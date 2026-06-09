@@ -25,10 +25,13 @@
 *.pem
 
 # debug
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+.codex-tmp/
+.tmp-*.txt
 
 # env files (can opt-in for committing if needed)
 .env*
@@ -39,3 +42,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.env
+example.env
+
+# generated analysis artifacts
+.graphify_*
+**/graphify-out/cache/
+ideas/**/outputs/
+outputs/
+
+# local runtime uploads
+/public/uploads/
+/public/seed-images/

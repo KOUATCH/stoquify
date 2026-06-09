@@ -1,0 +1,17 @@
+{
+  "eval_id": 2,
+  "eval_name": "implicit-dashboard-request",
+  "prompt": "the admin home page looks really generic — basically four colored stat cards and a chart. make it feel like it actually belongs to our product, not some bootstrap template.",
+  "assertions": [
+    {"text": "Agent recognized 'admin home page' as a dashboard task even though the word 'dashboard' wasn't used", "type": "content_check"},
+    {"text": "DASHBOARD-INSPIRATION.md exists with 7 entries", "type": "file_exists", "path": "DASHBOARD-INSPIRATION.md"},
+    {"text": "Inspiration picks lean distinctive/polarizing, not safe — at least 2 non-SaaS, at least 1 deliberately polarizing per skill rule", "type": "content_check"},
+    {"text": "Continuity audit (Phase 1) is given extra weight — landing page is explicitly read and documented", "type": "content_check"},
+    {"text": "IA-NOTES.md cuts widgets that don't earn their place (NOT just 4 colored stat cards again)", "type": "content_check"},
+    {"text": "DASHBOARD-SPEC.md exists and is complete", "type": "file_exists", "path": "DASHBOARD-SPEC.md"},
+    {"text": "Sample widget (hero-kpi-strip.tsx) exists and demonstrates a non-generic approach", "type": "file_exists", "path": "sample-widget/hero-kpi-strip.tsx"},
+    {"text": "Sample widget uses i18n hook, theme tokens, real data source", "type": "code_check"},
+    {"text": "RUN-NOTES.md addresses how the skill handled 'redesign existing' vs 'build new'", "type": "content_check"},
+    {"text": "No file under StockFlow codebase modified", "type": "side_effect_check"}
+  ]
+}

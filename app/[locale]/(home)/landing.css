@@ -1,0 +1,256 @@
+/**
+ * Marketing-page design tokens + base layer.
+ *
+ * Scoped under `.landing-root` so it never leaks into the app shell.
+ *
+ * Colors are named by responsibility first, then mapped to the older
+ * ink/rule/accent variables used by existing section components.
+ */
+
+.landing-root {
+  /* Semantic surfaces */
+  --color-canvas: #0b1014;
+  --color-chrome: #10171b;
+  --color-surface-deep: #111b20;
+  --color-surface-panel: #17252b;
+  --color-surface-panel-raised: #21323a;
+  --color-surface-panel-hover: #2c4149;
+  --color-surface-soft: #121d1a;
+  --color-surface-paper: #1a2723;
+  --color-surface-tint: #22332e;
+
+  /* Semantic borders */
+  --color-border-subtle: #24333a;
+  --color-border-muted: #36505a;
+  --color-border-strong: #5d7b88;
+  --color-paper-border: #31453e;
+
+  /* Brand and accents */
+  --color-brand: #2f7df6;
+  --color-brand-hover: #1f67dd;
+  --color-brand-soft: rgba(47, 125, 246, 0.14);
+  --color-brand-glow: rgba(47, 125, 246, 0.24);
+  --color-editorial: #d7a84f;
+  --color-warm: #c97855;
+  --color-spruce: #2dd4bf;
+
+  /* Semantic status */
+  --color-success: #2ec98a;
+  --color-warning: #f0ae3a;
+  --color-danger: #ef6a6a;
+  --color-info: #49c6e5;
+
+  /* Text */
+  --color-text-primary: #f7faf8;
+  --color-text-secondary: #d3ddd8;
+  --color-text-tertiary: #a9b8b2;
+  --color-text-muted: #7e9189;
+  --color-text-on-paper: #eef7f2;
+  --color-text-on-paper-muted: #aec1b8;
+
+  /* Legacy aliases used throughout components/landing */
+  --ink-0: var(--color-canvas);
+  --ink-1: var(--color-surface-deep);
+  --ink-2: var(--color-surface-panel);
+  --ink-3: var(--color-surface-panel-raised);
+  --ink-4: var(--color-surface-panel-hover);
+  --rule-1: var(--color-border-subtle);
+  --rule-2: var(--color-border-muted);
+  --rule-3: var(--color-border-strong);
+  --accent: var(--color-brand);
+  --accent-hi: #7fb1ff;
+  --accent-glow: var(--color-brand-glow);
+  --signal-up: var(--color-success);
+  --signal-warn: var(--color-warning);
+  --signal-down: var(--color-danger);
+  --signal-info: var(--color-info);
+  --editorial: var(--color-editorial);
+  --copper: var(--color-warm);
+  --text-hi: var(--color-text-primary);
+  --text-mid: var(--color-text-secondary);
+  --text-lo: var(--color-text-secondary);
+  --text-faint: var(--color-text-tertiary);
+  --text-dim: var(--color-text-muted);
+  --num: var(--color-text-primary);
+  --num-pos: #73e6b5;
+  --num-neg: #ff9b9b;
+  --paper-0: var(--color-surface-soft);
+  --paper-1: var(--color-surface-paper);
+  --paper-rule: var(--color-paper-border);
+  --paper-muted: var(--color-surface-tint);
+
+  font-feature-settings: "ss01", "cv11", "tnum";
+}
+
+.landing-root {
+  background:
+    linear-gradient(180deg, var(--color-canvas), var(--color-surface-deep) 34rem, var(--color-surface-soft) 100rem);
+}
+
+.landing-root .section-shell {
+  width: min(100% - 3rem, 80rem);
+  margin-inline: auto;
+}
+
+.landing-root .glass-panel {
+  border: 1px solid color-mix(in srgb, var(--color-border-subtle) 82%, transparent);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.018)),
+    rgba(23, 37, 43, 0.84);
+  box-shadow: 0 24px 70px rgba(2, 8, 23, 0.24);
+  backdrop-filter: blur(14px);
+}
+
+.landing-root .soft-card {
+  border: 1px solid var(--paper-rule);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.018)),
+    var(--paper-1);
+  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.18);
+}
+
+.landing-root .scroll-fade {
+  mask-image: linear-gradient(90deg, transparent, black 4%, black 96%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 4%, black 96%, transparent);
+}
+
+/* Tabular numerals everywhere a number appears in a ticker / counter */
+.landing-root .tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* The fine grid that lives under hero + connected-workflow */
+.landing-grid-bg {
+  background-image:
+    linear-gradient(to right, rgba(210, 221, 216, 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(210, 221, 216, 0.055) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: linear-gradient(180deg, black, transparent 92%);
+  -webkit-mask-image: linear-gradient(180deg, black, transparent 92%);
+}
+
+.landing-root .surface-grid {
+  background-image:
+    linear-gradient(to right, rgba(238, 247, 242, 0.052) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(238, 247, 242, 0.052) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.landing-root .section-divider {
+  border-top: 1px solid var(--rule-1);
+}
+
+/* Subtle film grain — adds "this is real, not a render" texture */
+.landing-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.7'/></svg>");
+}
+
+/* Live status dot — heartbeat for the ticker bar */
+@keyframes landing-pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+.landing-root .live-dot {
+  animation: landing-pulse-dot 1.8s ease-in-out infinite;
+}
+
+/* Ticker — for the live-data marquee under the hero */
+@keyframes landing-ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.landing-root .ticker-track {
+  animation: landing-ticker 60s linear infinite;
+}
+.landing-root:hover .ticker-track,
+.landing-root .ticker-track:hover {
+  animation-play-state: paused;
+}
+
+/* Workflow-line animation — dashed line travels along the path */
+@keyframes landing-flow-dash {
+  to { stroke-dashoffset: -160; }
+}
+.landing-root .flow-line {
+  stroke-dasharray: 4 8;
+  animation: landing-flow-dash 8s linear infinite;
+}
+
+/* Numeric counter — slight scale on update */
+@keyframes landing-num-tick {
+  0% { transform: translateY(0); opacity: 1; }
+  40% { transform: translateY(-6px); opacity: 0; }
+  60% { transform: translateY(6px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* Border-glow for "command center" frames */
+.landing-root .frame-glow {
+  position: relative;
+}
+.landing-root .frame-glow::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg,
+    rgba(106, 162, 255, 0.34),
+    rgba(103, 215, 249, 0.13) 30%,
+    transparent 60%);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Section labels — small caps eyebrow */
+.landing-root .eyebrow {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent-hi);
+}
+
+/* Display headline — Instrument Serif with mixed sans for "boring nouns" */
+.landing-root .display {
+  font-family: var(--font-display, "Times New Roman", serif);
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.02;
+}
+
+.landing-root .display-italic {
+  font-family: var(--font-display, "Times New Roman", serif);
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* Body voice */
+.landing-root .body-text {
+  font-family: var(--font-body, ui-sans-serif, system-ui);
+}
+
+/* Mono / data voice */
+.landing-root .data-text {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-root .ticker-track,
+  .landing-root .flow-line,
+  .landing-root .live-dot {
+    animation: none;
+  }
+}

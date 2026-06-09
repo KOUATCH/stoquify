@@ -1,0 +1,838 @@
+{
+  "enterpriseDashboard": {
+    "title": "Operations dashboard",
+    "subtitle": "A real-time overview of sales, stock, purchasing, and branch health.",
+    "connected": "Live data",
+    "generated": "Updated",
+    "refresh": "Refresh",
+    "refreshing": "Refreshing",
+    "refreshStarted": "Dashboard refresh started",
+    "refreshStartedMessage": "Fetching the latest operating data.",
+    "refreshSuccess": "Dashboard refreshed",
+    "refreshSuccessMessage": "The latest dashboard data is now visible.",
+    "refreshError": "Dashboard refresh failed",
+    "allLocations": "All locations",
+    "filters": {
+      "period": "Period",
+      "location": "Location"
+    },
+    "periods": {
+      "7d": "Last 7 days",
+      "30d": "Last 30 days",
+      "90d": "Last 90 days",
+      "mtd": "Month to date"
+    },
+    "tabs": {
+      "overview": "Overview",
+      "inventory": "Inventory",
+      "operations": "Operations"
+    },
+    "metrics": {
+      "revenue": "Revenue",
+      "orders": "Orders",
+      "customers": "Customers",
+      "inventoryValue": "Inventory value",
+      "averageOrderValue": "Avg. order value",
+      "cashCollected": "Cash collected"
+    },
+    "metricDescriptions": {
+      "revenue": "Completed sales in the selected period",
+      "orders": "Completed and delivered sales orders",
+      "customers": "Customers in this organization",
+      "inventoryValue": "Current value of tracked stock",
+      "averageOrderValue": "Revenue divided by completed orders",
+      "cashCollected": "Paid customer payments in the period"
+    },
+    "sections": {
+      "salesTrend": "Sales trend",
+      "salesTrendDescription": "Daily revenue and completed order movement.",
+      "topProducts": "Top products",
+      "topProductsDescription": "Best revenue contributors in the selected period.",
+      "pendingActions": "Pending actions",
+      "stockHealth": "Inventory health",
+      "stockHealthDescription": "Tracked stock posture across the selected scope.",
+      "locationPerformance": "Location performance",
+      "locationPerformanceDescription": "Revenue, orders, and stock value by branch.",
+      "alerts": "Operating alerts",
+      "alertsDescription": "Important issues that need attention.",
+      "recentActivity": "Recent activity",
+      "recentActivityDescription": "Latest sales, purchase, and stock movements.",
+      "quickActions": "Quick actions",
+      "quickActionsDescription": "Move from insight to the operational surface."
+    },
+    "stock": {
+      "trackedItems": "Tracked items",
+      "inStock": "Healthy",
+      "lowStock": "Low stock",
+      "outOfStock": "Out of stock",
+      "overstock": "Overstock",
+      "reorderCandidates": "Reorder candidates",
+      "availableUnits": "Available units",
+      "reservedUnits": "Reserved units"
+    },
+    "empty": {
+      "topProducts": "No product sales were found for this period.",
+      "alerts": "No urgent operating alerts right now.",
+      "activity": "No recent activity was found for this period.",
+      "locations": "No active locations were found."
+    },
+    "actions": {
+      "view": "View",
+      "open": "Open",
+      "inventory": "Inventory",
+      "sales": "Sales",
+      "purchases": "Purchases",
+      "finance": "Finance"
+    },
+    "comparison": "vs previous period"
+  },
+  "cashDrawerDashboard": {
+    "title": "Cash drawer control",
+    "subtitle": "Location-scoped drawer oversight, reconciliation confidence, and cashier session history.",
+    "updated": "Updated {time}",
+    "common": {
+      "notAvailable": "Not available"
+    },
+    "filters": {
+      "location": "Location",
+      "period": "Period",
+      "allLocations": "All locations"
+    },
+    "periods": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "7d": "Last 7 days",
+      "30d": "Last 30 days",
+      "mtd": "Month to date",
+      "custom": "Custom"
+    },
+    "actions": {
+      "refresh": "Refresh",
+      "pos": "POS",
+      "openPos": "Open POS",
+      "terminals": "Manage terminals",
+      "cashFlow": "Cash flow"
+    },
+    "notifications": {
+      "refreshTitle": "Refreshing drawer dashboard",
+      "refreshMessage": "Fetching the latest drawer and session data.",
+      "refreshedTitle": "Drawer dashboard refreshed",
+      "refreshedMessage": "The latest cash drawer data is visible.",
+      "refreshFailedTitle": "Refresh failed",
+      "refreshFailedMessage": "Unable to refresh the drawer dashboard."
+    },
+    "metrics": {
+      "currentBalance": "Drawer balance",
+      "cashSales": "Cash sales",
+      "liveVariance": "Live variance",
+      "activeDrawers": "Open drawers",
+      "confidence": "Confidence"
+    },
+    "metricDetails": {
+      "currentBalance": "Across {count} drawer(s)",
+      "cashSales": "{count} drawer event(s) in period",
+      "liveVariance": "Expected {expected}",
+      "activeDrawers": "{count} active cashier session(s)",
+      "confidence": "{accuracy} exact-close accuracy"
+    },
+    "sections": {
+      "drawerHealth": "Drawer command center",
+      "drawerHealthDescription": "Open status, expected cash, counted cash, variance, and recent drawer activity.",
+      "confidence": "Operational confidence",
+      "confidenceDescription": "Risk signals that help admins and cashiers trust the closeout process.",
+      "cashFlow": "Cash movement",
+      "cashFlowDescription": "Daily opening float, cash sales, cash in, cash out, and refund movement.",
+      "sessions": "Session reconciliation",
+      "sessionsDescription": "Cashier sessions with tender totals, expected cash, closing count, and variance.",
+      "journal": "Drawer journal",
+      "journalDescription": "Recent auditable cash drawer events in the selected period.",
+      "actions": "Related work",
+      "actionsDescription": "Move from drawer insight to the connected operating surfaces."
+    },
+    "summary": {
+      "netMovement": "Net movement {amount}",
+      "openingFloat": "Opening float",
+      "cashIn": "Cash in",
+      "cashOut": "Cash out",
+      "refunds": "Refunds",
+      "closingCounts": "Closing counts",
+      "accuracy": "Accuracy {value}",
+      "thresholds": "Variance thresholds: review at {medium}, manager attention at {high}."
+    },
+    "alerts": {
+      "highVariance": "{count} session(s) have high variance totaling {amount}.",
+      "mediumVariance": "{count} session(s) need variance review totaling {amount}.",
+      "staleSession": "{count} open session(s) have been active for more than 12 hours.",
+      "openDrawerWithoutSession": "{count} open drawer(s) are not linked to an active cashier session.",
+      "ready": "No drawer risk signals were found for this period."
+    },
+    "drawer": {
+      "open": "Open",
+      "closed": "Closed",
+      "expected": "Expected",
+      "current": "Counted",
+      "variance": "Variance",
+      "session": "Session",
+      "cashier": "Cashier",
+      "lastEvent": "Last event"
+    },
+    "legend": {
+      "sales": "Sales",
+      "cashIn": "Cash in",
+      "cashOut": "Cash out",
+      "refunds": "Refunds"
+    },
+    "table": {
+      "session": "Session",
+      "cashier": "Cashier",
+      "time": "Time",
+      "sales": "Sales",
+      "cash": "Cash",
+      "variance": "Variance",
+      "event": "Event",
+      "drawer": "Drawer",
+      "amount": "Amount",
+      "after": "After"
+    },
+    "statuses": {
+      "ACTIVE": "Open",
+      "SUSPENDED": "Suspended",
+      "CLOSED": "Closed",
+      "RECONCILED": "Reconciled"
+    },
+    "events": {
+      "OPENING_BALANCE": "Opening balance",
+      "SALE": "Cash sale",
+      "RETURN": "Return",
+      "CASH_IN": "Cash in",
+      "CASH_OUT": "Cash out",
+      "CLOSING_BALANCE": "Closing count",
+      "RECONCILIATION": "Reconciliation",
+      "REFUND": "Refund",
+      "PAYOUT": "Payout"
+    },
+    "empty": {
+      "drawers": "No cash drawers were found for this scope.",
+      "trend": "No drawer movement was found for this period.",
+      "sessions": "No cashier sessions were found for this period.",
+      "journal": "No drawer journal events were found for this period."
+    }
+  },
+  "financeDashboard": {
+    "title": "Finance command center",
+    "subtitle": "Payments, receivables, payables, margin, tax, cash flow, and drawer assurance in one controlled finance surface.",
+    "updated": "Updated {time}",
+    "common": {
+      "notAvailable": "Not available"
+    },
+    "notifications": {
+      "refreshTitle": "Refreshing finance dashboard",
+      "refreshMessage": "Fetching the latest payments, balances, and cash movement.",
+      "refreshedTitle": "Finance dashboard refreshed",
+      "refreshedMessage": "The latest finance data is visible.",
+      "failedTitle": "Refresh failed",
+      "failedMessage": "Unable to refresh the finance dashboard."
+    },
+    "filters": {
+      "view": "View",
+      "location": "Location",
+      "period": "Period",
+      "allLocations": "All locations"
+    },
+    "views": {
+      "overview": "Overview",
+      "payments": "Payments",
+      "receivables": "Receivables",
+      "payables": "Payables",
+      "cash-flow": "Cash flow",
+      "sales": "Sales finance",
+      "costs": "Cost control",
+      "profitability": "Profitability",
+      "analytics": "Analytics",
+      "retail": "Retail finance"
+    },
+    "periods": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "7d": "Last 7 days",
+      "30d": "Last 30 days",
+      "mtd": "Month to date",
+      "qtd": "Quarter to date",
+      "ytd": "Year to date",
+      "custom": "Custom"
+    },
+    "actions": {
+      "refresh": "Refresh",
+      "orderPayments": "Order payments",
+      "cashDrawers": "Cash drawers",
+      "cashFlow": "Cash flow",
+      "taxRates": "Tax rates"
+    },
+    "metrics": {
+      "cash": "Cash position",
+      "revenue": "Revenue",
+      "receivables": "Receivables",
+      "payables": "Payables",
+      "confidence": "Confidence"
+    },
+    "details": {
+      "cash": "Net cash movement {amount}",
+      "margin": "Gross margin {value}",
+      "receivables": "{count} open customer order(s)",
+      "payables": "{count} open supplier order(s)",
+      "workingCapital": "Working capital {amount}"
+    },
+    "sections": {
+      "movement": "Financial movement",
+      "movementDescription": "Daily inflow, outflow, revenue, purchases, expenses, and net cash movement for the selected scope.",
+      "assurance": "Finance assurance",
+      "assuranceDescription": "Risk signals that help admins, cashiers, and finance users trust the numbers.",
+      "receivables": "Receivables aging",
+      "receivablesDescription": "Customer balances and open sales exposure by aging bucket.",
+      "payables": "Payables aging",
+      "payablesDescription": "Supplier balances and open purchasing exposure by aging bucket.",
+      "payments": "Recent payments",
+      "paymentsDescription": "Latest inbound and outbound payments with method, status, processor, and counterparty.",
+      "methods": "Payment mix",
+      "methodsDescription": "Tender and settlement methods for the selected period."
+    },
+    "summary": {
+      "paymentsCollected": "Collected",
+      "pendingPayments": "Pending",
+      "refunds": "Refunds",
+      "tax": "Net tax",
+      "drawerVariance": "Drawer variance"
+    },
+    "alerts": {
+      "overdueAr": "{count} receivable item(s) are overdue, totaling {amount}.",
+      "overdueAp": "{count} payable item(s) need payment attention, totaling {amount}.",
+      "negativeMargin": "The selected period is showing negative margin of {amount}.",
+      "pendingPayments": "{count} payment(s) remain pending, totaling {amount}.",
+      "cashGap": "Net cash flow is negative by {amount}.",
+      "ready": "No finance risk signals were found for this period."
+    },
+    "legend": {
+      "inflow": "Inflow",
+      "revenue": "Revenue",
+      "outflow": "Outflow",
+      "expenses": "Expenses"
+    },
+    "empty": {
+      "trend": "No financial movement was found for this period.",
+      "counterparties": "No open balances were found for this scope.",
+      "payments": "No payments were found for this scope.",
+      "methods": "No payment methods were found for this period."
+    },
+    "aging": {
+      "current": "Current",
+      "d31": "31-60",
+      "d61": "61-90",
+      "d90": "90+",
+      "terms": "{count} day terms"
+    },
+    "table": {
+      "payment": "Payment",
+      "counterparty": "Counterparty",
+      "method": "Method",
+      "status": "Status",
+      "amount": "Amount",
+      "time": "Time"
+    },
+    "methods": {
+      "CASH": "Cash",
+      "CARD": "Card",
+      "MOBILE_MONEY": "Mobile money",
+      "BANK_TRANSFER": "Bank transfer",
+      "CREDIT": "Credit",
+      "STORE_CREDIT": "Store credit",
+      "CHEQUE": "Cheque",
+      "MIXED": "Mixed"
+    },
+    "statuses": {
+      "PENDING": "Pending",
+      "PARTIAL": "Partial",
+      "PAID": "Paid",
+      "REFUNDED": "Refunded",
+      "CANCELLED": "Cancelled"
+    }
+  },
+  "receiptPreview": {
+    "sendWhatsApp": "Send via WhatsApp",
+    "whatsappSending": "Sending WhatsApp receipt",
+    "whatsappQueuedTitle": "WhatsApp receipt queued",
+    "whatsappQueuedMessage": "The receipt delivery attempt was recorded.",
+    "whatsappFailedTitle": "WhatsApp receipt failed",
+    "whatsappFailedMessage": "Unable to send the receipt via WhatsApp."
+  },
+  "pos": {
+    "shell": {
+      "title": "Point of sale",
+      "subtitle": "Focused cashier workstation",
+      "scannerReady": "Scanner ready",
+      "touchMode": "Touch mode"
+    },
+    "setup": {
+      "title": "Register setup",
+      "location": "Location",
+      "terminal": "Terminal",
+      "chooseLocation": "Choose location",
+      "chooseTerminal": "Choose terminal",
+      "noLocation": "No location selected",
+      "noTerminal": "No terminal selected",
+      "activeRegister": "Active register",
+      "lockedDuringShift": "Location and terminal are locked while this shift is open."
+    },
+    "shift": {
+      "title": "Shift",
+      "open": "Shift {number}",
+      "closed": "No open shift",
+      "active": "Open",
+      "notOpen": "Closed",
+      "hud": "{count} txns - {gross} gross",
+      "cashOnHand": "Cash on hand: {amount}",
+      "openingPlaceholder": "Opening float",
+      "closingPlaceholder": "Closing count",
+      "openCta": "Open",
+      "close": "Close",
+      "closeWizardTitle": "Close shift",
+      "closeWizardDescription": "Review tender totals, count the drawer, and confirm the final variance.",
+      "expectedCash": "Expected cash",
+      "variance": "Variance",
+      "countedCash": "Counted cash",
+      "varianceWarning": "Drawer variance is {amount}. A manager review may be required."
+    },
+    "categories": {
+      "title": "Categories",
+      "all": "All items",
+      "favorites": "Favorites",
+      "recent": "Recent"
+    },
+    "metrics": {
+      "sessionSales": "Session sales",
+      "transactions": "Transactions",
+      "cashDrawer": "Cash drawer"
+    },
+    "catalog": {
+      "showing": "{count} items",
+      "item": "Item",
+      "add": "Add",
+      "addFavorite": "Add favorite",
+      "removeFavorite": "Remove favorite",
+      "price": "Price",
+      "sku": "SKU",
+      "barcode": "Barcode",
+      "noBarcode": "No barcode",
+      "noCategory": "Uncategorized",
+      "noBrand": "No brand",
+      "details": "Details",
+      "detailDescription": "Review sellable stock, identity, and item context without crowding the sales grid.",
+      "detailBackendNote": "Supplier, movement, and price-history panels need the next product detail service slice."
+    },
+    "customers": {
+      "title": "Customer",
+      "description": "Choose one customer for this transaction. The selected customer is locked until you change it or return to walk-in.",
+      "searchPlaceholder": "Search customers",
+      "choose": "Choose customer",
+      "change": "Change customer",
+      "selected": "Selected",
+      "locked": "Locked",
+      "walkIn": "Walk-in customer",
+      "walkInMeta": "Counter sale",
+      "orders": "{count} orders",
+      "creditLimit": "Limit {amount}",
+      "noCreditLimit": "No credit limit",
+      "creditWarning": "Projected account balance exceeds the configured credit limit.",
+      "noContact": "No contact",
+      "loading": "Loading customers...",
+      "empty": "No customers match"
+    },
+    "quick": {
+      "noSale": "No-sale"
+    },
+    "search": {
+      "placeholder": "Scan barcode or search SKU, item, or category"
+    },
+    "view": {
+      "grid": "Grid",
+      "list": "List"
+    },
+    "empty": {
+      "openShiftTitle": "Open a shift to start selling",
+      "openShiftDescription": "Select a location and terminal, declare the opening float, then the live inventory catalog will be ready for scanning.",
+      "noItems": "No sellable inventory items match this view."
+    },
+    "stock": {
+      "available": "{count} available",
+      "low": "{count} low",
+      "out": "Out of stock",
+      "not_tracked": "Not tracked",
+      "onHand": "On hand",
+      "availableLabel": "Available",
+      "inCart": "In cart",
+      "inCartCount": "{count} in cart"
+    },
+    "cart": {
+      "title": "Cart",
+      "walkIn": "Walk-in customer",
+      "empty": "Scan or select an item to start a persisted draft sale.",
+      "lines": "{count} lines"
+    },
+    "totals": {
+      "subtotal": "Subtotal",
+      "discount": "Discount",
+      "tax": "Tax",
+      "total": "Total"
+    },
+    "charge": {
+      "cta": "Charge {amount}"
+    },
+    "tender": {
+      "method": "Tender",
+      "amount": "Amount",
+      "exact": "Exact",
+      "paid": "Paid",
+      "due": "Due",
+      "change": "Change",
+      "shortPayment": "Payment is short by {amount}. Enter the full amount or use another tender.",
+      "customerRequired": "Select a customer before charging this sale on account.",
+      "nonCashOverpay": "Only cash can exceed the remaining balance because change can only be given from cash.",
+      "panelTitle": "Split tender",
+      "splitSummary": "{count} tender row(s)",
+      "addTender": "Add tender",
+      "removeTender": "Remove tender",
+      "reference": "Reference",
+      "referencePlaceholder": "Auth, transfer, or mobile reference",
+      "splitTender": "{count} tenders",
+      "methods": {
+        "CASH": "Cash",
+        "CARD": "Card",
+        "MOBILE_MONEY": "Mobile money",
+        "BANK_TRANSFER": "Bank transfer",
+        "STORE_CREDIT": "Store credit",
+        "ON_ACCOUNT": "On account"
+      }
+    },
+    "receipt": {
+      "options": "Receipt options",
+      "destinationPlaceholder": "Receipt destination: email, phone, or WhatsApp number",
+      "channels": {
+        "NONE": "No receipt",
+        "PRINT": "Print",
+        "EMAIL": "Email",
+        "SMS": "SMS",
+        "WHATSAPP": "WhatsApp"
+      }
+    },
+    "sale": {
+      "committed": "Sale {number} completed",
+      "summary": "{total} total - {change} change",
+      "delivery": "{channel} receipt: {status}"
+    },
+    "notifications": {
+      "genericError": "The POS operation could not be completed. Please try again.",
+      "setupRequiredTitle": "Register setup required",
+      "setupRequiredMessage": "Choose a location and terminal before opening the register.",
+      "openShiftRequiredTitle": "Open shift required",
+      "openShiftRequiredMessage": "Open a cashier shift before adding items to the cart.",
+      "openShiftPendingTitle": "Opening register",
+      "openShiftPendingMessage": "Creating the cashier session and preparing the drawer.",
+      "openShiftSuccessTitle": "Register opened",
+      "openShiftSuccessMessage": "{terminal} is ready with an opening float of {amount}.",
+      "openShiftErrorTitle": "Register open failed",
+      "closeShiftPendingTitle": "Closing register",
+      "closeShiftPendingMessage": "Reconciling the drawer and closing the cashier session.",
+      "closeShiftSuccessTitle": "Register closed",
+      "closeShiftSuccessMessage": "Session {number} was closed with an actual drawer balance of {amount}.",
+      "closeShiftErrorTitle": "Register close failed",
+      "addItemSuccessTitle": "Item added",
+      "addItemSuccessMessage": "{item} was added to the current sale.",
+      "addItemErrorTitle": "Item could not be added",
+      "quantitySuccessTitle": "Quantity updated",
+      "quantitySuccessMessage": "{item} quantity is now {count}.",
+      "quantityErrorTitle": "Quantity update failed",
+      "removeItemSuccessTitle": "Item removed",
+      "removeItemSuccessMessage": "{item} was removed from the current sale.",
+      "removeItemErrorTitle": "Item remove failed",
+      "saleBlockedTitle": "Sale cannot be charged",
+      "saleBlockedMessage": "Review the tender and customer before charging this sale.",
+      "salePendingTitle": "Posting sale",
+      "salePendingMessage": "Charging {amount} for {customer} and posting the related transactions.",
+      "saleSuccessTitle": "Sale completed",
+      "saleSuccessMessage": "Sale {number} was created for {total} using {tender}.",
+      "saleErrorTitle": "Sale failed",
+      "salePostedTitle": "Associated transactions posted",
+      "salePostedMessage": "{inventory}, {finance}, {drawer}, {customer}.",
+      "inventoryPosted": "Inventory was updated",
+      "financePosted": "Finance entries were posted",
+      "drawerPosted": "Cash drawer totals were updated",
+      "customerPosted": "Customer account was updated",
+      "walkInPosted": "Walk-in customer was recorded",
+      "receiptTitle": "Receipt delivery",
+      "receiptMessage": "{channel} receipt status: {status}."
+    },
+    "timeline": {
+      "saleCreated": "Sale created",
+      "inventoryUpdated": "Inventory updated",
+      "financePosted": "Finance entries posted",
+      "drawerUpdated": "Cash drawer totals updated",
+      "customerLedgerUpdated": "Customer ledger updated",
+      "walkInRecorded": "Walk-in sale recorded",
+      "receiptStatus": "{channel} receipt: {status}",
+      "noReceipt": "No receipt requested"
+    },
+    "smart": {
+      "addCustomer": "Add customer",
+      "changeCustomer": "Change customer",
+      "exactCash": "Exact cash",
+      "receiptStatus": "Receipt",
+      "parkSale": "Park sale",
+      "managerOverride": "Override",
+      "endShift": "End shift"
+    },
+    "hardware": {
+      "scanner": "Scanner",
+      "drawer": "Drawer",
+      "printer": "Printer",
+      "network": "Network",
+      "ready": "Ready",
+      "waiting": "Waiting",
+      "open": "Open",
+      "closed": "Closed",
+      "selected": "Selected",
+      "standby": "Standby",
+      "online": "Online"
+    },
+    "featureGates": {
+      "title": "Backend workflow needed",
+      "message": "{feature} needs a dedicated POS service/action before it can be safely used in production."
+    },
+    "common": {
+      "cancel": "Cancel"
+    },
+    "hotkeys": "Ctrl/Cmd K search - F4 customer - F8 tender - Esc clear"
+  },
+  "landing": {
+    "header": {
+      "homeAria": "StockFlow home",
+      "subtitle": "Operating system",
+      "navAria": "Primary",
+      "product": "Product",
+      "workflow": "Workflow",
+      "trust": "Trust",
+      "pricing": "Pricing",
+      "login": "Log in",
+      "dashboard": "Dashboard",
+      "startFree": "Start free",
+      "openNavigation": "Open navigation",
+      "languageLabel": "FR",
+      "languageAria": "View in French"
+    },
+    "hero": {
+      "badge": "inventory-first operating system",
+      "titleStart": "Control every shelf, sale, order, and dollar in",
+      "titleEmphasis": "one operating system",
+      "description": "StockFlow gives inventory-heavy teams a calm command layer for branch POS, stock movement, supplier orders, approvals, payroll signals, and financial visibility.",
+      "primaryCta": "Start free trial",
+      "secondaryCta": "View pricing",
+      "metrics": {
+        "branches": { "value": "24/7", "label": "Live branches" },
+        "accuracy": { "value": "99.2%", "label": "Stock accuracy" },
+        "close": { "value": "-38%", "label": "Faster close" }
+      },
+      "ticker": {
+        "approved": "PO-1042 approved",
+        "synced": "Branch 03 synced",
+        "lowStock": "Low stock: flour",
+        "cash": "Cash drawer balanced",
+        "margin": "Margin alert resolved"
+      }
+    },
+    "dashboard": {
+      "period": "Today",
+      "title": "Multi-branch pulse",
+      "synced": "synced",
+      "rows": {
+        "revenue": { "label": "Revenue", "value": "$84.2k", "meta": "+12.4%" },
+        "pos": { "label": "Open POs", "value": "18", "meta": "6 urgent" },
+        "turns": { "label": "Stock turns", "value": "4.8x", "meta": "+0.6" },
+        "variance": { "label": "Cash variance", "value": "$12", "meta": "clear" }
+      },
+      "inventoryHealth": "Branch inventory health",
+      "branches": {
+        "downtown": "Downtown",
+        "warehouse": "Warehouse",
+        "airport": "Airport"
+      },
+      "nextActionLabel": "Next action",
+      "nextAction": "Approve supplier PO before 4:00 PM",
+      "liveFeed": "Live feed",
+      "activity": {
+        "sale": "Sale posted",
+        "transfer": "Transfer received",
+        "po": "PO approved"
+      }
+    },
+    "operations": {
+      "eyebrow": "connected product",
+      "title": "One operating model, reflected in the product.",
+      "description": "The landing page is not selling an abstract promise. It points to working surfaces for auth, language, roles, dashboards, finance, purchasing, and branch operations.",
+      "moduleLabel": "module",
+      "modules": {
+        "pos": { "name": "POS", "description": "Transactions and tills", "meta": "14 live tills" },
+        "inventory": { "name": "Inventory", "description": "Stock, batches, movement", "meta": "6 exceptions" },
+        "purchasing": { "name": "Purchasing", "description": "POs and approvals", "meta": "18 open POs" },
+        "finance": { "name": "Finance", "description": "Cash flow and margins", "meta": "92% matched" },
+        "users": { "name": "Users", "description": "Teams and access", "meta": "42 active" },
+        "roles": { "name": "Roles", "description": "Permission control", "meta": "8 roles" }
+      }
+    },
+    "problem": {
+      "eyebrow": "the problem",
+      "title": "Most teams are not short on tools. They are short on shared truth.",
+      "copy": "Works alone until StockFlow connects the workflow.",
+      "systems": {
+        "pos": "POS",
+        "inventory": "Inventory",
+        "purchasing": "Purchasing",
+        "finance": "Finance",
+        "attendance": "Attendance",
+        "approvals": "Approvals"
+      }
+    },
+    "workflow": {
+      "eyebrow": "workflow",
+      "title": "One action updates the whole operating record.",
+      "steps": {
+        "sale": { "title": "Sale recorded", "copy": "POS captures payment, branch, cashier, customer, and item context." },
+        "stock": { "title": "Stock reduced", "copy": "Inventory moves instantly across batches, units, and locations." },
+        "reorder": { "title": "Reorder checked", "copy": "Rules compare demand, par levels, suppliers, and lead time." },
+        "approval": { "title": "Approval routed", "copy": "Managers approve exceptions before money or stock moves." },
+        "finance": { "title": "Finance updated", "copy": "Margins, cash flow, and tax records stay aligned." }
+      }
+    },
+    "gallery": {
+      "eyebrow": "product views",
+      "title": "A product surface that feels alive, not decorative.",
+      "panels": {
+        "inventory": { "title": "Inventory exception board", "copy": "Low stock, expiry risk, and transfer needs in one view", "meta": "22 alerts" },
+        "purchase": { "title": "Purchase approval queue", "copy": "Supplier orders ranked by urgency, margin, and branch demand", "meta": "18 open" },
+        "finance": { "title": "Finance margin cockpit", "copy": "Cash, tax, revenue, and cost drift summarized for operators", "meta": "92% matched" }
+      }
+    },
+    "modules": {
+      "eyebrow": "modules",
+      "titleStart": "Eight modules.",
+      "titleEmphasis": "One spine.",
+      "workflowCta": "See workflow",
+      "tryCta": "Try it",
+      "items": {
+        "pos": { "title": "POS", "copy": "Fast selling with cashier controls, receipts, and session visibility.", "metric": "14 tills" },
+        "inventory": { "title": "Inventory", "copy": "Location stock, batches, units, movements, categories, and alerts.", "metric": "12,847 SKUs" },
+        "purchasing": { "title": "Purchasing", "copy": "Supplier orders, approvals, delivery tracking, and landed cost.", "metric": "18 open POs" },
+        "transfers": { "title": "Transfers", "copy": "Branch-to-branch movement with accountability and receiving checks.", "metric": "31 moves" },
+        "finance": { "title": "Finance", "copy": "Cash flow, profit and loss, tax, drawer variance, and margins.", "metric": "$84.2k MTD" },
+        "customers": { "title": "Customers", "copy": "Credit, history, orders, balances, and relationship context.", "metric": "2,406 accounts" },
+        "roles": { "title": "Roles", "copy": "Least-privilege permissions for teams, branches, and managers.", "metric": "8 roles" },
+        "reports": { "title": "Reports", "copy": "Operational summaries that expose drift before it gets expensive.", "metric": "42 reports" }
+      }
+    },
+    "deepDives": {
+      "eyebrow": "daily control",
+      "title": "Designed for the decisions operators make every morning.",
+      "items": {
+        "inventory": { "title": "Inventory", "copy": "Track stock levels, movements, units, categories, and location health.", "labels": { "a": "Low stock", "b": "Transfers", "c": "Batches" } },
+        "purchasing": { "title": "Purchasing", "copy": "Create POs, route approvals, and keep supplier commitments visible.", "labels": { "a": "Draft", "b": "Approval", "c": "Receiving" } },
+        "finance": { "title": "Finance", "copy": "Turn transactions into cash-flow, margin, and tax visibility.", "labels": { "a": "Revenue", "b": "Margin", "c": "Variance" } }
+      }
+    },
+    "automation": {
+      "eyebrow": "automation",
+      "title": "Rules that make operations move before someone asks.",
+      "when": "WHEN",
+      "then": "THEN",
+      "rules": {
+        "stock": { "when": "If stock drops below par", "then": "Create purchase suggestion" },
+        "margin": { "when": "If margin falls", "then": "Flag finance review" },
+        "transfer": { "when": "If transfer is delayed", "then": "Notify receiving branch" }
+      }
+    },
+    "trust": {
+      "eyebrow": "trust",
+      "title": "Trust gets earned every day in plain view.",
+      "points": {
+        "permissions": { "title": "Role-based permissions", "copy": "Give teams only the access their branch, role, and workflow require." },
+        "audit": { "title": "Audit-friendly workflows", "copy": "Approvals, stock movement, and finance events stay traceable." },
+        "branches": { "title": "Branch-level controls", "copy": "Standardize the operating model without flattening local realities." },
+        "finance": { "title": "Clear financial visibility", "copy": "See cash, margins, receivables, payables, and drift together." }
+      }
+    },
+    "useCases": {
+      "eyebrow": "use cases",
+      "title": "Adapt the same operating spine to the way you sell.",
+      "items": {
+        "retail": { "title": "Retail chains", "copy": "Standardize selling, purchasing, and stock checks across many branches.", "label": "multi-branch" },
+        "wholesale": { "title": "Wholesale teams", "copy": "Protect margins while coordinating credit, orders, and supplier lead times.", "label": "credit aware" },
+        "restaurants": { "title": "Restaurants", "copy": "Track fast-moving ingredients, recipes, drawers, and shift-level accountability.", "label": "shift-ready" },
+        "pharmacies": { "title": "Pharmacies", "copy": "Watch expiry, batch movement, branch transfers, and audit-sensitive access.", "label": "batch control" },
+        "service": { "title": "Service counters", "copy": "Keep customer accounts, payments, orders, and staff permissions aligned.", "label": "account ledgers" }
+      }
+    },
+    "pricing": {
+      "eyebrow": "pricing",
+      "title": "Start lean. Add modules as the business grows.",
+      "popular": "most popular",
+      "choose": "Choose plan",
+      "plans": {
+        "starter": { "name": "Starter", "price": "$49", "description": "For one growing operation", "features": "Inventory, POS, purchasing, reports" },
+        "growth": { "name": "Growth", "price": "$149", "description": "For multi-branch teams", "features": "Transfers, approvals, roles, finance dashboards" },
+        "enterprise": { "name": "Enterprise", "price": "Custom", "description": "For governed rollouts", "features": "Audit support, custom workflows, priority onboarding" }
+      }
+    },
+    "finalCta": {
+      "eyebrow": "ready",
+      "title": "The clarity of a dashboard. The control of an operating system.",
+      "copy": "Connect the modules your team already needs and give every branch the same source of truth.",
+      "cta": "Start StockFlow"
+    },
+    "footer": {
+      "homeAria": "StockFlow home",
+      "subtitle": "Retail operations, connected",
+      "copy": "A modern operating layer for inventory-heavy businesses that need cleaner stock control, faster selling, governed purchasing, and better financial visibility.",
+      "navAria": "Footer",
+      "copyright": "StockFlow. Built for disciplined operations."
+    }
+  },
+  "purchaseOrders": {
+    "title": "Purchase orders",
+    "subtitle": "Plan supplier orders, approvals, receiving, and payable readiness from one operational view.",
+    "orgRequired": {
+      "title": "Organization required",
+      "subtitle": "Select or create an organization before managing purchase orders."
+    },
+    "header": {
+      "analyticsCta": "Payables dashboard",
+      "createCta": "New purchase order"
+    },
+    "stats": {
+      "totalOrders": "Total orders",
+      "totalOrdersSubtitle": "All purchase orders in this organization",
+      "totalOrdersBadge": "{n} purchase order(s)",
+      "totalValue": "Total value",
+      "totalValueSubtitle": "Committed supplier purchasing value",
+      "valueLabel": "Value {amount}",
+      "draftOrders": "Draft orders",
+      "draftSubtitle": "Orders still being prepared",
+      "received": "Received",
+      "receivedSubtitle": "Orders fully received into stock",
+      "overdue": "Overdue",
+      "overdueSubtitle": "Expected deliveries needing attention",
+      "overdueBadge": "{n} overdue"
+    },
+    "panel": {
+      "title": "Purchase order register",
+      "summary": "{n} order(s) monitored | {overdue} overdue | {value} total value",
+      "liveData": "Live data",
+      "loading": "Loading purchase orders"
+    }
+  }
+}

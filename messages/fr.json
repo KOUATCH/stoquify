@@ -1,0 +1,838 @@
+{
+  "enterpriseDashboard": {
+    "title": "Tableau de bord operations",
+    "subtitle": "Vue en temps reel des ventes, du stock, des achats et de la sante des agences.",
+    "connected": "Donnees en direct",
+    "generated": "Mis a jour",
+    "refresh": "Actualiser",
+    "refreshing": "Actualisation",
+    "refreshStarted": "Actualisation du tableau de bord lancee",
+    "refreshStartedMessage": "Recuperation des dernieres donnees operationnelles.",
+    "refreshSuccess": "Tableau de bord actualise",
+    "refreshSuccessMessage": "Les dernieres donnees du tableau de bord sont visibles.",
+    "refreshError": "Echec de l'actualisation du tableau de bord",
+    "allLocations": "Tous les lieux",
+    "filters": {
+      "period": "Periode",
+      "location": "Lieu"
+    },
+    "periods": {
+      "7d": "7 derniers jours",
+      "30d": "30 derniers jours",
+      "90d": "90 derniers jours",
+      "mtd": "Mois en cours"
+    },
+    "tabs": {
+      "overview": "Vue d'ensemble",
+      "inventory": "Inventaire",
+      "operations": "Operations"
+    },
+    "metrics": {
+      "revenue": "Revenu",
+      "orders": "Commandes",
+      "customers": "Clients",
+      "inventoryValue": "Valeur du stock",
+      "averageOrderValue": "Panier moyen",
+      "cashCollected": "Encaissements"
+    },
+    "metricDescriptions": {
+      "revenue": "Ventes terminees sur la periode selectionnee",
+      "orders": "Commandes terminees et livrees",
+      "customers": "Clients de cette organisation",
+      "inventoryValue": "Valeur actuelle du stock suivi",
+      "averageOrderValue": "Revenu divise par les commandes terminees",
+      "cashCollected": "Paiements clients payes sur la periode"
+    },
+    "sections": {
+      "salesTrend": "Tendance des ventes",
+      "salesTrendDescription": "Evolution quotidienne du revenu et des commandes terminees.",
+      "topProducts": "Meilleurs produits",
+      "topProductsDescription": "Principaux contributeurs au revenu sur la periode.",
+      "pendingActions": "Actions en attente",
+      "stockHealth": "Sante de l'inventaire",
+      "stockHealthDescription": "Etat du stock suivi dans le perimetre selectionne.",
+      "locationPerformance": "Performance par lieu",
+      "locationPerformanceDescription": "Revenu, commandes et valeur du stock par agence.",
+      "alerts": "Alertes operationnelles",
+      "alertsDescription": "Points importants qui demandent une attention.",
+      "recentActivity": "Activite recente",
+      "recentActivityDescription": "Derniers mouvements de ventes, achats et stock.",
+      "quickActions": "Actions rapides",
+      "quickActionsDescription": "Passer de l'information a la surface operationnelle."
+    },
+    "stock": {
+      "trackedItems": "Articles suivis",
+      "inStock": "Sain",
+      "lowStock": "Stock bas",
+      "outOfStock": "Rupture",
+      "overstock": "Surstock",
+      "reorderCandidates": "A reapprovisionner",
+      "availableUnits": "Unites disponibles",
+      "reservedUnits": "Unites reservees"
+    },
+    "empty": {
+      "topProducts": "Aucune vente produit trouvee pour cette periode.",
+      "alerts": "Aucune alerte operationnelle urgente pour le moment.",
+      "activity": "Aucune activite recente trouvee pour cette periode.",
+      "locations": "Aucun lieu actif trouve."
+    },
+    "actions": {
+      "view": "Voir",
+      "open": "Ouvrir",
+      "inventory": "Inventaire",
+      "sales": "Ventes",
+      "purchases": "Achats",
+      "finance": "Finance"
+    },
+    "comparison": "vs periode precedente"
+  },
+  "cashDrawerDashboard": {
+    "title": "Controle des caisses",
+    "subtitle": "Suivi par lieu des tiroirs, confiance de rapprochement et historique des services caissiers.",
+    "updated": "Mis a jour {time}",
+    "common": {
+      "notAvailable": "Non disponible"
+    },
+    "filters": {
+      "location": "Lieu",
+      "period": "Periode",
+      "allLocations": "Tous les lieux"
+    },
+    "periods": {
+      "today": "Aujourd'hui",
+      "yesterday": "Hier",
+      "7d": "7 derniers jours",
+      "30d": "30 derniers jours",
+      "mtd": "Mois en cours",
+      "custom": "Personnalise"
+    },
+    "actions": {
+      "refresh": "Actualiser",
+      "pos": "PDV",
+      "openPos": "Ouvrir PDV",
+      "terminals": "Gerer terminaux",
+      "cashFlow": "Tresorerie"
+    },
+    "notifications": {
+      "refreshTitle": "Actualisation du tableau caisses",
+      "refreshMessage": "Chargement des dernieres donnees tiroirs et services.",
+      "refreshedTitle": "Tableau caisses actualise",
+      "refreshedMessage": "Les dernieres donnees de caisse sont visibles.",
+      "refreshFailedTitle": "Echec actualisation",
+      "refreshFailedMessage": "Impossible d'actualiser le tableau des caisses."
+    },
+    "metrics": {
+      "currentBalance": "Solde tiroirs",
+      "cashSales": "Ventes especes",
+      "liveVariance": "Ecart actuel",
+      "activeDrawers": "Tiroirs ouverts",
+      "confidence": "Confiance"
+    },
+    "metricDetails": {
+      "currentBalance": "Sur {count} tiroir(s)",
+      "cashSales": "{count} evenement(s) tiroir sur la periode",
+      "liveVariance": "Attendu {expected}",
+      "activeDrawers": "{count} service(s) caissier actif(s)",
+      "confidence": "{accuracy} de clotures exactes"
+    },
+    "sections": {
+      "drawerHealth": "Centre de commande tiroirs",
+      "drawerHealthDescription": "Etat ouvert, especes attendues, especes comptees, ecart et activite recente.",
+      "confidence": "Confiance operationnelle",
+      "confidenceDescription": "Signaux de risque pour aider admins et caissiers a fiabiliser la cloture.",
+      "cashFlow": "Mouvements de caisse",
+      "cashFlowDescription": "Fond de caisse, ventes especes, entrees, sorties et remboursements par jour.",
+      "sessions": "Rapprochement services",
+      "sessionsDescription": "Services caissiers avec totaux, caisse attendue, comptage final et ecart.",
+      "journal": "Journal tiroirs",
+      "journalDescription": "Evenements auditables recents sur la periode selectionnee.",
+      "actions": "Travaux lies",
+      "actionsDescription": "Passer de l'analyse caisse aux surfaces operationnelles connectees."
+    },
+    "summary": {
+      "netMovement": "Mouvement net {amount}",
+      "openingFloat": "Fond de caisse",
+      "cashIn": "Entrees especes",
+      "cashOut": "Sorties especes",
+      "refunds": "Remboursements",
+      "closingCounts": "Comptages finaux",
+      "accuracy": "Exactitude {value}",
+      "thresholds": "Seuils d'ecart : revue a {medium}, attention manager a {high}."
+    },
+    "alerts": {
+      "highVariance": "{count} service(s) ont un ecart eleve totalisant {amount}.",
+      "mediumVariance": "{count} service(s) necessitent une revue d'ecart totalisant {amount}.",
+      "staleSession": "{count} service(s) ouvert(s) durent depuis plus de 12 heures.",
+      "openDrawerWithoutSession": "{count} tiroir(s) ouvert(s) ne sont pas lies a un service caissier actif.",
+      "ready": "Aucun signal de risque caisse n'a ete trouve sur cette periode."
+    },
+    "drawer": {
+      "open": "Ouvert",
+      "closed": "Ferme",
+      "expected": "Attendu",
+      "current": "Compte",
+      "variance": "Ecart",
+      "session": "Service",
+      "cashier": "Caissier",
+      "lastEvent": "Dernier evenement"
+    },
+    "legend": {
+      "sales": "Ventes",
+      "cashIn": "Entrees",
+      "cashOut": "Sorties",
+      "refunds": "Remb."
+    },
+    "table": {
+      "session": "Service",
+      "cashier": "Caissier",
+      "time": "Heure",
+      "sales": "Ventes",
+      "cash": "Especes",
+      "variance": "Ecart",
+      "event": "Evenement",
+      "drawer": "Tiroir",
+      "amount": "Montant",
+      "after": "Apres"
+    },
+    "statuses": {
+      "ACTIVE": "Ouvert",
+      "SUSPENDED": "Suspendu",
+      "CLOSED": "Ferme",
+      "RECONCILED": "Rapproche"
+    },
+    "events": {
+      "OPENING_BALANCE": "Fond de caisse",
+      "SALE": "Vente especes",
+      "RETURN": "Retour",
+      "CASH_IN": "Entree especes",
+      "CASH_OUT": "Sortie especes",
+      "CLOSING_BALANCE": "Comptage final",
+      "RECONCILIATION": "Rapprochement",
+      "REFUND": "Remboursement",
+      "PAYOUT": "Paiement sortant"
+    },
+    "empty": {
+      "drawers": "Aucun tiroir caisse trouve pour ce perimetre.",
+      "trend": "Aucun mouvement de caisse trouve sur cette periode.",
+      "sessions": "Aucun service caissier trouve sur cette periode.",
+      "journal": "Aucun evenement tiroir trouve sur cette periode."
+    }
+  },
+  "financeDashboard": {
+    "title": "Centre de commande finance",
+    "subtitle": "Paiements, creances, dettes, marge, taxes, tresorerie et assurance caisse dans une surface finance controlee.",
+    "updated": "Mis a jour {time}",
+    "common": {
+      "notAvailable": "Non disponible"
+    },
+    "notifications": {
+      "refreshTitle": "Actualisation finance",
+      "refreshMessage": "Chargement des paiements, soldes et mouvements de tresorerie.",
+      "refreshedTitle": "Tableau finance actualise",
+      "refreshedMessage": "Les dernieres donnees finance sont visibles.",
+      "failedTitle": "Echec actualisation",
+      "failedMessage": "Impossible d'actualiser le tableau finance."
+    },
+    "filters": {
+      "view": "Vue",
+      "location": "Lieu",
+      "period": "Periode",
+      "allLocations": "Tous les lieux"
+    },
+    "views": {
+      "overview": "Vue d'ensemble",
+      "payments": "Paiements",
+      "receivables": "Creances",
+      "payables": "Dettes",
+      "cash-flow": "Tresorerie",
+      "sales": "Finance ventes",
+      "costs": "Controle couts",
+      "profitability": "Rentabilite",
+      "analytics": "Analytique",
+      "retail": "Finance retail"
+    },
+    "periods": {
+      "today": "Aujourd'hui",
+      "yesterday": "Hier",
+      "7d": "7 derniers jours",
+      "30d": "30 derniers jours",
+      "mtd": "Mois en cours",
+      "qtd": "Trimestre en cours",
+      "ytd": "Annee en cours",
+      "custom": "Personnalise"
+    },
+    "actions": {
+      "refresh": "Actualiser",
+      "orderPayments": "Paiements commandes",
+      "cashDrawers": "Tiroirs caisse",
+      "cashFlow": "Tresorerie",
+      "taxRates": "Taux de taxe"
+    },
+    "metrics": {
+      "cash": "Position cash",
+      "revenue": "Revenu",
+      "receivables": "Creances",
+      "payables": "Dettes",
+      "confidence": "Confiance"
+    },
+    "details": {
+      "cash": "Mouvement net {amount}",
+      "margin": "Marge brute {value}",
+      "receivables": "{count} commande(s) client ouverte(s)",
+      "payables": "{count} commande(s) fournisseur ouverte(s)",
+      "workingCapital": "Fonds de roulement {amount}"
+    },
+    "sections": {
+      "movement": "Mouvements financiers",
+      "movementDescription": "Entrees, sorties, revenu, achats, depenses et tresorerie nette par jour pour le perimetre choisi.",
+      "assurance": "Assurance finance",
+      "assuranceDescription": "Signaux de risque pour aider admins, caissiers et finance a faire confiance aux chiffres.",
+      "receivables": "Aging creances",
+      "receivablesDescription": "Soldes clients et exposition ventes ouvertes par tranche d'age.",
+      "payables": "Aging dettes",
+      "payablesDescription": "Soldes fournisseurs et exposition achats ouverts par tranche d'age.",
+      "payments": "Paiements recents",
+      "paymentsDescription": "Derniers paiements entrants et sortants avec methode, statut, agent et tiers.",
+      "methods": "Mix paiement",
+      "methodsDescription": "Methodes d'encaissement et de reglement pour la periode choisie."
+    },
+    "summary": {
+      "paymentsCollected": "Encaisse",
+      "pendingPayments": "En attente",
+      "refunds": "Remboursements",
+      "tax": "Taxe nette",
+      "drawerVariance": "Ecart caisse"
+    },
+    "alerts": {
+      "overdueAr": "{count} creance(s) sont en retard, total {amount}.",
+      "overdueAp": "{count} dette(s) demandent attention, total {amount}.",
+      "negativeMargin": "La periode selectionnee affiche une marge negative de {amount}.",
+      "pendingPayments": "{count} paiement(s) restent en attente, total {amount}.",
+      "cashGap": "La tresorerie nette est negative de {amount}.",
+      "ready": "Aucun signal de risque finance trouve sur cette periode."
+    },
+    "legend": {
+      "inflow": "Entrees",
+      "revenue": "Revenu",
+      "outflow": "Sorties",
+      "expenses": "Depenses"
+    },
+    "empty": {
+      "trend": "Aucun mouvement financier trouve sur cette periode.",
+      "counterparties": "Aucun solde ouvert trouve pour ce perimetre.",
+      "payments": "Aucun paiement trouve pour ce perimetre.",
+      "methods": "Aucune methode de paiement trouvee pour cette periode."
+    },
+    "aging": {
+      "current": "Courant",
+      "d31": "31-60",
+      "d61": "61-90",
+      "d90": "90+",
+      "terms": "{count} jours"
+    },
+    "table": {
+      "payment": "Paiement",
+      "counterparty": "Tiers",
+      "method": "Methode",
+      "status": "Statut",
+      "amount": "Montant",
+      "time": "Heure"
+    },
+    "methods": {
+      "CASH": "Especes",
+      "CARD": "Carte",
+      "MOBILE_MONEY": "Mobile money",
+      "BANK_TRANSFER": "Virement",
+      "CREDIT": "Credit",
+      "STORE_CREDIT": "Avoir magasin",
+      "CHEQUE": "Cheque",
+      "MIXED": "Mixte"
+    },
+    "statuses": {
+      "PENDING": "En attente",
+      "PARTIAL": "Partiel",
+      "PAID": "Paye",
+      "REFUNDED": "Rembourse",
+      "CANCELLED": "Annule"
+    }
+  },
+  "receiptPreview": {
+    "sendWhatsApp": "Envoyer par WhatsApp",
+    "whatsappSending": "Envoi du recu WhatsApp",
+    "whatsappQueuedTitle": "Recu WhatsApp mis en file",
+    "whatsappQueuedMessage": "La tentative d'envoi du recu a ete enregistree.",
+    "whatsappFailedTitle": "Echec du recu WhatsApp",
+    "whatsappFailedMessage": "Impossible d'envoyer le recu par WhatsApp."
+  },
+  "pos": {
+    "shell": {
+      "title": "Point de vente",
+      "subtitle": "Poste caisse concentre",
+      "scannerReady": "Scanner pret",
+      "touchMode": "Mode tactile"
+    },
+    "setup": {
+      "title": "Configuration caisse",
+      "location": "Lieu",
+      "terminal": "Terminal",
+      "chooseLocation": "Choisir un lieu",
+      "chooseTerminal": "Choisir un terminal",
+      "noLocation": "Aucun lieu selectionne",
+      "noTerminal": "Aucun terminal selectionne",
+      "activeRegister": "Caisse active",
+      "lockedDuringShift": "Le lieu et le terminal sont verrouilles pendant le service ouvert."
+    },
+    "shift": {
+      "title": "Service",
+      "open": "Service {number}",
+      "closed": "Aucun service ouvert",
+      "active": "Ouvert",
+      "notOpen": "Ferme",
+      "hud": "{count} ventes - {gross} brut",
+      "cashOnHand": "Especes en caisse : {amount}",
+      "openingPlaceholder": "Fond de caisse",
+      "closingPlaceholder": "Comptage final",
+      "openCta": "Ouvrir",
+      "close": "Clore",
+      "closeWizardTitle": "Clore le service",
+      "closeWizardDescription": "Verifiez les totaux par reglement, comptez le tiroir et confirmez l'ecart final.",
+      "expectedCash": "Especes attendues",
+      "variance": "Ecart",
+      "countedCash": "Especes comptees",
+      "varianceWarning": "L'ecart tiroir est de {amount}. Une revue manager peut etre requise."
+    },
+    "categories": {
+      "title": "Categories",
+      "all": "Tous les articles",
+      "favorites": "Favoris",
+      "recent": "Recents"
+    },
+    "metrics": {
+      "sessionSales": "Ventes service",
+      "transactions": "Transactions",
+      "cashDrawer": "Caisse"
+    },
+    "catalog": {
+      "showing": "{count} articles",
+      "item": "Article",
+      "add": "Ajouter",
+      "addFavorite": "Ajouter favori",
+      "removeFavorite": "Retirer favori",
+      "price": "Prix",
+      "sku": "SKU",
+      "barcode": "Code-barres",
+      "noBarcode": "Aucun code",
+      "noCategory": "Sans categorie",
+      "noBrand": "Sans marque",
+      "details": "Details",
+      "detailDescription": "Consultez le stock vendable, l'identite et le contexte article sans charger la grille de vente.",
+      "detailBackendNote": "Les panneaux fournisseur, mouvements et historique prix necessitent la prochaine tranche de service detail article."
+    },
+    "customers": {
+      "title": "Client",
+      "description": "Choisissez un client pour cette transaction. Le client selectionne est verrouille jusqu'a son remplacement ou le retour au client comptoir.",
+      "searchPlaceholder": "Rechercher clients",
+      "choose": "Choisir client",
+      "change": "Changer client",
+      "selected": "Selectionne",
+      "locked": "Verrouille",
+      "walkIn": "Client comptoir",
+      "walkInMeta": "Vente directe",
+      "orders": "{count} commandes",
+      "creditLimit": "Limite {amount}",
+      "noCreditLimit": "Aucune limite credit",
+      "creditWarning": "Le solde compte projete depasse la limite credit configuree.",
+      "noContact": "Aucun contact",
+      "loading": "Chargement clients...",
+      "empty": "Aucun client correspondant"
+    },
+    "quick": {
+      "noSale": "Ouverture caisse"
+    },
+    "search": {
+      "placeholder": "Scanner un code-barres ou chercher SKU, article ou categorie"
+    },
+    "view": {
+      "grid": "Grille",
+      "list": "Liste"
+    },
+    "empty": {
+      "openShiftTitle": "Ouvrez un service pour vendre",
+      "openShiftDescription": "Selectionnez un lieu et un terminal, declarez le fond de caisse, puis le catalogue de stock sera pret pour le scan.",
+      "noItems": "Aucun article vendable ne correspond a cette vue."
+    },
+    "stock": {
+      "available": "{count} disponible",
+      "low": "{count} bas",
+      "out": "Rupture",
+      "not_tracked": "Non suivi",
+      "onHand": "En stock",
+      "availableLabel": "Disponible",
+      "inCart": "Panier",
+      "inCartCount": "{count} au panier"
+    },
+    "cart": {
+      "title": "Panier",
+      "walkIn": "Client comptoir",
+      "empty": "Scannez ou selectionnez un article pour demarrer une vente brouillon persistante.",
+      "lines": "{count} lignes"
+    },
+    "totals": {
+      "subtotal": "Sous-total",
+      "discount": "Remise",
+      "tax": "Taxe",
+      "total": "Total"
+    },
+    "charge": {
+      "cta": "Encaisser {amount}"
+    },
+    "tender": {
+      "method": "Reglement",
+      "amount": "Montant",
+      "exact": "Exact",
+      "paid": "Paye",
+      "due": "Reste",
+      "change": "Rendu",
+      "shortPayment": "Le reglement manque de {amount}. Saisissez le montant complet ou choisissez un autre mode.",
+      "customerRequired": "Selectionnez un client avant d'encaisser cette vente sur compte.",
+      "nonCashOverpay": "Seul le paiement especes peut depasser le solde restant, car le rendu se fait uniquement en especes.",
+      "panelTitle": "Reglement multiple",
+      "splitSummary": "{count} ligne(s) de reglement",
+      "addTender": "Ajouter",
+      "removeTender": "Retirer reglement",
+      "reference": "Reference",
+      "referencePlaceholder": "Autorisation, virement ou reference mobile",
+      "splitTender": "{count} reglements",
+      "methods": {
+        "CASH": "Especes",
+        "CARD": "Carte",
+        "MOBILE_MONEY": "Mobile money",
+        "BANK_TRANSFER": "Virement",
+        "STORE_CREDIT": "Avoir",
+        "ON_ACCOUNT": "Compte client"
+      }
+    },
+    "receipt": {
+      "options": "Options recu",
+      "destinationPlaceholder": "Destination recu : email, telephone ou numero WhatsApp",
+      "channels": {
+        "NONE": "Aucun recu",
+        "PRINT": "Imprimer",
+        "EMAIL": "Email",
+        "SMS": "SMS",
+        "WHATSAPP": "WhatsApp"
+      }
+    },
+    "sale": {
+      "committed": "Vente {number} terminee",
+      "summary": "{total} total - {change} rendu",
+      "delivery": "Recu {channel} : {status}"
+    },
+    "notifications": {
+      "genericError": "L'operation PDV n'a pas pu etre terminee. Veuillez reessayer.",
+      "setupRequiredTitle": "Configuration caisse requise",
+      "setupRequiredMessage": "Choisissez un lieu et un terminal avant d'ouvrir la caisse.",
+      "openShiftRequiredTitle": "Service ouvert requis",
+      "openShiftRequiredMessage": "Ouvrez un service caissier avant d'ajouter des articles au panier.",
+      "openShiftPendingTitle": "Ouverture caisse",
+      "openShiftPendingMessage": "Creation de la session caissier et preparation du tiroir.",
+      "openShiftSuccessTitle": "Caisse ouverte",
+      "openShiftSuccessMessage": "{terminal} est pret avec un fond de caisse de {amount}.",
+      "openShiftErrorTitle": "Echec ouverture caisse",
+      "closeShiftPendingTitle": "Fermeture caisse",
+      "closeShiftPendingMessage": "Rapprochement du tiroir et fermeture de la session caissier.",
+      "closeShiftSuccessTitle": "Caisse fermee",
+      "closeShiftSuccessMessage": "La session {number} a ete fermee avec un solde reel de tiroir de {amount}.",
+      "closeShiftErrorTitle": "Echec fermeture caisse",
+      "addItemSuccessTitle": "Article ajoute",
+      "addItemSuccessMessage": "{item} a ete ajoute a la vente en cours.",
+      "addItemErrorTitle": "Article non ajoute",
+      "quantitySuccessTitle": "Quantite mise a jour",
+      "quantitySuccessMessage": "La quantite de {item} est maintenant {count}.",
+      "quantityErrorTitle": "Echec mise a jour quantite",
+      "removeItemSuccessTitle": "Article retire",
+      "removeItemSuccessMessage": "{item} a ete retire de la vente en cours.",
+      "removeItemErrorTitle": "Echec retrait article",
+      "saleBlockedTitle": "Vente non encaissable",
+      "saleBlockedMessage": "Verifiez le reglement et le client avant d'encaisser cette vente.",
+      "salePendingTitle": "Validation vente",
+      "salePendingMessage": "Encaissement de {amount} pour {customer} et comptabilisation des transactions liees.",
+      "saleSuccessTitle": "Vente terminee",
+      "saleSuccessMessage": "La vente {number} a ete creee pour {total} via {tender}.",
+      "saleErrorTitle": "Echec vente",
+      "salePostedTitle": "Transactions associees comptabilisees",
+      "salePostedMessage": "{inventory}, {finance}, {drawer}, {customer}.",
+      "inventoryPosted": "Stock mis a jour",
+      "financePosted": "Ecritures finance comptabilisees",
+      "drawerPosted": "Totaux tiroir-caisse mis a jour",
+      "customerPosted": "Compte client mis a jour",
+      "walkInPosted": "Client comptoir enregistre",
+      "receiptTitle": "Envoi recu",
+      "receiptMessage": "Statut du recu {channel} : {status}."
+    },
+    "timeline": {
+      "saleCreated": "Vente creee",
+      "inventoryUpdated": "Stock mis a jour",
+      "financePosted": "Ecritures finance comptabilisees",
+      "drawerUpdated": "Totaux tiroir-caisse mis a jour",
+      "customerLedgerUpdated": "Grand livre client mis a jour",
+      "walkInRecorded": "Vente client comptoir enregistree",
+      "receiptStatus": "Recu {channel} : {status}",
+      "noReceipt": "Aucun recu demande"
+    },
+    "smart": {
+      "addCustomer": "Ajouter client",
+      "changeCustomer": "Changer client",
+      "exactCash": "Especes exactes",
+      "receiptStatus": "Recu",
+      "parkSale": "Mettre en attente",
+      "managerOverride": "Override",
+      "endShift": "Fin service"
+    },
+    "hardware": {
+      "scanner": "Scanner",
+      "drawer": "Tiroir",
+      "printer": "Imprimante",
+      "network": "Reseau",
+      "ready": "Pret",
+      "waiting": "Attente",
+      "open": "Ouvert",
+      "closed": "Ferme",
+      "selected": "Selectionne",
+      "standby": "Veille",
+      "online": "En ligne"
+    },
+    "featureGates": {
+      "title": "Workflow backend requis",
+      "message": "{feature} necessite un service/action PDV dedie avant une utilisation sure en production."
+    },
+    "common": {
+      "cancel": "Annuler"
+    },
+    "hotkeys": "Ctrl/Cmd K recherche - F4 client - F8 reglement - Esc effacer"
+  },
+  "landing": {
+    "header": {
+      "homeAria": "Accueil StockFlow",
+      "subtitle": "Systeme d'exploitation",
+      "navAria": "Navigation principale",
+      "product": "Produit",
+      "workflow": "Flux",
+      "trust": "Confiance",
+      "pricing": "Tarifs",
+      "login": "Connexion",
+      "dashboard": "Tableau de bord",
+      "startFree": "Essai gratuit",
+      "openNavigation": "Ouvrir la navigation",
+      "languageLabel": "EN",
+      "languageAria": "Voir en anglais"
+    },
+    "hero": {
+      "badge": "systeme d'exploitation centre inventaire",
+      "titleStart": "Pilotez chaque rayon, vente, commande et euro dans",
+      "titleEmphasis": "un seul systeme",
+      "description": "StockFlow donne aux equipes avec beaucoup d'inventaire une couche de controle calme pour le point de vente, les mouvements de stock, les commandes fournisseurs, les validations, la paie et la visibilite financiere.",
+      "primaryCta": "Demarrer l'essai",
+      "secondaryCta": "Voir les tarifs",
+      "metrics": {
+        "branches": { "value": "24/7", "label": "Agences actives" },
+        "accuracy": { "value": "99,2%", "label": "Precision stock" },
+        "close": { "value": "-38%", "label": "Cloture plus rapide" }
+      },
+      "ticker": {
+        "approved": "BC-1042 valide",
+        "synced": "Agence 03 synchronisee",
+        "lowStock": "Stock bas : farine",
+        "cash": "Caisse equilibree",
+        "margin": "Alerte marge resolue"
+      }
+    },
+    "dashboard": {
+      "period": "Aujourd'hui",
+      "title": "Pouls multi-agences",
+      "synced": "synchronise",
+      "rows": {
+        "revenue": { "label": "Revenu", "value": "84,2k $", "meta": "+12,4%" },
+        "pos": { "label": "BC ouverts", "value": "18", "meta": "6 urgents" },
+        "turns": { "label": "Rotation stock", "value": "4,8x", "meta": "+0,6" },
+        "variance": { "label": "Ecart caisse", "value": "12 $", "meta": "clair" }
+      },
+      "inventoryHealth": "Sante du stock par agence",
+      "branches": {
+        "downtown": "Centre-ville",
+        "warehouse": "Entrepot",
+        "airport": "Aeroport"
+      },
+      "nextActionLabel": "Prochaine action",
+      "nextAction": "Valider le BC fournisseur avant 16:00",
+      "liveFeed": "Flux direct",
+      "activity": {
+        "sale": "Vente publiee",
+        "transfer": "Transfert recu",
+        "po": "BC valide"
+      }
+    },
+    "operations": {
+      "eyebrow": "produit connecte",
+      "title": "Un modele operationnel, visible dans le produit.",
+      "description": "La page ne vend pas une promesse abstraite. Elle pointe vers des surfaces reelles pour l'authentification, les langues, les roles, les tableaux de bord, la finance, les achats et les agences.",
+      "moduleLabel": "module",
+      "modules": {
+        "pos": { "name": "Point de vente", "description": "Transactions et caisses", "meta": "14 caisses actives" },
+        "inventory": { "name": "Inventaire", "description": "Stock, lots, mouvements", "meta": "6 exceptions" },
+        "purchasing": { "name": "Achats", "description": "BC et validations", "meta": "18 BC ouverts" },
+        "finance": { "name": "Finance", "description": "Tresorerie et marges", "meta": "92% rapproches" },
+        "users": { "name": "Utilisateurs", "description": "Equipes et acces", "meta": "42 actifs" },
+        "roles": { "name": "Roles", "description": "Controle des permissions", "meta": "8 roles" }
+      }
+    },
+    "problem": {
+      "eyebrow": "le probleme",
+      "title": "La plupart des equipes ne manquent pas d'outils. Elles manquent d'une verite partagee.",
+      "copy": "Fonctionne seul jusqu'a ce que StockFlow connecte le flux.",
+      "systems": {
+        "pos": "Point de vente",
+        "inventory": "Inventaire",
+        "purchasing": "Achats",
+        "finance": "Finance",
+        "attendance": "Presence",
+        "approvals": "Validations"
+      }
+    },
+    "workflow": {
+      "eyebrow": "flux",
+      "title": "Une action met a jour tout le dossier operationnel.",
+      "steps": {
+        "sale": { "title": "Vente enregistree", "copy": "Le point de vente capture paiement, agence, caissier, client et article." },
+        "stock": { "title": "Stock reduit", "copy": "L'inventaire bouge instantanement par lots, unites et emplacements." },
+        "reorder": { "title": "Reappro controle", "copy": "Les regles comparent demande, niveaux mini, fournisseurs et delais." },
+        "approval": { "title": "Validation routee", "copy": "Les managers valident les exceptions avant les mouvements d'argent ou de stock." },
+        "finance": { "title": "Finance mise a jour", "copy": "Marges, tresorerie et taxes restent alignees." }
+      }
+    },
+    "gallery": {
+      "eyebrow": "vues produit",
+      "title": "Une surface produit vivante, pas decorative.",
+      "panels": {
+        "inventory": { "title": "Tableau des exceptions stock", "copy": "Stock bas, risque d'expiration et besoins de transfert en une vue", "meta": "22 alertes" },
+        "purchase": { "title": "File de validation achats", "copy": "Commandes fournisseurs classees par urgence, marge et demande agence", "meta": "18 ouvertes" },
+        "finance": { "title": "Cockpit de marge finance", "copy": "Caisse, taxes, revenus et derives de couts resumes pour les equipes", "meta": "92% rapproches" }
+      }
+    },
+    "modules": {
+      "eyebrow": "modules",
+      "titleStart": "Huit modules.",
+      "titleEmphasis": "Une colonne vertebrale.",
+      "workflowCta": "Voir le flux",
+      "tryCta": "Essayer",
+      "items": {
+        "pos": { "title": "Point de vente", "copy": "Vente rapide avec controles caissier, recus et visibilite des sessions.", "metric": "14 caisses" },
+        "inventory": { "title": "Inventaire", "copy": "Stock par lieu, lots, unites, mouvements, categories et alertes.", "metric": "12 847 references" },
+        "purchasing": { "title": "Achats", "copy": "Commandes fournisseurs, validations, suivi livraison et cout rendu.", "metric": "18 BC ouverts" },
+        "transfers": { "title": "Transferts", "copy": "Mouvements agence a agence avec responsabilite et controle reception.", "metric": "31 mouvements" },
+        "finance": { "title": "Finance", "copy": "Tresorerie, resultat, taxes, ecarts de caisse et marges.", "metric": "84,2k $ ce mois" },
+        "customers": { "title": "Clients", "copy": "Credit, historique, commandes, soldes et contexte relationnel.", "metric": "2 406 comptes" },
+        "roles": { "title": "Roles", "copy": "Permissions au moindre privilege pour equipes, agences et managers.", "metric": "8 roles" },
+        "reports": { "title": "Rapports", "copy": "Syntheses operationnelles qui revelent les derives avant qu'elles coutent cher.", "metric": "42 rapports" }
+      }
+    },
+    "deepDives": {
+      "eyebrow": "controle quotidien",
+      "title": "Concu pour les decisions que les operateurs prennent chaque matin.",
+      "items": {
+        "inventory": { "title": "Inventaire", "copy": "Suivez niveaux de stock, mouvements, unites, categories et sante des lieux.", "labels": { "a": "Stock bas", "b": "Transferts", "c": "Lots" } },
+        "purchasing": { "title": "Achats", "copy": "Creez des BC, routez les validations et gardez les engagements fournisseurs visibles.", "labels": { "a": "Brouillon", "b": "Validation", "c": "Reception" } },
+        "finance": { "title": "Finance", "copy": "Transformez les transactions en visibilite tresorerie, marge et taxes.", "labels": { "a": "Revenu", "b": "Marge", "c": "Ecart" } }
+      }
+    },
+    "automation": {
+      "eyebrow": "automatisation",
+      "title": "Des regles qui font avancer les operations avant qu'on le demande.",
+      "when": "QUAND",
+      "then": "ALORS",
+      "rules": {
+        "stock": { "when": "Si le stock passe sous le minimum", "then": "Creer une suggestion d'achat" },
+        "margin": { "when": "Si la marge baisse", "then": "Signaler une revue finance" },
+        "transfer": { "when": "Si un transfert est en retard", "then": "Notifier l'agence de reception" }
+      }
+    },
+    "trust": {
+      "eyebrow": "confiance",
+      "title": "La confiance se gagne chaque jour, en pleine visibilite.",
+      "points": {
+        "permissions": { "title": "Permissions par role", "copy": "Donnez aux equipes seulement les acces requis par leur agence, role et flux." },
+        "audit": { "title": "Flux auditables", "copy": "Validations, mouvements de stock et evenements finance restent tracables." },
+        "branches": { "title": "Controle par agence", "copy": "Standardisez le modele sans effacer les realites locales." },
+        "finance": { "title": "Visibilite financiere claire", "copy": "Voyez caisse, marges, creances, dettes et derives ensemble." }
+      }
+    },
+    "useCases": {
+      "eyebrow": "cas d'usage",
+      "title": "Adaptez la meme colonne operationnelle a votre maniere de vendre.",
+      "items": {
+        "retail": { "title": "Chaines de commerce", "copy": "Standardisez vente, achats et controles de stock sur plusieurs agences.", "label": "multi-agence" },
+        "wholesale": { "title": "Equipes grossistes", "copy": "Protegez les marges en coordonnant credit, commandes et delais fournisseurs.", "label": "credit maitrise" },
+        "restaurants": { "title": "Restaurants", "copy": "Suivez ingredients rapides, recettes, caisses et responsabilite par service.", "label": "pret service" },
+        "pharmacies": { "title": "Pharmacies", "copy": "Surveillez expirations, lots, transferts agence et acces sensibles.", "label": "controle lots" },
+        "service": { "title": "Comptoirs service", "copy": "Gardez comptes clients, paiements, commandes et permissions alignes.", "label": "comptes clients" }
+      }
+    },
+    "pricing": {
+      "eyebrow": "tarifs",
+      "title": "Commencez leger. Ajoutez des modules quand l'activite grandit.",
+      "popular": "le plus choisi",
+      "choose": "Choisir",
+      "plans": {
+        "starter": { "name": "Starter", "price": "49 $", "description": "Pour une operation en croissance", "features": "Inventaire, point de vente, achats, rapports" },
+        "growth": { "name": "Growth", "price": "149 $", "description": "Pour les equipes multi-agences", "features": "Transferts, validations, roles, tableaux finance" },
+        "enterprise": { "name": "Enterprise", "price": "Sur mesure", "description": "Pour les deploiements gouvernes", "features": "Accompagnement audit, flux personnalises, demarrage prioritaire" }
+      }
+    },
+    "finalCta": {
+      "eyebrow": "pret",
+      "title": "La clarte d'un tableau de bord. Le controle d'un systeme operationnel.",
+      "copy": "Connectez les modules dont votre equipe a deja besoin et donnez a chaque agence la meme source de verite.",
+      "cta": "Demarrer StockFlow"
+    },
+    "footer": {
+      "homeAria": "Accueil StockFlow",
+      "subtitle": "Operations commerce connectees",
+      "copy": "Une couche operationnelle moderne pour les entreprises riches en inventaire qui veulent mieux controler le stock, vendre plus vite, gouverner les achats et voir la finance clairement.",
+      "navAria": "Pied de page",
+      "copyright": "StockFlow. Concu pour des operations disciplinees."
+    }
+  },
+  "purchaseOrders": {
+    "title": "Bons de commande",
+    "subtitle": "Pilotez commandes fournisseurs, validations, receptions et preparation des dettes depuis une seule vue operationnelle.",
+    "orgRequired": {
+      "title": "Organisation requise",
+      "subtitle": "Selectionnez ou creez une organisation avant de gerer les bons de commande."
+    },
+    "header": {
+      "analyticsCta": "Tableau dettes",
+      "createCta": "Nouveau bon de commande"
+    },
+    "stats": {
+      "totalOrders": "Total commandes",
+      "totalOrdersSubtitle": "Tous les bons de commande de cette organisation",
+      "totalOrdersBadge": "{n} bon(s) de commande",
+      "totalValue": "Valeur totale",
+      "totalValueSubtitle": "Valeur d'achat engagee envers les fournisseurs",
+      "valueLabel": "Valeur {amount}",
+      "draftOrders": "Brouillons",
+      "draftSubtitle": "Commandes encore en preparation",
+      "received": "Recus",
+      "receivedSubtitle": "Commandes entierement recues en stock",
+      "overdue": "En retard",
+      "overdueSubtitle": "Livraisons attendues qui demandent attention",
+      "overdueBadge": "{n} en retard"
+    },
+    "panel": {
+      "title": "Registre des bons de commande",
+      "summary": "{n} commande(s) suivie(s) | {overdue} en retard | {value} valeur totale",
+      "liveData": "Donnees en direct",
+      "loading": "Chargement des bons de commande"
+    }
+  }
+}

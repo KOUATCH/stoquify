@@ -1,0 +1,18 @@
+{
+  "eval_id": 3,
+  "eval_name": "design-led-with-named-refs",
+  "prompt": "I need a beautiful stats page for my retail app, take inspiration from linear and vercel. has to handle dark/light and english/french since my users are bilingual.",
+  "assertions": [
+    {"text": "Agent honored both user-named references (Linear, Vercel) as 2 of the 7", "type": "content_check"},
+    {"text": "Agent added 5 more references following skill diversity rules (≥2 non-SaaS, ≥1 polarizing)", "type": "content_check"},
+    {"text": "DASHBOARD-INSPIRATION.md exists with all 7 entries", "type": "file_exists", "path": "DASHBOARD-INSPIRATION.md"},
+    {"text": "Continuity audit appended to inspiration doc", "type": "content_check"},
+    {"text": "IA-NOTES.md exists", "type": "file_exists", "path": "IA-NOTES.md"},
+    {"text": "DASHBOARD-SPEC.md exists and treats theme + i18n as first-class concerns (since user emphasized them)", "type": "file_exists", "path": "DASHBOARD-SPEC.md"},
+    {"text": "Sample widget (sales-trend-chart.tsx) exists and is trend/chart-focused (matches 'stats page')", "type": "file_exists", "path": "sample-widget/sales-trend-chart.tsx"},
+    {"text": "Sample widget i18n + theme tokens + real data + states", "type": "code_check"},
+    {"text": "quality-gates-plan.md exists", "type": "file_exists", "path": "quality-gates-plan.md"},
+    {"text": "RUN-NOTES.md confirms both skill files read and StockFlow code read", "type": "content_check"},
+    {"text": "No StockFlow file modified", "type": "side_effect_check"}
+  ]
+}
