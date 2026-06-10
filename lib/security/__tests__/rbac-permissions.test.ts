@@ -42,4 +42,12 @@ describe("rbac permission compatibility", () => {
   it("classifies role mutation permissions as critical", () => {
     expect(permissionRisk("roles.permissions.assign")).toBe("crit")
   })
+
+  it("classifies critical accounting and export permissions explicitly", () => {
+    expect(permissionRisk("accounting.journal.post")).toBe("crit")
+    expect(permissionRisk("POST_JOURNAL_ENTRIES")).toBe("crit")
+    expect(permissionRisk("accounting.period.close")).toBe("crit")
+    expect(permissionRisk("accounting.exports.create")).toBe("crit")
+    expect(permissionRisk("FINANCIAL_REPORTS_EXPORT")).toBe("crit")
+  })
 })

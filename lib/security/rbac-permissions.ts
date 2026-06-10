@@ -4,6 +4,21 @@ export type PermissionRisk = "low" | "med" | "high" | "crit"
 
 const WILDCARD_PERMISSION = "*"
 
+const EXPLICIT_PERMISSION_RISKS = {
+  "accounting.setup.manage": "crit",
+  "accounting.accounts.manage": "crit",
+  "accounting.journal.post": "crit",
+  "accounting.journal.reverse": "crit",
+  "accounting.period.close": "crit",
+  "accounting.period.reopen": "crit",
+  "accounting.exports.create": "crit",
+  "accounting.posting-rules.manage": "crit",
+  "accounting.audit.read": "high",
+  "finance.reports.export": "crit",
+  "reports.export": "crit",
+  "data.export": "crit",
+} as const satisfies Partial<Record<string, PermissionRisk>>
+
 export const PERMISSION_ALIASES = {
   "dashboard.read": ["DASHBOARD_READ"],
 
@@ -226,8 +241,15 @@ export function isKnownPermission(permission: string) {
 }
 
 export function permissionRisk(permission: string): PermissionRisk {
-  const candidates = permissionCandidates(permission).map((candidate) => candidate.toLowerCase())
-  const joined = candidates.join(" ")
+  const candidates = permissionCandidates(permission)
+  const explicitRisk = candidates
+    .map((candidate) => EXPLICIT_PERMISSION_RISKS[candidate as keyof typeof EXPLICIT_PERMISSION_RISKS])
+    .find(Boolean)
+
+  if (explicitRisk) return explicitRisk
+
+  const loweredCandidates = candidates.map((candidate) => candidate.toLowerCase())
+  const joined = loweredCandidates.join(" ")
 
   if (
     joined.includes("role") ||
