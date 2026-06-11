@@ -2,7 +2,7 @@ import {
   hasAllRbacPermissions,
   hasAnyRbacPermission,
   hasRbacPermission,
-} from "@/lib/security/rbac-permissions";
+} from "./security/rbac-permissions";
 
 // Permission system for StockFlow - Comprehensive RBAC
 export const PERMISSIONS = {

@@ -1,4 +1,4 @@
-import { getAllPermissions as getCanonicalPermissions } from "@/config/permissions"
+import { getAllPermissions as getCanonicalPermissions } from "../../config/permissions"
 
 export type PermissionRisk = "low" | "med" | "high" | "crit"
 
@@ -15,6 +15,14 @@ const EXPLICIT_PERMISSION_RISKS = {
   "accounting.posting-rules.manage": "crit",
   "accounting.audit.read": "high",
   "finance.reports.export": "crit",
+  "payments.reconciliation.run": "high",
+  "payments.reconciliation.sign": "crit",
+  "payments.export": "crit",
+  "controls.manage": "crit",
+  "controls.audit.read": "high",
+  "fraud.cases.manage": "crit",
+  "pos.transactions.refund": "crit",
+  "pos.transactions.void": "crit",
   "reports.export": "crit",
   "data.export": "crit",
 } as const satisfies Partial<Record<string, PermissionRisk>>
@@ -108,6 +116,9 @@ export const PERMISSION_ALIASES = {
   "finance.analytics.read": ["FINANCIAL_KPI_READ", "ANALYTICS_READ"],
   "finance.taxes.read": ["TAX_RATES_READ"],
   "finance.taxes.manage": ["CREATE_TAX_RATES", "UPDATE_TAX_RATES", "DELETE_TAX_RATES"],
+  "payments.reconciliation.run": ["MANAGE_FINANCIAL_CONTROLS", "MANAGE_CASH_TRANSACTIONS"],
+  "payments.reconciliation.sign": ["MANAGE_FINANCIAL_CONTROLS"],
+  "payments.export": ["FINANCIAL_REPORTS_EXPORT", "EXPORT_DATA"],
 
   "accounting.setup.manage": ["CONFIGURE_FINANCIAL_SYSTEM", "MANAGE_FINANCIAL_CONTROLS"],
   "accounting.accounts.read": ["VIEW_CHART_OF_ACCOUNTS"],
@@ -155,6 +166,9 @@ export const PERMISSION_ALIASES = {
   "system.organization.read": ["VIEW_ORGANIZATION_SETTINGS"],
   "system.organization.update": ["MANAGE_ORGANIZATION"],
   "data.export": ["EXPORT_DATA"],
+  "controls.manage": ["MANAGE_FINANCIAL_CONTROLS"],
+  "controls.audit.read": ["VIEW_FINANCIAL_AUDIT_TRAIL", "VIEW_AUDIT_LOGS"],
+  "fraud.cases.manage": ["MANAGE_FINANCIAL_CONTROLS", "VIEW_FINANCIAL_AUDIT_TRAIL"],
 } as const satisfies Record<string, readonly string[]>
 
 const reverseAliases = Object.entries(PERMISSION_ALIASES).reduce<Record<string, string[]>>(

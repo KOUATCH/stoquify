@@ -8,6 +8,12 @@ import {
 
 import { db } from "@/prisma/db"
 import {
+  assertSensitiveActionAllowed,
+  auditSensitiveActionDecision,
+  evaluateSensitiveAction,
+  type SensitiveActionDecision,
+} from "@/services/controls/sensitive-action.service"
+import {
   assertBalancedJournalEntry,
   assertOpenPeriod,
   assertSameOrganizationAccounts,
@@ -25,6 +31,26 @@ export type LedgerPostingBatchInput = {
   sourceVersion?: number | null
   idempotencyKey?: string | null
   metadata?: Prisma.InputJsonValue | null
+}
+
+export type AccountingControlContext = {
+  actorPermissions: readonly string[]
+  lastAuthAt?: Date | number | string | null
+  now?: Date | number | string | null
+}
+
+type ControlledResult<T> =
+  | { denied: SensitiveActionDecision; value?: never }
+  | { denied?: never; value: T }
+
+function amountTotal(lines: Array<{ debit: Prisma.Decimal | Prisma.Decimal.Value; credit: Prisma.Decimal | Prisma.Decimal.Value }>) {
+  return lines
+    .reduce((total, line) => {
+      const debit = new Prisma.Decimal(line.debit ?? 0)
+      const credit = new Prisma.Decimal(line.credit ?? 0)
+      return total.plus(Prisma.Decimal.max(debit, credit))
+    }, new Prisma.Decimal(0))
+    .toDecimalPlaces(2)
 }
 
 const journalEntryInclude = {
@@ -202,8 +228,9 @@ export async function postJournalEntry(
   organizationId: string,
   journalEntryId: string,
   actorId?: string | null,
+  control?: AccountingControlContext,
 ) {
-  return db.$transaction(async (tx) => {
+  const result = await db.$transaction(async (tx) => {
     const entry = await tx.journalEntry.findFirst({
       where: { id: journalEntryId, organizationId },
       include: {
@@ -224,6 +251,23 @@ export async function postJournalEntry(
       entry.lines.map((line) => line.accountId),
       tx,
     )
+
+    const controlDecision = evaluateSensitiveAction({
+      action: "accounting.journal.post",
+      actorId,
+      organizationId,
+      actorPermissions: control?.actorPermissions ?? [],
+      lastAuthAt: control?.lastAuthAt,
+      now: control?.now,
+      resourceType: "JournalEntry",
+      resourceId: entry.id,
+      subjectActorId: entry.createdById,
+      amount: amountTotal(entry.lines),
+      currency: entry.currency,
+      metadata: { entryNumber: entry.entryNumber, periodId: entry.periodId },
+    })
+    await auditSensitiveActionDecision(tx, controlDecision)
+    if (!controlDecision.allowed) return { denied: controlDecision }
 
     const batch = await createLedgerPostingBatch(
       {
@@ -286,8 +330,14 @@ export async function postJournalEntry(
       metadata: { entryNumber: posted.entryNumber },
     })
 
-    return posted
+    return { value: posted }
   })
+
+  if (result.denied) {
+    assertSensitiveActionAllowed(result.denied)
+  }
+
+  return result.value
 }
 
 export async function reverseJournalEntry(
@@ -296,8 +346,9 @@ export async function reverseJournalEntry(
   actorId?: string | null,
   reason?: string | null,
   reversalDate: Date = new Date(),
+  control?: AccountingControlContext,
 ) {
-  return db.$transaction(async (tx) => {
+  const result = await db.$transaction(async (tx) => {
     const original = await tx.journalEntry.findFirst({
       where: { id: journalEntryId, organizationId },
       include: {
@@ -318,6 +369,23 @@ export async function reverseJournalEntry(
 
     const period = await getOpenPeriodForDate(organizationId, reversalDate, tx)
     assertBalancedJournalEntry(original.lines)
+
+    const controlDecision = evaluateSensitiveAction({
+      action: "accounting.journal.reverse",
+      actorId,
+      organizationId,
+      actorPermissions: control?.actorPermissions ?? [],
+      lastAuthAt: control?.lastAuthAt,
+      now: control?.now,
+      resourceType: "JournalEntry",
+      resourceId: original.id,
+      subjectActorId: original.postedById || original.createdById,
+      amount: amountTotal(original.lines),
+      currency: original.currency,
+      metadata: { entryNumber: original.entryNumber, periodId: original.periodId, reason: reason || null },
+    })
+    await auditSensitiveActionDecision(tx, controlDecision)
+    if (!controlDecision.allowed) return { denied: controlDecision }
 
     const batch = await createLedgerPostingBatch(
       {
@@ -421,6 +489,12 @@ export async function reverseJournalEntry(
       metadata: { originalEntryId: original.id, reversalEntryId: reversal.id, reason: reason || null },
     })
 
-    return reversal
+    return { value: reversal }
   })
+
+  if (result.denied) {
+    assertSensitiveActionAllowed(result.denied)
+  }
+
+  return result.value
 }

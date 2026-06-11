@@ -1,5 +1,7 @@
 import { z } from "zod"
 
+import { CAMEROON_PAYMENT_PROVIDER_CODES } from "@/services/regulatory/country-packs/cameroon.constants"
+
 export const posLocationListSchema = z.object({})
 
 export const receiptChannelSchema = z.enum(["PRINT", "EMAIL", "SMS", "WHATSAPP", "NONE"])
@@ -71,7 +73,7 @@ export const posTenderSchema = z.object({
   cardLast4: z.string().trim().regex(/^\d{4}$/).optional(),
   cardType: z.string().trim().max(40).optional(),
   authorizationCode: z.string().trim().max(80).optional(),
-  mobileMoneyProvider: z.enum(["MTN_MOMO", "ORANGE_MONEY", "EU_MOBILE", "YUP", "OTHER"]).optional(),
+  mobileMoneyProvider: z.enum(CAMEROON_PAYMENT_PROVIDER_CODES).optional(),
   mobileMoneyPhoneNumber: z.string().trim().max(40).optional(),
   bankName: z.string().trim().max(120).optional(),
 })
@@ -91,6 +93,24 @@ export const commitSaleSchema = z.object({
   tenders: z.array(posTenderSchema).min(1, "At least one tender is required"),
   notes: z.string().trim().max(500).optional(),
   receipt: commitSaleReceiptSchema.optional(),
+})
+
+export const refundPOSSaleSchema = z.object({
+  salesOrderId: z.string().min(1, "Sale is required"),
+  locationId: z.string().min(1, "Location is required"),
+  terminalId: z.string().min(1, "Terminal is required"),
+  sessionId: z.string().min(1, "Session is required"),
+  reason: z.string().trim().min(3, "Refund reason is required").max(500),
+  notes: z.string().trim().max(500).optional(),
+})
+
+export const voidPOSSaleSchema = z.object({
+  salesOrderId: z.string().min(1, "Sale is required"),
+  locationId: z.string().min(1, "Location is required"),
+  terminalId: z.string().min(1, "Terminal is required"),
+  sessionId: z.string().min(1, "Session is required"),
+  reason: z.string().trim().min(3, "Void reason is required").max(500),
+  notes: z.string().trim().max(500).optional(),
 })
 
 export const salesReceiptLookupSchema = z.object({
@@ -131,3 +151,5 @@ export type RemoveCartLineInput = z.infer<typeof removeCartLineSchema>
 export type POSTenderMethod = z.infer<typeof posTenderMethodSchema>
 export type POSTenderInput = z.infer<typeof posTenderSchema>
 export type CommitSaleInput = z.infer<typeof commitSaleSchema>
+export type RefundPOSSaleInput = z.infer<typeof refundPOSSaleSchema>
+export type VoidPOSSaleInput = z.infer<typeof voidPOSSaleSchema>

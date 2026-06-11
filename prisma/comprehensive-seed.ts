@@ -5,12 +5,22 @@ import { mkdir, writeFile } from "fs/promises";
 import path from "path";
 import sharp from "sharp";
 import {
+  AccountingPeriodStatus,
+  AccountingPostingPurpose,
+  AccountingSetupStatus,
+  AccountingSourceType,
   AdjustmentStatus,
   AdjustmentType,
   CashDrawerTransactionType,
+  ChartAccountNormalBalance,
+  ChartAccountType,
+  FiscalYearStatus,
   GoodsReceiptStatus,
   InviteStatus,
+  JournalEntryStatus,
+  JournalType,
   LedgerEntryType,
+  LedgerPostingBatchStatus,
   Locale,
   LocationType,
   MobileMoneyProvider,
@@ -30,13 +40,18 @@ import {
   UnitType,
 } from "@prisma/client";
 import { PERMISSIONS } from "../lib/permissions";
+import { DEFAULT_POS_POSTING_RULES } from "../services/accounting/default-posting-rules";
+import { CAMEROON_PAYMENT_PROVIDER_CODES } from "../services/regulatory/country-packs/cameroon.constants";
+import { resolveCameroonStandardVatRateBps } from "../services/regulatory/country-packs/resolve";
 
 const prisma = new PrismaClient();
 
-const COUNT = 50;
+const COUNT = 40;
+const ORG_COUNT = 5;
 const ID_PREFIX = "cmp_";
-const ORG_ID = `${ID_PREFIX}org_001`;
+const ORGANIZATION_ID_PREFIX = `${ID_PREFIX}org_`;
 const seedIndexes = Array.from({ length: COUNT }, (_, index) => index + 1);
+const orgIndexes = Array.from({ length: ORG_COUNT }, (_, index) => index + 1);
 const FAKER_SEED = 20260527;
 const DEFAULT_DEMO_PASSWORD = "StockFlowSeed@2026";
 const SEED_IMAGE_URL_ROOT = "/seed-images";
@@ -48,6 +63,11 @@ const SEED_IMAGE_KINDS = [
   "avatars",
   "receipts",
 ] as const;
+const CAMEROON_STANDARD_VAT_RATE_BPS = resolveCameroonStandardVatRateBps("2026-01-01").value;
+const CAMEROON_STANDARD_VAT_RATE_PERCENT = CAMEROON_STANDARD_VAT_RATE_BPS / 100;
+const CAMEROON_STANDARD_VAT_RATE_MULTIPLIER = CAMEROON_STANDARD_VAT_RATE_BPS / 10_000;
+const CAMEROON_DEFAULT_MOBILE_MONEY_PROVIDER =
+  MobileMoneyProvider[CAMEROON_PAYMENT_PROVIDER_CODES[0]];
 const passwordHashCache = new Map<string, string>();
 
 faker.seed(FAKER_SEED);
@@ -57,14 +77,59 @@ type SeedDelegate = {
   count(args: unknown): Promise<number>;
 };
 
+type OrgSeedContext = {
+  orgIndex: number;
+  organizationId: string;
+  idPrefix: string;
+  documentPrefix: string;
+  emailSuffix: string;
+  country: string;
+  currency: string;
+  timezone: string;
+  locale: Locale;
+};
+
 const pad = (value: number) => value.toString().padStart(3, "0");
+const orgIdFor = (value: number) => `${ORGANIZATION_ID_PREFIX}${pad(value)}`;
+const orgCodeFor = (value: number) => `org${pad(value)}`;
+const createOrgContext = (orgIndex: number): OrgSeedContext => {
+  const isCentralAfrica = orgIndex % 2 !== 0;
+
+  return {
+    orgIndex,
+    organizationId: orgIdFor(orgIndex),
+    idPrefix: `${orgIdFor(orgIndex)}_`,
+    documentPrefix: `CMP${pad(orgIndex)}`,
+    emailSuffix: orgCodeFor(orgIndex),
+    country: isCentralAfrica ? "Cameroon" : "Senegal",
+    currency: isCentralAfrica ? "XAF" : "XOF",
+    timezone: isCentralAfrica ? "Africa/Douala" : "Africa/Dakar",
+    locale: orgIndex % 2 === 0 ? Locale.FR : Locale.EN,
+  };
+};
+const orgContexts = orgIndexes.map((index) => createOrgContext(index));
+let activeOrgContext: OrgSeedContext | null = null;
+const currentOrg = () => {
+  if (!activeOrgContext) {
+    throw new Error("No active OrgSeedContext. Seed through seedOrgDataset().");
+  }
+
+  return activeOrgContext;
+};
+const orgId = () => currentOrg().organizationId;
 const id = (model: string, value: number) =>
-  `${ID_PREFIX}${model}_${pad(value)}`;
+  `${currentOrg().idPrefix}${model}_${pad(value)}`;
 const day = (value: number) => new Date(Date.UTC(2026, 4, value, 9, 0, 0));
 const money = (value: number) => Number(value.toFixed(2));
 const qty = (value: number) => Number(value.toFixed(3));
 const orgScopedNumber = (prefix: string, value: number) =>
-  `CMP-${prefix}-${pad(value)}`;
+  `${currentOrg().documentPrefix}-${prefix}-${pad(value)}`;
+const scopedEmail = (localPart: string) =>
+  `${localPart}.${currentOrg().emailSuffix}@stockflow.test`;
+const roleEmail = (email: string) =>
+  scopedEmail(email.replace("@stockflow.test", ""));
+const scopedPhone = (family: number, value: number) =>
+  `+237${family}${currentOrg().orgIndex}${value.toString().padStart(4, "0")}`;
 const slugify = (value: string) =>
   value
     .toLowerCase()
@@ -558,13 +623,14 @@ const roleDefinitionFor = (index: number) =>
   };
 
 const ROLE_SEEDS = seedIndexes.map((index) => roleDefinitionFor(index));
-const demoCredentials = ROLE_SEEDS.map((role, index) => ({
-  name: `${role.firstName} ${role.lastName}`,
-  email: role.email,
-  password: role.password,
-  role: role.nameEn,
-  userId: id("user", index + 1),
-}));
+const demoCredentials: Array<{
+  organizationId: string;
+  name: string;
+  email: string;
+  password: string;
+  role: string;
+  userId: string;
+}> = [];
 
 const hashPassword = async (password = DEFAULT_DEMO_PASSWORD) => {
   const cached = passwordHashCache.get(password);
@@ -631,10 +697,66 @@ const deleteOrder: Array<[string, SeedDelegate]> = [
   ["Organization", prisma.organization],
 ];
 
+const seededOrganizationWhere = {
+  organizationId: { startsWith: ORGANIZATION_ID_PREFIX },
+};
+
+const accountingCleanupOrder: Array<[string, () => Promise<{ count: number }>]> = [
+  [
+    "AccountingSourceLink",
+    () => prisma.accountingSourceLink.deleteMany({ where: seededOrganizationWhere }),
+  ],
+  [
+    "LedgerAuditEvent",
+    () => prisma.ledgerAuditEvent.deleteMany({ where: seededOrganizationWhere }),
+  ],
+  [
+    "JournalEntryLine",
+    () => prisma.journalEntryLine.deleteMany({ where: seededOrganizationWhere }),
+  ],
+  [
+    "JournalEntry",
+    () => prisma.journalEntry.deleteMany({ where: seededOrganizationWhere }),
+  ],
+  [
+    "LedgerPostingBatch",
+    () => prisma.ledgerPostingBatch.deleteMany({ where: seededOrganizationWhere }),
+  ],
+  [
+    "PostingRuleLine",
+    () => prisma.postingRuleLine.deleteMany({ where: seededOrganizationWhere }),
+  ],
+  ["PostingRule", () => prisma.postingRule.deleteMany({ where: seededOrganizationWhere })],
+  ["Journal", () => prisma.journal.deleteMany({ where: seededOrganizationWhere })],
+  [
+    "ChartOfAccount",
+    () => prisma.chartOfAccount.deleteMany({ where: seededOrganizationWhere }),
+  ],
+  [
+    "AccountingPeriod",
+    () => prisma.accountingPeriod.deleteMany({ where: seededOrganizationWhere }),
+  ],
+  ["FiscalYear", () => prisma.fiscalYear.deleteMany({ where: seededOrganizationWhere })],
+  [
+    "OrganizationAccountingSettings",
+    () =>
+      prisma.organizationAccountingSettings.deleteMany({
+        where: seededOrganizationWhere,
+      }),
+  ],
+];
+
 const verificationOrder = [...deleteOrder].reverse();
 
 async function clearSeededData() {
   console.log("Clearing previous comprehensive seed records...");
+
+  for (const [label, operation] of accountingCleanupOrder) {
+    const result = await operation();
+    if (result.count > 0) {
+      console.log(`  deleted ${result.count} ${label}`);
+    }
+  }
 
   for (const [label, delegate] of deleteOrder) {
     const result = await delegate.deleteMany({
@@ -648,10 +770,10 @@ async function clearSeededData() {
 
 async function seedOrganizations() {
   await prisma.organization.createMany({
-    data: seedIndexes.map((index) => ({
-      id: id("org", index),
-      name: `${faker.company.name()} ${pad(index)}`,
-      slug: `cmp-${slugify(faker.company.buzzNoun())}-${pad(index)}`,
+    data: orgContexts.map((context) => ({
+      id: context.organizationId,
+      name: `${faker.company.name()} ${pad(context.orgIndex)}`,
+      slug: `cmp-${context.emailSuffix}-${slugify(faker.company.buzzNoun())}`,
       industry: faker.helpers.arrayElement([
         "Retail",
         "Distribution",
@@ -659,21 +781,16 @@ async function seedOrganizations() {
         "Wholesale",
         "Food production",
       ]),
-      country: faker.helpers.arrayElement([
-        "Cameroon",
-        "France",
-        "Senegal",
-        "Cote d'Ivoire",
-      ]),
+      country: context.country,
       state: faker.location.state(),
       address: faker.location.streetAddress(),
-      currency: index % 2 === 0 ? "XAF" : "EUR",
-      timezone: index % 2 === 0 ? "Africa/Douala" : "Europe/Paris",
-      defaultLocale: index % 2 === 0 ? Locale.FR : Locale.EN,
-      inventoryStartDate: day(index),
+      currency: context.currency,
+      timezone: context.timezone,
+      defaultLocale: context.locale,
+      inventoryStartDate: day(context.orgIndex),
       fiscalYearStart: "01-01",
       isActive: true,
-      updatedAt: day(index),
+      updatedAt: day(context.orgIndex),
     })),
   });
 }
@@ -687,7 +804,7 @@ async function seedRoles() {
       nameFr: role.nameFr,
       description: role.description,
       permissions: uniquePermissions(role.permissions),
-      organizationId: ORG_ID,
+      organizationId: orgId(),
       updatedAt: day(roleIndex + 1),
     })),
   });
@@ -697,19 +814,21 @@ async function seedUsers() {
   for (const index of seedIndexes) {
     const role = ROLE_SEEDS[index - 1];
     const password = role.password ?? DEFAULT_DEMO_PASSWORD;
-    const email =
+    const email = roleEmail(
       index <= ROLE_DEFINITIONS.length
         ? role.email
-        : `demo.user.${pad(index)}@stockflow.test`;
+        : `demo.user.${pad(index)}@stockflow.test`,
+    );
+    const userId = id("user", index);
 
     await prisma.user.create({
       data: {
-        id: id("user", index),
+        id: userId,
         email,
         emailVerified: true,
         firstName: role.firstName,
         lastName: role.lastName,
-        phone: `+23769010${pad(index)}`,
+        phone: scopedPhone(69, index),
         image: seedImageUrl("avatars", index),
         jobTitle: role.nameEn,
         password: await hashPassword(password),
@@ -718,11 +837,329 @@ async function seedUsers() {
         preferredLocale: index % 2 === 0 ? Locale.FR : Locale.EN,
         lastLogin: day(index),
         updatedAt: day(index),
-        organization: { connect: { id: ORG_ID } },
+        organization: { connect: { id: orgId() } },
         roles: { connect: { id: id("role", index) } },
       },
     });
+
+    if (index <= ROLE_DEFINITIONS.length) {
+      demoCredentials.push({
+        organizationId: orgId(),
+        name: `${role.firstName} ${role.lastName}`,
+        email,
+        password,
+        role: role.nameEn,
+        userId,
+      });
+    }
   }
+}
+
+async function seedAccountingControlPlane() {
+  await prisma.organizationAccountingSettings.create({
+    data: {
+      id: id("accounting_settings", 1),
+      organizationId: orgId(),
+      accountingEnabled: true,
+      setupStatus: AccountingSetupStatus.IN_PROGRESS,
+      countryPack: "SYSCOHADA_CM",
+      baseCurrency: currentOrg().currency,
+      fiscalYearStartMonth: 1,
+      fiscalYearStartDay: 1,
+      inventoryValuationPolicy: "WEIGHTED_AVERAGE",
+      roundingMode: "HALF_UP",
+      roundingScale: 2,
+      taxRegime: "VAT_CM_STANDARD",
+    },
+  });
+
+  const fiscalYear = await prisma.fiscalYear.create({
+    data: {
+      id: id("fiscal_year", 1),
+      organizationId: orgId(),
+      name: "2026",
+      startDate: new Date("2026-01-01T00:00:00.000Z"),
+      endDate: new Date("2026-12-31T23:59:59.999Z"),
+      status: FiscalYearStatus.OPEN,
+    },
+  });
+
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  await prisma.accountingPeriod.createMany({
+    data: monthNames.map((name, monthIndex) => ({
+      id: id("accounting_period", monthIndex + 1),
+      organizationId: orgId(),
+      fiscalYearId: fiscalYear.id,
+      periodNumber: monthIndex + 1,
+      name: `${name} 2026`,
+      startDate: new Date(Date.UTC(2026, monthIndex, 1, 0, 0, 0, 0)),
+      endDate: new Date(Date.UTC(2026, monthIndex + 1, 0, 23, 59, 59, 999)),
+      status: AccountingPeriodStatus.OPEN,
+    })),
+  });
+
+  const accounts = [
+    {
+      id: id("chart_account", 1),
+      code: "571",
+      nameEn: "Cash on hand",
+      nameFr: "Caisse",
+      type: ChartAccountType.ASSET,
+      normalBalance: ChartAccountNormalBalance.DEBIT,
+      mappingKey: "CASH_ON_HAND",
+      syscohadaClass: "5",
+      syscohadaReference: "571",
+      isControlAccount: true,
+    },
+    {
+      id: id("chart_account", 2),
+      code: "521",
+      nameEn: "Bank",
+      nameFr: "Banque",
+      type: ChartAccountType.ASSET,
+      normalBalance: ChartAccountNormalBalance.DEBIT,
+      mappingKey: "BANK",
+      syscohadaClass: "5",
+      syscohadaReference: "521",
+      isControlAccount: true,
+    },
+    {
+      id: id("chart_account", 3),
+      code: "5121",
+      nameEn: "Card clearing",
+      nameFr: "Transit cartes",
+      type: ChartAccountType.ASSET,
+      normalBalance: ChartAccountNormalBalance.DEBIT,
+      mappingKey: "CARD_CLEARING",
+      syscohadaClass: "5",
+      syscohadaReference: "512",
+      isControlAccount: true,
+    },
+    {
+      id: id("chart_account", 4),
+      code: "531",
+      nameEn: "Mobile money clearing",
+      nameFr: "Transit mobile money",
+      type: ChartAccountType.ASSET,
+      normalBalance: ChartAccountNormalBalance.DEBIT,
+      mappingKey: "MOBILE_MONEY_CLEARING",
+      syscohadaClass: "5",
+      syscohadaReference: "531",
+      isControlAccount: true,
+    },
+    {
+      id: id("chart_account", 5),
+      code: "513",
+      nameEn: "Cheque clearing",
+      nameFr: "Transit cheques",
+      type: ChartAccountType.ASSET,
+      normalBalance: ChartAccountNormalBalance.DEBIT,
+      mappingKey: "CHEQUE_CLEARING",
+      syscohadaClass: "5",
+      syscohadaReference: "513",
+      isControlAccount: true,
+    },
+    {
+      id: id("chart_account", 6),
+      code: "411",
+      nameEn: "Customer receivables",
+      nameFr: "Clients",
+      type: ChartAccountType.ASSET,
+      normalBalance: ChartAccountNormalBalance.DEBIT,
+      mappingKey: "ACCOUNTS_RECEIVABLE",
+      syscohadaClass: "4",
+      syscohadaReference: "411",
+      isControlAccount: true,
+    },
+    {
+      id: id("chart_account", 7),
+      code: "401",
+      nameEn: "Supplier payables",
+      nameFr: "Fournisseurs",
+      type: ChartAccountType.LIABILITY,
+      normalBalance: ChartAccountNormalBalance.CREDIT,
+      mappingKey: "ACCOUNTS_PAYABLE",
+      syscohadaClass: "4",
+      syscohadaReference: "401",
+      isControlAccount: true,
+    },
+    {
+      id: id("chart_account", 8),
+      code: "419",
+      nameEn: "Store credit liability",
+      nameFr: "Avoirs clients",
+      type: ChartAccountType.LIABILITY,
+      normalBalance: ChartAccountNormalBalance.CREDIT,
+      mappingKey: "STORE_CREDIT_LIABILITY",
+      syscohadaClass: "4",
+      syscohadaReference: "419",
+      isControlAccount: true,
+    },
+    {
+      id: id("chart_account", 9),
+      code: "31",
+      nameEn: "Inventory",
+      nameFr: "Stocks",
+      type: ChartAccountType.ASSET,
+      normalBalance: ChartAccountNormalBalance.DEBIT,
+      mappingKey: "INVENTORY",
+      syscohadaClass: "3",
+      syscohadaReference: "31",
+      isControlAccount: true,
+    },
+    {
+      id: id("chart_account", 10),
+      code: "701",
+      nameEn: "Sales revenue",
+      nameFr: "Ventes de marchandises",
+      type: ChartAccountType.REVENUE,
+      normalBalance: ChartAccountNormalBalance.CREDIT,
+      mappingKey: "SALES_REVENUE",
+      syscohadaClass: "7",
+      syscohadaReference: "701",
+      isControlAccount: false,
+    },
+    {
+      id: id("chart_account", 11),
+      code: "443",
+      nameEn: "Output VAT",
+      nameFr: "TVA collectee",
+      type: ChartAccountType.LIABILITY,
+      normalBalance: ChartAccountNormalBalance.CREDIT,
+      mappingKey: "OUTPUT_VAT",
+      syscohadaClass: "4",
+      syscohadaReference: "443",
+      isControlAccount: true,
+    },
+    {
+      id: id("chart_account", 12),
+      code: "445",
+      nameEn: "Input VAT",
+      nameFr: "TVA deductible",
+      type: ChartAccountType.ASSET,
+      normalBalance: ChartAccountNormalBalance.DEBIT,
+      mappingKey: "INPUT_VAT",
+      syscohadaClass: "4",
+      syscohadaReference: "445",
+      isControlAccount: true,
+    },
+    {
+      id: id("chart_account", 13),
+      code: "603",
+      nameEn: "Cost of goods sold",
+      nameFr: "Achats consommes",
+      type: ChartAccountType.EXPENSE,
+      normalBalance: ChartAccountNormalBalance.DEBIT,
+      mappingKey: "COGS",
+      syscohadaClass: "6",
+      syscohadaReference: "603",
+      isControlAccount: false,
+    },
+    {
+      id: id("chart_account", 14),
+      code: "659",
+      nameEn: "Inventory variance",
+      nameFr: "Ecart de stock",
+      type: ChartAccountType.EXPENSE,
+      normalBalance: ChartAccountNormalBalance.DEBIT,
+      mappingKey: "INVENTORY_VARIANCE",
+      syscohadaClass: "6",
+      syscohadaReference: "659",
+      isControlAccount: false,
+    },
+  ];
+
+  await prisma.chartOfAccount.createMany({
+    data: accounts.map((account) => ({
+      ...account,
+      organizationId: orgId(),
+      isSystem: true,
+      isActive: true,
+      allowManualPost: !account.isControlAccount,
+    })),
+  });
+
+  await prisma.journal.createMany({
+    data: [
+      { code: "GEN", nameEn: "General Journal", nameFr: "Journal general", type: JournalType.GENERAL, allowManualEntries: true },
+      { code: "OD", nameEn: "Adjustment Journal", nameFr: "Journal des operations diverses", type: JournalType.ADJUSTMENT, allowManualEntries: true },
+      { code: "AN", nameEn: "Opening Balance Journal", nameFr: "Journal d'ouverture", type: JournalType.OPENING, allowManualEntries: true },
+      { code: "VT", nameEn: "Sales Journal", nameFr: "Journal des ventes", type: JournalType.SALES, allowManualEntries: false },
+      { code: "AC", nameEn: "Purchase Journal", nameFr: "Journal des achats", type: JournalType.PURCHASE, allowManualEntries: false },
+      { code: "CA", nameEn: "Cash Journal", nameFr: "Journal de caisse", type: JournalType.CASH, allowManualEntries: true },
+      { code: "BQ", nameEn: "Bank Journal", nameFr: "Journal de banque", type: JournalType.BANK, allowManualEntries: true },
+      { code: "ST", nameEn: "Inventory Journal", nameFr: "Journal des stocks", type: JournalType.INVENTORY, allowManualEntries: false },
+    ].map((journal, index) => ({
+      id: id("journal", index + 1),
+      organizationId: orgId(),
+      isDefault: true,
+      isActive: true,
+      ...journal,
+    })),
+  });
+
+  await prisma.postingRule.createMany({
+    data: DEFAULT_POS_POSTING_RULES.map((template, index) => ({
+      id: id("posting_rule", index + 1),
+      organizationId: orgId(),
+      code: template.code,
+      nameEn: template.nameEn,
+      nameFr: template.nameFr,
+      descriptionEn: template.descriptionEn,
+      descriptionFr: template.descriptionFr,
+      sourceType: template.sourceType,
+      postingPurpose: template.postingPurpose,
+      priority: template.priority,
+      isActive: true,
+    })),
+  });
+
+  let postingRuleLineIndex = 1;
+  await prisma.postingRuleLine.createMany({
+    data: DEFAULT_POS_POSTING_RULES.flatMap((template, ruleIndex) =>
+      template.lines.map((line) => ({
+        id: id("posting_rule_line", postingRuleLineIndex++),
+        organizationId: orgId(),
+        postingRuleId: id("posting_rule", ruleIndex + 1),
+        lineNumber: line.lineNumber,
+        side: line.side,
+        mappingKey: line.mappingKey,
+        amountSource: line.amountSource,
+        condition: line.condition ?? undefined,
+        description: line.description,
+      })),
+    ),
+  });
+
+  await prisma.ledgerAuditEvent.create({
+    data: {
+      id: id("ledger_audit_event", 1),
+      organizationId: orgId(),
+      actorId: id("user", 1),
+      action: "COMPREHENSIVE_ACCOUNTING_SEED",
+      resourceType: "OrganizationAccountingSettings",
+      resourceId: id("accounting_settings", 1),
+      message: "Comprehensive accounting control plane seeded",
+      metadata: {
+        fiscalYear: fiscalYear.name,
+        postingRules: DEFAULT_POS_POSTING_RULES.map((rule) => rule.code),
+      },
+    },
+  });
 }
 
 async function seedAuthTables() {
@@ -739,8 +1176,8 @@ async function seedAuthTables() {
         userId,
         accountId: userId,
         providerId: "credential",
-        accessToken: `seed-access-token-${pad(index)}`,
-        refreshToken: `seed-refresh-token-${pad(index)}`,
+        accessToken: orgScopedNumber("ACCESS", index),
+        refreshToken: orgScopedNumber("REFRESH", index),
         scope: "profile email",
         accessTokenExpiresAt: day(index + 30),
         password: passwordHash,
@@ -751,7 +1188,7 @@ async function seedAuthTables() {
   await prisma.session.createMany({
     data: seedIndexes.map((index) => ({
       id: id("session", index),
-      token: `cmp-session-token-${pad(index)}`,
+      token: orgScopedNumber("SESSION", index),
       userId: id("user", index),
       expiresAt: day(index + 30),
     })),
@@ -776,7 +1213,7 @@ async function seedReferenceData() {
     data: seedIndexes.map((index) => ({
       id: id("location", index),
       name: `${faker.location.city()} ${faker.helpers.arrayElement(["Store", "Warehouse", "Hub", "Kitchen"])} ${pad(index)}`,
-      code: `CMP-LOC-${pad(index)}`,
+      code: orgScopedNumber("LOC", index),
       type: [
         LocationType.STORE,
         LocationType.WAREHOUSE,
@@ -784,11 +1221,11 @@ async function seedReferenceData() {
         LocationType.MANUFACTURING,
       ][index % 4],
       address: faker.location.streetAddress(),
-      phone: `+23768020${pad(index)}`,
-      email: `location.${pad(index)}@stockflow.test`,
+      phone: scopedPhone(68, index),
+      email: scopedEmail(`location.${pad(index)}`),
       isActive: true,
       isDefault: index === 1,
-      organizationId: ORG_ID,
+      organizationId: orgId(),
       managerId: id("user", index),
       allowNegativeStock: index % 5 === 0,
       requiresApproval: index % 4 === 0,
@@ -800,18 +1237,18 @@ async function seedReferenceData() {
     data: seedIndexes.map((index) => ({
       id: id("customer", index),
       name: `${faker.person.fullName()} ${pad(index)}`,
-      code: `CMP-CUS-${pad(index)}`,
-      email: `customer.${pad(index)}@stockflow.test`,
-      phone: `+23767030${pad(index)}`,
+      code: orgScopedNumber("CUS", index),
+      email: scopedEmail(`customer.${pad(index)}`),
+      phone: scopedPhone(67, index),
       address: faker.location.streetAddress(),
-      taxId: `CUS-TAX-${pad(index)}`,
+      taxId: orgScopedNumber("CUS-TAX", index),
       creditLimit: money(250_000 + index * 5_000),
       paymentTerms: 15 + index,
       notes: faker.company.catchPhrase(),
       isActive: true,
       preferredLocale: index % 2 === 0 ? Locale.FR : Locale.EN,
       currentBalance: money(index * 1_250),
-      organizationId: ORG_ID,
+      organizationId: orgId(),
       updatedAt: day(index),
     })),
   });
@@ -820,10 +1257,10 @@ async function seedReferenceData() {
     data: seedIndexes.map((index) => ({
       id: id("supplier", index),
       name: `${faker.company.name()} ${pad(index)}`,
-      code: `CMP-SUP-${pad(index)}`,
+      code: orgScopedNumber("SUP", index),
       contactPerson: faker.person.fullName(),
-      email: `supplier.${pad(index)}@stockflow.test`,
-      phone: `+23766040${pad(index)}`,
+      email: scopedEmail(`supplier.${pad(index)}`),
+      phone: scopedPhone(66, index),
       address: faker.location.streetAddress(),
       city: faker.location.city(),
       state: faker.location.state(),
@@ -834,14 +1271,14 @@ async function seedReferenceData() {
         "Senegal",
         "Cote d'Ivoire",
       ]),
-      taxId: `SUP-TAX-${pad(index)}`,
+      taxId: orgScopedNumber("SUP-TAX", index),
       paymentTerms: 20 + index,
       creditLimit: money(500_000 + index * 10_000),
       notes: faker.company.catchPhrase(),
       isActive: true,
       preferredLocale: index % 2 === 0 ? Locale.FR : Locale.EN,
       currentBalance: money(index * 2_000),
-      organizationId: ORG_ID,
+      organizationId: orgId(),
       updatedAt: day(index),
     })),
   });
@@ -849,7 +1286,7 @@ async function seedReferenceData() {
   await prisma.category.createMany({
     data: seedIndexes.map((index) => ({
       id: id("category", index),
-      slug: `cmp-${slugify(faker.commerce.department())}-${pad(index)}`,
+      slug: `${currentOrg().emailSuffix}-${slugify(faker.commerce.department())}-${pad(index)}`,
       titleEn: `${faker.commerce.department()} ${pad(index)}`,
       titleFr: `Categorie ${pad(index)}`,
       descriptionEn: faker.commerce.productDescription(),
@@ -857,7 +1294,7 @@ async function seedReferenceData() {
       imageUrl: seedImageUrl("categories", index),
       parentId: index > 10 ? id("category", index - 10) : null,
       isActive: true,
-      organizationId: ORG_ID,
+      organizationId: orgId(),
       updatedAt: day(index),
     })),
   });
@@ -867,7 +1304,7 @@ async function seedReferenceData() {
   await prisma.unit.createMany({
     data: seedIndexes.map((index) => ({
       id: id("unit", index),
-      symbol: `CMP-U${pad(index)}`,
+      symbol: `${currentOrg().documentPrefix}-U${pad(index)}`,
       type: [
         UnitType.QUANTITY,
         UnitType.WEIGHT,
@@ -879,7 +1316,7 @@ async function seedReferenceData() {
       baseUnit: index % 2 === 0 ? "piece" : "kg",
       conversionRate: index % 2 === 0 ? 1 : money(0.5 + index / 10),
       isActive: true,
-      organizationId: ORG_ID,
+      organizationId: orgId(),
       updatedAt: day(index),
     })),
   });
@@ -894,7 +1331,7 @@ async function seedReferenceData() {
       nameEn: `${faker.commerce.productAdjective()} Tax ${pad(index)}`,
       nameFr: `Taxe ${pad(index)}`,
       isActive: true,
-      organizationId: ORG_ID,
+      organizationId: orgId(),
       updatedAt: day(index),
     })),
   });
@@ -907,7 +1344,7 @@ async function seedReferenceData() {
       descriptionEn: faker.finance.transactionDescription(),
       descriptionFr: `Description categorie depense ${pad(index)}`,
       isActive: true,
-      organizationId: ORG_ID,
+      organizationId: orgId(),
       updatedAt: day(index),
     })),
   });
@@ -934,12 +1371,12 @@ async function seedBrands() {
         ${id("brand", index)},
         ${brandName},
         ${`Marque ${pad(index)}`},
-        ${`cmp-${slugify(brandName)}-${pad(index)}`},
+        ${`${currentOrg().emailSuffix}-${slugify(brandName)}-${pad(index)}`},
         ${faker.company.catchPhrase()},
         ${`Description francaise de marque ${pad(index)}`},
         ${seedImageUrl("brands", index)},
         ${true},
-        ${ORG_ID},
+        ${orgId()},
         ${day(index)},
         ${day(index)}
       )
@@ -961,19 +1398,19 @@ async function seedItemsAndInventory() {
 
       return {
         id: id("item", index),
-        slug: `cmp-${slugify(productName)}`,
-        sku: `CMP-SKU-${pad(index)}`,
-        barcode: `CMP-BAR-${pad(index)}`,
+        slug: `${currentOrg().emailSuffix}-${slugify(productName)}-${pad(index)}`,
+        sku: orgScopedNumber("SKU", index),
+        barcode: orgScopedNumber("BAR", index),
         nameEn: productName,
         nameFr: `Article ${pad(index)}`,
         descriptionEn: faker.commerce.productDescription(),
         descriptionFr: `Article d'inventaire ${pad(index)}`,
         imageUrls: [seedImageUrl("products", index)],
         thumbnail: seedImageUrl("products", index),
-        upc: `UPC${pad(index)}000`,
-        ean: `EAN${pad(index)}000`,
-        mpn: `MPN-${pad(index)}`,
-        isbn: `ISBN-${pad(index)}`,
+        upc: `${currentOrg().documentPrefix}-UPC-${pad(index)}`,
+        ean: `${currentOrg().documentPrefix}-EAN-${pad(index)}`,
+        mpn: orgScopedNumber("MPN", index),
+        isbn: orgScopedNumber("ISBN", index),
         dimensions: `${10 + index}x${8 + index}x${5 + index} cm`,
         weight: qty(
           faker.number.float({ min: 0.2, max: 35, fractionDigits: 3 }),
@@ -998,7 +1435,7 @@ async function seedItemsAndInventory() {
         reorderQuantity: qty(25 + index),
         isActive: true,
         isDiscontinued: false,
-        organizationId: ORG_ID,
+        organizationId: orgId(),
         categoryId: id("category", index),
         brandId: id("brand", index),
         unitId: id("unit", index),
@@ -1038,7 +1475,7 @@ async function seedItemsAndInventory() {
       id: id("item_supplier", index),
       itemId: id("item", index),
       supplierId: id("supplier", index),
-      supplierSku: `SUP-SKU-${pad(index)}`,
+      supplierSku: orgScopedNumber("SUP-SKU", index),
       supplierName: `Supplier Item ${pad(index)}`,
       isPreferred: index % 3 === 0,
       leadTimeDays: 3 + index,
@@ -1053,7 +1490,7 @@ async function seedItemsAndInventory() {
   await prisma.serialNumber.createMany({
     data: seedIndexes.map((index) => ({
       id: id("serial_number", index),
-      serialNumber: `CMP-SERIAL-${pad(index)}`,
+      serialNumber: orgScopedNumber("SERIAL", index),
       status: [
         SerialStatus.AVAILABLE,
         SerialStatus.RESERVED,
@@ -1062,8 +1499,8 @@ async function seedItemsAndInventory() {
       ][index % 4],
       itemId: id("item", index),
       locationId: id("location", index),
-      organizationId: ORG_ID,
-      batchNumber: `CMP-BATCH-${pad(index)}`,
+      organizationId: orgId(),
+      batchNumber: orgScopedNumber("BATCH", index),
       expiryDate: day(index + 120),
       notes: `Serial seed ${pad(index)}`,
       updatedAt: day(index),
@@ -1075,12 +1512,12 @@ async function seedPointOfSale() {
   await prisma.pOSStation.createMany({
     data: seedIndexes.map((index) => ({
       id: id("pos_station", index),
-      terminalNumber: `CMP-TERM-${pad(index)}`,
+      terminalNumber: orgScopedNumber("TERM", index),
       name: `Seed POS Terminal ${pad(index)}`,
       isActive: true,
       hasCashDrawer: true,
       locationId: id("location", index),
-      organizationId: ORG_ID,
+      organizationId: orgId(),
       updatedAt: day(index),
     })),
   });
@@ -1089,7 +1526,7 @@ async function seedPointOfSale() {
     data: seedIndexes.map((index) => ({
       id: id("cash_drawer", index),
       name: `Seed Cash Drawer ${pad(index)}`,
-      drawerNumber: `CMP-DRAWER-${pad(index)}`,
+      drawerNumber: orgScopedNumber("DRAWER", index),
       currentBalance: money(50_000 + index * 1_000),
       expectedBalance: money(50_000 + index * 1_050),
       isOpen: index % 4 !== 0,
@@ -1126,7 +1563,7 @@ async function seedPointOfSale() {
       mobileMoneyTotal: money(20_000 + index * 500),
       bankTransferTotal: money(5_000 + index * 250),
       creditTotal: money(2_000 + index * 100),
-      organizationId: ORG_ID,
+      organizationId: orgId(),
       notes: `POS session ${pad(index)}`,
       updatedAt: day(index),
     })),
@@ -1137,7 +1574,7 @@ async function seedPurchasing() {
   await prisma.purchaseOrder.createMany({
     data: seedIndexes.map((index) => {
       const subtotal = money(75_000 + index * 4_000);
-      const taxAmount = money(subtotal * 0.1925);
+      const taxAmount = money(subtotal * CAMEROON_STANDARD_VAT_RATE_MULTIPLIER);
       const total = money(subtotal + taxAmount + 2_500);
       return {
         id: id("purchase_order", index),
@@ -1161,7 +1598,7 @@ async function seedPurchasing() {
         total,
         supplierId: id("supplier", index),
         locationId: id("location", index),
-        organizationId: ORG_ID,
+        organizationId: orgId(),
         createdById: id("user", index),
         approvedById: id("user", (index % COUNT) + 1),
         approvedAt: day(index + 1),
@@ -1174,7 +1611,7 @@ async function seedPurchasing() {
     data: seedIndexes.map((index) => {
       const orderedQuantity = qty(20 + index);
       const unitCost = money(1_000 + index * 150);
-      const taxAmount = money(orderedQuantity * unitCost * 0.1925);
+      const taxAmount = money(orderedQuantity * unitCost * CAMEROON_STANDARD_VAT_RATE_MULTIPLIER);
       const lineTotal = money(orderedQuantity * unitCost + taxAmount);
       return {
         id: id("purchase_order_line", index),
@@ -1186,7 +1623,7 @@ async function seedPurchasing() {
         ),
         unitCost,
         discount: money(index * 50),
-        taxRate: 19.25,
+        taxRate: CAMEROON_STANDARD_VAT_RATE_PERCENT,
         taxAmount,
         lineTotal,
         notes: `PO line ${pad(index)}`,
@@ -1208,7 +1645,7 @@ async function seedPurchasing() {
       notes: `Goods receipt ${pad(index)}`,
       purchaseOrderId: id("purchase_order", index),
       locationId: id("location", index),
-      organizationId: ORG_ID,
+      organizationId: orgId(),
       receivedById: id("user", index),
       updatedAt: day(index),
     })),
@@ -1227,7 +1664,7 @@ async function seedPurchasing() {
         unitCost,
         lineTotal: money(receivedQuantity * unitCost),
         notes: `Receipt line ${pad(index)}`,
-        batchNumber: `CMP-PO-BATCH-${pad(index)}`,
+        batchNumber: orgScopedNumber("PO-BATCH", index),
         expiryDate: day(index + 180),
         updatedAt: day(index),
       };
@@ -1239,7 +1676,7 @@ async function seedSalesAndPayments() {
   await prisma.salesOrder.createMany({
     data: seedIndexes.map((index) => {
       const subtotal = money(50_000 + index * 3_000);
-      const taxAmount = money(subtotal * 0.1925);
+      const taxAmount = money(subtotal * CAMEROON_STANDARD_VAT_RATE_MULTIPLIER);
       const discount = money(index * 75);
       const total = money(subtotal + taxAmount - discount);
       return {
@@ -1263,7 +1700,7 @@ async function seedSalesAndPayments() {
           index % 4 === 0 ? PaymentStatus.PARTIAL : PaymentStatus.PAID,
         customerId: id("customer", index),
         locationId: id("location", index),
-        organizationId: ORG_ID,
+        organizationId: orgId(),
         createdById: id("user", index),
         terminalId: id("pos_station", index),
         sessionId: id("pos_session", index),
@@ -1276,7 +1713,7 @@ async function seedSalesAndPayments() {
     data: seedIndexes.map((index) => {
       const quantity = qty(2 + (index % 5));
       const unitPrice = money(1_500 + index * 225);
-      const taxAmount = money(quantity * unitPrice * 0.1925);
+      const taxAmount = money(quantity * unitPrice * CAMEROON_STANDARD_VAT_RATE_MULTIPLIER);
       const lineTotal = money(quantity * unitPrice + taxAmount);
       return {
         id: id("sales_order_line", index),
@@ -1285,7 +1722,7 @@ async function seedSalesAndPayments() {
         quantity,
         unitPrice,
         discount: money(index * 25),
-        taxRate: 19.25,
+        taxRate: CAMEROON_STANDARD_VAT_RATE_PERCENT,
         taxAmount,
         lineTotal,
         notes: `Sales line ${pad(index)}`,
@@ -1309,8 +1746,8 @@ async function seedSalesAndPayments() {
         amount,
         method,
         status: index % 5 === 0 ? PaymentStatus.REFUNDED : PaymentStatus.PAID,
-        idempotencyKey: `cmp-idempotency-${pad(index)}`,
-        organizationId: ORG_ID,
+        idempotencyKey: orgScopedNumber("IDEMP", index),
+        organizationId: orgId(),
         salesOrderId: id("sales_order", index),
         cashTendered:
           method === PaymentMethod.CASH ? money(amount + 1_000) : null,
@@ -1318,27 +1755,29 @@ async function seedSalesAndPayments() {
         cardType: method === PaymentMethod.CARD ? "VISA" : null,
         cardLast4: method === PaymentMethod.CARD ? `${1000 + index}` : null,
         authorizationCode:
-          method === PaymentMethod.CARD ? `AUTH-${pad(index)}` : null,
+          method === PaymentMethod.CARD ? orgScopedNumber("AUTH", index) : null,
         mobileMoneyProvider:
           method === PaymentMethod.MOBILE_MONEY
-            ? MobileMoneyProvider.MTN_MOMO
+            ? CAMEROON_DEFAULT_MOBILE_MONEY_PROVIDER
             : null,
         mobileMoneyPhoneNumber:
           method === PaymentMethod.MOBILE_MONEY
-            ? `+23765050${pad(index)}`
+            ? scopedPhone(65, index)
             : null,
         mobileMoneyReference:
-          method === PaymentMethod.MOBILE_MONEY ? `MOMO-${pad(index)}` : null,
+          method === PaymentMethod.MOBILE_MONEY
+            ? orgScopedNumber("MOMO", index)
+            : null,
         mobileMoneyStatus:
           method === PaymentMethod.MOBILE_MONEY ? "SUCCESS" : null,
         mobileMoneyFeesAmount:
           method === PaymentMethod.MOBILE_MONEY ? money(100 + index) : null,
         bankReference:
           method === PaymentMethod.BANK_TRANSFER
-            ? `BANK-REF-${pad(index)}`
+            ? orgScopedNumber("BANK-REF", index)
             : null,
         bankName: method === PaymentMethod.BANK_TRANSFER ? "Seed Bank" : null,
-        transactionId: `CMP-TXN-${pad(index)}`,
+        transactionId: orgScopedNumber("TXN", index),
         processedAt: day(index),
         processorResponse: "APPROVED",
         processedById: id("user", index),
@@ -1360,7 +1799,7 @@ async function seedSalesAndPayments() {
         RefundStatus.APPROVED,
         RefundStatus.PROCESSED,
       ][index % 3],
-      organizationId: ORG_ID,
+      organizationId: orgId(),
       paymentId: id("payment", index),
       processedAt: day(index + 1),
       processorResponse: "REFUND_ACCEPTED",
@@ -1388,13 +1827,13 @@ async function seedInventoryTransactions() {
           notes: `Purchase receipt movement ${pad(index)}`,
           itemId: id("item", index),
           locationId: id("location", index),
-          organizationId: ORG_ID,
+          organizationId: orgId(),
           createdById: id("user", index),
           referenceType: TransactionReferenceType.GOODS_RECEIPT,
           referenceId: id("goods_receipt", index),
           referenceNumber: orgScopedNumber("GR", index),
-          batchNumber: `CMP-PO-BATCH-${pad(index)}`,
-          serialNumbers: [`CMP-SERIAL-${pad(index)}`],
+          batchNumber: orgScopedNumber("PO-BATCH", index),
+          serialNumbers: [orgScopedNumber("SERIAL", index)],
           expiryDate: day(index + 180),
           balanceAfter: qty(75 + index + purchasedQuantity),
           createdAt: day(index),
@@ -1408,19 +1847,176 @@ async function seedInventoryTransactions() {
           notes: `Sales consumption movement ${pad(index)}`,
           itemId: id("item", index),
           locationId: id("location", index),
-          organizationId: ORG_ID,
+          organizationId: orgId(),
           createdById: id("user", index),
           referenceType: TransactionReferenceType.SALES_ORDER,
           referenceId: id("sales_order", index),
           referenceNumber: orgScopedNumber("SO", index),
-          batchNumber: `CMP-BATCH-${pad(index)}`,
-          serialNumbers: [`CMP-SERIAL-${pad(index)}`],
+          batchNumber: orgScopedNumber("BATCH", index),
+          serialNumbers: [orgScopedNumber("SERIAL", index)],
           expiryDate: day(index + 120),
           balanceAfter: qty(75 + index + purchasedQuantity - soldQuantity),
           createdAt: day(index + 1),
         },
       ];
     }),
+  });
+}
+
+async function seedAccountingEntries() {
+  await prisma.ledgerPostingBatch.createMany({
+    data: seedIndexes.map((index) => ({
+      id: id("ledger_posting_batch", index),
+      organizationId: orgId(),
+      periodId: id("accounting_period", ((index - 1) % 12) + 1),
+      sourceType: AccountingSourceType.POS_SALE,
+      sourceId: id("sales_order", index),
+      postingPurpose: AccountingPostingPurpose.SALE_COMPLETION,
+      idempotencyKey: orgScopedNumber("POST-SALE", index),
+      sourceVersion: 1,
+      status: LedgerPostingBatchStatus.POSTED,
+      metadata: {
+        seed: true,
+        sourceNumber: orgScopedNumber("SO", index),
+      },
+      postedAt: day(index),
+    })),
+  });
+
+  await prisma.journalEntry.createMany({
+    data: seedIndexes.map((index) => ({
+      id: id("journal_entry", index),
+      organizationId: orgId(),
+      journalId: id("journal", 4),
+      periodId: id("accounting_period", ((index - 1) % 12) + 1),
+      postingBatchId: id("ledger_posting_batch", index),
+      entryNumber: orgScopedNumber("JE", index),
+      entryDate: day(index),
+      status: JournalEntryStatus.POSTED,
+      currency: currentOrg().currency,
+      memo: `Seed sale recognition ${orgScopedNumber("SO", index)}`,
+      reference: orgScopedNumber("SO", index),
+      sourceType: AccountingSourceType.POS_SALE,
+      sourceId: id("sales_order", index),
+      postingPurpose: AccountingPostingPurpose.SALE_COMPLETION,
+      postedAt: day(index),
+      postedById: id("user", 8),
+      createdById: id("user", 8),
+    })),
+  });
+
+  await prisma.journalEntryLine.createMany({
+    data: seedIndexes.flatMap((index) => {
+      const subtotal = money(50_000 + index * 3_000);
+      const taxAmount = money(subtotal * CAMEROON_STANDARD_VAT_RATE_MULTIPLIER);
+      const discount = money(index * 75);
+      const revenue = money(subtotal - discount);
+      const total = money(revenue + taxAmount);
+      const unitCost = money(1_000 + index * 175);
+      const soldQuantity = qty(2 + (index % 5));
+      const costAmount = money(soldQuantity * unitCost);
+      const lineBase = (index - 1) * 5;
+
+      return [
+        {
+          id: id("journal_entry_line", lineBase + 1),
+          organizationId: orgId(),
+          journalEntryId: id("journal_entry", index),
+          accountId: id("chart_account", 1),
+          lineNumber: 1,
+          description: `Cash/customer settlement for ${orgScopedNumber("SO", index)}`,
+          debit: total,
+          credit: 0,
+          currency: currentOrg().currency,
+          locationId: id("location", index),
+          customerId: id("customer", index),
+        },
+        {
+          id: id("journal_entry_line", lineBase + 2),
+          organizationId: orgId(),
+          journalEntryId: id("journal_entry", index),
+          accountId: id("chart_account", 13),
+          lineNumber: 2,
+          description: `COGS for ${orgScopedNumber("SO", index)}`,
+          debit: costAmount,
+          credit: 0,
+          currency: currentOrg().currency,
+          locationId: id("location", index),
+          itemId: id("item", index),
+        },
+        {
+          id: id("journal_entry_line", lineBase + 3),
+          organizationId: orgId(),
+          journalEntryId: id("journal_entry", index),
+          accountId: id("chart_account", 10),
+          lineNumber: 3,
+          description: `Revenue for ${orgScopedNumber("SO", index)}`,
+          debit: 0,
+          credit: revenue,
+          currency: currentOrg().currency,
+          customerId: id("customer", index),
+        },
+        {
+          id: id("journal_entry_line", lineBase + 4),
+          organizationId: orgId(),
+          journalEntryId: id("journal_entry", index),
+          accountId: id("chart_account", 11),
+          lineNumber: 4,
+          description: `Output VAT for ${orgScopedNumber("SO", index)}`,
+          debit: 0,
+          credit: taxAmount,
+          currency: currentOrg().currency,
+          customerId: id("customer", index),
+        },
+        {
+          id: id("journal_entry_line", lineBase + 5),
+          organizationId: orgId(),
+          journalEntryId: id("journal_entry", index),
+          accountId: id("chart_account", 9),
+          lineNumber: 5,
+          description: `Inventory relief for ${orgScopedNumber("SO", index)}`,
+          debit: 0,
+          credit: costAmount,
+          currency: currentOrg().currency,
+          locationId: id("location", index),
+          itemId: id("item", index),
+        },
+      ];
+    }),
+  });
+
+  await prisma.accountingSourceLink.createMany({
+    data: seedIndexes.map((index) => ({
+      id: id("accounting_source_link", index),
+      organizationId: orgId(),
+      postingBatchId: id("ledger_posting_batch", index),
+      journalEntryId: id("journal_entry", index),
+      sourceType: AccountingSourceType.POS_SALE,
+      sourceId: id("sales_order", index),
+      sourceNumber: orgScopedNumber("SO", index),
+      sourceDate: day(index),
+      metadata: {
+        seed: true,
+        postingPurpose: AccountingPostingPurpose.SALE_COMPLETION,
+      },
+    })),
+  });
+
+  await prisma.ledgerAuditEvent.createMany({
+    data: seedIndexes.map((index) => ({
+      id: id("ledger_audit_event", index + 1),
+      organizationId: orgId(),
+      postingBatchId: id("ledger_posting_batch", index),
+      journalEntryId: id("journal_entry", index),
+      action: "SEED_POSTED_SALE_JOURNAL",
+      actorId: id("user", 8),
+      resourceType: "SalesOrder",
+      resourceId: id("sales_order", index),
+      message: `Posted seed sale journal ${orgScopedNumber("JE", index)}`,
+      metadata: {
+        sourceNumber: orgScopedNumber("SO", index),
+      },
+    })),
   });
 }
 
@@ -1442,7 +2038,7 @@ async function seedFinanceAndLedgers() {
       receiptUrl: seedImageUrl("receipts", index),
       supplierId: id("supplier", index),
       notes: `Expense notes ${pad(index)}`,
-      organizationId: ORG_ID,
+      organizationId: orgId(),
       createdById: id("user", index),
       updatedAt: day(index),
     })),
@@ -1464,7 +2060,7 @@ async function seedFinanceAndLedgers() {
       description: `Customer ledger entry ${pad(index)}`,
       referenceType: "SALES_ORDER",
       referenceId: id("sales_order", index),
-      organizationId: ORG_ID,
+      organizationId: orgId(),
       createdAt: day(index),
     })),
   });
@@ -1485,7 +2081,7 @@ async function seedFinanceAndLedgers() {
       description: `Supplier ledger entry ${pad(index)}`,
       referenceType: "PURCHASE_ORDER",
       referenceId: id("purchase_order", index),
-      organizationId: ORG_ID,
+      organizationId: orgId(),
       createdAt: day(index),
     })),
   });
@@ -1526,7 +2122,7 @@ async function seedReportingAndCash() {
         id: id("daily_sales_report", index),
         date: day(index),
         locationId: id("location", index),
-        organizationId: ORG_ID,
+        organizationId: orgId(),
         totalRevenue,
         totalCost,
         grossProfit,
@@ -1569,7 +2165,7 @@ async function seedReportingAndCash() {
         itemId: id("item", index),
         itemNameEn: `Seed Item ${pad(index)}`,
         itemNameFr: `Article de test ${pad(index)}`,
-        itemSku: `CMP-SKU-${pad(index)}`,
+        itemSku: orgScopedNumber("SKU", index),
         costPrice,
         sellingPrice,
         startingQuantity: qty(80 + index),
@@ -1618,7 +2214,7 @@ async function seedProductionAndStockMovement() {
       version: 1,
       isActive: true,
       notes: `Recipe seed ${pad(index)}`,
-      organizationId: ORG_ID,
+      organizationId: orgId(),
       updatedAt: day(index),
     })),
   });
@@ -1653,7 +2249,7 @@ async function seedProductionAndStockMovement() {
       unitCost: money(800 + index * 30),
       notes: `Production batch ${pad(index)}`,
       locationId: id("location", index),
-      organizationId: ORG_ID,
+      organizationId: orgId(),
       createdById: id("user", index),
       updatedAt: day(index),
     })),
@@ -1679,7 +2275,7 @@ async function seedProductionAndStockMovement() {
       adjustmentDate: day(index),
       notes: `Stock adjustment ${pad(index)}`,
       locationId: id("location", index),
-      organizationId: ORG_ID,
+      organizationId: orgId(),
       createdById: id("user", index),
       approvedById: id("user", (index % COUNT) + 1),
       approvedAt: day(index + 1),
@@ -1724,7 +2320,7 @@ async function seedProductionAndStockMovement() {
       notes: `Stock transfer ${pad(index)}`,
       fromLocationId: id("location", index),
       toLocationId: id("location", (index % COUNT) + 1),
-      organizationId: ORG_ID,
+      organizationId: orgId(),
       createdById: id("user", index),
       approvedById: id("user", (index % COUNT) + 1),
       approvedAt: day(index + 1),
@@ -1751,9 +2347,9 @@ async function seedAuditAndInvites() {
   await prisma.invite.createMany({
     data: seedIndexes.map((index) => ({
       id: id("invite", index),
-      token: index.toString(16).padStart(64, "0"),
-      email: `invite.${pad(index)}@stockflow.test`,
-      organizationId: ORG_ID,
+      token: `${currentOrg().orgIndex}${index}`.padStart(64, "0"),
+      email: scopedEmail(`invite.${pad(index)}`),
+      organizationId: orgId(),
       roleId: id("role", index),
       status: [
         InviteStatus.PENDING,
@@ -1780,57 +2376,255 @@ async function seedAuditAndInvites() {
       userId: id("user", index),
       ipAddress: `10.0.0.${index}`,
       userAgent: "StockFlow comprehensive seed",
-      organizationId: ORG_ID,
+      organizationId: orgId(),
       createdAt: day(index),
     })),
   });
 }
 
-async function verifyCounts() {
-  const counts: Array<{ model: string; count: number }> = [];
+async function withOrgSeedContext<T>(
+  context: OrgSeedContext,
+  operation: () => Promise<T>,
+) {
+  const previousContext = activeOrgContext;
+  activeOrgContext = context;
 
-  for (const [model, delegate] of verificationOrder) {
-    counts.push({
-      model,
-      count: await delegate.count({ where: { id: { startsWith: ID_PREFIX } } }),
-    });
+  try {
+    return await operation();
+  } finally {
+    activeOrgContext = previousContext;
   }
+}
 
-  const lowCounts = counts.filter(({ count }) => count < COUNT);
+async function seedOrgDataset(context: OrgSeedContext) {
+  await withOrgSeedContext(context, async () => {
+    console.log(
+      `Seeding full dataset for ${context.organizationId} (${context.documentPrefix})`,
+    );
+
+    await seedRoles();
+    await seedUsers();
+    await seedAccountingControlPlane();
+    await seedAuthTables();
+    await seedReferenceData();
+    await seedItemsAndInventory();
+    await seedPointOfSale();
+    await seedPurchasing();
+    await seedSalesAndPayments();
+    await seedInventoryTransactions();
+    await seedAccountingEntries();
+    await seedFinanceAndLedgers();
+    await seedReportingAndCash();
+    await seedProductionAndStockMovement();
+    await seedAuditAndInvites();
+  });
+}
+
+async function verifyCounts() {
+  const generatedIdWhere = { id: { startsWith: ID_PREFIX } };
+  const tenantMinimum = ORG_COUNT * COUNT;
+  const aggregateTargets: Array<{
+    model: string;
+    delegate: SeedDelegate;
+    minimum: number;
+  }> = [
+    ...verificationOrder.map(([model, delegate]) => ({
+      model,
+      delegate,
+      minimum: model === "Organization" ? ORG_COUNT : tenantMinimum,
+    })),
+    {
+      model: "OrganizationAccountingSettings",
+      delegate: prisma.organizationAccountingSettings,
+      minimum: ORG_COUNT,
+    },
+    { model: "FiscalYear", delegate: prisma.fiscalYear, minimum: ORG_COUNT },
+    {
+      model: "AccountingPeriod",
+      delegate: prisma.accountingPeriod,
+      minimum: ORG_COUNT * 12,
+    },
+    {
+      model: "ChartOfAccount",
+      delegate: prisma.chartOfAccount,
+      minimum: ORG_COUNT * 14,
+    },
+    { model: "Journal", delegate: prisma.journal, minimum: ORG_COUNT * 8 },
+    {
+      model: "PostingRule",
+      delegate: prisma.postingRule,
+      minimum: ORG_COUNT * DEFAULT_POS_POSTING_RULES.length,
+    },
+    {
+      model: "PostingRuleLine",
+      delegate: prisma.postingRuleLine,
+      minimum: ORG_COUNT * DEFAULT_POS_POSTING_RULES.length,
+    },
+    {
+      model: "LedgerPostingBatch",
+      delegate: prisma.ledgerPostingBatch,
+      minimum: tenantMinimum,
+    },
+    {
+      model: "JournalEntry",
+      delegate: prisma.journalEntry,
+      minimum: tenantMinimum,
+    },
+    {
+      model: "JournalEntryLine",
+      delegate: prisma.journalEntryLine,
+      minimum: tenantMinimum * 5,
+    },
+    {
+      model: "AccountingSourceLink",
+      delegate: prisma.accountingSourceLink,
+      minimum: tenantMinimum,
+    },
+    {
+      model: "LedgerAuditEvent",
+      delegate: prisma.ledgerAuditEvent,
+      minimum: tenantMinimum,
+    },
+  ];
+
+  const counts = await Promise.all(
+    aggregateTargets.map(async ({ model, delegate, minimum }) => ({
+      model,
+      minimum,
+      count: await delegate.count({ where: generatedIdWhere }),
+    })),
+  );
+
+  const lowCounts = counts.filter(({ count, minimum }) => count < minimum);
 
   console.table(counts);
 
   if (lowCounts.length > 0) {
     throw new Error(
       `Comprehensive seed coverage failed: ${lowCounts
-        .map(({ model, count }) => `${model}=${count}`)
+        .map(({ model, count, minimum }) => `${model}=${count}/${minimum}`)
         .join(", ")}`,
     );
   }
+
+  const orgDistributions = await Promise.all(
+    orgContexts.map(async (context) => ({
+      organizationId: context.organizationId,
+      roles: await prisma.role.count({
+        where: { organizationId: context.organizationId },
+      }),
+      users: await prisma.user.count({
+        where: { organizationId: context.organizationId },
+      }),
+      locations: await prisma.location.count({
+        where: { organizationId: context.organizationId },
+      }),
+      customers: await prisma.customer.count({
+        where: { organizationId: context.organizationId },
+      }),
+      suppliers: await prisma.supplier.count({
+        where: { organizationId: context.organizationId },
+      }),
+      items: await prisma.item.count({
+        where: { organizationId: context.organizationId },
+      }),
+      purchases: await prisma.purchaseOrder.count({
+        where: { organizationId: context.organizationId },
+      }),
+      sales: await prisma.salesOrder.count({
+        where: { organizationId: context.organizationId },
+      }),
+      payments: await prisma.payment.count({
+        where: { organizationId: context.organizationId },
+      }),
+      chartAccounts: await prisma.chartOfAccount.count({
+        where: { organizationId: context.organizationId },
+      }),
+      postingRules: await prisma.postingRule.count({
+        where: { organizationId: context.organizationId },
+      }),
+      journalEntries: await prisma.journalEntry.count({
+        where: { organizationId: context.organizationId },
+      }),
+    })),
+  );
+  const incompleteOrganizations = orgDistributions.filter(
+    (distribution) =>
+      distribution.roles < COUNT ||
+      distribution.users < COUNT ||
+      distribution.locations < COUNT ||
+      distribution.customers < COUNT ||
+      distribution.suppliers < COUNT ||
+      distribution.items < COUNT ||
+      distribution.purchases < COUNT ||
+      distribution.sales < COUNT ||
+      distribution.payments < COUNT ||
+      distribution.chartAccounts < 14 ||
+      distribution.postingRules < DEFAULT_POS_POSTING_RULES.length ||
+      distribution.journalEntries < COUNT,
+  );
+
+  console.table(orgDistributions);
+
+  if (incompleteOrganizations.length > 0) {
+    throw new Error(
+      `Comprehensive seed tenant distribution failed: ${incompleteOrganizations
+        .map((distribution) => distribution.organizationId)
+        .join(", ")}`,
+    );
+  }
+
+  const journalEntries = await prisma.journalEntry.findMany({
+    where: generatedIdWhere,
+    select: {
+      entryNumber: true,
+      organizationId: true,
+      lines: {
+        select: {
+          debit: true,
+          credit: true,
+        },
+      },
+    },
+  });
+  const unbalancedEntries = journalEntries.filter((entry) => {
+    const debitTotal = entry.lines.reduce(
+      (total, line) => total + Number(line.debit),
+      0,
+    );
+    const creditTotal = entry.lines.reduce(
+      (total, line) => total + Number(line.credit),
+      0,
+    );
+
+    return Math.round(debitTotal * 100) !== Math.round(creditTotal * 100);
+  });
+
+  if (unbalancedEntries.length > 0) {
+    throw new Error(
+      `Seed produced unbalanced journal entries: ${unbalancedEntries
+        .slice(0, 10)
+        .map((entry) => `${entry.organizationId}/${entry.entryNumber}`)
+        .join(", ")}`,
+    );
+  }
+
+  console.log(`Verified ${journalEntries.length} balanced seed journal entries.`);
 }
 
 async function main() {
   console.log(
-    `Starting comprehensive seed with at least ${COUNT} records per Prisma model...`,
+    `Starting comprehensive seed for ${ORG_COUNT} organizations with at least ${COUNT} records per tenant-scoped business model...`,
   );
 
+  demoCredentials.length = 0;
   await ensureSeedImages();
   verifySeedImageFiles();
   await clearSeededData();
   await seedOrganizations();
-  await seedRoles();
-  await seedUsers();
-  await seedAuthTables();
-  await seedReferenceData();
-  await seedItemsAndInventory();
-  await seedPointOfSale();
-  await seedPurchasing();
-  await seedSalesAndPayments();
-  await seedInventoryTransactions();
-  await seedFinanceAndLedgers();
-  await seedReportingAndCash();
-  await seedProductionAndStockMovement();
-  await seedAuditAndInvites();
+  for (const context of orgContexts) {
+    await seedOrgDataset(context);
+  }
   await verifyCounts();
   verifySeedImageFiles();
 

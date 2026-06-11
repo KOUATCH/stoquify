@@ -1,6 +1,12 @@
 import { randomUUID } from "crypto"
 import argon2 from "argon2"
 import {
+  AccountingPeriodStatus,
+  AccountingSetupStatus,
+  ChartAccountNormalBalance,
+  ChartAccountType,
+  FiscalYearStatus,
+  JournalType,
   Locale,
   LocationType,
   POSSessionStatus,
@@ -11,11 +17,17 @@ import {
   UnitType,
 } from "@prisma/client"
 
+import { DEFAULT_POS_POSTING_RULES } from "../services/accounting/default-posting-rules"
+import { resolveCameroonStandardVatRateBps } from "../services/regulatory/country-packs/resolve"
+
 const prisma = new PrismaClient()
 
 const ORGANIZATION_ID = "org_stockflow_demo"
 const STORE_LOCATION_ID = "loc_stockflow_store"
 const WAREHOUSE_LOCATION_ID = "loc_stockflow_warehouse"
+const CAMEROON_STANDARD_VAT_RATE_BPS = resolveCameroonStandardVatRateBps("2026-01-01").value
+const CAMEROON_STANDARD_VAT_RATE_PERCENT = CAMEROON_STANDARD_VAT_RATE_BPS / 100
+const CAMEROON_STANDARD_VAT_RATE_LABEL_FR = CAMEROON_STANDARD_VAT_RATE_PERCENT.toFixed(2).replace(".", ",")
 
 const ROLE_PERMISSIONS = {
   ADMIN: ["*"],
@@ -83,6 +95,18 @@ const hashPassword = (password: string) =>
   })
 
 const clearDatabase = async () => {
+  await safeDelete("accounting_source_links", () => prisma.accountingSourceLink.deleteMany())
+  await safeDelete("ledger_audit_events", () => prisma.ledgerAuditEvent.deleteMany())
+  await safeDelete("journal_entry_lines", () => prisma.journalEntryLine.deleteMany())
+  await safeDelete("journal_entries", () => prisma.journalEntry.deleteMany())
+  await safeDelete("ledger_posting_batches", () => prisma.ledgerPostingBatch.deleteMany())
+  await safeDelete("posting_rule_lines", () => prisma.postingRuleLine.deleteMany())
+  await safeDelete("posting_rules", () => prisma.postingRule.deleteMany())
+  await safeDelete("journals", () => prisma.journal.deleteMany())
+  await safeDelete("chart_of_accounts", () => prisma.chartOfAccount.deleteMany())
+  await safeDelete("accounting_periods", () => prisma.accountingPeriod.deleteMany())
+  await safeDelete("fiscal_years", () => prisma.fiscalYear.deleteMany())
+  await safeDelete("organization_accounting_settings", () => prisma.organizationAccountingSettings.deleteMany())
   await safeDelete("payment_refunds", () => prisma.paymentRefund.deleteMany())
   await safeDelete("cash_drawer_transactions", () => prisma.cashDrawerTransaction.deleteMany())
   await safeDelete("payments", () => prisma.payment.deleteMany())
@@ -285,7 +309,8 @@ const seedCatalog = async () => {
     prisma.brand.create({
       data: {
         id: "brand_demo_house",
-        brandName: "StockFlow House",
+        nameEn: "StockFlow House",
+        nameFr: "StockFlow House",
         slug: "stockflow-house",
         descriptionEn: "Demo private-label products",
         descriptionFr: "Produits de demonstration en marque propre",
@@ -309,9 +334,9 @@ const seedCatalog = async () => {
     prisma.taxRate.create({
       data: {
         id: "tax_demo_vat",
-        nameEn: "VAT 19.25%",
-        nameFr: "TVA 19,25 %",
-        rate: 19.25,
+        nameEn: `VAT ${CAMEROON_STANDARD_VAT_RATE_PERCENT}%`,
+        nameFr: `TVA ${CAMEROON_STANDARD_VAT_RATE_LABEL_FR} %`,
+        rate: CAMEROON_STANDARD_VAT_RATE_PERCENT,
         type: TaxType.VAT,
         organizationId: ORGANIZATION_ID,
         updatedAt: now(),
@@ -502,6 +527,316 @@ const seedItems = async (
   return createdItems
 }
 
+const seedAccounting = async (actorId: string) => {
+  await prisma.organizationAccountingSettings.create({
+    data: {
+      id: "acct_settings_demo",
+      organizationId: ORGANIZATION_ID,
+      accountingEnabled: true,
+      setupStatus: AccountingSetupStatus.IN_PROGRESS,
+      countryPack: "SYSCOHADA_CM",
+      baseCurrency: "XAF",
+      fiscalYearStartMonth: 1,
+      fiscalYearStartDay: 1,
+      inventoryValuationPolicy: "WEIGHTED_AVERAGE",
+      roundingMode: "HALF_UP",
+      roundingScale: 2,
+      taxRegime: "VAT_CM_STANDARD",
+    },
+  })
+
+  const fiscalYear = await prisma.fiscalYear.create({
+    data: {
+      id: "fy_stockflow_2026",
+      organizationId: ORGANIZATION_ID,
+      name: "2026",
+      startDate: new Date("2026-01-01T00:00:00.000Z"),
+      endDate: new Date("2026-12-31T23:59:59.999Z"),
+      status: FiscalYearStatus.OPEN,
+    },
+  })
+
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ]
+
+  for (let monthIndex = 0; monthIndex < 12; monthIndex += 1) {
+    await prisma.accountingPeriod.create({
+      data: {
+        id: `period_2026_${String(monthIndex + 1).padStart(2, "0")}`,
+        organizationId: ORGANIZATION_ID,
+        fiscalYearId: fiscalYear.id,
+        periodNumber: monthIndex + 1,
+        name: `${monthNames[monthIndex]} 2026`,
+        startDate: new Date(Date.UTC(2026, monthIndex, 1, 0, 0, 0, 0)),
+        endDate: new Date(Date.UTC(2026, monthIndex + 1, 0, 23, 59, 59, 999)),
+        status: AccountingPeriodStatus.OPEN,
+      },
+    })
+  }
+
+  const accounts = [
+    {
+      id: "acct_cash_on_hand",
+      code: "571",
+      nameEn: "Cash on hand",
+      nameFr: "Caisse",
+      type: ChartAccountType.ASSET,
+      normalBalance: ChartAccountNormalBalance.DEBIT,
+      mappingKey: "CASH_ON_HAND",
+      syscohadaClass: "5",
+      syscohadaReference: "571",
+      isControlAccount: true,
+    },
+    {
+      id: "acct_bank",
+      code: "521",
+      nameEn: "Bank",
+      nameFr: "Banque",
+      type: ChartAccountType.ASSET,
+      normalBalance: ChartAccountNormalBalance.DEBIT,
+      mappingKey: "BANK",
+      syscohadaClass: "5",
+      syscohadaReference: "521",
+      isControlAccount: true,
+    },
+    {
+      id: "acct_card_clearing",
+      code: "5121",
+      nameEn: "Card clearing",
+      nameFr: "Transit cartes",
+      type: ChartAccountType.ASSET,
+      normalBalance: ChartAccountNormalBalance.DEBIT,
+      mappingKey: "CARD_CLEARING",
+      syscohadaClass: "5",
+      syscohadaReference: "512",
+      isControlAccount: true,
+    },
+    {
+      id: "acct_mobile_money_clearing",
+      code: "531",
+      nameEn: "Mobile money clearing",
+      nameFr: "Transit mobile money",
+      type: ChartAccountType.ASSET,
+      normalBalance: ChartAccountNormalBalance.DEBIT,
+      mappingKey: "MOBILE_MONEY_CLEARING",
+      syscohadaClass: "5",
+      syscohadaReference: "531",
+      isControlAccount: true,
+    },
+    {
+      id: "acct_cheque_clearing",
+      code: "513",
+      nameEn: "Cheque clearing",
+      nameFr: "Transit cheques",
+      type: ChartAccountType.ASSET,
+      normalBalance: ChartAccountNormalBalance.DEBIT,
+      mappingKey: "CHEQUE_CLEARING",
+      syscohadaClass: "5",
+      syscohadaReference: "513",
+      isControlAccount: true,
+    },
+    {
+      id: "acct_ar",
+      code: "411",
+      nameEn: "Customer receivables",
+      nameFr: "Clients",
+      type: ChartAccountType.ASSET,
+      normalBalance: ChartAccountNormalBalance.DEBIT,
+      mappingKey: "ACCOUNTS_RECEIVABLE",
+      syscohadaClass: "4",
+      syscohadaReference: "411",
+      isControlAccount: true,
+    },
+    {
+      id: "acct_ap",
+      code: "401",
+      nameEn: "Supplier payables",
+      nameFr: "Fournisseurs",
+      type: ChartAccountType.LIABILITY,
+      normalBalance: ChartAccountNormalBalance.CREDIT,
+      mappingKey: "ACCOUNTS_PAYABLE",
+      syscohadaClass: "4",
+      syscohadaReference: "401",
+      isControlAccount: true,
+    },
+    {
+      id: "acct_store_credit",
+      code: "419",
+      nameEn: "Store credit liability",
+      nameFr: "Avoirs clients",
+      type: ChartAccountType.LIABILITY,
+      normalBalance: ChartAccountNormalBalance.CREDIT,
+      mappingKey: "STORE_CREDIT_LIABILITY",
+      syscohadaClass: "4",
+      syscohadaReference: "419",
+      isControlAccount: true,
+    },
+    {
+      id: "acct_inventory",
+      code: "31",
+      nameEn: "Inventory",
+      nameFr: "Stocks",
+      type: ChartAccountType.ASSET,
+      normalBalance: ChartAccountNormalBalance.DEBIT,
+      mappingKey: "INVENTORY",
+      syscohadaClass: "3",
+      syscohadaReference: "31",
+      isControlAccount: true,
+    },
+    {
+      id: "acct_sales",
+      code: "701",
+      nameEn: "Sales revenue",
+      nameFr: "Ventes de marchandises",
+      type: ChartAccountType.REVENUE,
+      normalBalance: ChartAccountNormalBalance.CREDIT,
+      mappingKey: "SALES_REVENUE",
+      syscohadaClass: "7",
+      syscohadaReference: "701",
+      isControlAccount: false,
+    },
+    {
+      id: "acct_output_vat",
+      code: "443",
+      nameEn: "Output VAT",
+      nameFr: "TVA collectee",
+      type: ChartAccountType.LIABILITY,
+      normalBalance: ChartAccountNormalBalance.CREDIT,
+      mappingKey: "OUTPUT_VAT",
+      syscohadaClass: "4",
+      syscohadaReference: "443",
+      isControlAccount: true,
+    },
+    {
+      id: "acct_input_vat",
+      code: "445",
+      nameEn: "Input VAT",
+      nameFr: "TVA deductible",
+      type: ChartAccountType.ASSET,
+      normalBalance: ChartAccountNormalBalance.DEBIT,
+      mappingKey: "INPUT_VAT",
+      syscohadaClass: "4",
+      syscohadaReference: "445",
+      isControlAccount: true,
+    },
+    {
+      id: "acct_cogs",
+      code: "603",
+      nameEn: "Cost of goods sold",
+      nameFr: "Achats consommes",
+      type: ChartAccountType.EXPENSE,
+      normalBalance: ChartAccountNormalBalance.DEBIT,
+      mappingKey: "COGS",
+      syscohadaClass: "6",
+      syscohadaReference: "603",
+      isControlAccount: false,
+    },
+    {
+      id: "acct_inventory_variance",
+      code: "659",
+      nameEn: "Inventory variance",
+      nameFr: "Ecart de stock",
+      type: ChartAccountType.EXPENSE,
+      normalBalance: ChartAccountNormalBalance.DEBIT,
+      mappingKey: "INVENTORY_VARIANCE",
+      syscohadaClass: "6",
+      syscohadaReference: "659",
+      isControlAccount: false,
+    },
+  ]
+
+  for (const account of accounts) {
+    await prisma.chartOfAccount.create({
+      data: {
+        ...account,
+        organizationId: ORGANIZATION_ID,
+        isSystem: true,
+        isActive: true,
+        allowManualPost: !account.isControlAccount,
+      },
+    })
+  }
+
+  const journals = [
+    { code: "GEN", nameEn: "General Journal", nameFr: "Journal general", type: JournalType.GENERAL, allowManualEntries: true },
+    { code: "OD", nameEn: "Adjustment Journal", nameFr: "Journal des operations diverses", type: JournalType.ADJUSTMENT, allowManualEntries: true },
+    { code: "AN", nameEn: "Opening Balance Journal", nameFr: "Journal d'ouverture", type: JournalType.OPENING, allowManualEntries: true },
+    { code: "VT", nameEn: "Sales Journal", nameFr: "Journal des ventes", type: JournalType.SALES, allowManualEntries: false },
+    { code: "AC", nameEn: "Purchase Journal", nameFr: "Journal des achats", type: JournalType.PURCHASE, allowManualEntries: false },
+    { code: "CA", nameEn: "Cash Journal", nameFr: "Journal de caisse", type: JournalType.CASH, allowManualEntries: true },
+    { code: "BQ", nameEn: "Bank Journal", nameFr: "Journal de banque", type: JournalType.BANK, allowManualEntries: true },
+    { code: "ST", nameEn: "Inventory Journal", nameFr: "Journal des stocks", type: JournalType.INVENTORY, allowManualEntries: false },
+  ]
+
+  for (const journal of journals) {
+    await prisma.journal.create({
+      data: {
+        id: `journal_${journal.code.toLowerCase()}`,
+        organizationId: ORGANIZATION_ID,
+        isDefault: true,
+        isActive: true,
+        ...journal,
+      },
+    })
+  }
+
+  for (const template of DEFAULT_POS_POSTING_RULES) {
+    await prisma.postingRule.create({
+      data: {
+        id: `posting_rule_${template.code.toLowerCase().replace(/[^a-z0-9]+/g, "_")}`,
+        organizationId: ORGANIZATION_ID,
+        code: template.code,
+        nameEn: template.nameEn,
+        nameFr: template.nameFr,
+        descriptionEn: template.descriptionEn,
+        descriptionFr: template.descriptionFr,
+        sourceType: template.sourceType,
+        postingPurpose: template.postingPurpose,
+        priority: template.priority,
+        isActive: true,
+        lines: {
+          create: template.lines.map((line) => ({
+            organizationId: ORGANIZATION_ID,
+            lineNumber: line.lineNumber,
+            side: line.side,
+            mappingKey: line.mappingKey,
+            amountSource: line.amountSource,
+            condition: line.condition ?? undefined,
+            description: line.description,
+          })),
+        },
+      },
+    })
+  }
+
+  await prisma.ledgerAuditEvent.create({
+    data: {
+      organizationId: ORGANIZATION_ID,
+      actorId,
+      action: "DEMO_ACCOUNTING_SEED",
+      resourceType: "OrganizationAccountingSettings",
+      resourceId: "acct_settings_demo",
+      message: "Demo accounting control plane seeded",
+      metadata: {
+        fiscalYear: fiscalYear.name,
+        postingRules: DEFAULT_POS_POSTING_RULES.map((rule) => rule.code),
+      },
+    },
+  })
+}
+
 const seedProduction = async (items: Awaited<ReturnType<typeof seedItems>>, userId: string) => {
   const outputItem = items[1]
   const ingredientItem = items[0]
@@ -623,6 +958,9 @@ export async function seedCurrentDemo() {
   if (!admin || !cashier) {
     throw new Error("Seed users were not created")
   }
+
+  console.log("Seeding accounting control plane")
+  await seedAccounting(admin.id)
 
   console.log("Seeding locations, catalog, partners, and inventory")
   await seedLocations()

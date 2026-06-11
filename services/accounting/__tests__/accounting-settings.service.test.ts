@@ -19,6 +19,7 @@ const mockTx = {
   postingRule: { findMany: jest.fn() },
   organizationAccountingSettings: { upsert: jest.fn() },
   ledgerAuditEvent: { create: jest.fn() },
+  auditLog: { create: jest.fn() },
 }
 
 const mockDb = db as unknown as { $transaction: jest.Mock }
@@ -63,6 +64,7 @@ describe("accounting setup readiness gates", () => {
       setupStatus: "READY",
     })
     mockTx.ledgerAuditEvent.create.mockResolvedValue({ id: "audit-1" })
+    mockTx.auditLog.create.mockResolvedValue({ id: "control-audit-1" })
   })
 
   it("rejects readiness when required account mappings are missing", async () => {
@@ -73,9 +75,22 @@ describe("accounting setup readiness gates", () => {
   })
 
   it("marks setup ready only after mappings, journals, periods, and posting rules exist", async () => {
-    const result = await markAccountingSetupReady("org-1", "user-1")
+    const result = await markAccountingSetupReady("org-1", "user-1", {
+      actorPermissions: ["accounting.setup.manage"],
+      lastAuthAt: Date.now(),
+    })
 
     expect(result).toMatchObject({ accountingEnabled: true, setupStatus: "READY" })
+    expect(mockTx.auditLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          entityType: "AccountingSetup",
+          entityId: "org-1",
+          action: "ACCOUNTING_SETUP_LOCK_CONTROL",
+          userId: "user-1",
+        }),
+      }),
+    )
     expect(mockTx.organizationAccountingSettings.upsert).toHaveBeenCalledWith(
       expect.objectContaining({
         update: expect.objectContaining({
@@ -95,5 +110,22 @@ describe("accounting setup readiness gates", () => {
         }),
       }),
     )
+  })
+
+  it("audits and blocks setup lock without required control permission", async () => {
+    await expect(markAccountingSetupReady("org-1", "user-1")).rejects.toThrow(/not allowed/i)
+
+    expect(mockTx.auditLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          action: "ACCOUNTING_SETUP_LOCK_CONTROL_DENIED",
+          changes: expect.objectContaining({
+            reasonCode: "MISSING_PERMISSION",
+            allowed: false,
+          }),
+        }),
+      }),
+    )
+    expect(mockTx.organizationAccountingSettings.upsert).not.toHaveBeenCalled()
   })
 })

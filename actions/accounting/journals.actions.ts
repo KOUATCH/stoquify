@@ -103,7 +103,10 @@ const postJournalProtected = protect<unknown, unknown>(
   { permission: "accounting.journal.post", auditResource: "JournalEntry", freshAuth: true },
   async (input, ctx) => {
     const parsed = journalEntryIdSchema.parse(input)
-    const entry = await postJournalEntry(ctx.orgId, parsed.journalEntryId, ctx.userId)
+    const entry = await postJournalEntry(ctx.orgId, parsed.journalEntryId, ctx.userId, {
+      actorPermissions: ctx.permissions,
+      lastAuthAt: Date.now(),
+    })
     revalidateAccountingPaths()
     return entry
   },
@@ -123,6 +126,10 @@ const reverseJournalProtected = protect<unknown, unknown>(
       ctx.userId,
       parsed.reason,
       parsed.reversalDate,
+      {
+        actorPermissions: ctx.permissions,
+        lastAuthAt: Date.now(),
+      },
     )
     revalidateAccountingPaths()
     return entry

@@ -1,26 +1,56 @@
 "use server"
 
 import { revalidateTag } from "next/cache"
-import { err, ok } from "@/services/_shared/action-response"
-import { requireOrg } from "@/services/_shared/require-org"
-import { commitPOSSale } from "@/services/pos/pos.service"
-import { commitSaleSchema } from "@/services/pos/pos.schemas"
+import { protect } from "@/services/_shared/protect"
+import { commitPOSSale, refundPOSSale, voidPOSSale } from "@/services/pos/pos.service"
+import { commitSaleSchema, refundPOSSaleSchema, voidPOSSaleSchema } from "@/services/pos/pos.schemas"
 
-export async function commitPOSSaleAction(input: unknown) {
-  try {
-    const { orgId, userId } = await requireOrg()
-    const parsed = commitSaleSchema.parse(input)
-    const sale = await commitPOSSale({ ...parsed, organizationId: orgId, userId })
-
-    revalidateTag("pos-cart")
-    revalidateTag("pos-sessions")
-    revalidateTag(`pos-stock-${parsed.locationId}`)
-    revalidateTag(`pos-terminal-${parsed.terminalId}`)
-    revalidateTag("finance-dashboard")
-    revalidateTag("customer-ar")
-
-    return ok(sale)
-  } catch (error) {
-    return err(error)
-  }
+function revalidatePOSSaleTags(input: { locationId: string; terminalId: string }) {
+  revalidateTag("pos-cart")
+  revalidateTag("pos-sessions")
+  revalidateTag(`pos-stock-${input.locationId}`)
+  revalidateTag(`pos-terminal-${input.terminalId}`)
+  revalidateTag("finance-dashboard")
+  revalidateTag("customer-ar")
 }
+
+export const commitPOSSaleAction = protect(
+  { permission: "pos.use", auditResource: "POSSale", auditAllowed: true },
+  async (input: unknown, ctx) => {
+    const parsed = commitSaleSchema.parse(input)
+    const sale = await commitPOSSale({ ...parsed, organizationId: ctx.orgId, userId: ctx.userId })
+
+    revalidatePOSSaleTags(parsed)
+    return sale
+  },
+)
+
+export const refundPOSSaleAction = protect(
+  {
+    permission: "pos.transactions.refund",
+    auditResource: "POSSaleRefund",
+    freshAuth: { maxAgeSeconds: 300 },
+  },
+  async (input: unknown, ctx) => {
+    const parsed = refundPOSSaleSchema.parse(input)
+    const refund = await refundPOSSale({ ...parsed, organizationId: ctx.orgId, userId: ctx.userId })
+
+    revalidatePOSSaleTags(parsed)
+    return refund
+  },
+)
+
+export const voidPOSSaleAction = protect(
+  {
+    permission: "pos.transactions.void",
+    auditResource: "POSSaleVoid",
+    freshAuth: { maxAgeSeconds: 300 },
+  },
+  async (input: unknown, ctx) => {
+    const parsed = voidPOSSaleSchema.parse(input)
+    const voided = await voidPOSSale({ ...parsed, organizationId: ctx.orgId, userId: ctx.userId })
+
+    revalidatePOSSaleTags(parsed)
+    return voided
+  },
+)

@@ -127,6 +127,9 @@ export const financialPermissions = [
   "finance.analytics.read",
   "finance.taxes.read",
   "finance.taxes.manage",
+  "payments.reconciliation.run",
+  "payments.reconciliation.sign",
+  "payments.export",
 ] as const;
 
 // Accounting backbone permissions
@@ -232,6 +235,9 @@ export const dataPermissions = [
   "data.backup",
   "data.restore",
   "data.migrate",
+  "controls.manage",
+  "controls.audit.read",
+  "fraud.cases.manage",
 ] as const;
 
 // Admin permissions (all permissions combined)

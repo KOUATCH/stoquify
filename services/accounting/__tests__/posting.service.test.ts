@@ -30,6 +30,9 @@ const mockTx = {
   ledgerAuditEvent: {
     create: jest.fn(),
   },
+  auditLog: {
+    create: jest.fn(),
+  },
 }
 
 const mockDb = db as unknown as { $transaction: jest.Mock }
@@ -70,6 +73,7 @@ describe("posting service", () => {
     mockTx.accountingSourceLink.findFirst.mockResolvedValue(null)
     mockTx.accountingSourceLink.create.mockResolvedValue({ id: "link-1" })
     mockTx.ledgerAuditEvent.create.mockResolvedValue({ id: "audit-1" })
+    mockTx.auditLog.create.mockResolvedValue({ id: "control-audit-1" })
   })
 
   it("rejects posting anything other than a draft journal entry", async () => {
@@ -116,9 +120,22 @@ describe("posting service", () => {
       entryNumber: "JE-20260609-0001",
       status: "POSTED",
     })
-    const result = await postJournalEntry("org-1", "je-1", "user-1")
+    const result = await postJournalEntry("org-1", "je-1", "user-1", {
+      actorPermissions: ["accounting.journal.post"],
+      lastAuthAt: Date.now(),
+    })
 
     expect(result).toMatchObject({ id: "je-1", status: "POSTED" })
+    expect(mockTx.auditLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          entityType: "JournalEntry",
+          entityId: "je-1",
+          action: "JOURNAL_POST_CONTROL",
+          userId: "user-1",
+        }),
+      }),
+    )
     expect(mockTx.ledgerPostingBatch.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
@@ -137,5 +154,54 @@ describe("posting service", () => {
         }),
       }),
     )
+  })
+
+  it("audits and blocks self-posting of a manual journal", async () => {
+    mockTx.journalEntry.findFirst.mockResolvedValue({
+      id: "je-1",
+      organizationId: "org-1",
+      status: "DRAFT",
+      periodId: "period-1",
+      period: openPeriod,
+      entryDate: new Date("2026-06-09T12:00:00.000Z"),
+      entryNumber: "JE-20260609-0001",
+      createdById: "user-1",
+      currency: "XAF",
+      lines: [
+        {
+          accountId: "cash",
+          debit: new Prisma.Decimal(100),
+          credit: new Prisma.Decimal(0),
+          currency: "XAF",
+        },
+        {
+          accountId: "sales",
+          debit: new Prisma.Decimal(0),
+          credit: new Prisma.Decimal(100),
+          currency: "XAF",
+        },
+      ],
+    })
+
+    await expect(
+      postJournalEntry("org-1", "je-1", "user-1", {
+        actorPermissions: ["accounting.journal.post"],
+        lastAuthAt: Date.now(),
+      }),
+    ).rejects.toThrow(/independent approval/i)
+
+    expect(mockTx.auditLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          action: "JOURNAL_POST_CONTROL_DENIED",
+          changes: expect.objectContaining({
+            reasonCode: "SELF_APPROVAL_BLOCKED",
+            allowed: false,
+          }),
+        }),
+      }),
+    )
+    expect(mockTx.ledgerPostingBatch.create).not.toHaveBeenCalled()
+    expect(mockTx.journalEntry.update).not.toHaveBeenCalled()
   })
 })

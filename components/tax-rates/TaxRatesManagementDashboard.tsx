@@ -179,9 +179,9 @@ const copy = {
       isActive: "Active",
     },
     placeholders: {
-      nameEn: "Standard VAT",
-      nameFr: "TVA standard",
-      rate: "19.25",
+      nameEn: "Statutory output tax",
+      nameFr: "Taxe collectee statutaire",
+      rate: "0.00",
     },
     tableColumns: {
       taxRate: "Tax rate",
@@ -266,9 +266,9 @@ const copy = {
       isActive: "Actif",
     },
     placeholders: {
-      nameEn: "Standard VAT",
-      nameFr: "TVA standard",
-      rate: "19.25",
+      nameEn: "Statutory output tax",
+      nameFr: "Taxe collectee statutaire",
+      rate: "0.00",
     },
     tableColumns: {
       taxRate: "Taux",

@@ -1,5 +1,25 @@
-import { Prisma } from "@prisma/client"
+import {
+  LedgerEntryType,
+  PaymentMethod,
+  PaymentStatus,
+  Prisma,
+  RefundStatus,
+  SalesOrderStatus,
+  TransactionReferenceType,
+  TransactionType,
+} from "@prisma/client"
 import { db } from "@/prisma/db"
+import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
+import { postRefund } from "@/services/accounting/postings/post-refund"
+import { postPayment } from "@/services/accounting/postings/post-payment"
+import { postSale } from "@/services/accounting/postings/post-sale"
+import { postVoid } from "@/services/accounting/postings/post-void"
+import { createCustomerLedgerEntry } from "@/services/accounting/customer-ledger.service"
+import {
+  assertNoDuplicateProviderCapture,
+  assertUniqueProviderCaptureReferences,
+  resolveProviderCaptureEvidence,
+} from "@/services/payments/payment-reconciliation.service"
 import { addMoney, moneyToNumber, moneyToString, subtractMoney, toDecimal } from "./money"
 import { getSalesReceipt, sendReceipt, type ReceiptDeliveryResult, type SalesReceiptPayload } from "./receipt.service"
 import {
@@ -13,8 +33,10 @@ import {
   type POSTenderInput,
   type POSTenderMethod,
   posTerminalListSchema,
+  refundPOSSaleSchema,
   removeCartLineSchema,
   updateCartLineSchema,
+  voidPOSSaleSchema,
 } from "./pos.schemas"
 
 type OrgScoped<T extends object = Record<string, unknown>> = T & {
@@ -56,6 +78,12 @@ function nextPaymentNumber() {
   const date = new Date().toISOString().slice(0, 10).replace(/-/g, "")
   const entropy = Math.random().toString(36).slice(2, 9).toUpperCase()
   return `PAY-${date}-${entropy}`
+}
+
+function nextRefundNumber() {
+  const date = new Date().toISOString().slice(0, 10).replace(/-/g, "")
+  const entropy = Math.random().toString(36).slice(2, 9).toUpperCase()
+  return `REF-${date}-${entropy}`
 }
 
 function lineMath(input: CartLineInput) {
@@ -989,6 +1017,22 @@ export async function commitPOSSale(rawInput: UserScoped) {
       .reduce((sum, allocation) => addMoney(sum, allocation.amount), new Prisma.Decimal(0))
       .toDecimalPlaces(2)
     const amountPaid = total.minus(onAccountAmount).toDecimalPlaces(2)
+    const providerCaptures = allocations.map((allocation) =>
+      resolveProviderCaptureEvidence({
+        organizationId: rawInput.organizationId,
+        paymentMethod: allocation.paymentMethod,
+        reference: allocation.tender.reference,
+        authorizationCode: allocation.tender.authorizationCode,
+        mobileMoneyProvider: allocation.tender.mobileMoneyProvider,
+        bankName: allocation.tender.bankName,
+      }),
+    )
+    assertUniqueProviderCaptureReferences(providerCaptures)
+    for (const capture of providerCaptures) {
+      if (capture) {
+        await assertNoDuplicateProviderCapture(tx, capture)
+      }
+    }
 
     if (onAccountAmount.gt(0)) {
       if (customer.code === "WALK_IN") {
@@ -1005,18 +1049,15 @@ export async function commitPOSSale(rawInput: UserScoped) {
         data: { currentBalance: nextBalance },
       })
 
-      await tx.customerLedgerEntry.create({
-        data: {
-          customerId: customer.id,
-          organizationId: rawInput.organizationId,
-          type: "SALE",
-          debit: onAccountAmount,
-          credit: 0,
-          balanceAfter: nextBalance,
-          description: `POS sale ${sale.orderNumber}`,
-          referenceType: "SALES_ORDER",
-          referenceId: sale.id,
-        },
+      await createCustomerLedgerEntry(tx, {
+        customerId: customer.id,
+        organizationId: rawInput.organizationId,
+        type: LedgerEntryType.SALE,
+        debit: onAccountAmount,
+        balanceAfter: nextBalance,
+        description: `POS sale ${sale.orderNumber}`,
+        referenceType: "SALES_ORDER",
+        referenceId: sale.id,
       })
     }
 
@@ -1151,8 +1192,10 @@ export async function commitPOSSale(rawInput: UserScoped) {
       })
     }
 
-    for (const allocation of allocations) {
-      await tx.payment.create({
+    const capturedPaymentIds: string[] = []
+    for (const [index, allocation] of allocations.entries()) {
+      const providerCapture = providerCaptures[index]
+      const payment = await tx.payment.create({
         data: {
           paymentNumber: nextPaymentNumber(),
           amount: allocation.amount,
@@ -1164,17 +1207,30 @@ export async function commitPOSSale(rawInput: UserScoped) {
           changeGiven: allocation.paymentMethod === "CASH" ? allocation.changeGiven : undefined,
           cardLast4: allocation.tender.cardLast4,
           cardType: allocation.tender.cardType,
-          authorizationCode: allocation.tender.authorizationCode,
+          authorizationCode:
+            allocation.paymentMethod === "CARD"
+              ? providerCapture?.providerReference ?? allocation.tender.authorizationCode
+              : allocation.tender.authorizationCode,
           mobileMoneyProvider: allocation.tender.mobileMoneyProvider,
           mobileMoneyPhoneNumber: allocation.tender.mobileMoneyPhoneNumber,
-          mobileMoneyReference: allocation.paymentMethod === "MOBILE_MONEY" ? allocation.tender.reference : undefined,
-          bankReference: allocation.paymentMethod === "BANK_TRANSFER" ? allocation.tender.reference : undefined,
+          mobileMoneyReference:
+            allocation.paymentMethod === "MOBILE_MONEY"
+              ? providerCapture?.providerReference ?? allocation.tender.reference
+              : undefined,
+          bankReference:
+            allocation.paymentMethod === "BANK_TRANSFER"
+              ? providerCapture?.providerReference ?? allocation.tender.reference
+              : undefined,
           bankName: allocation.tender.bankName,
-          transactionId: allocation.tender.reference,
+          transactionId: providerCapture?.providerReference ?? allocation.tender.reference,
           processedAt: allocation.paymentMethod === "CREDIT" ? undefined : now,
           processedById: rawInput.userId,
         },
       })
+
+      if (allocation.paymentMethod !== "CREDIT") {
+        capturedPaymentIds.push(payment.id)
+      }
     }
 
     await tx.pOSSession.update({
@@ -1204,6 +1260,32 @@ export async function commitPOSSale(rawInput: UserScoped) {
         notes: input.notes,
       },
     })
+
+    const saleJournalEntry = await postSale(
+      rawInput.organizationId,
+      {
+        salesOrderId: sale.id,
+        actorId: rawInput.userId,
+        postingDate: now,
+        costAmount: totalCost,
+      },
+      tx,
+    )
+    const paymentJournalEntries: Array<{ id: string; entryNumber: string }> = []
+
+    for (const paymentId of capturedPaymentIds) {
+      paymentJournalEntries.push(
+        await postPayment(
+          rawInput.organizationId,
+          {
+            paymentId,
+            actorId: rawInput.userId,
+            postingDate: now,
+          },
+          tx,
+        ),
+      )
+    }
 
     const revenue = total.minus(sale.taxAmount).toDecimalPlaces(2)
     const journalEntries = [
@@ -1240,6 +1322,10 @@ export async function commitPOSSale(rawInput: UserScoped) {
         changes: cleanJson({
           orderNumber: sale.orderNumber,
           drawerId,
+          saleJournalEntryId: saleJournalEntry.id,
+          saleJournalEntryNumber: saleJournalEntry.entryNumber,
+          paymentJournalEntryIds: paymentJournalEntries.map((entry) => entry.id),
+          paymentJournalEntryNumbers: paymentJournalEntries.map((entry) => entry.entryNumber),
           entries: journalEntries.map((entry) => ({
             account: entry.account,
             debit: moneyToString(entry.debit),
@@ -1319,4 +1405,629 @@ export async function commitPOSSale(rawInput: UserScoped) {
     receipt,
     delivery,
   } satisfies CommitPOSSaleResult
+}
+
+const correctionSaleInclude = {
+  customer: { select: { id: true, code: true, currentBalance: true } },
+  lines: {
+    include: {
+      item: {
+        select: {
+          id: true,
+          sku: true,
+          costPrice: true,
+          trackInventory: true,
+          inventoryLevels: {
+            select: {
+              id: true,
+              quantityOnHand: true,
+              quantityAvailable: true,
+              averageCost: true,
+              totalValue: true,
+              version: true,
+              locationId: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: { createdAt: "asc" },
+  },
+  payments: {
+    include: {
+      refunds: {
+        select: {
+          id: true,
+          status: true,
+        },
+      },
+    },
+    orderBy: { createdAt: "asc" },
+  },
+} satisfies Prisma.SalesOrderInclude
+
+type CorrectionSale = Prisma.SalesOrderGetPayload<{
+  include: typeof correctionSaleInclude
+}>
+
+export type RefundPOSSaleResult = {
+  saleId: string
+  orderNumber: string
+  status: string
+  paymentStatus: string
+  refundIds: string[]
+  refundJournalEntryIds: string[]
+  totalRefunded: number
+}
+
+export type VoidPOSSaleResult = {
+  saleId: string
+  orderNumber: string
+  status: string
+  paymentStatus: string
+  voidJournalEntryId: string
+}
+
+function activeCorrectionPayments(sale: CorrectionSale) {
+  return sale.payments.filter((payment) => !payment.deletedAt)
+}
+
+function sumPaymentMethod(payments: CorrectionSale["payments"], method: PaymentMethod) {
+  return payments
+    .filter((payment) => !payment.deletedAt && payment.method === method)
+    .reduce((sum, payment) => addMoney(sum, payment.amount), new Prisma.Decimal(0))
+    .toDecimalPlaces(2)
+}
+
+function paymentMethodTotals(payments: CorrectionSale["payments"]) {
+  return {
+    cash: sumPaymentMethod(payments, PaymentMethod.CASH),
+    card: sumPaymentMethod(payments, PaymentMethod.CARD),
+    mobileMoney: sumPaymentMethod(payments, PaymentMethod.MOBILE_MONEY),
+    bankTransfer: sumPaymentMethod(payments, PaymentMethod.BANK_TRANSFER),
+    storeCredit: sumPaymentMethod(payments, PaymentMethod.STORE_CREDIT),
+    credit: sumPaymentMethod(payments, PaymentMethod.CREDIT),
+  }
+}
+
+async function requireActiveCorrectionSession(
+  tx: Prisma.TransactionClient,
+  input: {
+    organizationId: string
+    sessionId: string
+    terminalId: string
+    locationId: string
+  },
+) {
+  const session = await tx.pOSSession.findFirst({
+    where: {
+      id: input.sessionId,
+      organizationId: input.organizationId,
+      terminalId: input.terminalId,
+      locationId: input.locationId,
+      status: "ACTIVE",
+    },
+    select: { id: true, expectedBalance: true },
+  })
+
+  if (!session) throw new BusinessRuleError("Active cashier shift not found")
+  return session
+}
+
+async function loadCompletedSaleForCorrection(
+  tx: Prisma.TransactionClient,
+  input: {
+    organizationId: string
+    salesOrderId: string
+    locationId: string
+    terminalId: string
+    sessionId: string
+  },
+) {
+  const sale = await tx.salesOrder.findFirst({
+    where: {
+      id: input.salesOrderId,
+      organizationId: input.organizationId,
+      locationId: input.locationId,
+      terminalId: input.terminalId,
+      sessionId: input.sessionId,
+      status: SalesOrderStatus.COMPLETED,
+      deletedAt: null,
+    },
+    include: correctionSaleInclude,
+  })
+
+  if (!sale) throw new NotFoundError("Completed POS sale not found")
+  if (sale.lines.length === 0) throw new BusinessRuleError("Cannot correct a sale without lines")
+  return sale
+}
+
+async function loadOriginalSaleMovements(
+  tx: Prisma.TransactionClient,
+  organizationId: string,
+  saleId: string,
+) {
+  const movements = await tx.inventoryTransaction.findMany({
+    where: {
+      organizationId,
+      referenceType: TransactionReferenceType.SALES_ORDER,
+      referenceId: saleId,
+      type: TransactionType.SALE,
+    },
+    orderBy: { createdAt: "asc" },
+  })
+
+  const byItemId = new Map<string, typeof movements>()
+  for (const movement of movements) {
+    const itemMovements = byItemId.get(movement.itemId) || []
+    itemMovements.push(movement)
+    byItemId.set(movement.itemId, itemMovements)
+  }
+
+  return byItemId
+}
+
+async function restockSaleInventory(
+  tx: Prisma.TransactionClient,
+  params: {
+    sale: CorrectionSale
+    organizationId: string
+    userId: string
+    reason: string
+    now: Date
+  },
+) {
+  const originalMovements = await loadOriginalSaleMovements(tx, params.organizationId, params.sale.id)
+  const levelStateById = new Map<
+    string,
+    {
+      quantityOnHand: Prisma.Decimal
+      quantityAvailable: Prisma.Decimal
+      totalValue: Prisma.Decimal
+      version: number
+    }
+  >()
+  let totalRestockCost = new Prisma.Decimal(0)
+
+  for (const line of params.sale.lines) {
+    const quantity = toDecimal(line.quantity)
+    if (quantity.lte(0) || !line.item.trackInventory) continue
+
+    const level = line.item.inventoryLevels.find((row) => row.locationId === params.sale.locationId)
+    if (!level) {
+      throw new BusinessRuleError(`No inventory level found for item ${line.item.sku} at this location`)
+    }
+
+    const state = levelStateById.get(level.id) || {
+      quantityOnHand: toDecimal(level.quantityOnHand),
+      quantityAvailable: toDecimal(level.quantityAvailable),
+      totalValue: toDecimal(level.totalValue),
+      version: level.version,
+    }
+    const itemMovements = originalMovements.get(line.itemId) || []
+    const originalMovement = itemMovements.shift()
+    const movementQuantity = originalMovement ? toDecimal(originalMovement.quantity).abs() : quantity
+    const movementCost = originalMovement ? toDecimal(originalMovement.totalCost).abs() : null
+    const unitCost = movementCost && movementQuantity.gt(0)
+      ? movementCost.div(movementQuantity).toDecimalPlaces(2)
+      : toDecimal(level.averageCost).gt(0)
+        ? toDecimal(level.averageCost)
+        : toDecimal(line.item.costPrice)
+    const lineCost = unitCost.times(quantity).toDecimalPlaces(2)
+    const nextOnHand = state.quantityOnHand.plus(quantity).toDecimalPlaces(3)
+    const nextAvailable = state.quantityAvailable.plus(quantity).toDecimalPlaces(3)
+    const nextTotalValue = state.totalValue.plus(lineCost).toDecimalPlaces(2)
+    const nextAverageCost = nextOnHand.gt(0) ? nextTotalValue.div(nextOnHand).toDecimalPlaces(2) : new Prisma.Decimal(0)
+
+    const update = await tx.inventoryLevel.updateMany({
+      where: {
+        id: level.id,
+        version: state.version,
+      },
+      data: {
+        quantityOnHand: nextOnHand,
+        quantityAvailable: nextAvailable,
+        totalValue: nextTotalValue,
+        averageCost: nextAverageCost,
+        version: { increment: 1 },
+        lastTransactionAt: params.now,
+      },
+    })
+
+    if (update.count !== 1) {
+      throw new BusinessRuleError(`Inventory changed while correcting item ${line.item.sku}; retry the correction`)
+    }
+
+    await tx.inventoryTransaction.create({
+      data: {
+        itemId: line.itemId,
+        locationId: params.sale.locationId,
+        organizationId: params.organizationId,
+        createdById: params.userId,
+        type: TransactionType.SALES_RETURN,
+        quantity,
+        unitCost,
+        totalCost: lineCost,
+        balanceAfter: nextOnHand,
+        referenceType: TransactionReferenceType.SALES_ORDER,
+        referenceId: params.sale.id,
+        referenceNumber: params.sale.orderNumber,
+        notes: params.reason,
+      },
+    })
+
+    totalRestockCost = totalRestockCost.plus(lineCost).toDecimalPlaces(2)
+    levelStateById.set(level.id, {
+      quantityOnHand: nextOnHand,
+      quantityAvailable: nextAvailable,
+      totalValue: nextTotalValue,
+      version: state.version + 1,
+    })
+  }
+
+  return totalRestockCost
+}
+
+async function applyCashDrawerOutflow(
+  tx: Prisma.TransactionClient,
+  params: {
+    terminalId: string
+    locationId: string
+    sessionId: string
+    userId: string
+    amount: Prisma.Decimal
+    type: "REFUND" | "RETURN"
+    reason: string
+  },
+) {
+  if (params.amount.lte(0)) return null
+
+  const drawer = await tx.cashDrawer.findFirst({
+    where: { terminalId: params.terminalId, locationId: params.locationId },
+    orderBy: { createdAt: "asc" },
+    select: {
+      id: true,
+      isOpen: true,
+      currentBalance: true,
+      expectedBalance: true,
+    },
+  })
+
+  if (!drawer?.isOpen) throw new BusinessRuleError("Cash drawer is not open for this terminal")
+
+  const balanceAfter = subtractMoney(drawer.currentBalance, params.amount).toDecimalPlaces(2)
+  await tx.cashDrawer.update({
+    where: { id: drawer.id },
+    data: {
+      currentBalance: balanceAfter,
+      expectedBalance: subtractMoney(drawer.expectedBalance, params.amount).toDecimalPlaces(2),
+    },
+  })
+
+  await tx.cashDrawerTransaction.create({
+    data: {
+      cashDrawerId: drawer.id,
+      sessionId: params.sessionId,
+      userId: params.userId,
+      type: params.type,
+      amount: params.amount,
+      reason: params.reason,
+      balanceBefore: drawer.currentBalance,
+      balanceAfter,
+    },
+  })
+
+  return drawer.id
+}
+
+async function reverseSessionTotals(
+  tx: Prisma.TransactionClient,
+  params: {
+    sessionId: string
+    sale: CorrectionSale
+    payments: CorrectionSale["payments"]
+    cashOutflow: Prisma.Decimal
+  },
+) {
+  const totals = paymentMethodTotals(params.payments)
+
+  return tx.pOSSession.update({
+    where: { id: params.sessionId },
+    data: {
+      totalSales: { decrement: params.sale.total },
+      totalTax: { decrement: params.sale.taxAmount },
+      totalDiscount: { decrement: params.sale.discount },
+      transactionCount: { decrement: 1 },
+      cashTotal: { decrement: totals.cash },
+      cardTotal: { decrement: totals.card },
+      mobileMoneyTotal: { decrement: totals.mobileMoney },
+      bankTransferTotal: { decrement: totals.bankTransfer },
+      creditTotal: { decrement: totals.credit },
+      expectedBalance: { decrement: params.cashOutflow },
+    },
+  })
+}
+
+function assertNoPriorRefunds(sale: CorrectionSale) {
+  const refundedPayment = sale.payments.find((payment) =>
+    payment.refunds.some((refund) => refund.status !== RefundStatus.CANCELLED),
+  )
+
+  if (refundedPayment) {
+    throw new BusinessRuleError(`Payment ${refundedPayment.paymentNumber} already has a refund`)
+  }
+}
+
+export async function refundPOSSale(rawInput: UserScoped) {
+  const input = refundPOSSaleSchema.parse(rawInput)
+
+  return db.$transaction(async (tx) => {
+    const now = new Date()
+    const sale = await loadCompletedSaleForCorrection(tx, {
+      organizationId: rawInput.organizationId,
+      salesOrderId: input.salesOrderId,
+      locationId: input.locationId,
+      terminalId: input.terminalId,
+      sessionId: input.sessionId,
+    })
+    await requireActiveCorrectionSession(tx, {
+      organizationId: rawInput.organizationId,
+      sessionId: input.sessionId,
+      terminalId: input.terminalId,
+      locationId: input.locationId,
+    })
+
+    assertNoPriorRefunds(sale)
+
+    const payments = activeCorrectionPayments(sale)
+    if (payments.some((payment) => payment.method === PaymentMethod.CREDIT)) {
+      throw new BusinessRuleError("On-account POS sales must be voided or settled before refunding")
+    }
+    const refundablePayments = payments.filter((payment) => {
+      const refundedAmount = toDecimal(payment.refundedAmount)
+      return (
+        payment.method !== PaymentMethod.CREDIT &&
+        payment.method !== PaymentMethod.MIXED &&
+        (payment.status === PaymentStatus.PAID || payment.status === PaymentStatus.PARTIAL) &&
+        toDecimal(payment.amount).minus(refundedAmount).gt(0)
+      )
+    })
+    const totalRefundable = refundablePayments
+      .reduce((total, payment) => total.plus(toDecimal(payment.amount).minus(toDecimal(payment.refundedAmount))), new Prisma.Decimal(0))
+      .toDecimalPlaces(2)
+
+    if (refundablePayments.length === 0 || !totalRefundable.eq(toDecimal(sale.total))) {
+      throw new BusinessRuleError("Only fully paid, unrefunded POS sales can be refunded in this workflow")
+    }
+
+    const restockCost = await restockSaleInventory(tx, {
+      sale,
+      organizationId: rawInput.organizationId,
+      userId: rawInput.userId,
+      reason: `POS refund ${sale.orderNumber}: ${input.reason}`,
+      now,
+    })
+    const cashOutflow = sumPaymentMethod(refundablePayments, PaymentMethod.CASH)
+    const drawerId = await applyCashDrawerOutflow(tx, {
+      terminalId: input.terminalId,
+      locationId: input.locationId,
+      sessionId: input.sessionId,
+      userId: rawInput.userId,
+      amount: cashOutflow,
+      type: "REFUND",
+      reason: `POS refund ${sale.orderNumber}: ${input.reason}`,
+    })
+
+    const refundIds: string[] = []
+    for (const payment of refundablePayments) {
+      const refundAmount = toDecimal(payment.amount).minus(toDecimal(payment.refundedAmount)).toDecimalPlaces(2)
+      const refund = await tx.paymentRefund.create({
+        data: {
+          refundNumber: nextRefundNumber(),
+          amount: refundAmount,
+          reason: input.reason,
+          status: RefundStatus.PROCESSED,
+          organizationId: rawInput.organizationId,
+          paymentId: payment.id,
+          processedAt: now,
+          processedById: rawInput.userId,
+          notes: input.notes,
+        },
+      })
+      refundIds.push(refund.id)
+
+      await tx.payment.update({
+        where: { id: payment.id },
+        data: {
+          refundedAmount: { increment: refundAmount },
+          status: PaymentStatus.REFUNDED,
+        },
+      })
+    }
+
+    const updatedSale = await tx.salesOrder.update({
+      where: { id: sale.id },
+      data: {
+        status: SalesOrderStatus.RETURNED,
+        paymentStatus: PaymentStatus.REFUNDED,
+        notes: input.notes || sale.notes,
+      },
+    })
+
+    await reverseSessionTotals(tx, {
+      sessionId: input.sessionId,
+      sale,
+      payments: refundablePayments,
+      cashOutflow,
+    })
+
+    const refundJournalEntries = []
+    for (const refundId of refundIds) {
+      refundJournalEntries.push(
+        await postRefund(
+          rawInput.organizationId,
+          {
+            refundId,
+            actorId: rawInput.userId,
+            postingDate: now,
+          },
+          tx,
+        ),
+      )
+    }
+
+    await tx.auditLog.create({
+      data: {
+        entityType: "SalesOrder",
+        entityId: sale.id,
+        action: "POS_SALE_REFUND",
+        organizationId: rawInput.organizationId,
+        userId: rawInput.userId,
+        changes: cleanJson({
+          orderNumber: sale.orderNumber,
+          reason: input.reason,
+          drawerId,
+          refundIds,
+          refundJournalEntryIds: refundJournalEntries.map((entry) => entry.id),
+          restockCost: moneyToString(restockCost),
+          totalRefunded: moneyToString(totalRefundable),
+        }),
+      },
+    })
+
+    return {
+      saleId: sale.id,
+      orderNumber: sale.orderNumber,
+      status: updatedSale.status,
+      paymentStatus: updatedSale.paymentStatus,
+      refundIds,
+      refundJournalEntryIds: refundJournalEntries.map((entry) => entry.id),
+      totalRefunded: moneyToNumber(totalRefundable),
+    } satisfies RefundPOSSaleResult
+  })
+}
+
+export async function voidPOSSale(rawInput: UserScoped) {
+  const input = voidPOSSaleSchema.parse(rawInput)
+
+  return db.$transaction(async (tx) => {
+    const now = new Date()
+    const sale = await loadCompletedSaleForCorrection(tx, {
+      organizationId: rawInput.organizationId,
+      salesOrderId: input.salesOrderId,
+      locationId: input.locationId,
+      terminalId: input.terminalId,
+      sessionId: input.sessionId,
+    })
+    await requireActiveCorrectionSession(tx, {
+      organizationId: rawInput.organizationId,
+      sessionId: input.sessionId,
+      terminalId: input.terminalId,
+      locationId: input.locationId,
+    })
+
+    assertNoPriorRefunds(sale)
+    const payments = activeCorrectionPayments(sale)
+    if (payments.length === 0) throw new BusinessRuleError("Cannot void a sale without payment rows")
+
+    const restockCost = await restockSaleInventory(tx, {
+      sale,
+      organizationId: rawInput.organizationId,
+      userId: rawInput.userId,
+      reason: `POS void ${sale.orderNumber}: ${input.reason}`,
+      now,
+    })
+    const cashOutflow = sumPaymentMethod(payments, PaymentMethod.CASH)
+    const drawerId = await applyCashDrawerOutflow(tx, {
+      terminalId: input.terminalId,
+      locationId: input.locationId,
+      sessionId: input.sessionId,
+      userId: rawInput.userId,
+      amount: cashOutflow,
+      type: "RETURN",
+      reason: `POS void ${sale.orderNumber}: ${input.reason}`,
+    })
+    const creditAmount = sumPaymentMethod(payments, PaymentMethod.CREDIT)
+
+    if (creditAmount.gt(0)) {
+      const nextBalance = subtractMoney(sale.customer.currentBalance, creditAmount).toDecimalPlaces(2)
+      if (nextBalance.lt(0)) {
+        throw new BusinessRuleError("Customer balance is lower than the on-account amount being voided")
+      }
+
+      await tx.customer.update({
+        where: { id: sale.customer.id },
+        data: { currentBalance: nextBalance },
+      })
+
+      await createCustomerLedgerEntry(tx, {
+        customerId: sale.customer.id,
+        organizationId: rawInput.organizationId,
+        type: LedgerEntryType.CREDIT_NOTE,
+        credit: creditAmount,
+        balanceAfter: nextBalance,
+        description: `POS void ${sale.orderNumber}`,
+        referenceType: "SALES_ORDER",
+        referenceId: sale.id,
+      })
+    }
+
+    for (const payment of payments) {
+      await tx.payment.update({
+        where: { id: payment.id },
+        data: { status: PaymentStatus.CANCELLED },
+      })
+    }
+
+    const updatedSale = await tx.salesOrder.update({
+      where: { id: sale.id },
+      data: {
+        status: SalesOrderStatus.CANCELLED,
+        paymentStatus: PaymentStatus.CANCELLED,
+        notes: input.notes || sale.notes,
+      },
+    })
+
+    await reverseSessionTotals(tx, {
+      sessionId: input.sessionId,
+      sale,
+      payments,
+      cashOutflow,
+    })
+
+    const voidJournalEntry = await postVoid(
+      rawInput.organizationId,
+      {
+        salesOrderId: sale.id,
+        actorId: rawInput.userId,
+        postingDate: now,
+      },
+      tx,
+    )
+
+    await tx.auditLog.create({
+      data: {
+        entityType: "SalesOrder",
+        entityId: sale.id,
+        action: "POS_SALE_VOID",
+        organizationId: rawInput.organizationId,
+        userId: rawInput.userId,
+        changes: cleanJson({
+          orderNumber: sale.orderNumber,
+          reason: input.reason,
+          drawerId,
+          voidJournalEntryId: voidJournalEntry.id,
+          restockCost: moneyToString(restockCost),
+        }),
+      },
+    })
+
+    return {
+      saleId: sale.id,
+      orderNumber: sale.orderNumber,
+      status: updatedSale.status,
+      paymentStatus: updatedSale.paymentStatus,
+      voidJournalEntryId: voidJournalEntry.id,
+    } satisfies VoidPOSSaleResult
+  })
 }

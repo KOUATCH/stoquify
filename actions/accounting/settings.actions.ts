@@ -119,7 +119,10 @@ const closePeriod = protect<unknown, unknown>(
   { permission: "accounting.period.close", auditResource: "AccountingPeriod", freshAuth: true },
   async (input, ctx) => {
     const parsed = closePeriodSchema.parse(input)
-    const period = await closeAccountingPeriod(ctx.orgId, parsed.periodId, ctx.userId)
+    const period = await closeAccountingPeriod(ctx.orgId, parsed.periodId, ctx.userId, {
+      actorPermissions: ctx.permissions,
+      lastAuthAt: Date.now(),
+    })
     revalidateAccountingPaths()
     return period
   },
@@ -132,7 +135,10 @@ export async function closeAccountingPeriodAction(input: unknown) {
 const markSetupReady = protect<unknown, unknown>(
   { permission: "accounting.setup.manage", auditResource: "AccountingSetup", freshAuth: true },
   async (_input, ctx) => {
-    const settings = await markAccountingSetupReady(ctx.orgId, ctx.userId)
+    const settings = await markAccountingSetupReady(ctx.orgId, ctx.userId, {
+      actorPermissions: ctx.permissions,
+      lastAuthAt: Date.now(),
+    })
     revalidateAccountingPaths()
     return settings
   },

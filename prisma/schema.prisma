@@ -1607,6 +1607,10 @@ model Payment {
 
   @@unique([organizationId, paymentNumber])
   @@unique([organizationId, idempotencyKey])
+  @@unique([organizationId, method, transactionId], map: "payments_org_method_txn_key")
+  @@unique([organizationId, method, authorizationCode], map: "payments_org_method_auth_key")
+  @@unique([organizationId, mobileMoneyProvider, mobileMoneyReference], map: "payments_org_momo_ref_key")
+  @@unique([organizationId, method, bankReference], map: "payments_org_method_bank_ref_key")
   @@index([organizationId, createdAt]) // hot: daily reconciliation
   @@index([organizationId, method, status])
   @@index([salesOrderId])

@@ -26,6 +26,9 @@ const mockTx = {
   ledgerAuditEvent: {
     create: jest.fn(),
   },
+  auditLog: {
+    create: jest.fn(),
+  },
 }
 
 const mockDb = db as unknown as { $transaction: jest.Mock }
@@ -51,6 +54,7 @@ describe("period close preflight", () => {
     ])
     mockTx.accountingPeriod.update.mockResolvedValue({ ...openPeriod, status: "CLOSED" })
     mockTx.ledgerAuditEvent.create.mockResolvedValue({ id: "audit-1" })
+    mockTx.auditLog.create.mockResolvedValue({ id: "control-audit-1" })
   })
 
   it("rejects close when draft journal entries remain", async () => {
@@ -74,9 +78,22 @@ describe("period close preflight", () => {
   it("closes an open period when preflight is clean", async () => {
     mockTx.journalEntry.count.mockResolvedValueOnce(0).mockResolvedValueOnce(0)
 
-    const result = await closeAccountingPeriod("org-1", "period-1", "user-1")
+    const result = await closeAccountingPeriod("org-1", "period-1", "user-1", {
+      actorPermissions: ["accounting.period.close"],
+      lastAuthAt: Date.now(),
+    })
 
     expect(result).toMatchObject({ status: "CLOSED" })
+    expect(mockTx.auditLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          entityType: "AccountingPeriod",
+          entityId: "period-1",
+          action: "PERIOD_CLOSE_CONTROL",
+          userId: "user-1",
+        }),
+      }),
+    )
     expect(mockTx.accountingPeriod.update).toHaveBeenCalledWith(
       expect.objectContaining({
         where: { id: "period-1" },
@@ -86,5 +103,24 @@ describe("period close preflight", () => {
         }),
       }),
     )
+  })
+
+  it("audits and blocks period close without fresh control context", async () => {
+    mockTx.journalEntry.count.mockResolvedValueOnce(0).mockResolvedValueOnce(0)
+
+    await expect(closeAccountingPeriod("org-1", "period-1", "user-1")).rejects.toThrow(/not allowed/i)
+
+    expect(mockTx.auditLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          action: "PERIOD_CLOSE_CONTROL_DENIED",
+          changes: expect.objectContaining({
+            reasonCode: "MISSING_PERMISSION",
+            allowed: false,
+          }),
+        }),
+      }),
+    )
+    expect(mockTx.accountingPeriod.update).not.toHaveBeenCalled()
   })
 })

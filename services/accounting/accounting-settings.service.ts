@@ -8,6 +8,12 @@ import {
 
 import { db } from "@/prisma/db"
 import { BusinessRuleError } from "@/services/_shared/action-errors"
+import {
+  assertSensitiveActionAllowed,
+  auditSensitiveActionDecision,
+  evaluateSensitiveAction,
+  type SensitiveActionDecision,
+} from "@/services/controls/sensitive-action.service"
 
 export type AccountingSettingsUpdateInput = {
   countryPack?: string | null
@@ -19,6 +25,16 @@ export type AccountingSettingsUpdateInput = {
   roundingScale?: number
   taxRegime?: string | null
 }
+
+export type AccountingSetupControlContext = {
+  actorPermissions: readonly string[]
+  lastAuthAt?: Date | number | string | null
+  now?: Date | number | string | null
+}
+
+type ControlledResult<T> =
+  | { denied: SensitiveActionDecision; value?: never }
+  | { denied?: never; value: T }
 
 export const REQUIRED_ACCOUNTING_MAPPINGS = [
   {
@@ -36,6 +52,27 @@ export const REQUIRED_ACCOUNTING_MAPPINGS = [
     syscohadaClass: "5",
   },
   {
+    key: "CARD_CLEARING",
+    label: "card clearing",
+    type: ChartAccountType.ASSET,
+    normalBalance: ChartAccountNormalBalance.DEBIT,
+    syscohadaClass: "5",
+  },
+  {
+    key: "MOBILE_MONEY_CLEARING",
+    label: "mobile money clearing",
+    type: ChartAccountType.ASSET,
+    normalBalance: ChartAccountNormalBalance.DEBIT,
+    syscohadaClass: "5",
+  },
+  {
+    key: "CHEQUE_CLEARING",
+    label: "cheque clearing",
+    type: ChartAccountType.ASSET,
+    normalBalance: ChartAccountNormalBalance.DEBIT,
+    syscohadaClass: "5",
+  },
+  {
     key: "ACCOUNTS_RECEIVABLE",
     label: "customer receivables",
     type: ChartAccountType.ASSET,
@@ -45,6 +82,13 @@ export const REQUIRED_ACCOUNTING_MAPPINGS = [
   {
     key: "ACCOUNTS_PAYABLE",
     label: "supplier payables",
+    type: ChartAccountType.LIABILITY,
+    normalBalance: ChartAccountNormalBalance.CREDIT,
+    syscohadaClass: "4",
+  },
+  {
+    key: "STORE_CREDIT_LIABILITY",
+    label: "store credit liability",
     type: ChartAccountType.LIABILITY,
     normalBalance: ChartAccountNormalBalance.CREDIT,
     syscohadaClass: "4",
@@ -344,13 +388,35 @@ export async function collectAccountingSetupReadinessIssues(
   return issues
 }
 
-export async function markAccountingSetupReady(organizationId: string, actorId?: string | null) {
-  return db.$transaction(async (tx) => {
+export async function markAccountingSetupReady(
+  organizationId: string,
+  actorId?: string | null,
+  control?: AccountingSetupControlContext,
+) {
+  const result = await db.$transaction(async (tx) => {
     const readinessIssues = await collectAccountingSetupReadinessIssues(organizationId, tx)
 
     if (readinessIssues.length > 0) {
       throw new BusinessRuleError(`Accounting setup is not ready: ${formatIssueList(readinessIssues)}`)
     }
+
+    const controlDecision = evaluateSensitiveAction({
+      action: "accounting.setup.lock",
+      actorId,
+      organizationId,
+      actorPermissions: control?.actorPermissions ?? [],
+      lastAuthAt: control?.lastAuthAt,
+      now: control?.now,
+      resourceType: "AccountingSetup",
+      resourceId: organizationId,
+      metadata: {
+        requiredMappings: REQUIRED_ACCOUNTING_MAPPINGS.map((mapping) => mapping.key),
+        requiredJournalTypes: REQUIRED_DEFAULT_JOURNAL_TYPES,
+        requiredPostingPurposes: REQUIRED_READY_POSTING_PURPOSES,
+      },
+    })
+    await auditSensitiveActionDecision(tx, controlDecision)
+    if (!controlDecision.allowed) return { denied: controlDecision }
 
     const settings = await tx.organizationAccountingSettings.upsert({
       where: { organizationId },
@@ -381,6 +447,12 @@ export async function markAccountingSetupReady(organizationId: string, actorId?:
       },
     })
 
-    return settings
+    return { value: settings }
   })
+
+  if (result.denied) {
+    assertSensitiveActionAllowed(result.denied)
+  }
+
+  return result.value
 }

@@ -17,7 +17,7 @@ import {
   updatePOSCartLineAction,
 } from "@/actions/pos/cart.actions"
 import { getCustomersAction } from "@/actions/customers/customerActions"
-import { commitPOSSaleAction } from "@/actions/pos/tender.actions"
+import { commitPOSSaleAction, refundPOSSaleAction, voidPOSSaleAction } from "@/actions/pos/tender.actions"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 export const posOperationsKeys = {
@@ -148,6 +148,28 @@ export function useCommitPOSSale() {
 
   return useMutation({
     mutationFn: commitPOSSaleAction,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: posOperationsKeys.all })
+    },
+  })
+}
+
+export function useRefundPOSSale() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: refundPOSSaleAction,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: posOperationsKeys.all })
+    },
+  })
+}
+
+export function useVoidPOSSale() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: voidPOSSaleAction,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: posOperationsKeys.all })
     },

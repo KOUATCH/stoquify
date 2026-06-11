@@ -40,20 +40,6 @@ interface ModernTaxRateFormProps {
   organizationId: string
 }
 
-// Common tax rate suggestions
-const TAX_RATE_SUGGESTIONS = [
-  { name: "Standard VAT", rate: 20 },
-  { name: "Reduced VAT", rate: 5 },
-  { name: "Zero VAT", rate: 0 },
-  { name: "Sales Tax", rate: 8.5 },
-  { name: "GST", rate: 15 },
-  { name: "HST", rate: 13 },
-  { name: "PST", rate: 7 },
-  { name: "Service Tax", rate: 18 },
-  { name: "Luxury Tax", rate: 25 },
-  { name: "Import Duty", rate: 10 },
-]
-
 export function ModernTaxRateForm({
   action,
   isLoading = false,
@@ -61,7 +47,7 @@ export function ModernTaxRateForm({
   organizationId
 }: ModernTaxRateFormProps) {
   const router = useRouter()
-  const { success, error, warning, info, operationStart, operationComplete } = useNotifications()
+  const { info, operationStart, operationComplete } = useNotifications()
 
   // Welcome notification when component mounts
   useEffect(() => {
@@ -111,13 +97,6 @@ export function ModernTaxRateForm({
     } else {
       router.back()
     }
-  }
-
-  // Handle tax rate suggestion selection
-  const handleTaxRateSuggestion = (taxSuggestion: typeof TAX_RATE_SUGGESTIONS[0]) => {
-    form.setValue("taxRateName", taxSuggestion.name, { shouldValidate: true })
-    form.setValue("rate", taxSuggestion.rate, { shouldValidate: true })
-    success("Tax Rate Selected", `Applied ${taxSuggestion.name} (${taxSuggestion.rate}%) to the form`)
   }
 
   // Calculate completion percentage
@@ -243,29 +222,6 @@ export function ModernTaxRateForm({
                             </FormItem>
                           )}
                         />
-                      </div>
-
-                      {/* Tax Rate Suggestions */}
-                      <div className="space-y-4">
-                        <h4 className="text-lg font-semibold text-slate-900 dark:text-white">Common Tax Rates</h4>
-                        <p className="text-sm text-slate-600 dark:text-slate-400">
-                          Click on any tax rate below to automatically fill the form:
-                        </p>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-                          {TAX_RATE_SUGGESTIONS.map((tax, index) => (
-                            <Button
-                              key={index}
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleTaxRateSuggestion(tax)}
-                              className="flex flex-col h-auto p-3 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-2 border-slate-200 dark:border-slate-700 hover:border-orange-300 dark:hover:border-orange-400 rounded-xl"
-                            >
-                              <span className="font-medium text-slate-900 dark:text-white text-xs">{tax.name}</span>
-                              <span className="text-sm text-orange-600 dark:text-orange-400 font-bold">{tax.rate}%</span>
-                            </Button>
-                          ))}
-                        </div>
                       </div>
 
                       {(taxRateName && rate >= 0) && (

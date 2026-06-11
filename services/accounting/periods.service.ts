@@ -2,7 +2,23 @@ import { JournalEntryStatus, LedgerPostingBatchStatus, Prisma } from "@prisma/cl
 
 import { db } from "@/prisma/db"
 import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
+import {
+  assertSensitiveActionAllowed,
+  auditSensitiveActionDecision,
+  evaluateSensitiveAction,
+  type SensitiveActionDecision,
+} from "@/services/controls/sensitive-action.service"
 import { assertOpenPeriod } from "./invariants"
+
+export type AccountingPeriodControlContext = {
+  actorPermissions: readonly string[]
+  lastAuthAt?: Date | number | string | null
+  now?: Date | number | string | null
+}
+
+type ControlledResult<T> =
+  | { denied: SensitiveActionDecision; value?: never }
+  | { denied?: never; value: T }
 
 export type FiscalYearCreateInput = {
   name: string
@@ -254,14 +270,34 @@ export async function closeAccountingPeriod(
   organizationId: string,
   periodId: string,
   actorId?: string | null,
+  control?: AccountingPeriodControlContext,
 ) {
-  return db.$transaction(async (tx) => {
+  const result = await db.$transaction(async (tx) => {
     const preflight = await getPeriodClosePreflight(organizationId, periodId, tx)
     const failures = getPeriodClosePreflightFailures(preflight)
 
     if (failures.length > 0) {
       throw new BusinessRuleError(`Accounting period cannot be closed: ${failures.join("; ")}`)
     }
+
+    const controlDecision = evaluateSensitiveAction({
+      action: "accounting.period.close",
+      actorId,
+      organizationId,
+      actorPermissions: control?.actorPermissions ?? [],
+      lastAuthAt: control?.lastAuthAt,
+      now: control?.now,
+      resourceType: "AccountingPeriod",
+      resourceId: periodId,
+      metadata: {
+        periodId,
+        draftEntryCount: preflight.draftEntryCount,
+        unresolvedPostingBatchCount: preflight.unresolvedPostingBatchCount,
+        unlinkedPostedEntryCount: preflight.unlinkedPostedEntryCount,
+      },
+    })
+    await auditSensitiveActionDecision(tx, controlDecision)
+    if (!controlDecision.allowed) return { denied: controlDecision }
 
     const closed = await tx.accountingPeriod.update({
       where: { id: periodId },
@@ -285,6 +321,12 @@ export async function closeAccountingPeriod(
       },
     })
 
-    return closed
+    return { value: closed }
   })
+
+  if (result.denied) {
+    assertSensitiveActionAllowed(result.denied)
+  }
+
+  return result.value
 }
