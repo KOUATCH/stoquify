@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache"
 import { getSession } from "@/lib/auth-server"
 import { db } from "@/prisma/db"
 import { Prisma } from "@prisma/client"
+import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses"
+import { AuthRequiredError, BusinessRuleError, ForbiddenError, NotFoundError } from "@/services/_shared/action-errors"
 import {
   createTaxRateForManagement,
   getTaxRateManagementDataForOrg,
@@ -98,13 +100,13 @@ async function assertOrganizationAccess(organizationId: string) {
   const requestedOrganizationId = cleanText(organizationId)
 
   if (!requestedOrganizationId) {
-    throw new Error("Organization is required")
+    throw new BusinessRuleError("Organization is required")
   }
 
   const session = await getSession()
 
   if (!session?.user?.id) {
-    throw new Error("Unauthorized")
+    throw new AuthRequiredError("Unauthorized")
   }
 
   const user = await db.user.findFirst({
@@ -123,7 +125,7 @@ async function assertOrganizationAccess(organizationId: string) {
   })
 
   if (!user) {
-    throw new Error("Unauthorized")
+    throw new AuthRequiredError("Unauthorized")
   }
 
   const permissions = new Set([
@@ -132,7 +134,7 @@ async function assertOrganizationAccess(organizationId: string) {
   ])
 
   if (user.organizationId !== requestedOrganizationId && !permissions.has("*")) {
-    throw new Error("You do not have access to this organization")
+    throw new ForbiddenError("You do not have access to this organization")
   }
 
   const organization = await db.organization.findFirst({
@@ -145,7 +147,7 @@ async function assertOrganizationAccess(organizationId: string) {
   })
 
   if (!organization) {
-    throw new Error("Organization not found or inactive")
+    throw new NotFoundError("Organization not found or inactive")
   }
 
   return organization.id
@@ -171,10 +173,14 @@ export async function getTaxRateManagementData(
       data,
     }
   } catch (error) {
-    console.error("Error fetching tax rate management data:", error)
     return {
       success: false,
-      error: getActionErrorMessage(error, "Failed to fetch tax rate management data"),
+      error: safeLoggedActionErrorMessage(
+        "Error fetching tax rate management data",
+        error,
+        { action: "getTaxRateManagementData" },
+        getActionErrorMessage(error, "Failed to fetch tax rate management data"),
+      ),
     }
   }
 }
@@ -196,10 +202,14 @@ export async function createManagedTaxRate(
 
     return { success: true, data: row }
   } catch (error) {
-    console.error("Error creating managed tax rate:", error)
     return {
       success: false,
-      error: getActionErrorMessage(error, "Failed to create tax rate"),
+      error: safeLoggedActionErrorMessage(
+        "Error creating managed tax rate",
+        error,
+        { action: "createManagedTaxRate" },
+        getActionErrorMessage(error, "Failed to create tax rate"),
+      ),
     }
   }
 }
@@ -228,10 +238,14 @@ export async function updateManagedTaxRate(
 
     return { success: true, data: row }
   } catch (error) {
-    console.error("Error updating managed tax rate:", error)
     return {
       success: false,
-      error: getActionErrorMessage(error, "Failed to update tax rate"),
+      error: safeLoggedActionErrorMessage(
+        "Error updating managed tax rate",
+        error,
+        { action: "updateManagedTaxRate" },
+        getActionErrorMessage(error, "Failed to update tax rate"),
+      ),
     }
   }
 }
@@ -253,10 +267,14 @@ export async function deleteManagedTaxRate(
 
     return { success: true, data }
   } catch (error) {
-    console.error("Error deleting managed tax rate:", error)
     return {
       success: false,
-      error: getActionErrorMessage(error, "Failed to remove tax rate"),
+      error: safeLoggedActionErrorMessage(
+        "Error deleting managed tax rate",
+        error,
+        { action: "deleteManagedTaxRate" },
+        getActionErrorMessage(error, "Failed to remove tax rate"),
+      ),
     }
   }
 }

@@ -1,4 +1,9 @@
-import { CAMEROON_COUNTRY_CODE, CAMEROON_PAYMENT_PROVIDER_CODES } from "./cameroon.constants"
+import {
+  CAMEROON_COUNTRY_CODE,
+  CAMEROON_DGI_E_SERVICES_CHANNEL,
+  CAMEROON_DGI_SANDBOX_ADAPTER_CODE,
+  CAMEROON_PAYMENT_PROVIDER_CODES,
+} from "./cameroon.constants"
 import { sealCountryPack } from "./hash"
 import type { CountryPack } from "./schemas"
 
@@ -31,6 +36,7 @@ const cameroonCountryPackUnsealed: CountryPack = {
       labels: "SUPPORTED",
       holidays: "PARTIALLY_SUPPORTED",
       "payments.mobileMoney": "PARTIALLY_SUPPORTED",
+      "compliance.eInvoicing": "REQUIRES_EXPERT_REVIEW",
     },
     legalRefs: [
       {
@@ -67,6 +73,16 @@ const cameroonCountryPackUnsealed: CountryPack = {
         retrievedOn: VERIFIED_ON,
       },
       {
+        id: "CM_DGI_EINVOICING_REVIEW_REQUIRED",
+        title: "Cameroon e-invoicing and fiscal certification metadata requiring official technical and legal review",
+        jurisdiction: "CM",
+        issuedBy: "Direction Generale des Impots du Cameroun",
+        sourceUrl: "https://www.impots.cm/",
+        retrievedOn: VERIFIED_ON,
+        notes:
+          "Placeholder reference for roadmap metadata only. Exact e-invoicing mandate, API, portal workflow, certification timing, and artifact requirements require official DGI specifications and qualified expert review before production automation.",
+      },
+      {
         id: "CM_CNPS_CONTRIBUTION_DECREE_2016",
         title: "Decret fixant les taux de cotisations sociales et les plafonds des remunerations",
         jurisdiction: "CM",
@@ -101,10 +117,22 @@ const cameroonCountryPackUnsealed: CountryPack = {
       business: [
         {
           value: {
-            taxpayerId: { en: "Unique Taxpayer Identification Number", fr: "Numero d'Identifiant Unique" },
-            tradeRegister: { en: "Trade and Personal Property Credit Register", fr: "Registre du Commerce" },
-            annualTaxReturn: { en: "Annual Statistical and Tax Return", fr: "Declaration Statistique et Fiscale" },
-            payrollReturn: { en: "Employer payroll and social declaration", fr: "Declaration employeur et sociale" },
+            taxpayerId: {
+              en: "Unique Taxpayer Identification Number",
+              fr: "Numero d'Identifiant Unique",
+            },
+            tradeRegister: {
+              en: "Trade and Personal Property Credit Register",
+              fr: "Registre du Commerce",
+            },
+            annualTaxReturn: {
+              en: "Annual Statistical and Tax Return",
+              fr: "Declaration Statistique et Fiscale",
+            },
+            payrollReturn: {
+              en: "Employer payroll and social declaration",
+              fr: "Declaration employeur et sociale",
+            },
           },
           legalRef: "CM_DGI_IMMATRICULATION",
           effectiveFrom: "2026-01-01",
@@ -138,7 +166,8 @@ const cameroonCountryPackUnsealed: CountryPack = {
           value: {
             requiredForProfessionalTaxpayer: true,
             validationMode: "DOCUMENT_REQUIRED",
-            formatHint: "Capture as issued on the RCCM document; exact registry pattern is jurisdiction and office dependent.",
+            formatHint:
+              "Capture as issued on the RCCM document; exact registry pattern is jurisdiction and office dependent.",
           },
           legalRef: "CM_DGI_IMMATRICULATION",
           effectiveFrom: "2026-01-01",
@@ -355,8 +384,7 @@ const cameroonCountryPackUnsealed: CountryPack = {
           verifiedOn: VERIFIED_ON,
           verifiedBy: VERIFIED_BY,
           verificationStatus: "SOURCE_CHECKED",
-          notes:
-            "Use only for non-statutory scheduling hints until an official annual calendar source is attached.",
+          notes: "Use only for non-statutory scheduling hints until an official annual calendar source is attached.",
         },
       ],
       movableRules: [
@@ -393,6 +421,202 @@ const cameroonCountryPackUnsealed: CountryPack = {
             verificationStatus: "SOURCE_CHECKED",
             notes:
               "This pack controls platform acceptance. Individual provider license, merchant contract, and settlement evidence must be attached per tenant before automated reconciliation sign-off.",
+          },
+        ],
+      },
+    },
+    compliance: {
+      eInvoicing: {
+        capability: [
+          {
+            value: {
+              status: "REQUIRES_EXPERT_REVIEW",
+              productionAutomationAllowed: false,
+              automationBlockReason:
+                "Cameroon e-invoicing/fiscal certification details require official DGI technical specifications and qualified legal/accounting review before any production adapter or certification workflow is enabled.",
+              supportedDocumentTypes: ["POS_RECEIPT", "SALES_INVOICE", "CREDIT_NOTE"],
+              requiresPostedLedgerSource: true,
+              requiresOfficialTechnicalSpec: true,
+              requiredExpertReviewBeforeAdapter: true,
+            },
+            legalRef: "CM_DGI_EINVOICING_REVIEW_REQUIRED",
+            effectiveFrom: "2026-01-01",
+            effectiveTo: null,
+            verifiedOn: VERIFIED_ON,
+            verifiedBy: VERIFIED_BY,
+            verificationStatus: "REQUIRES_EXPERT_REVIEW",
+            notes:
+              "Capability metadata is intentionally non-certified. It exists so the Compliance Center can block production automation while preserving the Cameroon-first roadmap shape.",
+          },
+        ],
+        requiredFields: [
+          {
+            value: {
+              documentTypes: ["POS_RECEIPT", "SALES_INVOICE", "CREDIT_NOTE"],
+              fields: [
+                {
+                  scope: "SELLER",
+                  field: "taxpayerIdentifier",
+                  required: true,
+                  notes: "NIU expected; exact statutory mention requires expert review.",
+                },
+                { scope: "SELLER", field: "legalName", required: true },
+                { scope: "SELLER", field: "registeredAddress", required: true },
+                {
+                  scope: "BUYER",
+                  field: "taxpayerIdentifier",
+                  required: true,
+                  when: "Buyer is a professional taxpayer or the final DGI rules require buyer identification.",
+                  notes: "Consumer/B2B threshold rules require official confirmation.",
+                },
+                { scope: "DOCUMENT", field: "documentType", required: true },
+                { scope: "DOCUMENT", field: "issueDate", required: true },
+                { scope: "DOCUMENT", field: "currencyCode", required: true },
+                { scope: "LINE", field: "description", required: true },
+                { scope: "LINE", field: "quantity", required: true },
+                { scope: "LINE", field: "unitPriceMinorUnits", required: true },
+                { scope: "TAX", field: "vatBreakdown", required: true },
+                { scope: "PAYMENT", field: "settlementMethod", required: true },
+                {
+                  scope: "SOURCE_TRACE",
+                  field: "postedLedgerSourceLink",
+                  required: true,
+                },
+              ],
+              missingFieldPolicy: "REQUIRES_EXPERT_REVIEW",
+            },
+            legalRef: "CM_DGI_EINVOICING_REVIEW_REQUIRED",
+            effectiveFrom: "2026-01-01",
+            effectiveTo: null,
+            verifiedOn: VERIFIED_ON,
+            verifiedBy: VERIFIED_BY,
+            verificationStatus: "REQUIRES_EXPERT_REVIEW",
+            notes:
+              "Minimum canonical field map for future adapter design. Exact mandatory mentions, buyer rules, and taxable/tax-exempt line requirements require official validation.",
+          },
+        ],
+        certificationPolicy: [
+          {
+            value: {
+              certificationTiming: "REQUIRES_EXPERT_REVIEW",
+              legalDeliveryWhenUncertified: "BLOCK",
+              offlineFinalNumberPolicy: "SERVER_ASSIGNED_ONLY",
+              requiresLedgerSourceTrace: true,
+              authorityCallInsideSaleTransactionAllowed: false,
+            },
+            legalRef: "CM_DGI_EINVOICING_REVIEW_REQUIRED",
+            effectiveFrom: "2026-01-01",
+            effectiveTo: null,
+            verifiedOn: VERIFIED_ON,
+            verifiedBy: VERIFIED_BY,
+            verificationStatus: "REQUIRES_EXPERT_REVIEW",
+            notes:
+              "Conservative default for the roadmap: no statutory delivery should be enabled until certification timing is confirmed by official sources.",
+          },
+        ],
+        authorityChannels: [
+          {
+            value: [
+              {
+                code: CAMEROON_DGI_E_SERVICES_CHANNEL,
+                authorityName: "Direction Generale des Impots du Cameroun",
+                channelType: "PORTAL",
+                adapterReadiness: "REQUIRES_EXPERT_REVIEW",
+                adapterKey: CAMEROON_DGI_SANDBOX_ADAPTER_CODE,
+                sandboxOnly: true,
+                supportedDocumentTypes: ["POS_RECEIPT", "SALES_INVOICE", "CREDIT_NOTE"],
+                requiresTenantCredentials: true,
+                credentialStoragePolicy: "VAULT_ONLY",
+                endpointMetadata: {
+                  officialSpecStatus: "REQUIRES_EXPERT_REVIEW",
+                  documentationUrl: "https://www.impots.cm/",
+                  secretsAllowedInPack: false,
+                  notes:
+                    "Country packs may describe public channel metadata only. Tenant credentials and any future endpoint secrets must live in the adapter configuration vault, never in the pack.",
+                },
+              },
+            ],
+            legalRef: "CM_DGI_EINVOICING_REVIEW_REQUIRED",
+            effectiveFrom: "2026-01-01",
+            effectiveTo: null,
+            verifiedOn: VERIFIED_ON,
+            verifiedBy: VERIFIED_BY,
+            verificationStatus: "REQUIRES_EXPERT_REVIEW",
+          },
+        ],
+        manualPortalFallback: [
+          {
+            value: {
+              availability: "REQUIRES_EXPERT_REVIEW",
+              allowedWhen: [
+                "OFFICIAL_API_NOT_AVAILABLE",
+                "AUTHORITY_PORTAL_REQUIRED",
+                "AUTHORITY_OUTAGE_WITH_APPROVAL",
+              ],
+              requiresFreshAuth: true,
+              requiresApproval: true,
+              evidenceRequired: [
+                "portalSubmissionReference",
+                "submittedPayloadHash",
+                "submittedAt",
+                "submittedBy",
+                "approvalActorId",
+                "portalReceiptOrScreenshotHash",
+                "fallbackReasonCode",
+              ],
+              immutableEvidenceHashRequired: true,
+            },
+            legalRef: "CM_DGI_EINVOICING_REVIEW_REQUIRED",
+            effectiveFrom: "2026-01-01",
+            effectiveTo: null,
+            verifiedOn: VERIFIED_ON,
+            verifiedBy: VERIFIED_BY,
+            verificationStatus: "REQUIRES_EXPERT_REVIEW",
+            notes:
+              "Fallback is a controlled evidence workflow placeholder, not permission to bypass certification. Exact portal fallback legality requires expert review.",
+          },
+        ],
+        artifactExpectations: [
+          {
+            value: {
+              hashRequired: true,
+              immutableStorageRequired: true,
+              expectedArtifacts: [
+                {
+                  code: "AUTHORITY_REFERENCE",
+                  source: "AUTHORITY",
+                  required: false,
+                  verificationStatus: "REQUIRES_EXPERT_REVIEW",
+                  notes: "Exact final reference format requires official DGI specification.",
+                },
+                {
+                  code: "QR_CODE_PAYLOAD",
+                  source: "AUTHORITY",
+                  required: false,
+                  verificationStatus: "REQUIRES_EXPERT_REVIEW",
+                  notes: "Do not render QR codes as statutory evidence until confirmed by official specification.",
+                },
+                {
+                  code: "SUBMITTED_PAYLOAD_HASH",
+                  source: "PLATFORM",
+                  required: true,
+                  verificationStatus: "SOURCE_CHECKED",
+                },
+                {
+                  code: "MANUAL_PORTAL_PROOF",
+                  source: "MANUAL_PORTAL",
+                  required: true,
+                  verificationStatus: "REQUIRES_EXPERT_REVIEW",
+                },
+              ],
+              receiptDisplayFields: ["certificationStatus", "authorityReference", "qrCodePayload"],
+            },
+            legalRef: "CM_DGI_EINVOICING_REVIEW_REQUIRED",
+            effectiveFrom: "2026-01-01",
+            effectiveTo: null,
+            verifiedOn: VERIFIED_ON,
+            verifiedBy: VERIFIED_BY,
+            verificationStatus: "REQUIRES_EXPERT_REVIEW",
           },
         ],
       },
@@ -454,6 +678,41 @@ const cameroonCountryPackUnsealed: CountryPack = {
         formatHint: "Assigned by DGI online immatriculation; do not infer validity from length alone.",
       },
       expectedLegalRef: "CM_DGI_IMMATRICULATION",
+      expectedPackVersion: "CM-2026.1",
+    },
+    {
+      id: "cm-einvoicing-capability-review-required-2026",
+      countryCode: CAMEROON_COUNTRY_CODE,
+      parameterPath: "compliance.eInvoicing.capability",
+      date: "2026-06-11",
+      purpose: "COMPLIANCE_CENTER_READINESS",
+      expectedValue: {
+        status: "REQUIRES_EXPERT_REVIEW",
+        productionAutomationAllowed: false,
+        automationBlockReason:
+          "Cameroon e-invoicing/fiscal certification details require official DGI technical specifications and qualified legal/accounting review before any production adapter or certification workflow is enabled.",
+        supportedDocumentTypes: ["POS_RECEIPT", "SALES_INVOICE", "CREDIT_NOTE"],
+        requiresPostedLedgerSource: true,
+        requiresOfficialTechnicalSpec: true,
+        requiredExpertReviewBeforeAdapter: true,
+      },
+      expectedLegalRef: "CM_DGI_EINVOICING_REVIEW_REQUIRED",
+      expectedPackVersion: "CM-2026.1",
+    },
+    {
+      id: "cm-einvoicing-certification-policy-2026",
+      countryCode: CAMEROON_COUNTRY_CODE,
+      parameterPath: "compliance.eInvoicing.certificationPolicy",
+      date: "2026-06-11",
+      purpose: "COMPLIANCE_CENTER_CERTIFICATION_GATE",
+      expectedValue: {
+        certificationTiming: "REQUIRES_EXPERT_REVIEW",
+        legalDeliveryWhenUncertified: "BLOCK",
+        offlineFinalNumberPolicy: "SERVER_ASSIGNED_ONLY",
+        requiresLedgerSourceTrace: true,
+        authorityCallInsideSaleTransactionAllowed: false,
+      },
+      expectedLegalRef: "CM_DGI_EINVOICING_REVIEW_REQUIRED",
       expectedPackVersion: "CM-2026.1",
     },
   ],

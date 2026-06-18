@@ -4,6 +4,9 @@ const modules = [
   ["inventory", ["a", "b", "c"], [88, 62, 74]],
   ["purchasing", ["a", "b", "c"], [52, 78, 43]],
   ["finance", ["a", "b", "c"], [91, 68, 24]],
+  ["accounting", ["a", "b", "c"], [84, 71, 57]],
+  ["compliance", ["a", "b", "c"], [63, 92, 48]],
+  ["payroll", ["a", "b", "c"], [76, 58, 81]],
 ]
 
 export function ModuleDeepDives() {

@@ -1,22 +1,16 @@
 "use server";
-import { db } from "@/prisma/db";
+import { requirePermission } from "@/lib/security/rbac";
+import { getBriefItemById as getBriefItemByIdFromService } from "@/services/item/item.service";
 
 
  const getBriefItemById= async(id: string)=> {
   try {
-    const item = await db.item.findUnique({
-      where: {
-        id,
-      },
-      select:{
-        nameEn:true,
-        nameFr:true,
-        sku:true,
-        updatedAt:true,
-        id:true,
-      }
+    const ctx = await requirePermission("inventory.items.read", {
+      resource: "Item",
+      resourceId: id,
+      auditAllowed: false,
     });
-    const data = item ? { ...item, name: item.nameEn } : null;
+    const data = await getBriefItemByIdFromService(ctx.orgId, id);
     return { 
       success: true,
       data,

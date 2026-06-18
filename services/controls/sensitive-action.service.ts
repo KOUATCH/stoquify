@@ -10,9 +10,23 @@ export type SensitiveActionId =
   | "pos.sale.commit"
   | "pos.refund.process"
   | "pos.void.process"
+  | "payment.provider-account.manage"
+  | "payment.reconciliation.import"
   | "payment.reconciliation.run"
+  | "payment.reconciliation.match"
+  | "payment.reconciliation.override"
+  | "payment.reconciliation.exception.assign"
+  | "payment.reconciliation.exception.resolve"
+  | "payment.reconciliation.suspense.propose"
+  | "payment.reconciliation.suspense.post"
   | "payment.reconciliation.sign"
+  | "payment.reconciliation.certificate.export"
   | "payment.export"
+  | "supplier.bank-change.approve"
+  | "supplier.payment.approve"
+  | "supplier.payment.release"
+  | "payroll.run.approve"
+  | "payroll.payment.release"
   | "accounting.export"
   | "accounting.journal.post"
   | "accounting.journal.reverse"
@@ -61,6 +75,24 @@ export const SENSITIVE_ACTION_POLICIES: Record<SensitiveActionId, SensitiveActio
     auditAction: "POS_VOID_CONTROL",
     detectorSignals: ["void_frequency", "void_own_sale", "void_after_hours"],
   },
+  "payment.provider-account.manage": {
+    action: "payment.provider-account.manage",
+    permission: "payments.provider-account.manage",
+    riskTier: "critical",
+    requiredAssurance: "L1",
+    freshAuthMaxAgeSeconds: 300,
+    blockSelfApproval: true,
+    auditAction: "PAYMENT_PROVIDER_ACCOUNT_MANAGE_CONTROL",
+    detectorSignals: ["settlement_account_changed", "suspense_account_changed", "provider_mapping_changed"],
+  },
+  "payment.reconciliation.import": {
+    action: "payment.reconciliation.import",
+    permission: "payments.reconciliation.import",
+    riskTier: "high",
+    requiredAssurance: "L0",
+    auditAction: "PAYMENT_RECONCILIATION_IMPORT_CONTROL",
+    detectorSignals: ["duplicate_statement_file", "provider_signature_invalid", "replayed_provider_event"],
+  },
   "payment.reconciliation.run": {
     action: "payment.reconciliation.run",
     permission: "payments.reconciliation.run",
@@ -68,6 +100,58 @@ export const SENSITIVE_ACTION_POLICIES: Record<SensitiveActionId, SensitiveActio
     requiredAssurance: "L0",
     auditAction: "PAYMENT_RECONCILIATION_RUN_CONTROL",
     detectorSignals: ["unmatched_provider_line", "settlement_drift"],
+  },
+  "payment.reconciliation.match": {
+    action: "payment.reconciliation.match",
+    permission: "payments.reconciliation.match",
+    riskTier: "high",
+    requiredAssurance: "L0",
+    auditAction: "PAYMENT_RECONCILIATION_MATCH_CONTROL",
+    detectorSignals: ["low_confidence_match", "manual_match_cluster", "amount_match_tolerance_used"],
+  },
+  "payment.reconciliation.override": {
+    action: "payment.reconciliation.override",
+    permission: "payments.reconciliation.override",
+    riskTier: "critical",
+    requiredAssurance: "L1",
+    freshAuthMaxAgeSeconds: 300,
+    blockSelfApproval: true,
+    auditAction: "PAYMENT_RECONCILIATION_OVERRIDE_CONTROL",
+    detectorSignals: ["manual_override", "override_after_signoff", "critical_exception_override"],
+  },
+  "payment.reconciliation.exception.assign": {
+    action: "payment.reconciliation.exception.assign",
+    permission: "payments.reconciliation.exception.assign",
+    riskTier: "high",
+    requiredAssurance: "L0",
+    auditAction: "PAYMENT_RECONCILIATION_EXCEPTION_ASSIGN_CONTROL",
+    detectorSignals: ["critical_exception_reassigned", "exception_sla_at_risk"],
+  },
+  "payment.reconciliation.exception.resolve": {
+    action: "payment.reconciliation.exception.resolve",
+    permission: "payments.reconciliation.exception.resolve",
+    riskTier: "high",
+    requiredAssurance: "L0",
+    auditAction: "PAYMENT_RECONCILIATION_EXCEPTION_RESOLVE_CONTROL",
+    detectorSignals: ["critical_exception_resolved", "resolution_without_evidence", "reopened_exception"],
+  },
+  "payment.reconciliation.suspense.propose": {
+    action: "payment.reconciliation.suspense.propose",
+    permission: "payments.reconciliation.suspense.propose",
+    riskTier: "high",
+    requiredAssurance: "L0",
+    auditAction: "PAYMENT_RECONCILIATION_SUSPENSE_PROPOSE_CONTROL",
+    detectorSignals: ["suspense_candidate_created", "aged_unmatched_amount", "suspense_threshold_exceeded"],
+  },
+  "payment.reconciliation.suspense.post": {
+    action: "payment.reconciliation.suspense.post",
+    permission: "payments.reconciliation.suspense.post",
+    riskTier: "critical",
+    requiredAssurance: "L1",
+    freshAuthMaxAgeSeconds: 300,
+    blockSelfApproval: true,
+    auditAction: "PAYMENT_RECONCILIATION_SUSPENSE_POST_CONTROL",
+    detectorSignals: ["suspense_posting", "period_close_with_suspense", "high_value_suspense"],
   },
   "payment.reconciliation.sign": {
     action: "payment.reconciliation.sign",
@@ -79,6 +163,16 @@ export const SENSITIVE_ACTION_POLICIES: Record<SensitiveActionId, SensitiveActio
     auditAction: "PAYMENT_RECONCILIATION_SIGN_CONTROL",
     detectorSignals: ["self_signoff_attempt", "critical_exception_open"],
   },
+  "payment.reconciliation.certificate.export": {
+    action: "payment.reconciliation.certificate.export",
+    permission: "payments.reconciliation.certificate.export",
+    riskTier: "critical",
+    requiredAssurance: "L1",
+    freshAuthMaxAgeSeconds: 300,
+    exportControl: true,
+    auditAction: "PAYMENT_RECONCILIATION_CERTIFICATE_EXPORT_CONTROL",
+    detectorSignals: ["certificate_export", "mass_reconciliation_export", "after_hours_export"],
+  },
   "payment.export": {
     action: "payment.export",
     permission: "payments.export",
@@ -88,6 +182,56 @@ export const SENSITIVE_ACTION_POLICIES: Record<SensitiveActionId, SensitiveActio
     exportControl: true,
     auditAction: "PAYMENT_EXPORT_CONTROL",
     detectorSignals: ["mass_export", "after_hours_export", "repeated_failed_export"],
+  },
+  "supplier.bank-change.approve": {
+    action: "supplier.bank-change.approve",
+    permission: "purchasing.supplier.bank.approve",
+    riskTier: "critical",
+    requiredAssurance: "L1",
+    freshAuthMaxAgeSeconds: 300,
+    blockSelfApproval: true,
+    auditAction: "SUPPLIER_BANK_CHANGE_APPROVE_CONTROL",
+    detectorSignals: ["supplier_bank_change_approval", "self_approval_attempt", "payment_after_bank_change"],
+  },
+  "supplier.payment.approve": {
+    action: "supplier.payment.approve",
+    permission: "purchasing.ap.payment.approve",
+    riskTier: "critical",
+    requiredAssurance: "L1",
+    freshAuthMaxAgeSeconds: 300,
+    blockSelfApproval: true,
+    auditAction: "SUPPLIER_PAYMENT_APPROVE_CONTROL",
+    detectorSignals: ["supplier_payment_approval", "self_approval_attempt", "payment_threshold_review"],
+  },
+  "supplier.payment.release": {
+    action: "supplier.payment.release",
+    permission: "purchasing.ap.payment.release",
+    riskTier: "critical",
+    requiredAssurance: "L1",
+    freshAuthMaxAgeSeconds: 300,
+    blockSelfApproval: true,
+    auditAction: "SUPPLIER_PAYMENT_RELEASE_CONTROL",
+    detectorSignals: ["supplier_payment_release", "payment_after_bank_change", "after_hours_disbursement"],
+  },
+  "payroll.run.approve": {
+    action: "payroll.run.approve",
+    permission: "payroll.runs.approve",
+    riskTier: "critical",
+    requiredAssurance: "L1",
+    freshAuthMaxAgeSeconds: 300,
+    blockSelfApproval: true,
+    auditAction: "PAYROLL_RUN_APPROVE_CONTROL",
+    detectorSignals: ["payroll_run_approval", "self_approval_attempt", "ghost_employee_risk"],
+  },
+  "payroll.payment.release": {
+    action: "payroll.payment.release",
+    permission: "payroll.payments.release",
+    riskTier: "critical",
+    requiredAssurance: "L1",
+    freshAuthMaxAgeSeconds: 300,
+    blockSelfApproval: true,
+    auditAction: "PAYROLL_PAYMENT_RELEASE_CONTROL",
+    detectorSignals: ["payroll_payment_release", "bank_file_divergence", "after_hours_disbursement"],
   },
   "accounting.export": {
     action: "accounting.export",

@@ -6,6 +6,12 @@ const modules = [
   ["inventory", "/dashboard/inventory", "bg-[var(--signal-warn)]"],
   ["purchasing", "/dashboard/purchase-orders", "bg-[var(--accent)]"],
   ["finance", "/dashboard/finance", "bg-[var(--signal-info)]"],
+  ["accounting", "/dashboard/accounting", "bg-[var(--editorial)]"],
+  ["compliance", "/dashboard/compliance", "bg-[var(--signal-down)]"],
+  ["reconciliation", "/dashboard/finance/reconciliation", "bg-[var(--signal-info)]"],
+  ["payroll", "/dashboard/payroll", "bg-[var(--copper)]"],
+  ["customers", "/dashboard/customers", "bg-[var(--signal-up)]"],
+  ["suppliers", "/dashboard/purchases/suppliers", "bg-[var(--signal-warn)]"],
   ["users", "/dashboard/settings/users", "bg-[var(--editorial)]"],
   ["roles", "/dashboard/settings/roles", "bg-[var(--copper)]"],
 ]

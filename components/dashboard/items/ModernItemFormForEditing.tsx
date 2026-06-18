@@ -754,7 +754,7 @@ export default function ModernItemFormForEditing({
                     <Button
                       type="submit"
                       disabled={isSubmittingBasic}
-                      className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
+                      className="h-12 w-full shadow-lg"
                     >
                       {isSubmittingBasic ? (
                         <>
@@ -800,23 +800,23 @@ export default function ModernItemFormForEditing({
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     className={`p-3 rounded-xl border-2 transition-all duration-200 text-left ${isActive
-                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                      ? 'border-[#f0c54d] bg-[#f0c54d]/15 dark:bg-[#bf7145]/20'
                       : 'border-slate-200 bg-white dark:bg-slate-800 hover:border-slate-300 dark:border-slate-700'
                       }`}
                   >
                     <div className="flex items-center gap-2 mb-1">
                       <div className={`p-1 rounded-lg ${isActive
-                        ? 'bg-blue-500 text-white'
+                        ? 'bg-gradient-to-r from-[#bf7145] to-[#f0c54d] text-[#1b110b]'
                         : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-400'
                         }`}>
                         <tab.icon className="h-3 w-3" />
                       </div>
-                      <span className={`text-xs font-medium ${isActive ? 'text-blue-700 dark:text-blue-300' : 'text-slate-700 dark:text-slate-300'
+                      <span className={`text-xs font-medium ${isActive ? 'text-[#8b4a2f] dark:text-[#f6d574]' : 'text-slate-700 dark:text-slate-300'
                         }`}>
                         {tab.title}
                       </span>
                     </div>
-                    <p className={`text-xs ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'
+                    <p className={`text-xs ${isActive ? 'text-[#8b4a2f] dark:text-[#f0c54d]' : 'text-slate-500 dark:text-slate-400'
                       }`}>
                       {tab.description}
                     </p>

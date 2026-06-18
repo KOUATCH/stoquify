@@ -42,6 +42,7 @@ import { Progress } from "@/components/ui/progress"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { useNotifications } from "@/components/notifications/NotificationProvider"
+import { OfflineSyncStatusStrip } from "@/components/pos/offline/OfflineSyncStatusStrip"
 import { cn } from "@/lib/utils"
 import {
   useActivePOSCart,
@@ -73,6 +74,29 @@ type CommitSaleResult = {
   amountPaid: number
   onAccountAmount: number
   changeDue: number
+  accountingMovements?: {
+    saleJournalEntry: {
+      id: string
+      entryNumber: string
+      postingBatchId?: string | null
+    }
+    paymentJournalEntries: Array<{
+      id: string
+      entryNumber: string
+    }>
+    entries: Array<{
+      account: string
+      debit: number
+      credit: number
+    }>
+    totalDebits: number
+    totalCredits: number
+  }
+  fiscalDocument?: {
+    id: string
+    status: string
+    authorityChannel: string | null
+  } | null
   receipt?: { digitalReceiptUrl?: string | null } & Record<string, unknown>
   delivery: {
     channel: ReceiptChannel
@@ -294,9 +318,12 @@ const posProductCardClass =
   "group relative overflow-hidden rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(29,45,53,0.72)] p-3 text-[var(--dash-text)] shadow-[0_18px_48px_rgba(5,12,16,0.20)] transition hover:-translate-y-0.5 hover:border-[var(--dash-border)] hover:bg-[rgba(37,57,67,0.86)]"
 const posProductSelectedClass =
   "border-[var(--dash-spruce)]/70 bg-[rgba(45,212,191,0.12)] ring-1 ring-[var(--dash-spruce)]/25"
-const posMetricSpruceClass = "rounded-lg border border-[var(--dash-spruce)]/25 bg-[var(--dash-spruce-soft)] p-2"
-const posMetricBrandClass = "rounded-lg border border-[var(--dash-brand)]/25 bg-[var(--dash-brand-soft)] p-2"
-const posMetricGoldClass = "rounded-lg border border-[var(--dash-gold)]/25 bg-[var(--dash-gold-soft)] p-2"
+const posMetricSpruceClass = "rounded-lg border border-[var(--dash-spruce)]/25 bg-[var(--dash-spruce-soft)] px-2 py-1.5"
+const posMetricBrandClass = "rounded-lg border border-[var(--dash-brand)]/25 bg-[var(--dash-brand-soft)] px-2 py-1.5"
+const posMetricGoldClass = "rounded-lg border border-[var(--dash-gold)]/25 bg-[var(--dash-gold-soft)] px-2 py-1.5"
+const posMetricRowClass = "flex min-w-0 items-center justify-between gap-2"
+const posMetricLabelClass = "min-w-0 truncate text-[10px] font-medium leading-none"
+const posMetricValueClass = "shrink-0 text-base font-bold leading-none tabular-nums"
 
 function POSButton({ className, variant: _variant, ...buttonProps }: ButtonProps) {
   void _variant
@@ -961,6 +988,13 @@ export default function ProfessionalPOSSystem() {
       </header>
 
       <main className="dashboard-landing-content mx-auto flex min-h-[calc(100vh-132px)] w-full max-w-[112rem] flex-col gap-4 px-3 py-4 pb-12 sm:px-4 lg:px-5">
+        <OfflineSyncStatusStrip
+          locationId={selectedLocationId || undefined}
+          terminalId={selectedTerminalId || undefined}
+          sessionId={activeShift?.id}
+          locale={locale === "fr" ? "fr" : "en"}
+        />
+
         <section className={cn("p-4", posSurfaceClass)}>
           <div className="grid gap-3 xl:grid-cols-[minmax(340px,0.9fr)_minmax(360px,1fr)_minmax(420px,1.2fr)]">
             <div className={cn("p-3", posPanelClass)}>
@@ -1412,18 +1446,18 @@ export default function ProfessionalPOSSystem() {
                       </div>
 
                       <div className={cn("mt-3 space-y-3", gridMode === "list" && "mt-0")}>
-                        <div className="grid grid-cols-3 gap-2">
-                          <div className={posMetricSpruceClass}>
-                            <div className={cn("text-[11px]", posMutedTextClass)}>{t("stock.onHand")}</div>
-                            <div className="text-lg font-bold tabular-nums text-[#7de8dc]">{displayedOnHand}</div>
+                        <div className="grid gap-1.5">
+                          <div className={cn(posMetricSpruceClass, posMetricRowClass)}>
+                            <div className={cn(posMetricLabelClass, posMutedTextClass)}>{t("stock.onHand")}</div>
+                            <div className={cn(posMetricValueClass, "text-[#7de8dc]")}>{displayedOnHand}</div>
                           </div>
-                          <div className={posMetricBrandClass}>
-                            <div className={cn("text-[11px]", posMutedTextClass)}>{t("stock.availableLabel")}</div>
-                            <div className="text-lg font-bold tabular-nums text-[#8fb7ff]">{item.stock.quantityAvailable}</div>
+                          <div className={cn(posMetricBrandClass, posMetricRowClass)}>
+                            <div className={cn(posMetricLabelClass, posMutedTextClass)}>{t("stock.availableLabel")}</div>
+                            <div className={cn(posMetricValueClass, "text-[#8fb7ff]")}>{item.stock.quantityAvailable}</div>
                           </div>
-                          <div className={posMetricGoldClass}>
-                            <div className={cn("text-[11px]", posMutedTextClass)}>{t("stock.inCart")}</div>
-                            <div className="text-lg font-bold tabular-nums text-[#f1d28a]">{inCartQuantity}</div>
+                          <div className={cn(posMetricGoldClass, posMetricRowClass)}>
+                            <div className={cn(posMetricLabelClass, posMutedTextClass)}>{t("stock.inCart")}</div>
+                            <div className={cn(posMetricValueClass, "text-[#f1d28a]")}>{inCartQuantity}</div>
                           </div>
                         </div>
                         <Progress value={stockProgress(item, displayedOnHand)} className="h-1.5 bg-[rgba(84,112,122,0.36)]" />
@@ -1474,9 +1508,9 @@ export default function ProfessionalPOSSystem() {
             )}
           </section>
 
-          <aside className="min-w-0 self-start">
-            <div className={cn("flex min-h-[560px] flex-col overflow-visible", posSurfaceClass)}>
-              <div className={cn("border-b bg-[rgba(12,20,24,0.42)] p-4", posDividerClass)}>
+          <aside className="min-h-0 min-w-0 xl:sticky xl:top-2 xl:h-[calc(100dvh-4rem)]">
+            <div className={cn("flex min-h-[700px] flex-col overflow-hidden xl:h-full xl:min-h-0", posSurfaceClass)}>
+              <div className={cn("shrink-0 border-b bg-[rgba(12,20,24,0.42)] p-4", posDividerClass)}>
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <h2 className="text-lg font-semibold text-[var(--dash-text)]">{t("cart.title")}</h2>
@@ -1498,8 +1532,8 @@ export default function ProfessionalPOSSystem() {
                 </div>
               </div>
 
-              <ScrollArea className="max-h-[clamp(14rem,32vh,24rem)]">
-                <div className="p-3 pr-4">
+              <ScrollArea className="min-h-0 flex-[1_1_21rem]">
+                <div className="p-3 pb-4 pr-4">
                   {!cart || cart.lines.length === 0 ? (
                     <div className="rounded-lg border border-dashed border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.36)] p-6 text-center text-sm text-[var(--dash-text-soft)]">
                       {t("cart.empty")}
@@ -1510,30 +1544,33 @@ export default function ProfessionalPOSSystem() {
                         const quantityOnHand = getCartLineQuantityOnHand(line)
 
                         return (
-                        <div key={line.id} className={cn("p-3 transition-colors hover:border-[var(--dash-border)] hover:bg-[rgba(37,57,67,0.82)]", posPanelClass)}>
+                        <div key={line.id} className={cn("p-2 transition-colors hover:border-[var(--dash-border)] hover:bg-[rgba(37,57,67,0.82)]", posPanelClass)}>
                           <div className="flex items-start justify-between gap-2">
-                            <div className="min-w-0">
-                              <div className="truncate text-sm font-medium">
+                            <div className="min-w-0 flex-1">
+                              <div className="truncate text-sm font-semibold">
                                 {locale === "fr" ? line.nameFr || line.nameEn : line.nameEn}
                               </div>
                               <div className={cn("mt-1 text-xs", posMutedTextClass)}>
                                 {line.sku} - {money.format(line.unitPrice)}
                               </div>
                             </div>
-                            <POSButton
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              className={posButtonDangerClass}
-                              disabled={removeLine.isPending}
-                              onClick={() => handleRemove(line.id)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </POSButton>
+                            <div className="flex shrink-0 items-start gap-1.5">
+                              <div className="pt-0.5 text-right text-sm font-bold tabular-nums">{money.format(line.lineTotal)}</div>
+                              <POSButton
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className={cn("h-7 w-7", posButtonDangerClass)}
+                                disabled={removeLine.isPending}
+                                onClick={() => handleRemove(line.id)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </POSButton>
+                            </div>
                           </div>
-                          <div className="mt-3 grid grid-cols-[minmax(7rem,9rem)_1fr] items-end gap-3">
-                            <label className={posLabelClass}>
-                              {t("stock.inCart")}
+                          <div className={cn("mt-2 flex items-center justify-between gap-3 rounded-md border bg-[rgba(12,20,24,0.28)] px-2 py-1.5", posDividerClass)}>
+                            <label className="flex min-w-0 items-center gap-2 text-xs font-semibold uppercase tracking-[0.08em] text-[var(--dash-text-soft)]">
+                              <span className="shrink-0">{t("stock.inCart")}</span>
                               <Input
                                 type="number"
                                 inputMode="decimal"
@@ -1559,10 +1596,14 @@ export default function ProfessionalPOSSystem() {
                                     event.currentTarget.blur()
                                   }
                                 }}
-                                className={cn("mt-1 h-10 text-center font-semibold tabular-nums", posFieldClass)}
+                                className={cn("h-8 w-20 text-center font-semibold tabular-nums", posFieldClass)}
                               />
                             </label>
-                            <div className="pb-1 text-right font-semibold tabular-nums">{money.format(line.lineTotal)}</div>
+                            {quantityOnHand !== null ? (
+                              <div className={cn("shrink-0 text-right text-[11px]", posMutedTextClass)}>
+                                {t("stock.available", { count: quantityOnHand })}
+                              </div>
+                            ) : null}
                           </div>
                         </div>
                         )
@@ -1572,8 +1613,30 @@ export default function ProfessionalPOSSystem() {
                 </div>
               </ScrollArea>
 
-              <div className={cn("mt-auto border-t bg-[rgba(12,20,24,0.32)] p-4", posDividerClass)}>
-                {lastSale ? (
+              <div className={cn("shrink-0 border-t bg-[rgba(12,20,24,0.36)]", posDividerClass)}>
+                <div className="px-4 py-2.5">
+                  <div className="grid grid-cols-3 gap-2 text-xs tabular-nums">
+                    <div className={cn("rounded-md border bg-[rgba(37,57,67,0.42)] px-2 py-1.5", posDividerClass)}>
+                      <div className={posMutedTextClass}>{t("totals.subtotal")}</div>
+                      <div className="mt-1 truncate font-semibold">{money.format(cart?.subtotal ?? 0)}</div>
+                    </div>
+                    <div className={cn("rounded-md border bg-[rgba(37,57,67,0.42)] px-2 py-1.5", posDividerClass)}>
+                      <div className={posMutedTextClass}>{t("totals.discount")}</div>
+                      <div className="mt-1 truncate font-semibold">{money.format(cart?.discount ?? 0)}</div>
+                    </div>
+                    <div className={cn("rounded-md border bg-[rgba(37,57,67,0.42)] px-2 py-1.5", posDividerClass)}>
+                      <div className={posMutedTextClass}>{t("totals.tax")}</div>
+                      <div className="mt-1 truncate font-semibold">{money.format(cart?.taxAmount ?? 0)}</div>
+                    </div>
+                  </div>
+                  <div className={cn("mt-2 flex items-center justify-between rounded-lg border bg-[rgba(37,57,67,0.58)] px-3 py-2", posDividerClass)}>
+                    <span className="text-sm font-semibold">{t("totals.total")}</span>
+                    <span className="text-xl font-bold tabular-nums text-[#8fb7ff]">{money.format(cart?.total ?? 0)}</span>
+                  </div>
+                </div>
+
+                <div className={cn("max-h-[clamp(10rem,22dvh,15rem)] overflow-y-auto border-t px-4 py-3", posDividerClass)}>
+                  {lastSale ? (
                   <div className="mb-3 rounded-lg border border-[var(--dash-spruce)]/25 bg-[var(--dash-spruce-soft)] p-3 text-sm text-[#d9fffb]">
                     <div className="flex items-start justify-between gap-3">
                       <div>
@@ -1613,34 +1676,40 @@ export default function ProfessionalPOSSystem() {
                         </div>
                       ))}
                     </div>
+                    {lastSale.accountingMovements ? (
+                      <div className="mt-3 rounded-lg border border-[var(--dash-spruce)]/30 bg-[rgba(12,20,24,0.28)] p-2">
+                        <div className="text-xs font-semibold uppercase tracking-[0.08em] text-[#d9fffb]">
+                          {t("timeline.accountingMovements")}
+                        </div>
+                        <div className="mt-2 grid gap-1 text-xs">
+                          <div className="flex items-center justify-between gap-3">
+                            <span className="truncate">{t("timeline.saleJournalEntry")}</span>
+                            <span className="shrink-0 font-mono">{lastSale.accountingMovements.saleJournalEntry.entryNumber}</span>
+                          </div>
+                          {lastSale.accountingMovements.paymentJournalEntries.map((entry) => (
+                            <div key={entry.id} className="flex items-center justify-between gap-3">
+                              <span className="truncate">{t("timeline.paymentJournalEntry")}</span>
+                              <span className="shrink-0 font-mono">{entry.entryNumber}</span>
+                            </div>
+                          ))}
+                          <div className="flex items-center justify-between gap-3 border-t border-[var(--dash-spruce)]/20 pt-1.5">
+                            <span className="truncate">{t("timeline.balancedJournal")}</span>
+                            <span className="shrink-0 font-mono">
+                              {money.format(lastSale.accountingMovements.totalDebits)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ) : null}
                     {lastSale.receipt?.digitalReceiptUrl ? (
                       <div className={cn("mt-2 truncate text-xs", posMutedTextClass)}>
                         {lastSale.receipt.digitalReceiptUrl}
                       </div>
                     ) : null}
                   </div>
-                ) : null}
+                  ) : null}
 
-                <div className="space-y-2 text-sm tabular-nums">
-                  <div className="flex justify-between">
-                    <span className={posMutedTextClass}>{t("totals.subtotal")}</span>
-                    <span>{money.format(cart?.subtotal ?? 0)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className={posMutedTextClass}>{t("totals.discount")}</span>
-                    <span>{money.format(cart?.discount ?? 0)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className={posMutedTextClass}>{t("totals.tax")}</span>
-                    <span>{money.format(cart?.taxAmount ?? 0)}</span>
-                  </div>
-                  <div className={cn("flex justify-between border-t pt-2 text-lg font-semibold", posDividerClass)}>
-                    <span>{t("totals.total")}</span>
-                    <span>{money.format(cart?.total ?? 0)}</span>
-                  </div>
-                </div>
-
-                <div className={cn("mt-4 space-y-3 p-3", posPanelClass)}>
+                  <div className={cn("space-y-3 p-3", posPanelClass)}>
                   <div className="flex items-center justify-between gap-2">
                     <div>
                       <div className="text-sm font-semibold">{t("tender.panelTitle")}</div>
@@ -1716,17 +1785,23 @@ export default function ProfessionalPOSSystem() {
                   </div>
 
                   {primaryTenderMethod === "CASH" && quickCashAmounts.length > 0 ? (
-                    <div className="grid grid-cols-4 gap-2">
+                    <div className="grid grid-cols-2 gap-2">
                       {quickCashAmounts.map((amount, index) => (
                         <POSButton
                           key={amount}
                           type="button"
                           variant="outline"
                           size="sm"
-                          className={cn(tenderPreview.totalTendered === amount ? posButtonActiveClass : posButtonClass)}
+                          className={cn(
+                            "w-full justify-center px-3 text-sm tabular-nums",
+                            index > 1 && "col-span-2",
+                            tenderPreview.totalTendered === amount ? posButtonActiveClass : posButtonClass,
+                          )}
                           onClick={() => updateTenderLine(tenderLines[0].id, { amount: String(amount), method: "CASH" })}
                         >
-                          {index === 0 ? t("tender.exact") : money.format(amount)}
+                          <span className="min-w-0 truncate">
+                            {index === 0 ? t("tender.exact") : money.format(amount)}
+                          </span>
                         </POSButton>
                       ))}
                     </div>
@@ -1758,37 +1833,39 @@ export default function ProfessionalPOSSystem() {
                       />
                     ) : null}
                   </div>
+                  </div>
+                </div>
 
-                  <div className="space-y-1 text-sm tabular-nums">
-                    <div className="flex justify-between">
-                      <span className={posMutedTextClass}>{t("tender.paid")}</span>
-                      <span>{money.format(paidPreview)}</span>
+                <div className={cn("shrink-0 border-t px-4 py-2.5", posDividerClass)}>
+                  <div className="grid grid-cols-3 gap-2 text-center text-xs tabular-nums">
+                    <div>
+                      <div className={posMutedTextClass}>{t("tender.paid")}</div>
+                      <div className="mt-1 font-semibold">{money.format(paidPreview)}</div>
                     </div>
-                    <div className="flex justify-between">
-                      <span className={posMutedTextClass}>{t("tender.due")}</span>
-                      <span>{money.format(balancePreview)}</span>
+                    <div>
+                      <div className={posMutedTextClass}>{t("tender.due")}</div>
+                      <div className="mt-1 font-semibold">{money.format(balancePreview)}</div>
                     </div>
-                    <div className="flex justify-between">
-                      <span className={posMutedTextClass}>{t("tender.change")}</span>
-                      <span>{money.format(changePreview)}</span>
+                    <div>
+                      <div className={posMutedTextClass}>{t("tender.change")}</div>
+                      <div className="mt-1 font-semibold">{money.format(changePreview)}</div>
                     </div>
                   </div>
                   {tenderBlocker ? (
-                    <div className="rounded-lg border border-[var(--dash-warning)]/25 bg-[var(--dash-warning-soft)] px-3 py-2 text-xs font-medium text-[#ffe4a8]">
+                    <div className="mt-2 rounded-lg border border-[var(--dash-warning)]/25 bg-[var(--dash-warning-soft)] px-3 py-2 text-xs font-medium text-[#ffe4a8]">
                       {tenderBlocker}
                     </div>
                   ) : null}
+                  <POSButton
+                    type="button"
+                    className={cn("mt-2.5 h-12 w-full justify-center text-base", posButtonPrimaryClass, touchMode && "h-14")}
+                    disabled={!canCommitSale}
+                    onClick={handleCommitSale}
+                  >
+                    <CreditCard className="h-4 w-4" />
+                    {t("charge.cta", { amount: money.format(cart?.total ?? 0) })}
+                  </POSButton>
                 </div>
-
-                <POSButton
-                  type="button"
-                  className={cn("mt-4 w-full", posButtonPrimaryClass, touchMode && "h-14 text-base")}
-                  disabled={!canCommitSale}
-                  onClick={handleCommitSale}
-                >
-                  <CreditCard className="h-4 w-4" />
-                  {t("charge.cta", { amount: money.format(cart?.total ?? 0) })}
-                </POSButton>
               </div>
             </div>
           </aside>

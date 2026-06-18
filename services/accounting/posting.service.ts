@@ -7,6 +7,7 @@ import {
 } from "@prisma/client"
 
 import { db } from "@/prisma/db"
+import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
 import {
   assertSensitiveActionAllowed,
   auditSensitiveActionDecision,
@@ -121,14 +122,14 @@ async function assertEntryAccountsPostable(
   })
 
   if (accounts.length !== new Set(accountIds).size) {
-    throw new Error("One or more journal accounts were not found")
+    throw new NotFoundError("One or more journal accounts were not found")
   }
 
   assertSameOrganizationAccounts(organizationId, accounts)
 
   for (const account of accounts) {
-    if (!account.isActive) throw new Error(`Account ${account.code} is inactive`)
-    if (account._count.children > 0) throw new Error(`Account ${account.code} has child accounts`)
+    if (!account.isActive) throw new BusinessRuleError(`Account ${account.code} is inactive`)
+    if (account._count.children > 0) throw new BusinessRuleError(`Account ${account.code} has child accounts`)
   }
 }
 
@@ -239,9 +240,9 @@ export async function postJournalEntry(
       },
     })
 
-    if (!entry) throw new Error("Journal entry not found")
+    if (!entry) throw new NotFoundError("Journal entry not found")
     if (entry.status !== JournalEntryStatus.DRAFT) {
-      throw new Error("Only draft journal entries can be posted")
+      throw new BusinessRuleError("Only draft journal entries can be posted")
     }
 
     assertOpenPeriod(entry.period, entry.entryDate, organizationId)
@@ -359,12 +360,12 @@ export async function reverseJournalEntry(
       },
     })
 
-    if (!original) throw new Error("Journal entry not found")
+    if (!original) throw new NotFoundError("Journal entry not found")
     if (original.status !== JournalEntryStatus.POSTED) {
-      throw new Error("Only posted journal entries can be reversed")
+      throw new BusinessRuleError("Only posted journal entries can be reversed")
     }
     if (original.reversedByEntries.length > 0) {
-      throw new Error("Journal entry has already been reversed")
+      throw new BusinessRuleError("Journal entry has already been reversed")
     }
 
     const period = await getOpenPeriodForDate(organizationId, reversalDate, tx)

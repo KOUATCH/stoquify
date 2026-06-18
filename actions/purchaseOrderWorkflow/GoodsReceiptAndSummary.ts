@@ -1,6 +1,7 @@
 "use server"
 
-import { requireOrg } from "@/services/_shared/require-org"
+import { requirePermission } from "@/lib/security/rbac"
+import { BusinessRuleError } from "@/services/_shared/action-errors"
 import {
   getGoodsReceipts,
   getSummary,
@@ -49,9 +50,12 @@ function toNumber(value: unknown): number {
 }
 
 async function scopedOrg(organizationId: string) {
-  const { orgId } = await requireOrg()
+  const { orgId } = await requirePermission("purchases.orders.read", {
+    resource: "PurchaseOrder",
+    auditAllowed: false,
+  })
   if (organizationId !== orgId) {
-    throw new Error("You do not have access to this organization")
+    throw new BusinessRuleError("You do not have access to this organization")
   }
   return orgId
 }
@@ -60,7 +64,7 @@ export async function getGoodsReceiptsForPurchaseOrder(
   purchaseOrderId: string,
   organizationId: string,
 ): Promise<GoodsReceiptWithRelations[]> {
-  if (!purchaseOrderId) throw new Error("Purchase order ID is required")
+  if (!purchaseOrderId) throw new BusinessRuleError("Purchase order ID is required")
   const orgId = await scopedOrg(organizationId)
   const receipts = await getGoodsReceipts(purchaseOrderId, orgId)
 

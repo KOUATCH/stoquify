@@ -2,14 +2,18 @@ import { getAllDashboardData } from "@/actions/dashboard/getDashboardData";
 import EnhancedEnterpriseDashboard, {
   type EnterpriseDashboardLabels,
 } from '@/components/dashboard/EnhancedEnterpriseDashboard';
-import { Button } from "@/components/ui/button";
+import { SessionRecoverySignOutButton } from "@/components/dashboard/SessionRecoverySignOutButton";
 import { ErrorBoundary } from '@/config/error-boundary';
-import { getAuthenticatedUser } from "@/config/useAuth";
 import { localizePath, pickLocale } from "@/i18n/routing";
-import { LogOut, Package } from "lucide-react";
-import Link from "next/link";
+import { RbacError, requireRbacContext } from "@/lib/security/rbac";
+import { Package } from "lucide-react";
+import { redirect } from "next/navigation";
 
 function isRecoverableDashboardSessionError(error: unknown) {
+  if (error instanceof RbacError) {
+    return error.code === "NO_ACTIVE_ORG" || error.code === "FORBIDDEN"
+  }
+
   const message = error instanceof Error ? error.message : ''
 
   return (
@@ -44,12 +48,7 @@ function DashboardSessionRecovery({ locale }: { locale: 'en' | 'fr' }) {
             </div>
             <h3 className="mb-3 text-xl font-semibold text-[var(--dash-text)]">{copy.title}</h3>
             <p className="mb-6 text-sm leading-6 text-[var(--dash-text-soft)]">{copy.description}</p>
-            <Button asChild variant="outline" className="dashboard-button-secondary rounded-lg">
-              <Link href="/auth/signout">
-                <LogOut className="mr-2 h-4 w-4" />
-                {copy.action}
-              </Link>
-            </Button>
+            <SessionRecoverySignOutButton label={copy.action} locale={locale} />
           </div>
         </div>
       </div>
@@ -67,7 +66,20 @@ export default async function DashboardPage({
   const messages = (await import(`@/messages/${locale}.json`)).default as {
     enterpriseDashboard: EnterpriseDashboardLabels
   }
-  const user = await getAuthenticatedUser()
+  let user
+
+  try {
+    user = (await requireRbacContext()).user
+  } catch (error) {
+    if (error instanceof RbacError && error.code === "UNAUTHENTICATED") {
+      redirect(localizePath("/login", locale))
+    }
+    if (isRecoverableDashboardSessionError(error)) {
+      return <DashboardSessionRecovery locale={locale} />
+    }
+
+    throw error
+  }
 
   if (!user?.organizationId) {
     return <DashboardSessionRecovery locale={locale} />

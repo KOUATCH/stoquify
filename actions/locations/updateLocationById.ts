@@ -1,6 +1,8 @@
 "use server";
 
+import { safeSuccessActionErrorResult } from "@/actions/_shared/safe-action-responses";
 import { db } from "@/prisma/db";
+import { NotFoundError } from "@/services/_shared/action-errors";
 import { LocationDTO } from "@/types/location";
 import { revalidatePath } from "next/cache";
 
@@ -13,7 +15,7 @@ const updateLocationById = async (id: string, data: LocationDTO) => {
       });
   
       if (!location) {
-        throw new Error("location not found");
+        throw new NotFoundError("Location not found");
       }
       const updatedLocation = await tx.location.update({
         where: { id },
@@ -39,12 +41,7 @@ const updateLocationById = async (id: string, data: LocationDTO) => {
       }
      })
     } catch (error) {
-      console.error("Error fetching location:", error);
-      return {
-        success: false,
-        data: null,
-        error: error instanceof Error ? error.message : "Failed to update location",
-      };
+      return safeSuccessActionErrorResult(error, { action: "updateLocationById" }, "Failed to update location");
     }
   }
 

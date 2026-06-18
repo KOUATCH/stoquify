@@ -5,6 +5,7 @@ import { randomUUID } from "crypto"
 import { getAuthenticatedUser } from "@/lib/auth-server"
 import type { ServerActionResult } from "@/lib/error-handling/types"
 import { db } from "@/prisma/db"
+import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
 import type {
   Customer,
   CustomerOrder,
@@ -65,7 +66,7 @@ async function getUserOrganizationId(organizationId?: string): Promise<string> {
 
   const user = await getAuthenticatedUser()
   if (!user.organizationId) {
-    throw new Error("Organization ID is required")
+    throw new BusinessRuleError("Organization ID is required")
   }
 
   return user.organizationId
@@ -123,7 +124,7 @@ export async function getCustomers(): Promise<ServerActionResult<CustomerWithSta
 
 export async function getCustomer(id: string, organizationId?: string): Promise<ServerActionResult<Customer | null>> {
   if (!id) {
-    throw new Error("Customer ID is required")
+    throw new BusinessRuleError("Customer ID is required")
   }
 
   const customer = await db.customer.findFirst({
@@ -139,7 +140,7 @@ export async function getCustomer(id: string, organizationId?: string): Promise<
 
 export async function createCustomer(data: CustomerFormData): Promise<ServerActionResult<Customer>> {
   if (!data.name) {
-    throw new Error("Customer name is required")
+    throw new BusinessRuleError("Customer name is required")
   }
 
   const organizationId = await getUserOrganizationId()
@@ -168,11 +169,11 @@ export async function createCustomer(data: CustomerFormData): Promise<ServerActi
 
 export async function updateCustomer(data: CustomerEditFormData): Promise<ServerActionResult<Customer>> {
   if (!data.id) {
-    throw new Error("Customer ID is required")
+    throw new BusinessRuleError("Customer ID is required")
   }
 
   if (!data.name) {
-    throw new Error("Customer name is required")
+    throw new BusinessRuleError("Customer name is required")
   }
 
   const organizationId = await getUserOrganizationId()
@@ -199,7 +200,7 @@ export async function updateCustomer(data: CustomerEditFormData): Promise<Server
   })
 
   if (updated.count === 0) {
-    throw new Error("Customer not found or update failed")
+    throw new NotFoundError("Customer not found or update failed")
   }
 
   const customer = await db.customer.findFirst({
@@ -211,7 +212,7 @@ export async function updateCustomer(data: CustomerEditFormData): Promise<Server
   })
 
   if (!customer) {
-    throw new Error("Customer not found after update")
+    throw new NotFoundError("Customer not found after update")
   }
 
   return { success: true, data: mapCustomer(customer) }
@@ -219,7 +220,7 @@ export async function updateCustomer(data: CustomerEditFormData): Promise<Server
 
 export async function getCustomerOrders(customerId: string): Promise<ServerActionResult<CustomerOrder[]>> {
   if (!customerId) {
-    throw new Error("Customer ID is required")
+    throw new BusinessRuleError("Customer ID is required")
   }
 
   const organizationId = await getUserOrganizationId()
@@ -277,7 +278,7 @@ export async function getCustomerOrders(customerId: string): Promise<ServerActio
 
 export async function deleteCustomer(id: string): Promise<ServerActionResult<void>> {
   if (!id) {
-    throw new Error("Customer ID is required")
+    throw new BusinessRuleError("Customer ID is required")
   }
 
   const organizationId = await getUserOrganizationId()

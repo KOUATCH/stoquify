@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache"
 import { Prisma } from "@prisma/client"
 
+import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses"
+import { BusinessRuleError, ForbiddenError } from "@/services/_shared/action-errors"
 import { requireOrg } from "@/services/_shared/require-org"
 import {
   CustomerCreateSchema,
@@ -123,17 +125,17 @@ async function assertOrganizationAccess(organizationId: string, requiredPermissi
   const requestedOrganizationId = cleanText(organizationId)
 
   if (!requestedOrganizationId) {
-    throw new Error("Organization is required")
+    throw new BusinessRuleError("Organization is required")
   }
 
   const { orgId, user } = await requireOrg()
 
   if (orgId !== requestedOrganizationId) {
-    throw new Error("You do not have access to this organization")
+    throw new ForbiddenError("You do not have access to this organization")
   }
 
   if (!hasPermission(user.permissions, requiredPermission)) {
-    throw new Error(`Missing permission: ${requiredPermission}`)
+    throw new ForbiddenError(`Missing permission: ${requiredPermission}`)
   }
 
   return orgId
@@ -159,10 +161,14 @@ export async function getCustomerManagementData(
 
     return { success: true, data }
   } catch (error) {
-    console.error("Error fetching customer management data:", error)
     return {
       success: false,
-      error: getActionErrorMessage(error, "Failed to fetch customer management data"),
+      error: safeLoggedActionErrorMessage(
+        "Error fetching customer management data",
+        error,
+        { action: "getCustomerManagementData" },
+        getActionErrorMessage(error, "Failed to fetch customer management data"),
+      ),
     }
   }
 }
@@ -182,10 +188,14 @@ export async function getCustomerAnalyticsData(
     const data = await getCustomerDetailAnalyticsForOrg(scopedOrganizationId, scopedCustomerId)
     return { success: true, data }
   } catch (error) {
-    console.error("Error fetching customer analytics data:", error)
     return {
       success: false,
-      error: getActionErrorMessage(error, "Failed to fetch customer analytics"),
+      error: safeLoggedActionErrorMessage(
+        "Error fetching customer analytics data",
+        error,
+        { action: "getCustomerAnalyticsData" },
+        getActionErrorMessage(error, "Failed to fetch customer analytics"),
+      ),
     }
   }
 }
@@ -207,10 +217,14 @@ export async function createManagedCustomer(
 
     return { success: true, data: row }
   } catch (error) {
-    console.error("Error creating managed customer:", error)
     return {
       success: false,
-      error: getActionErrorMessage(error, "Failed to create customer"),
+      error: safeLoggedActionErrorMessage(
+        "Error creating managed customer",
+        error,
+        { action: "createManagedCustomer" },
+        getActionErrorMessage(error, "Failed to create customer"),
+      ),
     }
   }
 }
@@ -239,10 +253,14 @@ export async function updateManagedCustomer(
 
     return { success: true, data: row }
   } catch (error) {
-    console.error("Error updating managed customer:", error)
     return {
       success: false,
-      error: getActionErrorMessage(error, "Failed to update customer"),
+      error: safeLoggedActionErrorMessage(
+        "Error updating managed customer",
+        error,
+        { action: "updateManagedCustomer" },
+        getActionErrorMessage(error, "Failed to update customer"),
+      ),
     }
   }
 }
@@ -264,10 +282,14 @@ export async function deleteManagedCustomer(
 
     return { success: true, data }
   } catch (error) {
-    console.error("Error archiving managed customer:", error)
     return {
       success: false,
-      error: getActionErrorMessage(error, "Failed to archive customer"),
+      error: safeLoggedActionErrorMessage(
+        "Error archiving managed customer",
+        error,
+        { action: "deleteManagedCustomer" },
+        getActionErrorMessage(error, "Failed to archive customer"),
+      ),
     }
   }
 }

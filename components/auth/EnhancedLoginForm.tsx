@@ -1,10 +1,10 @@
 "use client";
 
-import { signInWithCredentials } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { localizePath } from "@/i18n/routing";
+import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { LoginProps } from "@/types/types";
 import {
@@ -94,24 +94,28 @@ export default function EnhancedLoginForm() {
         await new Promise((resolve) => setTimeout(resolve, 1200));
       }
 
-      const result = await signInWithCredentials(data);
+      const result = await authClient.signIn.email({
+        email: data.email.trim().toLowerCase(),
+        password: data.password,
+        rememberMe: true,
+      });
 
       if (result.error) {
         setLoading(false);
-        formError(copy.errors.authFailed, result.error, `${copy.errors.attempt} ${loginAttempts + 1}/5`);
+        formError(
+          copy.errors.authFailed,
+          result.error.message || copy.errors.unexpectedBody,
+          `${copy.errors.attempt} ${loginAttempts + 1}/5`
+        );
         return;
       }
 
-      if (result.success) {
-        formSuccess(copy.successTitle, result.message || copy.successBody);
-        reset();
-        setLoading(false);
-        window.location.href = returnUrl;
-        return;
-      }
-
+      formSuccess(copy.successTitle, copy.successBody);
+      reset();
       setLoading(false);
-      formError(copy.errors.unexpectedTitle, copy.errors.unexpectedBody, copy.errors.tryAgain);
+      window.location.href = returnUrl;
+      return;
+
     } catch {
       setLoading(false);
       formError(
@@ -238,7 +242,7 @@ export default function EnhancedLoginForm() {
             <button
               type="button"
               onClick={() => setShowPassword((value) => !value)}
-              className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg text-[#7f969f] transition hover:bg-[#2f7df6]/10 hover:text-[#2f7df6] dark:hover:bg-white/[0.07] dark:hover:text-white"
+              className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg text-[#7f969f] transition hover:bg-[#f0c54d]/15 hover:text-[#8b4a2f] dark:hover:bg-[#bf7145]/20 dark:hover:text-[#f6d574]"
               aria-label={showPassword ? copy.hidePassword : copy.showPassword}
             >
               {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -268,7 +272,7 @@ export default function EnhancedLoginForm() {
         <Button
           type="submit"
           disabled={loading}
-          className="h-12 w-full rounded-xl bg-gradient-to-r from-[#2f7df6] to-[#2dd4bf] text-sm font-black text-white shadow-[0_16px_36px_rgba(47,125,246,0.24)] transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
+          className="h-12 w-full rounded-xl text-sm font-black transition disabled:cursor-not-allowed disabled:opacity-60"
         >
           {loading ? (
             <span className="flex items-center gap-2">
@@ -325,14 +329,14 @@ function AuthMethodButton({
       className={cn(
         "flex min-h-[76px] items-center gap-3 rounded-xl border px-3 py-3 text-left transition-all",
         active
-          ? "border-[#2f7df6]/35 bg-white text-[#132028] shadow-sm dark:border-[#8fb7ff]/25 dark:bg-[#0f171d]/72 dark:text-white"
-          : "border-[#9fb4bb]/25 bg-white/45 text-[#253943] hover:border-[#2f7df6]/35 hover:bg-white dark:border-white/10 dark:bg-white/[0.035] dark:text-[#d3ddd8] dark:hover:bg-white/[0.07]"
+          ? "border-[#f0c54d]/45 bg-[rgba(240,197,77,0.14)] text-[#132028] shadow-sm dark:border-[#f0c54d]/35 dark:bg-[#bf7145]/20 dark:text-white"
+          : "border-[#9fb4bb]/25 bg-white/45 text-[#253943] hover:border-[#f0c54d]/45 hover:bg-[#f0c54d]/12 dark:border-white/10 dark:bg-white/[0.035] dark:text-[#d3ddd8] dark:hover:bg-[#bf7145]/20"
       )}
     >
       <span
         className={cn(
           "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg",
-          active ? "bg-[#2f7df6]/12 text-[#2f7df6] dark:text-[#8fb7ff]" : "bg-[#132028]/6 text-[#58707a] dark:bg-white/[0.06] dark:text-[#9fb4bb]"
+          active ? "bg-[#f0c54d]/18 text-[#8b4a2f] dark:text-[#f6d574]" : "bg-[#132028]/6 text-[#58707a] dark:bg-white/[0.06] dark:text-[#9fb4bb]"
         )}
       >
         <Icon className="h-4 w-4" />

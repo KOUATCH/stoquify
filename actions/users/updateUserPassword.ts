@@ -1,14 +1,15 @@
 "use server";
+import {
+  logSafeActionWarning,
+  safeStatusActionErrorResult,
+} from "@/actions/_shared/safe-action-responses";
 import { PasswordProps } from "@/components/Forms/ChangePasswordForm";
 import { getAuthenticatedUser } from "@/config/useAuth";
 import { hasAppPermission } from "@/lib/security/server-authz";
 import {
-  hashPolicyCompliantPassword,
-  syncUserCredentialPassword,
-  verifyUserCredentialPassword,
-} from "@/lib/security/auth-credentials";
-import { logSecurityEvent, SecurityEventType } from "@/lib/security/audit-log";
-import { db } from "@/prisma/db";
+  changeUserPasswordWorkflow,
+  completePasswordResetWorkflow,
+} from "@/services/users/user-identity.service";
 import { revalidatePath } from "next/cache";
 
 export async function updateUserPassword(id: string, data: PasswordProps) {
@@ -19,55 +20,24 @@ export async function updateUserPassword(id: string, data: PasswordProps) {
     return { error: "Forbidden", status: 403 };
   }
 
-  const existingUser = await db.user.findFirst({
-    where: {
-      id,
-      organizationId: authUser.organizationId,
-    },
-  });
-
-  if (!existingUser) {
-    return { error: "User not found", status: 404 };
-  }
-
-  if (isSelfChange && !(await verifyUserCredentialPassword(existingUser.id, data.oldPassword))) {
-    return { error: "Old Password Incorrect", status: 403 };
-  }
-
-  const passwordPolicy = await hashPolicyCompliantPassword({
-    password: data.newPassword,
-    userId: existingUser.id,
-    email: existingUser.email,
-  });
-
-  if (!passwordPolicy.ok) {
-    return { error: passwordPolicy.message, status: 400 };
-  }
-
-  const hashedPassword = passwordPolicy.hash;
   try {
-    await db.$transaction(async (tx) => {
-      await syncUserCredentialPassword(tx, {
-        userId: id,
-        passwordHash: hashedPassword,
-        revokeSessions: true,
-      });
+    const result = await changeUserPasswordWorkflow({
+      actor: authUser,
+      targetUserId: id,
+      oldPassword: data.oldPassword,
+      newPassword: data.newPassword,
+      isSelfChange,
     });
-    await logSecurityEvent({
-      type: SecurityEventType.AUTH_PASSWORD_CHANGED,
-      userId: authUser.id,
-      organizationId: authUser.organizationId,
-      resource: id,
-      details: {
-        targetUserId: id,
-        selfService: isSelfChange,
-        sessionsRevoked: true,
-      },
-    });
+
+    if (result.status !== 200) return result;
+
     revalidatePath("/dashboard/clients");
-    return { error: null, status: 200 };
+    return result;
   } catch (error) {
-    console.log(error);
+    return safeStatusActionErrorResult(error, {
+      action: "users.password.change",
+      component: "User",
+    }, "Unable to update password. Please try again.");
   }
 }
 export async function resetUserPassword(
@@ -75,67 +45,16 @@ export async function resetUserPassword(
   token: string,
   newPassword: string
 ) {
-  const user = await db.user.findFirst({
-    where: {
-      email: { equals: email.trim().toLowerCase(), mode: "insensitive" },
-      verificationToken: token,
-      verificationTokenExpires: { gt: new Date() },
-    },
-  });
-  if (!user) {
-    return {
-      status: 404,
-      error: "Please use a valid reset link",
-      data: null,
-    };
-  }
-  const passwordPolicy = await hashPolicyCompliantPassword({
-    password: newPassword,
-    userId: user.id,
-    email: user.email,
-  });
-
-  if (!passwordPolicy.ok) {
-    return {
-      status: 400,
-      error: passwordPolicy.message,
-      data: null,
-    };
-  }
-
-  const hashedPassword = passwordPolicy.hash;
   try {
-    await db.$transaction(async (tx) => {
-      await syncUserCredentialPassword(tx, {
-        userId: user.id,
-        passwordHash: hashedPassword,
-        revokeSessions: true,
-      });
-
-      await tx.user.update({
-        where: {
-          id: user.id,
-        },
-        data: {
-          verificationToken: null,
-          verificationTokenExpires: null,
-        },
-      });
-    });
-    await logSecurityEvent({
-      type: SecurityEventType.AUTH_PASSWORD_RESET_COMPLETED,
-      userId: user.id,
-      organizationId: user.organizationId,
-      resource: user.id,
-      details: { sessionsRevoked: true },
-    });
-    return {
-      status: 200,
-      error: null,
-      data: null,
-    };
+    return await completePasswordResetWorkflow(email, token, newPassword);
   } catch (error) {
-    console.log(error);
+    logSafeActionWarning("Password reset completion failed", error, {
+      action: "users.password.reset.complete",
+      component: "User",
+    });
+    return safeStatusActionErrorResult(error, {
+      action: "users.password.reset.complete",
+      component: "User",
+    }, "Unable to reset password. Please try again.");
   }
 }
-

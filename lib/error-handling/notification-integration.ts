@@ -95,6 +95,7 @@ function mapCategoryToNotification(category: ErrorCategory): {
 
     case ErrorCategory.NETWORK:
     case ErrorCategory.EXTERNAL_SERVICE:
+    case ErrorCategory.EXTERNAL:
       return {
         category: 'network',
         titlePrefix: 'Connection Error'
@@ -119,9 +120,23 @@ function mapCategoryToNotification(category: ErrorCategory): {
       }
 
     case ErrorCategory.FINANCIAL:
+    case ErrorCategory.ACCOUNTING:
+    case ErrorCategory.PAYMENT:
       return {
         category: 'financial',
         titlePrefix: 'Financial Error'
+      }
+
+    case ErrorCategory.PAYROLL:
+      return {
+        category: 'business',
+        titlePrefix: 'Payroll Error'
+      }
+
+    case ErrorCategory.COMPLIANCE:
+      return {
+        category: 'business',
+        titlePrefix: 'Compliance Error'
       }
 
     case ErrorCategory.PURCHASE:

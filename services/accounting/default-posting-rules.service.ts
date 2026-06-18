@@ -1,7 +1,13 @@
 import { Prisma } from "@prisma/client"
 
 import { db } from "@/prisma/db"
-import { DEFAULT_POS_POSTING_RULES, type DefaultPostingRuleTemplate } from "./default-posting-rules"
+import {
+  DEFAULT_AP_POSTING_RULES,
+  DEFAULT_PAYROLL_POSTING_RULES,
+  DEFAULT_POS_POSTING_RULES,
+  DEFAULT_POSTING_RULES,
+  type DefaultPostingRuleTemplate,
+} from "./default-posting-rules"
 import { validatePostingRuleLines } from "./posting-rules.service"
 
 const postingRuleInclude = {
@@ -37,13 +43,29 @@ function defaultPostingRuleAudit(
     data: {
       organizationId: params.organizationId,
       actorId: params.actorId,
-      action: "DEFAULT_POS_POSTING_RULE_ENSURE",
+      action: "DEFAULT_POSTING_RULE_ENSURE",
       resourceType: "PostingRule",
       resourceId: params.resourceId,
       message: params.message,
       metadata: params.metadata,
     },
   })
+}
+
+export function getDefaultPOSPostingRuleTemplates(): readonly DefaultPostingRuleTemplate[] {
+  return DEFAULT_POS_POSTING_RULES
+}
+
+export function getDefaultAPPostingRuleTemplates(): readonly DefaultPostingRuleTemplate[] {
+  return DEFAULT_AP_POSTING_RULES
+}
+
+export function getDefaultPayrollPostingRuleTemplates(): readonly DefaultPostingRuleTemplate[] {
+  return DEFAULT_PAYROLL_POSTING_RULES
+}
+
+export function getDefaultPostingRuleTemplates(): readonly DefaultPostingRuleTemplate[] {
+  return DEFAULT_POSTING_RULES
 }
 
 async function createDefaultPostingRule(
@@ -79,7 +101,7 @@ async function createDefaultPostingRule(
     organizationId,
     actorId,
     resourceId: created.id,
-    message: `Default POS posting rule ${created.code} ensured`,
+    message: `Default posting rule ${created.code} ensured`,
     metadata: {
       sourceType: created.sourceType,
       postingPurpose: created.postingPurpose,
@@ -98,6 +120,90 @@ export async function ensureDefaultPOSPostingRules(
   const ensured = []
 
   for (const template of DEFAULT_POS_POSTING_RULES) {
+    const existing = await tx.postingRule.findFirst({
+      where: {
+        organizationId,
+        code: template.code,
+      },
+      include: postingRuleInclude,
+    })
+
+    if (existing) {
+      await validatePostingRuleLines(organizationId, existing.lines, tx)
+      ensured.push(existing)
+      continue
+    }
+
+    ensured.push(await createDefaultPostingRule(organizationId, template, actorId, tx))
+  }
+
+  return ensured
+}
+
+export async function ensureDefaultAPPostingRules(
+  organizationId: string,
+  actorId?: string | null,
+  tx: Prisma.TransactionClient | typeof db = db,
+) {
+  const ensured = []
+
+  for (const template of DEFAULT_AP_POSTING_RULES) {
+    const existing = await tx.postingRule.findFirst({
+      where: {
+        organizationId,
+        code: template.code,
+      },
+      include: postingRuleInclude,
+    })
+
+    if (existing) {
+      await validatePostingRuleLines(organizationId, existing.lines, tx)
+      ensured.push(existing)
+      continue
+    }
+
+    ensured.push(await createDefaultPostingRule(organizationId, template, actorId, tx))
+  }
+
+  return ensured
+}
+
+export async function ensureDefaultPayrollPostingRules(
+  organizationId: string,
+  actorId?: string | null,
+  tx: Prisma.TransactionClient | typeof db = db,
+) {
+  const ensured = []
+
+  for (const template of DEFAULT_PAYROLL_POSTING_RULES) {
+    const existing = await tx.postingRule.findFirst({
+      where: {
+        organizationId,
+        code: template.code,
+      },
+      include: postingRuleInclude,
+    })
+
+    if (existing) {
+      await validatePostingRuleLines(organizationId, existing.lines, tx)
+      ensured.push(existing)
+      continue
+    }
+
+    ensured.push(await createDefaultPostingRule(organizationId, template, actorId, tx))
+  }
+
+  return ensured
+}
+
+export async function ensureDefaultPostingRules(
+  organizationId: string,
+  actorId?: string | null,
+  tx: Prisma.TransactionClient | typeof db = db,
+) {
+  const ensured = []
+
+  for (const template of DEFAULT_POSTING_RULES) {
     const existing = await tx.postingRule.findFirst({
       where: {
         organizationId,

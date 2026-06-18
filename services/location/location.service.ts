@@ -2,6 +2,7 @@ import { randomUUID } from "crypto"
 import { db } from "@/prisma/db"
 import type { LocationDTO } from "@/types/location"
 import { LocationType, POSSessionStatus } from "@prisma/client"
+import { BusinessRuleError, NotFoundError } from "../_shared/action-errors"
 import { MAX_PAGE_SIZES } from "../_shared/pagination"
 import type { LocationManagementInput } from "./location.schemas"
 
@@ -301,7 +302,7 @@ async function assertManagerBelongsToOrg(organizationId: string, managerId?: str
   })
 
   if (!manager) {
-    throw new Error("Selected manager does not belong to this organization")
+    throw new BusinessRuleError("Selected manager does not belong to this organization")
   }
 
   return manager.id
@@ -348,7 +349,7 @@ export async function createLocationForManagement(
   const row = refreshed.locations.find((item) => item.id === location.id)
 
   if (!row) {
-    throw new Error("Location was created but could not be reloaded")
+    throw new BusinessRuleError("Location was created but could not be reloaded")
   }
 
   return row
@@ -365,7 +366,7 @@ export async function updateLocationForManagement(
   })
 
   if (!existingLocation) {
-    throw new Error("Location not found")
+    throw new NotFoundError("Location not found")
   }
 
   const name = input.name.trim()
@@ -410,7 +411,7 @@ export async function updateLocationForManagement(
   const row = refreshed.locations.find((item) => item.id === locationId)
 
   if (!row) {
-    throw new Error("Location was updated but could not be reloaded")
+    throw new BusinessRuleError("Location was updated but could not be reloaded")
   }
 
   return row
@@ -436,7 +437,7 @@ export async function archiveLocationForManagement(
   })
 
   if (!location) {
-    throw new Error("Location not found")
+    throw new NotFoundError("Location not found")
   }
 
   if (
@@ -445,7 +446,7 @@ export async function archiveLocationForManagement(
     location._count.salesOrders > 0 ||
     location._count.purchaseOrders > 0
   ) {
-    throw new Error("This location has operational history. Deactivate it instead of archiving.")
+    throw new BusinessRuleError("This location has operational history. Deactivate it instead of archiving.")
   }
 
   await db.location.update({

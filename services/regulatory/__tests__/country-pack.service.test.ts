@@ -1,10 +1,7 @@
 import { cameroonCountryPack } from "../country-packs/cameroon"
 import { computeCountryPackHash } from "../country-packs/hash"
 import { resolveRegulatoryParameter } from "../country-packs/resolve"
-import {
-  RegulatoryPackError,
-  validateCountryPackForPublish,
-} from "../country-packs/validation"
+import { RegulatoryPackError, validateCountryPackForPublish } from "../country-packs/validation"
 import { detectRegulatoryHardcodesInText } from "../hardcode-detector"
 
 function clone<T>(value: T): T {
@@ -18,7 +15,7 @@ describe("regulatory country pack foundation", () => {
     expect(result).toMatchObject({ valid: true, canPublish: true })
     expect(result.issues).toEqual([])
     expect(cameroonCountryPack.header.hash).toBe(computeCountryPackHash(cameroonCountryPack))
-    expect(cameroonCountryPack.goldenFixtures.length).toBeGreaterThanOrEqual(4)
+    expect(cameroonCountryPack.goldenFixtures.length).toBeGreaterThanOrEqual(6)
   })
 
   it("resolves values by country, entity, date, and pack version with provenance", () => {
@@ -45,6 +42,50 @@ describe("regulatory country pack foundation", () => {
     expect(resolved.resolutionHash).toMatch(/^sha256:[a-f0-9]{64}$/)
   })
 
+  it("resolves Cameroon e-invoicing readiness metadata as expert-review gated", () => {
+    const resolved = resolveRegulatoryParameter<{
+      status: string
+      productionAutomationAllowed: boolean
+      requiresPostedLedgerSource: boolean
+      requiresOfficialTechnicalSpec: boolean
+    }>("compliance.eInvoicing.capability", {
+      countryCode: "CM",
+      date: "2026-06-11",
+      purpose: "COMPLIANCE_CENTER_READINESS",
+      pinnedPackVersion: "CM-2026.1",
+    })
+
+    expect(resolved).toMatchObject({
+      countryCode: "CM",
+      packVersion: "CM-2026.1",
+      legalRef: "CM_DGI_EINVOICING_REVIEW_REQUIRED",
+      verificationStatus: "REQUIRES_EXPERT_REVIEW",
+      capabilityStatus: "REQUIRES_EXPERT_REVIEW",
+    })
+    expect(resolved.value).toMatchObject({
+      status: "REQUIRES_EXPERT_REVIEW",
+      productionAutomationAllowed: false,
+      requiresPostedLedgerSource: true,
+      requiresOfficialTechnicalSpec: true,
+    })
+
+    const certificationPolicy = resolveRegulatoryParameter<Record<string, unknown>>(
+      "compliance.eInvoicing.certificationPolicy",
+      {
+        countryCode: "CM",
+        date: "2026-06-11",
+        purpose: "COMPLIANCE_CENTER_CERTIFICATION_GATE",
+        pinnedPackVersion: "CM-2026.1",
+      },
+    )
+
+    expect(certificationPolicy.value).toMatchObject({
+      certificationTiming: "REQUIRES_EXPERT_REVIEW",
+      legalDeliveryWhenUncertified: "BLOCK",
+      authorityCallInsideSaleTransactionAllowed: false,
+    })
+  })
+
   it("blocks missing parameters with typed client-safe errors", () => {
     expect(() =>
       resolveRegulatoryParameter("taxes.vat.unknownRate", {
@@ -64,10 +105,31 @@ describe("regulatory country pack foundation", () => {
     }
   })
 
+  it("rejects expert-review placeholders if the matching capability claims support", () => {
+    const defective = clone(cameroonCountryPack)
+    defective.header.capabilityMatrix["compliance.eInvoicing"] = "SUPPORTED"
+    defective.header.hash = computeCountryPackHash(defective)
+
+    const result = validateCountryPackForPublish(defective)
+
+    expect(result.valid).toBe(false)
+    expect(result.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          code: "EXPERT_REVIEW_REQUIRED",
+          path: "compliance.eInvoicing.capability[0].verificationStatus",
+        }),
+      ]),
+    )
+  })
+
   it("rejects defective packs with missing legal citations", () => {
     const defective = clone(cameroonCountryPack)
-    const vatRate = (((defective.parameters.taxes as Record<string, unknown>).vat as Record<string, unknown>)
-      .standardRateBps as Array<Record<string, unknown>>)[0]
+    const vatRate = (
+      ((defective.parameters.taxes as Record<string, unknown>).vat as Record<string, unknown>).standardRateBps as Array<
+        Record<string, unknown>
+      >
+    )[0]
     vatRate.legalRef = "MISSING_LEGAL_REF"
     defective.header.hash = computeCountryPackHash(defective)
 

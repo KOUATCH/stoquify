@@ -1,4 +1,5 @@
 import { db } from "@/prisma/db"
+import { BusinessRuleError, ConflictError, NotFoundError } from "@/services/_shared/action-errors"
 import { LocationType, POSSessionStatus } from "@prisma/client"
 import type { TerminalManagementInput } from "./terminal-management.schemas"
 
@@ -84,7 +85,7 @@ async function assertLocationBelongsToOrg(organizationId: string, locationId: st
   })
 
   if (!location) {
-    throw new Error("Location not found")
+    throw new NotFoundError("Location not found")
   }
 
   return location
@@ -95,7 +96,7 @@ async function resolveTerminalNumber(organizationId: string, input: string | nul
     const terminalNumber = normalizeTerminalNumber(input)
 
     if (!terminalNumber) {
-      throw new Error("Terminal number is required")
+      throw new BusinessRuleError("Terminal number is required")
     }
 
     const duplicate = await db.pOSStation.findFirst({
@@ -108,7 +109,7 @@ async function resolveTerminalNumber(organizationId: string, input: string | nul
     })
 
     if (duplicate) {
-      throw new Error("Terminal number already exists")
+      throw new ConflictError("Terminal number already exists")
     }
 
     return terminalNumber
@@ -135,7 +136,7 @@ async function resolveTerminalNumber(organizationId: string, input: string | nul
     index += 1
   }
 
-  throw new Error("Could not generate a unique terminal number")
+  throw new ConflictError("Could not generate a unique terminal number")
 }
 
 async function ensureDefaultCashDrawer(terminal: {
@@ -326,7 +327,7 @@ export async function createTerminalForManagement(
   const row = refreshed.terminals.find((item) => item.id === terminal.id)
 
   if (!row) {
-    throw new Error("Terminal was created but could not be reloaded")
+    throw new BusinessRuleError("Terminal was created but could not be reloaded")
   }
 
   return row
@@ -353,15 +354,15 @@ export async function updateTerminalForManagement(
   })
 
   if (!existingTerminal) {
-    throw new Error("Terminal not found")
+    throw new NotFoundError("Terminal not found")
   }
 
   if (existingTerminal.currentSessionId && input.isActive === false) {
-    throw new Error("Cannot deactivate terminal with an active session")
+    throw new BusinessRuleError("Cannot deactivate terminal with an active session")
   }
 
   if (input.hasCashDrawer === false && existingTerminal.cashDrawers.some((drawer) => drawer.isOpen)) {
-    throw new Error("Cannot disable cash drawer while a drawer is open")
+    throw new BusinessRuleError("Cannot disable cash drawer while a drawer is open")
   }
 
   const location = await assertLocationBelongsToOrg(organizationId, input.locationId)
@@ -393,7 +394,7 @@ export async function updateTerminalForManagement(
   const row = refreshed.terminals.find((item) => item.id === terminalId)
 
   if (!row) {
-    throw new Error("Terminal was updated but could not be reloaded")
+    throw new BusinessRuleError("Terminal was updated but could not be reloaded")
   }
 
   return row
@@ -417,11 +418,11 @@ export async function archiveTerminalForManagement(
   })
 
   if (!terminal) {
-    throw new Error("Terminal not found")
+    throw new NotFoundError("Terminal not found")
   }
 
   if (terminal.currentSessionId || terminal.currentSession?.status === POSSessionStatus.ACTIVE) {
-    throw new Error("Cannot deactivate terminal with an active session")
+    throw new BusinessRuleError("Cannot deactivate terminal with an active session")
   }
 
   await db.pOSStation.update({

@@ -2,7 +2,9 @@
 
 import { revalidatePath } from "next/cache"
 
+import { safeActionErrorMessage } from "@/actions/_shared/safe-action-responses"
 import { getAuthenticatedUser } from "@/config/useAuth"
+import { AuthRequiredError, ForbiddenError } from "@/services/_shared/action-errors"
 import {
   BrandCreateSchema,
   BrandUpdateSchema,
@@ -24,7 +26,7 @@ function actionError<T>(error: unknown, fallback: string, data: T) {
   return {
     success: false,
     data,
-    error: error instanceof Error ? error.message : fallback,
+    error: safeActionErrorMessage(error, {}, fallback),
   }
 }
 
@@ -32,11 +34,11 @@ async function resolveOrgId(explicitOrgId?: string | null) {
   const user = await getAuthenticatedUser()
 
   if (!user?.organizationId) {
-    throw new Error("No organization found for the current user")
+    throw new AuthRequiredError("No organization found for the current user")
   }
 
   if (explicitOrgId && explicitOrgId !== user.organizationId && !user.permissions?.includes("*")) {
-    throw new Error("You cannot access brands for another organization")
+    throw new ForbiddenError("You cannot access brands for another organization")
   }
 
   return user.organizationId

@@ -3,6 +3,7 @@ import { db } from "@/prisma/db"
 import { Prisma, UnitType } from "@prisma/client"
 import type { Unit as UnitModel } from "@prisma/client"
 import type { UnitDTO } from "@/types/unit"
+import { BusinessRuleError, ConflictError, NotFoundError } from "../_shared/action-errors"
 import { MAX_PAGE_SIZES } from "../_shared/pagination"
 import type { UnitCreateInput, UnitManagementInput, UnitUpdateInput } from "./unit.schemas"
 
@@ -30,7 +31,7 @@ export type UnitManagementData = {
 
 export type UnitRemovalResult = {
   id: string
-  mode: "deleted" | "deactivated"
+  mode: "deactivated"
 }
 
 const UNIT_TYPES = new Set(Object.values(UnitType))
@@ -105,7 +106,7 @@ async function assertUniqueUnitIdentity(
       ? `Unit name "${input.nameEn}" already exists for this organisation`
       : `Unit symbol "${input.symbol}" already exists for this organisation`
 
-  throw new Error(reason)
+  throw new ConflictError(reason)
 }
 
 export async function createUnit(orgId: string, input: UnitCreateInput): Promise<UnitDTO> {
@@ -141,7 +142,7 @@ export async function updateUnit(
     where: { id, organizationId: orgId },
     select: { id: true, nameEn: true, symbol: true },
   })
-  if (!existing) throw new Error("Unit not found")
+  if (!existing) throw new NotFoundError("Unit not found")
 
   const candidate = {
     nameEn: input.nameEn ?? existing.nameEn,
@@ -178,19 +179,15 @@ export async function updateUnit(
 export async function deleteUnit(orgId: string, id: string): Promise<UnitDTO> {
   const existing = await db.unit.findFirst({
     where: { id, organizationId: orgId },
-    select: {
-      id: true,
-      _count: { select: { items: true } },
-    },
+    select: { id: true },
   })
-  if (!existing) throw new Error("Unit not found")
+  if (!existing) throw new NotFoundError("Unit not found")
 
-  if (existing._count.items > 0) {
-    throw new Error("This unit is used by inventory items. Deactivate it instead of deleting.")
-  }
-
-  const deleted = await db.unit.delete({ where: { id } })
-  return toDTO(deleted)
+  const deactivated = await db.unit.update({
+    where: { id },
+    data: { isActive: false, updatedAt: new Date() },
+  })
+  return toDTO(deactivated)
 }
 
 export async function getUnitManagementDataForOrg(
@@ -279,7 +276,7 @@ export async function createUnitForManagement(
   const row = await reloadUnitManagementRow(organizationId, unit.id)
 
   if (!row) {
-    throw new Error("Unit was created but could not be reloaded")
+    throw new BusinessRuleError("Unit was created but could not be reloaded")
   }
 
   return row
@@ -294,7 +291,7 @@ export async function updateUnitForManagement(
   const row = await reloadUnitManagementRow(organizationId, unitId)
 
   if (!row) {
-    throw new Error("Unit was updated but could not be reloaded")
+    throw new BusinessRuleError("Unit was updated but could not be reloaded")
   }
 
   return row
@@ -306,28 +303,20 @@ export async function removeUnitForManagement(
 ): Promise<UnitRemovalResult> {
   const unit = await db.unit.findFirst({
     where: { id: unitId, organizationId },
-    select: {
-      id: true,
-      _count: { select: { items: true } },
-    },
+    select: { id: true },
   })
 
   if (!unit) {
-    throw new Error("Unit not found")
+    throw new NotFoundError("Unit not found")
   }
 
-  if (unit._count.items > 0) {
-    await db.unit.update({
-      where: { id: unitId },
-      data: {
-        isActive: false,
-        updatedAt: new Date(),
-      },
-    })
+  await db.unit.update({
+    where: { id: unitId },
+    data: {
+      isActive: false,
+      updatedAt: new Date(),
+    },
+  })
 
-    return { id: unitId, mode: "deactivated" }
-  }
-
-  await db.unit.delete({ where: { id: unitId } })
-  return { id: unitId, mode: "deleted" }
+  return { id: unitId, mode: "deactivated" }
 }

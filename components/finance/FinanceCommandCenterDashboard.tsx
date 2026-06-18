@@ -432,6 +432,7 @@ export default function FinanceCommandCenterDashboard({ initialView = "overview"
                 <MethodBreakdown methods={dashboard.paymentMethods} money={money} t={t} />
                 <div className="grid gap-2 pt-2">
                   <ActionLink href="/dashboard/orders/payments" icon={CreditCard} label={t("actions.orderPayments")} />
+                  <ActionLink href="/dashboard/finance/reconciliation" icon={ShieldCheck} label={t("actions.reconciliation")} />
                   <ActionLink href="/dashboard/finance/cash-drawer" icon={Wallet} label={t("actions.cashDrawers")} />
                   <ActionLink href="/dashboard/finance/cash-flow" icon={LineChart} label={t("actions.cashFlow")} />
                   <ActionLink href="/dashboard/settings/tax-rates" icon={Percent} label={t("actions.taxRates")} />

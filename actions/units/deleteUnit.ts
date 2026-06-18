@@ -1,6 +1,7 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
+import { safeSuccessActionErrorResult } from "@/actions/_shared/safe-action-responses"
 import { getAuthenticatedUser } from "@/config/useAuth"
 import { removeUnitForManagement } from "@/services/unit/unit.service"
 
@@ -27,12 +28,7 @@ export const deleteUnit = async (id: string) => {
       data: result,
     }
   } catch (error) {
-    console.error("Error deleting unit:", error)
-    return {
-      error: error instanceof Error ? error.message : "Something went wrong, please try again",
-      success: false,
-      data: null,
-    }
+    return safeSuccessActionErrorResult(error, { action: "deleteUnit" }, "Something went wrong, please try again")
   }
 }
 

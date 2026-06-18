@@ -1,5 +1,11 @@
-import type { Prisma } from "@prisma/client"
+import {
+  AccountingSourceType,
+  FiscalDocumentStatus,
+  FiscalDocumentType,
+  type Prisma,
+} from "@prisma/client"
 import { db } from "@/prisma/db"
+import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
 import { moneyToNumber } from "./money"
 import {
   getSalesReceiptSchema,
@@ -11,6 +17,35 @@ import {
 } from "./pos.schemas"
 
 export type ReceiptDeliveryStatus = "PENDING" | "SENT" | "FAILED" | "SKIPPED"
+
+export type ReceiptLegalDeliveryStatus =
+  | "NOT_CREATED"
+  | "CERTIFIED"
+  | "ALLOWED_WITH_STATUS"
+  | "BLOCKED_UNTIL_CERTIFIED"
+  | "REQUIRES_EXPERT_REVIEW"
+
+export type ReceiptCertificationStatus = {
+  fiscalDocumentId: string | null
+  documentType: string | null
+  fiscalDocumentStatus: string
+  submissionId: string | null
+  submissionStatus: string | null
+  authorityChannel: string | null
+  authorityReference: string | null
+  legalNumber: string | null
+  provisionalNumber: string | null
+  certifiedAt: string | null
+  rejectedAt: string | null
+  rejectionReason: string | null
+  certificationArtifactHash: string | null
+  countryCode: string | null
+  countryPackVersion: string | null
+  countryPackVerificationStatus: string | null
+  legalDeliveryStatus: ReceiptLegalDeliveryStatus
+  legalDeliveryBlocked: boolean
+  legalDeliveryBlockReason: string | null
+}
 
 export type SalesReceiptPayload = {
   receipt: {
@@ -51,6 +86,7 @@ export type SalesReceiptPayload = {
       createdAt: string
     }>
   }
+  certification: ReceiptCertificationStatus
   business: {
     name: string
     address: string
@@ -149,6 +185,134 @@ function normalizePhoneNumber(raw?: string | null) {
 
 function tenderLabel(method: string) {
   return method === "CREDIT" ? "ON_ACCOUNT" : method
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value)
+}
+
+function certificationPolicyValue(
+  policy: Prisma.JsonValue | null | undefined,
+  key: string,
+) {
+  if (!isRecord(policy)) return null
+  const value = policy[key]
+  return typeof value === "string" ? value : null
+}
+
+function emptyReceiptCertificationStatus(): ReceiptCertificationStatus {
+  return {
+    fiscalDocumentId: null,
+    documentType: null,
+    fiscalDocumentStatus: "NOT_CREATED",
+    submissionId: null,
+    submissionStatus: null,
+    authorityChannel: null,
+    authorityReference: null,
+    legalNumber: null,
+    provisionalNumber: null,
+    certifiedAt: null,
+    rejectedAt: null,
+    rejectionReason: null,
+    certificationArtifactHash: null,
+    countryCode: null,
+    countryPackVersion: null,
+    countryPackVerificationStatus: null,
+    legalDeliveryStatus: "NOT_CREATED",
+    legalDeliveryBlocked: false,
+    legalDeliveryBlockReason: null,
+  }
+}
+
+function resolveReceiptLegalDeliveryStatus(input: {
+  fiscalDocumentStatus: string
+  certificationPolicySnapshot: Prisma.JsonValue | null
+}) {
+  if (input.fiscalDocumentStatus === FiscalDocumentStatus.CERTIFIED) {
+    return {
+      legalDeliveryStatus: "CERTIFIED" as const,
+      legalDeliveryBlocked: false,
+      legalDeliveryBlockReason: null,
+    }
+  }
+
+  const legalDeliveryWhenUncertified = certificationPolicyValue(
+    input.certificationPolicySnapshot,
+    "legalDeliveryWhenUncertified",
+  )
+
+  if (legalDeliveryWhenUncertified === "BLOCK") {
+    return {
+      legalDeliveryStatus: "BLOCKED_UNTIL_CERTIFIED" as const,
+      legalDeliveryBlocked: true,
+      legalDeliveryBlockReason:
+        "Country-pack policy blocks legal receipt delivery until certification or approved fallback evidence exists.",
+    }
+  }
+
+  if (legalDeliveryWhenUncertified === "ALLOW_WITH_STATUS") {
+    return {
+      legalDeliveryStatus: "ALLOWED_WITH_STATUS" as const,
+      legalDeliveryBlocked: false,
+      legalDeliveryBlockReason: null,
+    }
+  }
+
+  return {
+    legalDeliveryStatus: "REQUIRES_EXPERT_REVIEW" as const,
+    legalDeliveryBlocked: true,
+    legalDeliveryBlockReason:
+      "Country-pack policy requires expert review before legal receipt delivery can be treated as allowed.",
+  }
+}
+
+async function getReceiptCertificationStatus(
+  organizationId: string,
+  salesOrderId: string,
+): Promise<ReceiptCertificationStatus> {
+  const fiscalDocument = await db.fiscalDocument.findFirst({
+    where: {
+      organizationId,
+      sourceType: AccountingSourceType.POS_SALE,
+      sourceId: salesOrderId,
+      documentType: FiscalDocumentType.POS_RECEIPT,
+    },
+    include: {
+      submissions: {
+        orderBy: { createdAt: "desc" },
+        take: 1,
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  })
+
+  if (!fiscalDocument) return emptyReceiptCertificationStatus()
+
+  const submission = fiscalDocument.submissions[0] ?? null
+  const legalDelivery = resolveReceiptLegalDeliveryStatus({
+    fiscalDocumentStatus: fiscalDocument.status,
+    certificationPolicySnapshot: fiscalDocument.certificationPolicySnapshot,
+  })
+
+  return {
+    fiscalDocumentId: fiscalDocument.id,
+    documentType: fiscalDocument.documentType,
+    fiscalDocumentStatus: fiscalDocument.status,
+    submissionId: submission?.id ?? null,
+    submissionStatus: submission?.status ?? null,
+    authorityChannel: fiscalDocument.authorityChannel,
+    authorityReference: fiscalDocument.authorityReference,
+    legalNumber: fiscalDocument.legalNumber,
+    provisionalNumber: fiscalDocument.provisionalNumber,
+    certifiedAt: fiscalDocument.certifiedAt?.toISOString() ?? null,
+    rejectedAt: fiscalDocument.rejectedAt?.toISOString() ?? null,
+    rejectionReason: fiscalDocument.rejectionReason,
+    certificationArtifactHash: fiscalDocument.certificationArtifactHash,
+    countryCode: fiscalDocument.countryCode,
+    countryPackVersion: fiscalDocument.countryPackVersion,
+    countryPackVerificationStatus: fiscalDocument.countryPackVerificationStatus,
+    ...legalDelivery,
+  }
 }
 
 function cleanJson(input: Record<string, unknown>): Prisma.JsonObject {
@@ -252,7 +416,7 @@ async function findSalesReceipt(salesOrderId: string, organizationId?: string): 
   })
 
   if (!sale || sale.status === "DRAFT" || sale.status === "CANCELLED") {
-    throw new Error("Receipt not found")
+    throw new NotFoundError("Receipt not found")
   }
 
   const locale = (sale.customer?.preferredLocale || sale.organization.defaultLocale || "EN") as ReceiptLocale
@@ -261,6 +425,7 @@ async function findSalesReceipt(salesOrderId: string, organizationId?: string): 
     : displayName(sale.createdBy?.firstName, sale.createdBy?.lastName, sale.createdBy?.email)
   const primaryPayment = sale.payments[0]
   const firstTaxRate = sale.lines.find((line) => moneyToNumber(line.taxRate) > 0)?.taxRate
+  const certification = await getReceiptCertificationStatus(sale.organization.id, sale.id)
 
   return {
     receipt: {
@@ -301,6 +466,7 @@ async function findSalesReceipt(salesOrderId: string, organizationId?: string): 
         createdAt: payment.createdAt.toISOString(),
       })),
     },
+    certification,
     business: {
       name: sale.organization.name,
       address: sale.organization.address || "",
@@ -387,6 +553,20 @@ export async function sendReceipt(
     return result
   }
 
+  if (receipt.certification.legalDeliveryBlocked) {
+    const result: ReceiptDeliveryResult = {
+      channel: input.channel,
+      status: "FAILED",
+      retryable: false,
+      message:
+        receipt.certification.legalDeliveryBlockReason ||
+        "Receipt delivery is blocked until fiscal certification is complete.",
+      digitalReceiptUrl: receipt.digitalReceiptUrl,
+    }
+    await recordDeliveryAudit(input, receipt, result)
+    throw new BusinessRuleError(result.message)
+  }
+
   const destination = input.channel === "WHATSAPP"
     ? normalizePhoneNumber(input.destination || receipt.receipt.customerPhone) || undefined
     : input.destination
@@ -400,7 +580,7 @@ export async function sendReceipt(
       digitalReceiptUrl: receipt.digitalReceiptUrl,
     }
     await recordDeliveryAudit(input, receipt, result)
-    throw new Error(result.message)
+    throw new BusinessRuleError(result.message)
   }
 
   const providerInput = { receipt, destination, locale }

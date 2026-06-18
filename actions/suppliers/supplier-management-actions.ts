@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache"
 import { Prisma } from "@prisma/client"
 
+import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses"
+import { BusinessRuleError, ForbiddenError } from "@/services/_shared/action-errors"
 import { requireOrg } from "@/services/_shared/require-org"
 import {
   SupplierCreateSchema,
@@ -125,17 +127,17 @@ async function assertOrganizationAccess(organizationId: string, requiredPermissi
   const requestedOrganizationId = cleanText(organizationId)
 
   if (!requestedOrganizationId) {
-    throw new Error("Organization is required")
+    throw new BusinessRuleError("Organization is required")
   }
 
   const { orgId, user } = await requireOrg()
 
   if (orgId !== requestedOrganizationId) {
-    throw new Error("You do not have access to this organization")
+    throw new ForbiddenError("You do not have access to this organization")
   }
 
   if (!hasPermission(user.permissions, requiredPermission)) {
-    throw new Error(`Missing permission: ${requiredPermission}`)
+    throw new ForbiddenError(`Missing permission: ${requiredPermission}`)
   }
 
   return orgId
@@ -159,10 +161,14 @@ export async function getSupplierManagementData(
 
     return { success: true, data }
   } catch (error) {
-    console.error("Error fetching supplier management data:", error)
     return {
       success: false,
-      error: getActionErrorMessage(error, "Failed to fetch supplier management data"),
+      error: safeLoggedActionErrorMessage(
+        "Error fetching supplier management data",
+        error,
+        { action: "getSupplierManagementData" },
+        getActionErrorMessage(error, "Failed to fetch supplier management data"),
+      ),
     }
   }
 }
@@ -182,10 +188,14 @@ export async function getSupplierAnalyticsData(
     const data = await getSupplierDetailAnalyticsForOrg(scopedOrganizationId, scopedSupplierId)
     return { success: true, data }
   } catch (error) {
-    console.error("Error fetching supplier analytics data:", error)
     return {
       success: false,
-      error: getActionErrorMessage(error, "Failed to fetch supplier analytics"),
+      error: safeLoggedActionErrorMessage(
+        "Error fetching supplier analytics data",
+        error,
+        { action: "getSupplierAnalyticsData" },
+        getActionErrorMessage(error, "Failed to fetch supplier analytics"),
+      ),
     }
   }
 }
@@ -207,10 +217,14 @@ export async function createManagedSupplier(
 
     return { success: true, data: row }
   } catch (error) {
-    console.error("Error creating managed supplier:", error)
     return {
       success: false,
-      error: getActionErrorMessage(error, "Failed to create supplier"),
+      error: safeLoggedActionErrorMessage(
+        "Error creating managed supplier",
+        error,
+        { action: "createManagedSupplier" },
+        getActionErrorMessage(error, "Failed to create supplier"),
+      ),
     }
   }
 }
@@ -239,10 +253,14 @@ export async function updateManagedSupplier(
 
     return { success: true, data: row }
   } catch (error) {
-    console.error("Error updating managed supplier:", error)
     return {
       success: false,
-      error: getActionErrorMessage(error, "Failed to update supplier"),
+      error: safeLoggedActionErrorMessage(
+        "Error updating managed supplier",
+        error,
+        { action: "updateManagedSupplier" },
+        getActionErrorMessage(error, "Failed to update supplier"),
+      ),
     }
   }
 }
@@ -264,10 +282,14 @@ export async function deleteManagedSupplier(
 
     return { success: true, data }
   } catch (error) {
-    console.error("Error archiving managed supplier:", error)
     return {
       success: false,
-      error: getActionErrorMessage(error, "Failed to archive supplier"),
+      error: safeLoggedActionErrorMessage(
+        "Error archiving managed supplier",
+        error,
+        { action: "deleteManagedSupplier" },
+        getActionErrorMessage(error, "Failed to archive supplier"),
+      ),
     }
   }
 }

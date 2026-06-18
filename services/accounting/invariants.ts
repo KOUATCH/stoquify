@@ -1,5 +1,7 @@
 import { Prisma } from "@prisma/client"
 
+import { BusinessRuleError, ForbiddenError, NotFoundError } from "@/services/_shared/action-errors"
+
 export type AccountingAmount = Prisma.Decimal | number | string | null | undefined
 
 export type JournalBalanceLine = {
@@ -49,7 +51,7 @@ function dateOnly(value: Date) {
 
 export function assertBalancedJournalEntry(lines: JournalBalanceLine[]) {
   if (!lines.length) {
-    throw new Error("Journal entry requires at least one line")
+    throw new BusinessRuleError("Journal entry requires at least one line")
   }
 
   const totals = new Map<string, { debit: Prisma.Decimal; credit: Prisma.Decimal }>()
@@ -60,11 +62,11 @@ export function assertBalancedJournalEntry(lines: JournalBalanceLine[]) {
     const credit = toDecimal(line.credit).toDecimalPlaces(2)
 
     if (debit.lt(0) || credit.lt(0)) {
-      throw new Error("Journal entry lines cannot contain negative amounts")
+      throw new BusinessRuleError("Journal entry lines cannot contain negative amounts")
     }
 
     if (debit.gt(0) && credit.gt(0)) {
-      throw new Error("A journal line cannot contain both debit and credit amounts")
+      throw new BusinessRuleError("A journal line cannot contain both debit and credit amounts")
     }
 
     const current = totals.get(currency) ?? {
@@ -79,11 +81,11 @@ export function assertBalancedJournalEntry(lines: JournalBalanceLine[]) {
 
   for (const [currency, total] of totals) {
     if (total.debit.eq(0) && total.credit.eq(0)) {
-      throw new Error(`Journal entry currency ${currency} has no amount`)
+      throw new BusinessRuleError(`Journal entry currency ${currency} has no amount`)
     }
 
     if (!total.debit.eq(total.credit)) {
-      throw new Error(
+      throw new BusinessRuleError(
         `Journal entry is not balanced for ${currency}: debit ${total.debit.toFixed(2)} credit ${total.credit.toFixed(2)}`,
       )
     }
@@ -99,7 +101,7 @@ export function assertSameOrganizationAccounts(
   const mismatched = accounts.find((account) => account.organizationId !== organizationId)
 
   if (mismatched) {
-    throw new Error(`Account ${mismatched.code || mismatched.id} does not belong to this organization`)
+    throw new ForbiddenError(`Account ${mismatched.code || mismatched.id} does not belong to this organization`)
   }
 
   return true
@@ -123,15 +125,15 @@ export function assertOpenPeriod(
   organizationId?: string,
 ) {
   if (!period) {
-    throw new Error("Accounting period was not found")
+    throw new NotFoundError("Accounting period was not found")
   }
 
   if (organizationId && period.organizationId && period.organizationId !== organizationId) {
-    throw new Error("Accounting period does not belong to this organization")
+    throw new ForbiddenError("Accounting period does not belong to this organization")
   }
 
   if (period.status !== "OPEN") {
-    throw new Error(`Accounting period ${period.name || period.id} is not open`)
+    throw new BusinessRuleError(`Accounting period ${period.name || period.id} is not open`)
   }
 
   const candidate = dateOnly(entryDate)
@@ -139,7 +141,7 @@ export function assertOpenPeriod(
   const end = dateOnly(period.endDate)
 
   if (candidate < start || candidate > end) {
-    throw new Error(`Entry date is outside accounting period ${period.name || period.id}`)
+    throw new BusinessRuleError(`Entry date is outside accounting period ${period.name || period.id}`)
   }
 
   return true

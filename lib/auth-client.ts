@@ -11,7 +11,7 @@ import {
 } from "@/lib/security/rbac-permissions"
 
 export const authClient = createAuthClient({
-  baseURL: process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000",
+  basePath: "/api/auth",
 })
 
 export function useSession() {
@@ -63,7 +63,9 @@ export async function signOut(options?: {
   redirect?: boolean
 }) {
   const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000"
+    typeof window === "undefined"
+      ? process.env.NEXT_PUBLIC_BASE_URL ?? ""
+      : window.location.origin
   const currentLocale =
     typeof window === "undefined"
       ? DEFAULT_LOCALE

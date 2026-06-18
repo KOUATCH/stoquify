@@ -292,6 +292,8 @@ export class ErrorHandler implements IErrorHandler {
       userMessage: getPublicMessage(errorData),
       category: errorData.category,
       severity: errorData.severity,
+      correlationId: errorData.requestId,
+      requestId: errorData.requestId,
       recoverable: errorData.recoveryStrategy !== RecoveryStrategy.NONE,
       retryable: errorData.recoveryStrategy === RecoveryStrategy.RETRY,
       context: {

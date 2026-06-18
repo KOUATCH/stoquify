@@ -1,6 +1,7 @@
 import { logger } from "@/lib/logger"
 import { db } from "@/prisma/db"
 import { PaymentStatus, SalesOrderStatus, type Customer, type Prisma } from "@prisma/client"
+import { BusinessRuleError, ConflictError, NotFoundError } from "../_shared/action-errors"
 import { buildPagination, buildPaginatedResult, MAX_PAGE_SIZES } from "../_shared/pagination"
 import type { PaginatedResult } from "../_shared/types"
 import type { CustomerCreateInput, CustomerListParams, CustomerUpdateInput } from "./customer.schemas"
@@ -177,7 +178,7 @@ export async function getCustomerById(orgId: string, id: string): Promise<Custom
   const customer = await db.customer.findFirst({
     where: { id, organizationId: orgId, deletedAt: null },
   })
-  if (!customer) throw new Error("Customer not found")
+  if (!customer) throw new NotFoundError("Customer not found")
   return customer as CustomerDTO
 }
 
@@ -197,7 +198,7 @@ export async function createCustomer(
   const existing = await db.customer.findFirst({
     where: { organizationId: orgId, code },
   })
-  if (existing) throw new Error(`Customer with code "${code}" already exists in this organisation`)
+  if (existing) throw new ConflictError(`Customer with code "${code}" already exists in this organisation`)
 
   const customer = await db.customer.create({
     data: {
@@ -226,14 +227,14 @@ export async function updateCustomer(
   const customer = await db.customer.findFirst({
     where: { id, organizationId: orgId, deletedAt: null },
   })
-  if (!customer) throw new Error("Customer not found")
+  if (!customer) throw new NotFoundError("Customer not found")
 
   if (input.code && input.code !== customer.code) {
     const codeClash = await db.customer.findFirst({
       where: { organizationId: orgId, code: input.code, NOT: { id } },
     })
     if (codeClash) {
-      throw new Error(`Customer with code "${input.code}" already exists in this organisation`)
+      throw new ConflictError(`Customer with code "${input.code}" already exists in this organisation`)
     }
   }
 
@@ -260,7 +261,7 @@ export async function deleteCustomer(orgId: string, id: string): Promise<Custome
   const customer = await db.customer.findFirst({
     where: { id, organizationId: orgId, deletedAt: null },
   })
-  if (!customer) throw new Error("Customer not found")
+  if (!customer) throw new NotFoundError("Customer not found")
 
   // Soft delete — the schema includes `deletedAt`, and SalesOrder + ledger
   // entries reference Customer. Hard-delete would orphan history.
@@ -520,7 +521,7 @@ export async function createCustomerForManagement(
   const row = await reloadCustomerManagementRow(organizationId, customer.id)
 
   if (!row) {
-    throw new Error("Customer was created but could not be reloaded")
+    throw new BusinessRuleError("Customer was created but could not be reloaded")
   }
 
   return row
@@ -535,7 +536,7 @@ export async function updateCustomerForManagement(
   const row = await reloadCustomerManagementRow(organizationId, customerId)
 
   if (!row) {
-    throw new Error("Customer was updated but could not be reloaded")
+    throw new BusinessRuleError("Customer was updated but could not be reloaded")
   }
 
   return row
@@ -559,7 +560,7 @@ export async function removeCustomerForManagement(
   })
 
   if (!customer) {
-    throw new Error("Customer not found")
+    throw new NotFoundError("Customer not found")
   }
 
   const hasHistory = customer._count.salesOrders > 0 || customer._count.ledgerEntries > 0
@@ -581,7 +582,7 @@ export async function getCustomerDetailAnalyticsForOrg(
   const row = await reloadCustomerManagementRow(organizationId, customerId)
 
   if (!row) {
-    throw new Error("Customer not found")
+    throw new NotFoundError("Customer not found")
   }
 
   const [salesOrders, ledgerEntries, payments] = await Promise.all([

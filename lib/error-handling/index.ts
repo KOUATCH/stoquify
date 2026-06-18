@@ -12,7 +12,9 @@
 // Re-export all core components
 export * from './types'
 export * from './categories'
+export * from './canonical'
 export * from './error-handler'
+export * from './route-response'
 export * from './server-action-wrapper'
 export * from './client-error-boundary'
 export * from './hooks'

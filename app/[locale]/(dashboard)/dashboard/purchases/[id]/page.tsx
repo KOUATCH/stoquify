@@ -12,8 +12,8 @@ import {
 import { Separator } from "@/components/ui/separator"
 import { pickLocale } from "@/i18n/routing"
 import { formatCurrency } from "@/lib/i18n/formatters"
+import type { PurchaseOrderStatus } from "@/services/purchase-order/purchase-order.schemas"
 import type { Locale } from "@/types/bilingual"
-import { type PurchaseOrderStatus } from "@prisma/client"
 import { format } from "date-fns"
 import { ArrowLeft, AtSign, Building2, Calendar, CreditCard, DollarSign, Edit, FileText, Hash, Mail, MapPin, MoreHorizontal, Package, Phone, User } from 'lucide-react'
 import { getLocale } from "next-intl/server"

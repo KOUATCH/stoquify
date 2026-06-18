@@ -101,9 +101,9 @@ export default function WaitList() {
             <button
               type="submit"
               disabled={isSubmitting || isSubmitSuccessful}
-              className={`px-8 py-4 bg-black text-white rounded-lg font-semibold transition-all
-                ${isSubmitting ? "opacity-70 cursor-not-allowed" : "hover:bg-gray-900"}
-                ${isSubmitSuccessful ? "bg-green-600 hover:bg-green-600" : ""}`}
+              className={`button-gold-chestnut rounded-lg px-8 py-4 font-semibold transition-all
+                ${isSubmitting ? "cursor-not-allowed opacity-70" : ""}
+                ${isSubmitSuccessful ? "opacity-85" : ""}`}
             >
               {isSubmitting ? (
                 <span className="flex items-center gap-2">

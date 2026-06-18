@@ -287,7 +287,7 @@ export default function ModalTableHeader({
                         <div className="grid gap-4 py-4">
                           <Button asChild variant="outline">
                             <Link href={excelDownload} download>
-                              Download {model} Sample Data
+                              Download {model} Import Template
                             </Link>
                           </Button>
 

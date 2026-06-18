@@ -1,31 +1,21 @@
 "use server";
 import { inventoryAction } from "@/lib/error-handling";
 import type { ServerActionResult } from "@/lib/error-handling/types";
-import { db } from "@/prisma/db";
+import { requirePermission } from "@/lib/security/rbac";
+import { updateItemRelationsWithRelations } from "@/services/item/item.service";
 import { UpdateItemRelationsPayload } from "@/types/itemTypes";
 import { revalidatePath } from "next/cache";
 
 export const updateItemRelationsById = inventoryAction(
   async ({ id, data }: { id: string; data: UpdateItemRelationsPayload }): Promise<ServerActionResult<any>> => {
-    // Use a transaction for atomic operations
-    const result = await db.$transaction(async (tx) => {
-      const item = await tx.item.findUnique({
-        where: { id },
-      });
-
-      if (!item) {
-        throw new Error("Item not found");
-      }
-
-      const updatedItem = await tx.item.update({
-        where: { id },
-        data: { ...data }
-      });
-
-      revalidatePath("/inventory/items");
-      return updatedItem;
+    const ctx = await requirePermission("inventory.items.update", {
+      resource: "Item",
+      resourceId: id,
+      auditAllowed: true,
     });
+    const result = await updateItemRelationsWithRelations(ctx.orgId, id, data);
 
+    revalidatePath("/inventory/items");
     return {
       data: result,
       success: true,

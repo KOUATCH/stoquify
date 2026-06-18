@@ -64,25 +64,25 @@ export default function EntityForm<TFormValues extends FieldValues>({
       headerBg: "bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50",
       headerBorder: "border-blue-200",
       iconBg: "bg-gradient-to-r from-blue-500 to-indigo-500",
-      submitBg: "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700",
+      submitBg: "button-gold-chestnut",
     },
     success: {
       headerBg: "bg-gradient-to-r from-green-50 via-emerald-50 to-teal-50",
       headerBorder: "border-green-200",
       iconBg: "bg-gradient-to-r from-green-500 to-emerald-500",
-      submitBg: "bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700",
+      submitBg: "button-gold-chestnut",
     },
     warning: {
       headerBg: "bg-gradient-to-r from-orange-50 via-amber-50 to-yellow-50",
       headerBorder: "border-orange-200",
       iconBg: "bg-gradient-to-r from-orange-500 to-amber-500",
-      submitBg: "bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700",
+      submitBg: "button-gold-chestnut",
     },
     info: {
       headerBg: "bg-gradient-to-r from-cyan-50 via-sky-50 to-blue-50",
       headerBorder: "border-cyan-200",
       iconBg: "bg-gradient-to-r from-cyan-500 to-sky-500",
-      submitBg: "bg-gradient-to-r from-cyan-600 to-sky-600 hover:from-cyan-700 hover:to-sky-700",
+      submitBg: "button-gold-chestnut",
     },
   };
 
@@ -168,7 +168,7 @@ export default function EntityForm<TFormValues extends FieldValues>({
                     type="button"
                     variant="outline"
                     disabled={isSubmitting && disableWhenSubmitting}
-                    className="flex items-center gap-2 bg-white/80 hover:bg-white border-gray-300 hover:border-gray-400 transition-all duration-200"
+                    className="flex items-center gap-2 transition-all duration-200"
                   >
                     <XCircle className="w-4 h-4" />
                     {cancelLabel}
@@ -179,7 +179,7 @@ export default function EntityForm<TFormValues extends FieldValues>({
                   <Button
                     type="submit"
                     disabled={isSubmitting && disableWhenSubmitting}
-                    className={`flex items-center gap-2 ${currentVariant.submitBg} border-0 shadow-lg hover:shadow-xl transition-all duration-200 font-medium px-6`}
+                    className={`flex items-center gap-2 ${currentVariant.submitBg} shadow-lg hover:shadow-xl transition-all duration-200 font-medium px-6`}
                   >
                     {isSubmitting ? (
                       <>

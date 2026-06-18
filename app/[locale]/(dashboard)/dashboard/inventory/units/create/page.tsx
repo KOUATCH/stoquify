@@ -22,7 +22,7 @@ export default async function CreateUnitPage({
   }
 
   return (
-    <div className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
+    <div className="dashboard-landing-theme bee-eater-dashboard-theme dark min-h-screen overflow-x-hidden">
       <div className="dashboard-landing-content mx-auto flex w-full max-w-[92rem] min-w-0 flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8">
         <UnitsManagementDashboard
           organizationId={user.organizationId}

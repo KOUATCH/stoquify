@@ -109,7 +109,7 @@ interface LocationData {
 const getActionButtonVariant = (action: string, status: PurchaseOrderData['status']) => {
   switch (action) {
     case 'view':
-      return 'bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/40'
+      return 'bg-[#f0c54d]/14 text-[#8b4a2f] hover:bg-[#f0c54d]/22 dark:bg-[#bf7145]/20 dark:text-[#f6d574] dark:hover:bg-[#bf7145]/30'
     case 'edit':
       return status === 'DRAFT' ?
         'bg-emerald-50 text-emerald-600 hover:bg-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:hover:bg-emerald-900/40' :
@@ -117,7 +117,7 @@ const getActionButtonVariant = (action: string, status: PurchaseOrderData['statu
     case 'approve':
       return 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-950/35 dark:text-emerald-300 dark:hover:bg-emerald-950/50'
     case 'receive':
-      return 'bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-950/35 dark:text-blue-300 dark:hover:bg-blue-950/50'
+      return 'bg-[#f0c54d]/14 text-[#8b4a2f] hover:bg-[#f0c54d]/22 dark:bg-[#bf7145]/20 dark:text-[#f6d574] dark:hover:bg-[#bf7145]/30'
     case 'cancel':
       return 'bg-rose-50 text-rose-700 hover:bg-rose-100 dark:bg-rose-950/35 dark:text-rose-300 dark:hover:bg-rose-950/50'
     default:
@@ -768,7 +768,6 @@ const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
         approveMutation.mutate({
           id: purchaseOrder.id,
           organizationId: organizationId,
-          approvedBy: 'system-user' // TODO: Get current user ID from session
         })
         break
     }

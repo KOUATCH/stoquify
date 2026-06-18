@@ -40,7 +40,7 @@ import {
   UnitType,
 } from "@prisma/client";
 import { PERMISSIONS } from "../lib/permissions";
-import { DEFAULT_POS_POSTING_RULES } from "../services/accounting/default-posting-rules";
+import { DEFAULT_POSTING_RULES } from "../services/accounting/default-posting-rules";
 import { CAMEROON_PAYMENT_PROVIDER_CODES } from "../services/regulatory/country-packs/cameroon.constants";
 import { resolveCameroonStandardVatRateBps } from "../services/regulatory/country-packs/resolve";
 
@@ -54,6 +54,16 @@ const seedIndexes = Array.from({ length: COUNT }, (_, index) => index + 1);
 const orgIndexes = Array.from({ length: ORG_COUNT }, (_, index) => index + 1);
 const FAKER_SEED = 20260527;
 const DEFAULT_DEMO_PASSWORD = "StockFlowSeed@2026";
+const REGISTER_WORKFLOW_OWNER_PASSWORD = "RegisterOwner@2026";
+const REGISTER_WORKFLOW_PENDING_PASSWORD = "PendingVerify@2026";
+const REGISTER_WORKFLOW_MODULES = [
+  "POS",
+  "Inventory",
+  "Accounting",
+  "Payment reconciliation",
+  "Payroll",
+  "Compliance",
+];
 const SEED_IMAGE_URL_ROOT = "/seed-images";
 const SEED_IMAGE_DIR = path.join(process.cwd(), "public", "seed-images");
 const SEED_IMAGE_KINDS = [
@@ -630,6 +640,7 @@ const demoCredentials: Array<{
   password: string;
   role: string;
   userId: string;
+  note?: string;
 }> = [];
 
 const hashPassword = async (password = DEFAULT_DEMO_PASSWORD) => {
@@ -781,12 +792,35 @@ async function seedOrganizations() {
         "Wholesale",
         "Food production",
       ]),
+      tradeName: `AqStoq Market ${pad(context.orgIndex)}`,
+      taxIdentifier: `SEED-NIU-${pad(context.orgIndex)}-${context.currency}`,
       country: context.country,
+      countryCode: context.country === "Cameroon" ? "CM" : "SN",
       state: faker.location.state(),
       address: faker.location.streetAddress(),
       currency: context.currency,
       timezone: context.timezone,
       defaultLocale: context.locale,
+      companySize: ["1-10", "11-50", "51-200", "201+"][context.orgIndex % 4],
+      businessType: faker.helpers.arrayElement([
+        "Retail",
+        "Wholesale",
+        "Distribution",
+        "Services",
+      ]),
+      branchCount: ["1", "2-3", "4-10", "11+"][context.orgIndex % 4],
+      primaryPain: faker.helpers.arrayElement([
+        "POS and cash control",
+        "Stock control",
+        "Accounting cleanup",
+        "Payment reconciliation",
+        "Full operating system",
+      ]),
+      setupRole: ["owner", "accountant", "implementation_partner", "financial_partner"][context.orgIndex % 4],
+      requestedModules: REGISTER_WORKFLOW_MODULES,
+      assistedSetupRequested: context.orgIndex % 2 === 0,
+      onboardingSource: "comprehensive-seed-register-workflow",
+      onboardingCompletedAt: day(context.orgIndex),
       inventoryStartDate: day(context.orgIndex),
       fiscalYearStart: "01-01",
       isActive: true,
@@ -1113,7 +1147,7 @@ async function seedAccountingControlPlane() {
   });
 
   await prisma.postingRule.createMany({
-    data: DEFAULT_POS_POSTING_RULES.map((template, index) => ({
+    data: DEFAULT_POSTING_RULES.map((template, index) => ({
       id: id("posting_rule", index + 1),
       organizationId: orgId(),
       code: template.code,
@@ -1130,7 +1164,7 @@ async function seedAccountingControlPlane() {
 
   let postingRuleLineIndex = 1;
   await prisma.postingRuleLine.createMany({
-    data: DEFAULT_POS_POSTING_RULES.flatMap((template, ruleIndex) =>
+    data: DEFAULT_POSTING_RULES.flatMap((template, ruleIndex) =>
       template.lines.map((line) => ({
         id: id("posting_rule_line", postingRuleLineIndex++),
         organizationId: orgId(),
@@ -1156,7 +1190,7 @@ async function seedAccountingControlPlane() {
       message: "Comprehensive accounting control plane seeded",
       metadata: {
         fiscalYear: fiscalYear.name,
-        postingRules: DEFAULT_POS_POSTING_RULES.map((rule) => rule.code),
+        postingRules: DEFAULT_POSTING_RULES.map((rule) => rule.code),
       },
     },
   });
@@ -1206,6 +1240,136 @@ async function seedAuthTables() {
       createdAt: day(index),
     })),
   });
+}
+
+async function seedRegisterWorkflowDemoAccounts() {
+  const ownerPasswordHash = await hashPassword(REGISTER_WORKFLOW_OWNER_PASSWORD);
+  const pendingPasswordHash = await hashPassword(REGISTER_WORKFLOW_PENDING_PASSWORD);
+  const adminRoleId = id("role", 2);
+  const ownerUserId = id("register_owner_user", 1);
+  const pendingUserId = id("register_pending_user", 1);
+  const ownerEmail = scopedEmail("register.owner");
+  const pendingEmail = scopedEmail("register.pending");
+  const pendingOtp = `24${currentOrg().orgIndex}${pad(1)}`;
+
+  await prisma.user.create({
+    data: {
+      id: ownerUserId,
+      email: ownerEmail,
+      emailVerified: true,
+      firstName: "Rita",
+      lastName: "Founder",
+      phone: scopedPhone(67, 41),
+      image: seedImageUrl("avatars", 1),
+      jobTitle: "Register Workflow Owner",
+      password: ownerPasswordHash,
+      isActive: true,
+      isVerified: true,
+      preferredLocale: currentOrg().locale,
+      lastLogin: day(2),
+      updatedAt: day(2),
+      organization: { connect: { id: orgId() } },
+      roles: { connect: { id: adminRoleId } },
+    },
+  });
+
+  await prisma.user.create({
+    data: {
+      id: pendingUserId,
+      email: pendingEmail,
+      emailVerified: false,
+      firstName: "Pending",
+      lastName: "Verify",
+      phone: scopedPhone(67, 42),
+      image: seedImageUrl("avatars", 2),
+      jobTitle: "Pending Register Verification",
+      password: pendingPasswordHash,
+      isActive: true,
+      isVerified: false,
+      verificationToken: pendingOtp,
+      verificationTokenExpires: day(30),
+      preferredLocale: currentOrg().locale,
+      updatedAt: day(2),
+      organization: { connect: { id: orgId() } },
+      roles: { connect: { id: adminRoleId } },
+    },
+  });
+
+  await prisma.account.createMany({
+    data: [
+      {
+        id: id("register_owner_account", 1),
+        userId: ownerUserId,
+        accountId: ownerUserId,
+        providerId: "credential",
+        scope: "profile email",
+        password: ownerPasswordHash,
+      },
+      {
+        id: id("register_pending_account", 1),
+        userId: pendingUserId,
+        accountId: pendingUserId,
+        providerId: "credential",
+        scope: "profile email",
+        password: pendingPasswordHash,
+      },
+    ],
+  });
+
+  await prisma.passwordHistory.createMany({
+    data: [
+      {
+        id: id("register_owner_password_history", 1),
+        userId: ownerUserId,
+        passwordHash: ownerPasswordHash,
+        createdAt: day(2),
+      },
+      {
+        id: id("register_pending_password_history", 1),
+        userId: pendingUserId,
+        passwordHash: pendingPasswordHash,
+        createdAt: day(2),
+      },
+    ],
+  });
+
+  await prisma.location.create({
+    data: {
+      id: id("register_default_location", 1),
+      name: "Main onboarding branch",
+      code: "MAIN",
+      type: LocationType.STORE,
+      address: "Registration workflow seed branch",
+      phone: scopedPhone(67, 43),
+      email: scopedEmail("register.branch"),
+      isActive: true,
+      isDefault: true,
+      organizationId: orgId(),
+      managerId: ownerUserId,
+      updatedAt: day(2),
+    },
+  });
+
+  demoCredentials.push(
+    {
+      organizationId: orgId(),
+      name: "Rita Founder",
+      email: ownerEmail,
+      password: REGISTER_WORKFLOW_OWNER_PASSWORD,
+      role: "Register Workflow Owner",
+      userId: ownerUserId,
+      note: "Verified account created to mirror the completed v2 registration workflow.",
+    },
+    {
+      organizationId: orgId(),
+      name: "Pending Verify",
+      email: pendingEmail,
+      password: REGISTER_WORKFLOW_PENDING_PASSWORD,
+      role: "Pending Register Verification",
+      userId: pendingUserId,
+      note: `Unverified account for /verify testing. OTP: ${pendingOtp}`,
+    },
+  );
 }
 
 async function seedReferenceData() {
@@ -2380,6 +2544,26 @@ async function seedAuditAndInvites() {
       createdAt: day(index),
     })),
   });
+
+  await prisma.auditLog.create({
+    data: {
+      id: id("register_workflow_audit_log", 1),
+      entityType: "AuthRegistration",
+      entityId: id("register_owner_user", 1),
+      action: "AUTH_REGISTERED",
+      changes: {
+        seed: true,
+        source: "comprehensive-seed-register-workflow",
+        requestedModules: REGISTER_WORKFLOW_MODULES,
+        defaultLocationId: id("register_default_location", 1),
+      },
+      userId: id("register_owner_user", 1),
+      ipAddress: "10.0.1.10",
+      userAgent: "AqStoqFlow comprehensive register workflow seed",
+      organizationId: orgId(),
+      createdAt: day(2),
+    },
+  });
 }
 
 async function withOrgSeedContext<T>(
@@ -2406,6 +2590,7 @@ async function seedOrgDataset(context: OrgSeedContext) {
     await seedUsers();
     await seedAccountingControlPlane();
     await seedAuthTables();
+    await seedRegisterWorkflowDemoAccounts();
     await seedReferenceData();
     await seedItemsAndInventory();
     await seedPointOfSale();
@@ -2453,12 +2638,12 @@ async function verifyCounts() {
     {
       model: "PostingRule",
       delegate: prisma.postingRule,
-      minimum: ORG_COUNT * DEFAULT_POS_POSTING_RULES.length,
+      minimum: ORG_COUNT * DEFAULT_POSTING_RULES.length,
     },
     {
       model: "PostingRuleLine",
       delegate: prisma.postingRuleLine,
-      minimum: ORG_COUNT * DEFAULT_POS_POSTING_RULES.length,
+      minimum: ORG_COUNT * DEFAULT_POSTING_RULES.length,
     },
     {
       model: "LedgerPostingBatch",
@@ -2560,7 +2745,7 @@ async function verifyCounts() {
       distribution.sales < COUNT ||
       distribution.payments < COUNT ||
       distribution.chartAccounts < 14 ||
-      distribution.postingRules < DEFAULT_POS_POSTING_RULES.length ||
+      distribution.postingRules < DEFAULT_POSTING_RULES.length ||
       distribution.journalEntries < COUNT,
   );
 

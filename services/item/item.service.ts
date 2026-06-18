@@ -1,17 +1,19 @@
 import { db } from "@/prisma/db"
 import { Prisma } from "@prisma/client"
 import type { Item as ItemModel } from "@prisma/client"
-import { updateInventoryLevels } from "@/lib/inventory/update-inventory-levels"
 import { itemStandardInclude } from "@/lib/item/includes"
+import { ConflictError, NotFoundError } from "@/services/_shared/action-errors"
+import { postOpeningStock } from "@/services/inventory/inventory-stock-event.service"
+import { requestManualItemStockAdjustment } from "@/services/inventory/inventory-adjustment.service"
 import {
   type CreateItemInput,
   type ItemWithRelations,
   slugify as slugifyItem,
 } from "@/lib/item/schemas"
-import { TransactionType } from "@/types/inventory"
 import type {
   BriefItemPayload,
   ItemDTO,
+  ItemPayload,
   ItemWithInventoryLevelsPayload,
 } from "@/types/itemTypes"
 import { buildPagination, buildPaginatedResult, MAX_PAGE_SIZES } from "../_shared/pagination"
@@ -22,11 +24,110 @@ const DEFAULT_IMAGE_URL =
   "https://14J7oh8kso.ufs.sh/f/HLxTbDBCDLwfAXaapcezIN7vwylKf1PXSCqAuseUG0gx8mhd"
 
 export type { ItemCreateInput, ItemUpdateInput }
+export type { ItemWithRelations }
 
 type RelatedItemInput = Pick<
   CreateItemInput,
   "categoryId" | "brandId" | "unitId" | "taxRateId"
 >
+
+export type ListItemsWithRelationsInput = {
+  organizationId: string
+  q?: string
+  page?: number
+  pageSize?: number
+  sortBy?: "createdAt" | "updatedAt" | "nameEn" | "sku" | "sellingPrice" | "costPrice"
+  sortOrder?: "asc" | "desc"
+  categoryId?: string
+  brandId?: string
+  unitId?: string
+  taxRateId?: string
+  isActive?: boolean
+}
+
+export type PaginatedItemsWithRelations = {
+  data: ItemWithRelations[]
+  total: number
+  page: number
+  pageSize: number
+  totalPages: number
+}
+
+export type ItemBasicInfoUpdateInput = {
+  id?: string | null
+  organizationId?: unknown
+  nameEn?: string
+  nameFr?: string | null
+  descriptionEn?: string | null
+  descriptionFr?: string | null
+  imageUrls?: string | string[] | null
+  thumbnail?: string | null
+}
+
+export type ItemDetailsUpdateInput = {
+  id?: string | null
+  organizationId?: unknown
+  sku?: string
+  barcode?: string | null
+  dimensions?: string | null
+  weight?: number | null
+  upc?: string | null
+  ean?: string | null
+  mpn?: string | null
+  isbn?: string | null
+}
+
+export type ItemPricingUpdateInput = {
+  id?: string | null
+  organizationId?: unknown
+  costPrice?: number
+  sellingPrice?: number
+  tax?: number | null
+}
+
+export type ItemRelationsUpdateInput = {
+  id?: string | null
+  organizationId?: unknown
+  categoryId?: string | null
+  brandId?: string | null
+  unitId?: string | null
+  taxRateId?: string | null
+}
+
+export type ItemStockMutationInput = {
+  id?: string | null
+  organizationId?: unknown
+  minStockLevel?: number | null
+  maxStockLevel?: number | null
+  unitOfMeasure?: string | null
+  adjustInventory?: {
+    locationId: string
+    deltaQty: number
+    unitCost?: number
+    notes?: string
+  }
+}
+
+const disallowedGenericUpdateFields = new Set([
+  "id",
+  "organizationId",
+  "createdAt",
+  "updatedAt",
+  "deletedAt",
+  "inventoryLevels",
+  "category",
+  "brand",
+  "unit",
+  "taxRate",
+  "featuredReason",
+  "featuredAt",
+  "discontinuedAt",
+  "discontinueReason",
+  "discontinueNotes",
+  "isFeatured",
+  "name",
+  "description",
+])
 
 function cleanText(value?: string | null) {
   const trimmed = value?.trim()
@@ -36,6 +137,65 @@ function cleanText(value?: string | null) {
 function imageUrlList(value?: string | null) {
   const cleaned = cleanText(value)
   return cleaned ? [cleaned] : []
+}
+
+function decimalInput(value: unknown) {
+  return new Prisma.Decimal(value == null || value === "" ? 0 : (value as Prisma.Decimal.Value))
+}
+
+function decimalToNumber(value: Prisma.Decimal | null | undefined) {
+  return value?.toNumber() ?? 0
+}
+
+function imageUrlsToString(value: string[] | string | null | undefined) {
+  if (Array.isArray(value)) return value.join(",")
+  return value ?? ""
+}
+
+function normalizeImageUrls(value: unknown): string[] | undefined {
+  if (value === undefined) return undefined
+  if (Array.isArray(value)) {
+    return value.map((entry) => String(entry).trim()).filter(Boolean)
+  }
+  if (typeof value === "string") {
+    const trimmed = value.trim()
+    return trimmed ? [trimmed] : []
+  }
+  if (value === null) return []
+  return undefined
+}
+
+function stripUndefined<T extends Record<string, unknown>>(value: T) {
+  return Object.fromEntries(Object.entries(value).filter(([, entry]) => entry !== undefined)) as Partial<T>
+}
+
+function itemPayload(row: Pick<
+  ItemModel,
+  | "id"
+  | "nameEn"
+  | "slug"
+  | "costPrice"
+  | "sellingPrice"
+  | "createdAt"
+  | "imageUrls"
+  | "thumbnail"
+  | "organizationId"
+  | "sku"
+  | "descriptionEn"
+>): ItemPayload {
+  return {
+    id: row.id,
+    name: row.nameEn,
+    slug: row.slug,
+    costPrice: row.costPrice.toNumber(),
+    sellingPrice: row.sellingPrice.toNumber(),
+    createdAt: row.createdAt,
+    imageUrls: imageUrlsToString(row.imageUrls),
+    thumbnail: row.thumbnail,
+    organizationId: row.organizationId,
+    sku: row.sku,
+    description: row.descriptionEn || "",
+  }
 }
 
 async function assertItemRelations(
@@ -135,6 +295,153 @@ function toBriefDTO(row: ItemModel): BriefItemPayload {
     isSerialTracked: row.trackSerialNumbers,
     createdAt: row.createdAt,
   }
+}
+
+function toInventoryPayload(
+  row: Prisma.ItemGetPayload<{
+    include: {
+      brand: { select: { id: true; nameEn: true; nameFr: true } }
+      category: { select: { id: true; titleEn: true; titleFr: true } }
+      inventoryLevels: {
+        select: {
+          id: true
+          quantityOnHand: true
+          quantityReserved: true
+          quantityAvailable: true
+          quantityInTransit: true
+          quantityOnOrder: true
+          reorderPoint: true
+          totalValue: true
+        }
+      }
+    }
+  }>,
+): ItemWithInventoryLevelsPayload {
+  return {
+    id: row.id,
+    organizationId: row.organizationId,
+    nameEn: row.nameEn,
+    nameFr: row.nameFr,
+    descriptionEn: row.descriptionEn,
+    descriptionFr: row.descriptionFr,
+    name: row.nameEn,
+    description: row.descriptionEn,
+    slug: row.slug,
+    sku: row.sku,
+    costPrice: row.costPrice.toNumber(),
+    sellingPrice: row.sellingPrice.toNumber(),
+    thumbnail: row.thumbnail,
+    imageUrls: imageUrlsToString(row.imageUrls),
+    isActive: row.isActive,
+    isDiscontinued: row.isDiscontinued,
+    minStockLevel: row.minStockLevel.toNumber(),
+    maxStockLevel: row.maxStockLevel?.toNumber() ?? null,
+    reorderLevel: row.reorderLevel.toNumber(),
+    reorderQuantity: row.reorderQuantity?.toNumber() ?? null,
+    createdAt: row.createdAt,
+    updatedAt: row.updatedAt,
+    brand: row.brand ? { id: row.brand.id, brandName: row.brand.nameEn } : null,
+    category: row.category ? { id: row.category.id, title: row.category.titleEn } : null,
+    categoryId: row.categoryId,
+    inventoryLevels: row.inventoryLevels.map((level) => ({
+      id: level.id,
+      quantityOnHand: level.quantityOnHand.toNumber(),
+      quantityReserved: level.quantityReserved.toNumber(),
+      quantityAvailable: level.quantityAvailable.toNumber(),
+      quantityInTransit: level.quantityInTransit.toNumber(),
+      quantityOnOrder: level.quantityOnOrder.toNumber(),
+      reorderPoint: level.reorderPoint.toNumber(),
+      totalValue: level.totalValue.toNumber(),
+    })),
+  }
+}
+
+function itemWhereFromListInput(input: ListItemsWithRelationsInput): Prisma.ItemWhereInput {
+  return {
+    organizationId: input.organizationId,
+    deletedAt: null,
+    ...(input.q
+      ? {
+          OR: [
+            { nameEn: { contains: input.q, mode: "insensitive" as const } },
+            { nameFr: { contains: input.q, mode: "insensitive" as const } },
+            { sku: { contains: input.q, mode: "insensitive" as const } },
+            { barcode: { contains: input.q, mode: "insensitive" as const } },
+          ],
+        }
+      : {}),
+    ...(input.categoryId ? { categoryId: input.categoryId } : {}),
+    ...(input.brandId ? { brandId: input.brandId } : {}),
+    ...(input.unitId ? { unitId: input.unitId } : {}),
+    ...(input.taxRateId ? { taxRateId: input.taxRateId } : {}),
+    ...(typeof input.isActive === "boolean" ? { isActive: input.isActive } : {}),
+  }
+}
+
+function buildGenericItemUpdateData(data: Record<string, unknown>): Prisma.ItemUpdateInput {
+  const updateData: Prisma.ItemUpdateInput = {}
+  const updateRecord = updateData as Record<string, unknown>
+
+  for (const [key, value] of Object.entries(data)) {
+    if (value === undefined || value === null || disallowedGenericUpdateFields.has(key)) continue
+
+    switch (key) {
+      case "costPrice":
+      case "sellingPrice":
+      case "weight":
+      case "minStockLevel":
+      case "maxStockLevel":
+      case "reorderLevel":
+      case "reorderQuantity":
+        updateRecord[key] = decimalInput(value)
+        break
+      case "imageUrls":
+        updateData.imageUrls = normalizeImageUrls(value)
+        break
+      case "nameEn":
+      case "nameFr":
+      case "descriptionEn":
+      case "descriptionFr":
+      case "slug":
+      case "sku":
+      case "barcode":
+      case "dimensions":
+      case "upc":
+      case "ean":
+      case "mpn":
+      case "isbn":
+      case "thumbnail":
+      case "categoryId":
+      case "brandId":
+      case "unitId":
+      case "taxRateId":
+      case "isActive":
+      case "isDiscontinued":
+      case "trackInventory":
+      case "trackSerialNumbers":
+      case "trackBatches":
+      case "trackExpiry":
+        updateRecord[key] = value
+        break
+      default:
+        break
+    }
+  }
+
+  return updateData
+}
+
+async function assertItemInTenant(
+  client: typeof db | Prisma.TransactionClient,
+  organizationId: string,
+  itemId: string,
+) {
+  const item = await client.item.findFirst({
+    where: { id: itemId, organizationId, deletedAt: null },
+    select: { id: true },
+  })
+  if (!item) throw new NotFoundError("Item not found")
+  return item
 }
 
 export async function listItems(
@@ -237,6 +544,236 @@ export async function getItem(orgId: string, id: string): Promise<ItemDTO | null
   return row ? toDTO(row) : null
 }
 
+export const getItemEditDTO = getItem
+
+export type ItemApiListOptions = {
+  page?: number
+  limit?: number
+}
+
+export type ItemApiListResult<T> = {
+  data: T[]
+  pagination: {
+    itemCount: number
+    page: number
+    limit: number
+    totalPages: number
+  }
+}
+
+export type BriefItemApiDTO = {
+  id: string
+  nameEn: string
+  name: string
+  createdAt: Date
+  thumbnail: string | null
+  costPrice: number
+  sellingPrice: number
+  slug: string
+}
+
+function normalizeApiPagination(options: ItemApiListOptions = {}) {
+  const page = Math.max(1, options.page ?? 1)
+  const limit = Math.min(Math.max(options.limit ?? 10, 1), 100)
+  return {
+    page,
+    limit,
+    skip: (page - 1) * limit,
+  }
+}
+
+export async function listItemApiDTOs(
+  orgId: string,
+  options: ItemApiListOptions = {},
+): Promise<ItemApiListResult<ItemDTO>> {
+  const { page, limit, skip } = normalizeApiPagination(options)
+  const where: Prisma.ItemWhereInput = { organizationId: orgId, deletedAt: null }
+
+  const [items, totalCount] = await Promise.all([
+    db.item.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      skip,
+      take: limit,
+    }),
+    db.item.count({ where }),
+  ])
+
+  return {
+    data: items.map(toDTO),
+    pagination: {
+      itemCount: totalCount,
+      page,
+      limit,
+      totalPages: Math.ceil(totalCount / limit),
+    },
+  }
+}
+
+export async function listBriefItemApiDTOs(
+  orgId: string,
+  options: ItemApiListOptions = {},
+): Promise<ItemApiListResult<BriefItemApiDTO>> {
+  const { page, limit, skip } = normalizeApiPagination(options)
+  const where: Prisma.ItemWhereInput = { organizationId: orgId, deletedAt: null }
+
+  const [items, totalCount] = await Promise.all([
+    db.item.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        nameEn: true,
+        createdAt: true,
+        thumbnail: true,
+        costPrice: true,
+        sellingPrice: true,
+        slug: true,
+      },
+      skip,
+      take: limit,
+    }),
+    db.item.count({ where }),
+  ])
+
+  return {
+    data: items.map((item) => ({
+      id: item.id,
+      nameEn: item.nameEn,
+      name: item.nameEn,
+      createdAt: item.createdAt,
+      thumbnail: item.thumbnail,
+      costPrice: item.costPrice.toNumber(),
+      sellingPrice: item.sellingPrice.toNumber(),
+      slug: item.slug,
+    })),
+    pagination: {
+      itemCount: totalCount,
+      page,
+      limit,
+      totalPages: Math.ceil(totalCount / limit),
+    },
+  }
+}
+
+export async function getItemWithRelations(orgId: string, id: string): Promise<ItemWithRelations | null> {
+  return db.item.findFirst({
+    where: { id, organizationId: orgId, deletedAt: null },
+    include: itemStandardInclude,
+  })
+}
+
+export async function listItemsWithRelations(
+  input: ListItemsWithRelationsInput,
+): Promise<PaginatedItemsWithRelations> {
+  const page = input.page ?? 1
+  const pageSize = input.pageSize ?? 20
+  const sortBy = input.sortBy ?? "createdAt"
+  const sortOrder = input.sortOrder ?? "desc"
+  const where = itemWhereFromListInput(input)
+
+  const [total, data] = await Promise.all([
+    db.item.count({ where }),
+    db.item.findMany({
+      where,
+      include: itemStandardInclude,
+      orderBy: { [sortBy]: sortOrder },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    }),
+  ])
+
+  return {
+    data,
+    total,
+    page,
+    pageSize,
+    totalPages: Math.max(1, Math.ceil(total / pageSize)),
+  }
+}
+
+export async function getBriefItemById(orgId: string, id: string) {
+  const item = await db.item.findFirst({
+    where: {
+      id,
+      organizationId: orgId,
+      deletedAt: null,
+    },
+    select: {
+      nameEn: true,
+      nameFr: true,
+      sku: true,
+      updatedAt: true,
+      id: true,
+    },
+  })
+
+  return item ? { ...item, name: item.nameEn } : null
+}
+
+export async function listActiveItemPayloads(orgId: string): Promise<ItemPayload[]> {
+  const rows = await db.item.findMany({
+    where: {
+      organizationId: orgId,
+      isActive: true,
+      deletedAt: null,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    select: {
+      id: true,
+      nameEn: true,
+      slug: true,
+      costPrice: true,
+      sellingPrice: true,
+      createdAt: true,
+      imageUrls: true,
+      thumbnail: true,
+      organizationId: true,
+      sku: true,
+      descriptionEn: true,
+    },
+  })
+
+  return rows.map(itemPayload)
+}
+
+export async function listItemsWithInventoryLevels(
+  orgId: string,
+  options: { locationId?: string } = {},
+): Promise<ItemWithInventoryLevelsPayload[]> {
+  const rows = await db.item.findMany({
+    where: {
+      organizationId: orgId,
+      isActive: true,
+      deletedAt: null,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      brand: { select: { id: true, nameEn: true, nameFr: true } },
+      category: { select: { id: true, titleEn: true, titleFr: true } },
+      inventoryLevels: {
+        ...(options.locationId ? { where: { locationId: options.locationId } } : {}),
+        select: {
+          id: true,
+          quantityOnHand: true,
+          quantityReserved: true,
+          quantityAvailable: true,
+          quantityInTransit: true,
+          quantityOnOrder: true,
+          reorderPoint: true,
+          totalValue: true,
+        },
+      },
+    },
+  })
+
+  return rows.map(toInventoryPayload)
+}
+
 export async function createItem(
   orgId: string,
   userId: string,
@@ -260,7 +797,7 @@ export async function createItem(
       where: { organizationId: orgId, sku },
       select: { id: true },
     })
-    if (existing) throw new Error(`Item with SKU "${sku}" already exists`)
+    if (existing) throw new ConflictError(`Item with SKU "${sku}" already exists`)
 
     const newItem = await tx.item.create({
       data: {
@@ -287,37 +824,19 @@ export async function createItem(
       input.initialQuantity !== undefined &&
       input.initialQuantity > 0
     ) {
-      const cost = new Prisma.Decimal(input.unitCost ?? input.costPrice ?? 0)
-      const qty = new Prisma.Decimal(input.initialQuantity)
-      const total = cost.mul(qty)
-
-      await tx.inventoryLevel.create({
-        data: {
-          itemId: newItem.id,
-          locationId: input.locationId,
-          quantityOnHand: qty,
-          quantityAvailable: qty,
-          averageCost: cost,
-          totalValue: total,
-          lastTransactionAt: new Date(),
-        },
-      })
-
-      await tx.inventoryTransaction.create({
-        data: {
-          type: TransactionType.INITIAL_STOCK,
-          quantity: qty,
-          unitCost: cost,
-          totalCost: total,
-          notes: `Initial stock for ${newItem.nameEn}`,
-          itemId: newItem.id,
-          locationId: input.locationId,
+      await postOpeningStock(
+        {
           organizationId: orgId,
+          itemId: newItem.id,
+          locationId: input.locationId,
+          quantity: input.initialQuantity,
+          unitCost: input.unitCost ?? input.costPrice ?? 0,
           createdById: userId,
-          serialNumbers: [],
-          balanceAfter: qty,
+          referenceNumber: sku,
+          notes: `Initial stock for ${newItem.nameEn}`,
         },
-      })
+        tx,
+      )
     }
 
     return toDTO(newItem)
@@ -352,9 +871,9 @@ export async function createItemFromForm(
         : Promise.resolve(null),
     ])
 
-    if (existingSku) throw new Error(`Item with SKU "${sku}" already exists`)
-    if (existingSlug) throw new Error(`Item with slug "${slug}" already exists`)
-    if (existingBarcode) throw new Error(`Item with barcode "${barcode}" already exists`)
+    if (existingSku) throw new ConflictError(`Item with SKU "${sku}" already exists`)
+    if (existingSlug) throw new ConflictError(`Item with slug "${slug}" already exists`)
+    if (existingBarcode) throw new ConflictError(`Item with barcode "${barcode}" already exists`)
 
     await assertItemRelations(tx, orgId, input)
 
@@ -396,22 +915,19 @@ export async function createItemFromForm(
     if (input.initialInventory && input.initialInventory.quantity > 0) {
       const inventory = input.initialInventory
 
-      await updateInventoryLevels(tx, {
-        itemId: item.id,
-        locationId: inventory.locationId,
-        deltaQty: inventory.quantity,
-        unitCost: inventory.unitCost ?? item.costPrice.toNumber(),
-        organizationId: orgId,
-        meta: {
-          notes: inventory.notes ?? "Initial item stock",
+      await postOpeningStock(
+        {
+          organizationId: orgId,
+          itemId: item.id,
+          locationId: inventory.locationId,
+          quantity: inventory.quantity,
+          unitCost: inventory.unitCost ?? item.costPrice.toNumber(),
           createdById: inventory.createdById ?? userId,
-          referenceType: "GOODS_RECEIPT",
-          referenceNumber: inventory.referenceNumber,
-          batchNumber: inventory.batchNumber,
-          serialNumbers: inventory.serialNumbers,
-          expiryDate: inventory.expiryDate,
+          referenceNumber: inventory.referenceNumber ?? sku,
+          notes: inventory.notes ?? "Initial item stock",
         },
-      })
+        tx,
+      )
     }
 
     return item
@@ -427,7 +943,7 @@ export async function updateItem(
     where: { id, organizationId: orgId },
     select: { id: true },
   })
-  if (!existing) throw new Error("Item not found")
+  if (!existing) throw new NotFoundError("Item not found")
 
   const updated = await db.item.update({
     where: { id },
@@ -458,17 +974,296 @@ export async function updateItem(
   return toDTO(updated)
 }
 
-export async function deleteItem(orgId: string, id: string): Promise<ItemDTO> {
-  const item = await db.item.findFirst({ where: { id, organizationId: orgId } })
-  if (!item) throw new Error("Item not found")
+export async function updateItemBasicInfoWithRelations(
+  orgId: string,
+  id: string,
+  input: ItemBasicInfoUpdateInput,
+): Promise<ItemWithRelations> {
+  await assertItemInTenant(db, orgId, id)
 
-  // Soft delete — Item schema has deletedAt. Preserves the historical record
-  // for sales/inventory transactions that reference this item.
-  const deleted = await db.item.update({
+  return db.item.update({
+    where: { id },
+    data: stripUndefined({
+      nameEn: input.nameEn,
+      nameFr: input.nameFr,
+      descriptionEn: input.descriptionEn,
+      descriptionFr: input.descriptionFr,
+      thumbnail: input.thumbnail,
+      imageUrls: normalizeImageUrls(input.imageUrls),
+    }),
+    include: itemStandardInclude,
+  })
+}
+
+export async function updateItemDetailsWithRelations(
+  orgId: string,
+  id: string,
+  input: ItemDetailsUpdateInput,
+): Promise<ItemWithRelations> {
+  await assertItemInTenant(db, orgId, id)
+
+  if (input.sku) {
+    const conflict = await db.item.findFirst({
+      where: {
+        organizationId: orgId,
+        sku: input.sku,
+        id: { not: id },
+        deletedAt: null,
+      },
+      select: { id: true },
+    })
+    if (conflict) throw new ConflictError("Another item with this SKU already exists")
+  }
+
+  return db.item.update({
+    where: { id },
+    data: stripUndefined({
+      sku: input.sku,
+      barcode: input.barcode,
+      dimensions: input.dimensions,
+      weight: input.weight === undefined ? undefined : decimalInput(input.weight),
+      upc: input.upc,
+      ean: input.ean,
+      mpn: input.mpn,
+      isbn: input.isbn,
+    }),
+    include: itemStandardInclude,
+  })
+}
+
+export async function updateItemPricingWithRelations(
+  orgId: string,
+  id: string,
+  input: ItemPricingUpdateInput,
+): Promise<ItemWithRelations> {
+  await assertItemInTenant(db, orgId, id)
+
+  return db.item.update({
+    where: { id },
+    data: stripUndefined({
+      costPrice: input.costPrice === undefined ? undefined : decimalInput(input.costPrice),
+      sellingPrice: input.sellingPrice === undefined ? undefined : decimalInput(input.sellingPrice),
+    }),
+    include: itemStandardInclude,
+  })
+}
+
+export async function updateItemRelationsWithRelations(
+  orgId: string,
+  id: string,
+  input: ItemRelationsUpdateInput,
+): Promise<ItemWithRelations> {
+  await assertItemInTenant(db, orgId, id)
+  await assertItemRelations(db as unknown as Prisma.TransactionClient, orgId, input)
+
+  return db.item.update({
+    where: { id },
+    data: {
+      categoryId: input.categoryId ?? null,
+      brandId: input.brandId ?? null,
+      unitId: input.unitId ?? null,
+      taxRateId: input.taxRateId ?? null,
+    },
+    include: itemStandardInclude,
+  })
+}
+
+export async function updateItemGenericWithRelations(
+  orgId: string,
+  id: string,
+  input: Record<string, unknown>,
+): Promise<
+  Prisma.ItemGetPayload<{
+    include: { inventoryLevels: true; category: true; brand: true; unit: true }
+  }>
+> {
+  const updateData = buildGenericItemUpdateData(input)
+  if (Object.keys(updateData).length === 0) {
+    const item = await db.item.findFirst({
+      where: { id, organizationId: orgId, deletedAt: null },
+      include: { inventoryLevels: true, category: true, brand: true, unit: true },
+    })
+    if (!item) throw new NotFoundError("Item not found")
+    return item
+  }
+
+  await assertItemInTenant(db, orgId, id)
+
+  return db.item.update({
+    where: { id },
+    data: updateData,
+    include: { inventoryLevels: true, category: true, brand: true, unit: true },
+  })
+}
+
+export async function updateItemTrackingWithRelations(
+  orgId: string,
+  id: string,
+  input: {
+    isActive?: boolean | null
+    isSerialTracked?: boolean | null
+    slug?: string | null
+  },
+): Promise<ItemWithRelations> {
+  await assertItemInTenant(db, orgId, id)
+
+  return db.item.update({
+    where: { id },
+    data: stripUndefined({
+      isActive: input.isActive ?? undefined,
+      trackSerialNumbers: input.isSerialTracked ?? undefined,
+      slug: typeof input.slug === "string" ? (input.slug === "" ? slugifyItem(id) : slugifyItem(input.slug)) : undefined,
+    }),
+    include: itemStandardInclude,
+  })
+}
+
+export type UpdateItemStockPolicyInput = {
+  minStockLevel?: number | null
+  maxStockLevel?: number | null
+}
+
+export type ItemStockPolicyResult = Prisma.ItemGetPayload<{
+  include: { inventoryLevels: true }
+}>
+
+export async function updateItemStockPolicy(
+  orgId: string,
+  id: string,
+  input: UpdateItemStockPolicyInput,
+): Promise<ItemStockPolicyResult> {
+  const existing = await db.item.findFirst({
+    where: { id, organizationId: orgId, deletedAt: null },
+    select: { id: true },
+  })
+
+  if (!existing) throw new NotFoundError("Item not found")
+
+  return db.item.update({
+    where: { id },
+    data: {
+      ...(input.minStockLevel !== undefined
+        ? {
+            minStockLevel:
+              input.minStockLevel === null
+                ? new Prisma.Decimal(0)
+                : new Prisma.Decimal(input.minStockLevel),
+          }
+        : {}),
+      ...(input.maxStockLevel !== undefined
+        ? {
+            maxStockLevel:
+              input.maxStockLevel === null
+                ? null
+                : new Prisma.Decimal(input.maxStockLevel),
+          }
+        : {}),
+    },
+    include: {
+      inventoryLevels: true,
+    },
+  })
+}
+
+export async function updateItemStockFromForm(
+  orgId: string,
+  userId: string,
+  id: string,
+  input: ItemStockMutationInput,
+): Promise<ItemWithRelations> {
+  return db.$transaction(async (tx) => {
+    const existingItem = await tx.item.findFirst({
+      where: { id, organizationId: orgId, deletedAt: null },
+      include: itemStandardInclude,
+    })
+
+    if (!existingItem) throw new NotFoundError("Item not found")
+
+    const updatedItem = await tx.item.update({
+      where: { id },
+      data: stripUndefined({
+        minStockLevel:
+          input.minStockLevel === undefined ? undefined : decimalInput(input.minStockLevel),
+        maxStockLevel:
+          input.maxStockLevel === undefined || input.maxStockLevel === null
+            ? input.maxStockLevel
+            : decimalInput(input.maxStockLevel),
+      }),
+      include: itemStandardInclude,
+    })
+
+    if (input.adjustInventory && input.adjustInventory.deltaQty !== 0) {
+      await requestManualItemStockAdjustment(
+        {
+          organizationId: orgId,
+          itemId: updatedItem.id,
+          locationId: input.adjustInventory.locationId,
+          actorId: userId,
+          quantityChange: input.adjustInventory.deltaQty,
+          mode: "delta",
+          unitCost: input.adjustInventory.unitCost ?? existingItem.costPrice.toNumber(),
+          reason: input.adjustInventory.notes ?? "Manual stock adjustment",
+          notes: input.adjustInventory.notes ?? null,
+        },
+        tx,
+      )
+    }
+
+    return updatedItem
+  })
+}
+
+export async function archiveItem(
+  orgId: string,
+  id: string,
+): Promise<ItemWithRelations> {
+  const item = await db.item.findFirst({
+    where: { id, organizationId: orgId, deletedAt: null },
+    select: {
+      id: true,
+      _count: {
+        select: {
+          inventoryTransactions: true,
+          adjustmentLines: true,
+          transferLines: true,
+          goodsReceiptLines: true,
+          supplierInvoiceLines: true,
+          stockCountLines: true,
+          dailySalesReportItems: true,
+        },
+      },
+    },
+  })
+
+  if (!item) throw new NotFoundError("Item not found")
+
+  const evidenceBearingRecords =
+    item._count.inventoryTransactions +
+    item._count.adjustmentLines +
+    item._count.transferLines +
+    item._count.goodsReceiptLines +
+    item._count.supplierInvoiceLines +
+    item._count.stockCountLines +
+    item._count.dailySalesReportItems
+
+  if (evidenceBearingRecords > 0) {
+    return db.item.update({
+      where: { id },
+      data: { deletedAt: new Date(), isActive: false, isDiscontinued: true },
+      include: itemStandardInclude,
+    })
+  }
+
+  return db.item.update({
     where: { id },
     data: { deletedAt: new Date(), isActive: false },
+    include: itemStandardInclude,
   })
-  return toDTO(deleted)
+}
+
+export async function deleteItem(orgId: string, id: string): Promise<ItemDTO> {
+  const deleted = await archiveItem(orgId, id)
+  return toDTO(deleted as ItemModel)
 }
 
 // Convenience for components that just need a flat list.

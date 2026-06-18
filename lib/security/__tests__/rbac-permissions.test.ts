@@ -39,6 +39,25 @@ describe("rbac permission compatibility", () => {
     expect(hasRbacPermission(["accounting.reports.read"], "VIEW_FINANCIAL_REPORTS")).toBe(true)
   })
 
+  it("does not let reconciliation run permission imply certified evidence powers", () => {
+    expect(hasRbacPermission(["payments.reconciliation.run"], "payments.reconciliation.import")).toBe(false)
+    expect(hasRbacPermission(["payments.reconciliation.run"], "payments.reconciliation.sign")).toBe(false)
+    expect(hasRbacPermission(["payments.reconciliation.run"], "payments.reconciliation.suspense.post")).toBe(false)
+  })
+
+  it("keeps AP controls compatible with legacy purchasing and supplier payment grants", () => {
+    expect(hasRbacPermission(["SUPPLIER_PAYABLES_READ"], "purchasing.ap.invoice.view")).toBe(true)
+    expect(hasRbacPermission(["SUPPLIER_PAYMENTS_MANAGE"], "purchasing.ap.payment.release")).toBe(true)
+    expect(hasRbacPermission(["MANAGE_FINANCIAL_CONTROLS"], "purchasing.supplier.bank.approve")).toBe(true)
+  })
+
+  it("keeps payroll controls compatible with legacy payroll and finance grants", () => {
+    expect(hasRbacPermission(["PAYROLL_APPROVE"], "payroll.runs.approve")).toBe(true)
+    expect(hasRbacPermission(["PAYROLL_PROCESS"], "payroll.runs.calculate")).toBe(true)
+    expect(hasRbacPermission(["MANAGE_FINANCIAL_CONTROLS"], "payroll.payments.release")).toBe(true)
+    expect(hasRbacPermission(["EMPLOYEE_SALARY_READ"], "payroll.payslips.read")).toBe(true)
+  })
+
   it("classifies role mutation permissions as critical", () => {
     expect(permissionRisk("roles.permissions.assign")).toBe("crit")
   })
@@ -49,5 +68,9 @@ describe("rbac permission compatibility", () => {
     expect(permissionRisk("accounting.period.close")).toBe("crit")
     expect(permissionRisk("accounting.exports.create")).toBe("crit")
     expect(permissionRisk("FINANCIAL_REPORTS_EXPORT")).toBe("crit")
+    expect(permissionRisk("purchasing.ap.payment.release")).toBe("crit")
+    expect(permissionRisk("purchasing.supplier.bank.approve")).toBe("crit")
+    expect(permissionRisk("payroll.runs.approve")).toBe("crit")
+    expect(permissionRisk("payroll.payments.release")).toBe("crit")
   })
 })

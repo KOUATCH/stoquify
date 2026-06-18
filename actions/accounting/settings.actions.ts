@@ -10,12 +10,26 @@ import {
   updateAccountingSettings,
 } from "@/services/accounting/accounting-settings.service"
 import {
+  getAccountingControlCenterData,
+  type AccountingBlockerCategory,
+  type AccountingControlCenterBlocker,
+  type AccountingControlCenterData,
+  type AccountingReadinessStatus,
+} from "@/services/accounting/control-center.service"
+import {
   closeAccountingPeriod,
   createFiscalYearWithPeriods,
   listAccountingPeriods,
   listFiscalYears,
 } from "@/services/accounting/periods.service"
 import { ensureDefaultJournals, listJournals } from "@/services/accounting/journals.service"
+
+export type {
+  AccountingBlockerCategory,
+  AccountingControlCenterBlocker,
+  AccountingControlCenterData,
+  AccountingReadinessStatus,
+}
 
 const settingsUpdateSchema = z.object({
   countryPack: z.string().trim().nullable().optional(),
@@ -41,6 +55,7 @@ const closePeriodSchema = z.object({
 
 function revalidateAccountingPaths() {
   revalidatePath("/dashboard/accounting", "page")
+  revalidatePath("/dashboard/accounting/control-center", "page")
   revalidatePath("/dashboard/accounting/setup", "page")
   revalidatePath("/dashboard/accounting/accounts", "page")
   revalidatePath("/dashboard/accounting/journals", "page")
@@ -63,6 +78,18 @@ const getSetupData = protect<unknown, unknown>(
 
 export async function getAccountingSetupDataAction(input: unknown = {}) {
   return getSetupData(input)
+}
+
+const getControlCenter = protect<unknown, AccountingControlCenterData>(
+  { permission: "accounting.setup.manage", auditResource: "AccountingSetup" },
+  async (_input, ctx) =>
+    getAccountingControlCenterData(ctx.orgId, {
+      actorPermissions: ctx.permissions,
+    }),
+)
+
+export async function getAccountingControlCenterAction(input: unknown = {}) {
+  return getControlCenter(input)
 }
 
 const updateSettings = protect<unknown, unknown>(
@@ -145,5 +172,9 @@ const markSetupReady = protect<unknown, unknown>(
 )
 
 export async function markAccountingSetupReadyAction(input: unknown = {}) {
+  return markSetupReady(input)
+}
+
+export async function lockAccountingSetupAction(input: unknown = {}) {
   return markSetupReady(input)
 }

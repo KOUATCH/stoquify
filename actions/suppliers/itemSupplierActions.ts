@@ -1,8 +1,10 @@
 "use server"
 
+import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses"
 import { db } from "@/prisma/db"
 import { getSession } from "@/lib/auth-server"
 import { resolveActionOrganization } from "@/services/_shared/resolve-action-organization"
+import { removeItemSupplierForOrganization } from "@/services/supplier/supplier.service"
 import { revalidatePath } from "next/cache"
 import type { Prisma } from "@prisma/client"
 
@@ -143,10 +145,14 @@ export async function getItemSuppliers(organizationId?: string) {
       error: null
     }
   } catch (error) {
-    console.error("Error fetching item suppliers:", error)
     return {
       success: false,
-      error: "Failed to fetch item suppliers",
+      error: safeLoggedActionErrorMessage(
+        "Error fetching item suppliers",
+        error,
+        { action: "getItemSuppliers" },
+        "Failed to fetch item suppliers",
+      ),
       data: []
     }
   }
@@ -197,11 +203,15 @@ export async function getItemSupplierById(id: string) {
       error: null
     }
   } catch (error) {
-    console.error("Error fetching item supplier:", error)
-    return {
-      success: false,
-      error: "Failed to fetch item supplier",
-      data: null
+    return { 
+      success: false, 
+      error: safeLoggedActionErrorMessage(
+        "Error fetching item supplier",
+        error,
+        { action: "getItemSupplierById" },
+        "Failed to fetch item supplier",
+      ), 
+      data: null 
     }
   }
 }
@@ -271,8 +281,15 @@ export async function createItemSupplier(data: ItemSupplierData) {
 
     return { success: true, data: withItemDisplayName(itemSupplier) }
   } catch (error) {
-    console.error("Error creating item supplier:", error)
-    return { success: false, error: "Failed to create item supplier" }
+    return {
+      success: false,
+      error: safeLoggedActionErrorMessage(
+        "Error creating item supplier",
+        error,
+        { action: "createItemSupplier" },
+        "Failed to create item supplier",
+      ),
+    }
   }
 }
 
@@ -328,8 +345,15 @@ export async function updateItemSupplier(data: UpdateItemSupplierData) {
 
     return { success: true, data: withItemDisplayName(itemSupplier) }
   } catch (error) {
-    console.error("Error updating item supplier:", error)
-    return { success: false, error: "Failed to update item supplier" }
+    return {
+      success: false,
+      error: safeLoggedActionErrorMessage(
+        "Error updating item supplier",
+        error,
+        { action: "updateItemSupplier" },
+        "Failed to update item supplier",
+      ),
+    }
   }
 }
 
@@ -341,29 +365,25 @@ export async function deleteItemSupplier(id: string) {
       return { success: false, error: "Unauthorized" }
     }
 
-    const existingRelation = await db.itemSupplier.findFirst({
-      where: {
-        id,
-        ...itemSupplierOrgWhere((session.user as any).organizationId as string),
-      },
-      select: { id: true },
-    })
-
-    if (!existingRelation) {
-      return { success: false, error: "Item supplier not found" }
-    }
-
-    const itemSupplier = await db.itemSupplier.delete({
-      where: { id }
-    })
+    const itemSupplier = await removeItemSupplierForOrganization(
+      (session.user as any).organizationId as string,
+      id,
+    )
 
     revalidatePath("/dashboard/inventory/items")
     revalidatePath("/dashboard/purchases/suppliers")
 
     return { success: true, data: itemSupplier }
   } catch (error) {
-    console.error("Error deleting item supplier:", error)
-    return { success: false, error: "Failed to delete item supplier" }
+    return {
+      success: false,
+      error: safeLoggedActionErrorMessage(
+        "Error deleting item supplier",
+        error,
+        { action: "deleteItemSupplier" },
+        "Failed to delete item supplier",
+      ),
+    }
   }
 }
 
@@ -411,10 +431,14 @@ export async function getAllOrgItemSuppliers(organizationId: string) {
       error: null
     }
   } catch (error) {
-    console.error("Error fetching all org item suppliers:", error)
     return {
       success: false,
-      error: "Failed to fetch all org item suppliers",
+      error: safeLoggedActionErrorMessage(
+        "Error fetching all org item suppliers",
+        error,
+        { action: "getAllOrgItemSuppliers" },
+        "Failed to fetch all org item suppliers",
+      ),
       data: []
     }
   }
@@ -456,10 +480,14 @@ export async function getItemSuppliersByItemId(itemId: string) {
       error: null
     }
   } catch (error) {
-    console.error("Error fetching item suppliers by item ID:", error)
     return {
       success: false,
-      error: "Failed to fetch item suppliers by item ID",
+      error: safeLoggedActionErrorMessage(
+        "Error fetching item suppliers by item ID",
+        error,
+        { action: "getItemSuppliersByItemId" },
+        "Failed to fetch item suppliers by item ID",
+      ),
       data: []
     }
   }

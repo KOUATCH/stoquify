@@ -30,6 +30,7 @@ export const CreatePurchaseOrderSchema = z.object({
 export const UpdatePurchaseOrderSchema = z.object({
   id: z.string().min(1),
   organizationId: z.string().min(1),
+  updatedById: z.string().optional(),
   supplierId: z.string().optional(),
   locationId: z.string().optional(),
   date: z.string().optional(),
@@ -93,5 +94,6 @@ export type ReceiveItemsInput = z.infer<typeof ReceiveItemsSchema>
 export type BulkStatusUpdateInput = z.infer<typeof BulkStatusUpdateSchema>
 export type ClonePurchaseOrderInput = z.infer<typeof ClonePurchaseOrderSchema>
 export type POAnalyticsInput = z.infer<typeof POAnalyticsSchema>
+export type PurchaseOrderStatus = z.infer<typeof PurchaseOrderStatusEnum>
 export type OrderLineInput = z.infer<typeof OrderLineSchema>
 export type GoodsReceiptItemInput = z.infer<typeof GoodsReceiptItemSchema>

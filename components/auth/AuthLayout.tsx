@@ -5,7 +5,6 @@ import { localizePath } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 import {
   Activity,
-  BarChart3,
   Calculator,
   CheckCircle2,
   Command,
@@ -57,25 +56,18 @@ export default function AuthLayout({
   const isDarkTheme = themeReady && resolvedTheme === "dark";
   const moduleHighlights = [
     {
-      ...pageCopy.common.moduleHighlights.inventory,
-      icon: PackageCheck,
-      iconClass: "text-[#2f7df6] dark:text-[#8fb7ff]",
-      surfaceClass: "bg-[#2f7df6]/10 ring-[#2f7df6]/20",
-      metricClass: "text-[#2f7df6] dark:text-[#8fb7ff]",
-    },
-    {
-      ...pageCopy.common.moduleHighlights.accounting,
-      icon: Calculator,
-      iconClass: "text-[#a87516] dark:text-[#f0c76a]",
-      surfaceClass: "bg-[#d7a84f]/10 ring-[#d7a84f]/20",
-      metricClass: "text-[#a87516] dark:text-[#f0c76a]",
-    },
-    {
       ...pageCopy.common.moduleHighlights.pos,
       icon: ShoppingCart,
       iconClass: "text-[#178e83] dark:text-[#7de8dc]",
       surfaceClass: "bg-[#2dd4bf]/10 ring-[#2dd4bf]/20",
       metricClass: "text-[#178e83] dark:text-[#7de8dc]",
+    },
+    {
+      ...pageCopy.common.moduleHighlights.inventory,
+      icon: PackageCheck,
+      iconClass: "text-[#2f7df6] dark:text-[#8fb7ff]",
+      surfaceClass: "bg-[#2f7df6]/10 ring-[#2f7df6]/20",
+      metricClass: "text-[#2f7df6] dark:text-[#8fb7ff]",
     },
     {
       ...pageCopy.common.moduleHighlights.purchasing,
@@ -85,17 +77,52 @@ export default function AuthLayout({
       metricClass: "text-[#bf4b6a] dark:text-[#ff9ab1]",
     },
     {
-      ...pageCopy.common.moduleHighlights.reporting,
-      icon: BarChart3,
+      ...pageCopy.common.moduleHighlights.accounting,
+      icon: Calculator,
+      iconClass: "text-[#a87516] dark:text-[#f0c76a]",
+      surfaceClass: "bg-[#d7a84f]/10 ring-[#d7a84f]/20",
+      metricClass: "text-[#a87516] dark:text-[#f0c76a]",
+    },
+    {
+      ...pageCopy.common.moduleHighlights.compliance,
+      icon: Globe2,
       iconClass: "text-[#5c6df6] dark:text-[#aeb8ff]",
       surfaceClass: "bg-[#5c6df6]/10 ring-[#5c6df6]/20",
       metricClass: "text-[#5c6df6] dark:text-[#aeb8ff]",
     },
+    {
+      ...pageCopy.common.moduleHighlights.reconciliation,
+      icon: Radar,
+      iconClass: "text-[#2f7df6] dark:text-[#8fb7ff]",
+      surfaceClass: "bg-[#2f7df6]/10 ring-[#2f7df6]/20",
+      metricClass: "text-[#2f7df6] dark:text-[#8fb7ff]",
+    },
+    {
+      ...pageCopy.common.moduleHighlights.payroll,
+      icon: Users,
+      iconClass: "text-[#178e83] dark:text-[#7de8dc]",
+      surfaceClass: "bg-[#2dd4bf]/10 ring-[#2dd4bf]/20",
+      metricClass: "text-[#178e83] dark:text-[#7de8dc]",
+    },
+    {
+      ...pageCopy.common.moduleHighlights.offline,
+      icon: Workflow,
+      iconClass: "text-[#bf4b6a] dark:text-[#ff9ab1]",
+      surfaceClass: "bg-[#bf4b6a]/10 ring-[#bf4b6a]/20",
+      metricClass: "text-[#bf4b6a] dark:text-[#ff9ab1]",
+    },
+    {
+      ...pageCopy.common.moduleHighlights.controls,
+      icon: ShieldCheck,
+      iconClass: "text-[#a87516] dark:text-[#f0c76a]",
+      surfaceClass: "bg-[#d7a84f]/10 ring-[#d7a84f]/20",
+      metricClass: "text-[#a87516] dark:text-[#f0c76a]",
+    },
   ];
   const statusCards = [
-    { label: pageCopy.common.statusCards.uptime, value: "99.98%", icon: Activity },
-    { label: pageCopy.common.statusCards.audit, value: "RBAC", icon: Radar },
-    { label: pageCopy.common.statusCards.sync, value: "Live", icon: Workflow },
+    { label: pageCopy.common.statusCards.uptime, value: "Tenant", icon: Activity },
+    { label: pageCopy.common.statusCards.audit, value: "Proof", icon: Radar },
+    { label: pageCopy.common.statusCards.sync, value: "Replay", icon: Workflow },
   ];
   const assuranceItems = [
     pageCopy.common.encrypted,
@@ -176,7 +203,7 @@ export default function AuthLayout({
             </span>
             <span className="min-w-0">
               <span className="block truncate text-base font-black tracking-[0.12em] text-[#132028] dark:text-white">
-                STOCKFLOW
+                AQSTOQFLOW
               </span>
               <span className="block truncate text-[0.68rem] font-bold uppercase tracking-[0.16em] text-[#58707a] dark:text-[#9fb4bb]">
                 {pageCopy.common.brandSubtitle}

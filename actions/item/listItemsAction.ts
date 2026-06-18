@@ -1,30 +1,20 @@
 'use server'
 
-import { itemStandardInclude } from '@/lib/item/includes';
 import { listItemsSchema } from '@/lib/item/schemas';
-import { db } from '@/prisma/db';
-// import { db } from '@/prisma/db'
-// import { itemStandardInclude } from '@/lib/items/includes'
-// import { listItemsSchema } from '@/lib/items/schemas'
-import { Prisma } from '@prisma/client';
+import { requirePermission } from '@/lib/security/rbac';
+import {
+  listItemsWithRelations,
+  type PaginatedItemsWithRelations,
+} from '@/services/item/item.service';
+
+export type { ItemWithRelations } from '@/services/item/item.service';
 
 // Shared result type
 export type ActionResult<T> =
   | { success: true; data: T; message?: string }
   | { success: false; error: string }
 
-// Item payload types
-export type ItemWithRelations = Prisma.ItemGetPayload<{
-  include: typeof itemStandardInclude
-}>
-
-export type PaginatedItems = {
-  data: ItemWithRelations[]
-  total: number
-  page: number
-  pageSize: number
-  totalPages: number
-}
+export type PaginatedItems = PaginatedItemsWithRelations
 
 // Normalizer to support both calling styles:
 // 1) listItemsAction({ organizationId, q, page, pageSize, ... })
@@ -65,65 +55,20 @@ export async function listItemsAction(
   try {
     const input = normalizeArgs(args)
     const params = listItemsSchema.parse(input)
-
-    const {
-      organizationId,
-      q,
-      page,
-      pageSize,
-      sortBy,
-      sortOrder,
-      categoryId,
-      brandId,
-      unitId,
-      taxRateId,
-      isActive,
-    } = params
-
-    const where: Prisma.ItemWhereInput = {
-      organizationId,
-      ...(q
-        ? {
-            OR: [
-              { nameEn: { contains: q, mode: 'insensitive' } },
-              { nameFr: { contains: q, mode: 'insensitive' } },
-              { sku: { contains: q, mode: 'insensitive' } },
-              { barcode: { contains: q, mode: 'insensitive' } },
-            ],
-          }
-        : {}),
-      ...(categoryId ? { categoryId } : {}),
-      ...(brandId ? { brandId } : {}),
-      ...(unitId ? { unitId } : {}),
-      ...(taxRateId ? { taxRateId } : {}),
-      ...(typeof isActive === 'boolean' ? { isActive } : {}),
-    }
-
-    const [total, rows] = await Promise.all([
-      db.item.count({ where }),
-      db.item.findMany({
-        where,
-        include: itemStandardInclude,
-        orderBy: { [sortBy]: sortOrder },
-        skip: (page - 1) * pageSize,
-        take: pageSize,
-      }),
-    ])
-
-    const totalPages = Math.max(1, Math.ceil(total / pageSize))
+    const ctx = await requirePermission('inventory.items.read', {
+      resource: 'Item',
+      auditAllowed: false,
+    })
+    const data = await listItemsWithRelations({
+      ...params,
+      organizationId: ctx.orgId,
+    })
 
     return {
       success: true,
-      data: {
-        data: rows,
-        total,
-        page,
-        pageSize,
-        totalPages,
-      },
+      data,
     }
   } catch (error) {
-    console.error('listItemsAction error:', error)
     const message =
       error instanceof Error ? error.message : 'Failed to list items'
     return { success: false, error: message }

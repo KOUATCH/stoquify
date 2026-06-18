@@ -4,6 +4,7 @@ import type { CashierPerformanceReport } from "@/actions/analytics/financial-rep
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { ReportTrustBanner } from "@/components/reports/report-trust-banner"
 import { AlertTriangle, DollarSign, User } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 
@@ -13,6 +14,8 @@ interface CashierPerformanceReportProps {
 }
 
 export function CashierPerformanceReportComponent({ reports }: CashierPerformanceReportProps) {
+  const provenance = reports[0]?.provenance
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -48,6 +51,8 @@ export function CashierPerformanceReportComponent({ reports }: CashierPerformanc
           <p className="text-muted-foreground">{reports.length} cashiers analyzed</p>
         </div>
       </div>
+
+      <ReportTrustBanner provenance={provenance} />
 
       {/* Performance Chart */}
       <Card>

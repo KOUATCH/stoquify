@@ -23,13 +23,13 @@ export async function getSession() {
 }
 
 // Authenticated user with roles + permissions fetched fresh from DB.
-// Redirects to /login or /register if preconditions fail.
+// Redirects to localized recovery/auth routes if preconditions fail.
 export async function getAuthenticatedUser() {
   try {
     return (await requireRbacContext()).user
   } catch (error) {
     if (error instanceof RbacError && error.code === "NO_ACTIVE_ORG") {
-      return redirectTo("/register")
+      return redirectTo("/dashboard?session=stale")
     }
     if (error instanceof RbacError && error.code === "EMAIL_NOT_VERIFIED") {
       return redirectTo("/login?error=email-not-verified")

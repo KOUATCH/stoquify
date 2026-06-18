@@ -3,19 +3,31 @@
   "version": "0.1.0",
   "private": true,
   "prisma": {
-    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\",\"moduleResolution\":\"node\"} prisma/comprehensive-seed.ts"
+    "seed": "ts-node -r tsconfig-paths/register --compiler-options {\"module\":\"CommonJS\",\"moduleResolution\":\"node\"} prisma/comprehensive-seed.ts"
   },
   "scripts": {
     "dev": "npx prisma generate && next dev -p 3000",
     "dev:turbopack": "npx prisma generate && next dev --turbopack -p 3000",
-    "build": "npx prisma generate && next build --no-lint",
-    "build:linted": "npx prisma generate && next build",
+    "build": "npm run build:linted",
+    "build:app": "next build",
+    "build:linted": "npm run lint && npm run build:app",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint app actions components config hooks lib services --ext .js,.jsx,.ts,.tsx",
     "typecheck": "tsc --noEmit --pretty false",
     "prisma:validate": "prisma validate",
     "prisma:generate": "prisma generate",
-    "verify:repo": "npm run prisma:validate && npm run typecheck",
+    "service:boundary": "node scripts/service-boundary-gate.js --mode report",
+    "service:boundary:ratchet": "node scripts/service-boundary-gate.js --mode fail --baseline what-next/AQSTOQFLOW_SERVICE_BOUNDARY_GATE_REPORT_2026-06-16.json",
+    "service:boundary:fail": "node scripts/service-boundary-gate.js --mode fail",
+    "error:boundary": "node scripts/raw-error-boundary-gate.js --mode report",
+    "error:boundary:fail": "node scripts/raw-error-boundary-gate.js --mode fail",
+    "demo:trust": "node scripts/demo-report-trust-gate.js --mode report",
+    "demo:trust:fail": "node scripts/demo-report-trust-gate.js --mode fail",
+    "inventory:boundary": "node scripts/inventory-boundary-gate.js --mode report",
+    "inventory:boundary:fail": "node scripts/inventory-boundary-gate.js --mode fail",
+    "policy:gates": "npm run inventory:boundary:fail && npm run service:boundary:ratchet && npm run error:boundary:fail && npm run demo:trust:fail",
+    "verify:repo": "npm run prisma:validate && npm run typecheck && npm run policy:gates && npm run build:linted && npm test -- --runInBand",
+    "verify:release": "npm run verify:repo",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
@@ -26,6 +38,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
+    "@prisma/client": "^6.19.3",
     "@radix-ui/react-accordion": "^1.2.3",
     "@radix-ui/react-alert-dialog": "^1.1.4",
     "@radix-ui/react-aspect-ratio": "^1.1.2",
@@ -98,6 +111,7 @@
     "next-intl": "^4.12.0",
     "next-themes": "^0.4.4",
     "otpauth": "^9.4.1",
+    "prisma": "^6.19.3",
     "qrcode": "^1.5.4",
     "react": "^19.1.1",
     "react-day-picker": "8.10.1",
@@ -126,7 +140,6 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^10.0.0",
-    "@prisma/client": "^6.19.0",
     "@tailwindcss/forms": "^0.5.10",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
@@ -144,10 +157,12 @@
     "or": "^0.2.0",
     "postcss": "^8",
     "prettier": "^3.5.3",
-    "prisma": "^6.19.0",
     "raw-loader": "^4.0.2",
     "tailwindcss": "^3.4.1",
     "ts-node": "^10.9.2",
     "typescript": "^5"
+  },
+  "overrides": {
+    "effect": "3.21.0"
   }
 }

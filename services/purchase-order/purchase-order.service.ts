@@ -2,12 +2,16 @@ import "server-only"
 
 import { logger } from "@/lib/logger"
 import { db } from "@/prisma/db"
+import { BusinessRuleError, ConflictError, NotFoundError } from "@/services/_shared/action-errors"
+import { markBusinessEventAppliedInTx, recordBusinessEventInTx } from "@/services/events/business-event.service"
+import { postGoodsReceiptStock } from "@/services/inventory/inventory-stock-event.service"
 import { type GoodsReceiptStatus, type Prisma, type PurchaseOrderStatus } from "@prisma/client"
 import type { Decimal } from "@prisma/client/runtime/library"
 import type {
   BulkStatusUpdateInput,
   ClonePurchaseOrderInput,
   CreatePurchaseOrderInput,
+  OrderLineInput,
   POAnalyticsInput,
   ReceiveItemsInput,
   UpdatePurchaseOrderInput,
@@ -69,9 +73,10 @@ export function canTransition(from: PurchaseOrderStatus, to: PurchaseOrderStatus
   return VALID_TRANSITIONS[from]?.includes(to) ?? false
 }
 
-const NON_EDITABLE_STATUSES: PurchaseOrderStatus[] = ["APPROVED", "RECEIVED", "CANCELLED", "COMPLETED"]
+const NON_EDITABLE_STATUSES: PurchaseOrderStatus[] = ["APPROVED", "PARTIALLY_RECEIVED", "RECEIVED", "CANCELLED", "COMPLETED"]
 const NON_DELETABLE_STATUSES: PurchaseOrderStatus[] = ["RECEIVED", "PARTIALLY_RECEIVED", "COMPLETED"]
 const RECEIVABLE_STATUSES: PurchaseOrderStatus[] = ["APPROVED", "PARTIALLY_RECEIVED"]
+const LINE_RECONCILIATION_STATUSES = new Set<PurchaseOrderStatus>(["DRAFT", "SUBMITTED"])
 
 // ── Calculation helpers ───────────────────────────────────────────────────────
 
@@ -91,20 +96,167 @@ function calcOrderTotals(lines: CreatePurchaseOrderInput["orderLines"], shipping
   return { subtotal, taxAmount, discount, total: subtotal + taxAmount + shippingCost - discount }
 }
 
+function lineDataFromOrderLine(line: OrderLineInput) {
+  const { taxAmount, lineTotal } = calcLine(line.quantity, line.unitPrice, line.taxRate, line.discount)
+  return {
+    itemId:          line.itemId,
+    orderedQuantity: line.quantity,
+    unitCost:        line.unitPrice,
+    discount:        line.discount ?? 0,
+    taxRate:         line.taxRate ?? 0,
+    taxAmount,
+    lineTotal,
+    notes:           line.notes ?? "",
+  }
+}
+
+function lineAuditSnapshot(line: {
+  id: string
+  itemId: string
+  orderedQuantity: Decimal | number | string
+  receivedQuantity: Decimal | number | string
+  unitCost: Decimal | number | string
+  discount: Decimal | number | string | null
+  taxRate: Decimal | number | string | null
+  taxAmount: Decimal | number | string | null
+  lineTotal: Decimal | number | string
+  notes?: string | null
+}) {
+  return {
+    id:               line.id,
+    itemId:           line.itemId,
+    orderedQuantity:  toN(line.orderedQuantity),
+    receivedQuantity: toN(line.receivedQuantity),
+    unitCost:         toN(line.unitCost),
+    discount:         toN(line.discount),
+    taxRate:          toN(line.taxRate),
+    taxAmount:        toN(line.taxAmount),
+    lineTotal:        toN(line.lineTotal),
+    notes:            line.notes ?? null,
+  }
+}
+
+function requestedLineAuditSnapshot(line: OrderLineInput) {
+  const data = lineDataFromOrderLine(line)
+  return {
+    itemId:           data.itemId,
+    orderedQuantity:  toN(data.orderedQuantity),
+    receivedQuantity: 0,
+    unitCost:         toN(data.unitCost),
+    discount:         toN(data.discount),
+    taxRate:          toN(data.taxRate),
+    taxAmount:        toN(data.taxAmount),
+    lineTotal:        toN(data.lineTotal),
+    notes:            data.notes || null,
+  }
+}
+
+async function reconcileDraftPurchaseOrderLines(
+  tx: Prisma.TransactionClient,
+  params: {
+    purchaseOrderId: string
+    organizationId: string
+    status: PurchaseOrderStatus
+    actorId?: string | null
+    lines: OrderLineInput[]
+  },
+) {
+  if (!LINE_RECONCILIATION_STATUSES.has(params.status)) {
+    throw new BusinessRuleError(`Purchase order lines can only be reconciled while the order is draft or submitted.`)
+  }
+
+  const currentLines = await tx.purchaseOrderLine.findMany({
+    where: { purchaseOrderId: params.purchaseOrderId },
+    select: {
+      id: true,
+      itemId: true,
+      orderedQuantity: true,
+      receivedQuantity: true,
+      unitCost: true,
+      discount: true,
+      taxRate: true,
+      taxAmount: true,
+      lineTotal: true,
+      notes: true,
+      goodsReceiptLines: { select: { id: true }, take: 1 },
+      supplierInvoiceLines: { select: { id: true }, take: 1 },
+    },
+    orderBy: { createdAt: "asc" },
+  })
+
+  const protectedLine = currentLines.find((line) =>
+    toN(line.receivedQuantity) > 0 || line.goodsReceiptLines.length > 0 || line.supplierInvoiceLines.length > 0,
+  )
+  if (protectedLine) {
+    throw new BusinessRuleError("Cannot replace purchase order lines after receipt or invoice evidence exists.")
+  }
+
+  const requestedByItemId = new Map(params.lines.map((line) => [line.itemId, line]))
+  const reconciled = {
+    updated: [] as Array<{ id: string; itemId: string }>,
+    created: [] as Array<{ id: string; itemId: string }>,
+    removed: [] as Array<{ id: string; itemId: string }>,
+  }
+
+  for (const currentLine of currentLines) {
+    const requestedLine = requestedByItemId.get(currentLine.itemId)
+    if (!requestedLine) {
+      await tx.purchaseOrderLine.delete({ where: { id: currentLine.id } })
+      reconciled.removed.push({ id: currentLine.id, itemId: currentLine.itemId })
+      continue
+    }
+
+    await tx.purchaseOrderLine.update({
+      where: { id: currentLine.id },
+      data: lineDataFromOrderLine(requestedLine),
+    })
+    reconciled.updated.push({ id: currentLine.id, itemId: currentLine.itemId })
+    requestedByItemId.delete(currentLine.itemId)
+  }
+
+  for (const requestedLine of requestedByItemId.values()) {
+    const created = await tx.purchaseOrderLine.create({
+      data: {
+        purchaseOrderId:   params.purchaseOrderId,
+        ...lineDataFromOrderLine(requestedLine),
+        receivedQuantity: 0,
+      },
+      select: { id: true, itemId: true },
+    })
+    reconciled.created.push({ id: created.id, itemId: created.itemId })
+  }
+
+  await tx.auditLog.create({
+    data: {
+      organizationId: params.organizationId,
+      userId:         params.actorId ?? null,
+      entityType:     "PurchaseOrder",
+      entityId:       params.purchaseOrderId,
+      action:         "RECONCILE_PURCHASE_ORDER_LINES",
+      changes: {
+        status: params.status,
+        before: currentLines.map(lineAuditSnapshot),
+        after:  params.lines.map(requestedLineAuditSnapshot),
+        reconciled,
+      },
+    },
+  })
+}
+
 // ── Validation helpers ────────────────────────────────────────────────────────
 
 function assertDateRange(startStr: string, endStr: string) {
   const start = new Date(startStr), end = new Date(endStr)
-  if (isNaN(start.getTime())) throw new Error("Invalid order date format")
-  if (isNaN(end.getTime()))   throw new Error("Invalid expected delivery date format")
-  if (end < start)            throw new Error("Expected delivery date cannot be before order date")
+  if (isNaN(start.getTime())) throw new BusinessRuleError("Invalid order date format")
+  if (isNaN(end.getTime()))   throw new BusinessRuleError("Invalid expected delivery date format")
+  if (end < start)            throw new BusinessRuleError("Expected delivery date cannot be before order date")
 }
 
 function assertUniqueItems(lines: CreatePurchaseOrderInput["orderLines"]) {
   const seen = new Map<string, number>()
   for (const [i, l] of lines.entries()) {
     seen.set(l.itemId, (seen.get(l.itemId) ?? 0) + 1)
-    if ((seen.get(l.itemId) ?? 0) > 1) throw new Error(`Duplicate item found at line ${i + 1}`)
+    if ((seen.get(l.itemId) ?? 0) > 1) throw new ConflictError(`Duplicate item found at line ${i + 1}`)
   }
 }
 
@@ -185,7 +337,7 @@ function generateReceiptSerials(params: {
 }) {
   const provided = params.provided?.filter(Boolean) ?? []
   if (provided.length > params.receivedQuantity) {
-    throw new Error(`Serial number count cannot exceed received quantity for "${params.sku}"`)
+    throw new BusinessRuleError(`Serial number count cannot exceed received quantity for "${params.sku}"`)
   }
 
   const missingCount = params.receivedQuantity - provided.length
@@ -201,76 +353,54 @@ function generateReceiptSerials(params: {
 
 async function applyInventoryReceipt(
   tx: Prisma.TransactionClient,
-  itemId: string,
-  locationId: string,
-  qty: number,
-  unitCost: number,
-  organizationId: string,
-  tracking?: {
+  params: {
+    itemId: string
+    locationId: string
+    qty: number
+    unitCost: number
+    organizationId: string
+    receiptId: string
+    receiptNumber: string
+    receiptLineId: string
+    receivedById?: string | null
     batchNumber?: string | null
     expiryDate?: Date | null
     serialNumbers?: string[]
   },
 ) {
-  const existing = await tx.inventoryLevel.findFirst({ where: { itemId, locationId } })
-  let balanceAfter = qty
-
-  if (existing) {
-    const newQty   = toN(existing.quantityOnHand) + qty
-    const newValue = toN(existing.totalValue) + qty * unitCost
-    balanceAfter = newQty
-    await tx.inventoryLevel.update({
-      where: { id: existing.id },
-      data: {
-        quantityOnHand:    newQty,
-        quantityAvailable: newQty - toN(existing.quantityReserved),
-        totalValue:        newValue,
-        averageCost:       newValue / newQty,
-        lastTransactionAt: new Date(),
-      },
-    })
-  } else {
-    await tx.inventoryLevel.create({
-      data: {
-        itemId, locationId,
-        quantityOnHand:    qty,
-        quantityReserved:  0,
-        quantityAvailable: qty,
-        quantityInTransit: 0,
-        quantityOnOrder:   0,
-        totalValue:        qty * unitCost,
-        averageCost:       unitCost,
-        lastTransactionAt: new Date(),
-      },
-    })
-  }
-
-  await tx.inventoryTransaction.create({
-    data: {
-      itemId, locationId, organizationId,
-      type:          "PURCHASE_RECEIPT",
-      quantity:      qty,
-      unitCost,
-      totalCost:     qty * unitCost,
-      notes:         "Goods received via purchase order",
-      referenceType: "PURCHASE_ORDER",
-      batchNumber:   tracking?.batchNumber ?? null,
-      expiryDate:    tracking?.expiryDate ?? null,
-      serialNumbers: tracking?.serialNumbers ?? [],
-      balanceAfter,
-      createdAt:     new Date(),
+  await postGoodsReceiptStock(
+    {
+      organizationId: params.organizationId,
+      receiptId: params.receiptId,
+      receiptNumber: params.receiptNumber,
+      receivedById: params.receivedById,
+      idempotencyKey: `goods-receipt-stock:${params.organizationId}:${params.receiptId}:${params.receiptLineId}`,
+      lines: [
+        {
+          itemId: params.itemId,
+          locationId: params.locationId,
+          quantity: params.qty,
+          unitCost: params.unitCost,
+          goodsReceiptLineId: params.receiptLineId,
+          notes: "Goods received via purchase order",
+          batchNumber: params.batchNumber ?? null,
+          expiryDate: params.expiryDate ?? null,
+          serialNumbers: params.serialNumbers ?? [],
+        },
+      ],
     },
-  })
+    tx,
+  )
 
-  if (tracking?.serialNumbers?.length) {
+  if (params.serialNumbers?.length) {
     await tx.serialNumber.createMany({
-      data: tracking.serialNumbers.map((serialNumber) => ({
+      data: params.serialNumbers.map((serialNumber) => ({
         serialNumber,
-        itemId,
-        locationId,
-        organizationId,
-        batchNumber: tracking.batchNumber ?? null,
-        expiryDate: tracking.expiryDate ?? null,
+        itemId: params.itemId,
+        locationId: params.locationId,
+        organizationId: params.organizationId,
+        batchNumber: params.batchNumber ?? null,
+        expiryDate: params.expiryDate ?? null,
         status: "AVAILABLE",
         notes: "Received via purchase order",
       })),
@@ -340,7 +470,7 @@ export async function getPurchaseOrderById(id: string, organizationId: string) {
     where: { id, organizationId, deletedAt: null },
     include: standardInclude,
   })
-  if (!po) throw new Error("Purchase order not found")
+  if (!po) throw new NotFoundError("Purchase order not found")
   return transformPO(po)
 }
 
@@ -357,9 +487,9 @@ export async function createPurchaseOrder(input: CreatePurchaseOrderInput) {
     db.location.findFirst({ where: { id: input.locationId, organizationId: input.organizationId } }),
     db.item.findMany({ where: { id: { in: input.orderLines.map(l => l.itemId) }, organizationId: input.organizationId }, select: { id: true } }),
   ])
-  if (!supplier) throw new Error("Supplier not found or does not belong to this organisation")
-  if (!location) throw new Error("Delivery location not found or does not belong to this organisation")
-  if (items.length !== input.orderLines.length) throw new Error("One or more items not found in this organisation")
+  if (!supplier) throw new NotFoundError("Supplier not found or does not belong to this organisation")
+  if (!location) throw new NotFoundError("Delivery location not found or does not belong to this organisation")
+  if (items.length !== input.orderLines.length) throw new NotFoundError("One or more items not found in this organisation")
 
   const orderNumber = await nextPONumber(input.organizationId)
   const totals      = calcOrderTotals(input.orderLines, input.shippingCost)
@@ -415,9 +545,9 @@ export async function updatePurchaseOrder(input: UpdatePurchaseOrderInput) {
     where: { id: input.id, organizationId: input.organizationId },
     include: standardInclude,
   })
-  if (!existing) throw new Error("Purchase order not found")
+  if (!existing) throw new NotFoundError("Purchase order not found")
   if (NON_EDITABLE_STATUSES.includes(existing.status)) {
-    throw new Error(`Cannot edit a purchase order with status: ${existing.status}`)
+    throw new BusinessRuleError(`Cannot edit a purchase order with status: ${existing.status}`)
   }
 
   const orderDate  = existing.orderDate.toISOString().slice(0, 10)
@@ -426,11 +556,11 @@ export async function updatePurchaseOrder(input: UpdatePurchaseOrderInput) {
 
   if (input.supplierId) {
     const s = await db.supplier.findFirst({ where: { id: input.supplierId, organizationId: input.organizationId } })
-    if (!s) throw new Error("Supplier not found or does not belong to this organisation")
+    if (!s) throw new NotFoundError("Supplier not found or does not belong to this organisation")
   }
   if (input.locationId) {
     const l = await db.location.findFirst({ where: { id: input.locationId, organizationId: input.organizationId } })
-    if (!l) throw new Error("Location not found or does not belong to this organisation")
+    if (!l) throw new NotFoundError("Location not found or does not belong to this organisation")
   }
 
   let totals = {
@@ -446,7 +576,7 @@ export async function updatePurchaseOrder(input: UpdatePurchaseOrderInput) {
         where: { id: { in: input.orderLines.map(l => l.itemId) }, organizationId: input.organizationId },
         select: { id: true },
       })
-      if (items.length !== input.orderLines.length) throw new Error("One or more items not found in this organisation")
+      if (items.length !== input.orderLines.length) throw new NotFoundError("One or more items not found in this organisation")
       totals = calcOrderTotals(input.orderLines, toN(input.shippingCost ?? existing.shippingCost))
     } else {
       totals = { subtotal: 0, taxAmount: 0, discount: 0, total: input.shippingCost ?? 0 }
@@ -472,26 +602,13 @@ export async function updatePurchaseOrder(input: UpdatePurchaseOrderInput) {
     })
 
     if (input.orderLines) {
-      await tx.purchaseOrderLine.deleteMany({ where: { purchaseOrderId: input.id } })
-      if (input.orderLines.length > 0) {
-        await tx.purchaseOrderLine.createMany({
-          data: input.orderLines.map(l => {
-            const { taxAmount, lineTotal } = calcLine(l.quantity, l.unitPrice, l.taxRate, l.discount)
-            return {
-              purchaseOrderId:  input.id,
-              itemId:           l.itemId,
-              orderedQuantity:  l.quantity,
-              unitCost:         l.unitPrice,
-              discount:         l.discount ?? 0,
-              taxRate:          l.taxRate ?? 0,
-              taxAmount,
-              lineTotal,
-              notes:            l.notes ?? "",
-              receivedQuantity: 0,
-            }
-          }),
-        })
-      }
+      await reconcileDraftPurchaseOrderLines(tx, {
+        purchaseOrderId: input.id,
+        organizationId:  input.organizationId,
+        status:          existing.status,
+        actorId:         input.updatedById,
+        lines:           input.orderLines,
+      })
     }
 
     return tx.purchaseOrder.findUnique({ where: { id: input.id }, include: standardInclude })
@@ -502,16 +619,75 @@ export async function updatePurchaseOrder(input: UpdatePurchaseOrderInput) {
 
 // ── Delete ────────────────────────────────────────────────────────────────────
 
-export async function deletePurchaseOrder(id: string, organizationId: string) {
+export async function deletePurchaseOrder(id: string, organizationId: string, deletedById: string) {
   logger.info("purchase-order.delete", { id })
-  const po = await db.purchaseOrder.findFirst({ where: { id, organizationId, deletedAt: null }, select: { id: true, status: true, orderNumber: true } })
-  if (!po) throw new Error("Purchase order not found")
+  const po = await db.purchaseOrder.findFirst({
+    where: { id, organizationId, deletedAt: null },
+    select: { id: true, status: true, orderNumber: true, createdById: true, approvedById: true },
+  })
+  if (!po) throw new NotFoundError("Purchase order not found")
   if (NON_DELETABLE_STATUSES.includes(po.status)) {
-    throw new Error(`Cannot delete a purchase order with status: ${po.status}`)
+    throw new BusinessRuleError(`Cannot delete a purchase order with status: ${po.status}`)
   }
+  if (!deletedById || deletedById === "system-user") {
+    throw new BusinessRuleError("A real actor identity is required to archive a purchase order.")
+  }
+
+  const archivedAt = new Date()
   await db.$transaction(async (tx) => {
-    await tx.purchaseOrderLine.deleteMany({ where: { purchaseOrderId: id } })
-    await tx.purchaseOrder.delete({ where: { id } })
+    await tx.purchaseOrder.update({
+      where: { id },
+      data: {
+        status: "CANCELLED",
+        deletedAt: archivedAt,
+        updatedAt: archivedAt,
+      },
+    })
+    await tx.auditLog.create({
+      data: {
+        organizationId,
+        userId: deletedById,
+        entityType: "PurchaseOrder",
+        entityId: id,
+        action: "ARCHIVE_PURCHASE_ORDER",
+        changes: {
+          before: {
+            orderNumber: po.orderNumber,
+            status: po.status,
+            createdById: po.createdById,
+            approvedById: po.approvedById,
+          },
+          after: {
+            status: "CANCELLED",
+            deletedAt: archivedAt.toISOString(),
+          },
+        },
+      },
+    })
+    const eventResult = await recordBusinessEventInTx(tx, {
+      organizationId,
+      eventType: "purchase_order.archived",
+      eventSource: "INTERNAL",
+      schemaVersion: 1,
+      idempotencyKey: `purchase-order:archive:${organizationId}:${id}`,
+      payload: {
+        purchaseOrderId: id,
+        orderNumber: po.orderNumber,
+        fromStatus: po.status,
+        toStatus: "CANCELLED",
+        archivedAt: archivedAt.toISOString(),
+        archivedById: deletedById,
+      },
+      occurredAt: archivedAt,
+      actorId: deletedById,
+      sourceType: "PURCHASE_ORDER",
+      sourceId: id,
+      metadata: {
+        gate: "priority-006-hard-delete-immutability",
+        classification: "SOFT_DELETE_ARCHIVE",
+      },
+    })
+    await markBusinessEventAppliedInTx(tx, organizationId, eventResult.event.id)
   })
   return po.orderNumber
 }
@@ -525,9 +701,9 @@ async function transition(
   extra?: Partial<Parameters<typeof db.purchaseOrder.update>[0]["data"]>,
 ) {
   const po = await db.purchaseOrder.findFirst({ where: { id, organizationId, deletedAt: null }, include: standardInclude })
-  if (!po) throw new Error("Purchase order not found")
+  if (!po) throw new NotFoundError("Purchase order not found")
   if (!canTransition(po.status, toStatus)) {
-    throw new Error(`Cannot transition purchase order from ${po.status} to ${toStatus}`)
+    throw new BusinessRuleError(`Cannot transition purchase order from ${po.status} to ${toStatus}`)
   }
   const updated = await db.purchaseOrder.update({
     where: { id },
@@ -540,22 +716,68 @@ async function transition(
 export async function submitPurchaseOrder(id: string, organizationId: string) {
   logger.info("purchase-order.submit", { id })
   const po = await db.purchaseOrder.findFirst({ where: { id, organizationId, deletedAt: null }, select: { lines: true, status: true } })
-  if (!po) throw new Error("Purchase order not found")
-  if (!po.lines || po.lines.length === 0) throw new Error("Cannot submit a purchase order without line items")
+  if (!po) throw new NotFoundError("Purchase order not found")
+  if (!po.lines || po.lines.length === 0) throw new BusinessRuleError("Cannot submit a purchase order without line items")
   return transition(id, organizationId, "SUBMITTED")
 }
 
 export async function approvePurchaseOrder(id: string, organizationId: string, approvedById: string) {
   logger.info("purchase-order.approve", { id, approvedById })
-  return transition(id, organizationId, "APPROVED", { approvedById, approvedAt: new Date() })
+  if (!approvedById || approvedById === "system-user") {
+    throw new BusinessRuleError("A real approver identity is required.")
+  }
+
+  const po = await db.purchaseOrder.findFirst({
+    where: { id, organizationId, deletedAt: null },
+    include: standardInclude,
+  })
+  if (!po) throw new NotFoundError("Purchase order not found")
+  if (!canTransition(po.status, "APPROVED")) {
+    throw new BusinessRuleError(`Cannot transition purchase order from ${po.status} to APPROVED`)
+  }
+  if (po.createdById && po.createdById === approvedById) {
+    throw new BusinessRuleError("A purchase order must be approved by a different user than the requester.")
+  }
+
+  const approvedAt = new Date()
+  const updated = await db.$transaction(async (tx) => {
+    const approved = await tx.purchaseOrder.update({
+      where: { id },
+      data: { status: "APPROVED", approvedById, approvedAt, updatedAt: approvedAt },
+      include: standardInclude,
+    })
+    await tx.auditLog.create({
+      data: {
+        organizationId,
+        userId: approvedById,
+        entityType: "PurchaseOrder",
+        entityId: id,
+        action: "APPROVE_PURCHASE_ORDER",
+        changes: {
+          before: {
+            status: po.status,
+            createdById: po.createdById,
+          },
+          after: {
+            status: "APPROVED",
+            approvedById,
+            approvedAt: approvedAt.toISOString(),
+          },
+        },
+      },
+    })
+    return approved
+  })
+
+  return transformPO(updated)
 }
 
 export async function cancelPurchaseOrder(id: string, organizationId: string, reason?: string) {
   logger.info("purchase-order.cancel", { id })
   const po = await db.purchaseOrder.findFirst({ where: { id, organizationId, deletedAt: null }, select: { notes: true, status: true, orderNumber: true } })
-  if (!po) throw new Error("Purchase order not found")
+  if (!po) throw new NotFoundError("Purchase order not found")
   if (!canTransition(po.status, "CANCELLED")) {
-    throw new Error(`Cannot cancel a purchase order with status: ${po.status}`)
+    throw new BusinessRuleError(`Cannot cancel a purchase order with status: ${po.status}`)
   }
   const updated = await db.purchaseOrder.update({
     where: { id },
@@ -583,16 +805,16 @@ export async function receiveItems(input: ReceiveItemsInput) {
     where: { id: input.purchaseOrderId, organizationId: input.organizationId, deletedAt: null },
     include: { ...standardInclude, lines: { include: { item: true } } },
   })
-  if (!po) throw new Error("Purchase order not found")
+  if (!po) throw new NotFoundError("Purchase order not found")
   if (!RECEIVABLE_STATUSES.includes(po.status)) {
-    throw new Error(`Cannot receive items for a purchase order with status: ${po.status}`)
+    throw new BusinessRuleError(`Cannot receive items for a purchase order with status: ${po.status}`)
   }
 
   const receiptNumber = await nextGRNumber(input.organizationId)
   const lineMap = new Map(po.lines.map(l => [l.id, l]))
   const items = input.items.map((item) => {
     const line = lineMap.get(item.lineId)
-    if (!line) throw new Error(`Line ${item.lineId} not found on this purchase order`)
+    if (!line) throw new NotFoundError(`Line ${item.lineId} not found on this purchase order`)
 
     if (!line.item.trackSerialNumbers) return item
 
@@ -610,27 +832,27 @@ export async function receiveItems(input: ReceiveItemsInput) {
 
   for (const [i, item] of items.entries()) {
     const line = lineMap.get(item.lineId)
-    if (!line) throw new Error(`Line ${item.lineId} not found on this purchase order`)
+    if (!line) throw new NotFoundError(`Line ${item.lineId} not found on this purchase order`)
 
     const itemName = line.item.nameEn || line.item.sku
     const remaining = toN(line.orderedQuantity) - toN(line.receivedQuantity)
     if (item.receivedQuantity > remaining) {
-      throw new Error(`Cannot receive ${item.receivedQuantity} of "${itemName}". Only ${remaining} remaining.`)
+      throw new BusinessRuleError(`Cannot receive ${item.receivedQuantity} of "${itemName}". Only ${remaining} remaining.`)
     }
     if (item.serialNumbers && new Set(item.serialNumbers).size !== item.serialNumbers.length) {
-      throw new Error(`Duplicate serial numbers found for item ${i + 1}`)
+      throw new ConflictError(`Duplicate serial numbers found for item ${i + 1}`)
     }
     if (line.item.trackSerialNumbers) {
       if (!item.serialNumbers || item.serialNumbers.length !== item.receivedQuantity) {
-        throw new Error(`Serial numbers required and must match received quantity for "${itemName}"`)
+        throw new BusinessRuleError(`Serial numbers required and must match received quantity for "${itemName}"`)
       }
     }
     if (line.item.trackBatches && !item.batchNumber) {
-      throw new Error(`Batch number required for "${itemName}"`)
+      throw new BusinessRuleError(`Batch number required for "${itemName}"`)
     }
     if (line.item.trackExpiry) {
       if (!item.expiryDate || isNaN(new Date(item.expiryDate).getTime())) {
-        throw new Error(`Valid expiry date required for "${itemName}"`)
+        throw new BusinessRuleError(`Valid expiry date required for "${itemName}"`)
       }
     }
   }
@@ -638,7 +860,7 @@ export async function receiveItems(input: ReceiveItemsInput) {
   const requestedSerials = items.flatMap((item) => item.serialNumbers ?? [])
   if (requestedSerials.length) {
     if (new Set(requestedSerials).size !== requestedSerials.length) {
-      throw new Error("Duplicate serial numbers found in this receipt")
+      throw new ConflictError("Duplicate serial numbers found in this receipt")
     }
     const existingSerials = await db.serialNumber.findMany({
       where: {
@@ -648,7 +870,7 @@ export async function receiveItems(input: ReceiveItemsInput) {
       select: { serialNumber: true },
     })
     if (existingSerials.length) {
-      throw new Error(`Serial number already exists: ${existingSerials.map((serial) => serial.serialNumber).join(", ")}`)
+      throw new ConflictError(`Serial number already exists: ${existingSerials.map((serial) => serial.serialNumber).join(", ")}`)
     }
   }
 
@@ -672,7 +894,7 @@ export async function receiveItems(input: ReceiveItemsInput) {
       const line = lineMap.get(item.lineId)!
       const unitCost = item.unitPrice ?? toN(line.unitCost)
 
-      await tx.goodsReceiptLine.create({
+      const receiptLine = await tx.goodsReceiptLine.create({
         data: {
           goodsReceiptId:      receipt.id,
           purchaseOrderLineId: line.id,
@@ -691,7 +913,16 @@ export async function receiveItems(input: ReceiveItemsInput) {
         data: { receivedQuantity: toN(line.receivedQuantity) + item.receivedQuantity },
       })
 
-      await applyInventoryReceipt(tx, line.itemId, effectiveLocationId, item.receivedQuantity, unitCost, input.organizationId, {
+      await applyInventoryReceipt(tx, {
+        itemId: line.itemId,
+        locationId: effectiveLocationId,
+        qty: item.receivedQuantity,
+        unitCost,
+        organizationId: input.organizationId,
+        receiptId: receipt.id,
+        receiptNumber,
+        receiptLineId: receiptLine.id,
+        receivedById: input.receivedById,
         batchNumber: item.batchNumber ?? null,
         expiryDate: item.expiryDate ? new Date(item.expiryDate) : null,
         serialNumbers: item.serialNumbers ?? [],
@@ -760,7 +991,7 @@ export async function clonePurchaseOrder(input: ClonePurchaseOrderInput, created
     where: { id: input.id, organizationId: input.organizationId, deletedAt: null },
     include: { lines: true },
   })
-  if (!source) throw new Error("Purchase order not found")
+  if (!source) throw new NotFoundError("Purchase order not found")
 
   const overrides = input.overrides ?? {}
   const orderNumber = await nextPONumber(input.organizationId)
@@ -954,7 +1185,7 @@ export async function getStatusHistory(id: string, organizationId: string) {
     where: { id, organizationId, deletedAt: null },
     select: { id: true, status: true, createdAt: true, approvedAt: true, updatedAt: true },
   })
-  if (!po) throw new Error("Purchase order not found")
+  if (!po) throw new NotFoundError("Purchase order not found")
 
   const receipts = await db.goodsReceipt.findMany({
     where: { purchaseOrderId: id, organizationId },

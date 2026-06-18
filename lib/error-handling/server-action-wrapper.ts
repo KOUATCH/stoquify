@@ -12,6 +12,7 @@ import {
   RecoveryStrategy
 } from './types'
 import { errorHandler } from './error-handler'
+import { canonicalErrorToServerActionError, normalizeToCanonicalError } from './canonical'
 
 /**
  * Wrapper configuration for server actions
@@ -64,24 +65,20 @@ function isStructuredActionError(error: unknown): error is NonNullable<ServerAct
 
 function normalizeActionError(error: unknown, requestId: string): NonNullable<ServerActionResult['error']> {
   if (isStructuredActionError(error)) {
-    return error
+    return {
+      ...error,
+      requestId: error.requestId ?? requestId,
+      correlationId: error.correlationId ?? requestId,
+    }
   }
 
-  const message = typeof error === 'string'
-    ? error
-    : error instanceof Error
-      ? error.message
-      : 'The operation could not be completed.'
-
-  const errorData = errorHandler.createError({
+  const canonical = normalizeToCanonicalError(error, {
     requestId,
-    code: 'ACTION_REPORTED_ERROR',
-    message,
-    userMessage: message,
-    context: ErrorContext.SERVER_ACTION
+    correlationId: requestId,
+    context: ErrorContext.SERVER_ACTION,
   })
 
-  return errorHandler.toServerActionError(errorData)
+  return canonicalErrorToServerActionError(canonical)
 }
 
 /**

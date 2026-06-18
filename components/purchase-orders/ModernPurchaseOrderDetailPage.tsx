@@ -215,7 +215,6 @@ export default function ModernPurchaseOrderDetailPage({
       await approveMutation.mutateAsync({
         id: purchaseOrder.id,
         organizationId,
-        approvedBy: currentUserId || null
       })
       setShowApproveDialog(false)
       success(
@@ -230,7 +229,7 @@ export default function ModernPurchaseOrderDetailPage({
         { duration: 6000, sound: true }
       )
     }
-  }, [approveMutation, currentUserId, notifyError, organizationId, purchaseOrder, success])
+  }, [approveMutation, notifyError, organizationId, purchaseOrder, success])
 
   const handleCancel = useCallback(async () => {
     if (!purchaseOrder || !organizationId) return

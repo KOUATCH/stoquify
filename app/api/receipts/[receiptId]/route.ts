@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server"
+import { jsonErrorEnvelopeResponse } from "@/lib/error-handling/route-response"
 import { getPublicSalesReceipt } from "@/services/pos/receipt.service"
+
+const ENDPOINT = "GET /api/receipts/[receiptId]"
 
 export async function GET(
   _request: Request,
@@ -14,15 +17,6 @@ export async function GET(
       data: receipt,
     })
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to load receipt"
-    const status = message === "Receipt not found" ? 404 : 500
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: message,
-      },
-      { status },
-    )
+    return jsonErrorEnvelopeResponse(error, { endpoint: ENDPOINT }, { success: false })
   }
 }

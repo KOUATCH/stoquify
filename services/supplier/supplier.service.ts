@@ -1,6 +1,7 @@
 import { logger } from "@/lib/logger"
 import { db } from "@/prisma/db"
 import { PurchaseOrderStatus, type Prisma, type Supplier } from "@prisma/client"
+import { BusinessRuleError, ConflictError, NotFoundError } from "../_shared/action-errors"
 import { buildPagination, buildPaginatedResult } from "../_shared/pagination"
 import type { PaginatedResult } from "../_shared/types"
 import type {
@@ -190,7 +191,7 @@ export async function getSupplierById(orgId: string, id: string): Promise<Suppli
   const supplier = await db.supplier.findFirst({
     where: { id, organizationId: orgId, deletedAt: null },
   })
-  if (!supplier) throw new Error("Supplier not found")
+  if (!supplier) throw new NotFoundError("Supplier not found")
   return supplier as SupplierDTO
 }
 
@@ -209,7 +210,7 @@ export async function createSupplier(
   const existing = await db.supplier.findFirst({
     where: { organizationId: orgId, code },
   })
-  if (existing) throw new Error(`Supplier with code "${code}" already exists in this organisation`)
+  if (existing) throw new ConflictError(`Supplier with code "${code}" already exists in this organisation`)
 
   const supplier = await db.supplier.create({
     data: {
@@ -243,14 +244,14 @@ export async function updateSupplier(
   const supplier = await db.supplier.findFirst({
     where: { id, organizationId: orgId, deletedAt: null },
   })
-  if (!supplier) throw new Error("Supplier not found")
+  if (!supplier) throw new NotFoundError("Supplier not found")
 
   if (input.code && input.code !== supplier.code) {
     const clash = await db.supplier.findFirst({
       where: { organizationId: orgId, code: input.code, NOT: { id } },
     })
     if (clash) {
-      throw new Error(`Supplier with code "${input.code}" already exists in this organisation`)
+      throw new ConflictError(`Supplier with code "${input.code}" already exists in this organisation`)
     }
   }
 
@@ -286,7 +287,7 @@ export async function setSupplierActive(
   const supplier = await db.supplier.findFirst({
     where: { id, organizationId: orgId, deletedAt: null },
   })
-  if (!supplier) throw new Error("Supplier not found")
+  if (!supplier) throw new NotFoundError("Supplier not found")
 
   const updated = await db.supplier.update({ where: { id }, data: { isActive } })
   return updated as SupplierDTO
@@ -296,14 +297,14 @@ export async function deleteSupplier(orgId: string, id: string): Promise<Supplie
   const supplier = await db.supplier.findFirst({
     where: { id, organizationId: orgId, deletedAt: null },
   })
-  if (!supplier) throw new Error("Supplier not found")
+  if (!supplier) throw new NotFoundError("Supplier not found")
 
   // Block hard delete if there are dependent purchase orders to preserve history.
   const linkedPOs = await db.purchaseOrder.count({
     where: { supplierId: id, organizationId: orgId },
   })
   if (linkedPOs > 0) {
-    throw new Error("Cannot delete supplier: it is referenced by purchase orders")
+    throw new BusinessRuleError("Cannot delete supplier: it is referenced by purchase orders")
   }
 
   // Soft-delete to preserve ItemSupplier / ledger history.
@@ -577,7 +578,7 @@ export async function createSupplierForManagement(
   const row = await reloadSupplierManagementRow(organizationId, supplier.id)
 
   if (!row) {
-    throw new Error("Supplier was created but could not be reloaded")
+    throw new BusinessRuleError("Supplier was created but could not be reloaded")
   }
 
   return row
@@ -592,7 +593,7 @@ export async function updateSupplierForManagement(
   const row = await reloadSupplierManagementRow(organizationId, supplierId)
 
   if (!row) {
-    throw new Error("Supplier was updated but could not be reloaded")
+    throw new BusinessRuleError("Supplier was updated but could not be reloaded")
   }
 
   return row
@@ -617,7 +618,7 @@ export async function removeSupplierForManagement(
   })
 
   if (!supplier) {
-    throw new Error("Supplier not found")
+    throw new NotFoundError("Supplier not found")
   }
 
   const hasHistory =
@@ -635,6 +636,34 @@ export async function removeSupplierForManagement(
   return { id: supplierId, mode: hasHistory ? "deactivated" : "archived" }
 }
 
+export async function removeItemSupplierForOrganization(
+  organizationId: string,
+  itemSupplierId: string,
+) {
+  const itemSupplier = await db.itemSupplier.findFirst({
+    where: {
+      id: itemSupplierId,
+      item: {
+        organizationId,
+        deletedAt: null,
+      },
+      supplier: {
+        organizationId,
+        deletedAt: null,
+      },
+    },
+    select: { id: true },
+  })
+
+  if (!itemSupplier) {
+    throw new NotFoundError("Item supplier not found")
+  }
+
+  return db.itemSupplier.delete({
+    where: { id: itemSupplier.id },
+  })
+}
+
 export async function getSupplierDetailAnalyticsForOrg(
   organizationId: string,
   supplierId: string,
@@ -642,7 +671,7 @@ export async function getSupplierDetailAnalyticsForOrg(
   const row = await reloadSupplierManagementRow(organizationId, supplierId)
 
   if (!row) {
-    throw new Error("Supplier not found")
+    throw new NotFoundError("Supplier not found")
   }
 
   const [purchaseOrders, ledgerEntries, linkedItems] = await Promise.all([

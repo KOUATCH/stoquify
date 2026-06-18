@@ -2,43 +2,29 @@
 
 "use server";
 
-import { db } from "@/prisma/db";
+import { safeSuccessActionErrorResult } from "@/actions/_shared/safe-action-responses"
+import { requirePermission } from "@/lib/security/rbac"
+import { archiveLocationForManagement } from "@/services/location/location.service"
 
 
 const deleteLocation = async (id: string) => {
 
   try {
-      const location = await db.location.findUnique({
-        where: { id },
+      const ctx = await requirePermission("locations.delete", {
+        resource: "Location",
+        resourceId: id,
+        auditAllowed: true,
       })
-
-      if (!location) {
-        return {
-          error: `Something went wrong, Location not found`,
-          success: false ,
-          data: null,
-        };
-      }
-     
-      const deletedLocation = await db.location.delete({
-        where: {
-          id,
-        },
-      });
+      const archivedLocation = await archiveLocationForManagement(ctx.orgId, id)
 
       return {
         success: true,
         error: null,
-        data: deletedLocation
+        data: archivedLocation
       };
 
   } catch (error) {
-    console.error("Error deleting Location:", error);
-    return {
-      error: `Something went wrong, Please try again`,
-      success: true,
-      data: null,
-    };
+    return safeSuccessActionErrorResult(error, { action: "deleteLocation" }, "Something went wrong, Please try again");
   }
 }
 export default deleteLocation

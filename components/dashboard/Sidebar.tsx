@@ -8,6 +8,7 @@ import { ISidebarLink, sidebarLinks } from "@/config/sidebar";
 import { localizePath } from "@/i18n/routing";
 import { signOut } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
+import { useShellPermissions } from "@/components/dashboard/useShellPermissions";
 import {
   Activity,
   ChevronDown,
@@ -42,6 +43,7 @@ const Sidebar=({ session, notifications = [] }: SidebarProps)=> {
   const [searchTerm, setSearchTerm] = useState("");
   const pathname = usePathname();
   const user = session.user;
+  const { hasPermission } = useShellPermissions(session);
   const userRole = session?.user?.roles?.[0]?.name ?? "User";
   const organizationName = session?.user?.organizationName ?? "StockFlow";
   const localePrefix = pathname.match(/^\/(en|fr)(?=\/)/)?.[1];
@@ -64,19 +66,9 @@ const Sidebar=({ session, notifications = [] }: SidebarProps)=> {
       : normalizedPath === href || normalizedPath.startsWith(`${href}/`);
   };
 
-  // Helper function to check if user has permission
-  const hasPermission = (permission: string): boolean => {
-    // Check for wildcard permission (superadmin access)
-    if (user.permissions?.includes('*')) {
-      return true;
-    }
-    return user.permissions?.includes(permission) ?? false;
-  };
-
   // Filter sidebar links based on permissions
   const filterSidebarLinks = (links: ISidebarLink[]): ISidebarLink[] => {
     return links
-      .filter((link) => hasPermission(link.permission))
       .map((link) => ({
         ...link,
         dropdownMenu: link.dropdownMenu?.filter((item) =>
@@ -85,7 +77,8 @@ const Sidebar=({ session, notifications = [] }: SidebarProps)=> {
       }))
       .filter(
         (link) =>
-          !link.dropdown || (link.dropdownMenu && link.dropdownMenu.length > 0)
+          hasPermission(link.permission) ||
+          Boolean(link.dropdown && link.dropdownMenu?.length)
       );
   };
 
@@ -157,7 +150,7 @@ const Sidebar=({ session, notifications = [] }: SidebarProps)=> {
 
           <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.055] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
             <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[rgba(215,168,79,0.16)] text-[#f0c76a]">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[rgba(47,125,246,0.16)] text-[#8fb7ff]">
                 <Crown className="h-4 w-4" />
               </div>
               <div className="min-w-0">
@@ -209,6 +202,7 @@ const Sidebar=({ session, notifications = [] }: SidebarProps)=> {
               const isDirectActive = isActiveHref(item.href);
               const isChildActive = Boolean(isHrefIncluded);
               const isActive = isDirectActive || isChildActive;
+              const isFinanceSection = item.title === "Finance";
 
               return (
                 <div key={i}>
@@ -241,28 +235,58 @@ const Sidebar=({ session, notifications = [] }: SidebarProps)=> {
                           <ChevronRight className="h-4 w-4 shrink-0 text-[#7f969f]" />
                         )}
                       </CollapsibleTrigger>
-                      <CollapsibleContent className="mt-1 rounded-xl border border-white/[0.06] bg-[#0e1a20]/60 py-1">
-                        {item.dropdownMenu?.map((menuItem, i) => (
-                          <Link
-                            key={i}
-                            href={localizedHref(menuItem.href)}
-                            className={cn(
-                              "mx-2 flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-xs text-[#9fb4bb] transition-all hover:bg-white/[0.07] hover:text-white",
-                              isActiveHref(menuItem.href) && "bg-[rgba(45,212,191,0.14)] text-[#d9fffb]"
-                            )}
-                          >
-                            <span className="flex min-w-0 items-center gap-2">
-                              <span className={cn(
-                                "h-1.5 w-1.5 shrink-0 rounded-full bg-[#54707a]",
-                                isActiveHref(menuItem.href) && "bg-[#2dd4bf]"
-                              )} />
-                              <span className="truncate">{menuItem.title}</span>
-                            </span>
-                            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/[0.04]">
-                              <Plus className="h-3 w-3" />
-                            </span>
-                          </Link>
-                        ))}
+                      <CollapsibleContent
+                        className={cn(
+                          "mt-1 rounded-xl border py-1",
+                          isFinanceSection
+                            ? "dashboard-finance-submenu"
+                            : "border-white/[0.06] bg-[#0e1a20]/60"
+                        )}
+                      >
+                        {item.dropdownMenu?.map((menuItem, i) => {
+                          const isMenuItemActive = isActiveHref(menuItem.href);
+
+                          return (
+                            <Link
+                              key={i}
+                              href={localizedHref(menuItem.href)}
+                              data-active={isMenuItemActive ? "true" : "false"}
+                              className={cn(
+                                "mx-2 flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-xs transition-all",
+                                isFinanceSection
+                                  ? "dashboard-finance-submenu-item"
+                                  : "text-[#9fb4bb] hover:bg-white/[0.07] hover:text-white",
+                                !isFinanceSection &&
+                                  isMenuItemActive &&
+                                  "bg-[rgba(45,212,191,0.14)] text-[#d9fffb]"
+                              )}
+                            >
+                              <span className="flex min-w-0 items-center gap-2">
+                                <span
+                                  data-active={isMenuItemActive ? "true" : "false"}
+                                  className={cn(
+                                    "h-1.5 w-1.5 shrink-0 rounded-full",
+                                    isFinanceSection
+                                      ? "dashboard-finance-submenu-dot"
+                                      : "bg-[#54707a]",
+                                    !isFinanceSection && isMenuItemActive && "bg-[#2dd4bf]"
+                                  )}
+                                />
+                                <span className="truncate">{menuItem.title}</span>
+                              </span>
+                              <span
+                                className={cn(
+                                  "flex h-5 w-5 shrink-0 items-center justify-center rounded-full",
+                                  isFinanceSection
+                                    ? "dashboard-finance-submenu-action"
+                                    : "bg-white/[0.04]"
+                                )}
+                              >
+                                <Plus className="h-3 w-3" />
+                              </span>
+                            </Link>
+                          );
+                        })}
                       </CollapsibleContent>
                     </Collapsible>
                   ) : (
@@ -323,7 +347,7 @@ const Sidebar=({ session, notifications = [] }: SidebarProps)=> {
           </Link>
 
           <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-[#0e1a20]/70 p-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#2f7df6] to-[#2dd4bf] text-sm font-black text-white shadow-lg">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#2563eb] to-[#5796ff] text-sm font-black text-white shadow-lg">
               {userInitials}
             </div>
             <div className="min-w-0 flex-1">
@@ -333,7 +357,7 @@ const Sidebar=({ session, notifications = [] }: SidebarProps)=> {
             <button
               type="button"
               onClick={handleLogout}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.05] text-[#efb0b0] transition-all hover:border-[#ef6a6a]/40 hover:bg-[#ef6a6a]/12 hover:text-white"
+              className="dashboard-top-button flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-all"
               aria-label="Sign out"
             >
               <LogOut className="h-4 w-4" />

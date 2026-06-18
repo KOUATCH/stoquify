@@ -1,8 +1,18 @@
+import {
+  AccountingSourceType,
+  ComplianceSubmissionStatus,
+  FiscalDocumentStatus,
+  FiscalDocumentType,
+} from "@prisma/client"
 import { db } from "@/prisma/db"
+import { NotFoundError } from "@/services/_shared/action-errors"
 import { getPublicSalesReceipt, getSalesReceipt } from "@/services/pos/receipt.service"
 
 const mockDb = db as unknown as {
   salesOrder: {
+    findFirst: jest.Mock
+  }
+  fiscalDocument: {
     findFirst: jest.Mock
   }
 }
@@ -11,6 +21,9 @@ beforeEach(() => {
   jest.clearAllMocks()
   ;(db as any).salesOrder = {
     findFirst: jest.fn(),
+  }
+  ;(db as any).fiscalDocument = {
+    findFirst: jest.fn().mockResolvedValue(null),
   }
 })
 
@@ -123,5 +136,67 @@ describe("public receipt payload", () => {
         }),
       }),
     )
+  })
+
+  it("raises a typed not-found error for unavailable public receipts", async () => {
+    mockDb.salesOrder.findFirst.mockResolvedValue(null)
+
+    await expect(getPublicSalesReceipt({ salesOrderId: "missing-sale" })).rejects.toBeInstanceOf(NotFoundError)
+  })
+
+  it("surfaces fiscal document and certification queue status truthfully", async () => {
+    mockDb.salesOrder.findFirst.mockResolvedValue(saleFixture())
+    mockDb.fiscalDocument.findFirst.mockResolvedValue({
+      id: "fiscal-doc-1",
+      documentType: FiscalDocumentType.POS_RECEIPT,
+      status: FiscalDocumentStatus.QUEUED,
+      authorityChannel: "CM_DGI_E_SERVICES_PORTAL",
+      authorityReference: null,
+      legalNumber: null,
+      provisionalNumber: null,
+      certifiedAt: null,
+      rejectedAt: null,
+      rejectionReason: null,
+      certificationArtifactHash: null,
+      countryCode: "CM",
+      countryPackVersion: "CM-2026.1",
+      countryPackVerificationStatus: "REQUIRES_EXPERT_REVIEW",
+      certificationPolicySnapshot: {
+        legalDeliveryWhenUncertified: "BLOCK",
+      },
+      submissions: [
+        {
+          id: "submission-1",
+          status: ComplianceSubmissionStatus.PENDING,
+          createdAt: new Date("2026-01-15T10:01:00.000Z"),
+        },
+      ],
+    })
+
+    const receipt = await getSalesReceipt({ salesOrderId: "sale-1", organizationId: "org-1" })
+
+    expect(mockDb.fiscalDocument.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          organizationId: "org-1",
+          sourceType: AccountingSourceType.POS_SALE,
+          sourceId: "sale-1",
+          documentType: FiscalDocumentType.POS_RECEIPT,
+        },
+      }),
+    )
+    expect(receipt.certification).toMatchObject({
+      fiscalDocumentId: "fiscal-doc-1",
+      documentType: FiscalDocumentType.POS_RECEIPT,
+      fiscalDocumentStatus: FiscalDocumentStatus.QUEUED,
+      submissionId: "submission-1",
+      submissionStatus: ComplianceSubmissionStatus.PENDING,
+      authorityChannel: "CM_DGI_E_SERVICES_PORTAL",
+      countryCode: "CM",
+      countryPackVersion: "CM-2026.1",
+      countryPackVerificationStatus: "REQUIRES_EXPERT_REVIEW",
+      legalDeliveryStatus: "BLOCKED_UNTIL_CERTIFIED",
+      legalDeliveryBlocked: true,
+    })
   })
 })

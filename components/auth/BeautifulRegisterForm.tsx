@@ -228,7 +228,7 @@ export default function BeautifulRegisterForm() {
         </div>
         <div className="h-2 overflow-hidden rounded-full bg-[#cfdcdf] dark:bg-[#0f171d]">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-[#2f7df6] via-[#2dd4bf] to-[#d7a84f] transition-all duration-500"
+            className="h-full rounded-full bg-gradient-to-r from-[#bf7145] to-[#f0c54d] transition-all duration-500"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -245,9 +245,9 @@ export default function BeautifulRegisterForm() {
                 className={cn(
                   "flex min-h-11 items-center justify-center gap-2 rounded-xl border px-2 py-2 text-xs font-bold transition-all",
                   active
-                    ? "border-[#2f7df6]/40 bg-[rgba(47,125,246,0.12)] text-[#2f7df6] dark:text-[#8fb7ff]"
+                    ? "border-[#f0c54d]/45 bg-[rgba(240,197,77,0.16)] text-[#8b4a2f] dark:text-[#f6d574]"
                     : complete
-                      ? "border-[#2dd4bf]/35 bg-[rgba(45,212,191,0.12)] text-[#178e83] dark:text-[#7de8dc]"
+                      ? "border-[#bf7145]/40 bg-[rgba(191,113,69,0.14)] text-[#7a3f2a] dark:text-[#f0c54d]"
                       : "border-[#9fb4bb]/25 bg-white/45 text-[#7f969f] dark:border-white/10 dark:bg-white/[0.035]"
                 )}
               >
@@ -570,7 +570,7 @@ export default function BeautifulRegisterForm() {
             <Button
               type="button"
               onClick={goNext}
-              className="h-11 rounded-xl bg-gradient-to-r from-[#2f7df6] to-[#2dd4bf] px-5 font-black text-white shadow-[0_16px_36px_rgba(47,125,246,0.22)] hover:opacity-95"
+              className="h-11 rounded-xl px-5 font-black"
             >
               {copy.continue}
               <ArrowRight className="ml-2 h-4 w-4" />
@@ -579,7 +579,7 @@ export default function BeautifulRegisterForm() {
             <Button
               type="submit"
               disabled={loading}
-              className="h-11 rounded-xl bg-gradient-to-r from-[#2f7df6] to-[#2dd4bf] px-5 font-black text-white shadow-[0_16px_36px_rgba(47,125,246,0.22)] hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
+              className="h-11 rounded-xl px-5 font-black disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? (
                 <span className="flex items-center gap-2">
@@ -649,7 +649,7 @@ function VisibilityButton({
     <button
       type="button"
       onClick={onClick}
-      className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg text-[#7f969f] transition hover:bg-[#2f7df6]/10 hover:text-[#2f7df6] dark:hover:bg-white/[0.07] dark:hover:text-white"
+      className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg text-[#7f969f] transition hover:bg-[#f0c54d]/15 hover:text-[#8b4a2f] dark:hover:bg-[#bf7145]/20 dark:hover:text-[#f6d574]"
       aria-label={show ? hideLabel : showLabel}
     >
       {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}

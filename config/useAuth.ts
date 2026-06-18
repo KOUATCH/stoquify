@@ -25,7 +25,7 @@ async function redirectWithRequestLocale(path: string): Promise<never> {
 async function redirectForAuthError(error: unknown): Promise<never> {
   if (error instanceof RbacError) {
     if (error.code === "UNAUTHENTICATED") return redirectWithRequestLocale("/login")
-    if (error.code === "NO_ACTIVE_ORG") return redirectWithRequestLocale("/register")
+    if (error.code === "NO_ACTIVE_ORG") return redirectWithRequestLocale("/dashboard?session=stale")
     if (error.code === "EMAIL_NOT_VERIFIED") return redirectWithRequestLocale("/login?error=email-not-verified")
     if (error.code === "ACCOUNT_LOCKED") return redirectWithRequestLocale("/forgot-password?error=account-locked")
   }

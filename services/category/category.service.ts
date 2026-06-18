@@ -1,6 +1,7 @@
 import { db } from "@/prisma/db"
 import type { Prisma } from "@prisma/client"
 import type { CategoryDTO } from "@/types/category"
+import { BusinessRuleError, ConflictError, NotFoundError } from "@/services/_shared/action-errors"
 import { buildPagination, buildPaginatedResult, MAX_PAGE_SIZES } from "../_shared/pagination"
 import type { PaginatedParams, PaginatedResult } from "../_shared/types"
 import type { CategoryCreateInput, CategoryUpdateInput } from "./category.schemas"
@@ -45,7 +46,7 @@ async function assertParentBelongsToOrg(orgId: string, parentId: string | null |
   if (!parentId) return
 
   if (id && parentId === id) {
-    throw new Error("A category cannot be its own parent")
+    throw new BusinessRuleError("A category cannot be its own parent")
   }
 
   const parent = await db.category.findFirst({
@@ -54,7 +55,7 @@ async function assertParentBelongsToOrg(orgId: string, parentId: string | null |
   })
 
   if (!parent) {
-    throw new Error("Parent category not found")
+    throw new NotFoundError("Parent category not found")
   }
 }
 
@@ -107,7 +108,7 @@ export async function getCategory(orgId: string, id: string): Promise<CategoryDT
 
 export async function getCategoryById(orgId: string, id: string): Promise<CategoryDTO> {
   const cat = await getCategory(orgId, id)
-  if (!cat) throw new Error("Category not found")
+  if (!cat) throw new NotFoundError("Category not found")
   return cat
 }
 
@@ -127,7 +128,7 @@ export async function createCategory(
     select: { id: true, titleEn: true, slug: true },
   })
   if (existing) {
-    throw new Error(`Category "${input.titleEn}" already exists for this organisation`)
+    throw new ConflictError(`Category "${input.titleEn}" already exists for this organisation`)
   }
 
   const cat = await db.category.create({
@@ -156,7 +157,7 @@ export async function updateCategory(
     where: { id, organizationId: orgId, deletedAt: null },
     select: { id: true },
   })
-  if (!existing) throw new Error("Category not found")
+  if (!existing) throw new NotFoundError("Category not found")
 
   await assertParentBelongsToOrg(orgId, input.parentId, id)
 
@@ -177,7 +178,7 @@ export async function updateCategory(
     })
 
     if (conflict) {
-      throw new Error(`Category "${input.titleEn ?? nextSlug}" already exists for this organisation`)
+      throw new ConflictError(`Category "${input.titleEn ?? nextSlug}" already exists for this organisation`)
     }
   }
 
@@ -208,7 +209,7 @@ export async function deleteCategory(orgId: string, id: string): Promise<Categor
     where: { id, organizationId: orgId, deletedAt: null },
     select: { id: true },
   })
-  if (!existing) throw new Error("Category not found")
+  if (!existing) throw new NotFoundError("Category not found")
 
   const deleted = await db.category.update({
     where: { id },

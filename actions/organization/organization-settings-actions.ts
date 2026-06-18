@@ -1,9 +1,11 @@
 "use server"
 
+import { safeLoggedActionErrorMessage } from '@/actions/_shared/safe-action-responses'
 import { revalidatePath } from 'next/cache'
 import { db } from '@/prisma/db'
 import { getAuthenticatedUser } from '@/lib/auth-server'
 import { generateSlug } from '@/lib/generateSlug'
+import { ForbiddenError } from '@/services/_shared/action-errors'
 import { Locale as PrismaLocale, PaymentStatus } from '@prisma/client'
 import { randomUUID } from 'crypto'
 
@@ -100,7 +102,7 @@ async function assertOrganizationAccess(organizationId: string) {
   const user = await getAuthenticatedUser()
 
   if (user.organizationId !== organizationId) {
-    throw new Error('You do not have access to this organization')
+    throw new ForbiddenError('You do not have access to this organization')
   }
 
   return user
@@ -155,8 +157,15 @@ export async function getOrganizationSettings(organizationId: string) {
 
     return { success: true, data: organization }
   } catch (error) {
-    console.error('Error fetching organization settings:', error)
-    return { success: false, error: 'Failed to fetch organization settings' }
+    return {
+      success: false,
+      error: safeLoggedActionErrorMessage(
+        'Error fetching organization settings',
+        error,
+        { action: 'getOrganizationSettings' },
+        'Failed to fetch organization settings',
+      ),
+    }
   }
 }
 
@@ -249,8 +258,15 @@ export async function getOrganizationManagementRows(
       })),
     }
   } catch (error) {
-    console.error('Error fetching organization management rows:', error)
-    return { success: false, error: 'Failed to fetch organization management rows' }
+    return {
+      success: false,
+      error: safeLoggedActionErrorMessage(
+        'Error fetching organization management rows',
+        error,
+        { action: 'getOrganizationManagementRows' },
+        'Failed to fetch organization management rows',
+      ),
+    }
   }
 }
 
@@ -339,8 +355,15 @@ export async function createOrganizationSettings(
       },
     }
   } catch (error) {
-    console.error('Error creating organization:', error)
-    return { success: false, error: 'Failed to create organization' }
+    return {
+      success: false,
+      error: safeLoggedActionErrorMessage(
+        'Error creating organization',
+        error,
+        { action: 'createOrganizationSettings' },
+        'Failed to create organization',
+      ),
+    }
   }
 }
 
@@ -379,8 +402,15 @@ export async function updateOrganizationSettings(
     revalidateOrganizationSettingsPaths()
     return { success: true, data: organization }
   } catch (error) {
-    console.error('Error updating organization settings:', error)
-    return { success: false, error: 'Failed to update organization settings' }
+    return {
+      success: false,
+      error: safeLoggedActionErrorMessage(
+        'Error updating organization settings',
+        error,
+        { action: 'updateOrganizationSettings' },
+        'Failed to update organization settings',
+      ),
+    }
   }
 }
 
@@ -402,8 +432,15 @@ export async function updateOrganizationCurrency(
     revalidateOrganizationSettingsPaths()
     return { success: true, data: organization }
   } catch (error) {
-    console.error('Error updating organization currency:', error)
-    return { success: false, error: 'Failed to update organization currency' }
+    return {
+      success: false,
+      error: safeLoggedActionErrorMessage(
+        'Error updating organization currency',
+        error,
+        { action: 'updateOrganizationCurrency' },
+        'Failed to update organization currency',
+      ),
+    }
   }
 }
 
@@ -425,8 +462,15 @@ export async function updateOrganizationTimezone(
     revalidateOrganizationSettingsPaths()
     return { success: true, data: organization }
   } catch (error) {
-    console.error('Error updating organization timezone:', error)
-    return { success: false, error: 'Failed to update organization timezone' }
+    return {
+      success: false,
+      error: safeLoggedActionErrorMessage(
+        'Error updating organization timezone',
+        error,
+        { action: 'updateOrganizationTimezone' },
+        'Failed to update organization timezone',
+      ),
+    }
   }
 }
 
@@ -448,8 +492,15 @@ export async function updateInventoryStartDate(
     revalidateOrganizationSettingsPaths()
     return { success: true, data: organization }
   } catch (error) {
-    console.error('Error updating inventory start date:', error)
-    return { success: false, error: 'Failed to update inventory start date' }
+    return {
+      success: false,
+      error: safeLoggedActionErrorMessage(
+        'Error updating inventory start date',
+        error,
+        { action: 'updateInventoryStartDate' },
+        'Failed to update inventory start date',
+      ),
+    }
   }
 }
 
@@ -471,7 +522,14 @@ export async function updateFiscalYearStart(
     revalidateOrganizationSettingsPaths()
     return { success: true, data: organization }
   } catch (error) {
-    console.error('Error updating fiscal year start:', error)
-    return { success: false, error: 'Failed to update fiscal year start' }
+    return {
+      success: false,
+      error: safeLoggedActionErrorMessage(
+        'Error updating fiscal year start',
+        error,
+        { action: 'updateFiscalYearStart' },
+        'Failed to update fiscal year start',
+      ),
+    }
   }
 }

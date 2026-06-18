@@ -1,4 +1,4 @@
-import { BookOpenCheck, FilePlus2, Landmark, ListTree, Scale, Settings2 } from "lucide-react"
+import { BookOpenCheck, ClipboardCheck, FilePlus2, FileSearch, Landmark, ListTree, Scale, Settings2, ShieldCheck } from "lucide-react"
 
 import { getAccountingDashboardSummaryAction } from "@/actions/accounting/reports.actions"
 import { Link } from "@/i18n/navigation"
@@ -53,6 +53,18 @@ export default async function AccountingDashboardPage() {
             <Settings2 className="h-4 w-4" />
             <span>Setup</span>
           </AccountingLinkButton>
+          <AccountingLinkButton href="/dashboard/accounting/control-center" variant="outline">
+            <ShieldCheck className="h-4 w-4" />
+            <span>Control center</span>
+          </AccountingLinkButton>
+          <AccountingLinkButton href="/dashboard/accounting/accountant-portal" variant="outline">
+            <FileSearch className="h-4 w-4" />
+            <span>Accountant portal</span>
+          </AccountingLinkButton>
+          <AccountingLinkButton href="/dashboard/accounting/close" variant="outline">
+            <ClipboardCheck className="h-4 w-4" />
+            <span>Close center</span>
+          </AccountingLinkButton>
         </>
       }
     >
@@ -105,8 +117,11 @@ export default async function AccountingDashboardPage() {
             />
           </div>
 
-          <div className="grid gap-4 lg:grid-cols-4">
+          <div className="grid gap-4 lg:grid-cols-6">
             {[
+              { label: "Control center", href: "/dashboard/accounting/control-center", text: "Readiness gates and setup lock" },
+              { label: "Accountant portal", href: "/dashboard/accounting/accountant-portal", text: "Trust packs and source links" },
+              { label: "Close center", href: "/dashboard/accounting/close", text: "Blockers, evidence, provenance" },
               { label: "Setup", href: "/dashboard/accounting/setup", text: "Settings, journals, and periods" },
               { label: "Accounts", href: "/dashboard/accounting/accounts", text: "Chart of accounts" },
               { label: "Journals", href: "/dashboard/accounting/journals", text: "Drafts, posting, reversals" },

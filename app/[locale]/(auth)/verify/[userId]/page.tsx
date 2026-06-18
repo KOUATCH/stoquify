@@ -1,21 +1,29 @@
-import VerifyOTPForm from "@/components/Forms/VerifyForm";
-import { GridBackground } from "@/components/reusable-ui/grid-background";
+import { AuthV2Shell } from "@/components/auth/v2/AuthV2Shell"
+import { VerifyV2Form } from "@/components/auth/v2/VerifyV2Form"
+import { pickLocale } from "@/i18n/routing"
 
-  const   Page= async({params,searchParams}:{
-    params:Promise<{userId:string}>
-    searchParams:Promise<{[key:string]:string | string[] | undefined, email:string}>}
+export const dynamic = "force-dynamic"
 
-  )=> {
+type VerifyPageProps = {
+  params: Promise<{
+    locale: string
+    userId: string
+  }>
+  searchParams: Promise<{
+    email?: string | string[]
+  }>
+}
 
-    const {userId} = await params
-    const email= (await searchParams).email as string
+export default async function VerifyPage({ params, searchParams }: VerifyPageProps) {
+  const { locale, userId } = await params
+  const resolvedLocale = pickLocale(locale)
+  const query = await searchParams
+  const emailValue = Array.isArray(query.email) ? query.email[0] : query.email
+  const alternatePath = `/verify/${userId}${emailValue ? `?email=${encodeURIComponent(emailValue)}` : ""}`
 
   return (
-    <GridBackground>
-      <div className="px-4">
-        <VerifyOTPForm userId={userId} email={email}/>
-      </div>
-    </GridBackground>
-  );
+    <AuthV2Shell locale={resolvedLocale} variant="verify" alternatePath={alternatePath}>
+      <VerifyV2Form locale={resolvedLocale} userId={userId} email={emailValue ?? ""} />
+    </AuthV2Shell>
+  )
 }
-export default Page

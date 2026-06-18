@@ -372,6 +372,7 @@ export function shouldRetry(error: Error, attemptCount: number = 0, maxRetries: 
   const retryableCategories = [
     ErrorCategory.NETWORK,
     ErrorCategory.EXTERNAL_SERVICE,
+    ErrorCategory.EXTERNAL,
     ErrorCategory.PERFORMANCE,
     ErrorCategory.DATABASE
   ]
@@ -434,6 +435,7 @@ export function getUserMessage(error: Error, category: ErrorCategory): string {
 
     case ErrorCategory.NETWORK:
     case ErrorCategory.EXTERNAL_SERVICE:
+    case ErrorCategory.EXTERNAL:
       return 'Network connectivity issue. Please check your connection and try again.'
 
     case ErrorCategory.SYSTEM:
@@ -463,6 +465,7 @@ export function getErrorCode(error: Error, category: ErrorCategory): string {
     [ErrorCategory.DATABASE]: 'DB',
     [ErrorCategory.NETWORK]: 'NETWORK',
     [ErrorCategory.EXTERNAL_SERVICE]: 'EXTERNAL',
+    [ErrorCategory.EXTERNAL]: 'EXTERNAL',
     [ErrorCategory.FILE_SYSTEM]: 'FILE',
     [ErrorCategory.USER_INPUT]: 'INPUT',
     [ErrorCategory.FORM_VALIDATION]: 'FORM',
@@ -472,6 +475,10 @@ export function getErrorCode(error: Error, category: ErrorCategory): string {
     [ErrorCategory.INVENTORY]: 'INV',
     [ErrorCategory.SALES]: 'SALES',
     [ErrorCategory.PURCHASE]: 'PURCHASE',
+    [ErrorCategory.ACCOUNTING]: 'ACCOUNTING',
+    [ErrorCategory.PAYMENT]: 'PAYMENT',
+    [ErrorCategory.PAYROLL]: 'PAYROLL',
+    [ErrorCategory.COMPLIANCE]: 'COMPLIANCE',
     [ErrorCategory.FINANCIAL]: 'FINANCIAL',
     [ErrorCategory.POS]: 'POS',
     [ErrorCategory.REPORTING]: 'REPORT'

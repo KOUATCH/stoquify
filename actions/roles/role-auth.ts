@@ -1,6 +1,6 @@
 import { requirePermission, type RbacContext } from "@/lib/security/rbac"
 import { hasRbacPermission } from "@/lib/security/rbac-permissions"
-import { db } from "@/prisma/db"
+import { ForbiddenError } from "@/services/_shared/action-errors"
 
 export const ROLE_ACTION_PERMISSIONS = {
   read: "roles.read",
@@ -27,40 +27,13 @@ export function assertCanAssignPermissions(ctx: AuthedRoleContext, requestedPerm
   if (!requestedPermissions?.length || ctx.isSuperUser) return
 
   if (!hasRbacPermission(ctx.permissions, ROLE_ACTION_PERMISSIONS.assignPermissions)) {
-    throw new Error("Forbidden: missing permission assignment rights")
+    throw new ForbiddenError("Forbidden")
   }
 
   const notGrantable = requestedPermissions.filter(
     (permission) => !hasRbacPermission(ctx.permissions, permission),
   )
   if (notGrantable.length > 0) {
-    throw new Error(`Forbidden: cannot grant permissions you do not hold: ${notGrantable.join(", ")}`)
+    throw new ForbiddenError("Forbidden")
   }
-}
-
-export async function resolveRoleOrganization(ctx: AuthedRoleContext, explicitOrgId?: string | null) {
-  const requestedOrgId = explicitOrgId?.trim()
-
-  if (!requestedOrgId || requestedOrgId === ctx.orgId) {
-    return ctx.orgId
-  }
-
-  if (!ctx.isSuperUser) {
-    throw new Error("Forbidden: cannot manage roles for another organization")
-  }
-
-  const organization = await db.organization.findFirst({
-    where: {
-      id: requestedOrgId,
-      isActive: true,
-      deletedAt: null,
-    },
-    select: { id: true },
-  })
-
-  if (!organization) {
-    throw new Error("Organization not found or inactive")
-  }
-
-  return organization.id
 }

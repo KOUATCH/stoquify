@@ -1,0 +1,3867 @@
+{
+  "summary": {
+    "generatedAt": "2026-06-16T12:05:42.114Z",
+    "root": "E:\\ohada saas\\newStockFlow\\aqstoqflow",
+    "mode": "report",
+    "filesScanned": 652,
+    "findings": 481,
+    "byCategory": {
+      "action-owned-mutation": 48,
+      "hard-delete-review": 18,
+      "direct-prisma-outside-service": 17,
+      "raw-error-handling": 375,
+      "mock-demo-production-risk": 14,
+      "ui-service-import": 9
+    }
+  },
+  "findings": [
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/customers/customerAction2.ts",
+      "line": 148,
+      "evidence": "db.customer.create(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/customers/customerAction2.ts",
+      "line": 180,
+      "evidence": "db.customer.updateMany(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/customers/customerAction2.ts",
+      "line": 285,
+      "evidence": "db.customer.updateMany(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/inventory/inventoryMovementActions.ts",
+      "line": 189,
+      "evidence": "db.stockTransfer.create(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/item-suppliers/addItemSuppliers.ts",
+      "line": 14,
+      "evidence": "db.itemSupplier.createMany(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/item/items.ts",
+      "line": 134,
+      "evidence": "db.item.update(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/item/items.ts",
+      "line": 186,
+      "evidence": "db.item.update(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/item/items.ts",
+      "line": 220,
+      "evidence": "db.item.update(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/item/items.ts",
+      "line": 248,
+      "evidence": "db.item.update(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/item/items.ts",
+      "line": 298,
+      "evidence": "tx.item.update(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/item/items.ts",
+      "line": 356,
+      "evidence": "db.item.update(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/item/items.ts",
+      "line": 392,
+      "evidence": "db.item.delete(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "hard-delete-review",
+      "file": "actions/item/items.ts",
+      "line": 392,
+      "evidence": "db.item.delete(",
+      "recommendation": "Classify as draft-only cleanup, configuration cleanup, soft delete, cancellation, reversal, or forbidden evidence deletion."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/itemsShow/deleteItem.ts",
+      "line": 44,
+      "evidence": "db.item.delete(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "hard-delete-review",
+      "file": "actions/itemsShow/deleteItem.ts",
+      "line": 44,
+      "evidence": "db.item.delete(",
+      "recommendation": "Classify as draft-only cleanup, configuration cleanup, soft delete, cancellation, reversal, or forbidden evidence deletion."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/itemsShow/updateItemBasicInfoById.ts",
+      "line": 22,
+      "evidence": "tx.item.update(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/itemsShow/updateItemById.ts",
+      "line": 43,
+      "evidence": "tx.item.update(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/itemsShow/updateItemItemDetailsById.ts",
+      "line": 21,
+      "evidence": "tx.item.update(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/itemsShow/updateItemPricingById.ts",
+      "line": 21,
+      "evidence": "tx.item.update(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/itemsShow/updateItemRelationsById.ts",
+      "line": 20,
+      "evidence": "tx.item.update(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/itemsShow/updateItemStockById.ts",
+      "line": 64,
+      "evidence": "tx.item.update(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/locations/deleteLocation.ts",
+      "line": 23,
+      "evidence": "db.location.delete(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "hard-delete-review",
+      "file": "actions/locations/deleteLocation.ts",
+      "line": 23,
+      "evidence": "db.location.delete(",
+      "recommendation": "Classify as draft-only cleanup, configuration cleanup, soft delete, cancellation, reversal, or forbidden evidence deletion."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/locations/updateLocationById.ts",
+      "line": 18,
+      "evidence": "tx.location.update(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/organization/organization-settings-actions.ts",
+      "line": 277,
+      "evidence": "tx.organization.create(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/organization/organization-settings-actions.ts",
+      "line": 294,
+      "evidence": "tx.role.create(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/organization/organization-settings-actions.ts",
+      "line": 371,
+      "evidence": "db.organization.update(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/organization/organization-settings-actions.ts",
+      "line": 394,
+      "evidence": "db.organization.update(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/organization/organization-settings-actions.ts",
+      "line": 417,
+      "evidence": "db.organization.update(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/organization/organization-settings-actions.ts",
+      "line": 440,
+      "evidence": "db.organization.update(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/organization/organization-settings-actions.ts",
+      "line": 463,
+      "evidence": "db.organization.update(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/roles/createRole.ts",
+      "line": 42,
+      "evidence": "db.role.create(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/roles/updateRole.ts",
+      "line": 58,
+      "evidence": "db.role.updateMany(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/suppliers/itemSupplierActions.ts",
+      "line": 245,
+      "evidence": "db.itemSupplier.create(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/suppliers/itemSupplierActions.ts",
+      "line": 301,
+      "evidence": "db.itemSupplier.update(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/suppliers/itemSupplierActions.ts",
+      "line": 356,
+      "evidence": "db.itemSupplier.delete(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "hard-delete-review",
+      "file": "actions/suppliers/itemSupplierActions.ts",
+      "line": 356,
+      "evidence": "db.itemSupplier.delete(",
+      "recommendation": "Classify as draft-only cleanup, configuration cleanup, soft delete, cancellation, reversal, or forbidden evidence deletion."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/users/createInvitedUser.ts",
+      "line": 49,
+      "evidence": "tx.invite.update(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/users/createInvitedUser.ts",
+      "line": 97,
+      "evidence": "tx.user.create(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/users/createInvitedUser.ts",
+      "line": 120,
+      "evidence": "tx.passwordHistory.create(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/users/createInvitedUser.ts",
+      "line": 132,
+      "evidence": "tx.invite.update(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/users/createUser.ts",
+      "line": 103,
+      "evidence": "tx.organization.create(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/users/createUser.ts",
+      "line": 130,
+      "evidence": "tx.role.create(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/users/createUser.ts",
+      "line": 148,
+      "evidence": "tx.user.create(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/users/createUser.ts",
+      "line": 174,
+      "evidence": "tx.passwordHistory.create(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/users/deleteUser.ts",
+      "line": 46,
+      "evidence": "tx.invite.deleteMany(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "hard-delete-review",
+      "file": "actions/users/deleteUser.ts",
+      "line": 46,
+      "evidence": "tx.invite.deleteMany(",
+      "recommendation": "Classify as draft-only cleanup, configuration cleanup, soft delete, cancellation, reversal, or forbidden evidence deletion."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/users/deleteUser.ts",
+      "line": 50,
+      "evidence": "tx.user.delete(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "hard-delete-review",
+      "file": "actions/users/deleteUser.ts",
+      "line": 50,
+      "evidence": "tx.user.delete(",
+      "recommendation": "Classify as draft-only cleanup, configuration cleanup, soft delete, cancellation, reversal, or forbidden evidence deletion."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/users/sendInvite.ts",
+      "line": 82,
+      "evidence": "tx.invite.update(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/users/sendInvite.ts",
+      "line": 92,
+      "evidence": "tx.invite.create(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/users/sendResetLink.ts",
+      "line": 31,
+      "evidence": "db.user.update(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/users/updateUserPassword.ts",
+      "line": 115,
+      "evidence": "tx.user.update(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "action-owned-mutation",
+      "file": "actions/users/verifyOtp.ts",
+      "line": 24,
+      "evidence": "db.user.update(",
+      "recommendation": "Move mutation into services/<domain>; action should validate, authorize, call service, and revalidate."
+    },
+    {
+      "severity": "high",
+      "category": "direct-prisma-outside-service",
+      "file": "app/[locale]/(auth)/user-invite/[organisationId]/page.tsx",
+      "line": 3,
+      "evidence": "from \"@/prisma/db\"",
+      "recommendation": "Move data access into a protected service; keep routes/pages/hooks/components orchestration-only."
+    },
+    {
+      "severity": "high",
+      "category": "direct-prisma-outside-service",
+      "file": "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/edit/Page.tsx",
+      "line": 7,
+      "evidence": "from \"@/prisma/db\"",
+      "recommendation": "Move data access into a protected service; keep routes/pages/hooks/components orchestration-only."
+    },
+    {
+      "severity": "high",
+      "category": "direct-prisma-outside-service",
+      "file": "app/[locale]/(dashboard)/dashboard/purchases/[id]/page.tsx",
+      "line": 16,
+      "evidence": "@prisma/client",
+      "recommendation": "Move data access into a protected service; keep routes/pages/hooks/components orchestration-only."
+    },
+    {
+      "severity": "high",
+      "category": "direct-prisma-outside-service",
+      "file": "app/[locale]/(dashboard)/dashboard/purchases/page.tsx",
+      "line": 18,
+      "evidence": "@prisma/client",
+      "recommendation": "Move data access into a protected service; keep routes/pages/hooks/components orchestration-only."
+    },
+    {
+      "severity": "high",
+      "category": "direct-prisma-outside-service",
+      "file": "app/[locale]/(dashboard)/dashboard/settings/roles/columns.tsx",
+      "line": 11,
+      "evidence": "@prisma/client",
+      "recommendation": "Move data access into a protected service; keep routes/pages/hooks/components orchestration-only."
+    },
+    {
+      "severity": "high",
+      "category": "direct-prisma-outside-service",
+      "file": "app/api/v1/organisations/[id]/briefItems/route.ts",
+      "line": 1,
+      "evidence": "from \"@/prisma/db\"",
+      "recommendation": "Move data access into a protected service; keep routes/pages/hooks/components orchestration-only."
+    },
+    {
+      "severity": "high",
+      "category": "direct-prisma-outside-service",
+      "file": "app/api/v1/organisations/[id]/items/route.ts",
+      "line": 1,
+      "evidence": "from \"@/prisma/db\"",
+      "recommendation": "Move data access into a protected service; keep routes/pages/hooks/components orchestration-only."
+    },
+    {
+      "severity": "high",
+      "category": "direct-prisma-outside-service",
+      "file": "app/api/v1/organisations/route.ts",
+      "line": 2,
+      "evidence": "from \"@/prisma/db\"",
+      "recommendation": "Move data access into a protected service; keep routes/pages/hooks/components orchestration-only."
+    },
+    {
+      "severity": "high",
+      "category": "direct-prisma-outside-service",
+      "file": "components/dashboard/Sidebar.tsx",
+      "line": 31,
+      "evidence": "@prisma/client",
+      "recommendation": "Move data access into a protected service; keep routes/pages/hooks/components orchestration-only."
+    },
+    {
+      "severity": "high",
+      "category": "direct-prisma-outside-service",
+      "file": "components/dashboard/Tables/Invites.tsx",
+      "line": 6,
+      "evidence": "@prisma/client",
+      "recommendation": "Move data access into a protected service; keep routes/pages/hooks/components orchestration-only."
+    },
+    {
+      "severity": "high",
+      "category": "direct-prisma-outside-service",
+      "file": "components/Forms/RoleForm.tsx",
+      "line": 9,
+      "evidence": "@prisma/client",
+      "recommendation": "Move data access into a protected service; keep routes/pages/hooks/components orchestration-only."
+    },
+    {
+      "severity": "high",
+      "category": "direct-prisma-outside-service",
+      "file": "components/locations/LocationsManagementDashboard.tsx",
+      "line": 15,
+      "evidence": "@prisma/client",
+      "recommendation": "Move data access into a protected service; keep routes/pages/hooks/components orchestration-only."
+    },
+    {
+      "severity": "high",
+      "category": "direct-prisma-outside-service",
+      "file": "components/NotificationMenu.tsx",
+      "line": 16,
+      "evidence": "@prisma/client",
+      "recommendation": "Move data access into a protected service; keep routes/pages/hooks/components orchestration-only."
+    },
+    {
+      "severity": "high",
+      "category": "direct-prisma-outside-service",
+      "file": "components/purchase-orders/ModernStatusBadge.tsx",
+      "line": 3,
+      "evidence": "@prisma/client",
+      "recommendation": "Move data access into a protected service; keep routes/pages/hooks/components orchestration-only."
+    },
+    {
+      "severity": "high",
+      "category": "direct-prisma-outside-service",
+      "file": "components/tax-rates/TaxRatesManagementDashboard.tsx",
+      "line": 13,
+      "evidence": "@prisma/client",
+      "recommendation": "Move data access into a protected service; keep routes/pages/hooks/components orchestration-only."
+    },
+    {
+      "severity": "high",
+      "category": "direct-prisma-outside-service",
+      "file": "components/units/UnitsManagementDashboard.tsx",
+      "line": 5,
+      "evidence": "@prisma/client",
+      "recommendation": "Move data access into a protected service; keep routes/pages/hooks/components orchestration-only."
+    },
+    {
+      "severity": "high",
+      "category": "direct-prisma-outside-service",
+      "file": "hooks/useRecentPurchaseOrderQueries.ts",
+      "line": 24,
+      "evidence": "@prisma/client",
+      "recommendation": "Move data access into a protected service; keep routes/pages/hooks/components orchestration-only."
+    },
+    {
+      "severity": "high",
+      "category": "hard-delete-review",
+      "file": "services/accounting/posting-rules.service.ts",
+      "line": 332,
+      "evidence": "tx.postingRuleLine.deleteMany(",
+      "recommendation": "Classify as draft-only cleanup, configuration cleanup, soft delete, cancellation, reversal, or forbidden evidence deletion."
+    },
+    {
+      "severity": "high",
+      "category": "hard-delete-review",
+      "file": "services/auth/password-policy.ts",
+      "line": 163,
+      "evidence": "tx.passwordHistory.deleteMany(",
+      "recommendation": "Classify as draft-only cleanup, configuration cleanup, soft delete, cancellation, reversal, or forbidden evidence deletion."
+    },
+    {
+      "severity": "high",
+      "category": "hard-delete-review",
+      "file": "services/pos/pos.service.ts",
+      "line": 1092,
+      "evidence": "tx.salesOrderLine.delete(",
+      "recommendation": "Classify as draft-only cleanup, configuration cleanup, soft delete, cancellation, reversal, or forbidden evidence deletion."
+    },
+    {
+      "severity": "high",
+      "category": "hard-delete-review",
+      "file": "services/pos/pos.service.ts",
+      "line": 1107,
+      "evidence": "tx.salesOrderLine.delete(",
+      "recommendation": "Classify as draft-only cleanup, configuration cleanup, soft delete, cancellation, reversal, or forbidden evidence deletion."
+    },
+    {
+      "severity": "high",
+      "category": "hard-delete-review",
+      "file": "services/pos/pos.service.ts",
+      "line": 1152,
+      "evidence": "tx.salesOrderLine.delete(",
+      "recommendation": "Classify as draft-only cleanup, configuration cleanup, soft delete, cancellation, reversal, or forbidden evidence deletion."
+    },
+    {
+      "severity": "high",
+      "category": "hard-delete-review",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 454,
+      "evidence": "tx.purchaseOrderLine.deleteMany(",
+      "recommendation": "Classify as draft-only cleanup, configuration cleanup, soft delete, cancellation, reversal, or forbidden evidence deletion."
+    },
+    {
+      "severity": "high",
+      "category": "hard-delete-review",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 492,
+      "evidence": "tx.purchaseOrderLine.deleteMany(",
+      "recommendation": "Classify as draft-only cleanup, configuration cleanup, soft delete, cancellation, reversal, or forbidden evidence deletion."
+    },
+    {
+      "severity": "high",
+      "category": "hard-delete-review",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 493,
+      "evidence": "tx.purchaseOrder.delete(",
+      "recommendation": "Classify as draft-only cleanup, configuration cleanup, soft delete, cancellation, reversal, or forbidden evidence deletion."
+    },
+    {
+      "severity": "high",
+      "category": "hard-delete-review",
+      "file": "services/tax-rate/tax-rate.service.ts",
+      "line": 176,
+      "evidence": "db.taxRate.delete(",
+      "recommendation": "Classify as draft-only cleanup, configuration cleanup, soft delete, cancellation, reversal, or forbidden evidence deletion."
+    },
+    {
+      "severity": "high",
+      "category": "hard-delete-review",
+      "file": "services/tax-rate/tax-rate.service.ts",
+      "line": 317,
+      "evidence": "db.taxRate.delete(",
+      "recommendation": "Classify as draft-only cleanup, configuration cleanup, soft delete, cancellation, reversal, or forbidden evidence deletion."
+    },
+    {
+      "severity": "high",
+      "category": "hard-delete-review",
+      "file": "services/unit/unit.service.ts",
+      "line": 192,
+      "evidence": "db.unit.delete(",
+      "recommendation": "Classify as draft-only cleanup, configuration cleanup, soft delete, cancellation, reversal, or forbidden evidence deletion."
+    },
+    {
+      "severity": "high",
+      "category": "hard-delete-review",
+      "file": "services/unit/unit.service.ts",
+      "line": 331,
+      "evidence": "db.unit.delete(",
+      "recommendation": "Classify as draft-only cleanup, configuration cleanup, soft delete, cancellation, reversal, or forbidden evidence deletion."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/analytics/getSalesAnalytics.ts",
+      "line": 229,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/analytics/getSalesAnalytics.ts",
+      "line": 230,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/analytics/getSalesAnalytics.ts",
+      "line": 330,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/analytics/getSalesAnalytics.ts",
+      "line": 331,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/analytics/getSalesAnalytics.ts",
+      "line": 411,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/analytics/getSalesAnalytics.ts",
+      "line": 412,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/analytics/getSalesAnalytics.ts",
+      "line": 501,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/analytics/getSalesAnalytics.ts",
+      "line": 502,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/analytics/getSalesAnalytics.ts",
+      "line": 572,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/analytics/getSalesAnalytics.ts",
+      "line": 573,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/auth.ts",
+      "line": 222,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/auth.ts",
+      "line": 235,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/auth.ts",
+      "line": 337,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/brands/getBrandsAction.ts",
+      "line": 35,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/brands/getBrandsAction.ts",
+      "line": 39,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/categories/getCategoriesAction.ts",
+      "line": 37,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/categories/getCategoriesAction.ts",
+      "line": 41,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/categories/getCategoriesAction.ts",
+      "line": 45,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/customers/customer-management-actions.ts",
+      "line": 126,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/customers/customer-management-actions.ts",
+      "line": 132,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/customers/customer-management-actions.ts",
+      "line": 136,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/customers/customer-management-actions.ts",
+      "line": 162,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/customers/customer-management-actions.ts",
+      "line": 185,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/customers/customer-management-actions.ts",
+      "line": 210,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/customers/customer-management-actions.ts",
+      "line": 242,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/customers/customer-management-actions.ts",
+      "line": 267,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/customers/customerAction2.ts",
+      "line": 68,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/customers/customerAction2.ts",
+      "line": 126,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/customers/customerAction2.ts",
+      "line": 142,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/customers/customerAction2.ts",
+      "line": 171,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/customers/customerAction2.ts",
+      "line": 175,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/customers/customerAction2.ts",
+      "line": 202,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/customers/customerAction2.ts",
+      "line": 214,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/customers/customerAction2.ts",
+      "line": 222,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/customers/customerAction2.ts",
+      "line": 280,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/customers/customerActions.ts",
+      "line": 19,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/customers/customerActions.ts",
+      "line": 23,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/customers/customerActions.ts",
+      "line": 44,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/customers/customerActions.ts",
+      "line": 72,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/customers/customerActions.ts",
+      "line": 77,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/customers/customerActions.ts",
+      "line": 87,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/dashboard/getDashboardData.ts",
+      "line": 253,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/dashboard/getDashboardData.ts",
+      "line": 315,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/dashboard/getDashboardData.ts",
+      "line": 318,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/dashboard/getDashboardData.ts",
+      "line": 550,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "mock-demo-production-risk",
+      "file": "actions/inventory/inventoryActions.ts",
+      "line": 120,
+      "evidence": "Mock implementation",
+      "recommendation": "Remove production-visible mock data or quarantine it behind explicit demo-only boundaries."
+    },
+    {
+      "severity": "medium",
+      "category": "mock-demo-production-risk",
+      "file": "actions/inventory/inventoryActions.ts",
+      "line": 121,
+      "evidence": "mockItems",
+      "recommendation": "Remove production-visible mock data or quarantine it behind explicit demo-only boundaries."
+    },
+    {
+      "severity": "medium",
+      "category": "mock-demo-production-risk",
+      "file": "actions/inventory/inventoryActions.ts",
+      "line": 207,
+      "evidence": "mockItems",
+      "recommendation": "Remove production-visible mock data or quarantine it behind explicit demo-only boundaries."
+    },
+    {
+      "severity": "medium",
+      "category": "mock-demo-production-risk",
+      "file": "actions/inventory/inventoryActions.ts",
+      "line": 567,
+      "evidence": "mockTransactions",
+      "recommendation": "Remove production-visible mock data or quarantine it behind explicit demo-only boundaries."
+    },
+    {
+      "severity": "medium",
+      "category": "mock-demo-production-risk",
+      "file": "actions/inventory/inventoryActions.ts",
+      "line": 637,
+      "evidence": "mockTransactions",
+      "recommendation": "Remove production-visible mock data or quarantine it behind explicit demo-only boundaries."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/inventory/inventoryActions.ts",
+      "line": 760,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/inventory/inventoryActions.ts",
+      "line": 761,
+      "evidence": "throw error",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "mock-demo-production-risk",
+      "file": "actions/inventory/inventoryActions.ts",
+      "line": 771,
+      "evidence": "mockAdjustments",
+      "recommendation": "Remove production-visible mock data or quarantine it behind explicit demo-only boundaries."
+    },
+    {
+      "severity": "medium",
+      "category": "mock-demo-production-risk",
+      "file": "actions/inventory/inventoryActions.ts",
+      "line": 802,
+      "evidence": "mockAdjustments",
+      "recommendation": "Remove production-visible mock data or quarantine it behind explicit demo-only boundaries."
+    },
+    {
+      "severity": "medium",
+      "category": "mock-demo-production-risk",
+      "file": "actions/inventory/inventoryActions.ts",
+      "line": 858,
+      "evidence": "mockTransfers",
+      "recommendation": "Remove production-visible mock data or quarantine it behind explicit demo-only boundaries."
+    },
+    {
+      "severity": "medium",
+      "category": "mock-demo-production-risk",
+      "file": "actions/inventory/inventoryActions.ts",
+      "line": 894,
+      "evidence": "mockTransfers",
+      "recommendation": "Remove production-visible mock data or quarantine it behind explicit demo-only boundaries."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/inventory/inventoryMovementActions.ts",
+      "line": 145,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/inventory/inventoryMovementActions.ts",
+      "line": 146,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/inventory/inventoryMovementActions.ts",
+      "line": 147,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/inventory/inventoryMovementActions.ts",
+      "line": 148,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/inventory/inventoryMovementActions.ts",
+      "line": 149,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/inventory/inventoryMovementActions.ts",
+      "line": 150,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/inventory/inventoryMovementActions.ts",
+      "line": 157,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/inventory/inventoryMovementActions.ts",
+      "line": 158,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/inventory/inventoryMovementActions.ts",
+      "line": 167,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/inventory/inventoryMovementActions.ts",
+      "line": 183,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/inventory/inventoryMovementActions.ts",
+      "line": 243,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/inventory/inventoryMovementActions.ts",
+      "line": 244,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/inventory/inventoryMovementActions.ts",
+      "line": 245,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/inventory/inventoryMovementActions.ts",
+      "line": 296,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/inventory/inventoryMovementActions.ts",
+      "line": 371,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/inventory/inventoryMovementActions.ts",
+      "line": 453,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/inventory/inventoryMovementActions.ts",
+      "line": 454,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/inventory/inventoryMovementActions.ts",
+      "line": 455,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/inventory/inventoryMovementActions.ts",
+      "line": 456,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/inventory/inventoryMovementActions.ts",
+      "line": 459,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/inventory/inventoryMovementActions.ts",
+      "line": 528,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/item-suppliers/addItemSuppliers.ts",
+      "line": 22,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/item-suppliers/getItemWithSuppliers.ts",
+      "line": 120,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/item/items.ts",
+      "line": 54,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/item/items.ts",
+      "line": 79,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/item/items.ts",
+      "line": 124,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/item/items.ts",
+      "line": 155,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/item/items.ts",
+      "line": 204,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/item/items.ts",
+      "line": 232,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/item/items.ts",
+      "line": 262,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/item/items.ts",
+      "line": 296,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/item/items.ts",
+      "line": 329,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/item/items.ts",
+      "line": 365,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/item/items.ts",
+      "line": 403,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/item/listItemsAction.ts",
+      "line": 126,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/itemsShow/createActionItem.ts",
+      "line": 26,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/itemsShow/deleteItem.ts",
+      "line": 30,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/itemsShow/deleteItem.ts",
+      "line": 42,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/itemsShow/deleteItem.ts",
+      "line": 54,
+      "evidence": "throw error",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/itemsShow/getOrgItems.ts",
+      "line": 37,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/itemsShow/getOrgItemsWithInventoryLevels.ts",
+      "line": 13,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/itemsShow/getOrgItemsWithInventoryLevels.ts",
+      "line": 107,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/itemsShow/getOrgItemsWithInventoryLevelsLocation.ts",
+      "line": 11,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/itemsShow/updateItemBasicInfoById.ts",
+      "line": 17,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/itemsShow/updateItemById.ts",
+      "line": 25,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/itemsShow/updateItemById.ts",
+      "line": 62,
+      "evidence": "throw error",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/itemsShow/updateItemItemDetailsById.ts",
+      "line": 17,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/itemsShow/updateItemPricingById.ts",
+      "line": 17,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/itemsShow/updateItemRelationsById.ts",
+      "line": 17,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/itemsShow/updateItemStockById.ts",
+      "line": 61,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/locations/createLocation.ts",
+      "line": 45,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/locations/deleteLocation.ts",
+      "line": 36,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/locations/getOrgLocations.ts",
+      "line": 18,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/locations/location-management-actions.ts",
+      "line": 88,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/locations/location-management-actions.ts",
+      "line": 94,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/locations/location-management-actions.ts",
+      "line": 113,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/locations/location-management-actions.ts",
+      "line": 122,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/locations/location-management-actions.ts",
+      "line": 135,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/locations/location-management-actions.ts",
+      "line": 160,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/locations/location-management-actions.ts",
+      "line": 185,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/locations/location-management-actions.ts",
+      "line": 217,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/locations/location-management-actions.ts",
+      "line": 242,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/locations/updateLocationById.ts",
+      "line": 16,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/locations/updateLocationById.ts",
+      "line": 42,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/organization/organization-settings-actions.ts",
+      "line": 103,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/organization/organization-settings-actions.ts",
+      "line": 158,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/organization/organization-settings-actions.ts",
+      "line": 252,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/organization/organization-settings-actions.ts",
+      "line": 342,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/organization/organization-settings-actions.ts",
+      "line": 382,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/organization/organization-settings-actions.ts",
+      "line": 405,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/organization/organization-settings-actions.ts",
+      "line": 428,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/organization/organization-settings-actions.ts",
+      "line": 451,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/organization/organization-settings-actions.ts",
+      "line": 474,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/pos/terminal-management.actions.ts",
+      "line": 82,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/pos/terminal-management.actions.ts",
+      "line": 86,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/pos/terminal-management.actions.ts",
+      "line": 112,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/pos/terminal-management.actions.ts",
+      "line": 131,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/pos/terminal-management.actions.ts",
+      "line": 160,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/pos/terminal-management.actions.ts",
+      "line": 179,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/purchaseOrderWorkflow/GoodsReceiptAndSummary.ts",
+      "line": 54,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/purchaseOrderWorkflow/GoodsReceiptAndSummary.ts",
+      "line": 63,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+      "line": 64,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/roles/createRole.ts",
+      "line": 24,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/roles/createRole.ts",
+      "line": 38,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/roles/createRole.ts",
+      "line": 68,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/roles/getOrgRoles.ts",
+      "line": 22,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/roles/getRoleById.ts",
+      "line": 16,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/roles/getRoleById.ts",
+      "line": 21,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/roles/role-auth.ts",
+      "line": 30,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/roles/role-auth.ts",
+      "line": 37,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/roles/role-auth.ts",
+      "line": 49,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/roles/role-auth.ts",
+      "line": 62,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/roles/updateRole.ts",
+      "line": 26,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/roles/updateRole.ts",
+      "line": 45,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/roles/updateRole.ts",
+      "line": 54,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/roles/updateRole.ts",
+      "line": 71,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/roles/updateRole.ts",
+      "line": 79,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/roles/updateRole.ts",
+      "line": 104,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/storage/photo-upload-actions.ts",
+      "line": 40,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/storage/photo-upload-actions.ts",
+      "line": 58,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/storage/photo-upload-actions.ts",
+      "line": 98,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/storage/photo-upload-actions.ts",
+      "line": 153,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/storage/photo-upload-actions.ts",
+      "line": 191,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/suppliers/itemSupplierActions.ts",
+      "line": 146,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/suppliers/itemSupplierActions.ts",
+      "line": 200,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/suppliers/itemSupplierActions.ts",
+      "line": 274,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/suppliers/itemSupplierActions.ts",
+      "line": 331,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/suppliers/itemSupplierActions.ts",
+      "line": 365,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/suppliers/itemSupplierActions.ts",
+      "line": 414,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/suppliers/itemSupplierActions.ts",
+      "line": 459,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/suppliers/supplier-management-actions.ts",
+      "line": 128,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/suppliers/supplier-management-actions.ts",
+      "line": 134,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/suppliers/supplier-management-actions.ts",
+      "line": 138,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/suppliers/supplier-management-actions.ts",
+      "line": 162,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/suppliers/supplier-management-actions.ts",
+      "line": 185,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/suppliers/supplier-management-actions.ts",
+      "line": 210,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/suppliers/supplier-management-actions.ts",
+      "line": 242,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/suppliers/supplier-management-actions.ts",
+      "line": 267,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/taxRate/tax-rate-management-actions.ts",
+      "line": 101,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/taxRate/tax-rate-management-actions.ts",
+      "line": 107,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/taxRate/tax-rate-management-actions.ts",
+      "line": 126,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/taxRate/tax-rate-management-actions.ts",
+      "line": 135,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/taxRate/tax-rate-management-actions.ts",
+      "line": 148,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/taxRate/tax-rate-management-actions.ts",
+      "line": 174,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/taxRate/tax-rate-management-actions.ts",
+      "line": 199,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/taxRate/tax-rate-management-actions.ts",
+      "line": 231,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/taxRate/tax-rate-management-actions.ts",
+      "line": 256,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/units/deleteUnit.ts",
+      "line": 30,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/units/getOrgUnits.ts",
+      "line": 18,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/units/unit-management-actions.ts",
+      "line": 104,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/units/unit-management-actions.ts",
+      "line": 110,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/units/unit-management-actions.ts",
+      "line": 129,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/units/unit-management-actions.ts",
+      "line": 138,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/units/unit-management-actions.ts",
+      "line": 151,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/units/unit-management-actions.ts",
+      "line": 177,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/units/unit-management-actions.ts",
+      "line": 202,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/units/unit-management-actions.ts",
+      "line": 234,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/units/unit-management-actions.ts",
+      "line": 259,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/users/createInvitedUser.ts",
+      "line": 161,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/users/createUser.ts",
+      "line": 198,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/users/createUser.ts",
+      "line": 202,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/users/createUser.ts",
+      "line": 231,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/users/deleteUser.ts",
+      "line": 43,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/users/deleteUser.ts",
+      "line": 72,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/users/getOrgInvites.ts",
+      "line": 71,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/users/getOrgUsers.ts",
+      "line": 55,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/users/sendInvite.ts",
+      "line": 115,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/users/sendInvite.ts",
+      "line": 133,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "actions/users/sendResetLink.ts",
+      "line": 50,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "mock-demo-production-risk",
+      "file": "app/[locale]/(dashboard)/dashboard/items/new/page.tsx",
+      "line": 4,
+      "evidence": "demo route",
+      "recommendation": "Remove production-visible mock data or quarantine it behind explicit demo-only boundaries."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "app/api/uploads/[...path]/route.ts",
+      "line": 83,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "app/api/v1/organisations/[id]/briefItems/route.ts",
+      "line": 19,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "app/api/v1/organisations/[id]/briefItems/route.ts",
+      "line": 139,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "app/api/v1/organisations/[id]/items/route.ts",
+      "line": 92,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "app/api/v1/organisations/[id]/items/route.ts",
+      "line": 93,
+      "evidence": "throw error",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "app/api/v1/organisations/route.ts",
+      "line": 33,
+      "evidence": "console.error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "ui-service-import",
+      "file": "components/accounting/CloseAssuranceCenter.tsx",
+      "line": 26,
+      "evidence": "from '@/services/..'",
+      "recommendation": "UI and hooks should call actions/API surfaces, not business-rule services directly."
+    },
+    {
+      "severity": "medium",
+      "category": "ui-service-import",
+      "file": "components/brands/ModernBrandForm.tsx",
+      "line": 26,
+      "evidence": "from '@/services/..'",
+      "recommendation": "UI and hooks should call actions/API surfaces, not business-rule services directly."
+    },
+    {
+      "severity": "medium",
+      "category": "ui-service-import",
+      "file": "components/categories/ModernCategoryForm.tsx",
+      "line": 11,
+      "evidence": "from '@/services/..'",
+      "recommendation": "UI and hooks should call actions/API surfaces, not business-rule services directly."
+    },
+    {
+      "severity": "medium",
+      "category": "mock-demo-production-risk",
+      "file": "components/dashboard/Tables/ModalTableheader.tsx",
+      "line": 290,
+      "evidence": "Sample Data",
+      "recommendation": "Remove production-visible mock data or quarantine it behind explicit demo-only boundaries."
+    },
+    {
+      "severity": "medium",
+      "category": "mock-demo-production-risk",
+      "file": "components/dashboard/Tables/TableHeader.tsx",
+      "line": 293,
+      "evidence": "Sample Data",
+      "recommendation": "Remove production-visible mock data or quarantine it behind explicit demo-only boundaries."
+    },
+    {
+      "severity": "medium",
+      "category": "ui-service-import",
+      "file": "components/finance/FinanceCommandCenterDashboard.tsx",
+      "line": 41,
+      "evidence": "from '@/services/..'",
+      "recommendation": "UI and hooks should call actions/API surfaces, not business-rule services directly."
+    },
+    {
+      "severity": "medium",
+      "category": "ui-service-import",
+      "file": "components/finance/PaymentReconciliationWorkbench.tsx",
+      "line": 52,
+      "evidence": "from '@/services/..'",
+      "recommendation": "UI and hooks should call actions/API surfaces, not business-rule services directly."
+    },
+    {
+      "severity": "medium",
+      "category": "ui-service-import",
+      "file": "components/pos/CashDrawerManagementDashboard.tsx",
+      "line": 42,
+      "evidence": "from '@/services/..'",
+      "recommendation": "UI and hooks should call actions/API surfaces, not business-rule services directly."
+    },
+    {
+      "severity": "medium",
+      "category": "ui-service-import",
+      "file": "hooks/finance/useFinanceDashboard.ts",
+      "line": 4,
+      "evidence": "from '@/services/..'",
+      "recommendation": "UI and hooks should call actions/API surfaces, not business-rule services directly."
+    },
+    {
+      "severity": "medium",
+      "category": "ui-service-import",
+      "file": "hooks/payments/usePaymentReconciliationWorkbench.ts",
+      "line": 6,
+      "evidence": "from '@/services/..'",
+      "recommendation": "UI and hooks should call actions/API surfaces, not business-rule services directly."
+    },
+    {
+      "severity": "medium",
+      "category": "ui-service-import",
+      "file": "hooks/posHooks/useDrawerDashboard.ts",
+      "line": 4,
+      "evidence": "from '@/services/..'",
+      "recommendation": "UI and hooks should call actions/API surfaces, not business-rule services directly."
+    },
+    {
+      "severity": "medium",
+      "category": "mock-demo-production-risk",
+      "file": "lib/error-handling/monitoring.ts",
+      "line": 877,
+      "evidence": "Mock implementation",
+      "recommendation": "Remove production-visible mock data or quarantine it behind explicit demo-only boundaries."
+    },
+    {
+      "severity": "medium",
+      "category": "mock-demo-production-risk",
+      "file": "lib/error-handling/monitoring.ts",
+      "line": 882,
+      "evidence": "Mock implementation",
+      "recommendation": "Remove production-visible mock data or quarantine it behind explicit demo-only boundaries."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/_shared/require-org.ts",
+      "line": 20,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/_shared/resolve-action-organization.ts",
+      "line": 13,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/_shared/resolve-action-organization.ts",
+      "line": 26,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/accounts.service.ts",
+      "line": 63,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/accounts.service.ts",
+      "line": 241,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/accounts.service.ts",
+      "line": 242,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/invariants.ts",
+      "line": 52,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/invariants.ts",
+      "line": 63,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/invariants.ts",
+      "line": 67,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/invariants.ts",
+      "line": 82,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/invariants.ts",
+      "line": 86,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/invariants.ts",
+      "line": 102,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/invariants.ts",
+      "line": 126,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/invariants.ts",
+      "line": 130,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/invariants.ts",
+      "line": 134,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/invariants.ts",
+      "line": 142,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/journals.service.ts",
+      "line": 158,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/journals.service.ts",
+      "line": 160,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/journals.service.ts",
+      "line": 172,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/journals.service.ts",
+      "line": 179,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/journals.service.ts",
+      "line": 194,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/journals.service.ts",
+      "line": 203,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/journals.service.ts",
+      "line": 204,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/journals.service.ts",
+      "line": 205,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/journals.service.ts",
+      "line": 206,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/journals.service.ts",
+      "line": 211,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/journals.service.ts",
+      "line": 216,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/periods.service.ts",
+      "line": 103,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/posting.service.ts",
+      "line": 124,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/posting.service.ts",
+      "line": 130,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/posting.service.ts",
+      "line": 131,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/posting.service.ts",
+      "line": 242,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/posting.service.ts",
+      "line": 244,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/posting.service.ts",
+      "line": 362,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/posting.service.ts",
+      "line": 364,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/accounting/posting.service.ts",
+      "line": 367,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/brand/brand.service.ts",
+      "line": 86,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/brand/brand.service.ts",
+      "line": 105,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/brand/brand.service.ts",
+      "line": 134,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/brand/brand.service.ts",
+      "line": 151,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/brand/brand.service.ts",
+      "line": 178,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/category/category.service.ts",
+      "line": 48,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/category/category.service.ts",
+      "line": 57,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/category/category.service.ts",
+      "line": 110,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/category/category.service.ts",
+      "line": 130,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/category/category.service.ts",
+      "line": 159,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/category/category.service.ts",
+      "line": 180,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/category/category.service.ts",
+      "line": 211,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/customer/customer.service.ts",
+      "line": 180,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/customer/customer.service.ts",
+      "line": 200,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/customer/customer.service.ts",
+      "line": 229,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/customer/customer.service.ts",
+      "line": 236,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/customer/customer.service.ts",
+      "line": 263,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/customer/customer.service.ts",
+      "line": 523,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/customer/customer.service.ts",
+      "line": 538,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/customer/customer.service.ts",
+      "line": 562,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/customer/customer.service.ts",
+      "line": 584,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/finance/finance-dashboard.service.ts",
+      "line": 227,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/finance/finance-dashboard.service.ts",
+      "line": 392,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/item/item.service.ts",
+      "line": 262,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/item/item.service.ts",
+      "line": 336,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/item/item.service.ts",
+      "line": 337,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/item/item.service.ts",
+      "line": 338,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/item/item.service.ts",
+      "line": 408,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/item/item.service.ts",
+      "line": 441,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/location/location.service.ts",
+      "line": 304,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/location/location.service.ts",
+      "line": 351,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/location/location.service.ts",
+      "line": 368,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/location/location.service.ts",
+      "line": 413,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/location/location.service.ts",
+      "line": 439,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/location/location.service.ts",
+      "line": 448,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/payments/adapters/mobile-money-hmac.adapter.ts",
+      "line": 53,
+      "evidence": "throw error",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/payments/payment-reconciliation-workbench.service.ts",
+      "line": 408,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/payments/payment-reconciliation-workbench.service.ts",
+      "line": 445,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/payroll/__tests__/payroll-completion.service.test.ts",
+      "line": 360,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/payroll/__tests__/payroll-control.service.test.ts",
+      "line": 180,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/drawer-dashboard.service.ts",
+      "line": 248,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/drawer-dashboard.service.ts",
+      "line": 256,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/pos.service.ts",
+      "line": 363,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/pos.service.ts",
+      "line": 382,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/pos.service.ts",
+      "line": 396,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/pos.service.ts",
+      "line": 451,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/pos.service.ts",
+      "line": 710,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/pos.service.ts",
+      "line": 721,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/pos.service.ts",
+      "line": 814,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/pos.service.ts",
+      "line": 999,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/pos.service.ts",
+      "line": 1019,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/pos.service.ts",
+      "line": 1089,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/pos.service.ts",
+      "line": 1150,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/pos.service.ts",
+      "line": 1242,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/pos.service.ts",
+      "line": 1243,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/pos.service.ts",
+      "line": 1256,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/pos.service.ts",
+      "line": 1274,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/pos.service.ts",
+      "line": 1277,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/pos.service.ts",
+      "line": 1304,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/pos.service.ts",
+      "line": 1309,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/pos.service.ts",
+      "line": 1333,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/pos.service.ts",
+      "line": 1401,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/pos.service.ts",
+      "line": 1544,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/receipt.service.ts",
+      "line": 418,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/receipt.service.ts",
+      "line": 566,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/receipt.service.ts",
+      "line": 582,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/terminal-management.service.ts",
+      "line": 87,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/terminal-management.service.ts",
+      "line": 98,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/terminal-management.service.ts",
+      "line": 111,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/terminal-management.service.ts",
+      "line": 138,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/terminal-management.service.ts",
+      "line": 329,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/terminal-management.service.ts",
+      "line": 356,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/terminal-management.service.ts",
+      "line": 360,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/terminal-management.service.ts",
+      "line": 364,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/terminal-management.service.ts",
+      "line": 396,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/terminal-management.service.ts",
+      "line": 420,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/pos/terminal-management.service.ts",
+      "line": 424,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 99,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 100,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 101,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 108,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 189,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 322,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 339,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 340,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 341,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 397,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 399,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 408,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 412,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 428,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 487,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 489,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 507,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 509,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 522,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 523,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 535,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 537,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 565,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 567,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 574,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 592,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 597,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 600,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 604,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 608,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 612,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 620,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 630,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 751,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 945,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/supplier/supplier.service.ts",
+      "line": 193,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/supplier/supplier.service.ts",
+      "line": 212,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/supplier/supplier.service.ts",
+      "line": 246,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/supplier/supplier.service.ts",
+      "line": 253,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/supplier/supplier.service.ts",
+      "line": 289,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/supplier/supplier.service.ts",
+      "line": 299,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/supplier/supplier.service.ts",
+      "line": 306,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/supplier/supplier.service.ts",
+      "line": 580,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/supplier/supplier.service.ts",
+      "line": 595,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/supplier/supplier.service.ts",
+      "line": 620,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/supplier/supplier.service.ts",
+      "line": 645,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/tax-rate/tax-rate.service.ts",
+      "line": 93,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/tax-rate/tax-rate.service.ts",
+      "line": 142,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/tax-rate/tax-rate.service.ts",
+      "line": 170,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/tax-rate/tax-rate.service.ts",
+      "line": 173,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/tax-rate/tax-rate.service.ts",
+      "line": 268,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/tax-rate/tax-rate.service.ts",
+      "line": 283,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/tax-rate/tax-rate.service.ts",
+      "line": 302,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/unit/unit.service.ts",
+      "line": 108,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/unit/unit.service.ts",
+      "line": 144,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/unit/unit.service.ts",
+      "line": 186,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/unit/unit.service.ts",
+      "line": 189,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/unit/unit.service.ts",
+      "line": 282,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/unit/unit.service.ts",
+      "line": 297,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    },
+    {
+      "severity": "medium",
+      "category": "raw-error-handling",
+      "file": "services/unit/unit.service.ts",
+      "line": 316,
+      "evidence": "throw new Error(",
+      "recommendation": "Use typed domain errors and safe action/route error mapping."
+    }
+  ]
+}

@@ -1,4 +1,7 @@
 import {
+  AccountingSourceType,
+  ComplianceAdapterEnvironment,
+  FiscalDocumentType,
   LedgerEntryType,
   PaymentMethod,
   PaymentStatus,
@@ -15,6 +18,13 @@ import { postPayment } from "@/services/accounting/postings/post-payment"
 import { postSale } from "@/services/accounting/postings/post-sale"
 import { postVoid } from "@/services/accounting/postings/post-void"
 import { createCustomerLedgerEntry } from "@/services/accounting/customer-ledger.service"
+import { createFiscalDocumentFromPostedSource } from "@/services/compliance/fiscal-document.service"
+import { resolveEInvoicingMetadata } from "@/services/compliance/country-pack-hooks"
+import { recordBusinessEventInTx } from "@/services/events/business-event.service"
+import {
+  postPOSStockIssue,
+  postPOSStockReturn,
+} from "@/services/inventory/inventory-stock-event.service"
 import {
   assertNoDuplicateProviderCapture,
   assertUniqueProviderCaptureReferences,
@@ -60,6 +70,235 @@ type TenderAllocation = {
   amount: Prisma.Decimal
   tenderedAmount: Prisma.Decimal
   changeGiven: Prisma.Decimal
+}
+
+type POSSaleForFiscalDocument = {
+  id: string
+  orderNumber: string
+  subtotal: Prisma.Decimal.Value
+  taxAmount: Prisma.Decimal.Value
+  discount: Prisma.Decimal.Value
+  total: Prisma.Decimal.Value
+  organization: {
+    country: string | null
+    currency: string
+  }
+  lines: Array<{
+    id: string
+    itemId: string
+    quantity: Prisma.Decimal.Value
+    unitPrice: Prisma.Decimal.Value
+    discount: Prisma.Decimal.Value
+    taxRate: Prisma.Decimal.Value
+    taxAmount: Prisma.Decimal.Value
+    lineTotal: Prisma.Decimal.Value
+    item: {
+      id: string
+      sku: string
+      nameEn?: string | null
+      nameFr?: string | null
+    }
+  }>
+}
+
+type POSFiscalDocumentEligibility = {
+  countryCode: string
+  currency: string
+  authorityChannel: string
+  adapterKey?: string | null
+}
+
+const COUNTRY_CODE_ALIASES: Record<string, string> = {
+  CAMEROON: "CM",
+  CAMEROUN: "CM",
+}
+
+function normalizeCountryCode(country?: string | null) {
+  const normalized = country?.trim().toUpperCase()
+  if (!normalized) return null
+  if (/^[A-Z]{2}$/.test(normalized)) return normalized
+  return COUNTRY_CODE_ALIASES[normalized] ?? null
+}
+
+function findAuthorityChannelForPOSReceipt(channels: unknown[]) {
+  for (const channel of channels) {
+    if (!channel || typeof channel !== "object") continue
+    const candidate = channel as Record<string, unknown>
+    const supportedDocumentTypes = Array.isArray(candidate.supportedDocumentTypes)
+      ? candidate.supportedDocumentTypes
+      : []
+
+    if (
+      typeof candidate.code === "string" &&
+      supportedDocumentTypes.includes(FiscalDocumentType.POS_RECEIPT)
+    ) {
+      return {
+        authorityChannel: candidate.code,
+        adapterKey:
+          typeof candidate.adapterKey === "string" && candidate.adapterKey.trim()
+            ? candidate.adapterKey
+            : null,
+      }
+    }
+  }
+
+  return null
+}
+
+function resolvePOSFiscalDocumentEligibility(
+  sale: POSSaleForFiscalDocument,
+  issueDate: Date,
+): POSFiscalDocumentEligibility | null {
+  const countryCode = normalizeCountryCode(sale.organization.country)
+  if (!countryCode) return null
+
+  try {
+    const metadata = resolveEInvoicingMetadata({ countryCode, date: issueDate })
+    const supportedDocumentTypes = Array.isArray(metadata.capability.value.supportedDocumentTypes)
+      ? metadata.capability.value.supportedDocumentTypes
+      : []
+    const authorityChannel = findAuthorityChannelForPOSReceipt(metadata.authorityChannels.value)
+
+    if (!supportedDocumentTypes.includes(FiscalDocumentType.POS_RECEIPT) || !authorityChannel) {
+      return null
+    }
+
+    return {
+      countryCode,
+      currency: sale.organization.currency || "XAF",
+      authorityChannel: authorityChannel.authorityChannel,
+      adapterKey: authorityChannel.adapterKey,
+    }
+  } catch {
+    return null
+  }
+}
+
+function toFiscalDecimal(value: Prisma.Decimal.Value) {
+  return toDecimal(value).toDecimalPlaces(2).toFixed(2)
+}
+
+function toFiscalQuantity(value: Prisma.Decimal.Value) {
+  return new Prisma.Decimal(value).toDecimalPlaces(3).toFixed(3)
+}
+
+function toTaxRateBps(value: Prisma.Decimal.Value) {
+  return toDecimal(value).mul(100).toDecimalPlaces(0).toNumber()
+}
+
+function buildFiscalDocumentLines(sale: POSSaleForFiscalDocument) {
+  return sale.lines.map((line, index) => {
+    const quantity = toDecimal(line.quantity)
+    const unitPrice = toDecimal(line.unitPrice)
+    const discount = toDecimal(line.discount)
+    const lineSubtotal = Prisma.Decimal.max(new Prisma.Decimal(0), unitPrice.mul(quantity).minus(discount))
+      .toDecimalPlaces(2)
+    const taxRateBps = toTaxRateBps(line.taxRate)
+    const description = line.item.nameEn || line.item.nameFr || line.item.sku
+
+    return {
+      lineNumber: index + 1,
+      sourceLineId: line.id,
+      itemId: line.itemId,
+      description,
+      quantity: toFiscalQuantity(quantity),
+      unitPrice: toFiscalDecimal(unitPrice),
+      discountAmount: toFiscalDecimal(discount),
+      taxRateBps,
+      taxCode: taxRateBps > 0 ? "VAT" : null,
+      taxAmount: toFiscalDecimal(line.taxAmount),
+      lineSubtotal: toFiscalDecimal(lineSubtotal),
+      lineTotal: toFiscalDecimal(line.lineTotal),
+      linePayload: {
+        sku: line.item.sku,
+        itemId: line.item.id,
+      },
+    }
+  })
+}
+
+function buildTaxBreakdown(sale: POSSaleForFiscalDocument) {
+  const buckets = new Map<string, { taxRateBps: number; taxableAmount: Prisma.Decimal; taxAmount: Prisma.Decimal }>()
+
+  for (const line of sale.lines) {
+    const taxRateBps = toTaxRateBps(line.taxRate)
+    const key = String(taxRateBps)
+    const quantity = toDecimal(line.quantity)
+    const taxableAmount = Prisma.Decimal.max(
+      new Prisma.Decimal(0),
+      toDecimal(line.unitPrice).mul(quantity).minus(toDecimal(line.discount)),
+    ).toDecimalPlaces(2)
+    const taxAmount = toDecimal(line.taxAmount).toDecimalPlaces(2)
+    const existing =
+      buckets.get(key) ?? {
+        taxRateBps,
+        taxableAmount: new Prisma.Decimal(0),
+        taxAmount: new Prisma.Decimal(0),
+      }
+
+    existing.taxableAmount = existing.taxableAmount.plus(taxableAmount).toDecimalPlaces(2)
+    existing.taxAmount = existing.taxAmount.plus(taxAmount).toDecimalPlaces(2)
+    buckets.set(key, existing)
+  }
+
+  return {
+    buckets: Array.from(buckets.values()).map((bucket) => ({
+      taxRateBps: bucket.taxRateBps,
+      taxableAmount: toFiscalDecimal(bucket.taxableAmount),
+      taxAmount: toFiscalDecimal(bucket.taxAmount),
+    })),
+    totalTaxAmount: toFiscalDecimal(sale.taxAmount),
+  }
+}
+
+async function createPOSFiscalDocumentInTx(
+  tx: Prisma.TransactionClient,
+  input: {
+    sale: POSSaleForFiscalDocument
+    organizationId: string
+    actorId: string
+    locationId: string
+    terminalId: string
+    issueDate: Date
+  },
+) {
+  const eligibility = resolvePOSFiscalDocumentEligibility(input.sale, input.issueDate)
+  if (!eligibility) return null
+
+  return createFiscalDocumentFromPostedSource(
+    {
+      organizationId: input.organizationId,
+      createdById: input.actorId,
+      documentType: FiscalDocumentType.POS_RECEIPT,
+      sourceType: AccountingSourceType.POS_SALE,
+      sourceId: input.sale.id,
+      sourceNumber: input.sale.orderNumber,
+      sourceDate: input.issueDate,
+      issueDate: input.issueDate,
+      countryCode: eligibility.countryCode,
+      currency: eligibility.currency,
+      fiscalPeriodKey: "ANNUAL",
+      sequenceScopeKey: `POS:${input.locationId}:${input.terminalId}`,
+      idempotencyKey: `pos-sale:${input.sale.id}:fiscal-document`,
+      subtotal: toFiscalDecimal(input.sale.subtotal),
+      taxAmount: toFiscalDecimal(input.sale.taxAmount),
+      discountAmount: toFiscalDecimal(input.sale.discount),
+      totalAmount: toFiscalDecimal(input.sale.total),
+      taxBreakdown: buildTaxBreakdown(input.sale),
+      lines: buildFiscalDocumentLines(input.sale),
+      enqueueCertification: true,
+      authorityChannel: eligibility.authorityChannel,
+      adapterKey: eligibility.adapterKey,
+      adapterEnvironment: ComplianceAdapterEnvironment.SANDBOX,
+      metadata: {
+        terminalId: input.terminalId,
+        locationId: input.locationId,
+        source: "POS_COMPLETION_FLOW",
+        statutoryEffect: "SANDBOX_ONLY_NO_PRODUCTION_CERTIFICATION",
+      },
+    },
+    tx,
+  )
 }
 
 function nextSessionNumber() {
@@ -121,7 +360,7 @@ function allocateTenders(tenders: POSTenderInput[], total: Prisma.Decimal) {
   for (const tender of tenders) {
     const tenderedAmount = toDecimal(tender.amount)
     if (remaining.lte(0)) {
-      throw new Error("Tender exceeds sale balance")
+      throw new BusinessRuleError("Tender exceeds sale balance")
     }
 
     if (tender.method === "CASH") {
@@ -140,7 +379,7 @@ function allocateTenders(tenders: POSTenderInput[], total: Prisma.Decimal) {
     }
 
     if (tenderedAmount.gt(remaining)) {
-      throw new Error("Only cash tenders can exceed the balance due")
+      throw new BusinessRuleError("Only cash tenders can exceed the balance due")
     }
 
     allocations.push({
@@ -154,7 +393,7 @@ function allocateTenders(tenders: POSTenderInput[], total: Prisma.Decimal) {
   }
 
   if (remaining.gt(0)) {
-    throw new Error("Insufficient tender for sale total")
+    throw new BusinessRuleError("Insufficient tender for sale total")
   }
 
   return { allocations, changeDue }
@@ -209,7 +448,7 @@ async function getOrCreateDraftCart(
     select: { terminalNumber: true },
   })
 
-  if (!terminal) throw new Error("Terminal not found for this location")
+  if (!terminal) throw new NotFoundError("Terminal not found for this location")
 
   const customer = await getWalkInCustomer(tx, input.organizationId)
 
@@ -468,7 +707,7 @@ export async function openPOSShift(rawInput: UserScoped) {
     select: { id: true, name: true, terminalNumber: true },
   })
 
-  if (!terminal) throw new Error("Terminal not found for this location")
+  if (!terminal) throw new NotFoundError("Terminal not found for this location")
 
   const existing = await db.pOSSession.findFirst({
     where: {
@@ -479,7 +718,7 @@ export async function openPOSShift(rawInput: UserScoped) {
     select: { id: true },
   })
 
-  if (existing) throw new Error("Terminal already has an open shift")
+  if (existing) throw new BusinessRuleError("Terminal already has an open shift")
 
   const session = await db.$transaction(async (tx) => {
     const created = await tx.pOSSession.create({
@@ -572,7 +811,7 @@ export async function closePOSShift(rawInput: UserScoped) {
     },
   })
 
-  if (!session) throw new Error("Open shift not found")
+  if (!session) throw new NotFoundError("Open shift not found")
 
   const expectedBalance = toDecimal(session.expectedBalance)
   const variance = subtractMoney(actualBalance, expectedBalance)
@@ -757,7 +996,7 @@ export async function addPOSCartLine(rawInput: UserScoped) {
       },
     })
 
-    if (!item) throw new Error("Item not found")
+    if (!item) throw new NotFoundError("Item not found")
 
     const salesOrder = await getOrCreateDraftCart(tx, {
       organizationId: rawInput.organizationId,
@@ -777,7 +1016,7 @@ export async function addPOSCartLine(rawInput: UserScoped) {
     const nextQuantity = existingLine ? addMoney(existingLine.quantity, quantityToAdd) : quantityToAdd
     const available = toDecimal(item.inventoryLevels[0]?.quantityAvailable)
     if (item.trackInventory && available.lt(nextQuantity)) {
-      throw new Error("Insufficient stock at this location")
+      throw new BusinessRuleError("Insufficient stock at this location")
     }
 
     const unitPrice = toDecimal(item.sellingPrice)
@@ -847,7 +1086,7 @@ export async function updatePOSCartLine(rawInput: UserScoped) {
       },
     })
 
-    if (!line) throw new Error("Cart line not found")
+    if (!line) throw new NotFoundError("Cart line not found")
 
     if (quantity.lte(0)) {
       await tx.salesOrderLine.delete({ where: { id: line.id } })
@@ -908,7 +1147,7 @@ export async function removePOSCartLine(rawInput: UserScoped) {
       select: { id: true },
     })
 
-    if (!line) throw new Error("Cart line not found")
+    if (!line) throw new NotFoundError("Cart line not found")
 
     await tx.salesOrderLine.delete({ where: { id: line.id } })
     await recalculateCartTotals(tx, input.salesOrderId)
@@ -926,6 +1165,29 @@ export type CommitPOSSaleResult = {
   amountPaid: number
   onAccountAmount: number
   changeDue: number
+  accountingMovements: {
+    saleJournalEntry: {
+      id: string
+      entryNumber: string
+      postingBatchId?: string | null
+    }
+    paymentJournalEntries: Array<{
+      id: string
+      entryNumber: string
+    }>
+    entries: Array<{
+      account: string
+      debit: number
+      credit: number
+    }>
+    totalDebits: number
+    totalCredits: number
+  }
+  fiscalDocument?: {
+    id: string
+    status: string
+    authorityChannel: string | null
+  } | null
   receipt: SalesReceiptPayload
   delivery: ReceiptDeliveryResult | null
 }
@@ -946,6 +1208,7 @@ export async function commitPOSSale(rawInput: UserScoped) {
         deletedAt: null,
       },
       include: {
+        organization: { select: { country: true, currency: true } },
         customer: { select: { id: true, code: true, currentBalance: true, creditLimit: true } },
         lines: {
           include: {
@@ -953,6 +1216,8 @@ export async function commitPOSSale(rawInput: UserScoped) {
               select: {
                 id: true,
                 sku: true,
+                nameEn: true,
+                nameFr: true,
                 costPrice: true,
                 trackInventory: true,
                 inventoryLevels: {
@@ -974,8 +1239,8 @@ export async function commitPOSSale(rawInput: UserScoped) {
       },
     })
 
-    if (!sale) throw new Error("Draft POS sale not found")
-    if (sale.lines.length === 0) throw new Error("Cannot commit an empty cart")
+    if (!sale) throw new NotFoundError("Draft POS sale not found")
+    if (sale.lines.length === 0) throw new BusinessRuleError("Cannot commit an empty cart")
 
     const session = await tx.pOSSession.findFirst({
       where: {
@@ -988,7 +1253,7 @@ export async function commitPOSSale(rawInput: UserScoped) {
       select: { id: true, expectedBalance: true },
     })
 
-    if (!session) throw new Error("Active cashier shift not found")
+    if (!session) throw new NotFoundError("Active cashier shift not found")
 
     const customerId = input.customerId || sale.customerId
     const customer = await tx.customer.findFirst({
@@ -1006,10 +1271,10 @@ export async function commitPOSSale(rawInput: UserScoped) {
       },
     })
 
-    if (!customer) throw new Error("Customer not found")
+    if (!customer) throw new NotFoundError("Customer not found")
 
     const total = toDecimal(sale.total).toDecimalPlaces(2)
-    if (total.lte(0)) throw new Error("Sale total must be greater than zero")
+    if (total.lte(0)) throw new BusinessRuleError("Sale total must be greater than zero")
 
     const { allocations, changeDue } = allocateTenders(input.tenders, total)
     const onAccountAmount = allocations
@@ -1036,12 +1301,12 @@ export async function commitPOSSale(rawInput: UserScoped) {
 
     if (onAccountAmount.gt(0)) {
       if (customer.code === "WALK_IN") {
-        throw new Error("On-account tender requires an attached customer")
+        throw new BusinessRuleError("On-account tender requires an attached customer")
       }
 
       const nextBalance = addMoney(customer.currentBalance, onAccountAmount).toDecimalPlaces(2)
       if (customer.creditLimit && nextBalance.gt(customer.creditLimit)) {
-        throw new Error("Customer credit limit would be exceeded")
+        throw new BusinessRuleError("Customer credit limit would be exceeded")
       }
 
       await tx.customer.update({
@@ -1061,72 +1326,39 @@ export async function commitPOSSale(rawInput: UserScoped) {
       })
     }
 
-    let totalCost = new Prisma.Decimal(0)
+    const inventoryTransactionIds: string[] = []
     const now = new Date()
-
-    for (const line of sale.lines) {
+    const stockLines = sale.lines.flatMap((line) => {
       const quantity = toDecimal(line.quantity)
-      if (quantity.lte(0)) throw new Error(`Invalid quantity for item ${line.item.sku}`)
+      if (quantity.lte(0)) throw new BusinessRuleError(`Invalid quantity for item ${line.item.sku}`)
 
-      if (!line.item.trackInventory) continue
+      if (!line.item.trackInventory) return []
 
       const level = line.item.inventoryLevels[0]
-      if (!level) {
-        throw new Error(`No inventory level found for item ${line.item.sku} at this location`)
-      }
+      const unitCost = level && toDecimal(level.averageCost).gt(0)
+        ? toDecimal(level.averageCost)
+        : toDecimal(line.item.costPrice)
 
-      const quantityOnHand = toDecimal(level.quantityOnHand)
-      const quantityAvailable = toDecimal(level.quantityAvailable)
-      if (quantityOnHand.lt(quantity) || quantityAvailable.lt(quantity)) {
-        throw new Error(`Insufficient stock for item ${line.item.sku}`)
-      }
-
-      const unitCost = toDecimal(level.averageCost).gt(0) ? toDecimal(level.averageCost) : toDecimal(line.item.costPrice)
-      const lineCost = unitCost.times(quantity).toDecimalPlaces(2)
-      const nextOnHand = quantityOnHand.minus(quantity)
-      const nextAvailable = quantityAvailable.minus(quantity)
-      const nextTotalValue = unitCost.times(nextOnHand).toDecimalPlaces(2)
-
-      const update = await tx.inventoryLevel.updateMany({
-        where: {
-          id: level.id,
-          version: level.version,
-          quantityOnHand: { gte: quantity },
-          quantityAvailable: { gte: quantity },
-        },
-        data: {
-          quantityOnHand: nextOnHand,
-          quantityAvailable: nextAvailable,
-          totalValue: nextTotalValue,
-          version: { increment: 1 },
-          lastTransactionAt: now,
-        },
-      })
-
-      if (update.count !== 1) {
-        throw new Error(`Inventory changed while selling item ${line.item.sku}; retry the sale`)
-      }
-
-      await tx.inventoryTransaction.create({
-        data: {
-          itemId: line.itemId,
-          locationId: input.locationId,
-          organizationId: rawInput.organizationId,
-          createdById: rawInput.userId,
-          type: "SALE",
-          quantity: quantity.times(-1),
-          unitCost,
-          totalCost: lineCost,
-          balanceAfter: nextOnHand,
-          referenceType: "SALES_ORDER",
-          referenceId: sale.id,
-          referenceNumber: sale.orderNumber,
-          notes: `POS sale ${sale.orderNumber}`,
-        },
-      })
-
-      totalCost = totalCost.plus(lineCost).toDecimalPlaces(2)
-    }
+      return [{
+        itemId: line.itemId,
+        quantity,
+        unitCost,
+        notes: `POS sale ${sale.orderNumber}`,
+      }]
+    })
+    const stockResult = await postPOSStockIssue(
+      {
+        organizationId: rawInput.organizationId,
+        saleId: sale.id,
+        orderNumber: sale.orderNumber,
+        locationId: input.locationId,
+        actorId: rawInput.userId,
+        lines: stockLines,
+      },
+      tx,
+    )
+    inventoryTransactionIds.push(...stockResult.movementTransactionIds)
+    const totalCost = stockResult.totalCost
 
     const cashNet = allocations
       .filter((allocation) => allocation.paymentMethod === "CASH")
@@ -1166,7 +1398,7 @@ export async function commitPOSSale(rawInput: UserScoped) {
         },
       })
 
-      if (!drawer?.isOpen) throw new Error("Cash drawer is not open for this terminal")
+      if (!drawer?.isOpen) throw new BusinessRuleError("Cash drawer is not open for this terminal")
 
       drawerId = drawer.id
       const balanceAfter = addMoney(drawer.currentBalance, cashNet).toDecimalPlaces(2)
@@ -1309,8 +1541,17 @@ export async function commitPOSSale(rawInput: UserScoped) {
       .toDecimalPlaces(2)
 
     if (!totalDebits.eq(totalCredits)) {
-      throw new Error("Finance journal is not balanced")
+      throw new BusinessRuleError("Finance journal is not balanced")
     }
+
+    const fiscalDocument = await createPOSFiscalDocumentInTx(tx, {
+      sale,
+      organizationId: rawInput.organizationId,
+      actorId: rawInput.userId,
+      locationId: input.locationId,
+      terminalId: input.terminalId,
+      issueDate: now,
+    })
 
     await tx.auditLog.create({
       data: {
@@ -1326,6 +1567,8 @@ export async function commitPOSSale(rawInput: UserScoped) {
           saleJournalEntryNumber: saleJournalEntry.entryNumber,
           paymentJournalEntryIds: paymentJournalEntries.map((entry) => entry.id),
           paymentJournalEntryNumbers: paymentJournalEntries.map((entry) => entry.entryNumber),
+          fiscalDocumentId: fiscalDocument?.id ?? null,
+          fiscalDocumentStatus: fiscalDocument?.status ?? null,
           entries: journalEntries.map((entry) => ({
             account: entry.account,
             debit: moneyToString(entry.debit),
@@ -1350,8 +1593,59 @@ export async function commitPOSSale(rawInput: UserScoped) {
           amountPaid: moneyToString(amountPaid),
           onAccountAmount: moneyToString(onAccountAmount),
           changeDue: moneyToString(changeDue),
+          fiscalDocumentId: fiscalDocument?.id ?? null,
+          fiscalDocumentStatus: fiscalDocument?.status ?? null,
         }),
       },
+    })
+
+    await recordBusinessEventInTx(tx, {
+      organizationId: rawInput.organizationId,
+      eventType: "pos.sale.finalized",
+      eventSource: "POS",
+      idempotencyKey: `pos-sale:${sale.id}:finalized`,
+      actorId: rawInput.userId,
+      locationId: input.locationId,
+      registerId: input.terminalId,
+      sourceType: "POS_SALE",
+      sourceId: sale.id,
+      postingBatchId: saleJournalEntry.postingBatchId ?? undefined,
+      payload: cleanJson({
+        salesOrderId: sale.id,
+        orderNumber: sale.orderNumber,
+        sessionId: input.sessionId,
+        terminalId: input.terminalId,
+        status: updatedSale.status,
+        paymentStatus: updatedSale.paymentStatus,
+        amountPaid: moneyToString(amountPaid),
+        onAccountAmount: moneyToString(onAccountAmount),
+        changeDue: moneyToString(changeDue),
+        saleJournalEntryId: saleJournalEntry.id,
+        paymentJournalEntryIds: paymentJournalEntries.map((entry) => entry.id),
+        capturedPaymentIds,
+        inventoryTransactionIds,
+        fiscalDocument: fiscalDocument
+          ? {
+              id: fiscalDocument.id,
+              status: fiscalDocument.status,
+              authorityChannel: fiscalDocument.authorityChannel,
+              submissionStatuses: fiscalDocument.submissions.map((submission) => submission.status),
+            }
+          : null,
+      }),
+      outboxMessages: [
+        {
+          channel: "NOTIFICATION",
+          eventName: "pos.sale.finalized",
+          payload: {
+            salesOrderId: sale.id,
+            orderNumber: sale.orderNumber,
+            amountPaid: moneyToString(amountPaid),
+            fiscalDocumentId: fiscalDocument?.id ?? null,
+            fiscalDocumentStatus: fiscalDocument?.status ?? null,
+          },
+        },
+      ],
     })
 
     return {
@@ -1363,6 +1657,31 @@ export async function commitPOSSale(rawInput: UserScoped) {
       amountPaid,
       onAccountAmount,
       changeDue,
+      accountingMovements: {
+        saleJournalEntry: {
+          id: saleJournalEntry.id,
+          entryNumber: saleJournalEntry.entryNumber,
+          postingBatchId: saleJournalEntry.postingBatchId ?? null,
+        },
+        paymentJournalEntries: paymentJournalEntries.map((entry) => ({
+          id: entry.id,
+          entryNumber: entry.entryNumber,
+        })),
+        entries: journalEntries.map((entry) => ({
+          account: entry.account,
+          debit: moneyToNumber(entry.debit),
+          credit: moneyToNumber(entry.credit),
+        })),
+        totalDebits: moneyToNumber(totalDebits),
+        totalCredits: moneyToNumber(totalCredits),
+      },
+      fiscalDocument: fiscalDocument
+        ? {
+            id: fiscalDocument.id,
+            status: fiscalDocument.status,
+            authorityChannel: fiscalDocument.authorityChannel,
+          }
+        : null,
     }
   })
 
@@ -1402,6 +1721,8 @@ export async function commitPOSSale(rawInput: UserScoped) {
     amountPaid: moneyToNumber(committed.amountPaid),
     onAccountAmount: moneyToNumber(committed.onAccountAmount),
     changeDue: moneyToNumber(committed.changeDue),
+    accountingMovements: committed.accountingMovements,
+    fiscalDocument: committed.fiscalDocument,
     receipt,
     delivery,
   } satisfies CommitPOSSaleResult
@@ -1574,36 +1895,20 @@ async function restockSaleInventory(
     organizationId: string
     userId: string
     reason: string
+    correctionType: "REFUND" | "VOID"
     now: Date
   },
 ) {
   const originalMovements = await loadOriginalSaleMovements(tx, params.organizationId, params.sale.id)
-  const levelStateById = new Map<
-    string,
-    {
-      quantityOnHand: Prisma.Decimal
-      quantityAvailable: Prisma.Decimal
-      totalValue: Prisma.Decimal
-      version: number
-    }
-  >()
-  let totalRestockCost = new Prisma.Decimal(0)
-
-  for (const line of params.sale.lines) {
+  const stockLines = params.sale.lines.flatMap((line) => {
     const quantity = toDecimal(line.quantity)
-    if (quantity.lte(0) || !line.item.trackInventory) continue
+    if (quantity.lte(0) || !line.item.trackInventory) return []
 
     const level = line.item.inventoryLevels.find((row) => row.locationId === params.sale.locationId)
     if (!level) {
       throw new BusinessRuleError(`No inventory level found for item ${line.item.sku} at this location`)
     }
 
-    const state = levelStateById.get(level.id) || {
-      quantityOnHand: toDecimal(level.quantityOnHand),
-      quantityAvailable: toDecimal(level.quantityAvailable),
-      totalValue: toDecimal(level.totalValue),
-      version: level.version,
-    }
     const itemMovements = originalMovements.get(line.itemId) || []
     const originalMovement = itemMovements.shift()
     const movementQuantity = originalMovement ? toDecimal(originalMovement.quantity).abs() : quantity
@@ -1613,59 +1918,31 @@ async function restockSaleInventory(
       : toDecimal(level.averageCost).gt(0)
         ? toDecimal(level.averageCost)
         : toDecimal(line.item.costPrice)
-    const lineCost = unitCost.times(quantity).toDecimalPlaces(2)
-    const nextOnHand = state.quantityOnHand.plus(quantity).toDecimalPlaces(3)
-    const nextAvailable = state.quantityAvailable.plus(quantity).toDecimalPlaces(3)
-    const nextTotalValue = state.totalValue.plus(lineCost).toDecimalPlaces(2)
-    const nextAverageCost = nextOnHand.gt(0) ? nextTotalValue.div(nextOnHand).toDecimalPlaces(2) : new Prisma.Decimal(0)
 
-    const update = await tx.inventoryLevel.updateMany({
-      where: {
-        id: level.id,
-        version: state.version,
-      },
-      data: {
-        quantityOnHand: nextOnHand,
-        quantityAvailable: nextAvailable,
-        totalValue: nextTotalValue,
-        averageCost: nextAverageCost,
-        version: { increment: 1 },
-        lastTransactionAt: params.now,
-      },
-    })
+    return [{
+      itemId: line.itemId,
+      quantity,
+      unitCost,
+      notes: params.reason,
+    }]
+  })
 
-    if (update.count !== 1) {
-      throw new BusinessRuleError(`Inventory changed while correcting item ${line.item.sku}; retry the correction`)
-    }
+  const result = await postPOSStockReturn(
+    {
+      organizationId: params.organizationId,
+      saleId: params.sale.id,
+      orderNumber: params.sale.orderNumber,
+      locationId: params.sale.locationId,
+      actorId: params.userId,
+      occurredAt: params.now,
+      correctionType: params.correctionType,
+      reason: params.reason,
+      lines: stockLines,
+    },
+    tx,
+  )
 
-    await tx.inventoryTransaction.create({
-      data: {
-        itemId: line.itemId,
-        locationId: params.sale.locationId,
-        organizationId: params.organizationId,
-        createdById: params.userId,
-        type: TransactionType.SALES_RETURN,
-        quantity,
-        unitCost,
-        totalCost: lineCost,
-        balanceAfter: nextOnHand,
-        referenceType: TransactionReferenceType.SALES_ORDER,
-        referenceId: params.sale.id,
-        referenceNumber: params.sale.orderNumber,
-        notes: params.reason,
-      },
-    })
-
-    totalRestockCost = totalRestockCost.plus(lineCost).toDecimalPlaces(2)
-    levelStateById.set(level.id, {
-      quantityOnHand: nextOnHand,
-      quantityAvailable: nextAvailable,
-      totalValue: nextTotalValue,
-      version: state.version + 1,
-    })
-  }
-
-  return totalRestockCost
+  return result.totalCost
 }
 
 async function applyCashDrawerOutflow(
@@ -1805,6 +2082,7 @@ export async function refundPOSSale(rawInput: UserScoped) {
       organizationId: rawInput.organizationId,
       userId: rawInput.userId,
       reason: `POS refund ${sale.orderNumber}: ${input.reason}`,
+      correctionType: "REFUND",
       now,
     })
     const cashOutflow = sumPaymentMethod(refundablePayments, PaymentMethod.CASH)
@@ -1895,6 +2173,41 @@ export async function refundPOSSale(rawInput: UserScoped) {
       },
     })
 
+    await recordBusinessEventInTx(tx, {
+      organizationId: rawInput.organizationId,
+      eventType: "pos.refund.issued",
+      eventSource: "POS",
+      idempotencyKey: `pos-refund:${sale.id}:${refundIds.join(":")}`,
+      actorId: rawInput.userId,
+      locationId: input.locationId,
+      registerId: input.terminalId,
+      sourceType: "POS_REFUND",
+      sourceId: sale.id,
+      payload: cleanJson({
+        salesOrderId: sale.id,
+        orderNumber: sale.orderNumber,
+        sessionId: input.sessionId,
+        terminalId: input.terminalId,
+        reason: input.reason,
+        drawerId,
+        refundIds,
+        refundJournalEntryIds: refundJournalEntries.map((entry) => entry.id),
+        restockCost: moneyToString(restockCost),
+        totalRefunded: moneyToString(totalRefundable),
+      }),
+      outboxMessages: [
+        {
+          channel: "NOTIFICATION",
+          eventName: "pos.refund.issued",
+          payload: {
+            salesOrderId: sale.id,
+            orderNumber: sale.orderNumber,
+            totalRefunded: moneyToString(totalRefundable),
+          },
+        },
+      ],
+    })
+
     return {
       saleId: sale.id,
       orderNumber: sale.orderNumber,
@@ -1935,6 +2248,7 @@ export async function voidPOSSale(rawInput: UserScoped) {
       organizationId: rawInput.organizationId,
       userId: rawInput.userId,
       reason: `POS void ${sale.orderNumber}: ${input.reason}`,
+      correctionType: "VOID",
       now,
     })
     const cashOutflow = sumPaymentMethod(payments, PaymentMethod.CASH)
@@ -2020,6 +2334,39 @@ export async function voidPOSSale(rawInput: UserScoped) {
           restockCost: moneyToString(restockCost),
         }),
       },
+    })
+
+    await recordBusinessEventInTx(tx, {
+      organizationId: rawInput.organizationId,
+      eventType: "pos.sale.voided",
+      eventSource: "POS",
+      idempotencyKey: `pos-void:${sale.id}:${voidJournalEntry.id}`,
+      actorId: rawInput.userId,
+      locationId: input.locationId,
+      registerId: input.terminalId,
+      sourceType: "POS_VOID",
+      sourceId: sale.id,
+      payload: cleanJson({
+        salesOrderId: sale.id,
+        orderNumber: sale.orderNumber,
+        sessionId: input.sessionId,
+        terminalId: input.terminalId,
+        reason: input.reason,
+        drawerId,
+        voidJournalEntryId: voidJournalEntry.id,
+        restockCost: moneyToString(restockCost),
+      }),
+      outboxMessages: [
+        {
+          channel: "NOTIFICATION",
+          eventName: "pos.sale.voided",
+          payload: {
+            salesOrderId: sale.id,
+            orderNumber: sale.orderNumber,
+            voidJournalEntryId: voidJournalEntry.id,
+          },
+        },
+      ],
     })
 
     return {

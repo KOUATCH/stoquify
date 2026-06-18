@@ -1,11 +1,13 @@
 "use server"
 
 import { promises as fs } from 'fs'
+import { logSafeActionWarning, safeLoggedActionErrorMessage } from '@/actions/_shared/safe-action-responses'
 import { getSession } from '@/lib/auth-server'
 import path from 'path'
 import { v4 as uuidv4 } from 'uuid'
 import { revalidatePath } from 'next/cache'
 import { getStorageConfiguration } from './storage-config-actions'
+import { ApplicationError, BusinessRuleError } from '@/services/_shared/action-errors'
 
 // Directory creation is now handled during storage configuration save
 // This ensures folders exist before upload attempts
@@ -37,7 +39,7 @@ async function savePhotoLocally(
 ): Promise<string> {
   const fileExtension = extensionByMimeType[file.type]
   if (!fileExtension) {
-    throw new Error('Unsupported file type')
+    throw new BusinessRuleError('Unsupported file type')
   }
 
   const fileName = `${uuidv4()}.${fileExtension}`
@@ -55,7 +57,13 @@ async function savePhotoLocally(
     try {
       await fs.mkdir(orgDirectory, { recursive: true })
     } catch (mkdirError) {
-      throw new Error(`Failed to create upload directory: ${orgDirectory}. Error: ${mkdirError}`)
+      throw new ApplicationError(
+        "INTERNAL_ERROR",
+        "Failed to prepare upload storage",
+        500,
+        false,
+        { organizationId, cause: mkdirError instanceof Error ? mkdirError.name : typeof mkdirError },
+      )
     }
   }
 
@@ -95,7 +103,7 @@ async function deletePhotoLocally(
     await fs.unlink(fullPath)
     return true
   } catch (error) {
-    console.error('Error deleting local photo:', error)
+    logSafeActionWarning('Error deleting local photo', error, { action: 'deletePhotoLocally' })
     return false
   }
 }
@@ -150,10 +158,14 @@ export async function uploadPhoto(
 
     return { success: true, url }
   } catch (error) {
-    console.error('Error uploading photo:', error)
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to upload photo'
+      error: safeLoggedActionErrorMessage(
+        'Error uploading photo',
+        error,
+        { action: 'uploadPhoto' },
+        'Failed to upload photo',
+      )
     }
   }
 }
@@ -188,10 +200,14 @@ export async function deletePhoto(
     revalidatePath('/')
     return { success: true }
   } catch (error) {
-    console.error('Error deleting photo:', error)
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to delete photo'
+      error: safeLoggedActionErrorMessage(
+        'Error deleting photo',
+        error,
+        { action: 'deletePhoto' },
+        'Failed to delete photo',
+      )
     }
   }
 }

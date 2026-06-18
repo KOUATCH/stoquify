@@ -1,6 +1,7 @@
 "use server";
 
 import { getAuthenticatedUser } from "@/config/useAuth";
+import { safeSuccessActionErrorResult } from "@/actions/_shared/safe-action-responses";
 import { createLocationForManagement } from "@/services/location/location.service";
 import { LocationManagementSchema, type LocationManagementInput } from "@/services/location/location.schemas";
 import { revalidatePath } from "next/cache";
@@ -42,12 +43,7 @@ const createLocation = async (data: CreateLocationData) => {
       data: newLocation,
     };
   } catch (error) {
-    console.error("Error creating Location:", error);
-    return {
-      success: false,
-      error: `Failed to create location. Please try again.`,
-      data: null,
-    };
+    return safeSuccessActionErrorResult(error, { action: "createLocation" }, "Failed to create location. Please try again.");
   }
 };
 

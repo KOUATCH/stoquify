@@ -1,5 +1,6 @@
 // In your server action file
 "use server";
+import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses";
 import { listLocations } from "@/services/location/location.service";
 import { resolveActionOrganization } from "@/services/_shared/resolve-action-organization";
 import { LocationResponse } from "@/types/location";
@@ -15,10 +16,14 @@ export const getOrgLocations = async (orgId?: string | null): Promise<LocationRe
       data: locations,
     };  
   } catch (error) {
-    console.error("Error fetching locations:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: safeLoggedActionErrorMessage(
+        "Error fetching locations",
+        error,
+        { action: "getOrgLocations" },
+        "Failed to fetch locations",
+      ),
       data: [],
     };
   }

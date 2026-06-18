@@ -17,12 +17,24 @@ export type OrganizationProps = {
   name: string;
   slug?: string;
   industry?: string;
+  tradeName?: string | null;
+  taxIdentifier?: string | null;
   country?: string;
+  countryCode?: string | null;
   state?: string;
   address?: string;
   currency?: string;
   timezone?: string;
   defaultLocale?: "en" | "fr";
+  companySize?: string | null;
+  businessType?: string | null;
+  branchCount?: string | null;
+  primaryPain?: string | null;
+  setupRole?: string | null;
+  requestedModules?: string[];
+  assistedSetupRequested?: boolean;
+  onboardingSource?: string | null;
+  onboardingCompletedAt?: Date | null;
   inventoryStartDate?: Date;
   fiscalYearStart?: string;
   isActive?: boolean;
@@ -189,10 +201,42 @@ export interface RegisterUserProps {
   timezone?: string
   defaultLocale?: "en" | "fr"
 
+  // V2 onboarding context. Optional so the legacy register page keeps working.
+  countryCode?: string
+  businessType?: string
+  branchCount?: string
+  primaryPain?: string
+  setupRole?: "owner" | "accountant" | "implementation_partner" | "financial_partner"
+  tradeName?: string
+  taxIdentifier?: string
+  firstBranchName?: string
+  requestedModules?: string[]
+  assistedSetupRequested?: boolean
+  onboardingSource?: string
+
   // Security
   password: string
   confirmPassword: string
   termsAccepted: boolean
+}
+
+export interface RegisterWorkflowData {
+  userId: string
+  organizationId: string
+  email: string
+  verificationRequired: boolean
+  defaultLocationId?: string | null
+  onboarding: {
+    source: string
+    countryCode?: string | null
+    companySize?: string | null
+    businessType?: string | null
+    branchCount?: string | null
+    primaryPain?: string | null
+    setupRole?: string | null
+    requestedModules: string[]
+    assistedSetupRequested: boolean
+  }
 }
 
 export interface UserProps {
@@ -226,4 +270,11 @@ export interface AuthResponse {
   error?: string
   message?: string
   data?: any
+  status?: number
+  code?: string
+  correlationId?: string
+  category?: string
+  severity?: string
+  retryable?: boolean
+  fieldErrors?: Record<string, string[]>
 }

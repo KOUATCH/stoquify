@@ -2,8 +2,10 @@
 
 import { revalidatePath } from "next/cache"
 
+import { safeActionErrorMessage } from "@/actions/_shared/safe-action-responses"
 import { getAuthenticatedUser } from "@/config/useAuth"
 import { PERMISSIONS } from "@/lib/permissions"
+import { AuthRequiredError, ForbiddenError } from "@/services/_shared/action-errors"
 import {
   CategoryCreateSchema,
   CategoryUpdateSchema,
@@ -25,7 +27,7 @@ function actionError<T>(error: unknown, fallback: string, data: T) {
   return {
     success: false,
     data,
-    error: error instanceof Error ? error.message : fallback,
+    error: safeActionErrorMessage(error, {}, fallback),
   }
 }
 
@@ -34,15 +36,15 @@ async function resolveOrgId(explicitOrgId?: string | null, permission?: string) 
   const isSuperUser = user.permissions?.includes("*")
 
   if (!user?.organizationId) {
-    throw new Error("No organization found for the current user")
+    throw new AuthRequiredError("No organization found for the current user")
   }
 
   if (permission && !isSuperUser && !user.permissions?.includes(permission)) {
-    throw new Error("You do not have permission to manage categories")
+    throw new ForbiddenError("You do not have permission to manage categories")
   }
 
   if (explicitOrgId && explicitOrgId !== user.organizationId && !isSuperUser) {
-    throw new Error("You cannot access categories for another organization")
+    throw new ForbiddenError("You cannot access categories for another organization")
   }
 
   return explicitOrgId && isSuperUser ? explicitOrgId : user.organizationId

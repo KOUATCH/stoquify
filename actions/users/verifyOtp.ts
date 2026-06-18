@@ -1,51 +1,21 @@
 "use server";
-import { logSecurityEvent, SecurityEventType } from "@/lib/security/audit-log";
-import { db } from "@/prisma/db";
+import { logSafeActionWarning } from "@/actions/_shared/safe-action-responses";
+import { verifyEmailOtpWorkflow } from "@/services/users/user-identity.service";
 
 // import { generateNumericToken } from "@/lib/token";
 // 
 
  const verifyOTP= async (userId:string,  otp:string)=>{
   try {
-       const user= await db.user.findUnique({
-      where:{
-        id:userId
-      }
-     
-    })
-    if(
-      !user?.verificationToken ||
-      user.verificationToken !== otp ||
-      (user.verificationTokenExpires && user.verificationTokenExpires < new Date())
-    ){
- return{
-status:403
- }}
-  await db.user.update({
-  where:{
-    id:userId
-  },
-  data:{
-    isVerified:true,
-    emailVerified: true,
-    verificationToken: null,
-    verificationTokenExpires: null
-  }
- })
-  await logSecurityEvent({
-    type: SecurityEventType.AUTH_EMAIL_VERIFIED,
-    userId: user.id,
-    organizationId: user.organizationId,
-    resource: user.email,
-  })
-    
-    return{
-      status:200
-    }
+    return await verifyEmailOtpWorkflow(userId, otp)
   } catch (error) {
-     return{
-status:403
- }  
+    logSafeActionWarning("Email verification failed", error, {
+      action: "users.email.verify",
+      component: "User",
+    })
+    return{
+      status:403
+    }
   }
 }
 export default verifyOTP

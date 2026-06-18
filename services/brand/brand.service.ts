@@ -1,6 +1,7 @@
 import { db } from "@/prisma/db"
 import type { Prisma } from "@prisma/client"
 import type { BrandDTO } from "@/types/brand"
+import { ConflictError, NotFoundError } from "@/services/_shared/action-errors"
 import { buildPagination, buildPaginatedResult, MAX_PAGE_SIZES } from "../_shared/pagination"
 import type { PaginatedParams, PaginatedResult } from "../_shared/types"
 import type { BrandCreateInput, BrandUpdateInput } from "./brand.schemas"
@@ -83,7 +84,7 @@ export async function getBrandById(orgId: string, id: string): Promise<BrandDTO>
     where: { id, organizationId: orgId, deletedAt: null },
     include: { _count: { select: { items: true } } },
   })
-  if (!b) throw new Error("Brand not found")
+  if (!b) throw new NotFoundError("Brand not found")
   return toDTO(b)
 }
 
@@ -102,7 +103,7 @@ export async function createBrand(orgId: string, input: BrandCreateInput): Promi
       existing.nameEn === input.nameEn
         ? `Brand "${input.nameEn}" already exists for this organisation`
         : `Brand slug "${slug}" collides with an existing brand`
-    throw new Error(reason)
+    throw new ConflictError(reason)
   }
 
   const b = await db.brand.create({
@@ -131,7 +132,7 @@ export async function updateBrand(
     where: { id, organizationId: orgId },
     select: { id: true },
   })
-  if (!existing) throw new Error("Brand not found")
+  if (!existing) throw new NotFoundError("Brand not found")
 
   const nextSlug = input.slug ?? (input.nameEn ? slugify(input.nameEn) : undefined)
 
@@ -148,7 +149,7 @@ export async function updateBrand(
       select: { id: true, nameEn: true, slug: true },
     })
     if (conflict) {
-      throw new Error(`Brand "${input.nameEn ?? nextSlug}" already exists for this organisation`)
+      throw new ConflictError(`Brand "${input.nameEn ?? nextSlug}" already exists for this organisation`)
     }
   }
 
@@ -175,7 +176,7 @@ export async function updateBrand(
 
 export async function deleteBrand(orgId: string, id: string): Promise<BrandDTO> {
   const b = await db.brand.findFirst({ where: { id, organizationId: orgId } })
-  if (!b) throw new Error("Brand not found")
+  if (!b) throw new NotFoundError("Brand not found")
 
   // Soft delete — Brand schema has deletedAt; preserves item.brand history.
   const deleted = await db.brand.update({

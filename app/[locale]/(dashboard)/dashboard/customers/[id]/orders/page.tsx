@@ -228,7 +228,7 @@ export default function CustomerOrdersPage() {
                 </Button>
                 <Button
                   size="sm"
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
+                  className="shadow-lg"
                   onClick={() => {
                     info("Create Order", `Redirecting to create order for ${customer.name}`)
                     router.push(localizedHref(`/dashboard/sales/new?customerId=${customer.id}`))
@@ -429,7 +429,7 @@ export default function CustomerOrdersPage() {
                         }
                       </p>
                       <Button
-                        className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+                        className=""
                         onClick={() => {
                           info("Create First Order", `Redirecting to create first order for ${customer.name}`)
                           router.push(localizedHref(`/dashboard/sales/new?customerId=${customer.id}`))

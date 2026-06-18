@@ -770,10 +770,10 @@ export class SystemMonitor extends EventEmitter {
     this.alerts = this.alerts.filter(alert => alert.timestamp >= cutoff)
   }
 
-  // Helper methods for business metrics (would integrate with actual data sources)
+  // Helper methods for business metrics.
   private async getCpuUsage(): Promise<number> {
-    // In a real implementation, this would use process.cpuUsage() or external monitoring
-    return Math.random() * 30 + 10 // Mock value
+    // CPU usage requires host telemetry that is not wired into this runtime yet.
+    return 0
   }
 
   private calculateRequestsPerMinute(): number {
@@ -874,13 +874,58 @@ export class SystemMonitor extends EventEmitter {
   }
 
   private async getRefundRate(): Promise<number> {
-    // Mock implementation - would calculate actual refund rate
-    return Math.random() * 3 + 1 // 1-4% mock refund rate
+    try {
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+
+      return await resilientDb.withResilience(
+        async (db) => {
+          const [refundCount, saleCount] = await Promise.all([
+            db.cashDrawerTransaction.count({
+              where: {
+                createdAt: { gte: today },
+                type: 'REFUND',
+              },
+            }),
+            db.cashDrawerTransaction.count({
+              where: {
+                createdAt: { gte: today },
+                type: 'SALE',
+              },
+            }),
+          ])
+
+          return saleCount > 0 ? (refundCount / saleCount) * 100 : 0
+        },
+        { operationName: 'get_refund_rate' }
+      )
+    } catch {
+      return 0
+    }
   }
 
   private async getCashVariance(): Promise<number> {
-    // Mock implementation - would calculate actual cash variance
-    return (Math.random() - 0.5) * 20 // -10 to +10 dollar variance
+    try {
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+
+      return await resilientDb.withResilience(
+        async (db) => {
+          const result = await db.pOSSession.aggregate({
+            where: {
+              startTime: { gte: today },
+              variance: { not: null },
+            },
+            _sum: { variance: true },
+          })
+
+          return Number(result._sum.variance ?? 0)
+        },
+        { operationName: 'get_cash_variance' }
+      )
+    } catch {
+      return 0
+    }
   }
 
   private async getAverageTransactionValue(): Promise<number> {

@@ -1,4 +1,5 @@
 import { getAuthenticatedUser, type AuthenticatedUser } from "@/config/useAuth"
+import { AuthRequiredError } from "./action-errors"
 
 export type AuthedContext = {
   user: AuthenticatedUser
@@ -17,7 +18,7 @@ export type AuthedContext = {
 export async function requireOrg(): Promise<AuthedContext> {
   const user = await getAuthenticatedUser()
   if (!user?.organizationId) {
-    throw new Error("Unauthorized: no active organization")
+    throw new AuthRequiredError("Unauthorized: no active organization")
   }
   return { user, userId: user.id, orgId: user.organizationId }
 }

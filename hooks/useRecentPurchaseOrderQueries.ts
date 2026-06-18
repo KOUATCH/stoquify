@@ -21,7 +21,7 @@ import {
   getGoodsReceiptsForPurchaseOrder
 } from "@/actions/purchaseOrderWorkflow/GoodsReceiptAndSummary";
 import { CreatePurchaseOrderPayload, PaginatedPurchaseOrdersResponse, PurchaseOrderFilters, PurchaseOrderResponse, PurchaseOrderWithRelations, UpdatePurchaseOrderDTO } from "@/types/purchase-orders-system-types";
-import { PurchaseOrder, PurchaseOrderStatus } from "@prisma/client";
+import type { PurchaseOrderStatus } from "@/services/purchase-order/purchase-order.schemas";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useMemo } from "react";
@@ -847,6 +847,8 @@ const VALID_SORT_FIELDS = [
   "expectedDeliveryDate",
 ] as const;
 
+type PurchaseOrderSortField = (typeof VALID_SORT_FIELDS)[number];
+
 /**
  * Enhanced hook for managing purchase order filters with type safety and validation
  */
@@ -873,9 +875,9 @@ export function usePurchaseOrderFilters(organizationId?: string): PurchaseOrderF
     return isNaN(parsed) || parsed < 1 ? defaultValue : parsed;
   }, []);
 
-  const parseSortField = useCallback((value: string | null): keyof PurchaseOrder => {
-    if (!value) return "createdAt" as keyof PurchaseOrder;
-    return VALID_SORT_FIELDS.includes(value as any) ? (value as keyof PurchaseOrder) : ("createdAt" as keyof PurchaseOrder);
+  const parseSortField = useCallback((value: string | null): PurchaseOrderSortField => {
+    if (!value) return "createdAt";
+    return VALID_SORT_FIELDS.includes(value as PurchaseOrderSortField) ? (value as PurchaseOrderSortField) : "createdAt";
   }, []);
 
   const parseSortOrder = useCallback((value: string | null): "asc" | "desc" => {

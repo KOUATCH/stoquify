@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache"
 import { getSession } from "@/lib/auth-server"
 import { db } from "@/prisma/db"
 import { Prisma } from "@prisma/client"
+import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses"
+import { AuthRequiredError, BusinessRuleError, ForbiddenError, NotFoundError } from "@/services/_shared/action-errors"
 import {
   archiveLocationForManagement,
   createLocationForManagement,
@@ -85,13 +87,13 @@ async function assertOrganizationAccess(organizationId: string) {
   const requestedOrganizationId = cleanText(organizationId)
 
   if (!requestedOrganizationId) {
-    throw new Error("Organization is required")
+    throw new BusinessRuleError("Organization is required")
   }
 
   const session = await getSession()
 
   if (!session?.user?.id) {
-    throw new Error("Unauthorized")
+    throw new AuthRequiredError("Unauthorized")
   }
 
   const user = await db.user.findFirst({
@@ -110,7 +112,7 @@ async function assertOrganizationAccess(organizationId: string) {
   })
 
   if (!user) {
-    throw new Error("Unauthorized")
+    throw new AuthRequiredError("Unauthorized")
   }
 
   const permissions = new Set([
@@ -119,7 +121,7 @@ async function assertOrganizationAccess(organizationId: string) {
   ])
 
   if (user.organizationId !== requestedOrganizationId && !permissions.has("*")) {
-    throw new Error("You do not have access to this organization")
+    throw new ForbiddenError("You do not have access to this organization")
   }
 
   const organization = await db.organization.findFirst({
@@ -132,7 +134,7 @@ async function assertOrganizationAccess(organizationId: string) {
   })
 
   if (!organization) {
-    throw new Error("Organization not found or inactive")
+    throw new NotFoundError("Organization not found or inactive")
   }
 
   return organization.id
@@ -157,10 +159,14 @@ export async function getLocationManagementData(
       data,
     }
   } catch (error) {
-    console.error("Error fetching location management data:", error)
     return {
       success: false,
-      error: getActionErrorMessage(error, "Failed to fetch location management data"),
+      error: safeLoggedActionErrorMessage(
+        "Error fetching location management data",
+        error,
+        { action: "getLocationManagementData" },
+        getActionErrorMessage(error, "Failed to fetch location management data"),
+      ),
     }
   }
 }
@@ -182,10 +188,14 @@ export async function createManagedLocation(
 
     return { success: true, data: row }
   } catch (error) {
-    console.error("Error creating managed location:", error)
     return {
       success: false,
-      error: getActionErrorMessage(error, "Failed to create location"),
+      error: safeLoggedActionErrorMessage(
+        "Error creating managed location",
+        error,
+        { action: "createManagedLocation" },
+        getActionErrorMessage(error, "Failed to create location"),
+      ),
     }
   }
 }
@@ -214,10 +224,14 @@ export async function updateManagedLocation(
 
     return { success: true, data: row }
   } catch (error) {
-    console.error("Error updating managed location:", error)
     return {
       success: false,
-      error: getActionErrorMessage(error, "Failed to update location"),
+      error: safeLoggedActionErrorMessage(
+        "Error updating managed location",
+        error,
+        { action: "updateManagedLocation" },
+        getActionErrorMessage(error, "Failed to update location"),
+      ),
     }
   }
 }
@@ -239,10 +253,14 @@ export async function archiveManagedLocation(
 
     return { success: true, data }
   } catch (error) {
-    console.error("Error archiving managed location:", error)
     return {
       success: false,
-      error: getActionErrorMessage(error, "Failed to archive location"),
+      error: safeLoggedActionErrorMessage(
+        "Error archiving managed location",
+        error,
+        { action: "archiveManagedLocation" },
+        getActionErrorMessage(error, "Failed to archive location"),
+      ),
     }
   }
 }

@@ -11,19 +11,19 @@
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --primary: 43 84% 62%;
+    --primary-foreground: 190 31% 7%;
+    --secondary: 22 49% 51%;
+    --secondary-foreground: 45 100% 95%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 43 84% 92%;
+    --accent-foreground: 22 49% 26%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --ring: 43 84% 62%;
     --radius: 0.5rem;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
@@ -39,19 +39,19 @@
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --primary: 43 84% 62%;
+    --primary-foreground: 190 31% 7%;
+    --secondary: 22 40% 28%;
+    --secondary-foreground: 45 100% 95%;
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 22 38% 28%;
+    --accent-foreground: 45 100% 95%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --ring: 43 84% 62%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
@@ -119,6 +119,92 @@
     -webkit-box-shadow: 0 0 0 1000px rgba(15, 23, 29, 0.96) inset !important;
   }
 
+  .button-gold-chestnut {
+    border: 1px solid rgba(47, 125, 246, 0.5);
+    background: linear-gradient(135deg, #2563eb 0%, #2f7df6 100%);
+    color: #ffffff;
+    box-shadow: 0 14px 30px rgba(47, 125, 246, 0.22);
+  }
+
+  .button-gold-chestnut:hover {
+    background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+    color: #ffffff;
+  }
+
+  .button-gold-chestnut-secondary {
+    border: 1px solid rgba(84, 112, 122, 0.58);
+    background: rgba(24, 38, 45, 0.78);
+    color: #f7faf8;
+    box-shadow: 0 10px 24px rgba(6, 14, 18, 0.18);
+  }
+
+  .button-gold-chestnut-secondary:hover {
+    border-color: rgba(47, 125, 246, 0.68);
+    background: rgba(47, 125, 246, 0.16);
+    color: #ffffff;
+  }
+
+  .button-gold-chestnut-outline {
+    border: 1px solid rgba(47, 125, 246, 0.42);
+    background: rgba(47, 125, 246, 0.08);
+    color: #1d4ed8;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  }
+
+  .button-gold-chestnut-outline:hover {
+    border-color: rgba(47, 125, 246, 0.66);
+    background: rgba(47, 125, 246, 0.14);
+    color: #1e40af;
+  }
+
+  .button-gold-chestnut-ghost {
+    color: #2563eb;
+  }
+
+  .button-gold-chestnut-ghost:hover {
+    background: rgba(47, 125, 246, 0.12);
+    color: #1d4ed8;
+  }
+
+  .button-gold-chestnut-link {
+    color: #2563eb;
+  }
+
+  .button-gold-chestnut-link:hover {
+    color: #1d4ed8;
+  }
+
+  .dark .button-gold-chestnut-outline,
+  .dashboard-landing-theme .button-gold-chestnut-outline {
+    border-color: rgba(87, 150, 255, 0.42);
+    background: rgba(47, 125, 246, 0.14);
+    color: #f7faf8;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  .dark .button-gold-chestnut-outline:hover,
+  .dashboard-landing-theme .button-gold-chestnut-outline:hover {
+    border-color: rgba(87, 150, 255, 0.66);
+    background: rgba(47, 125, 246, 0.2);
+    color: #ffffff;
+  }
+
+  .dark .button-gold-chestnut-ghost,
+  .dashboard-landing-theme .button-gold-chestnut-ghost {
+    color: #8fb7ff;
+  }
+
+  .dark .button-gold-chestnut-ghost:hover,
+  .dashboard-landing-theme .button-gold-chestnut-ghost:hover {
+    background: rgba(47, 125, 246, 0.16);
+    color: #ffffff;
+  }
+
+  .dark .button-gold-chestnut-link,
+  .dashboard-landing-theme .button-gold-chestnut-link {
+    color: #8fb7ff;
+  }
+
   .dashboard-landing-theme {
     --dash-canvas: #152027;
     --dash-chrome: #19272f;
@@ -154,8 +240,8 @@
     --card-foreground: 120 18% 98%;
     --popover: 199 29% 16%;
     --popover-foreground: 120 18% 98%;
-    --primary: 215 92% 57%;
-    --primary-foreground: 120 18% 98%;
+    --primary: 43 84% 62%;
+    --primary-foreground: 190 31% 7%;
     --secondary: 195 30% 22%;
     --secondary-foreground: 120 18% 98%;
     --muted: 195 24% 24%;
@@ -164,7 +250,7 @@
     --accent-foreground: 204 26% 6%;
     --border: 194 23% 34%;
     --input: 194 23% 34%;
-    --ring: 215 92% 57%;
+    --ring: 43 84% 62%;
     position: relative;
     isolation: isolate;
     overflow-x: hidden;
@@ -198,6 +284,98 @@
     background:
       linear-gradient(90deg, rgba(255, 255, 255, 0.03), transparent 22%, rgba(255, 255, 255, 0.018) 72%, transparent),
       linear-gradient(to bottom, rgba(21, 32, 39, 0), rgba(21, 32, 39, 0.34));
+  }
+
+  .bee-eater-dashboard-theme {
+    --dash-canvas: #0d1517;
+    --dash-chrome: #142326;
+    --dash-surface: #173035;
+    --dash-surface-raised: #213d41;
+    --dash-surface-warm: #4a3025;
+    --dash-border: #5e817b;
+    --dash-border-subtle: #315259;
+    --dash-text: #fff8e6;
+    --dash-text-muted: #e5e7d7;
+    --dash-text-soft: #b8c9bd;
+    --dash-text-faint: #859a91;
+    --dash-brand: #25bdd0;
+    --dash-brand-strong: #67dce9;
+    --dash-brand-soft: rgba(37, 189, 208, 0.18);
+    --dash-spruce: #41ba79;
+    --dash-spruce-soft: rgba(65, 186, 121, 0.16);
+    --dash-gold: #f0c54d;
+    --dash-gold-soft: rgba(240, 197, 77, 0.16);
+    --dash-warm: #bf7145;
+    --dash-warm-soft: rgba(191, 113, 69, 0.18);
+    --dash-success: #46c77c;
+    --dash-success-soft: rgba(70, 199, 124, 0.16);
+    --dash-warning: #f2a641;
+    --dash-warning-soft: rgba(242, 166, 65, 0.16);
+    --dash-danger: #df6b5e;
+    --dash-danger-soft: rgba(223, 107, 94, 0.16);
+    --dash-info: #39c6e6;
+    --dash-info-soft: rgba(57, 198, 230, 0.15);
+    --background: 188 28% 8%;
+    --foreground: 45 100% 95%;
+    --card: 189 31% 15%;
+    --card-foreground: 45 100% 95%;
+    --popover: 189 31% 15%;
+    --popover-foreground: 45 100% 95%;
+    --primary: 43 84% 62%;
+    --primary-foreground: 190 31% 7%;
+    --secondary: 31 41% 22%;
+    --secondary-foreground: 45 100% 95%;
+    --muted: 181 22% 24%;
+    --muted-foreground: 146 14% 75%;
+    --accent: 43 83% 62%;
+    --accent-foreground: 190 31% 7%;
+    --border: 178 16% 44%;
+    --input: 178 16% 44%;
+    --ring: 43 84% 62%;
+    background:
+      linear-gradient(118deg, rgba(191, 113, 69, 0.22), transparent 25%, rgba(37, 189, 208, 0.18) 52%, transparent 78%),
+      linear-gradient(88deg, rgba(240, 197, 77, 0.12), transparent 32%, rgba(65, 186, 121, 0.12) 72%, transparent),
+      linear-gradient(180deg, var(--dash-canvas) 0%, var(--dash-chrome) 48%, #18363a 100%);
+  }
+
+  .bee-eater-dashboard-theme::before {
+    background-image:
+      linear-gradient(rgba(240, 197, 77, 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(37, 189, 208, 0.1) 1px, transparent 1px);
+  }
+
+  .bee-eater-dashboard-theme::after {
+    background:
+      linear-gradient(90deg, rgba(255, 248, 230, 0.038), transparent 22%, rgba(37, 189, 208, 0.04) 72%, transparent),
+      linear-gradient(to bottom, rgba(13, 21, 23, 0), rgba(13, 21, 23, 0.42));
+  }
+
+  .bee-eater-dashboard-theme .dashboard-live-dot {
+    background: var(--dash-gold);
+    box-shadow: 0 0 0 5px rgba(240, 197, 77, 0.12);
+  }
+
+  .bee-eater-dashboard-theme .dashboard-button-create {
+    border-color: color-mix(in srgb, var(--dash-brand) 62%, var(--dash-border));
+    background: linear-gradient(135deg, var(--dash-brand), var(--dash-brand-strong));
+    box-shadow: 0 16px 34px color-mix(in srgb, var(--dash-brand) 26%, transparent);
+  }
+
+  .bee-eater-dashboard-theme .dashboard-button-create:hover {
+    border-color: color-mix(in srgb, var(--dash-brand-strong) 72%, var(--dash-border));
+    background: linear-gradient(135deg, color-mix(in srgb, var(--dash-brand) 86%, black), var(--dash-brand-strong));
+  }
+
+  .bee-eater-dashboard-theme .dashboard-button-primary {
+    border-color: color-mix(in srgb, var(--dash-brand) 62%, var(--dash-border));
+    background: linear-gradient(135deg, var(--dash-brand), var(--dash-brand-strong));
+    color: #ffffff;
+    box-shadow: 0 16px 36px color-mix(in srgb, var(--dash-brand) 28%, transparent);
+  }
+
+  .bee-eater-dashboard-theme .dashboard-button-primary:hover {
+    background: linear-gradient(135deg, color-mix(in srgb, var(--dash-brand) 86%, black), var(--dash-brand-strong));
+    color: #ffffff;
   }
 
   .dashboard-landing-content {
@@ -289,40 +467,54 @@
     box-shadow: 0 0 0 3px rgba(47, 125, 246, 0.18);
   }
 
+  .dashboard-top-button {
+    border: 1px solid var(--dash-border-subtle) !important;
+    background: rgba(24, 38, 45, 0.72) !important;
+    color: var(--dash-text-muted) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.055) !important;
+  }
+
+  .dashboard-top-button:hover {
+    border-color: var(--dash-brand) !important;
+    background: var(--dash-brand-soft) !important;
+    color: var(--dash-text) !important;
+  }
+
   .dashboard-button-secondary {
-    border: 1px solid var(--dash-border-subtle);
-    background: rgba(37, 57, 67, 0.78);
+    border: 1px solid color-mix(in srgb, var(--dash-brand) 42%, var(--dash-border-subtle));
+    background: color-mix(in srgb, var(--dash-brand) 13%, transparent);
     color: var(--dash-text-muted);
   }
 
   .dashboard-button-secondary:hover {
-    border-color: var(--dash-border);
-    background: rgba(45, 68, 77, 0.94);
+    border-color: color-mix(in srgb, var(--dash-brand-strong) 62%, var(--dash-border));
+    background: color-mix(in srgb, var(--dash-brand) 20%, transparent);
     color: var(--dash-text);
   }
 
   .dashboard-button-create {
-    border: 1px solid var(--dash-border);
-    background: rgba(45, 68, 77, 0.94);
-    color: var(--dash-text);
+    border: 1px solid color-mix(in srgb, var(--dash-brand) 62%, var(--dash-border));
+    background: linear-gradient(135deg, var(--dash-brand), var(--dash-brand-strong));
+    color: #ffffff;
+    box-shadow: 0 16px 34px color-mix(in srgb, var(--dash-brand) 26%, transparent);
   }
 
   .dashboard-button-create:hover {
-    border-color: var(--dash-border);
-    background: rgba(45, 68, 77, 0.94);
-    color: var(--dash-text);
+    border-color: color-mix(in srgb, var(--dash-brand-strong) 72%, var(--dash-border));
+    background: linear-gradient(135deg, color-mix(in srgb, var(--dash-brand) 86%, black), var(--dash-brand-strong));
+    color: #ffffff;
   }
 
   .dashboard-button-primary {
-    border: 1px solid rgba(87, 150, 255, 0.54);
-    background: linear-gradient(135deg, var(--dash-brand), #1f6feb);
-    color: white;
-    box-shadow: 0 16px 36px rgba(47, 125, 246, 0.26);
+    border: 1px solid color-mix(in srgb, var(--dash-brand) 62%, var(--dash-border));
+    background: linear-gradient(135deg, var(--dash-brand), var(--dash-brand-strong));
+    color: #ffffff;
+    box-shadow: 0 16px 36px color-mix(in srgb, var(--dash-brand) 28%, transparent);
   }
 
   .dashboard-button-primary:hover {
-    background: linear-gradient(135deg, var(--dash-brand-strong), var(--dash-brand));
-    color: white;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--dash-brand) 86%, black), var(--dash-brand-strong));
+    color: #ffffff;
   }
 
   .dashboard-filter-chip {
@@ -496,6 +688,31 @@
   }
 
   .dashboard-enterprise-sidebar {
+    --dash-canvas: #152027;
+    --dash-chrome: #19272f;
+    --dash-surface: #1d2d35;
+    --dash-surface-raised: #253943;
+    --dash-border: #54707a;
+    --dash-border-subtle: #344a54;
+    --dash-text: #f7faf8;
+    --dash-text-muted: #d3ddd8;
+    --dash-text-soft: #a9b8b2;
+    --dash-text-faint: #7e9189;
+    --dash-brand: #2f7df6;
+    --dash-brand-strong: #5796ff;
+    --dash-brand-soft: rgba(47, 125, 246, 0.16);
+    --dash-spruce: #2dd4bf;
+    --dash-spruce-soft: rgba(45, 212, 191, 0.14);
+    --dash-gold: #d7a84f;
+    --dash-gold-soft: rgba(215, 168, 79, 0.14);
+    --dash-success: #2ec98a;
+    --dash-success-soft: rgba(46, 201, 138, 0.14);
+    --dash-warning: #f0ae3a;
+    --dash-warning-soft: rgba(240, 174, 58, 0.16);
+    --dash-danger: #ef6a6a;
+    --dash-danger-soft: rgba(239, 106, 106, 0.16);
+    --dash-info: #49c6e5;
+    --dash-info-soft: rgba(73, 198, 229, 0.14);
     --sidebar-canvas: #0f171d;
     --sidebar-panel: #142129;
     --sidebar-border: rgba(170, 199, 207, 0.16);
@@ -534,6 +751,64 @@
 
   .dashboard-enterprise-sidebar .text-slate-700 {
     color: #d3ddd8;
+  }
+
+  .dashboard-enterprise-sidebar .dashboard-finance-submenu {
+    border-color: var(--dash-border-subtle);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.025)),
+      rgba(29, 45, 53, 0.72);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.055);
+  }
+
+  .dashboard-enterprise-sidebar .dashboard-finance-submenu-item {
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--dash-text-soft);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0);
+  }
+
+  .dashboard-enterprise-sidebar .dashboard-finance-submenu-item:hover {
+    border-color: color-mix(in srgb, var(--dash-brand) 36%, var(--dash-border-subtle));
+    background: var(--dash-brand-soft);
+    color: var(--dash-text);
+  }
+
+  .dashboard-enterprise-sidebar .dashboard-finance-submenu-item[data-active="true"] {
+    border-color: color-mix(in srgb, var(--dash-spruce) 46%, var(--dash-border-subtle));
+    background:
+      linear-gradient(90deg, var(--dash-spruce-soft), var(--dash-brand-soft)),
+      rgba(37, 57, 67, 0.78);
+    color: var(--dash-text);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.07),
+      0 12px 28px rgba(5, 14, 19, 0.16);
+  }
+
+  .dashboard-enterprise-sidebar .dashboard-finance-submenu-dot {
+    background: var(--dash-border);
+  }
+
+  .dashboard-enterprise-sidebar .dashboard-finance-submenu-item:hover .dashboard-finance-submenu-dot {
+    background: var(--dash-brand-strong);
+  }
+
+  .dashboard-enterprise-sidebar .dashboard-finance-submenu-dot[data-active="true"] {
+    background: var(--dash-spruce);
+    box-shadow: 0 0 0 4px var(--dash-spruce-soft);
+  }
+
+  .dashboard-enterprise-sidebar .dashboard-finance-submenu-action {
+    border: 1px solid var(--dash-border-subtle);
+    background: rgba(37, 57, 67, 0.66);
+    color: var(--dash-text-faint);
+  }
+
+  .dashboard-enterprise-sidebar .dashboard-finance-submenu-item:hover .dashboard-finance-submenu-action,
+  .dashboard-enterprise-sidebar .dashboard-finance-submenu-item[data-active="true"] .dashboard-finance-submenu-action {
+    border-color: color-mix(in srgb, var(--dash-brand) 42%, var(--dash-border-subtle));
+    background: var(--dash-brand-soft);
+    color: var(--dash-brand-strong);
   }
 
   .dashboard-sidebar-scroll {

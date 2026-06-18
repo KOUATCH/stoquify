@@ -99,17 +99,6 @@ function redirectWithLocaleCookie(
   return applySecurityHeaders(response)
 }
 
-function getSafeLocalizedRedirectPath(
-  callbackUrl: string | null,
-  fallbackPath: string,
-  locale: "en" | "fr"
-) {
-  if (callbackUrl?.startsWith("/") && !callbackUrl.startsWith("//")) {
-    return localizePath(callbackUrl, locale)
-  }
-  return localizePath(fallbackPath, locale)
-}
-
 // BetterAuth stores its session in a cookie named "better-auth.session_token"
 function isAuthenticated(req: NextRequest): boolean {
   return !!req.cookies.get("better-auth.session_token")?.value
@@ -165,15 +154,6 @@ export default function middleware(req: NextRequest) {
   }
 
   if (isAuthRoute) {
-    if (authenticated) {
-      const callbackUrl = req.nextUrl.searchParams.get("callbackUrl")
-      const redirectUrl = getSafeLocalizedRedirectPath(
-        callbackUrl,
-        "/dashboard",
-        locale
-      )
-      return redirectWithLocaleCookie(req, redirectUrl, locale)
-    }
     return nextWithLocale(req, locale)
   }
 

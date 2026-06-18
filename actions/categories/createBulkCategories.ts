@@ -1,3 +1,4 @@
+import { logSafeActionWarning } from "@/actions/_shared/safe-action-responses";
 import { CategoryCreateDTO } from "@/types/category";
 import createCategory from "./createCategory";
 
@@ -7,6 +8,8 @@ export async function createBulkCategories(categories: CategoryCreateDTO[]) {
       await createCategory(category);
     }
   } catch (error) {
-    console.log(error);
+    logSafeActionWarning("Bulk category creation skipped after a failed row", error, {
+      action: "createBulkCategories",
+    });
   }
 }

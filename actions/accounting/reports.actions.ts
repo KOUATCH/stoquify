@@ -1,19 +1,14 @@
 "use server"
 
-import { createHash, randomUUID } from "node:crypto"
 import { z } from "zod"
 
-import { db } from "@/prisma/db"
 import { protect } from "@/services/_shared/protect"
 import {
+  exportAccountingReport,
   getAccountingDashboardSummary,
   getGeneralLedger,
   getTrialBalance,
 } from "@/services/accounting/reports.service"
-import {
-  assertSensitiveActionAllowed,
-  evaluateAndAuditSensitiveAction,
-} from "@/services/controls/sensitive-action.service"
 
 const trialBalanceSchema = z.object({
   periodId: z.string().nullable().optional(),
@@ -45,10 +40,6 @@ const exportAccountingReportSchema = z.object({
     })
   }
 })
-
-function hashFilters(input: unknown) {
-  return `sha256:${createHash("sha256").update(JSON.stringify(input)).digest("hex")}`
-}
 
 const getDashboardSummary = protect<unknown, unknown>(
   { permission: "accounting.reports.read", auditResource: "AccountingReport" },
@@ -102,68 +93,18 @@ const exportAccountingReportProtected = protect<unknown, unknown>(
   },
   async (input, ctx) => {
     const parsed = exportAccountingReportSchema.parse(input)
-    const normalizedFilters = {
-      reportType: parsed.reportType,
-      periodId: parsed.periodId || null,
-      accountId: parsed.accountId || null,
-      startDate: parsed.startDate?.toISOString() || null,
-      endDate: parsed.endDate?.toISOString() || null,
-      includeZeroBalance: parsed.includeZeroBalance ?? true,
-    }
-
-    const report =
-      parsed.reportType === "TRIAL_BALANCE"
-        ? await getTrialBalance({
-            organizationId: ctx.orgId,
-            periodId: parsed.periodId,
-            startDate: parsed.startDate,
-            endDate: parsed.endDate,
-            includeZeroBalance: parsed.includeZeroBalance ?? true,
-          })
-        : await getGeneralLedger({
-            organizationId: ctx.orgId,
-            accountId: parsed.accountId!,
-            startDate: parsed.startDate,
-            endDate: parsed.endDate,
-          })
-
-    const rowCount = Array.isArray(report) ? report.length : report.rows.length
-    const exportId = randomUUID()
-    const watermarkId = `acct-${ctx.orgId}-${exportId}`
-    const filtersHash = hashFilters(normalizedFilters)
-
-    const decision = await db.$transaction((tx) =>
-      evaluateAndAuditSensitiveAction(tx, {
-        action: "accounting.export",
-        actorId: ctx.userId,
-        organizationId: ctx.orgId,
-        actorPermissions: ctx.permissions,
-        lastAuthAt: Date.now(),
-        resourceType: "AccountingExport",
-        resourceId: exportId,
-        exportContext: {
-          scope: parsed.reportType,
-          filtersHash,
-          rowCount,
-          fileType: parsed.fileType,
-          sensitivity: "statutory",
-          watermarkId,
-        },
-        metadata: normalizedFilters,
-      }),
-    )
-    assertSensitiveActionAllowed(decision)
-
-    return {
-      exportId,
+    return exportAccountingReport({
+      organizationId: ctx.orgId,
+      actorId: ctx.userId,
+      actorPermissions: ctx.permissions,
       reportType: parsed.reportType,
       fileType: parsed.fileType,
-      rowCount,
-      filtersHash,
-      watermarkId,
-      generatedAt: new Date().toISOString(),
-      data: report,
-    }
+      periodId: parsed.periodId,
+      accountId: parsed.accountId,
+      startDate: parsed.startDate,
+      endDate: parsed.endDate,
+      includeZeroBalance: parsed.includeZeroBalance ?? true,
+    })
   },
 )
 

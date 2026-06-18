@@ -264,6 +264,7 @@
     "actions": {
       "refresh": "Refresh",
       "orderPayments": "Order payments",
+      "reconciliation": "Reconciliation",
       "cashDrawers": "Cash drawers",
       "cashFlow": "Cash flow",
       "taxRates": "Tax rates"
@@ -354,6 +355,382 @@
       "PAID": "Paid",
       "REFUNDED": "Refunded",
       "CANCELLED": "Cancelled"
+    }
+  },
+  "paymentReconciliationWorkbench": {
+    "title": "Payment reconciliation workbench",
+    "subtitle": "Rail-level payment assurance, duplicate provider-reference alerts, and suspense-ready exception queues.",
+    "updated": "Updated {time}",
+    "common": {
+      "notAvailable": "Not available",
+      "yes": "Yes",
+      "no": "No"
+    },
+    "certification": {
+      "title": "Durable evidence kernel",
+      "description": "Provider events, statement lines, reconciliation runs, exception queues, and suspense requests are now read from the durable reconciliation model.",
+      "asOf": "As of {time}",
+      "closeBlocked": "{count} blocker(s) must be cleared before sign-off.",
+      "emptyProviderAccounts": "No active provider account is configured yet.",
+      "emptyRuns": "No durable reconciliation runs have been created yet.",
+      "providerAccounts": "Provider accounts",
+      "signoffQueue": "Sign-off queue",
+      "runFacts": "{matches} match(es), {exceptions} exception(s), suspense {suspense}",
+      "statuses": {
+        "NO_EVIDENCE": "No evidence",
+        "READY_FOR_RUN": "Ready for run",
+        "NEEDS_REVIEW": "Needs review",
+        "READY_FOR_SIGNOFF": "Ready for sign-off",
+        "SIGNED": "Signed"
+      },
+      "summary": {
+        "providerAccounts": "Active provider accounts",
+        "recentRuns": "Recent runs",
+        "readyForSignoff": "Ready for sign-off",
+        "openExceptions": "Open exceptions",
+        "openSuspense": "Open suspense"
+      },
+      "controls": {
+        "evidence": "Provider or statement evidence",
+        "freshAuth": "Fresh auth for sign-off",
+        "makerChecker": "Maker-checker manual match",
+        "gatewayOnly": "Suspense gateway only"
+      },
+      "actions": {
+        "run": "Run",
+        "sign": "Sign",
+        "export": "Export"
+      },
+      "notifications": {
+        "runStartedTitle": "Reconciliation run queued",
+        "runStartedMessage": "The provider account is being reconciled against durable evidence.",
+        "runCompleteTitle": "Reconciliation run complete",
+        "runCompleteMessage": "The run summary, exceptions, and suspense queue have been refreshed.",
+        "signStartedTitle": "Sign-off in progress",
+        "signStartedMessage": "Fresh-auth and maker-checker controls are being verified.",
+        "signCompleteTitle": "Run signed",
+        "signCompleteMessage": "The reconciliation certificate hash has been stored.",
+        "exportStartedTitle": "Preparing certificate export",
+        "exportStartedMessage": "The signed certificate is being watermarked and logged.",
+        "exportCompleteTitle": "Certificate exported",
+        "exportCompleteMessage": "The signed reconciliation certificate download has started."
+      }
+    },
+    "suspenseWorkflow": {
+      "title": "Suspense approval lane",
+      "description": "Assign, propose reclassification, and approve suspense posting requests with maker-checker evidence.",
+      "empty": "No durable suspense item is waiting for approval.",
+      "assigned": "Assigned",
+      "reasonPlaceholder": "Reason and evidence note",
+      "actions": {
+        "assign": "Assign",
+        "propose": "Propose",
+        "approve": "Approve"
+      },
+      "notifications": {
+        "assignedTitle": "Exception assigned",
+        "assignedMessage": "The suspense item and linked exception are now assigned.",
+        "proposedTitle": "Reclassification proposed",
+        "proposedMessage": "The maker proposal is ready for independent approval.",
+        "approvedTitle": "Suspense posting approved",
+        "approvedMessage": "The approved suspense posting request was recorded."
+      }
+    },
+    "inbox": {
+      "title": "Reconciliation inbox",
+      "description": "Durable in-app notifications for exception ownership, SLA risk, sign-off readiness, and close blockers.",
+      "empty": "No reconciliation inbox item has been delivered yet.",
+      "due": "Due {time}",
+      "types": {
+        "payment_reconciliation_exception_created": "Exception created",
+        "payment_reconciliation_exception_assigned": "Exception assigned",
+        "payment_reconciliation_exception_escalated": "Exception escalated",
+        "payment_reconciliation_suspense_created": "Suspense item created",
+        "payment_reconciliation_suspense_sla_warning": "SLA warning",
+        "payment_reconciliation_suspense_sla_breached": "SLA breached",
+        "payment_reconciliation_manual_match_proposed": "Manual match proposed",
+        "payment_reconciliation_manual_match_approved": "Manual match approved",
+        "payment_reconciliation_manual_match_rejected": "Manual match rejected",
+        "payment_reconciliation_run_failed": "Reconciliation run failed",
+        "payment_reconciliation_run_ready_for_signoff": "Ready for sign-off",
+        "payment_reconciliation_period_close_blocked": "Period close blocked",
+        "payment_reconciliation_suspense_reclassification_proposed": "Suspense reclassification proposed",
+        "payment_reconciliation_suspense_reclassification_approved": "Suspense posting approved"
+      }
+    },
+    "source": {
+      "captureReadModel": "Captured payment read model",
+      "providerPersistencePending": "Provider statement and signed reconciliation-run persistence is not present yet, so this view shows capture-readiness evidence from existing payments."
+    },
+    "notifications": {
+      "refreshTitle": "Refreshing reconciliation",
+      "refreshMessage": "Fetching the latest payment capture evidence.",
+      "refreshedTitle": "Reconciliation refreshed",
+      "refreshedMessage": "The latest reconciliation workbench data is visible.",
+      "failedTitle": "Refresh failed",
+      "failedMessage": "Unable to refresh the reconciliation workbench."
+    },
+    "filters": {
+      "location": "Location",
+      "period": "Period",
+      "allLocations": "All locations"
+    },
+    "periods": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "7d": "Last 7 days",
+      "30d": "Last 30 days",
+      "mtd": "Month to date",
+      "qtd": "Quarter to date",
+      "ytd": "Year to date",
+      "custom": "Custom"
+    },
+    "actions": {
+      "refresh": "Refresh"
+    },
+    "metrics": {
+      "activeRails": "Active rails",
+      "cleanRuns": "Clean runs",
+      "criticalFailures": "Critical failures",
+      "duplicates": "Duplicate refs",
+      "suspenseExposure": "Suspense exposure"
+    },
+    "details": {
+      "activeRails": "Across {count} configured electronic rail(s)",
+      "attentionRuns": "{count} run(s) need attention",
+      "failures": "{count} total failure(s)",
+      "coverage": "{value} provider reference coverage",
+      "suspense": "{count} suspense-ready item(s)"
+    },
+    "sections": {
+      "runs": "Run summaries",
+      "runsDescription": "Per-rail capture-readiness runs generated from existing payment evidence.",
+      "assurance": "Reconciliation assurance",
+      "assuranceDescription": "Coverage and source maturity for the selected period.",
+      "failureGroups": "Failure groups by rail",
+      "failureGroupsDescription": "Exception clusters grouped by payment rail and failure type.",
+      "duplicates": "Duplicate provider-reference alerts",
+      "duplicatesDescription": "Provider references that appear on more than one captured payment.",
+      "suspense": "Suspense-ready reconciliation failures",
+      "suspenseDescription": "Failures classified with 47x suspense hints and evidence references."
+    },
+    "summary": {
+      "totalPayments": "Electronic payments",
+      "totalAmount": "Captured amount",
+      "matchedAmount": "Matched amount",
+      "providerReferenceCoverage": "Provider reference coverage"
+    },
+    "rails": {
+      "CARD": "Card",
+      "MOBILE_MONEY": "Mobile money",
+      "BANK_TRANSFER": "Bank transfer"
+    },
+    "statuses": {
+      "clean": "Clean",
+      "attention": "Attention",
+      "critical": "Critical",
+      "no_activity": "No activity"
+    },
+    "severity": {
+      "high": "High",
+      "critical": "Critical"
+    },
+    "failureTypes": {
+      "MISSING_PROVIDER_REFERENCE": "Missing provider reference",
+      "DUPLICATE_INTERNAL_PROVIDER_REFERENCE": "Duplicate internal provider reference",
+      "DUPLICATE_PROVIDER_SETTLEMENT_REFERENCE": "Duplicate provider settlement reference",
+      "NON_FINAL_PAYMENT_STATUS": "Non-final payment status",
+      "MISSING_PROVIDER_SETTLEMENT": "Missing provider settlement",
+      "UNMATCHED_PROVIDER_REFERENCE": "Unmatched provider reference",
+      "AMOUNT_MISMATCH": "Amount mismatch",
+      "SETTLEMENT_GROSS_MISMATCH": "Settlement gross mismatch",
+      "SETTLEMENT_FEE_MISMATCH": "Settlement fee mismatch"
+    },
+    "suspenseTypes": {
+      "duplicate_provider_id": "Duplicate provider ID",
+      "missing_provider_reference": "Missing provider reference",
+      "missing_settlement_line": "Missing settlement line",
+      "unmatched_provider_line": "Unmatched provider line",
+      "amount_mismatch": "Amount mismatch",
+      "settlement_shortfall": "Settlement shortfall",
+      "fee_deviation": "Fee deviation",
+      "pending_classification": "Pending classification"
+    },
+    "durableSuspenseTypes": {
+      "UNKNOWN_CREDIT": "Unknown credit",
+      "MISSING_CALLBACK": "Missing callback",
+      "MISSING_STATEMENT_LINE": "Missing statement line",
+      "AMOUNT_MISMATCH": "Amount mismatch",
+      "DUPLICATE_PROVIDER_ID": "Duplicate provider ID",
+      "ORPHAN_REFUND": "Orphan refund",
+      "FEE_DEVIATION": "Fee deviation",
+      "SETTLEMENT_SHORTFALL": "Settlement shortfall",
+      "SIGNATURE_FAILURE": "Signature failure",
+      "REPLAY_SPIKE": "Replay spike",
+      "FAILED_BUT_DEBITED": "Failed but debited",
+      "SUCCEEDED_BUT_NOT_CREDITED": "Succeeded but not credited",
+      "CASH_DEPOSIT_DELAY": "Cash deposit delay",
+      "OTHER": "Other"
+    },
+    "empty": {
+      "failureGroups": "No reconciliation failure groups were found for this scope.",
+      "duplicates": "No duplicate provider references were found.",
+      "suspense": "No suspense-ready failures were found for this scope."
+    },
+    "table": {
+      "rail": "Rail",
+      "status": "Status",
+      "payments": "Payments",
+      "matched": "Matched",
+      "failures": "Failures",
+      "suspense": "Suspense",
+      "lastSeen": "Last seen",
+      "criticalCount": "{count} critical",
+      "itemCount": "{count} item(s)",
+      "duplicateCount": "{count} duplicate(s)",
+      "failure": "Failure",
+      "reference": "Reference",
+      "counterparty": "Counterparty",
+      "amount": "Amount",
+      "suspenseType": "Suspense type",
+      "time": "Time"
+    }
+  },
+  "complianceCenter": {
+    "title": "Compliance Center",
+    "subtitle": "Fiscal document queues, authority-submission evidence, and adapter readiness for the current tenant.",
+    "common": {
+      "notAvailable": "Not available"
+    },
+    "provenance": {
+      "kernel": "Compliance kernel snapshot",
+      "tenantScoped": "Tenant scoped",
+      "fresh": "Fresh as of {time}",
+      "stale": "Stale as of {time}"
+    },
+    "filters": {
+      "country": "Country",
+      "allCountries": "All countries",
+      "documentStatus": "Document status",
+      "allStatuses": "All statuses",
+      "allAdapterStatuses": "All adapter statuses",
+      "searchDocuments": "Search documents",
+      "searchSubmissions": "Search submissions"
+    },
+    "actions": {
+      "refresh": "Refresh",
+      "retry": "Retry"
+    },
+    "notifications": {
+      "refreshTitle": "Refreshing compliance",
+      "refreshMessage": "Fetching the latest fiscal document and submission queues.",
+      "refreshedTitle": "Compliance refreshed",
+      "refreshedMessage": "The Compliance Center snapshot has been updated.",
+      "failedTitle": "Refresh failed",
+      "failedMessage": "Unable to refresh the Compliance Center."
+    },
+    "states": {
+      "deniedTitle": "Compliance access denied",
+      "unauthenticatedDescription": "Sign in with an account that can read fiscal documents before opening this dashboard.",
+      "deniedDescription": "Your role does not include the compliance.documents.read permission for this tenant.",
+      "errorTitle": "Compliance data unavailable",
+      "degraded": "{count} compliance blocker(s) or adapter risk(s) need operator review."
+    },
+    "metrics": {
+      "documents": "Fiscal documents",
+      "certified": "Certified",
+      "openSubmissions": "Open submissions",
+      "exceptions": "Submission exceptions",
+      "adapters": "Active adapters"
+    },
+    "details": {
+      "pendingDocuments": "{count} pending or submitted",
+      "certifiedDocuments": "Authority-certified fiscal artifacts",
+      "openSubmissions": "Pending, leased, or retry scheduled",
+      "exceptions": "Rejected, failed, or dead-lettered",
+      "adapters": "{count} adapter risk(s)"
+    },
+    "sections": {
+      "documents": "Fiscal document queue",
+      "documentsDescription": "Recent statutory envelopes with source, amount, country-pack provenance, and authority references.",
+      "adapters": "Adapter health",
+      "adaptersDescription": "Country authority configuration and expert-review readiness.",
+      "submissions": "Authority submission queue",
+      "submissionsDescription": "Pending, retry, rejection, and dead-letter work that operators must not lose in logs."
+    },
+    "empty": {
+      "documentsTitle": "No fiscal documents found",
+      "documentsDescription": "The selected scope has no fiscal documents in the compliance kernel yet.",
+      "adaptersTitle": "No adapter configuration found",
+      "adaptersDescription": "Configure a reviewed sandbox or manual portal adapter before production certification claims.",
+      "submissionsTitle": "No open submissions found",
+      "submissionsDescription": "The selected scope has no authority submission work requiring operator attention."
+    },
+    "table": {
+      "document": "Document",
+      "status": "Status",
+      "source": "Source",
+      "amount": "Amount",
+      "provenance": "Provenance",
+      "authority": "Authority",
+      "issued": "Issued",
+      "linesAndSubmissions": "{lines} line(s), {submissions} submission(s)",
+      "submission": "Submission",
+      "operation": "Operation",
+      "attempts": "Attempts",
+      "nextAttempt": "Next attempt",
+      "evidenceHash": "Evidence hash"
+    },
+    "documentTypes": {
+      "POS_RECEIPT": "POS receipt",
+      "SALES_INVOICE": "Sales invoice",
+      "CREDIT_NOTE": "Credit note",
+      "DEBIT_NOTE": "Debit note"
+    },
+    "documentStatuses": {
+      "DRAFT": "Draft",
+      "QUEUED": "Queued",
+      "SUBMITTED": "Submitted",
+      "CERTIFIED": "Certified",
+      "REJECTED": "Rejected",
+      "REVERSED": "Reversed"
+    },
+    "submissionStatuses": {
+      "PENDING": "Pending",
+      "LEASED": "Leased",
+      "SUBMITTED": "Submitted",
+      "RETRY_SCHEDULED": "Retry scheduled",
+      "CERTIFIED": "Certified",
+      "REJECTED": "Rejected",
+      "FAILED": "Failed",
+      "DEAD_LETTER": "Dead letter",
+      "CANCELLED": "Cancelled"
+    },
+    "adapterStatuses": {
+      "DRAFT": "Draft",
+      "ACTIVE": "Active",
+      "DISABLED": "Disabled",
+      "REQUIRES_CONFIGURATION": "Needs configuration",
+      "REQUIRES_EXPERT_REVIEW": "Needs expert review"
+    },
+    "environments": {
+      "FAKE_SANDBOX": "Fake sandbox",
+      "SANDBOX": "Sandbox",
+      "PRODUCTION": "Production",
+      "MANUAL_PORTAL": "Manual portal"
+    },
+    "operations": {
+      "CERTIFY": "Certify",
+      "POLL_STATUS": "Poll status",
+      "MANUAL_FALLBACK": "Manual fallback",
+      "REVERSE": "Reverse"
+    },
+    "adapter": {
+      "pack": "Country pack",
+      "capability": "Capability",
+      "credential": "Credential",
+      "credentialPresent": "Configured",
+      "credentialMissing": "Not configured"
     }
   },
   "receiptPreview": {
@@ -574,6 +951,10 @@
       "saleCreated": "Sale created",
       "inventoryUpdated": "Inventory updated",
       "financePosted": "Finance entries posted",
+      "accountingMovements": "Accounting movements",
+      "saleJournalEntry": "Sale journal",
+      "paymentJournalEntry": "Payment journal",
+      "balancedJournal": "Balanced debit/credit",
       "drawerUpdated": "Cash drawer totals updated",
       "customerLedgerUpdated": "Customer ledger updated",
       "walkInRecorded": "Walk-in sale recorded",
@@ -613,8 +994,8 @@
   },
   "landing": {
     "header": {
-      "homeAria": "StockFlow home",
-      "subtitle": "Operating system",
+      "homeAria": "AqStoqFlow home",
+      "subtitle": "OHADA SMB platform",
       "navAria": "Primary",
       "product": "Product",
       "workflow": "Workflow",
@@ -622,74 +1003,80 @@
       "pricing": "Pricing",
       "login": "Log in",
       "dashboard": "Dashboard",
-      "startFree": "Start free",
+      "startFree": "Create workspace",
       "openNavigation": "Open navigation",
       "languageLabel": "FR",
       "languageAria": "View in French"
     },
     "hero": {
-      "badge": "inventory-first operating system",
-      "titleStart": "Control every shelf, sale, order, and dollar in",
-      "titleEmphasis": "one operating system",
-      "description": "StockFlow gives inventory-heavy teams a calm command layer for branch POS, stock movement, supplier orders, approvals, payroll signals, and financial visibility.",
-      "primaryCta": "Start free trial",
-      "secondaryCta": "View pricing",
+      "badge": "ledger-first OHADA SMB platform",
+      "titleStart": "Run stock, sales, cash, compliance, and close from",
+      "titleEmphasis": "one evidence spine",
+      "description": "AqStoqFlow connects POS, inventory, purchasing, finance, accounting, compliance, payroll, reconciliation, and branch controls so every operational move can carry tenant scope, permission context, source evidence, and ledger impact.",
+      "primaryCta": "Create workspace",
+      "secondaryCta": "Review rollout",
       "metrics": {
-        "branches": { "value": "24/7", "label": "Live branches" },
-        "accuracy": { "value": "99.2%", "label": "Stock accuracy" },
-        "close": { "value": "-38%", "label": "Faster close" }
+        "branches": { "value": "Tenant", "label": "Scoped by organization" },
+        "accuracy": { "value": "Ledger", "label": "Source-linked postings" },
+        "close": { "value": "OHADA", "label": "Country-pack ready" }
       },
       "ticker": {
-        "approved": "PO-1042 approved",
-        "synced": "Branch 03 synced",
-        "lowStock": "Low stock: flour",
-        "cash": "Cash drawer balanced",
-        "margin": "Margin alert resolved"
+        "approved": "Purchase approval captured",
+        "synced": "Offline POS replay queued",
+        "lowStock": "Stock exception needs review",
+        "cash": "Cash drawer evidence attached",
+        "margin": "Close blocker assigned"
       }
     },
     "dashboard": {
-      "period": "Today",
-      "title": "Multi-branch pulse",
-      "synced": "synced",
+      "period": "Control day",
+      "title": "Operations assurance snapshot",
+      "synced": "tenant scoped",
       "rows": {
-        "revenue": { "label": "Revenue", "value": "$84.2k", "meta": "+12.4%" },
-        "pos": { "label": "Open POs", "value": "18", "meta": "6 urgent" },
-        "turns": { "label": "Stock turns", "value": "4.8x", "meta": "+0.6" },
-        "variance": { "label": "Cash variance", "value": "$12", "meta": "clear" }
+        "revenue": { "label": "Ledger state", "value": "Draft close", "meta": "source-linked" },
+        "pos": { "label": "Exception queues", "value": "Open", "meta": "stock/AP/payroll" },
+        "turns": { "label": "Evidence", "value": "Hashes", "meta": "exports ready" },
+        "variance": { "label": "Controls", "value": "RBAC", "meta": "step-up" }
       },
-      "inventoryHealth": "Branch inventory health",
+      "inventoryHealth": "Operational control coverage",
       "branches": {
-        "downtown": "Downtown",
-        "warehouse": "Warehouse",
-        "airport": "Airport"
+        "downtown": "POS",
+        "warehouse": "Inventory",
+        "airport": "Accounting"
       },
       "nextActionLabel": "Next action",
-      "nextAction": "Approve supplier PO before 4:00 PM",
-      "liveFeed": "Live feed",
+      "nextAction": "Review reconciliation suspense before period close",
+      "liveFeed": "Evidence feed",
       "activity": {
-        "sale": "Sale posted",
-        "transfer": "Transfer received",
-        "po": "PO approved"
+        "sale": "POS event",
+        "transfer": "Stock movement",
+        "po": "PO approval"
       }
     },
     "operations": {
       "eyebrow": "connected product",
-      "title": "One operating model, reflected in the product.",
-      "description": "The landing page is not selling an abstract promise. It points to working surfaces for auth, language, roles, dashboards, finance, purchasing, and branch operations.",
+      "title": "One operating model, not disconnected modules.",
+      "description": "The platform surfaces real operational boundaries: POS sessions, inventory movement, purchasing/AP, finance, OHADA accounting, compliance evidence, payroll and presence, payment reconciliation, role controls, and branch administration.",
       "moduleLabel": "module",
       "modules": {
-        "pos": { "name": "POS", "description": "Transactions and tills", "meta": "14 live tills" },
-        "inventory": { "name": "Inventory", "description": "Stock, batches, movement", "meta": "6 exceptions" },
-        "purchasing": { "name": "Purchasing", "description": "POs and approvals", "meta": "18 open POs" },
-        "finance": { "name": "Finance", "description": "Cash flow and margins", "meta": "92% matched" },
-        "users": { "name": "Users", "description": "Teams and access", "meta": "42 active" },
-        "roles": { "name": "Roles", "description": "Permission control", "meta": "8 roles" }
+        "pos": { "name": "POS", "description": "Sessions, receipts, drawers", "meta": "checkout to ledger" },
+        "inventory": { "name": "Inventory", "description": "Items, movements, counts", "meta": "stock evidence" },
+        "purchasing": { "name": "Purchasing", "description": "POs, receiving, AP", "meta": "3-way discipline" },
+        "finance": { "name": "Finance", "description": "Cash, AP, AR, margins", "meta": "cash visibility" },
+        "accounting": { "name": "Accounting", "description": "OHADA ledger and close", "meta": "source-linked" },
+        "compliance": { "name": "Compliance", "description": "Fiscal evidence and rules", "meta": "country packs" },
+        "reconciliation": { "name": "Reconciliation", "description": "Provider matching and suspense", "meta": "close blocker" },
+        "payroll": { "name": "Payroll", "description": "Presence and statutory pay", "meta": "approval gated" },
+        "customers": { "name": "Customers", "description": "Receivables and history", "meta": "account context" },
+        "suppliers": { "name": "Suppliers", "description": "Vendor terms and AP risk", "meta": "payment controls" },
+        "users": { "name": "Users", "description": "Teams and invitations", "meta": "tenant access" },
+        "roles": { "name": "Roles", "description": "Permission control", "meta": "maker-checker" }
       }
     },
     "problem": {
       "eyebrow": "the problem",
-      "title": "Most teams are not short on tools. They are short on shared truth.",
-      "copy": "Works alone until StockFlow connects the workflow.",
+      "title": "SMBs do not just need screens. They need provable operating truth.",
+      "copy": "Risky when it lives alone; reliable when the event, permission, evidence, and ledger record travel together.",
       "systems": {
         "pos": "POS",
         "inventory": "Inventory",
@@ -701,105 +1088,133 @@
     },
     "workflow": {
       "eyebrow": "workflow",
-      "title": "One action updates the whole operating record.",
-      "steps": {
-        "sale": { "title": "Sale recorded", "copy": "POS captures payment, branch, cashier, customer, and item context." },
-        "stock": { "title": "Stock reduced", "copy": "Inventory moves instantly across batches, units, and locations." },
-        "reorder": { "title": "Reorder checked", "copy": "Rules compare demand, par levels, suppliers, and lead time." },
-        "approval": { "title": "Approval routed", "copy": "Managers approve exceptions before money or stock moves." },
-        "finance": { "title": "Finance updated", "copy": "Margins, cash flow, and tax records stay aligned." }
+      "title": "Every module moves on the same ledger-first operating spine.",
+      "description": "Scroll across the AqStoqFlow workflow: a country-pack-driven, multi-tenant OHADA SMB operating system where POS, inventory, purchasing/AP, accounting close, compliance, reconciliation, payroll/presence, offline sync, and controls all carry source evidence forward.",
+      "carouselLabel": "AqStoqFlow module workflow carousel",
+      "cards": {
+        "pos": { "title": "POS", "copy": "Cashier sessions, receipts, returns, drawers, fiscal handoff, and sales evidence start the operating record.", "meta": "sell" },
+        "inventory": { "title": "Inventory", "copy": "Items, counts, transfers, write-offs, locations, and valuation signals explain stock before it reaches the books.", "meta": "stock" },
+        "purchasing": { "title": "Purchasing/AP", "copy": "Purchase orders, receiving, supplier invoices, matching, approvals, and payment release keep AP disciplined.", "meta": "procure" },
+        "suppliers": { "title": "Suppliers", "copy": "Vendor terms, item links, payable readiness, bank-change review, and payment risk stay visible.", "meta": "vendor" },
+        "customers": { "title": "Customers", "copy": "Customer history, receivables context, payments, orders, and account signals stay tied to operations.", "meta": "AR" },
+        "finance": { "title": "Finance", "copy": "Cash drawers, payables, receivables, taxes, margins, profitability, and retail analytics converge.", "meta": "cash" },
+        "accounting": { "title": "Accounting close", "copy": "OHADA chart, journals, posting rules, trial balance, source links, close blockers, and close packs align.", "meta": "close" },
+        "compliance": { "title": "Compliance", "copy": "Fiscal documents, legal evidence, country packs, authority queues, and adapter readiness stay governed.", "meta": "rules" },
+        "reconciliation": { "title": "Reconciliation", "copy": "Provider events, statement imports, matching, suspense, sign-off, and certificates protect payment truth.", "meta": "match" },
+        "payroll": { "title": "Payroll/presence", "copy": "Employees, contracts, presence, attendance, leave, payroll runs, approvals, payslips, and postings connect.", "meta": "people" },
+        "offline": { "title": "Offline sync", "copy": "Device identity, queued POS work, replay discipline, conflict handling, and evidence preserve branch continuity.", "meta": "sync" },
+        "transfers": { "title": "Transfers", "copy": "Branch-to-branch dispatch, receiving, variance, accountability, and source movement records remain traceable.", "meta": "move" },
+        "locations": { "title": "Locations", "copy": "Branches, warehouses, terminals, tax settings, units, and organization setup define operating scope.", "meta": "scope" },
+        "controls": { "title": "Controls", "copy": "Tenant scope, RBAC, step-up, maker-checker, approvals, and audit trails prevent silent risky moves.", "meta": "trust" },
+        "analytics": { "title": "Analytics", "copy": "Dashboards, reports, accountant exports, exception queues, and data-trust indicators reflect source records.", "meta": "insight" },
+        "administration": { "title": "Administration", "copy": "Users, invitations, roles, permissions, module gates, country settings, and setup keep the platform governed.", "meta": "admin" }
       }
     },
     "gallery": {
       "eyebrow": "product views",
-      "title": "A product surface that feels alive, not decorative.",
+      "title": "Product views built around evidence, exceptions, and close readiness.",
+      "description": "The page should sell the operating discipline without becoming noisy: one product surface, then compact panels that show the signals teams actually scan.",
+      "screenshotAlt": "StockFlow dashboard product view",
+      "preview": {
+        "meta": "live workspace",
+        "title": "Product views stay close to the records they explain"
+      },
       "panels": {
-        "inventory": { "title": "Inventory exception board", "copy": "Low stock, expiry risk, and transfer needs in one view", "meta": "22 alerts" },
-        "purchase": { "title": "Purchase approval queue", "copy": "Supplier orders ranked by urgency, margin, and branch demand", "meta": "18 open" },
-        "finance": { "title": "Finance margin cockpit", "copy": "Cash, tax, revenue, and cost drift summarized for operators", "meta": "92% matched" }
+        "inventory": { "title": "Inventory movement ledger", "copy": "Stock levels, counts, transfers, write-offs, and valuation risk stay visible by location.", "meta": "source trail", "signals": { "1": "count coverage", "2": "transfer proof", "3": "valuation check" } },
+        "purchase": { "title": "Purchasing and AP controls", "copy": "Purchase orders, receiving, supplier invoices, bank changes, and payments move through review.", "meta": "approval lane", "signals": { "1": "PO match", "2": "receipt trail", "3": "payment review" } },
+        "finance": { "title": "Close and reconciliation cockpit", "copy": "Cash, provider evidence, suspense, journals, and close blockers converge before reporting.", "meta": "close view", "signals": { "1": "cash evidence", "2": "suspense review", "3": "close blockers" } }
       }
     },
     "modules": {
       "eyebrow": "modules",
-      "titleStart": "Eight modules.",
-      "titleEmphasis": "One spine.",
+      "titleStart": "Operational modules.",
+      "titleEmphasis": "One evidence spine.",
       "workflowCta": "See workflow",
       "tryCta": "Try it",
       "items": {
-        "pos": { "title": "POS", "copy": "Fast selling with cashier controls, receipts, and session visibility.", "metric": "14 tills" },
-        "inventory": { "title": "Inventory", "copy": "Location stock, batches, units, movements, categories, and alerts.", "metric": "12,847 SKUs" },
-        "purchasing": { "title": "Purchasing", "copy": "Supplier orders, approvals, delivery tracking, and landed cost.", "metric": "18 open POs" },
-        "transfers": { "title": "Transfers", "copy": "Branch-to-branch movement with accountability and receiving checks.", "metric": "31 moves" },
-        "finance": { "title": "Finance", "copy": "Cash flow, profit and loss, tax, drawer variance, and margins.", "metric": "$84.2k MTD" },
-        "customers": { "title": "Customers", "copy": "Credit, history, orders, balances, and relationship context.", "metric": "2,406 accounts" },
-        "roles": { "title": "Roles", "copy": "Least-privilege permissions for teams, branches, and managers.", "metric": "8 roles" },
-        "reports": { "title": "Reports", "copy": "Operational summaries that expose drift before it gets expensive.", "metric": "42 reports" }
+        "pos": { "title": "POS", "copy": "Cashier sessions, receipts, returns, cash drawers, offline replay, and fiscal handoff.", "metric": "checkout control" },
+        "inventory": { "title": "Inventory", "copy": "Items, units, brands, categories, levels, movements, counts, transfers, and valuation risk.", "metric": "stock evidence" },
+        "purchasing": { "title": "Purchasing", "copy": "Purchase orders, receiving, supplier invoices, AP matching, approvals, and payment release.", "metric": "AP controls" },
+        "suppliers": { "title": "Suppliers", "copy": "Vendor records, terms, item links, bank-change review, payable readiness, and payment risk.", "metric": "vendor trust" },
+        "customers": { "title": "Customers", "copy": "Customer records, order history, receivables context, payments, and relationship signals.", "metric": "AR context" },
+        "finance": { "title": "Finance", "copy": "Cash drawers, payables, receivables, cash flow, profitability, taxes, and retail analytics.", "metric": "cash clarity" },
+        "accounting": { "title": "Accounting", "copy": "OHADA chart, journals, posting rules, trial balance, accountant portal, and close center.", "metric": "ledger spine" },
+        "compliance": { "title": "Compliance", "copy": "Fiscal documents, authority queues, country packs, adapter readiness, and legal evidence.", "metric": "country rules" },
+        "reconciliation": { "title": "Reconciliation", "copy": "Provider events, statement imports, matching, suspense workflows, sign-off, and certificates.", "metric": "payment assurance" },
+        "payroll": { "title": "Payroll", "copy": "Employees, contracts, presence, attendance, leave, payroll runs, approvals, and payslips.", "metric": "statutory flow" },
+        "transfers": { "title": "Transfers", "copy": "Branch-to-branch stock moves with dispatch, receiving, variance, and accountability.", "metric": "movement proof" },
+        "locations": { "title": "Locations", "copy": "Branches, warehouses, terminals, tax settings, units, organization profile, and setup.", "metric": "tenant setup" },
+        "security": { "title": "Security", "copy": "Users, invites, roles, permissions, step-up, maker-checker, and audit-friendly access.", "metric": "RBAC layer" },
+        "analytics": { "title": "Analytics", "copy": "Dashboards, operational reports, accountant exports, alerts, and data-trust indicators.", "metric": "source-linked" }
       }
     },
     "deepDives": {
       "eyebrow": "daily control",
-      "title": "Designed for the decisions operators make every morning.",
+      "title": "Designed for the decisions that decide whether the books can be trusted.",
       "items": {
-        "inventory": { "title": "Inventory", "copy": "Track stock levels, movements, units, categories, and location health.", "labels": { "a": "Low stock", "b": "Transfers", "c": "Batches" } },
-        "purchasing": { "title": "Purchasing", "copy": "Create POs, route approvals, and keep supplier commitments visible.", "labels": { "a": "Draft", "b": "Approval", "c": "Receiving" } },
-        "finance": { "title": "Finance", "copy": "Turn transactions into cash-flow, margin, and tax visibility.", "labels": { "a": "Revenue", "b": "Margin", "c": "Variance" } }
+        "inventory": { "title": "Inventory", "copy": "Explain quantity, location, movement, valuation, and variance from the same record.", "labels": { "a": "Levels", "b": "Moves", "c": "Counts" } },
+        "purchasing": { "title": "Purchasing", "copy": "Keep order, receipt, invoice, approval, and supplier-payment risk in one workflow.", "labels": { "a": "PO", "b": "Receive", "c": "AP" } },
+        "finance": { "title": "Finance", "copy": "Connect cash drawers, payments, receivables, payables, margins, and tax visibility.", "labels": { "a": "Cash", "b": "AR/AP", "c": "Tax" } },
+        "accounting": { "title": "Accounting", "copy": "Tie journals, posting rules, trial balance, source links, and close packs together.", "labels": { "a": "Journals", "b": "Controls", "c": "Close" } },
+        "compliance": { "title": "Compliance", "copy": "Track fiscal-document status, authority evidence, country-pack rules, and adapter health.", "labels": { "a": "Fiscal", "b": "Evidence", "c": "Rules" } },
+        "payroll": { "title": "Payroll", "copy": "Connect presence, contracts, leave, approvals, payslips, declarations, and payroll postings.", "labels": { "a": "Presence", "b": "Payslips", "c": "Postings" } }
       }
     },
     "automation": {
       "eyebrow": "automation",
-      "title": "Rules that make operations move before someone asks.",
+      "title": "Automation stays controlled because every action needs evidence.",
       "when": "WHEN",
       "then": "THEN",
       "rules": {
-        "stock": { "when": "If stock drops below par", "then": "Create purchase suggestion" },
-        "margin": { "when": "If margin falls", "then": "Flag finance review" },
-        "transfer": { "when": "If transfer is delayed", "then": "Notify receiving branch" }
+        "stock": { "when": "When stock falls below policy or a count variance appears", "then": "Queue adjustment or purchase review with source evidence" },
+        "margin": { "when": "When payment evidence does not match the ledger", "then": "Create suspense and block close until reviewed" },
+        "transfer": { "when": "When payroll, fiscal, or supplier payment needs approval", "then": "Route maker-checker review before posting or release" }
       }
     },
     "trust": {
       "eyebrow": "trust",
-      "title": "Trust gets earned every day in plain view.",
+      "title": "Trust is built from tenant scope, source evidence, and controlled posting.",
       "points": {
-        "permissions": { "title": "Role-based permissions", "copy": "Give teams only the access their branch, role, and workflow require." },
-        "audit": { "title": "Audit-friendly workflows", "copy": "Approvals, stock movement, and finance events stay traceable." },
-        "branches": { "title": "Branch-level controls", "copy": "Standardize the operating model without flattening local realities." },
-        "finance": { "title": "Clear financial visibility", "copy": "See cash, margins, receivables, payables, and drift together." }
+        "permissions": { "title": "Tenant, RBAC, and step-up controls", "copy": "Keep every action scoped to the right organization, branch, role, and assurance level." },
+        "audit": { "title": "Source-linked audit trails", "copy": "Receipts, movements, approvals, journals, and close packs preserve their supporting evidence." },
+        "branches": { "title": "Branch and device controls", "copy": "Model branches, warehouses, POS terminals, drawers, and offline replay without losing accountability." },
+        "finance": { "title": "Ledger-backed financial truth", "copy": "Cash, margins, receivables, payables, taxes, reconciliation, and close status share one record." }
       }
     },
     "useCases": {
       "eyebrow": "use cases",
-      "title": "Adapt the same operating spine to the way you sell.",
+      "title": "Adapt the same control spine to each OHADA SMB operating model.",
       "items": {
-        "retail": { "title": "Retail chains", "copy": "Standardize selling, purchasing, and stock checks across many branches.", "label": "multi-branch" },
-        "wholesale": { "title": "Wholesale teams", "copy": "Protect margins while coordinating credit, orders, and supplier lead times.", "label": "credit aware" },
-        "restaurants": { "title": "Restaurants", "copy": "Track fast-moving ingredients, recipes, drawers, and shift-level accountability.", "label": "shift-ready" },
-        "pharmacies": { "title": "Pharmacies", "copy": "Watch expiry, batch movement, branch transfers, and audit-sensitive access.", "label": "batch control" },
-        "service": { "title": "Service counters", "copy": "Keep customer accounts, payments, orders, and staff permissions aligned.", "label": "account ledgers" }
+        "retail": { "title": "Retail chains", "copy": "Connect branch sales, drawer sessions, stock counts, replenishment, and daily cash evidence.", "label": "multi-branch" },
+        "wholesale": { "title": "Wholesale teams", "copy": "Coordinate supplier terms, purchase orders, customer receivables, payment evidence, and margin risk.", "label": "credit aware" },
+        "restaurants": { "title": "Restaurants", "copy": "Track fast-moving inputs, shift accountability, cash drawers, purchasing, and stock variance.", "label": "shift-ready" },
+        "pharmacies": { "title": "Pharmacies", "copy": "Control batches, expiry, transfers, restricted permissions, audit evidence, and supplier follow-up.", "label": "batch control" },
+        "service": { "title": "Service counters", "copy": "Align orders, customer balances, payments, payroll presence, and accountant-ready records.", "label": "account ledgers" }
       }
     },
     "pricing": {
       "eyebrow": "pricing",
-      "title": "Start lean. Add modules as the business grows.",
-      "popular": "most popular",
-      "choose": "Choose plan",
+      "title": "Adopt the platform by control depth, not by slogans.",
+      "popular": "recommended rollout",
+      "choose": "Create workspace",
       "plans": {
-        "starter": { "name": "Starter", "price": "$49", "description": "For one growing operation", "features": "Inventory, POS, purchasing, reports" },
-        "growth": { "name": "Growth", "price": "$149", "description": "For multi-branch teams", "features": "Transfers, approvals, roles, finance dashboards" },
-        "enterprise": { "name": "Enterprise", "price": "Custom", "description": "For governed rollouts", "features": "Audit support, custom workflows, priority onboarding" }
+        "starter": { "name": "Core operations", "price": "Start", "description": "For teams centralizing POS, stock, and purchasing", "features": "Inventory, POS, customers, suppliers, purchase orders, dashboard basics" },
+        "growth": { "name": "Control layer", "price": "Scale", "description": "For teams adding finance, roles, and branch controls", "features": "Finance, cash drawers, RBAC, locations, analytics, approval queues" },
+        "enterprise": { "name": "Assurance layer", "price": "Governed", "description": "For regulated OHADA workflows and accountant-ready operations", "features": "Accounting, close assurance, compliance, reconciliation, payroll, offline sync" }
       }
     },
     "finalCta": {
       "eyebrow": "ready",
-      "title": "The clarity of a dashboard. The control of an operating system.",
-      "copy": "Connect the modules your team already needs and give every branch the same source of truth.",
-      "cta": "Start StockFlow"
+      "title": "Give daily operations the same discipline as period close.",
+      "copy": "Start with the modules your team runs today, then grow into OHADA accounting, compliance, reconciliation, payroll, and assurance without breaking the evidence trail.",
+      "cta": "Create workspace"
     },
     "footer": {
-      "homeAria": "StockFlow home",
-      "subtitle": "Retail operations, connected",
-      "copy": "A modern operating layer for inventory-heavy businesses that need cleaner stock control, faster selling, governed purchasing, and better financial visibility.",
+      "homeAria": "AqStoqFlow home",
+      "subtitle": "OHADA SMB operations, controlled",
+      "copy": "A ledger-first operating layer for inventory-heavy businesses that need POS, stock, purchasing, finance, compliance, payroll, reconciliation, and branch controls to speak the same truth.",
       "navAria": "Footer",
-      "copyright": "StockFlow. Built for disciplined operations."
+      "copyright": "AqStoqFlow. Built for disciplined OHADA operations."
     }
   },
   "purchaseOrders": {

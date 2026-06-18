@@ -2,10 +2,9 @@
 
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { ReportTrustBanner } from "@/components/reports/report-trust-banner"
 import { ArrowDownRight, ArrowUpRight, DollarSign, TrendingDown, TrendingUp } from "lucide-react"
-// import { CashFlowReportComponent } from "@/components/reports/cash-flow-report"
 
-// TODO: Update the import path if 'financial-reports' is located elsewhere, or create the file if missing.
 import { type CashFlowReport } from "@/actions/analytics/financial-reports"
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 
@@ -44,6 +43,8 @@ export function CashFlowReportComponent({ report }: CashFlowReportProps) {
           <p className="text-muted-foreground">{report.period}</p>
         </div>
       </div>
+
+      <ReportTrustBanner provenance={report.provenance} />
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

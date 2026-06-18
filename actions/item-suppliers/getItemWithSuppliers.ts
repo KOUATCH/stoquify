@@ -1,8 +1,8 @@
 "use server"
 
+import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses"
 import { db } from "@/prisma/db"
 import type { ItemWithSupplierDTO, SupplierItemResponse } from "@/types/itemTypes"
-import { Prisma } from "@prisma/client"
 
 /**
  * Retrieves an item with its associated suppliers via ItemSupplier (supplierItems)
@@ -117,28 +117,15 @@ export default async function getItemWithSuppliersById(id: string): Promise<Supp
 
     }
   } catch (error) {
-    console.error(`Error fetching item suppliers for item ${id}:`, error)
-    let errorMessage = "Failed to fetch item suppliers"
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      switch (error.code) {
-        case "P2025":
-          errorMessage = "Item not found"
-          break
-        case "P2002":
-          errorMessage = "Database constraint violation"
-          break
-        default:
-          errorMessage = `Database error: ${error.message}`
-      }
-    } else if (error instanceof Prisma.PrismaClientValidationError) {
-      errorMessage = "Invalid query parameters"
-    } else if (error instanceof Error) {
-      errorMessage = error.message
-    }
     return {
       success: false,
       data: [],
-      error: errorMessage
+      error: safeLoggedActionErrorMessage(
+        "Error fetching item suppliers for item",
+        error,
+        { action: "getItemWithSuppliersById" },
+        "Failed to fetch item suppliers",
+      )
 
     }
   }

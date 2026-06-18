@@ -11,7 +11,12 @@ jest.mock("@/prisma/db", () => ({
   },
 }))
 
-import { ensureDefaultPOSPostingRules } from "../default-posting-rules.service"
+import {
+  ensureDefaultAPPostingRules,
+  ensureDefaultPayrollPostingRules,
+  ensureDefaultPOSPostingRules,
+  getDefaultPostingRuleTemplates,
+} from "../default-posting-rules.service"
 
 const mockTx = {
   chartOfAccount: { findMany: jest.fn() },
@@ -26,6 +31,8 @@ const mappedAccounts = [
   "ACCOUNTS_RECEIVABLE",
   "SALES_REVENUE",
   "OUTPUT_VAT",
+  "ACCOUNTS_PAYABLE",
+  "INPUT_VAT",
   "COGS",
   "INVENTORY",
   "CASH_ON_HAND",
@@ -34,6 +41,11 @@ const mappedAccounts = [
   "BANK",
   "CHEQUE_CLEARING",
   "STORE_CREDIT_LIABILITY",
+  "PAYROLL_GROSS_EXPENSE",
+  "PAYROLL_EMPLOYER_CHARGE_EXPENSE",
+  "EMPLOYEE_PAYABLES",
+  "PAYROLL_WITHHOLDING_PAYABLE",
+  "SOCIAL_CONTRIBUTIONS_PAYABLE",
 ].map((mappingKey, index) => ({
   id: `acct-${index + 1}`,
   code: String(400 + index),
@@ -222,5 +234,113 @@ describe("default POS posting rules", () => {
     )
 
     await expect(ensureDefaultPOSPostingRules("org-1", "user-1", mockTx as never)).rejects.toThrow(/CARD_CLEARING/)
+  })
+
+  it("exposes balanced AP invoice and supplier payment recipes for accounting readiness", async () => {
+    const apRules = await ensureDefaultAPPostingRules("org-1", "user-1", mockTx as never)
+
+    expect(apRules).toHaveLength(2)
+    expect(getDefaultPostingRuleTemplates().map((rule) => rule.code)).toEqual(
+      expect.arrayContaining(["AP-SUPPLIER-INVOICE", "AP-SUPPLIER-PAYMENT"]),
+    )
+    expect(mockTx.postingRule.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          code: "AP-SUPPLIER-INVOICE",
+          lines: expect.objectContaining({
+            create: expect.arrayContaining([
+              expect.objectContaining({
+                mappingKey: "INVENTORY",
+                side: PostingRuleLineSide.DEBIT,
+                amountSource: PostingRuleAmountSource.NET_AMOUNT,
+              }),
+              expect.objectContaining({
+                mappingKey: "INPUT_VAT",
+                side: PostingRuleLineSide.DEBIT,
+                amountSource: PostingRuleAmountSource.TAX_AMOUNT,
+              }),
+              expect.objectContaining({
+                mappingKey: "ACCOUNTS_PAYABLE",
+                side: PostingRuleLineSide.CREDIT,
+                amountSource: PostingRuleAmountSource.GROSS_AMOUNT,
+              }),
+            ]),
+          }),
+        }),
+      }),
+    )
+    expect(mockTx.postingRule.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          code: "AP-SUPPLIER-PAYMENT",
+          lines: expect.objectContaining({
+            create: expect.arrayContaining([
+              expect.objectContaining({ mappingKey: "ACCOUNTS_PAYABLE", side: PostingRuleLineSide.DEBIT }),
+              expect.objectContaining({ mappingKey: "BANK", condition: { paymentMethod: "BANK_TRANSFER" } }),
+              expect.objectContaining({ mappingKey: "MOBILE_MONEY_CLEARING", condition: { paymentMethod: "MOBILE_MONEY" } }),
+            ]),
+          }),
+        }),
+      }),
+    )
+  })
+
+  it("exposes balanced payroll run and payroll payment recipes for accounting readiness", async () => {
+    const payrollRules = await ensureDefaultPayrollPostingRules("org-1", "user-1", mockTx as never)
+
+    expect(payrollRules).toHaveLength(2)
+    expect(getDefaultPostingRuleTemplates().map((rule) => rule.code)).toEqual(
+      expect.arrayContaining(["PAYROLL-RUN", "PAYROLL-PAYMENT"]),
+    )
+    expect(mockTx.postingRule.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          code: "PAYROLL-RUN",
+          lines: expect.objectContaining({
+            create: expect.arrayContaining([
+              expect.objectContaining({
+                mappingKey: "PAYROLL_GROSS_EXPENSE",
+                side: PostingRuleLineSide.DEBIT,
+                amountSource: PostingRuleAmountSource.GROSS_AMOUNT,
+              }),
+              expect.objectContaining({
+                mappingKey: "PAYROLL_EMPLOYER_CHARGE_EXPENSE",
+                side: PostingRuleLineSide.DEBIT,
+                amountSource: PostingRuleAmountSource.EMPLOYER_CHARGE_AMOUNT,
+              }),
+              expect.objectContaining({
+                mappingKey: "EMPLOYEE_PAYABLES",
+                side: PostingRuleLineSide.CREDIT,
+                amountSource: PostingRuleAmountSource.NET_PAYABLE_AMOUNT,
+              }),
+              expect.objectContaining({
+                mappingKey: "PAYROLL_WITHHOLDING_PAYABLE",
+                side: PostingRuleLineSide.CREDIT,
+                amountSource: PostingRuleAmountSource.EMPLOYEE_DEDUCTION_AMOUNT,
+              }),
+              expect.objectContaining({
+                mappingKey: "SOCIAL_CONTRIBUTIONS_PAYABLE",
+                side: PostingRuleLineSide.CREDIT,
+                amountSource: PostingRuleAmountSource.EMPLOYER_CHARGE_AMOUNT,
+              }),
+            ]),
+          }),
+        }),
+      }),
+    )
+    expect(mockTx.postingRule.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          code: "PAYROLL-PAYMENT",
+          lines: expect.objectContaining({
+            create: expect.arrayContaining([
+              expect.objectContaining({ mappingKey: "EMPLOYEE_PAYABLES", side: PostingRuleLineSide.DEBIT }),
+              expect.objectContaining({ mappingKey: "BANK", condition: { paymentMethod: "BANK_TRANSFER" } }),
+              expect.objectContaining({ mappingKey: "MOBILE_MONEY_CLEARING", condition: { paymentMethod: "MOBILE_MONEY" } }),
+            ]),
+          }),
+        }),
+      }),
+    )
   })
 })

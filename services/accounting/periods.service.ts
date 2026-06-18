@@ -1,4 +1,11 @@
-import { JournalEntryStatus, LedgerPostingBatchStatus, Prisma } from "@prisma/client"
+import {
+  JournalEntryStatus,
+  LedgerPostingBatchStatus,
+  PaymentExceptionStatus,
+  ReconciliationRunStatus,
+  SuspenseStatus,
+  Prisma,
+} from "@prisma/client"
 
 import { db } from "@/prisma/db"
 import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
@@ -93,7 +100,7 @@ export async function createFiscalYearWithPeriods(
   actorId?: string | null,
 ) {
   if (input.endDate <= input.startDate) {
-    throw new Error("Fiscal year end date must be after start date")
+    throw new BusinessRuleError("Fiscal year end date must be after start date")
   }
 
   return db.$transaction(async (tx) => {
@@ -167,6 +174,9 @@ export type PeriodClosePreflight = {
   draftEntryCount: number
   unresolvedPostingBatchCount: number
   unlinkedPostedEntryCount: number
+  openReconciliationExceptionCount: number
+  openReconciliationSuspenseCount: number
+  unsignedReconciliationRunCount: number
   trialBalanceIssues: Array<{
     currency: string
     debit: Prisma.Decimal
@@ -186,7 +196,7 @@ export async function getPeriodClosePreflight(
   if (!period) throw new NotFoundError("Accounting period not found")
   assertOpenPeriod(period, period.endDate, organizationId)
 
-  const [draftEntryCount, unresolvedPostingBatchCount, unlinkedPostedEntryCount, lines] = await Promise.all([
+  const [draftEntryCount, unresolvedPostingBatchCount, unlinkedPostedEntryCount, openReconciliationExceptionCount, openReconciliationSuspenseCount, unsignedReconciliationRunCount, lines] = await Promise.all([
     tx.journalEntry.count({
       where: { organizationId, periodId, status: JournalEntryStatus.DRAFT },
     }),
@@ -203,6 +213,49 @@ export async function getPeriodClosePreflight(
         periodId,
         status: { in: [JournalEntryStatus.POSTED, JournalEntryStatus.REVERSED] },
         postingBatchId: null,
+      },
+    }),
+    tx.paymentException.count({
+      where: {
+        organizationId,
+        status: {
+          in: [
+            PaymentExceptionStatus.OPEN,
+            PaymentExceptionStatus.ASSIGNED,
+            PaymentExceptionStatus.ACKNOWLEDGED,
+            PaymentExceptionStatus.ESCALATED,
+            PaymentExceptionStatus.RESOLUTION_PROPOSED,
+            PaymentExceptionStatus.REOPENED,
+          ],
+        },
+        reconciliationRun: {
+          businessDate: { gte: period.startDate, lte: period.endDate },
+        },
+      },
+    }),
+    tx.suspenseItem.count({
+      where: {
+        organizationId,
+        status: {
+          in: [
+            SuspenseStatus.OPEN,
+            SuspenseStatus.ASSIGNED,
+            SuspenseStatus.IN_REVIEW,
+            SuspenseStatus.POSTED_TO_SUSPENSE,
+            SuspenseStatus.RESOLUTION_PROPOSED,
+            SuspenseStatus.REOPENED,
+          ],
+        },
+        reconciliationRun: {
+          businessDate: { gte: period.startDate, lte: period.endDate },
+        },
+      },
+    }),
+    tx.reconciliationRun.count({
+      where: {
+        organizationId,
+        businessDate: { gte: period.startDate, lte: period.endDate },
+        status: { notIn: [ReconciliationRunStatus.SIGNED, ReconciliationRunStatus.VOIDED] },
       },
     }),
     tx.journalEntryLine.findMany({
@@ -240,6 +293,9 @@ export async function getPeriodClosePreflight(
     draftEntryCount,
     unresolvedPostingBatchCount,
     unlinkedPostedEntryCount,
+    openReconciliationExceptionCount,
+    openReconciliationSuspenseCount,
+    unsignedReconciliationRunCount,
     trialBalanceIssues,
   }
 }
@@ -257,6 +313,18 @@ export function getPeriodClosePreflightFailures(preflight: PeriodClosePreflight)
 
   if (preflight.unlinkedPostedEntryCount > 0) {
     failures.push(`${preflight.unlinkedPostedEntryCount} posted journal entr${preflight.unlinkedPostedEntryCount === 1 ? "y is" : "ies are"} missing a posting batch link`)
+  }
+
+  if (preflight.openReconciliationExceptionCount > 0) {
+    failures.push(`${preflight.openReconciliationExceptionCount} open payment reconciliation exception${preflight.openReconciliationExceptionCount === 1 ? "" : "s"} must be resolved`)
+  }
+
+  if (preflight.openReconciliationSuspenseCount > 0) {
+    failures.push(`${preflight.openReconciliationSuspenseCount} open payment reconciliation suspense item${preflight.openReconciliationSuspenseCount === 1 ? "" : "s"} must be resolved`)
+  }
+
+  if (preflight.unsignedReconciliationRunCount > 0) {
+    failures.push(`${preflight.unsignedReconciliationRunCount} payment reconciliation run${preflight.unsignedReconciliationRunCount === 1 ? "" : "s"} must be signed or voided`)
   }
 
   for (const issue of preflight.trialBalanceIssues) {
@@ -294,6 +362,9 @@ export async function closeAccountingPeriod(
         draftEntryCount: preflight.draftEntryCount,
         unresolvedPostingBatchCount: preflight.unresolvedPostingBatchCount,
         unlinkedPostedEntryCount: preflight.unlinkedPostedEntryCount,
+        openReconciliationExceptionCount: preflight.openReconciliationExceptionCount,
+        openReconciliationSuspenseCount: preflight.openReconciliationSuspenseCount,
+        unsignedReconciliationRunCount: preflight.unsignedReconciliationRunCount,
       },
     })
     await auditSensitiveActionDecision(tx, controlDecision)
@@ -318,6 +389,9 @@ export async function closeAccountingPeriod(
         draftEntryCount: preflight.draftEntryCount,
         unresolvedPostingBatchCount: preflight.unresolvedPostingBatchCount,
         unlinkedPostedEntryCount: preflight.unlinkedPostedEntryCount,
+        openReconciliationExceptionCount: preflight.openReconciliationExceptionCount,
+        openReconciliationSuspenseCount: preflight.openReconciliationSuspenseCount,
+        unsignedReconciliationRunCount: preflight.unsignedReconciliationRunCount,
       },
     })
 

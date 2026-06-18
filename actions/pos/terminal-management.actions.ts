@@ -2,7 +2,9 @@
 
 import { revalidatePath, revalidateTag } from "next/cache"
 import { Prisma } from "@prisma/client"
+import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses"
 import { err, ok } from "@/services/_shared/action-response"
+import { BusinessRuleError, ForbiddenError } from "@/services/_shared/action-errors"
 import { requireOrg } from "@/services/_shared/require-org"
 import {
   archiveTerminalForManagement,
@@ -79,11 +81,11 @@ async function assertOrganizationAccess(requestedOrganizationId?: string | null)
   const scopedOrganizationId = cleanText(requestedOrganizationId) ?? orgId
 
   if (!scopedOrganizationId) {
-    throw new Error("Organization is required")
+    throw new BusinessRuleError("Organization is required")
   }
 
   if (scopedOrganizationId !== orgId && !user.permissions.includes("*")) {
-    throw new Error("You do not have access to this organization")
+    throw new ForbiddenError("You do not have access to this organization")
   }
 
   return scopedOrganizationId
@@ -109,8 +111,12 @@ export async function getTerminalManagementData(organizationId: string) {
 
     return ok(data)
   } catch (error) {
-    console.error("Error fetching terminal management data:", error)
-    return err<TerminalManagementData>(getActionErrorMessage(error, "Failed to fetch terminal management data"))
+    return err<TerminalManagementData>(safeLoggedActionErrorMessage(
+      "Error fetching terminal management data",
+      error,
+      { action: "getTerminalManagementData" },
+      getActionErrorMessage(error, "Failed to fetch terminal management data"),
+    ))
   }
 }
 
@@ -128,8 +134,12 @@ export async function createManagedTerminal(organizationId: string, input: Termi
 
     return ok(terminal)
   } catch (error) {
-    console.error("Error creating managed terminal:", error)
-    return err<TerminalManagementRow>(getActionErrorMessage(error, "Failed to create terminal"))
+    return err<TerminalManagementRow>(safeLoggedActionErrorMessage(
+      "Error creating managed terminal",
+      error,
+      { action: "createManagedTerminal" },
+      getActionErrorMessage(error, "Failed to create terminal"),
+    ))
   }
 }
 
@@ -157,8 +167,12 @@ export async function updateManagedTerminal(
 
     return ok(terminal)
   } catch (error) {
-    console.error("Error updating managed terminal:", error)
-    return err<TerminalManagementRow>(getActionErrorMessage(error, "Failed to update terminal"))
+    return err<TerminalManagementRow>(safeLoggedActionErrorMessage(
+      "Error updating managed terminal",
+      error,
+      { action: "updateManagedTerminal" },
+      getActionErrorMessage(error, "Failed to update terminal"),
+    ))
   }
 }
 
@@ -176,7 +190,11 @@ export async function archiveManagedTerminal(organizationId: string, terminalId:
 
     return ok(terminal)
   } catch (error) {
-    console.error("Error archiving managed terminal:", error)
-    return err<{ id: string }>(getActionErrorMessage(error, "Failed to deactivate terminal"))
+    return err<{ id: string }>(safeLoggedActionErrorMessage(
+      "Error archiving managed terminal",
+      error,
+      { action: "archiveManagedTerminal" },
+      getActionErrorMessage(error, "Failed to deactivate terminal"),
+    ))
   }
 }

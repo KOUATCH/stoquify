@@ -3,6 +3,7 @@
 import type { FinancialSummaryReport } from "@/actions/analytics/analytics/financial-reports"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { ReportTrustBanner } from "@/components/reports/report-trust-banner"
 import { CreditCard, DollarSign, Package, ShoppingCart, TrendingDown, TrendingUp } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 
@@ -31,6 +32,8 @@ export function FinancialSummaryReportComponent({ report }: FinancialSummaryRepo
           <p className="text-muted-foreground">{report.period}</p>
         </div>
       </div>
+
+      <ReportTrustBanner provenance={report.provenance} />
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

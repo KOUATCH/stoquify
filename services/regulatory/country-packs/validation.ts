@@ -66,6 +66,12 @@ const REQUIRED_CAMEROON_PARAMETER_PATHS = [
   "filings.taxFilingNames",
   "holidays.fixed",
   "payments.providerLegality.mobileMoney",
+  "compliance.eInvoicing.capability",
+  "compliance.eInvoicing.requiredFields",
+  "compliance.eInvoicing.certificationPolicy",
+  "compliance.eInvoicing.authorityChannels",
+  "compliance.eInvoicing.manualPortalFallback",
+  "compliance.eInvoicing.artifactExpectations",
   "labels.business",
 ]
 
@@ -96,6 +102,14 @@ function getPathValue(root: unknown, path: string): unknown {
 export function getParameterEnvelopeArray(pack: CountryPack, parameterPath: string) {
   const value = getPathValue(pack.parameters, parameterPath)
   return isRegulatoryEnvelopeArray(value) ? value : null
+}
+
+function getCapabilityStatusForPath(pack: CountryPack, parameterPath: string) {
+  const matchingKey = Object.keys(pack.header.capabilityMatrix)
+    .sort((left, right) => right.length - left.length)
+    .find((key) => parameterPath === key || parameterPath.startsWith(`${key}.`))
+
+  return matchingKey ? pack.header.capabilityMatrix[matchingKey] : null
 }
 
 export function selectEffectiveEnvelope<T = unknown>(
@@ -167,12 +181,17 @@ function validateEnvelopeArray(
       })
     }
 
-    if (requireNoExpertReview && envelope.verificationStatus === "REQUIRES_EXPERT_REVIEW") {
+    if (
+      requireNoExpertReview &&
+      envelope.verificationStatus === "REQUIRES_EXPERT_REVIEW" &&
+      getCapabilityStatusForPath(pack, path) !== "REQUIRES_EXPERT_REVIEW"
+    ) {
       issues.push({
         code: "EXPERT_REVIEW_REQUIRED",
         severity: "error",
         path: `${path}[${index}].verificationStatus`,
-        message: "Published packs cannot contain parameters still requiring expert review.",
+        message:
+          "Published packs can only contain expert-review placeholders under an explicit REQUIRES_EXPERT_REVIEW capability.",
       })
     }
 

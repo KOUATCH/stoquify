@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache"
 import { getSession } from "@/lib/auth-server"
 import { db } from "@/prisma/db"
 import { Prisma } from "@prisma/client"
+import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses"
+import { AuthRequiredError, BusinessRuleError, ForbiddenError, NotFoundError } from "@/services/_shared/action-errors"
 import {
   createUnitForManagement,
   getUnitManagementDataForOrg,
@@ -101,13 +103,13 @@ async function assertOrganizationAccess(organizationId: string) {
   const requestedOrganizationId = cleanText(organizationId)
 
   if (!requestedOrganizationId) {
-    throw new Error("Organization is required")
+    throw new BusinessRuleError("Organization is required")
   }
 
   const session = await getSession()
 
   if (!session?.user?.id) {
-    throw new Error("Unauthorized")
+    throw new AuthRequiredError("Unauthorized")
   }
 
   const user = await db.user.findFirst({
@@ -126,7 +128,7 @@ async function assertOrganizationAccess(organizationId: string) {
   })
 
   if (!user) {
-    throw new Error("Unauthorized")
+    throw new AuthRequiredError("Unauthorized")
   }
 
   const permissions = new Set([
@@ -135,7 +137,7 @@ async function assertOrganizationAccess(organizationId: string) {
   ])
 
   if (user.organizationId !== requestedOrganizationId && !permissions.has("*")) {
-    throw new Error("You do not have access to this organization")
+    throw new ForbiddenError("You do not have access to this organization")
   }
 
   const organization = await db.organization.findFirst({
@@ -148,7 +150,7 @@ async function assertOrganizationAccess(organizationId: string) {
   })
 
   if (!organization) {
-    throw new Error("Organization not found or inactive")
+    throw new NotFoundError("Organization not found or inactive")
   }
 
   return organization.id
@@ -174,10 +176,14 @@ export async function getUnitManagementData(
       data,
     }
   } catch (error) {
-    console.error("Error fetching unit management data:", error)
     return {
       success: false,
-      error: getActionErrorMessage(error, "Failed to fetch unit management data"),
+      error: safeLoggedActionErrorMessage(
+        "Error fetching unit management data",
+        error,
+        { action: "getUnitManagementData" },
+        getActionErrorMessage(error, "Failed to fetch unit management data"),
+      ),
     }
   }
 }
@@ -199,10 +205,14 @@ export async function createManagedUnit(
 
     return { success: true, data: row }
   } catch (error) {
-    console.error("Error creating managed unit:", error)
     return {
       success: false,
-      error: getActionErrorMessage(error, "Failed to create unit"),
+      error: safeLoggedActionErrorMessage(
+        "Error creating managed unit",
+        error,
+        { action: "createManagedUnit" },
+        getActionErrorMessage(error, "Failed to create unit"),
+      ),
     }
   }
 }
@@ -231,10 +241,14 @@ export async function updateManagedUnit(
 
     return { success: true, data: row }
   } catch (error) {
-    console.error("Error updating managed unit:", error)
     return {
       success: false,
-      error: getActionErrorMessage(error, "Failed to update unit"),
+      error: safeLoggedActionErrorMessage(
+        "Error updating managed unit",
+        error,
+        { action: "updateManagedUnit" },
+        getActionErrorMessage(error, "Failed to update unit"),
+      ),
     }
   }
 }
@@ -256,10 +270,14 @@ export async function deleteManagedUnit(
 
     return { success: true, data }
   } catch (error) {
-    console.error("Error deleting managed unit:", error)
     return {
       success: false,
-      error: getActionErrorMessage(error, "Failed to remove unit"),
+      error: safeLoggedActionErrorMessage(
+        "Error deleting managed unit",
+        error,
+        { action: "deleteManagedUnit" },
+        getActionErrorMessage(error, "Failed to remove unit"),
+      ),
     }
   }
 }

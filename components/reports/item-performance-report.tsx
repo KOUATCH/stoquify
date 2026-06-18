@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { ReportTrustBanner } from "@/components/reports/report-trust-banner"
 import { AlertTriangle, Package, Search, TrendingDown, TrendingUp } from "lucide-react"
 import { useState } from "react"
 
@@ -19,6 +20,7 @@ export function ItemPerformanceReportComponent({ reports, focusItemId }: ItemPer
   const [showFocusedOnly, setShowFocusedOnly] = useState(Boolean(focusItemId))
   const focusedReport = focusItemId ? reports.find((report) => report.itemId === focusItemId) : undefined
   const reportSource = focusedReport && showFocusedOnly ? [focusedReport] : reports
+  const provenance = focusedReport?.provenance ?? reports[0]?.provenance
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -96,6 +98,8 @@ export function ItemPerformanceReportComponent({ reports, focusItemId }: ItemPer
           </Button>
         ) : null}
       </div>
+
+      <ReportTrustBanner provenance={provenance} />
 
       {/* Filters */}
       <Card>

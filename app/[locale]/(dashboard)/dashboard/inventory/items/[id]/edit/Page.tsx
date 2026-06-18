@@ -4,7 +4,7 @@ import getOrgTaxRates from "@/actions/taxRate/getOrgTaxRates"
 import getOrgUnits from "@/actions/units/getOrgUnits"
 import { getAuthenticatedUser } from "@/config/useAuth"
 import { localizePath, pickLocale } from "@/i18n/routing"
-import { db } from "@/prisma/db"
+import { getItemEditDTO } from "@/services/item/item.service"
 import { redirect } from "next/navigation"
 import EditItemClient from "./EditItemClient"
 
@@ -19,9 +19,7 @@ export default async function ItemsEditPage({ params }: Props) {
   const userOrg = user?.organizationId
   if (!userOrg) redirect(localizePath("/login", locale))
 
-  const itemData = await db.item.findFirst({
-    where: { id, organizationId: userOrg },
-  })
+  const itemData = await getItemEditDTO(userOrg, id)
   if (!itemData) {
     return (
       <div className="container mx-auto py-8">

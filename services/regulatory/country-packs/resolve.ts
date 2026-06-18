@@ -117,7 +117,11 @@ export function resolveRegulatoryParameter<TValue = unknown>(
   const pack = selectCountryPack({ ...context, countryCode }, date)
   const capabilityStatus = resolveCapabilityStatus(pack, parameterPath)
 
-  if (capabilityStatus === "NOT_SUPPORTED") {
+  if (
+    capabilityStatus === "NOT_SUPPORTED" ||
+    capabilityStatus === "NOT_YET_SUPPORTED" ||
+    capabilityStatus === "OUT_OF_SCOPE"
+  ) {
     throw new RegulatoryPackError(
       "CAPABILITY_NOT_SUPPORTED",
       `Regulatory parameter "${parameterPath}" is not supported by pack ${pack.header.packVersion}.`,

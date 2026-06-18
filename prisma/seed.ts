@@ -17,7 +17,7 @@ import {
   UnitType,
 } from "@prisma/client"
 
-import { DEFAULT_POS_POSTING_RULES } from "../services/accounting/default-posting-rules"
+import { DEFAULT_POSTING_RULES } from "../services/accounting/default-posting-rules"
 import { resolveCameroonStandardVatRateBps } from "../services/regulatory/country-packs/resolve"
 
 const prisma = new PrismaClient()
@@ -792,7 +792,7 @@ const seedAccounting = async (actorId: string) => {
     })
   }
 
-  for (const template of DEFAULT_POS_POSTING_RULES) {
+  for (const template of DEFAULT_POSTING_RULES) {
     await prisma.postingRule.create({
       data: {
         id: `posting_rule_${template.code.toLowerCase().replace(/[^a-z0-9]+/g, "_")}`,
@@ -831,7 +831,7 @@ const seedAccounting = async (actorId: string) => {
       message: "Demo accounting control plane seeded",
       metadata: {
         fiscalYear: fiscalYear.name,
-        postingRules: DEFAULT_POS_POSTING_RULES.map((rule) => rule.code),
+        postingRules: DEFAULT_POSTING_RULES.map((rule) => rule.code),
       },
     },
   })

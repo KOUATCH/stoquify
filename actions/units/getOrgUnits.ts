@@ -1,5 +1,6 @@
 "use server"
 
+import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses"
 import { resolveActionOrganization } from "@/services/_shared/resolve-action-organization"
 import { listUnits } from "@/services/unit/unit.service"
 import type { UnitResponse } from "@/types/unit"
@@ -15,10 +16,14 @@ const getOrgUnits = async (orgId?: string | null): Promise<UnitResponse> => {
       data: units,
     }
   } catch (error) {
-    console.error("Error fetching units:", error)
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: safeLoggedActionErrorMessage(
+        "Error fetching units",
+        error,
+        { action: "getOrgUnits" },
+        "Failed to fetch units",
+      ),
       data: [],
     }
   }

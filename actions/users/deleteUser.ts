@@ -1,10 +1,10 @@
 
 
 "use server";
+import { safeStatusActionErrorResult } from "@/actions/_shared/safe-action-responses";
 import { getAuthenticatedUser } from "@/config/useAuth";
-import { hasAppPermission, safeUserSelect } from "@/lib/security/server-authz";
-import { logSecurityEvent, SecurityEventType } from "@/lib/security/audit-log";
-import { db } from "@/prisma/db";
+import { hasAppPermission } from "@/lib/security/server-authz";
+import { deactivateUserForOrganization } from "@/services/users/user-lifecycle.service";
 
 
 export async function deleteUser(id: string) {
@@ -28,51 +28,19 @@ export async function deleteUser(id: string) {
       };
     }
 
-    // Use a transaction for atomic operations
-    return await db.$transaction(async (tx) => {
-     
-const user= await tx.user.findFirst({
-  where:{id, organizationId: authUser.organizationId},
-  select:{
-    email:true,
-    organizationId:true
-  }
-})
-
-if (!user) {
-  throw new Error("User not found")
-}
-
-await tx.invite.deleteMany({
-  where:{email:user.email, organizationId:user.organizationId}
-});
-
-   const deletedUser=  await tx.user.delete({
-      where: {
-        id,
-      },
-      select: safeUserSelect,
-    });
-
-    void logSecurityEvent({
-      type: SecurityEventType.USER_DELETED,
-      userId: authUser.id,
+    const deactivatedUser = await deactivateUserForOrganization({
       organizationId: authUser.organizationId,
-      resource: id,
-      details: { deletedEmail: user.email },
-    })
+      targetUserId: id,
+      actorId: authUser.id,
+    });
 
     return {
       ok: true,
-  data:deletedUser
+      data: deactivatedUser
     };
-
-    })
 } catch (error) {
-    console.error("Error deleting user:", error);
-    return {
-      error: `Something went wrong, Please try again`,
-      status: 500,
-      data: null,
-    };
+    return safeStatusActionErrorResult(error, {
+      action: "users.delete",
+      component: "User",
+    }, "Something went wrong, Please try again");
 }}

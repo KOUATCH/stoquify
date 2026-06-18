@@ -1,4 +1,5 @@
 "use server"
+import { safeLoggedActionErrorMessage } from '@/actions/_shared/safe-action-responses';
 import { db } from '@/prisma/db';
 
 
@@ -18,8 +19,15 @@ const addItemSuppliers = async (itemId: string, supplierIds: string[]) => {
     revalidatePath(`/dashboard/inventory/items/${itemId}`)
     return{ success:true}
   } catch (error) {
-    console.log("Failed to add ItemSupplier", error)
-    throw new Error("Failed to add suppliers to item")
+    return {
+      success: false,
+      error: safeLoggedActionErrorMessage(
+        "Failed to add ItemSupplier",
+        error,
+        { action: "addItemSuppliers" },
+        "Failed to add suppliers to item",
+      ),
+    }
   }
  
 }

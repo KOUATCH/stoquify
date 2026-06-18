@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
-import { PurchaseOrderStatus } from "@prisma/client"
+import type { PurchaseOrderStatus } from "@/services/purchase-order/purchase-order.schemas"
 import {
   CheckCircle,
   FileText,

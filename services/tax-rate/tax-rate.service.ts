@@ -3,6 +3,7 @@ import { db } from "@/prisma/db"
 import { Prisma, TaxType } from "@prisma/client"
 import type { TaxRate as TaxRateModel } from "@prisma/client"
 import type { TaxRateDTO } from "@/types/taxRates"
+import { BusinessRuleError, ConflictError, NotFoundError } from "../_shared/action-errors"
 import { MAX_PAGE_SIZES } from "../_shared/pagination"
 import type {
   TaxRateCreateInput,
@@ -34,7 +35,7 @@ export type TaxRateManagementData = {
 
 export type TaxRateRemovalResult = {
   id: string
-  mode: "deleted" | "deactivated"
+  mode: "deactivated"
 }
 
 const TAX_TYPES = new Set(Object.values(TaxType))
@@ -90,7 +91,7 @@ async function assertUniqueTaxRateName(
   })
 
   if (conflict) {
-    throw new Error(`Tax rate "${nameEn}" already exists for this organisation`)
+    throw new ConflictError(`Tax rate "${nameEn}" already exists for this organisation`)
   }
 }
 
@@ -139,7 +140,7 @@ export async function updateTaxRate(
     where: { id, organizationId: orgId },
     select: { id: true, nameEn: true },
   })
-  if (!existing) throw new Error("Tax rate not found")
+  if (!existing) throw new NotFoundError("Tax rate not found")
 
   if (input.nameEn && input.nameEn !== existing.nameEn) {
     await assertUniqueTaxRateName(orgId, input.nameEn, id)
@@ -162,19 +163,15 @@ export async function updateTaxRate(
 export async function deleteTaxRate(orgId: string, id: string): Promise<TaxRateDTO> {
   const existing = await db.taxRate.findFirst({
     where: { id, organizationId: orgId },
-    select: {
-      id: true,
-      _count: { select: { items: true } },
-    },
+    select: { id: true },
   })
-  if (!existing) throw new Error("Tax rate not found")
+  if (!existing) throw new NotFoundError("Tax rate not found")
 
-  if (existing._count.items > 0) {
-    throw new Error("This tax rate is used by items. Deactivate it instead of deleting.")
-  }
-
-  const deleted = await db.taxRate.delete({ where: { id } })
-  return toDTO(deleted)
+  const deactivated = await db.taxRate.update({
+    where: { id },
+    data: { isActive: false, updatedAt: new Date() },
+  })
+  return toDTO(deactivated)
 }
 
 export async function getTaxRateManagementDataForOrg(
@@ -265,7 +262,7 @@ export async function createTaxRateForManagement(
   const row = await reloadTaxRateManagementRow(organizationId, taxRate.id)
 
   if (!row) {
-    throw new Error("Tax rate was created but could not be reloaded")
+    throw new BusinessRuleError("Tax rate was created but could not be reloaded")
   }
 
   return row
@@ -280,7 +277,7 @@ export async function updateTaxRateForManagement(
   const row = await reloadTaxRateManagementRow(organizationId, taxRateId)
 
   if (!row) {
-    throw new Error("Tax rate was updated but could not be reloaded")
+    throw new BusinessRuleError("Tax rate was updated but could not be reloaded")
   }
 
   return row
@@ -292,28 +289,20 @@ export async function removeTaxRateForManagement(
 ): Promise<TaxRateRemovalResult> {
   const taxRate = await db.taxRate.findFirst({
     where: { id: taxRateId, organizationId },
-    select: {
-      id: true,
-      _count: { select: { items: true } },
-    },
+    select: { id: true },
   })
 
   if (!taxRate) {
-    throw new Error("Tax rate not found")
+    throw new NotFoundError("Tax rate not found")
   }
 
-  if (taxRate._count.items > 0) {
-    await db.taxRate.update({
-      where: { id: taxRateId },
-      data: {
-        isActive: false,
-        updatedAt: new Date(),
-      },
-    })
+  await db.taxRate.update({
+    where: { id: taxRateId },
+    data: {
+      isActive: false,
+      updatedAt: new Date(),
+    },
+  })
 
-    return { id: taxRateId, mode: "deactivated" }
-  }
-
-  await db.taxRate.delete({ where: { id: taxRateId } })
-  return { id: taxRateId, mode: "deleted" }
+  return { id: taxRateId, mode: "deactivated" }
 }

@@ -6,6 +6,7 @@ import {
 } from "@prisma/client"
 
 import { db } from "@/prisma/db"
+import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
 import {
   assertBalancedJournalEntry,
   assertSameOrganizationAccounts,
@@ -155,9 +156,9 @@ async function assertJournalIsManualReady(
     where: { id: journalId, organizationId, isActive: true },
   })
 
-  if (!journal) throw new Error("Journal not found")
+  if (!journal) throw new NotFoundError("Journal not found")
   if (!journal.allowManualEntries) {
-    throw new Error("This journal does not allow manual entries")
+    throw new BusinessRuleError("This journal does not allow manual entries")
   }
 
   return journal
@@ -169,14 +170,14 @@ async function assertLinesUsePostableAccounts(
   tx: Prisma.TransactionClient,
 ) {
   if (lines.length < 2) {
-    throw new Error("Journal entry requires at least two lines")
+    throw new BusinessRuleError("Journal entry requires at least two lines")
   }
 
   const uniqueAccountIds = Array.from(new Set(lines.map((line) => line.accountId).filter(Boolean)))
 
   if (uniqueAccountIds.length !== lines.length) {
     const missing = lines.find((line) => !line.accountId)
-    if (missing) throw new Error("Every journal line requires an account")
+    if (missing) throw new BusinessRuleError("Every journal line requires an account")
   }
 
   const accounts = await tx.chartOfAccount.findMany({
@@ -191,7 +192,7 @@ async function assertLinesUsePostableAccounts(
   })
 
   if (accounts.length !== uniqueAccountIds.length) {
-    throw new Error("One or more journal accounts were not found")
+    throw new NotFoundError("One or more journal accounts were not found")
   }
 
   assertSameOrganizationAccounts(organizationId, accounts)
@@ -200,20 +201,20 @@ async function assertLinesUsePostableAccounts(
 
   for (const line of lines) {
     const account = accountById.get(line.accountId)
-    if (!account) throw new Error("One or more journal accounts were not found")
-    if (!account.isActive) throw new Error(`Account ${account.code} is inactive`)
-    if (account._count.children > 0) throw new Error(`Account ${account.code} has child accounts`)
-    if (!account.allowManualPost) throw new Error(`Account ${account.code} does not allow manual posting`)
+    if (!account) throw new NotFoundError("One or more journal accounts were not found")
+    if (!account.isActive) throw new BusinessRuleError(`Account ${account.code} is inactive`)
+    if (account._count.children > 0) throw new BusinessRuleError(`Account ${account.code} has child accounts`)
+    if (!account.allowManualPost) throw new BusinessRuleError(`Account ${account.code} does not allow manual posting`)
 
     const debit = toDecimal(line.debit)
     const credit = toDecimal(line.credit)
     if (debit.eq(0) && credit.eq(0)) {
-      throw new Error(`Journal line for account ${account.code} requires a debit or credit amount`)
+      throw new BusinessRuleError(`Journal line for account ${account.code} requires a debit or credit amount`)
     }
 
     const lineCurrency = normalizeCurrency(line.currency)
     if (account.currency && normalizeCurrency(account.currency) !== lineCurrency) {
-      throw new Error(`Account ${account.code} only accepts ${account.currency}`)
+      throw new BusinessRuleError(`Account ${account.code} only accepts ${account.currency}`)
     }
   }
 

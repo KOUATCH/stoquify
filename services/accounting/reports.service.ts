@@ -1,6 +1,12 @@
+import { createHash, randomUUID } from "node:crypto"
+
 import { JournalEntryStatus, Prisma } from "@prisma/client"
 
 import { db } from "@/prisma/db"
+import {
+  assertSensitiveActionAllowed,
+  evaluateAndAuditSensitiveAction,
+} from "@/services/controls/sensitive-action.service"
 
 export type TrialBalanceInput = {
   organizationId: string
@@ -15,6 +21,19 @@ export type GeneralLedgerInput = {
   accountId: string
   startDate?: Date | null
   endDate?: Date | null
+}
+
+export type ExportAccountingReportInput = {
+  organizationId: string
+  actorId?: string | null
+  actorPermissions: readonly string[]
+  reportType: "TRIAL_BALANCE" | "GENERAL_LEDGER"
+  fileType: "json" | "csv"
+  periodId?: string | null
+  accountId?: string | null
+  startDate?: Date | null
+  endDate?: Date | null
+  includeZeroBalance?: boolean
 }
 
 function decimalZero() {
@@ -34,6 +53,10 @@ function entryDateFilter(input: TrialBalanceInput | GeneralLedgerInput) {
       ...(input.endDate ? { lte: input.endDate } : {}),
     },
   }
+}
+
+function hashFilters(input: unknown) {
+  return `sha256:${createHash("sha256").update(JSON.stringify(input)).digest("hex")}`
 }
 
 export async function getTrialBalance(input: TrialBalanceInput) {
@@ -239,3 +262,67 @@ export async function getAccountingDashboardSummary(organizationId: string) {
   }
 }
 
+export async function exportAccountingReport(input: ExportAccountingReportInput) {
+  const normalizedFilters = {
+    reportType: input.reportType,
+    periodId: input.periodId || null,
+    accountId: input.accountId || null,
+    startDate: input.startDate?.toISOString() || null,
+    endDate: input.endDate?.toISOString() || null,
+    includeZeroBalance: input.includeZeroBalance ?? true,
+  }
+
+  const report =
+    input.reportType === "TRIAL_BALANCE"
+      ? await getTrialBalance({
+          organizationId: input.organizationId,
+          periodId: input.periodId,
+          startDate: input.startDate,
+          endDate: input.endDate,
+          includeZeroBalance: input.includeZeroBalance ?? true,
+        })
+      : await getGeneralLedger({
+          organizationId: input.organizationId,
+          accountId: input.accountId!,
+          startDate: input.startDate,
+          endDate: input.endDate,
+        })
+
+  const rowCount = Array.isArray(report) ? report.length : report.rows.length
+  const exportId = randomUUID()
+  const watermarkId = `acct-${input.organizationId}-${exportId}`
+  const filtersHash = hashFilters(normalizedFilters)
+
+  const decision = await db.$transaction((tx) =>
+    evaluateAndAuditSensitiveAction(tx, {
+      action: "accounting.export",
+      actorId: input.actorId,
+      organizationId: input.organizationId,
+      actorPermissions: input.actorPermissions,
+      lastAuthAt: Date.now(),
+      resourceType: "AccountingExport",
+      resourceId: exportId,
+      exportContext: {
+        scope: input.reportType,
+        filtersHash,
+        rowCount,
+        fileType: input.fileType,
+        sensitivity: "statutory",
+        watermarkId,
+      },
+      metadata: normalizedFilters,
+    }),
+  )
+  assertSensitiveActionAllowed(decision)
+
+  return {
+    exportId,
+    reportType: input.reportType,
+    fileType: input.fileType,
+    rowCount,
+    filtersHash,
+    watermarkId,
+    generatedAt: new Date().toISOString(),
+    data: report,
+  }
+}

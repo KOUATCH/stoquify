@@ -1,5 +1,8 @@
 import type { Prisma } from '@prisma/client'
-import { TransactionReferenceType, TransactionType } from '@prisma/client'
+import {
+  postGoodsReceiptStock,
+} from '@/services/inventory/inventory-stock-event.service'
+import { BusinessRuleError } from '@/services/_shared/action-errors'
 
 export type UpdateInventoryParams = {
   itemId: string
@@ -10,22 +13,13 @@ export type UpdateInventoryParams = {
   meta?: {
     notes?: string
     createdById?: string
-    referenceType?: 'GOODS_RECEIPT' // kept for future extension
+    referenceType?: 'GOODS_RECEIPT'
     referenceId?: string
     referenceNumber?: string
     serialNumbers?: string[]
     batchNumber?: string
     expiryDate?: Date
   }
-}
-
-type DecimalValue = Prisma.Decimal | number | string | null | undefined
-
-function toNumber(value: DecimalValue) {
-  if (value === null || value === undefined) return 0
-  if (typeof value === 'number') return value
-  if (typeof value === 'string') return Number(value) || 0
-  return value.toNumber()
 }
 
 // Overload 1: legacy positional signature
@@ -77,70 +71,36 @@ export async function updateInventoryLevels(
     meta = {},
   } = params
 
-  // Fetch current level
-  const level = await tx.inventoryLevel.findUnique({
-    where: { itemId_locationId: { itemId, locationId } },
-  })
+  if (meta.referenceType === 'GOODS_RECEIPT') {
+    if (!meta.referenceId) {
+      throw new BusinessRuleError('Goods receipt inventory updates require an explicit receipt source.')
+    }
 
-  const prevOnHand = toNumber(level?.quantityOnHand)
-  const newOnHand = prevOnHand + deltaQty
-  if (newOnHand < 0) {
-    throw new Error('Inventory on hand would go negative')
+    await postGoodsReceiptStock(
+      {
+        organizationId,
+        receiptId: meta.referenceId,
+        receiptNumber: meta.referenceNumber ?? meta.referenceId,
+        receivedById: meta.createdById,
+        lines: [
+          {
+            itemId,
+            locationId,
+            quantity: deltaQty,
+            unitCost,
+            notes: meta.notes,
+            batchNumber: meta.batchNumber,
+            serialNumbers: meta.serialNumbers,
+            expiryDate: meta.expiryDate,
+          },
+        ],
+      },
+      tx,
+    )
+    return
   }
 
-  // Weighted average cost
-  const prevAvg = toNumber(level?.averageCost)
-  const prevValue = prevAvg * prevOnHand
-  const inboundValue = unitCost * deltaQty
-  const newAvg = newOnHand > 0 ? (prevValue + inboundValue) / newOnHand : 0
-  const newTotalValue = newAvg * newOnHand
-
-  // Upsert inventory level
-  await tx.inventoryLevel.upsert({
-    where: { itemId_locationId: { itemId, locationId } },
-    create: {
-      itemId,
-      locationId,
-      quantityOnHand: newOnHand,
-      quantityReserved: 0,
-      quantityAvailable: newOnHand, // reserved 0 on create
-      quantityInTransit: 0,
-      quantityOnOrder: 0,
-      averageCost: +newAvg.toFixed(4),
-      totalValue: +newTotalValue.toFixed(2),
-      lastTransactionAt: new Date(),
-    },
-    update: {
-      quantityOnHand: newOnHand,
-      quantityAvailable:
-        toNumber(level?.quantityReserved) > newOnHand
-          ? 0
-          : newOnHand - toNumber(level?.quantityReserved),
-      averageCost: +newAvg.toFixed(4),
-      totalValue: +newTotalValue.toFixed(2),
-      lastTransactionAt: new Date(),
-    },
-  })
-
-  // Create inventory transaction
-  await tx.inventoryTransaction.create({
-    data: {
-      type: TransactionType.PURCHASE_RECEIPT,
-      quantity: deltaQty,
-      unitCost: unitCost,
-      totalCost: +(unitCost * deltaQty).toFixed(2),
-      notes: meta.notes,
-      itemId,
-      locationId,
-      organizationId,
-      createdById: meta.createdById,
-      referenceType: TransactionReferenceType.GOODS_RECEIPT,
-      referenceId: meta.referenceId,
-      referenceNumber: meta.referenceNumber,
-      batchNumber: meta.batchNumber,
-      serialNumbers: meta.serialNumbers ?? [],
-      expiryDate: meta.expiryDate,
-      balanceAfter: newOnHand,
-    },
-  })
+  throw new BusinessRuleError(
+    'Legacy generic inventory level updates are disabled. Use opening stock, goods receipt, or stock adjustment services.',
+  )
 }

@@ -95,13 +95,13 @@ const UserDropdownMenu = ({
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="group relative h-10 w-10 justify-center gap-3 rounded-xl border border-white/10 bg-white/[0.045] px-0 text-[#d3ddd8] transition-all duration-300 hover:bg-white/[0.09] hover:text-white 2xl:h-12 2xl:w-auto 2xl:justify-start 2xl:px-3"
+          className="dashboard-top-button group relative h-10 w-10 justify-center gap-3 rounded-xl px-0 transition-all duration-300 2xl:h-12 2xl:w-auto 2xl:justify-start 2xl:px-3"
         >
           {/* Enhanced Avatar with Status Indicator */}
           <div className="relative">
-            <Avatar className="h-8 w-8 ring-2 ring-white/15 transition-all duration-300 group-hover:scale-105 group-hover:ring-[#2dd4bf]/40 2xl:h-10 2xl:w-10">
+            <Avatar className="h-8 w-8 ring-2 ring-white/15 transition-all duration-300 group-hover:scale-105 group-hover:ring-[#5796ff]/40 2xl:h-10 2xl:w-10">
               <AvatarImage src={avatarUrl} alt={username} className="object-cover" />
-              <AvatarFallback className="bg-gradient-to-br from-[#2f7df6] to-[#2dd4bf] text-sm font-bold text-white">
+              <AvatarFallback className="bg-gradient-to-br from-[#2563eb] to-[#5796ff] text-sm font-bold text-white">
                 {getInitials(username)}
               </AvatarFallback>
             </Avatar>
@@ -120,7 +120,7 @@ const UserDropdownMenu = ({
           </div>
 
           {/* Dropdown Arrow */}
-          <ChevronDown className="hidden h-4 w-4 text-[#8fa4ab] transition-all duration-300 group-hover:text-[#2dd4bf] group-data-[state=open]:rotate-180 2xl:block" />
+              <ChevronDown className="hidden h-4 w-4 text-[#8fa4ab] transition-all duration-300 group-hover:text-[#8fb7ff] group-data-[state=open]:rotate-180 2xl:block" />
         </Button>
       </DropdownMenuTrigger>
 
@@ -133,7 +133,7 @@ const UserDropdownMenu = ({
         {/* Enhanced User Header */}
         <div className="relative border-b border-white/10 bg-[#142129] p-6">
           {/* Background Pattern */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_0%,rgba(73,198,229,0.16),transparent_34%),radial-gradient(circle_at_88%_10%,rgba(215,168,79,0.14),transparent_28%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_0%,rgba(73,198,229,0.16),transparent_34%),radial-gradient(circle_at_88%_10%,rgba(47,125,246,0.14),transparent_28%)]" />
           <div className="absolute right-2 top-2 h-20 w-20 rounded-full bg-gradient-to-br from-white/10 to-transparent" />
           <div className="absolute bottom-2 left-2 h-16 w-16 rounded-full bg-gradient-to-tr from-white/5 to-transparent" />
 
@@ -141,7 +141,7 @@ const UserDropdownMenu = ({
             <div className="relative">
               <Avatar className="h-14 w-14 shadow-xl ring-4 ring-white/10">
                 <AvatarImage src={avatarUrl} alt={username} className="object-cover" />
-                <AvatarFallback className="bg-gradient-to-br from-[#2f7df6] to-[#2dd4bf] text-lg font-bold text-white">
+                <AvatarFallback className="bg-gradient-to-br from-[#2563eb] to-[#5796ff] text-lg font-bold text-white">
                   {getInitials(username)}
                 </AvatarFallback>
               </Avatar>
@@ -174,16 +174,16 @@ const UserDropdownMenu = ({
             <Button
               variant="outline"
               size="sm"
-              className="h-auto flex-col gap-2 rounded-xl border-white/10 bg-white/[0.045] p-3 text-[#d3ddd8] transition-all duration-200 hover:border-[#2dd4bf]/40 hover:bg-white/[0.08] hover:text-white"
+              className="dashboard-top-button h-auto flex-col gap-2 rounded-xl p-3 transition-all duration-200"
               onClick={() => handleNavigate("/dashboard/profile")}
             >
-              <User className="h-4 w-4 text-[#7de8dc]" />
+              <User className="h-4 w-4 text-[#8fb7ff]" />
               <span className="text-xs font-medium">Profile</span>
             </Button>
             <Button
               variant="outline"
               size="sm"
-              className="h-auto flex-col gap-2 rounded-xl border-white/10 bg-white/[0.045] p-3 text-[#d3ddd8] transition-all duration-200 hover:border-[#5796ff]/50 hover:bg-white/[0.08] hover:text-white"
+              className="dashboard-top-button h-auto flex-col gap-2 rounded-xl p-3 transition-all duration-200"
               onClick={() => handleNavigate("/dashboard/settings")}
             >
               <Settings className="h-4 w-4 text-[#8fb7ff]" />
@@ -255,7 +255,7 @@ const UserDropdownMenu = ({
           <DropdownMenuItem className="group cursor-pointer rounded-lg p-3 transition-all duration-200 focus:bg-white/[0.08] focus:text-white">
             <div className="flex items-center gap-3 w-full">
               <div className="rounded-lg bg-white/[0.07] p-2 transition-colors">
-                {isDarkTheme ? <Moon className="h-4 w-4 text-[#8fb7ff]" /> : <Sun className="h-4 w-4 text-[#f0c76a]" />}
+                {isDarkTheme ? <Moon className="h-4 w-4 text-[#8fb7ff]" /> : <Sun className="h-4 w-4 text-[#8fb7ff]" />}
               </div>
               <div className="flex-1">
                 <div className="font-medium">Dark Mode</div>
@@ -274,8 +274,8 @@ const UserDropdownMenu = ({
             onClick={() => handleNavigate("/dashboard/settings/appearance")}
           >
             <div className="flex items-center gap-3 w-full">
-              <div className="rounded-lg bg-[rgba(215,168,79,0.16)] p-2 transition-colors">
-                <Palette className="h-4 w-4 text-[#f0c76a]" />
+              <div className="rounded-lg bg-[rgba(47,125,246,0.16)] p-2 transition-colors">
+                <Palette className="h-4 w-4 text-[#8fb7ff]" />
               </div>
               <div className="flex-1">
                 <div className="font-medium">Appearance</div>
@@ -294,14 +294,14 @@ const UserDropdownMenu = ({
             onClick={() => handleNavigate("/dashboard/billing")}
           >
             <div className="flex items-center gap-3 w-full">
-              <div className="rounded-lg bg-[rgba(215,168,79,0.16)] p-2 transition-colors">
-                <CreditCard className="h-4 w-4 text-[#f0c76a]" />
+              <div className="rounded-lg bg-[rgba(47,125,246,0.16)] p-2 transition-colors">
+                <CreditCard className="h-4 w-4 text-[#8fb7ff]" />
               </div>
               <div className="flex-1">
                 <div className="font-medium">Billing & Plans</div>
                 <div className="text-xs text-[#8fa4ab]">Manage subscription</div>
               </div>
-              <Badge variant="outline" className="border-[#d7a84f]/30 bg-[rgba(215,168,79,0.12)] text-xs text-[#f0c76a]">
+              <Badge variant="outline" className="border-[#5796ff]/30 bg-[rgba(47,125,246,0.12)] text-xs text-[#8fb7ff]">
                 Pro
               </Badge>
             </div>

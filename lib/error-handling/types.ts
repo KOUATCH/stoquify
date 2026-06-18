@@ -22,6 +22,7 @@ export enum ErrorCategory {
   DATABASE = 'database',
   NETWORK = 'network',
   EXTERNAL_SERVICE = 'external_service',
+  EXTERNAL = 'external',
   FILE_SYSTEM = 'file_system',
 
   // User Experience Errors
@@ -37,6 +38,10 @@ export enum ErrorCategory {
   INVENTORY = 'inventory',
   SALES = 'sales',
   PURCHASE = 'purchase',
+  ACCOUNTING = 'accounting',
+  PAYMENT = 'payment',
+  PAYROLL = 'payroll',
+  COMPLIANCE = 'compliance',
   FINANCIAL = 'financial',
   POS = 'pos',
   REPORTING = 'reporting'
@@ -192,8 +197,13 @@ export interface ServerActionResult<T = unknown> {
     userMessage: string
     category: ErrorCategory
     severity: ErrorSeverity
+    status?: number
+    correlationId?: string
+    requestId?: string
     recoverable: boolean
     retryable: boolean
+    fieldErrors?: Record<string, string[]>
+    metadata?: Record<string, unknown>
     context?: Record<string, unknown>
   }
   metadata?: {

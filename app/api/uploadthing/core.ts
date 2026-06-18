@@ -1,5 +1,6 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { getSession } from "@/lib/auth-server";
+import { AuthRequiredError } from "@/services/_shared/action-errors";
 
 const f = createUploadthing();
 
@@ -7,7 +8,7 @@ async function requireUploadAuth() {
   const session = await getSession();
   const organizationId = (session?.user as any)?.organizationId as string | undefined
   if (!session?.user?.id || !organizationId) {
-    throw new Error("Unauthorized");
+    throw new AuthRequiredError("Unauthorized");
   }
 
   return {

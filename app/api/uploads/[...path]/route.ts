@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { promises as fs } from 'fs'
 import path from 'path'
 import { getSession } from '@/lib/auth-server'
+import { jsonAuthzError, jsonErrorResponse } from '@/lib/error-handling/route-response'
+
+const ENDPOINT = 'GET /api/uploads/[...path]'
 
 export async function GET(
   request: NextRequest,
@@ -11,23 +14,33 @@ export async function GET(
     // Verify user authentication
     const session = await getSession()
     if (!session?.user?.organizationId) {
-      return new NextResponse('Unauthorized', { status: 401 })
+      return jsonAuthzError('Unauthorized', 401, ENDPOINT)
     }
 
     const { path: pathSegments } = await params
     if (pathSegments.length !== 2) {
-      return new NextResponse('Invalid file path', { status: 400 })
+      return jsonErrorResponse('Invalid file path', {
+        code: 'VALIDATION_ERROR',
+        status: 400,
+        userMessage: 'Invalid file path',
+        endpoint: ENDPOINT,
+      })
     }
 
     const [organizationId, fileName] = pathSegments
 
     // Verify the user has access to this organization's files
     if (organizationId !== session.user.organizationId) {
-      return new NextResponse('Forbidden', { status: 403 })
+      return jsonAuthzError('Forbidden', 403, ENDPOINT)
     }
 
     if (!/^[a-zA-Z0-9._-]+$/.test(fileName) || fileName.includes('..')) {
-      return new NextResponse('Invalid file path', { status: 400 })
+      return jsonErrorResponse('Invalid file path', {
+        code: 'VALIDATION_ERROR',
+        status: 400,
+        userMessage: 'Invalid file path',
+        endpoint: ENDPOINT,
+      })
     }
 
     // Construct the full file path
@@ -35,14 +48,24 @@ export async function GET(
     const fullPath = path.resolve(orgDirectory, fileName)
 
     if (!fullPath.startsWith(`${orgDirectory}${path.sep}`)) {
-      return new NextResponse('Invalid file path', { status: 400 })
+      return jsonErrorResponse('Invalid file path', {
+        code: 'VALIDATION_ERROR',
+        status: 400,
+        userMessage: 'Invalid file path',
+        endpoint: ENDPOINT,
+      })
     }
 
     // Check if file exists
     try {
       await fs.access(fullPath)
     } catch {
-      return new NextResponse('File not found', { status: 404 })
+      return jsonErrorResponse('File not found', {
+        code: 'NOT_FOUND',
+        status: 404,
+        userMessage: 'File not found',
+        endpoint: ENDPOINT,
+      })
     }
 
     // Read the file
@@ -67,7 +90,12 @@ export async function GET(
         contentType = 'image/webp'
         break
       case '.svg':
-        return new NextResponse('Unsupported file type', { status: 415 })
+        return jsonErrorResponse('Unsupported file type', {
+          code: 'VALIDATION_ERROR',
+          status: 400,
+          userMessage: 'Unsupported file type',
+          endpoint: ENDPOINT,
+        })
     }
 
     // Return the file with appropriate headers
@@ -80,7 +108,9 @@ export async function GET(
       },
     })
   } catch (error) {
-    console.error('Error serving uploaded file:', error)
-    return new NextResponse('Internal Server Error', { status: 500 })
+    return jsonErrorResponse(error, {
+      endpoint: ENDPOINT,
+      userMessage: 'Unable to serve uploaded file.',
+    })
   }
 }

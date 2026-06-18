@@ -1,66 +1,26 @@
 "use server";
 
-import { db } from "@/prisma/db";
-import { UpdateItemPayload } from "@/types/itemTypes";
 import { revalidatePath } from "next/cache";
 import { inventoryAction } from "@/lib/error-handling";
 import type { ServerActionResult } from "@/lib/error-handling/types";
+import { requirePermission } from "@/lib/security/rbac";
+import { updateItemGenericWithRelations } from "@/services/item/item.service";
 
 export const updateItemById = inventoryAction(
   async ({ id, data }: { id: string; data: any }): Promise<ServerActionResult<any>> => {
-  try {
-    // Use a transaction for atomic operations
-    return await db.$transaction(async (tx) => {
-      const item = await tx.item.findUnique({
-        where: { id },
-        include: {
-          inventoryLevels: true,
-          category: true,
-          brand: true,
-          unit: true,
-        },
-      });
+    const ctx = await requirePermission("inventory.items.update", {
+      resource: "Item",
+      resourceId: id,
+      auditAllowed: true,
+    });
+    const updatedItem = await updateItemGenericWithRelations(ctx.orgId, id, data);
 
-      if (!item) {
-        throw new Error("Item not found");
-      }
+    revalidatePath("/dashboard/inventory/items");
 
-      // Filter out undefined values and prepare update data
-      const updateData = Object.fromEntries(
-        Object.entries(data).filter(([_, value]) => value !== undefined && value !== null)
-      );
-
-      // Remove fields that don't exist in schema
-      delete updateData.featuredReason;
-      delete updateData.featuredAt;
-      delete updateData.discontinuedAt;
-      delete updateData.discontinueReason;
-      delete updateData.discontinueNotes;
-      delete updateData.isFeatured;
-      delete updateData.name;
-      delete updateData.description;
-
-      const updatedItem = await tx.item.update({
-        where: { id },
-        data: updateData,
-        include: {
-          inventoryLevels: true,
-          category: true,
-          brand: true,
-          unit: true,
-        },
-      });
-
-      revalidatePath("/dashboard/inventory/items");
-
-      return {
-        success: true,
-        data: updatedItem,
-      };
-     });
-  } catch (error) {
-    throw error;
-  }
+    return {
+      success: true,
+      data: updatedItem,
+    };
   },
   {
     actionName: 'updateItemById',

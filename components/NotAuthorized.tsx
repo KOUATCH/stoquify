@@ -34,20 +34,20 @@ export default function NotAuthorized() {
         </div>
 
         <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
-          <Button asChild className="h-11 rounded-xl bg-gradient-to-r from-[#2f7df6] to-[#2dd4bf] font-black text-white shadow-[0_16px_36px_rgba(47,125,246,0.22)] hover:opacity-95">
+          <Button asChild className="h-11 rounded-xl font-black">
             <Link href="/dashboard">
               <LayoutDashboard className="mr-2 h-4 w-4" />
               Dashboard
             </Link>
           </Button>
-          <Button asChild variant="outline" className="h-11 rounded-xl border-[#9fb4bb]/30 bg-white/55 text-[#253943] hover:bg-white dark:border-white/10 dark:bg-white/[0.045] dark:text-[#d3ddd8] dark:hover:bg-white/[0.09]">
+          <Button asChild variant="outline" className="h-11 rounded-xl">
             <Link href="/">
               <Home className="mr-2 h-4 w-4" />
               Home
             </Link>
           </Button>
         </div>
-        <Button asChild variant="ghost" className="mt-3 h-10 rounded-xl text-[#58707a] hover:bg-[#2f7df6]/10 hover:text-[#2f7df6] dark:text-[#9fb4bb] dark:hover:bg-white/[0.07] dark:hover:text-white">
+          <Button asChild variant="ghost" className="mt-3 h-10 rounded-xl text-[#8b4a2f] hover:bg-[#f0c54d]/15 hover:text-[#6f3926] dark:text-[#f6d574] dark:hover:bg-[#bf7145]/20 dark:hover:text-[#fff8e6]">
           <Link href="/dashboard/settings/users">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Team access

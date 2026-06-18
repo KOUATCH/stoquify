@@ -60,7 +60,7 @@ async function assertParentBelongsToOrg(
   })
 
   if (!parent) {
-    throw new Error("Parent account was not found in this organization")
+    throw new NotFoundError("Parent account was not found in this organization")
   }
 }
 
@@ -238,8 +238,8 @@ export async function archiveChartAccount(
     db.chartOfAccount.count({ where: { organizationId, parentId: accountId, deletedAt: null } }),
   ])
 
-  if (!account) throw new Error("Chart account not found")
-  if (childCount > 0) throw new Error("Cannot archive an account that has child accounts")
+  if (!account) throw new NotFoundError("Chart account not found")
+  if (childCount > 0) throw new BusinessRuleError("Cannot archive an account that has child accounts")
 
   return db.$transaction(async (tx) => {
     const archived = await tx.chartOfAccount.update({

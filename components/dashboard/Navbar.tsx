@@ -3,9 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import UserDropdownMenu from "@/components/UserDropdownMenu";
 import { sidebarLinks } from "@/config/sidebar";
-import { usePermission } from "@/hooks/usePermissions";
 import { localizePath } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
+import { useShellPermissions } from "@/components/dashboard/useShellPermissions";
 import {
   Activity,
   BarChart3,
@@ -42,7 +42,7 @@ const OrganizationBanner = ({
 
   return (
     <div className="hidden min-w-0 items-center gap-3 rounded-xl border border-white/10 bg-white/[0.045] px-3 py-2 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] min-[1700px]:flex">
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[rgba(215,168,79,0.16)] text-[#f0c76a]">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[rgba(47,125,246,0.16)] text-[#8fb7ff]">
         <Building2 className="h-4 w-4" />
       </div>
       <div className="min-w-0">
@@ -69,7 +69,7 @@ const Navbar = ({ session }: { session: any }) => {
   const pathname = usePathname();
   const { resolvedTheme, setTheme } = useTheme();
   const [themeReady, setThemeReady] = useState(false);
-  const { hasPermission } = usePermission();
+  const { hasPermission } = useShellPermissions(session);
   const userRole = session?.user?.roles?.[0]?.name ?? "User"
   const localePrefix = pathname.match(/^\/(en|fr)(?=\/)/)?.[1];
   const locale = localePrefix === "fr" ? "fr" : "en";
@@ -101,23 +101,22 @@ const Navbar = ({ session }: { session: any }) => {
   const commandLinks = [
     { title: "Items", href: "/dashboard/inventory/items", icon: Package, color: "text-[#8fb7ff]" },
     { title: "Sales", href: "/dashboard/sales", icon: ShoppingCart, color: "text-[#76e3b0]" },
-    { title: "Reports", href: "/dashboard/reports", icon: BarChart3, color: "text-[#f0c76a]" },
+    { title: "Reports", href: "/dashboard/reports", icon: BarChart3, color: "text-[#49c6e5]" },
   ];
 
   // Filter sidebar links based on user permissions
-  const filteredLinks = sidebarLinks.filter((link) => {
-    // Check main link permission
-    if (!hasPermission(link.permission)) {
-      return false;
-    }
-
-    // If it's a dropdown, check if user has permission for any dropdown item
-    if (link.dropdown && link.dropdownMenu) {
-      return link.dropdownMenu.some((item) => hasPermission(item.permission));
-    }
-
-    return true;
-  });
+  const filteredLinks = sidebarLinks
+    .map((link) => ({
+      ...link,
+      dropdownMenu: link.dropdownMenu?.filter((item) =>
+        hasPermission(item.permission)
+      ),
+    }))
+    .filter(
+      (link) =>
+        hasPermission(link.permission) ||
+        Boolean(link.dropdown && link.dropdownMenu?.length)
+    );
 
   // Flatten dropdown menus for mobile view
   const mobileLinks = filteredLinks.reduce(
@@ -129,6 +128,7 @@ const Navbar = ({ session }: { session: any }) => {
           href: link.href || "#",
           icon: link.icon,
           permission: link.permission,
+          parentTitle: link.title,
         });
         return acc;
       }
@@ -142,6 +142,7 @@ const Navbar = ({ session }: { session: any }) => {
               href: item.href,
               icon: link.icon,
               permission: item.permission,
+              parentTitle: link.title,
             });
           }
         });
@@ -149,7 +150,7 @@ const Navbar = ({ session }: { session: any }) => {
 
       return acc;
     },
-    [] as Array<{ title: string; href: string; icon: any; permission: string }>
+    [] as Array<{ title: string; href: string; icon: any; permission: string; parentTitle?: string }>
   );
 
   const handleLogout = async () => {
@@ -163,10 +164,10 @@ const Navbar = ({ session }: { session: any }) => {
 
   return (
     <header className="sticky top-0 z-20 isolate flex min-h-16 w-full max-w-full items-center gap-2 overflow-hidden border-b border-white/10 bg-[#142129]/90 px-2 shadow-[0_20px_45px_rgba(5,12,16,0.22)] backdrop-blur-xl sm:px-4 lg:h-[68px] lg:px-5">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_12%_0%,rgba(73,198,229,0.12),transparent_28%),radial-gradient(circle_at_88%_0%,rgba(215,168,79,0.11),transparent_24%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_12%_0%,rgba(73,198,229,0.12),transparent_28%),radial-gradient(circle_at_88%_0%,rgba(47,125,246,0.11),transparent_24%)]" />
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="outline" size="icon" className="relative z-10 shrink-0 rounded-xl border-white/10 bg-white/[0.06] text-[#d3ddd8] hover:bg-white/[0.1] hover:text-white md:hidden">
+          <Button variant="outline" size="icon" className="relative z-10 shrink-0 rounded-xl md:hidden">
             <Menu className="h-5 w-5" />
             <span className="sr-only">Toggle navigation menu</span>
           </Button>
@@ -181,17 +182,27 @@ const Navbar = ({ session }: { session: any }) => {
                 const Icon = item.icon;
                 const href = localizedHref(item.href);
                 const isActive = href === pathname || item.href === pathname;
+                const isFinanceChild = item.parentTitle === "Finance";
 
                 return (
                   <Link
                     key={i}
                     href={href}
+                    data-active={isActive ? "true" : "false"}
                     className={cn(
-                      "flex items-center gap-3 rounded-xl px-3 py-2.5 text-[#b9c8c3] transition-all hover:bg-white/[0.075] hover:text-white",
-                      isActive ? "bg-[rgba(47,125,246,0.16)] text-white" : ""
+                      "flex items-center gap-3 rounded-xl px-3 py-2.5 transition-all",
+                      isFinanceChild
+                        ? "dashboard-finance-submenu-item"
+                        : "text-[#b9c8c3] hover:bg-white/[0.075] hover:text-white",
+                      !isFinanceChild && isActive ? "bg-[rgba(47,125,246,0.16)] text-white" : ""
                     )}
                   >
-                    <Icon className="h-4 w-4 text-[#8fb7ff]" />
+                    <Icon
+                      className={cn(
+                        "h-4 w-4",
+                        isFinanceChild ? "text-[var(--dash-brand-strong)]" : "text-[#8fb7ff]"
+                      )}
+                    />
                     {item.title}
                   </Link>
                 );
@@ -199,7 +210,7 @@ const Navbar = ({ session }: { session: any }) => {
             </nav>
 
             <div className="mt-auto">
-              <Button onClick={handleLogout} size="sm" className="w-full rounded-xl bg-gradient-to-r from-[#2f7df6] to-[#2dd4bf] text-white hover:opacity-95">
+              <Button onClick={handleLogout} size="sm" className="w-full rounded-xl">
                 Logout
               </Button>
             </div>
@@ -229,7 +240,7 @@ const Navbar = ({ session }: { session: any }) => {
             <Link
               key={item.title}
               href={localizedHref(item.href)}
-              className="flex h-10 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.045] px-3 text-sm font-semibold text-[#d3ddd8] transition-all hover:bg-white/[0.09] hover:text-white"
+              className="dashboard-top-button flex h-10 items-center gap-2 rounded-xl px-3 text-sm font-semibold transition-all"
             >
               <Icon className={cn("h-4 w-4", item.color)} />
               {item.title}
@@ -240,22 +251,22 @@ const Navbar = ({ session }: { session: any }) => {
       <div className="relative z-10 ml-auto flex min-w-0 shrink-0 items-center gap-1 sm:gap-2">
         <Link
           href={localizedHref("/dashboard")}
-          className="hidden h-10 items-center gap-2 rounded-xl border border-white/10 bg-[rgba(45,212,191,0.11)] px-3 text-sm font-semibold text-[#bff7f1] transition-all hover:bg-[rgba(45,212,191,0.18)] hover:text-white min-[1800px]:flex"
+          className="dashboard-top-button hidden h-10 items-center gap-2 rounded-xl px-3 text-sm font-semibold transition-all min-[1800px]:flex"
         >
-          <Zap className="h-4 w-4 text-[#2dd4bf]" />
+          <Zap className="h-4 w-4 text-[#8fb7ff]" />
           Command
         </Link>
         <Link
           href="/"
-          className="hidden h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.045] text-[#d3ddd8] transition-all hover:bg-white/[0.09] hover:text-white 2xl:flex"
+          className="dashboard-top-button hidden h-10 w-10 items-center justify-center rounded-xl transition-all 2xl:flex"
           target="_blank"
           aria-label="Open website"
         >
-          <ExternalLink className="h-4 w-4 text-[#49c6e5]" />
+          <ExternalLink className="h-4 w-4 text-[#8fb7ff]" />
         </Link>
         <Link
           href={targetLocaleHref}
-          className="flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.045] px-0 text-sm font-semibold uppercase text-[#d3ddd8] transition-all hover:bg-white/[0.09] hover:text-white sm:w-auto sm:px-3"
+          className="dashboard-top-button flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-xl px-0 text-sm font-semibold uppercase transition-all sm:w-auto sm:px-3"
           aria-label={`Switch language to ${targetLocale.toUpperCase()}`}
         >
           <Globe2 className="h-4 w-4 text-[#8fb7ff]" />
@@ -264,11 +275,11 @@ const Navbar = ({ session }: { session: any }) => {
         <button
           type="button"
           onClick={() => setTheme(isDarkTheme ? "light" : "dark")}
-          className="flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.045] px-0 text-sm font-semibold text-[#d3ddd8] transition-all hover:bg-white/[0.09] hover:text-white 2xl:w-auto 2xl:px-3"
+          className="dashboard-top-button flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-xl px-0 text-sm font-semibold transition-all 2xl:w-auto 2xl:px-3"
           aria-label={isDarkTheme ? "Switch to light theme" : "Switch to dark theme"}
         >
           {isDarkTheme ? (
-            <Sun className="h-4 w-4 text-[#f0c76a]" />
+            <Sun className="h-4 w-4 text-[#8fb7ff]" />
           ) : (
             <Moon className="h-4 w-4 text-[#8fb7ff]" />
           )}
@@ -276,10 +287,10 @@ const Navbar = ({ session }: { session: any }) => {
         </button>
         <button
           type="button"
-          className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.045] text-[#d3ddd8] transition-all hover:bg-white/[0.09] hover:text-white"
+          className="dashboard-top-button relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all"
           aria-label="Notifications"
         >
-          <Bell className="h-5 w-5 text-[#f0c76a]" />
+          <Bell className="h-5 w-5 text-[#8fb7ff]" />
           <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-[#ef6a6a] shadow-[0_0_0_4px_rgba(239,106,106,0.14)]" />
         </button>
         <UserDropdownMenu

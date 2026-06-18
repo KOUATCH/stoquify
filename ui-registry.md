@@ -1,6 +1,6 @@
 # UI Registry
 
-Last updated: 2026-06-06
+Last updated: 2026-06-12
 
 This registry captures the current StockFlow UI language for the dashboard/sidebar, categories, units, brands, login, and register surfaces. It records what exists today and highlights drift; it is not a fix list that has already been applied.
 
@@ -52,6 +52,45 @@ The dominant dashboard language is a dark enterprise command-center style: deep 
 - `components/dashboard/DashboardLayout.tsx:262` still represents an older light blue/indigo dashboard shell; do not use it as the reference for the active locale dashboard chrome.
 - `app/globals.css:334` establishes dark enterprise floating overlays globally; auth select menus should be checked visually because auth pages otherwise use a lighter dual-theme vocabulary.
 - `app/globals.css:122` hardcodes many dashboard hex/rgba values inside CSS variables. This is the current source of truth, but promotion into reusable design tokens would reduce drift.
+
+## Primitive - Gold Chestnut Buttons
+
+Files: `components/ui/button.tsx`, `app/globals.css`, `components/FormInputs/SubmitButton.tsx`, `components/dashboard/Navbar.tsx`, `components/UserDropdownMenu.tsx`, `components/dashboard/Sidebar.tsx`, `components/auth/EnhancedLoginForm.tsx`, `components/auth/BeautifulRegisterForm.tsx`
+Family: Button
+Last updated: 2026-06-12
+
+### Anatomy
+
+| Variant | Size | State | Token or class summary |
+| --- | --- | --- | --- |
+| shared default | h-8/h-9/h-10 | default/hover | `button-gold-chestnut`, chestnut-to-gold gradient, dark ink text |
+| shared outline | h-8/h-9/h-10 | default/hover | `button-gold-chestnut-outline`, chestnut border, soft gold fill, cream text in dark/dashboard surfaces |
+| shared secondary | h-8/h-9/h-10 | default/hover | `button-gold-chestnut-secondary`, solid chestnut gradient with cream text |
+| shared ghost/link | variable | hover | `button-gold-chestnut-ghost`, `button-gold-chestnut-link`, soft gold/chestnut hover treatment |
+| dashboard action | h-9/h-10 | default/hover | `.dashboard-button-primary` and `.dashboard-button-create` both use `--dash-warm` to `--dash-gold` |
+| dashboard secondary | h-9/h-10 | default/hover | `.dashboard-button-secondary` uses chestnut soft fill with gold/chestnut border |
+| destructive | variable | default/hover | `destructive` remains red for actual dangerous actions |
+
+### Tokens Used
+
+- Global app button tokens: `--primary: 43 84% 62%`, `--secondary: 22 49% 51%`, `--accent: 43 84% 92%`, `--ring: 43 84% 62%`.
+- Dashboard button tokens: `--dash-gold`, `--dash-gold-soft`, `--dash-warm`, `--dash-warm-soft`, `--dash-border`, `--dash-border-subtle`.
+- Reusable classes: `button-gold-chestnut`, `button-gold-chestnut-secondary`, `button-gold-chestnut-outline`, `button-gold-chestnut-ghost`, `button-gold-chestnut-link`.
+
+### Motion
+
+- Shared buttons keep the primitive `transition-colors` behavior.
+- Dashboard buttons keep existing hover transitions and elevation, now with gold/chestnut gradients.
+
+### Accessibility
+
+- Shared `Button` keeps semantic `button` markup, `asChild` support, disabled behavior, and `focus-visible:ring-ring`.
+- Gold button text uses dark ink on gold/chestnut gradients for contrast.
+- Destructive buttons retain red semantics to avoid weakening dangerous-action recognition.
+
+### Pattern Notes
+
+Use the gold/chestnut button classes or dashboard button utilities instead of blue/teal gradients for actions. Preserve non-button chart/status colors when they carry domain meaning, but visible action controls should route through the shared `Button` variants or `dashboard-button-*` utilities.
 
 ## Navigation - Dashboard Sidebar
 

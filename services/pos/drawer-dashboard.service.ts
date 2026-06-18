@@ -1,4 +1,5 @@
 import { db } from "@/prisma/db"
+import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
 import { moneyToNumber, type MoneyValue } from "@/services/pos/money"
 import {
   drawerDashboardServiceSchema,
@@ -245,7 +246,7 @@ export async function getCashDrawerDashboard(rawInput: DrawerDashboardServiceInp
   const range = resolveDateRange(input.period, input.startDate, input.endDate)
 
   if (range.endDate < range.startDate) {
-    throw new Error("End date must be after start date")
+    throw new BusinessRuleError("End date must be after start date")
   }
 
   const organization = await db.organization.findFirst({
@@ -253,7 +254,7 @@ export async function getCashDrawerDashboard(rawInput: DrawerDashboardServiceInp
     select: { id: true, name: true, currency: true },
   })
 
-  if (!organization) throw new Error("Organization not found")
+  if (!organization) throw new NotFoundError("Organization not found")
 
   const thresholds = currencyThresholds(organization.currency)
   const locationFilter = input.locationId

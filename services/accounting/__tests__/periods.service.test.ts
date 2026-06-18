@@ -23,6 +23,15 @@ const mockTx = {
   journalEntryLine: {
     findMany: jest.fn(),
   },
+  paymentException: {
+    count: jest.fn(),
+  },
+  suspenseItem: {
+    count: jest.fn(),
+  },
+  reconciliationRun: {
+    count: jest.fn(),
+  },
   ledgerAuditEvent: {
     create: jest.fn(),
   },
@@ -48,6 +57,9 @@ describe("period close preflight", () => {
     mockDb.$transaction.mockImplementation(async (handler: (tx: typeof mockTx) => Promise<unknown>) => handler(mockTx))
     mockTx.accountingPeriod.findFirst.mockResolvedValue(openPeriod)
     mockTx.ledgerPostingBatch.count.mockResolvedValue(0)
+    mockTx.paymentException.count.mockResolvedValue(0)
+    mockTx.suspenseItem.count.mockResolvedValue(0)
+    mockTx.reconciliationRun.count.mockResolvedValue(0)
     mockTx.journalEntryLine.findMany.mockResolvedValue([
       { debit: new Prisma.Decimal(100), credit: new Prisma.Decimal(0), currency: "XAF" },
       { debit: new Prisma.Decimal(0), credit: new Prisma.Decimal(100), currency: "XAF" },
@@ -72,6 +84,14 @@ describe("period close preflight", () => {
     ])
 
     await expect(closeAccountingPeriod("org-1", "period-1", "user-1")).rejects.toThrow(/trial balance is not balanced/i)
+    expect(mockTx.accountingPeriod.update).not.toHaveBeenCalled()
+  })
+
+  it("rejects close when payment reconciliation blockers remain", async () => {
+    mockTx.journalEntry.count.mockResolvedValueOnce(0).mockResolvedValueOnce(0)
+    mockTx.reconciliationRun.count.mockResolvedValue(1)
+
+    await expect(closeAccountingPeriod("org-1", "period-1", "user-1")).rejects.toThrow(/payment reconciliation run/i)
     expect(mockTx.accountingPeriod.update).not.toHaveBeenCalled()
   })
 

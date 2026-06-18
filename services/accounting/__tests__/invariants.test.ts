@@ -1,5 +1,6 @@
 import { Prisma } from "@prisma/client"
 
+import { BusinessRuleError, ForbiddenError } from "@/services/_shared/action-errors"
 import {
   assertBalancedJournalEntry,
   assertOpenPeriod,
@@ -23,10 +24,21 @@ describe("accounting invariants", () => {
         { debit: 1000, currency: "XAF" },
         { credit: 900, currency: "XAF" },
       ]),
+    ).toThrow(BusinessRuleError)
+
+    expect(() =>
+      assertBalancedJournalEntry([
+        { debit: 1000, currency: "XAF" },
+        { credit: 900, currency: "XAF" },
+      ]),
     ).toThrow(/not balanced/i)
   })
 
   it("rejects lines with both debit and credit", () => {
+    expect(() =>
+      assertBalancedJournalEntry([{ debit: 100, credit: 100, currency: "XAF" }]),
+    ).toThrow(BusinessRuleError)
+
     expect(() =>
       assertBalancedJournalEntry([{ debit: 100, credit: 100, currency: "XAF" }]),
     ).toThrow(/both debit and credit/i)
@@ -39,6 +51,12 @@ describe("accounting invariants", () => {
         { id: "sales", code: "701", organizationId: "org-a" },
       ]),
     ).toBe(true)
+
+    expect(() =>
+      assertSameOrganizationAccounts("org-a", [
+        { id: "cash", code: "571", organizationId: "org-b" },
+      ]),
+    ).toThrow(ForbiddenError)
 
     expect(() =>
       assertSameOrganizationAccounts("org-a", [
@@ -70,6 +88,10 @@ describe("accounting invariants", () => {
     }
 
     expect(assertOpenPeriod(period, new Date("2026-06-09T12:00:00.000Z"), "org-a")).toBe(true)
+
+    expect(() =>
+      assertOpenPeriod({ ...period, status: "CLOSED" }, new Date("2026-06-09T12:00:00.000Z"), "org-a"),
+    ).toThrow(BusinessRuleError)
 
     expect(() =>
       assertOpenPeriod({ ...period, status: "CLOSED" }, new Date("2026-06-09T12:00:00.000Z"), "org-a"),
