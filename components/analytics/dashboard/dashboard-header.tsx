@@ -4,6 +4,12 @@ import { Calendar, Download, Filter, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useState } from "react"
+import {
+  analyticsFilterClass,
+  analyticsMutedTextClass,
+  analyticsPrimaryButtonClass,
+  analyticsToneClass,
+} from "./analytics-dashboard-theme"
 
 export function DashboardHeader() {
   const [isRefreshing, setIsRefreshing] = useState(false)
@@ -16,25 +22,29 @@ export function DashboardHeader() {
   return (
     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 animate-fade-in">
       <div>
-        <h1 className="text-4xl font-black font-[family-name:var(--font-montserrat)] text-balance">
+        <h1 className="text-4xl font-black font-[family-name:var(--font-montserrat)] text-balance text-[var(--dash-text)]">
           Financial Analytics
         </h1>
-        <p className="text-muted-foreground mt-2 text-pretty">Real-time insights into your business performance</p>
+        <p className={`${analyticsMutedTextClass} mt-2 text-pretty`}>
+          Real-time insights into your business performance
+        </p>
         <div className="flex items-center gap-2 mt-3">
-          <Badge variant="secondary" className="glass-effect">
+          <Badge variant="outline" className={analyticsToneClass("success")}>
             Live Data
           </Badge>
-          <Badge variant="outline">Last updated: {new Date().toLocaleTimeString()}</Badge>
+          <Badge variant="outline" className={analyticsToneClass("muted")}>
+            Last updated: {new Date().toLocaleTimeString()}
+          </Badge>
         </div>
       </div>
 
       <div className="flex items-center gap-3">
-        <Button variant="outline" size="sm" className="glass-effect bg-transparent">
+        <Button variant="outline" size="sm" className={analyticsFilterClass}>
           <Calendar className="h-4 w-4 mr-2" />
           Today
         </Button>
 
-        <Button variant="outline" size="sm" className="glass-effect bg-transparent">
+        <Button variant="outline" size="sm" className={analyticsFilterClass}>
           <Filter className="h-4 w-4 mr-2" />
           Filter
         </Button>
@@ -44,13 +54,13 @@ export function DashboardHeader() {
           size="sm"
           onClick={handleRefresh}
           disabled={isRefreshing}
-          className="glass-effect bg-transparent"
+          className={analyticsFilterClass}
         >
           <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`} />
           Refresh
         </Button>
 
-        <Button size="sm" className="bg-primary hover:bg-primary/90">
+        <Button size="sm" className={analyticsPrimaryButtonClass}>
           <Download className="h-4 w-4 mr-2" />
           Export
         </Button>

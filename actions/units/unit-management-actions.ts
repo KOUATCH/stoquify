@@ -1,11 +1,11 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { getSession } from "@/lib/auth-server"
+import { assertCanUseOrganization, requirePermission } from "@/lib/security/rbac"
 import { db } from "@/prisma/db"
 import { Prisma } from "@prisma/client"
 import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses"
-import { AuthRequiredError, BusinessRuleError, ForbiddenError, NotFoundError } from "@/services/_shared/action-errors"
+import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
 import {
   createUnitForManagement,
   getUnitManagementDataForOrg,
@@ -35,6 +35,7 @@ type ActionResult<T> = {
 
 const ACTIONABLE_ERROR_MESSAGES = new Set([
   "Unauthorized",
+  "Forbidden: cannot access another organization",
   "Organization is required",
   "Organization not found or inactive",
   "You do not have access to this organization",
@@ -99,46 +100,22 @@ function getValidationMessage(input: unknown) {
   }
 }
 
-async function assertOrganizationAccess(organizationId: string) {
+async function assertOrganizationAccess(
+  organizationId: string,
+  options: { permission: string; resource: string; resourceId?: string; auditAllowed?: boolean },
+) {
   const requestedOrganizationId = cleanText(organizationId)
 
   if (!requestedOrganizationId) {
     throw new BusinessRuleError("Organization is required")
   }
 
-  const session = await getSession()
-
-  if (!session?.user?.id) {
-    throw new AuthRequiredError("Unauthorized")
-  }
-
-  const user = await db.user.findFirst({
-    where: {
-      id: session.user.id,
-      isActive: true,
-    },
-    select: {
-      organizationId: true,
-      roles: {
-        select: {
-          permissions: true,
-        },
-      },
-    },
+  const ctx = await requirePermission(options.permission, {
+    resource: options.resource,
+    ...(options.resourceId ? { resourceId: options.resourceId } : {}),
+    ...(options.auditAllowed !== undefined ? { auditAllowed: options.auditAllowed } : {}),
   })
-
-  if (!user) {
-    throw new AuthRequiredError("Unauthorized")
-  }
-
-  const permissions = new Set([
-    ...((session.user as any).permissions ?? []),
-    ...user.roles.flatMap((role) => role.permissions ?? []),
-  ])
-
-  if (user.organizationId !== requestedOrganizationId && !permissions.has("*")) {
-    throw new ForbiddenError("You do not have access to this organization")
-  }
+  await assertCanUseOrganization(ctx, requestedOrganizationId)
 
   const organization = await db.organization.findFirst({
     where: {
@@ -168,7 +145,10 @@ export async function getUnitManagementData(
   organizationId: string,
 ): Promise<ActionResult<UnitManagementData>> {
   try {
-    const scopedOrganizationId = await assertOrganizationAccess(organizationId)
+    const scopedOrganizationId = await assertOrganizationAccess(organizationId, {
+      permission: "inventory.units.read",
+      resource: "Unit",
+    })
     const data = await getUnitManagementDataForOrg(scopedOrganizationId)
 
     return {
@@ -193,7 +173,11 @@ export async function createManagedUnit(
   input: UnitManagementInput,
 ): Promise<ActionResult<UnitManagementRow>> {
   try {
-    const scopedOrganizationId = await assertOrganizationAccess(organizationId)
+    const scopedOrganizationId = await assertOrganizationAccess(organizationId, {
+      permission: "inventory.units.create",
+      resource: "Unit",
+      auditAllowed: true,
+    })
     const parsed = getValidationMessage(input)
 
     if (!parsed.success) {
@@ -223,8 +207,13 @@ export async function updateManagedUnit(
   input: UnitManagementInput,
 ): Promise<ActionResult<UnitManagementRow>> {
   try {
-    const scopedOrganizationId = await assertOrganizationAccess(organizationId)
     const scopedUnitId = cleanText(unitId)
+    const scopedOrganizationId = await assertOrganizationAccess(organizationId, {
+      permission: "inventory.units.update",
+      resource: "Unit",
+      ...(scopedUnitId ? { resourceId: scopedUnitId } : {}),
+      auditAllowed: true,
+    })
 
     if (!scopedUnitId) {
       return { success: false, error: "Unit not found" }
@@ -258,8 +247,13 @@ export async function deleteManagedUnit(
   unitId: string,
 ): Promise<ActionResult<UnitRemovalResult>> {
   try {
-    const scopedOrganizationId = await assertOrganizationAccess(organizationId)
     const scopedUnitId = cleanText(unitId)
+    const scopedOrganizationId = await assertOrganizationAccess(organizationId, {
+      permission: "inventory.units.delete",
+      resource: "Unit",
+      ...(scopedUnitId ? { resourceId: scopedUnitId } : {}),
+      auditAllowed: true,
+    })
 
     if (!scopedUnitId) {
       return { success: false, error: "Unit not found" }

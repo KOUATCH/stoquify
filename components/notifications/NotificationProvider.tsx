@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react"
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react"
 import { NotificationData, NotificationSystem } from "./NotificationSystem"
 import { setupErrorNotificationIntegration } from "@/lib/error-handling/notification-integration"
 import {
@@ -14,9 +14,12 @@ import {
 
 interface NotificationContextType {
   notifications: NotificationData[]
+  unreadCount: number
   soundEnabled: boolean
   addNotification: (notification: Omit<NotificationData, "id"> & { id?: string }) => string
   removeNotification: (id: string) => void
+  markAsRead: (id: string) => void
+  markAllAsRead: () => void
   clearAll: () => void
   toggleSound: () => void
   // Convenience methods
@@ -58,6 +61,38 @@ interface NotificationContextType {
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined)
 
+const severityByType: Record<NotificationData["type"], NonNullable<NotificationData["severity"]>> = {
+  success: "success",
+  error: "error",
+  warning: "warning",
+  info: "info",
+}
+
+function safeReadBoolean(key: string, fallback: boolean) {
+  if (typeof window === "undefined") return fallback
+
+  try {
+    const storedValue = window.localStorage.getItem(key)
+    return storedValue === null ? fallback : JSON.parse(storedValue)
+  } catch {
+    return fallback
+  }
+}
+
+function safeWriteBoolean(key: string, value: boolean) {
+  if (typeof window === "undefined") return
+
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value))
+  } catch {
+    // Sound preference persistence is non-critical.
+  }
+}
+
+function createCorrelationId() {
+  return `ntf-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+}
+
 export function useNotifications() {
   const context = useContext(NotificationContext)
   if (!context) {
@@ -80,18 +115,16 @@ export function NotificationProvider({
   const [notifications, setNotifications] = useState<NotificationData[]>([])
   const [soundEnabled, setSoundEnabled] = useState(defaultSoundEnabled)
   const notificationCounter = useRef(0)
+  const unreadCount = useMemo(() => notifications.filter((notification) => !notification.readAt).length, [notifications])
 
   // Load sound preference from localStorage
   useEffect(() => {
-    const savedSoundEnabled = localStorage.getItem("notification-sound-enabled")
-    if (savedSoundEnabled !== null) {
-      setSoundEnabled(JSON.parse(savedSoundEnabled))
-    }
-  }, [])
+    setSoundEnabled(safeReadBoolean("notification-sound-enabled", defaultSoundEnabled))
+  }, [defaultSoundEnabled])
 
   // Save sound preference to localStorage
   useEffect(() => {
-    localStorage.setItem("notification-sound-enabled", JSON.stringify(soundEnabled))
+    safeWriteBoolean("notification-sound-enabled", soundEnabled)
   }, [soundEnabled])
 
   const addNotification = useCallback((notification: Omit<NotificationData, "id"> & { id?: string }) => {
@@ -102,11 +135,18 @@ export function NotificationProvider({
       sound: true,
       duration: 5000,
       priority: "normal",
+      category: "general",
+      severity: severityByType[notification.type],
+      deliveryState: "delivered",
+      channel: "in_app",
+      createdAt: new Date().toISOString(),
+      correlationId: createCorrelationId(),
       ...notificationData,
     }
 
     setNotifications((prev) => {
-      const updated = [...prev, newNotification]
+      const withoutDuplicate = prev.filter((item) => item.id !== id)
+      const updated = [...withoutDuplicate, newNotification]
       // Keep only the most recent notifications
       if (updated.length > maxNotifications) {
         return updated.slice(-maxNotifications)
@@ -119,6 +159,32 @@ export function NotificationProvider({
 
   const removeNotification = useCallback((id: string) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id))
+  }, [])
+
+  const markAsRead = useCallback((id: string) => {
+    const readAt = new Date().toISOString()
+    setNotifications((prev) =>
+      prev.map((notification) =>
+        notification.id === id
+          ? {
+              ...notification,
+              readAt: notification.readAt || readAt,
+              deliveryState: "read",
+            }
+          : notification
+      )
+    )
+  }, [])
+
+  const markAllAsRead = useCallback(() => {
+    const readAt = new Date().toISOString()
+    setNotifications((prev) =>
+      prev.map((notification) => ({
+        ...notification,
+        readAt: notification.readAt || readAt,
+        deliveryState: notification.deliveryState === "dismissed" ? notification.deliveryState : "read",
+      }))
+    )
   }, [])
 
   const clearAll = useCallback(() => {
@@ -798,9 +864,12 @@ export function NotificationProvider({
 
   const contextValue: NotificationContextType = {
     notifications,
+    unreadCount,
     soundEnabled,
     addNotification,
     removeNotification,
+    markAsRead,
+    markAllAsRead,
     clearAll,
     toggleSound,
     success,
@@ -841,8 +910,10 @@ export function NotificationProvider({
       <NotificationSystem
         notifications={notifications}
         onRemove={removeNotification}
+        onMarkRead={markAsRead}
         soundEnabled={soundEnabled}
         onToggleSound={toggleSound}
+        unreadCount={unreadCount}
       />
     </NotificationContext.Provider>
   )

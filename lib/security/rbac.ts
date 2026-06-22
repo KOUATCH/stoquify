@@ -7,6 +7,7 @@ import {
   hasAllRbacPermissions,
   hasAnyRbacPermission,
   hasRbacPermission,
+  isKnownPermission,
   permissionRisk,
   type PermissionRisk,
 } from "@/lib/security/rbac-permissions"
@@ -16,6 +17,7 @@ export {
   hasAllRbacPermissions,
   hasAnyRbacPermission,
   hasRbacPermission,
+  isKnownPermission,
   permissionRisk,
 } from "@/lib/security/rbac-permissions"
 
@@ -252,6 +254,19 @@ export async function requirePermission(
   const ctx = await requireRbacContext()
   const risk = permissionRisk(permission)
 
+  if (!isKnownPermission(permission)) {
+    await auditRbacDecision({
+      ctx,
+      permission,
+      result: "denied",
+      risk,
+      resource: options?.resource,
+      resourceId: options?.resourceId,
+      reason: "Unknown permission",
+    })
+    throw new RbacError(`Forbidden: unknown permission ${permission}`, "FORBIDDEN", 403)
+  }
+
   if (!canUsePermission(ctx, permission)) {
     await auditRbacDecision({
       ctx,
@@ -284,6 +299,20 @@ export async function requireAnyPermission(
   options?: { resource?: string; resourceId?: string },
 ) {
   const ctx = await requireRbacContext()
+  const unknownPermissions = permissions.filter((permission) => !isKnownPermission(permission))
+  if (unknownPermissions.length) {
+    await auditRbacDecision({
+      ctx,
+      permission: permissions.join("|"),
+      result: "denied",
+      risk: "high",
+      resource: options?.resource,
+      resourceId: options?.resourceId,
+      reason: `Unknown permission: ${unknownPermissions.join(", ")}`,
+    })
+    throw new RbacError(`Forbidden: unknown permission ${unknownPermissions.join(", ")}`, "FORBIDDEN", 403)
+  }
+
   if (!canUseAnyPermission(ctx, permissions)) {
     await auditRbacDecision({
       ctx,
@@ -304,6 +333,20 @@ export async function requireAllPermissions(
   options?: { resource?: string; resourceId?: string },
 ) {
   const ctx = await requireRbacContext()
+  const unknownPermissions = permissions.filter((permission) => !isKnownPermission(permission))
+  if (unknownPermissions.length) {
+    await auditRbacDecision({
+      ctx,
+      permission: permissions.join("&"),
+      result: "denied",
+      risk: "high",
+      resource: options?.resource,
+      resourceId: options?.resourceId,
+      reason: `Unknown permission: ${unknownPermissions.join(", ")}`,
+    })
+    throw new RbacError(`Forbidden: unknown permission ${unknownPermissions.join(", ")}`, "FORBIDDEN", 403)
+  }
+
   if (!canUseAllPermissions(ctx, permissions)) {
     await auditRbacDecision({
       ctx,
@@ -320,7 +363,7 @@ export async function requireAllPermissions(
 }
 
 export async function assertCanUseOrganization(ctx: RbacContext, organizationId: string) {
-  if (organizationId === ctx.orgId || ctx.isSuperUser) return true
+  if (organizationId === ctx.orgId) return true
   await auditRbacDecision({
     ctx,
     permission: "system.organization.read",

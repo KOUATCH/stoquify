@@ -2,8 +2,8 @@
 
 import { randomUUID } from "crypto"
 
-import { getAuthenticatedUser } from "@/lib/auth-server"
 import type { ServerActionResult } from "@/lib/error-handling/types"
+import { requirePermission } from "@/lib/security/rbac"
 import { db } from "@/prisma/db"
 import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
 import type {
@@ -16,6 +16,7 @@ import type { CustomerEditFormData, CustomerFormData } from "@/validations/custo
 import type { Customer as PrismaCustomer, Payment } from "@prisma/client"
 
 type DecimalLike = { toNumber?: () => number; toString: () => string } | number | string | null | undefined
+type CustomerPermission = "customers.read" | "customers.create" | "customers.update" | "customers.delete"
 
 function toNumber(value: DecimalLike): number {
   if (value == null) return 0
@@ -61,15 +62,21 @@ function mapPayment(payment: Payment): CustomerOrderPayment {
   }
 }
 
-async function getUserOrganizationId(organizationId?: string): Promise<string> {
-  if (organizationId) return organizationId
+async function requireCustomerAccess(
+  permission: CustomerPermission,
+  options: { resourceId?: string; auditAllowed?: boolean } = {},
+): Promise<string> {
+  const ctx = await requirePermission(permission, {
+    resource: "Customer",
+    ...(options.resourceId ? { resourceId: options.resourceId } : {}),
+    ...(options.auditAllowed !== undefined ? { auditAllowed: options.auditAllowed } : {}),
+  })
 
-  const user = await getAuthenticatedUser()
-  if (!user.organizationId) {
+  if (!ctx.orgId) {
     throw new BusinessRuleError("Organization ID is required")
   }
 
-  return user.organizationId
+  return ctx.orgId
 }
 
 async function nextCustomerCode(organizationId: string): Promise<string> {
@@ -81,7 +88,7 @@ async function nextCustomerCode(organizationId: string): Promise<string> {
 }
 
 export async function getCustomers(): Promise<ServerActionResult<CustomerWithStats[]>> {
-  const organizationId = await getUserOrganizationId()
+  const organizationId = await requireCustomerAccess("customers.read")
 
   const customers = await db.customer.findMany({
     where: {
@@ -122,15 +129,17 @@ export async function getCustomers(): Promise<ServerActionResult<CustomerWithSta
   return { success: true, data: result }
 }
 
-export async function getCustomer(id: string, organizationId?: string): Promise<ServerActionResult<Customer | null>> {
+export async function getCustomer(id: string, _organizationId?: string): Promise<ServerActionResult<Customer | null>> {
   if (!id) {
     throw new BusinessRuleError("Customer ID is required")
   }
 
+  const organizationId = await requireCustomerAccess("customers.read", { resourceId: id })
+
   const customer = await db.customer.findFirst({
     where: {
       id,
-      organizationId: await getUserOrganizationId(organizationId),
+      organizationId,
       deletedAt: null,
     },
   })
@@ -143,7 +152,7 @@ export async function createCustomer(data: CustomerFormData): Promise<ServerActi
     throw new BusinessRuleError("Customer name is required")
   }
 
-  const organizationId = await getUserOrganizationId()
+  const organizationId = await requireCustomerAccess("customers.create", { auditAllowed: true })
   const now = new Date()
 
   const customer = await db.customer.create({
@@ -176,7 +185,10 @@ export async function updateCustomer(data: CustomerEditFormData): Promise<Server
     throw new BusinessRuleError("Customer name is required")
   }
 
-  const organizationId = await getUserOrganizationId()
+  const organizationId = await requireCustomerAccess("customers.update", {
+    resourceId: data.id,
+    auditAllowed: true,
+  })
 
   const updated = await db.customer.updateMany({
     where: {
@@ -223,7 +235,7 @@ export async function getCustomerOrders(customerId: string): Promise<ServerActio
     throw new BusinessRuleError("Customer ID is required")
   }
 
-  const organizationId = await getUserOrganizationId()
+  const organizationId = await requireCustomerAccess("customers.read", { resourceId: customerId })
 
   const orders = await db.salesOrder.findMany({
     where: {
@@ -281,7 +293,10 @@ export async function deleteCustomer(id: string): Promise<ServerActionResult<voi
     throw new BusinessRuleError("Customer ID is required")
   }
 
-  const organizationId = await getUserOrganizationId()
+  const organizationId = await requireCustomerAccess("customers.delete", {
+    resourceId: id,
+    auditAllowed: true,
+  })
 
   await db.customer.updateMany({
     where: {

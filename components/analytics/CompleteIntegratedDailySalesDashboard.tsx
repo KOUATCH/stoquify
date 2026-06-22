@@ -7,6 +7,19 @@ import { Badge } from "@/components/ui/badge"
 import { DollarSign, ShoppingCart, Users, TrendingUp, ArrowUpIcon, ArrowDownIcon, Clock, BarChart3, Target, Activity } from "lucide-react"
 import { getDailyReportData } from "@/actions/analytics/financial-analytics"
 import { useClientAuth } from "@/hooks/useClientAuth"
+import {
+  type AnalyticsTone,
+  analyticsContentClass,
+  analyticsMutedTextClass,
+  analyticsPageClass,
+  analyticsPanelClass,
+  analyticsRowClass,
+  analyticsStatCardClass,
+  analyticsStatStyle,
+  analyticsToneClass,
+  analyticsToneText,
+  analyticsTrendText,
+} from "@/components/analytics/dashboard/analytics-dashboard-theme"
 
 interface CompleteIntegratedDailySalesDashboardProps {
   organizationId?: string
@@ -43,44 +56,6 @@ export default function CompleteIntegratedDailySalesDashboard({
 
     fetchDailyData()
   }, [orgId, locId, date])
-  const getCardColors = (index: number) => {
-    const colorSchemes = [
-      {
-        bg: "from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20",
-        border: "border-emerald-200/40 dark:border-emerald-800/40",
-        iconBg: "bg-emerald-500/10 dark:bg-emerald-400/10",
-        iconColor: "text-emerald-600 dark:text-emerald-400",
-        textColor: "text-emerald-600 dark:text-emerald-400",
-        valueColor: "text-emerald-900 dark:text-emerald-100"
-      },
-      {
-        bg: "from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20",
-        border: "border-blue-200/40 dark:border-blue-800/40",
-        iconBg: "bg-blue-500/10 dark:bg-blue-400/10",
-        iconColor: "text-blue-600 dark:text-blue-400",
-        textColor: "text-blue-600 dark:text-blue-400",
-        valueColor: "text-blue-900 dark:text-blue-100"
-      },
-      {
-        bg: "from-orange-50 to-yellow-50 dark:from-orange-900/20 dark:to-yellow-900/20",
-        border: "border-orange-200/40 dark:border-orange-800/40",
-        iconBg: "bg-orange-500/10 dark:bg-orange-400/10",
-        iconColor: "text-orange-600 dark:text-orange-400",
-        textColor: "text-orange-600 dark:text-orange-400",
-        valueColor: "text-orange-900 dark:text-orange-100"
-      },
-      {
-        bg: "from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20",
-        border: "border-purple-200/40 dark:border-purple-800/40",
-        iconBg: "bg-purple-500/10 dark:bg-purple-400/10",
-        iconColor: "text-purple-600 dark:text-purple-400",
-        textColor: "text-purple-600 dark:text-purple-400",
-        valueColor: "text-purple-900 dark:text-purple-100"
-      }
-    ]
-    return colorSchemes[index % colorSchemes.length]
-  }
-
   const getDailyStats = () => {
     if (loading || !dailyData) {
       return [
@@ -156,12 +131,14 @@ export default function CompleteIntegratedDailySalesDashboard({
   }
 
   const dailyStats = getDailyStats()
+  const cardTones: AnalyticsTone[] = ["success", "brand", "info", "gold"]
 
   return (
-    <div className="space-y-6">
+    <div className={analyticsPageClass}>
+      <div className={analyticsContentClass}>
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Daily Sales Reports</h1>
-        <Badge variant="outline" className="text-sm">
+        <h1 className="text-3xl font-bold tracking-tight text-[var(--dash-text)]">Daily Sales Reports</h1>
+        <Badge variant="outline" className={`text-sm ${analyticsToneClass("success")}`}>
           <Clock className="h-3 w-3 mr-1" />
           Real-time data
         </Badge>
@@ -172,36 +149,41 @@ export default function CompleteIntegratedDailySalesDashboard({
         {dailyStats.map((stat, index) => {
           const Icon = stat.icon
           const isPositive = stat.trend === "up"
-          const colors = getCardColors(index)
+          const tone = cardTones[index % cardTones.length]
 
           return (
-            <div key={index} className={`bg-gradient-to-br ${colors.bg} p-4 rounded-xl border ${colors.border}`}>
+            <div key={index} className={`${analyticsStatCardClass} p-4`} style={analyticsStatStyle(tone)}>
               <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-lg ${colors.iconBg}`}>
-                  <Icon className={`w-5 h-5 ${colors.iconColor}`} />
+                <div className={`rounded-lg border p-2 ${analyticsToneClass(tone)}`}>
+                  <Icon className={`w-5 h-5 ${analyticsToneText(tone)}`} />
                 </div>
                 <div className="flex-1">
-                  <p className={`text-xs font-medium ${colors.textColor} uppercase tracking-wide`}>
+                  <p className={`text-xs font-medium uppercase tracking-wide ${analyticsToneText(tone)}`}>
                     {stat.title}
                   </p>
-                  <p className={`text-xl font-bold ${colors.valueColor}`}>{stat.value}</p>
+                  <p className="text-xl font-bold text-[var(--dash-text)]">{stat.value}</p>
                 </div>
                 <div className="flex items-center text-xs">
-                  {isPositive ? <ArrowUpIcon className="mr-1 h-3 w-3 text-emerald-600" /> : <ArrowDownIcon className="mr-1 h-3 w-3 text-red-600" />}
-                  <span className={isPositive ? "text-emerald-700 dark:text-emerald-400 font-semibold" : "text-red-700 dark:text-red-400 font-semibold"}>
+                  {isPositive ? (
+                    <ArrowUpIcon className={`mr-1 h-3 w-3 ${analyticsTrendText(true)}`} />
+                  ) : (
+                    <ArrowDownIcon className={`mr-1 h-3 w-3 ${analyticsTrendText(false)}`} />
+                  )}
+                  <span className={`${analyticsTrendText(isPositive)} font-semibold`}>
                     {stat.change}
                   </span>
                 </div>
               </div>
+              <p className={`mt-2 text-xs ${analyticsMutedTextClass}`}>{stat.description}</p>
             </div>
           )
         })}
       </div>
 
       {/* Session Overview */}
-      <Card>
+      <Card className={analyticsPanelClass}>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-[var(--dash-text)]">
             <Activity className="h-5 w-5" />
             Current Session Overview
           </CardTitle>
@@ -209,7 +191,7 @@ export default function CompleteIntegratedDailySalesDashboard({
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-2">
-              <p className="text-sm font-medium text-gray-600">Session Details</p>
+              <p className={`text-sm font-medium ${analyticsMutedTextClass}`}>Session Details</p>
               <div className="space-y-1">
                 <p className="text-sm"><span className="font-medium">Session:</span> {dailyData?.session.sessionNumber || "Loading..."}</p>
                 <p className="text-sm"><span className="font-medium">Cashier:</span> {dailyData?.session.cashierName || "Loading..."}</p>
@@ -218,7 +200,7 @@ export default function CompleteIntegratedDailySalesDashboard({
               </div>
             </div>
             <div className="space-y-2">
-              <p className="text-sm font-medium text-gray-600">Cash Management</p>
+              <p className={`text-sm font-medium ${analyticsMutedTextClass}`}>Cash Management</p>
               <div className="space-y-1">
                 <p className="text-sm"><span className="font-medium">Opening Balance:</span> ${dailyData?.metrics.openingBalance?.toFixed(2) || "0.00"}</p>
                 <p className="text-sm"><span className="font-medium">Cash In:</span> ${dailyData?.metrics.cashIn?.toFixed(2) || "0.00"}</p>
@@ -227,7 +209,7 @@ export default function CompleteIntegratedDailySalesDashboard({
               </div>
             </div>
             <div className="space-y-2">
-              <p className="text-sm font-medium text-gray-600">Payment Methods</p>
+              <p className={`text-sm font-medium ${analyticsMutedTextClass}`}>Payment Methods</p>
               <div className="space-y-1">
                 <p className="text-sm"><span className="font-medium">Cash:</span> ${dailyData?.metrics.cashTotal?.toFixed(2) || "0.00"} ({dailyData?.metrics.totalSales > 0 ? Math.round((dailyData.metrics.cashTotal / dailyData.metrics.totalSales) * 100) : 0}%)</p>
                 <p className="text-sm"><span className="font-medium">Card:</span> ${dailyData?.metrics.cardTotal?.toFixed(2) || "0.00"} ({dailyData?.metrics.totalSales > 0 ? Math.round((dailyData.metrics.cardTotal / dailyData.metrics.totalSales) * 100) : 0}%)</p>
@@ -241,9 +223,9 @@ export default function CompleteIntegratedDailySalesDashboard({
       {/* Performance Reports */}
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Sales Performance */}
-        <Card>
+        <Card className={analyticsPanelClass}>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-[var(--dash-text)]">
               <BarChart3 className="h-5 w-5" />
               Sales Performance
             </CardTitle>
@@ -256,7 +238,7 @@ export default function CompleteIntegratedDailySalesDashboard({
                   <span>94.9%</span>
                 </div>
                 <Progress value={94.9} className="h-2" />
-                <p className="text-xs text-gray-500 mt-1">$2,847 of $3,000 target</p>
+                <p className={`mt-1 text-xs ${analyticsMutedTextClass}`}>$2,847 of $3,000 target</p>
               </div>
               <div>
                 <div className="flex justify-between text-sm mb-1">
@@ -264,7 +246,7 @@ export default function CompleteIntegratedDailySalesDashboard({
                   <span>84.7%</span>
                 </div>
                 <Progress value={84.7} className="h-2" />
-                <p className="text-xs text-gray-500 mt-1">127 of 150 transactions</p>
+                <p className={`mt-1 text-xs ${analyticsMutedTextClass}`}>127 of 150 transactions</p>
               </div>
               <div>
                 <div className="flex justify-between text-sm mb-1">
@@ -272,16 +254,16 @@ export default function CompleteIntegratedDailySalesDashboard({
                   <span>96%</span>
                 </div>
                 <Progress value={96} className="h-2" />
-                <p className="text-xs text-gray-500 mt-1">Based on recent feedback</p>
+                <p className={`mt-1 text-xs ${analyticsMutedTextClass}`}>Based on recent feedback</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Top Selling Items */}
-        <Card>
+        <Card className={analyticsPanelClass}>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-[var(--dash-text)]">
               <Target className="h-5 w-5" />
               Top Selling Items Today
             </CardTitle>
@@ -290,17 +272,17 @@ export default function CompleteIntegratedDailySalesDashboard({
             <div className="space-y-3">
               {dailyData?.topItems && dailyData.topItems.length > 0 ? (
                 dailyData.topItems.map((item: any, index: number) => (
-                  <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                  <div key={index} className={`${analyticsRowClass} flex items-center justify-between p-3`}>
                     <div>
                       <p className="font-medium text-sm">{item.itemName}</p>
-                      <p className="text-xs text-gray-500">{item.quantitySold} units sold</p>
+                      <p className={`text-xs ${analyticsMutedTextClass}`}>{item.quantitySold} units sold</p>
                     </div>
-                    <span className="font-bold text-green-600">${item.totalRevenue.toFixed(2)}</span>
+                    <span className="font-bold text-[var(--dash-success)]">${item.totalRevenue.toFixed(2)}</span>
                   </div>
                 ))
               ) : (
                 <div className="text-center py-4">
-                  <p className="text-sm text-gray-500">
+                  <p className={`text-sm ${analyticsMutedTextClass}`}>
                     {loading ? "Loading top items..." : "No sales data available"}
                   </p>
                 </div>
@@ -308,6 +290,7 @@ export default function CompleteIntegratedDailySalesDashboard({
             </div>
           </CardContent>
         </Card>
+      </div>
       </div>
     </div>
   )

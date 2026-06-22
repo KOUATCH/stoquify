@@ -6,32 +6,35 @@ import { QuickActionsCard } from "@/components/analytics/dashboard/quick-actions
 import { RecentTransactionsCard } from "@/components/analytics/dashboard/recent-transactions-card"
 import { RevenueChart } from "@/components/analytics/dashboard/revenue-chart"
 import { TopProductsCard } from "@/components/analytics/dashboard/top-products-card"
-import { getTranslations } from "next-intl/server"
+import { analyticsContentClass, analyticsPanelClass, analyticsPageClass } from "@/components/analytics/dashboard/analytics-dashboard-theme"
 import { Suspense } from "react"
 
+function AnalyticsSkeleton({ className }: { className: string }) {
+  return <div className={`${analyticsPanelClass} animate-pulse ${className}`} />
+}
+
 export default async function HomePage() {
-  const t = await getTranslations("common")
   return (
-    <div className="min-h-screen gradient-bg">
-      <div className="container mx-auto p-6 space-y-8">
+    <div className={analyticsPageClass}>
+      <div className={analyticsContentClass}>
         <DashboardHeader />
 
-        <Suspense fallback={<div className="animate-pulse">{t("loading")}</div>}>
+        <Suspense fallback={<AnalyticsSkeleton className="h-28" />}>
           <DashboardStats />
         </Suspense>
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           <div className="xl:col-span-2 space-y-6">
-            <Suspense fallback={<div className="h-96 bg-card rounded-xl animate-pulse" />}>
+            <Suspense fallback={<AnalyticsSkeleton className="h-96" />}>
               <RevenueChart />
             </Suspense>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Suspense fallback={<div className="h-80 bg-card rounded-xl animate-pulse" />}>
+              <Suspense fallback={<AnalyticsSkeleton className="h-80" />}>
                 <TopProductsCard />
               </Suspense>
 
-              <Suspense fallback={<div className="h-80 bg-card rounded-xl animate-pulse" />}>
+              <Suspense fallback={<AnalyticsSkeleton className="h-80" />}>
                 <CashierPerformanceCard />
               </Suspense>
             </div>
@@ -40,11 +43,11 @@ export default async function HomePage() {
           <div className="space-y-6">
             <QuickActionsCard />
 
-            <Suspense fallback={<div className="h-64 bg-card rounded-xl animate-pulse" />}>
+            <Suspense fallback={<AnalyticsSkeleton className="h-64" />}>
               <AlertsCard />
             </Suspense>
 
-            <Suspense fallback={<div className="h-96 bg-card rounded-xl animate-pulse" />}>
+            <Suspense fallback={<AnalyticsSkeleton className="h-96" />}>
               <RecentTransactionsCard />
             </Suspense>
           </div>

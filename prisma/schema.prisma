@@ -349,6 +349,11 @@ model Organization {
   threeWayMatches          ThreeWayMatch[]
   supplierPayments         SupplierPayment[]
   supplierPaymentAllocations SupplierPaymentAllocation[]
+  workflowAssuranceCheckRuns WorkflowAssuranceCheckRun[]
+  workflowAssuranceIncidents WorkflowAssuranceIncident[]
+  workflowAssuranceIncidentEvents WorkflowAssuranceIncidentEvent[]
+  workflowAssuranceAlertDeliveries WorkflowAssuranceAlertDelivery[]
+  workflowAssuranceWaivers WorkflowAssuranceWaiver[]
 
   @@unique([slug])
   @@index([slug])
@@ -5508,6 +5513,361 @@ enum ComplianceEvidenceSource {
   AUTHORITY
   MANUAL_PORTAL
   ADAPTER
+}
+
+// ============================================================
+// KONTAVA WORKFLOW ASSURANCE REGISTRY
+// ============================================================
+
+model WorkflowAssuranceCheckDefinition {
+  id String @id @default(cuid())
+
+  checkKey         String
+  version          Int
+  workflow         WorkflowAssuranceWorkflow
+  moduleSlug       String
+  invariantName    String
+  executionMode    WorkflowAssuranceExecutionMode
+  defaultSeverity  WorkflowAssuranceSeverity @default(WARNING)
+  requiredPermission String
+  ownerRole        String
+  enabled          Boolean @default(true)
+  enforceMode      Boolean @default(false)
+  sourceTables     Json
+  actionRoute      String
+  metadata         Json?
+
+  runs WorkflowAssuranceCheckRun[]
+  incidents WorkflowAssuranceIncident[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([checkKey, version])
+  @@index([workflow, enabled])
+  @@index([moduleSlug, enabled])
+  @@index([executionMode, enabled])
+  @@map("workflow_assurance_check_definitions")
+}
+
+model WorkflowAssuranceCheckRun {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  definitionId      String
+  definition        WorkflowAssuranceCheckDefinition @relation(fields: [definitionId], references: [id], onDelete: Restrict)
+  checkKey          String
+  definitionVersion Int
+
+  runType      WorkflowAssuranceRunType
+  runStatus    WorkflowAssuranceRunStatus @default(RUNNING)
+  resultStatus WorkflowAssuranceResultStatus?
+  severity     WorkflowAssuranceSeverity?
+
+  actorId     String?
+  sourceType  String?
+  sourceId    String?
+  sourceHash  String?
+  fingerprint String?
+  periodId    String?
+  locationId  String?
+
+  scannedCount Int @default(0)
+  passedCount  Int @default(0)
+  warningCount Int @default(0)
+  failedCount  Int @default(0)
+  blockedCount Int @default(0)
+  skippedCount Int @default(0)
+  errorCount   Int @default(0)
+
+  startedAt   DateTime @default(now())
+  completedAt DateTime?
+  durationMs  Int?
+
+  resultSummary Json?
+  errorCode     String?
+  errorMessage  String?
+  metadata      Json?
+
+  incidents WorkflowAssuranceIncident[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId, runStatus, startedAt])
+  @@index([organizationId, resultStatus, startedAt])
+  @@index([organizationId, checkKey, startedAt])
+  @@index([organizationId, sourceType, sourceId])
+  @@index([definitionId])
+  @@map("workflow_assurance_check_runs")
+}
+
+enum WorkflowAssuranceWorkflow {
+  CASH_COMMAND
+  RECEIVABLES
+  PAYABLES
+  INVENTORY
+  SALES_MARGIN
+  PAYMENT_RECONCILIATION
+  LEDGER
+  BUSINESS_EVENT
+  PURCHASING_AP
+  PAYROLL
+  COMPLIANCE
+  CLOSE_ASSURANCE
+  POS
+  OFFLINE_POS
+  SNAPSHOT_BI
+  CROSS_MODULE
+}
+
+enum WorkflowAssuranceExecutionMode {
+  SYNCHRONOUS_GUARD
+  AFTER_COMMIT_VALIDATOR
+  SCHEDULED_SCAN
+  PRE_CLOSE_GATE
+  SNAPSHOT_BI_GUARD
+}
+
+enum WorkflowAssuranceResultStatus {
+  PASSED
+  WARNING
+  FAILED
+  BLOCKED
+  SKIPPED
+  ERROR
+}
+
+enum WorkflowAssuranceRunType {
+  MANUAL
+  SCHEDULED
+  AFTER_COMMIT
+  PRE_CLOSE
+  SNAPSHOT_GUARD
+}
+
+enum WorkflowAssuranceRunStatus {
+  RUNNING
+  COMPLETED
+  COMPLETED_WITH_WARNINGS
+  FAILED
+}
+
+enum WorkflowAssuranceSeverity {
+  INFO
+  WARNING
+  HIGH
+  BLOCKING
+  COMPLIANCE_CRITICAL
+}
+
+model WorkflowAssuranceIncident {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  definitionId String
+  definition   WorkflowAssuranceCheckDefinition @relation(fields: [definitionId], references: [id], onDelete: Restrict)
+
+  checkRunId String?
+  checkRun   WorkflowAssuranceCheckRun? @relation(fields: [checkRunId], references: [id], onDelete: SetNull)
+
+  checkKey          String
+  definitionVersion Int
+  workflow          WorkflowAssuranceWorkflow
+  moduleSlug        String
+
+  sourceType  String
+  sourceId    String
+  sourceHash  String
+  fingerprint String
+
+  title         String
+  detail        String
+  severity      WorkflowAssuranceSeverity
+  status        WorkflowAssuranceIncidentStatus @default(OPEN)
+  evidenceGrade String @default("blocked")
+  sourceLinks   Json?
+
+  assignedRole String?
+  ownerId      String?
+  dueAt        DateTime?
+  actionRoute  String
+
+  firstDetectedAt DateTime @default(now())
+  lastDetectedAt  DateTime @default(now())
+  resolvedAt      DateTime?
+  resolvedById    String?
+  reopenedAt      DateTime?
+  suppressedAt    DateTime?
+  suppressedById  String?
+  closedAt        DateTime?
+  occurrenceCount Int @default(1)
+
+  resolutionNote   String?
+  suppressionReason String?
+  metadata         Json?
+
+  events     WorkflowAssuranceIncidentEvent[]
+  deliveries WorkflowAssuranceAlertDelivery[]
+  waivers    WorkflowAssuranceWaiver[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([organizationId, checkKey, sourceType, sourceId, fingerprint, sourceHash], name: "workflow_assurance_incident_dedupe_key")
+  @@index([organizationId, status, severity, lastDetectedAt])
+  @@index([organizationId, ownerId, status, dueAt])
+  @@index([organizationId, workflow, status])
+  @@index([definitionId])
+  @@index([checkRunId])
+  @@map("workflow_assurance_incidents")
+}
+
+model WorkflowAssuranceIncidentEvent {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  incidentId String
+  incident   WorkflowAssuranceIncident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+
+  eventType  WorkflowAssuranceIncidentEventType
+  fromStatus WorkflowAssuranceIncidentStatus?
+  toStatus   WorkflowAssuranceIncidentStatus?
+  actorId    String?
+  message    String
+  metadata   Json?
+
+  createdAt DateTime @default(now())
+
+  @@index([organizationId, incidentId, createdAt])
+  @@index([organizationId, eventType, createdAt])
+  @@index([actorId, createdAt])
+  @@map("workflow_assurance_incident_events")
+}
+
+model WorkflowAssuranceAlertDelivery {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  incidentId String
+  incident   WorkflowAssuranceIncident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+
+  channel   WorkflowAssuranceAlertChannel
+  status    WorkflowAssuranceAlertDeliveryStatus @default(PENDING)
+  dedupeKey String
+
+  recipientId   String?
+  recipientRole String?
+  title         String
+  message       String
+  actionRoute   String?
+
+  deliveredAt  DateTime?
+  failedAt     DateTime?
+  failureCode  String?
+  failureReason String?
+  metadata     Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([organizationId, incidentId, channel, dedupeKey])
+  @@index([organizationId, status, createdAt])
+  @@index([organizationId, channel, status])
+  @@index([incidentId])
+  @@map("workflow_assurance_alert_deliveries")
+}
+
+model WorkflowAssuranceWaiver {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  incidentId String
+  incident   WorkflowAssuranceIncident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+
+  status       WorkflowAssuranceWaiverStatus @default(REQUESTED)
+  requesterId  String
+  approverId   String?
+  reason       String
+  evidenceHash String
+  expiresAt    DateTime
+
+  requestedAt DateTime @default(now())
+  approvedAt  DateTime?
+  rejectedAt  DateTime?
+  revokedAt   DateTime?
+  metadata    Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId, incidentId, status])
+  @@index([organizationId, requesterId, status])
+  @@index([organizationId, expiresAt, status])
+  @@map("workflow_assurance_waivers")
+}
+
+enum WorkflowAssuranceIncidentStatus {
+  OPEN
+  ACKNOWLEDGED
+  ASSIGNED
+  IN_PROGRESS
+  RESOLVED
+  WAIVED
+  SUPPRESSED
+  REOPENED
+  CLOSED
+}
+
+enum WorkflowAssuranceIncidentEventType {
+  CREATED
+  DUPLICATE_DETECTED
+  SEVERITY_CHANGED
+  ACKNOWLEDGED
+  ASSIGNED
+  IN_PROGRESS
+  RESOLVED
+  WAIVER_REQUESTED
+  WAIVER_APPROVED
+  WAIVER_REJECTED
+  SUPPRESSED
+  REOPENED
+  CLOSED
+  ALERT_RECORDED
+}
+
+enum WorkflowAssuranceAlertChannel {
+  IN_APP
+  EMAIL
+  WEBHOOK
+  SMS
+  TASK_QUEUE
+}
+
+enum WorkflowAssuranceAlertDeliveryStatus {
+  PENDING
+  DELIVERED
+  SKIPPED
+  FAILED
+  SUPPRESSED
+}
+
+enum WorkflowAssuranceWaiverStatus {
+  REQUESTED
+  APPROVED
+  REJECTED
+  EXPIRED
+  REVOKED
 }
 
 // ============================================================

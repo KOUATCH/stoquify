@@ -1,0 +1,325 @@
+{
+  "generatedAt": "2026-06-21T21:19:06.538Z",
+  "root": "E:\\ohada saas\\newStockFlow\\aqstoqflow",
+  "summary": {
+    "checkCount": 33,
+    "readyCheckCount": 33,
+    "indexCount": 6,
+    "readyIndexCount": 6,
+    "engineHealthCount": 2,
+    "readyEngineHealthCount": 2,
+    "blockerCount": 0,
+    "enforceModeStatus": "ready"
+  },
+  "checks": [
+    {
+      "checkKey": "ledger.posted_source_link.required",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "accountant",
+      "actionRoute": "/dashboard/accounting/journals",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "business_event.applied_or_visible",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "operations_lead",
+      "actionRoute": "/dashboard/manager-action-center",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "business_event.outbox.stuck_sla",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "operations_lead",
+      "actionRoute": "/dashboard/manager-action-center",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "ledger.posted_batch_journal.required",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "accountant",
+      "actionRoute": "/dashboard/accounting/journals",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "ledger.journal_entry.balanced",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "accountant",
+      "actionRoute": "/dashboard/accounting/reports/trial-balance",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "compliance.final_document_hash.required",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "accountant",
+      "actionRoute": "/dashboard/compliance",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "ledger.closed_period.posting_blocked",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "accountant",
+      "actionRoute": "/dashboard/accounting/control-center",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "ledger.failed_posting_batch.visible",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "finance_manager",
+      "actionRoute": "/dashboard/manager-action-center",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "pos.completed_sale_payment.required",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "branch_manager",
+      "actionRoute": "/dashboard/pos",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "pos.completed_sale_receipt.required",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "branch_manager",
+      "actionRoute": "/dashboard/pos",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "pos.completed_sale_stock_movement.required",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "inventory_manager",
+      "actionRoute": "/dashboard/pos",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "pos.completed_sale_ledger_source_link.required",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "finance_manager",
+      "actionRoute": "/dashboard/pos",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "pos.network_tender_idempotency_hash.required",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "finance_manager",
+      "actionRoute": "/dashboard/pos",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "offline_pos.replay_sla.visible",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "operations_lead",
+      "actionRoute": "/dashboard/pos",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "offline_pos.accepted_event_business_event.required",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "operations_lead",
+      "actionRoute": "/dashboard/pos",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "offline_pos.sequence_hash_conflict.visible",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "operations_lead",
+      "actionRoute": "/dashboard/pos",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "offline_pos.quarantined_event_conflict.required",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "operations_lead",
+      "actionRoute": "/dashboard/pos",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "offline_pos.replayed_event_proof.required",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "operations_lead",
+      "actionRoute": "/dashboard/pos",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "payment_reconciliation.exception_sla.visible",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "finance_manager",
+      "actionRoute": "/dashboard/finance/reconciliation",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "payment_reconciliation.suspense_owner.required",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "finance_manager",
+      "actionRoute": "/dashboard/finance/reconciliation",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "payment_reconciliation.unmatched_provider_event.visible",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "finance_manager",
+      "actionRoute": "/dashboard/finance/reconciliation",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "payment_reconciliation.unsigned_run_sla.visible",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "finance_manager",
+      "actionRoute": "/dashboard/finance/reconciliation",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "payment_reconciliation.certificate_source_hash.current",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "finance_manager",
+      "actionRoute": "/dashboard/finance/reconciliation",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "purchasing_ap.po_approval_receipt_trace.required",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "operations_lead",
+      "actionRoute": "/dashboard/purchase-orders",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "purchasing_ap.goods_receipt_stock_movement.required",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "inventory_manager",
+      "actionRoute": "/dashboard/purchases",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "purchasing_ap.supplier_invoice_three_way_match.required",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "finance_manager",
+      "actionRoute": "/dashboard/purchases/payables",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "purchasing_ap.supplier_invoice_posting_proof.required",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "finance_manager",
+      "actionRoute": "/dashboard/finance/payables",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "purchasing_ap.released_payment_evidence.required",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "finance_manager",
+      "actionRoute": "/dashboard/finance/payables",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "purchasing_ap.supplier_bank_pending_release.blocked",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "finance_manager",
+      "actionRoute": "/dashboard/purchases/suppliers",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "inventory.completed_adjustment_evidence.required",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "inventory_manager",
+      "actionRoute": "/dashboard/inventory/movements",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "payroll.released_payment_evidence.required",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "payroll_lead",
+      "actionRoute": "/dashboard/payroll",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "compliance.submission_sla.visible",
+      "executionMode": "scheduled_scan",
+      "ownerRole": "accountant",
+      "actionRoute": "/dashboard/compliance",
+      "enforceMode": false,
+      "blockers": []
+    },
+    {
+      "checkKey": "close.certified_pack_evidence.current",
+      "executionMode": "pre_close_gate",
+      "ownerRole": "accountant",
+      "actionRoute": "/dashboard/accounting/close",
+      "enforceMode": false,
+      "blockers": []
+    }
+  ],
+  "indexes": [
+    {
+      "id": "incident_status_severity_date",
+      "label": "organization + status + severity + detected date",
+      "passed": true
+    },
+    {
+      "id": "incident_workflow_status",
+      "label": "organization + workflow + status",
+      "passed": true
+    },
+    {
+      "id": "incident_owner_due",
+      "label": "organization + owner + status + due date",
+      "passed": true
+    },
+    {
+      "id": "run_status_started",
+      "label": "organization + run status + started date",
+      "passed": true
+    },
+    {
+      "id": "run_source_lookup",
+      "label": "organization + source type + source id",
+      "passed": true
+    },
+    {
+      "id": "alert_delivery_status",
+      "label": "organization + alert delivery status",
+      "passed": true
+    }
+  ],
+  "engineHealth": [
+    {
+      "id": "control_tower_engine_health",
+      "label": "Control Tower exposes stale run, failed run, pending alert, and failed alert health",
+      "passed": true
+    },
+    {
+      "id": "scheduler_policy",
+      "label": "Scheduler policy classifies execution modes and cursor fields",
+      "passed": true
+    }
+  ],
+  "blockers": []
+}

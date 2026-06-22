@@ -1,11 +1,11 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { getSession } from "@/lib/auth-server"
+import { assertCanUseOrganization, requirePermission } from "@/lib/security/rbac"
 import { db } from "@/prisma/db"
 import { Prisma } from "@prisma/client"
 import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses"
-import { AuthRequiredError, BusinessRuleError, ForbiddenError, NotFoundError } from "@/services/_shared/action-errors"
+import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
 import {
   createTaxRateForManagement,
   getTaxRateManagementDataForOrg,
@@ -35,6 +35,7 @@ type ActionResult<T> = {
 
 const ACTIONABLE_ERROR_MESSAGES = new Set([
   "Unauthorized",
+  "Forbidden: cannot access another organization",
   "Organization is required",
   "Organization not found or inactive",
   "You do not have access to this organization",
@@ -96,46 +97,22 @@ function getValidationMessage(input: unknown) {
   }
 }
 
-async function assertOrganizationAccess(organizationId: string) {
+async function assertOrganizationAccess(
+  organizationId: string,
+  options: { permission: string; resource: string; resourceId?: string; auditAllowed?: boolean },
+) {
   const requestedOrganizationId = cleanText(organizationId)
 
   if (!requestedOrganizationId) {
     throw new BusinessRuleError("Organization is required")
   }
 
-  const session = await getSession()
-
-  if (!session?.user?.id) {
-    throw new AuthRequiredError("Unauthorized")
-  }
-
-  const user = await db.user.findFirst({
-    where: {
-      id: session.user.id,
-      isActive: true,
-    },
-    select: {
-      organizationId: true,
-      roles: {
-        select: {
-          permissions: true,
-        },
-      },
-    },
+  const ctx = await requirePermission(options.permission, {
+    resource: options.resource,
+    ...(options.resourceId ? { resourceId: options.resourceId } : {}),
+    ...(options.auditAllowed !== undefined ? { auditAllowed: options.auditAllowed } : {}),
   })
-
-  if (!user) {
-    throw new AuthRequiredError("Unauthorized")
-  }
-
-  const permissions = new Set([
-    ...((session.user as any).permissions ?? []),
-    ...user.roles.flatMap((role) => role.permissions ?? []),
-  ])
-
-  if (user.organizationId !== requestedOrganizationId && !permissions.has("*")) {
-    throw new ForbiddenError("You do not have access to this organization")
-  }
+  await assertCanUseOrganization(ctx, requestedOrganizationId)
 
   const organization = await db.organization.findFirst({
     where: {
@@ -165,7 +142,10 @@ export async function getTaxRateManagementData(
   organizationId: string,
 ): Promise<ActionResult<TaxRateManagementData>> {
   try {
-    const scopedOrganizationId = await assertOrganizationAccess(organizationId)
+    const scopedOrganizationId = await assertOrganizationAccess(organizationId, {
+      permission: "taxes.read",
+      resource: "TaxRate",
+    })
     const data = await getTaxRateManagementDataForOrg(scopedOrganizationId)
 
     return {
@@ -190,7 +170,11 @@ export async function createManagedTaxRate(
   input: TaxRateManagementInput,
 ): Promise<ActionResult<TaxRateManagementRow>> {
   try {
-    const scopedOrganizationId = await assertOrganizationAccess(organizationId)
+    const scopedOrganizationId = await assertOrganizationAccess(organizationId, {
+      permission: "taxes.create",
+      resource: "TaxRate",
+      auditAllowed: true,
+    })
     const parsed = getValidationMessage(input)
 
     if (!parsed.success) {
@@ -220,8 +204,13 @@ export async function updateManagedTaxRate(
   input: TaxRateManagementInput,
 ): Promise<ActionResult<TaxRateManagementRow>> {
   try {
-    const scopedOrganizationId = await assertOrganizationAccess(organizationId)
     const scopedTaxRateId = cleanText(taxRateId)
+    const scopedOrganizationId = await assertOrganizationAccess(organizationId, {
+      permission: "taxes.update",
+      resource: "TaxRate",
+      ...(scopedTaxRateId ? { resourceId: scopedTaxRateId } : {}),
+      auditAllowed: true,
+    })
 
     if (!scopedTaxRateId) {
       return { success: false, error: "Tax rate not found" }
@@ -255,8 +244,13 @@ export async function deleteManagedTaxRate(
   taxRateId: string,
 ): Promise<ActionResult<TaxRateRemovalResult>> {
   try {
-    const scopedOrganizationId = await assertOrganizationAccess(organizationId)
     const scopedTaxRateId = cleanText(taxRateId)
+    const scopedOrganizationId = await assertOrganizationAccess(organizationId, {
+      permission: "taxes.delete",
+      resource: "TaxRate",
+      ...(scopedTaxRateId ? { resourceId: scopedTaxRateId } : {}),
+      auditAllowed: true,
+    })
 
     if (!scopedTaxRateId) {
       return { success: false, error: "Tax rate not found" }

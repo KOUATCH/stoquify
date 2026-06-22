@@ -1,5 +1,10 @@
-import FinanceCommandCenterDashboard from "@/components/finance/FinanceCommandCenterDashboard"
+import { FinancePayablesSurface } from "@/components/finance/FinanceSpecializedLedgerSurfaces"
+
+export const metadata = {
+  title: "Payables | AqStoqFlow",
+  description: "Supplier payables, AP aging, disbursement, and ledger posting surface.",
+}
 
 export default function FinancePayablesPage() {
-  return <FinanceCommandCenterDashboard initialView="payables" />
+  return <FinancePayablesSurface />
 }

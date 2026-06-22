@@ -3,8 +3,11 @@ import { getAllPermissions as getCanonicalPermissions } from "../../config/permi
 export type PermissionRisk = "low" | "med" | "high" | "crit"
 
 const WILDCARD_PERMISSION = "*"
+const WILDCARD_DENIED_RISKS = new Set<PermissionRisk>(["high", "crit"])
 
 const EXPLICIT_PERMISSION_RISKS = {
+  "admin.role.assign": "crit",
+  "admin.user.invite": "crit",
   "accounting.setup.manage": "crit",
   "accounting.accounts.manage": "crit",
   "accounting.journal.post": "crit",
@@ -34,6 +37,8 @@ const EXPLICIT_PERMISSION_RISKS = {
   "compliance.evidence.attach": "high",
   "compliance.metadata.read": "high",
   "finance.reports.export": "crit",
+  "reports.financial.export": "crit",
+  "reports.audit.view": "high",
   "payments.provider-account.read": "high",
   "payments.provider-account.manage": "crit",
   "payments.reconciliation.read": "high",
@@ -53,11 +58,14 @@ const EXPLICIT_PERMISSION_RISKS = {
   "purchasing.supplier.bank.approve": "crit",
   "purchasing.ap.payment.approve": "crit",
   "purchasing.ap.payment.release": "crit",
+  "purchasing.payment.record": "crit",
+  "purchasing.purchaseOrder.approve": "crit",
   "payroll.employees.manage": "crit",
   "payroll.contracts.manage": "crit",
   "payroll.attendance.freeze": "high",
   "payroll.runs.calculate": "high",
   "payroll.runs.approve": "crit",
+  "payroll.run.approve": "crit",
   "payroll.runs.post": "crit",
   "payroll.payslips.emit": "crit",
   "payroll.payments.release": "crit",
@@ -66,6 +74,11 @@ const EXPLICIT_PERMISSION_RISKS = {
   "controls.manage": "crit",
   "controls.audit.read": "high",
   "fraud.cases.manage": "crit",
+  "inventory.adjust.approve": "crit",
+  "inventory.transfer.approve": "crit",
+  "pos.cash.adjust": "crit",
+  "pos.sale.refund": "crit",
+  "pos.sale.void": "crit",
   "pos.transactions.refund": "crit",
   "pos.transactions.void": "crit",
   "reports.export": "crit",
@@ -74,6 +87,9 @@ const EXPLICIT_PERMISSION_RISKS = {
 
 export const PERMISSION_ALIASES = {
   "dashboard.read": ["DASHBOARD_READ"],
+
+  "admin.role.assign": ["ASSIGN_ROLES", "MANAGE_FINANCIAL_PERMISSIONS"],
+  "admin.user.invite": ["CREATE_USERS"],
 
   "users.read": ["READ_USERS"],
   "users.create": ["CREATE_USERS"],
@@ -121,6 +137,8 @@ export const PERMISSION_ALIASES = {
   "inventory.units.delete": ["DELETE_UNITS"],
   "inventory.stock.adjust": ["CREATE_STOCK_ADJUSTMENTS", "ADJUSTMENTS_CREATE"],
   "inventory.stock.transfer": ["CREATE_STOCK_TRANSFERS", "TRANSFERS_CREATE"],
+  "inventory.adjust.approve": ["APPROVE_STOCK_ADJUSTMENTS"],
+  "inventory.transfer.approve": ["APPROVE_STOCK_TRANSFERS"],
 
   "sales.read": ["READ_SALES_ORDERS"],
   "sales.create": ["CREATE_SALES_ORDERS"],
@@ -144,7 +162,7 @@ export const PERMISSION_ALIASES = {
   "purchases.orders.update": ["UPDATE_PURCHASE_ORDERS"],
   "purchases.orders.approve": ["APPROVE_PURCHASE_ORDERS"],
   "purchases.orders.cancel": ["DELETE_PURCHASE_ORDERS"],
-  "purchases.orders.receive": ["RECEIVE_GOODS"],
+  "purchasing.purchaseOrder.approve": ["APPROVE_PURCHASE_ORDERS"],
   "purchases.suppliers.read": ["READ_SUPPLIERS"],
   "purchases.suppliers.create": ["CREATE_SUPPLIERS"],
   "purchases.suppliers.update": ["UPDATE_SUPPLIERS"],
@@ -157,6 +175,7 @@ export const PERMISSION_ALIASES = {
   "purchasing.ap.payment.request": ["SUPPLIER_PAYMENTS_MANAGE", "finance.payables.pay"],
   "purchasing.ap.payment.approve": ["SUPPLIER_PAYMENTS_MANAGE", "MANAGE_FINANCIAL_CONTROLS"],
   "purchasing.ap.payment.release": ["SUPPLIER_PAYMENTS_MANAGE", "MANAGE_FINANCIAL_CONTROLS"],
+  "purchasing.payment.record": ["SUPPLIER_PAYMENTS_MANAGE", "finance.payables.pay"],
 
   "customers.read": ["READ_CUSTOMERS"],
   "customers.create": ["CREATE_CUSTOMERS"],
@@ -166,6 +185,8 @@ export const PERMISSION_ALIASES = {
   "finance.read": ["FINANCE_READ", "FINANCIAL_READ"],
   "finance.reports.read": ["FINANCIAL_REPORTS_READ", "VIEW_FINANCIAL_REPORTS"],
   "finance.reports.export": ["FINANCIAL_REPORTS_EXPORT"],
+  "reports.financial.export": ["FINANCIAL_REPORTS_EXPORT", "EXPORT_DATA"],
+  "reports.audit.view": ["VIEW_AUDIT_LOGS", "VIEW_FINANCIAL_AUDIT_TRAIL"],
   "finance.analytics.read": ["FINANCIAL_KPI_READ", "ANALYTICS_READ"],
   "finance.taxes.read": ["TAX_RATES_READ"],
   "finance.taxes.manage": ["CREATE_TAX_RATES", "UPDATE_TAX_RATES", "DELETE_TAX_RATES"],
@@ -228,6 +249,7 @@ export const PERMISSION_ALIASES = {
   "payroll.runs.calculate": ["PAYROLL_PROCESS"],
   "payroll.runs.review": ["PAYROLL_READ", "PAYROLL_REPORTS_READ"],
   "payroll.runs.approve": ["PAYROLL_APPROVE", "MANAGE_FINANCIAL_CONTROLS"],
+  "payroll.run.approve": ["PAYROLL_APPROVE", "MANAGE_FINANCIAL_CONTROLS"],
   "payroll.runs.post": ["PAYROLL_APPROVE", "POST_JOURNAL_ENTRIES", "MANAGE_FINANCIAL_CONTROLS"],
   "payroll.payslips.read": ["PAYROLL_READ", "EMPLOYEE_SALARY_READ"],
   "payroll.payslips.emit": ["PAYROLL_APPROVE", "PAYROLL_PROCESS"],
@@ -252,6 +274,9 @@ export const PERMISSION_ALIASES = {
   "pos.transactions.read": ["READ_SALES_ORDERS"],
   "pos.transactions.void": ["PROCESS_REFUNDS"],
   "pos.transactions.refund": ["PROCESS_REFUNDS"],
+  "pos.sale.void": ["PROCESS_REFUNDS"],
+  "pos.sale.refund": ["PROCESS_REFUNDS"],
+  "pos.cash.adjust": ["MANAGE_CASH_TRANSACTIONS", "MANAGE_CASH_DRAWER"],
   "pos.cash.drawer.open": ["MANAGE_CASH_DRAWER", "CASH_DRAWER_READ"],
   "pos.discounts.apply": ["PROCESS_SALES"],
   "pos.receipts.print": ["OPERATE_POS"],
@@ -313,9 +338,14 @@ export function permissionCandidates(permission: string): string[] {
 
 export function expandPermissions(permissions: readonly string[] | null | undefined): string[] {
   if (!permissions?.length) return []
-  if (permissions.includes(WILDCARD_PERMISSION)) return [WILDCARD_PERMISSION]
 
-  return Array.from(new Set(permissions.flatMap(permissionCandidates)))
+  return Array.from(
+    new Set(
+      permissions.flatMap((permission) =>
+        permission === WILDCARD_PERMISSION ? [WILDCARD_PERMISSION] : permissionCandidates(permission),
+      ),
+    ),
+  )
 }
 
 export function hasRbacPermission(
@@ -323,8 +353,14 @@ export function hasRbacPermission(
   requiredPermission: string,
 ) {
   if (!permissions?.length) return false
-  if (permissions.includes(WILDCARD_PERMISSION)) return true
   if (requiredPermission === WILDCARD_PERMISSION) return permissions.includes(WILDCARD_PERMISSION)
+  if (!isKnownPermission(requiredPermission)) return false
+  if (
+    permissions.includes(WILDCARD_PERMISSION) &&
+    !WILDCARD_DENIED_RISKS.has(permissionRisk(requiredPermission))
+  ) {
+    return true
+  }
 
   const available = new Set(expandPermissions(permissions))
   return permissionCandidates(requiredPermission).some((candidate) => available.has(candidate))

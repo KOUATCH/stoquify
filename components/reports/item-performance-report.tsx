@@ -6,6 +6,15 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { ReportTrustBanner } from "@/components/reports/report-trust-banner"
+import {
+  analyticsFilterClass,
+  analyticsMutedTextClass,
+  analyticsPanelClass,
+  analyticsStockTone,
+  analyticsToneClass,
+  analyticsToneText,
+  analyticsTrendText,
+} from "@/components/analytics/dashboard/analytics-dashboard-theme"
 import { AlertTriangle, Package, Search, TrendingDown, TrendingUp } from "lucide-react"
 import { useState } from "react"
 
@@ -30,24 +39,26 @@ export function ItemPerformanceReportComponent({ reports, focusItemId }: ItemPer
   }
 
   const getStockStatusBadge = (status: string) => {
+    const className = analyticsToneClass(analyticsStockTone(status))
+
     switch (status) {
       case "in_stock":
-        return <Badge className="bg-green-100 text-green-800">In Stock</Badge>
+        return <Badge variant="outline" className={className}>In Stock</Badge>
       case "low_stock":
-        return <Badge className="bg-yellow-100 text-yellow-800">Low Stock</Badge>
+        return <Badge variant="outline" className={className}>Low Stock</Badge>
       case "out_of_stock":
-        return <Badge className="bg-red-100 text-red-800">Out of Stock</Badge>
+        return <Badge variant="outline" className={className}>Out of Stock</Badge>
       default:
-        return <Badge variant="secondary">Unknown</Badge>
+        return <Badge variant="outline" className={className}>Unknown</Badge>
     }
   }
 
   const getTrendIcon = (trend: string) => {
     switch (trend) {
       case "increasing":
-        return <TrendingUp className="h-4 w-4 text-green-500" />
+        return <TrendingUp className={`h-4 w-4 ${analyticsTrendText(true)}`} />
       case "decreasing":
-        return <TrendingDown className="h-4 w-4 text-red-500" />
+        return <TrendingDown className={`h-4 w-4 ${analyticsTrendText(false)}`} />
       default:
         return <div className="h-4 w-4" />
     }
@@ -80,8 +91,10 @@ export function ItemPerformanceReportComponent({ reports, focusItemId }: ItemPer
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">{focusedReport ? "Product Sales Analysis" : "Item Performance Report"}</h2>
-          <p className="text-muted-foreground">
+          <h2 className="text-2xl font-bold text-[var(--dash-text)]">
+            {focusedReport ? "Product Sales Analysis" : "Item Performance Report"}
+          </h2>
+          <p className={analyticsMutedTextClass}>
             {focusedReport ? `${focusedReport.itemName} sales, profitability, and inventory record` : `${reports.length} items analyzed`}
           </p>
         </div>
@@ -89,6 +102,7 @@ export function ItemPerformanceReportComponent({ reports, focusItemId }: ItemPer
           <Button
             variant="outline"
             size="sm"
+            className={analyticsFilterClass}
             onClick={() => {
               setSearchTerm("")
               setShowFocusedOnly(false)
@@ -102,11 +116,11 @@ export function ItemPerformanceReportComponent({ reports, focusItemId }: ItemPer
       <ReportTrustBanner provenance={provenance} />
 
       {/* Filters */}
-      <Card>
+      <Card className={analyticsPanelClass}>
         <CardContent className="pt-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${analyticsMutedTextClass}`} />
               <Input
                 placeholder="Search items, SKU, or category..."
                 value={searchTerm}
@@ -114,34 +128,38 @@ export function ItemPerformanceReportComponent({ reports, focusItemId }: ItemPer
                   setSearchTerm(e.target.value)
                   setShowFocusedOnly(false)
                 }}
-                className="pl-10"
+                className="dashboard-control pl-10"
               />
             </div>
             <div className="flex gap-2">
               <Button
-                variant={sortBy === "revenue" ? "default" : "outline"}
+                variant="outline"
                 size="sm"
+                className={sortBy === "revenue" ? "dashboard-button-primary rounded-lg" : analyticsFilterClass}
                 onClick={() => setSortBy("revenue")}
               >
                 Revenue
               </Button>
               <Button
-                variant={sortBy === "quantity" ? "default" : "outline"}
+                variant="outline"
                 size="sm"
+                className={sortBy === "quantity" ? "dashboard-button-primary rounded-lg" : analyticsFilterClass}
                 onClick={() => setSortBy("quantity")}
               >
                 Quantity
               </Button>
               <Button
-                variant={sortBy === "profit" ? "default" : "outline"}
+                variant="outline"
                 size="sm"
+                className={sortBy === "profit" ? "dashboard-button-primary rounded-lg" : analyticsFilterClass}
                 onClick={() => setSortBy("profit")}
               >
                 Profit
               </Button>
               <Button
-                variant={sortBy === "margin" ? "default" : "outline"}
+                variant="outline"
                 size="sm"
+                className={sortBy === "margin" ? "dashboard-button-primary rounded-lg" : analyticsFilterClass}
                 onClick={() => setSortBy("margin")}
               >
                 Margin
@@ -154,15 +172,15 @@ export function ItemPerformanceReportComponent({ reports, focusItemId }: ItemPer
       {/* Items Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {filteredReports.map((report) => (
-          <Card key={report.itemId}>
+          <Card key={report.itemId} className={analyticsPanelClass}>
             <CardHeader>
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <CardTitle className="text-lg line-clamp-2">{report.itemName}</CardTitle>
-                  <p className="text-sm text-muted-foreground">SKU: {report.itemSku}</p>
+                  <p className={`text-sm ${analyticsMutedTextClass}`}>SKU: {report.itemSku}</p>
                   <div className="flex items-center gap-2 mt-2">
-                    <Badge variant="outline">{report.category}</Badge>
-                    {report.brand && <Badge variant="outline">{report.brand}</Badge>}
+                    <Badge variant="outline" className={analyticsToneClass("muted")}>{report.category}</Badge>
+                    {report.brand && <Badge variant="outline" className={analyticsToneClass("muted")}>{report.brand}</Badge>}
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -175,10 +193,10 @@ export function ItemPerformanceReportComponent({ reports, focusItemId }: ItemPer
               {/* Sales Metrics */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <div className="text-sm text-muted-foreground">Revenue</div>
+                  <div className={`text-sm ${analyticsMutedTextClass}`}>Revenue</div>
                   <div className="text-lg font-bold">{formatCurrency(report.totalRevenue)}</div>
                   {report.revenueChange !== 0 && (
-                    <div className={`text-xs ${report.revenueChange > 0 ? "text-green-600" : "text-red-600"}`}>
+                    <div className={`text-xs ${analyticsTrendText(report.revenueChange > 0)}`}>
                       {report.revenueChange > 0 ? "+" : ""}
                       {report.revenueChange.toFixed(1)}%
                     </div>
@@ -186,10 +204,10 @@ export function ItemPerformanceReportComponent({ reports, focusItemId }: ItemPer
                 </div>
 
                 <div>
-                  <div className="text-sm text-muted-foreground">Quantity Sold</div>
+                  <div className={`text-sm ${analyticsMutedTextClass}`}>Quantity Sold</div>
                   <div className="text-lg font-bold">{report.quantitySold}</div>
                   {report.quantityChange !== 0 && (
-                    <div className={`text-xs ${report.quantityChange > 0 ? "text-green-600" : "text-red-600"}`}>
+                    <div className={`text-xs ${analyticsTrendText(report.quantityChange > 0)}`}>
                       {report.quantityChange > 0 ? "+" : ""}
                       {report.quantityChange.toFixed(1)}%
                     </div>
@@ -200,19 +218,19 @@ export function ItemPerformanceReportComponent({ reports, focusItemId }: ItemPer
               {/* Profitability */}
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Gross Profit</span>
+                  <span className={`text-sm ${analyticsMutedTextClass}`}>Gross Profit</span>
                   <span className="font-medium">{formatCurrency(report.grossProfit)}</span>
                 </div>
 
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Profit Margin</span>
-                  <span className={`font-medium ${report.profitMargin < 20 ? "text-yellow-600" : "text-green-600"}`}>
+                  <span className={`text-sm ${analyticsMutedTextClass}`}>Profit Margin</span>
+                  <span className={`font-medium ${report.profitMargin < 20 ? analyticsToneText("gold") : analyticsToneText("success")}`}>
                     {report.profitMargin.toFixed(1)}%
                   </span>
                 </div>
 
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Avg. Price</span>
+                  <span className={`text-sm ${analyticsMutedTextClass}`}>Avg. Price</span>
                   <span className="font-medium">{formatCurrency(report.averageSellingPrice)}</span>
                 </div>
               </div>
@@ -220,29 +238,29 @@ export function ItemPerformanceReportComponent({ reports, focusItemId }: ItemPer
               {/* Inventory Status */}
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Current Stock</span>
+                  <span className={`text-sm ${analyticsMutedTextClass}`}>Current Stock</span>
                   <div className="flex items-center gap-2">
                     {report.currentStock <= 5 && report.stockStatus !== "out_of_stock" && (
-                      <AlertTriangle className="h-4 w-4 text-yellow-500" />
+                      <AlertTriangle className={`h-4 w-4 ${analyticsToneText("gold")}`} />
                     )}
                     <span className="font-medium">{report.currentStock}</span>
                   </div>
                 </div>
 
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Stock Value</span>
+                  <span className={`text-sm ${analyticsMutedTextClass}`}>Stock Value</span>
                   <span className="font-medium">{formatCurrency(report.stockValue)}</span>
                 </div>
 
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Turnover Rate</span>
+                  <span className={`text-sm ${analyticsMutedTextClass}`}>Turnover Rate</span>
                   <span className="font-medium">{report.turnoverRate.toFixed(1)}x</span>
                 </div>
 
                 {report.daysOfStock < 999 && (
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">Days of Stock</span>
-                    <span className={`font-medium ${report.daysOfStock < 30 ? "text-yellow-600" : ""}`}>
+                    <span className={`text-sm ${analyticsMutedTextClass}`}>Days of Stock</span>
+                    <span className={`font-medium ${report.daysOfStock < 30 ? analyticsToneText("gold") : ""}`}>
                       {Math.round(report.daysOfStock)} days
                     </span>
                   </div>
@@ -254,11 +272,11 @@ export function ItemPerformanceReportComponent({ reports, focusItemId }: ItemPer
       </div>
 
       {filteredReports.length === 0 && (
-        <Card>
+        <Card className={analyticsPanelClass}>
           <CardContent className="text-center py-8">
-            <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <Package className={`h-12 w-12 mx-auto mb-4 ${analyticsMutedTextClass}`} />
             <h3 className="text-lg font-medium mb-2">No items found</h3>
-            <p className="text-muted-foreground">Try adjusting your search criteria</p>
+            <p className={analyticsMutedTextClass}>Try adjusting your search criteria</p>
           </CardContent>
         </Card>
       )}

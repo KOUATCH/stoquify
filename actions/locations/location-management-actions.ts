@@ -1,11 +1,11 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { getSession } from "@/lib/auth-server"
+import { assertCanUseOrganization, requirePermission } from "@/lib/security/rbac"
 import { db } from "@/prisma/db"
 import { Prisma } from "@prisma/client"
 import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses"
-import { AuthRequiredError, BusinessRuleError, ForbiddenError, NotFoundError } from "@/services/_shared/action-errors"
+import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
 import {
   archiveLocationForManagement,
   createLocationForManagement,
@@ -35,6 +35,7 @@ type ActionResult<T> = {
 
 const ACTIONABLE_ERROR_MESSAGES = new Set([
   "Unauthorized",
+  "Forbidden: cannot access another organization",
   "Organization is required",
   "Organization not found or inactive",
   "You do not have access to this organization",
@@ -83,46 +84,22 @@ function getValidationMessage(input: unknown) {
   }
 }
 
-async function assertOrganizationAccess(organizationId: string) {
+async function assertOrganizationAccess(
+  organizationId: string,
+  options: { permission: string; resource: string; resourceId?: string; auditAllowed?: boolean },
+) {
   const requestedOrganizationId = cleanText(organizationId)
 
   if (!requestedOrganizationId) {
     throw new BusinessRuleError("Organization is required")
   }
 
-  const session = await getSession()
-
-  if (!session?.user?.id) {
-    throw new AuthRequiredError("Unauthorized")
-  }
-
-  const user = await db.user.findFirst({
-    where: {
-      id: session.user.id,
-      isActive: true,
-    },
-    select: {
-      organizationId: true,
-      roles: {
-        select: {
-          permissions: true,
-        },
-      },
-    },
+  const ctx = await requirePermission(options.permission, {
+    resource: options.resource,
+    ...(options.resourceId ? { resourceId: options.resourceId } : {}),
+    ...(options.auditAllowed !== undefined ? { auditAllowed: options.auditAllowed } : {}),
   })
-
-  if (!user) {
-    throw new AuthRequiredError("Unauthorized")
-  }
-
-  const permissions = new Set([
-    ...((session.user as any).permissions ?? []),
-    ...user.roles.flatMap((role) => role.permissions ?? []),
-  ])
-
-  if (user.organizationId !== requestedOrganizationId && !permissions.has("*")) {
-    throw new ForbiddenError("You do not have access to this organization")
-  }
+  await assertCanUseOrganization(ctx, requestedOrganizationId)
 
   const organization = await db.organization.findFirst({
     where: {
@@ -151,7 +128,10 @@ export async function getLocationManagementData(
   organizationId: string,
 ): Promise<ActionResult<LocationManagementData>> {
   try {
-    const scopedOrganizationId = await assertOrganizationAccess(organizationId)
+    const scopedOrganizationId = await assertOrganizationAccess(organizationId, {
+      permission: "locations.read",
+      resource: "Location",
+    })
     const data = await getLocationManagementDataForOrg(scopedOrganizationId)
 
     return {
@@ -176,7 +156,11 @@ export async function createManagedLocation(
   input: LocationManagementInput,
 ): Promise<ActionResult<LocationManagementRow>> {
   try {
-    const scopedOrganizationId = await assertOrganizationAccess(organizationId)
+    const scopedOrganizationId = await assertOrganizationAccess(organizationId, {
+      permission: "locations.create",
+      resource: "Location",
+      auditAllowed: true,
+    })
     const parsed = getValidationMessage(input)
 
     if (!parsed.success) {
@@ -206,8 +190,13 @@ export async function updateManagedLocation(
   input: LocationManagementInput,
 ): Promise<ActionResult<LocationManagementRow>> {
   try {
-    const scopedOrganizationId = await assertOrganizationAccess(organizationId)
     const scopedLocationId = cleanText(locationId)
+    const scopedOrganizationId = await assertOrganizationAccess(organizationId, {
+      permission: "locations.update",
+      resource: "Location",
+      ...(scopedLocationId ? { resourceId: scopedLocationId } : {}),
+      auditAllowed: true,
+    })
 
     if (!scopedLocationId) {
       return { success: false, error: "Location not found" }
@@ -241,8 +230,13 @@ export async function archiveManagedLocation(
   locationId: string,
 ): Promise<ActionResult<{ id: string }>> {
   try {
-    const scopedOrganizationId = await assertOrganizationAccess(organizationId)
     const scopedLocationId = cleanText(locationId)
+    const scopedOrganizationId = await assertOrganizationAccess(organizationId, {
+      permission: "locations.delete",
+      resource: "Location",
+      ...(scopedLocationId ? { resourceId: scopedLocationId } : {}),
+      auditAllowed: true,
+    })
 
     if (!scopedLocationId) {
       return { success: false, error: "Location not found" }

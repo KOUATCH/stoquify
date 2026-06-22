@@ -182,7 +182,7 @@ export const PERMISSIONS = {
   APPROVE_STOCK_ADJUSTMENTS: 'APPROVE_STOCK_ADJUSTMENTS',
   CREATE_STOCK_TRANSFERS: 'CREATE_STOCK_TRANSFERS',
   APPROVE_STOCK_TRANSFERS: 'APPROVE_STOCK_TRANSFERS',
-  RECEIVE_GOODS: 'RECEIVE_GOODS',
+  PURCHASES_ORDERS_RECEIVE: 'purchases.orders.receive',
 
   // Supplier Management
   CREATE_SUPPLIERS: 'CREATE_SUPPLIERS',
@@ -423,7 +423,7 @@ export const ROLE_TEMPLATES = {
       PERMISSIONS.APPROVE_STOCK_ADJUSTMENTS,
       PERMISSIONS.CREATE_STOCK_TRANSFERS,
       PERMISSIONS.APPROVE_STOCK_TRANSFERS,
-      PERMISSIONS.RECEIVE_GOODS,
+      PERMISSIONS.PURCHASES_ORDERS_RECEIVE,
       PERMISSIONS.CREATE_SUPPLIERS,
       PERMISSIONS.READ_SUPPLIERS,
       PERMISSIONS.UPDATE_SUPPLIERS,
@@ -599,7 +599,7 @@ export const ROLE_TEMPLATES = {
       PERMISSIONS.VIEW_SALES_REPORTS,
       PERMISSIONS.CREATE_STOCK_ADJUSTMENTS,
       PERMISSIONS.CREATE_STOCK_TRANSFERS,
-      PERMISSIONS.RECEIVE_GOODS,
+      PERMISSIONS.PURCHASES_ORDERS_RECEIVE,
       PERMISSIONS.READ_SUPPLIERS,
       PERMISSIONS.READ_CUSTOMERS,
       PERMISSIONS.UPDATE_CUSTOMERS,
@@ -728,7 +728,7 @@ export const ROLE_TEMPLATES = {
       PERMISSIONS.UPDATE_SALES_ORDERS,
       PERMISSIONS.PROCESS_SALES,
       PERMISSIONS.CREATE_STOCK_ADJUSTMENTS,
-      PERMISSIONS.RECEIVE_GOODS,
+      PERMISSIONS.PURCHASES_ORDERS_RECEIVE,
       PERMISSIONS.READ_SUPPLIERS,
       PERMISSIONS.READ_CUSTOMERS,
       PERMISSIONS.UPDATE_CUSTOMERS,
@@ -909,7 +909,7 @@ export const PERMISSION_GROUPS = {
       PERMISSIONS.DELETE_PURCHASE_ORDERS,
       PERMISSIONS.APPROVE_PURCHASE_ORDERS,
       PERMISSIONS.VIEW_PURCHASE_REPORTS,
-      PERMISSIONS.RECEIVE_GOODS,
+      PERMISSIONS.PURCHASES_ORDERS_RECEIVE,
     ],
   },
 
@@ -1036,7 +1036,7 @@ export type Action =
   | "po:create"
   | "po:submit"
   | "po:approve"
-  | "po:receive"
+  | "purchases.orders.receive"
   | "po:cancel"
   | "po:update"
   | "po:delete"
@@ -1049,7 +1049,7 @@ const roleMatrix: Partial<Record<Role, Action[]>> = {
     "po:create",
     "po:submit",
     "po:approve",
-    "po:receive",
+    "purchases.orders.receive",
     "po:cancel",
     "po:update",
     "po:delete",
@@ -1059,7 +1059,7 @@ const roleMatrix: Partial<Record<Role, Action[]>> = {
   ],
   buyer: ["po:create", "po:submit", "po:update", "po:clone", "po:export"],
   approver: ["po:approve", "po:cancel", "po:export", "po:bulk-status"],
-  receiver: ["po:receive", "po:export"],
+  receiver: ["purchases.orders.receive", "po:export"],
   manager: ["po:create", "po:submit", "po:approve", "po:update", "po:clone", "po:export"],
   supervisor: ["po:create", "po:submit", "po:update", "po:clone", "po:export"],
   employee: ["po:create", "po:submit", "po:export"],

@@ -1,11 +1,13 @@
 import {
   approvePurchaseOrder,
   deletePurchaseOrder,
+  receiveItems,
 } from "../purchaseOrderSystemAction"
 import { requirePermission } from "@/lib/security/rbac"
 import {
   approvePurchaseOrder as approvePurchaseOrderService,
   deletePurchaseOrder as deletePurchaseOrderService,
+  receiveItems as receiveItemsService,
 } from "@/services/purchase-order/purchase-order.service"
 
 jest.mock("@/lib/security/rbac", () => ({
@@ -42,6 +44,7 @@ jest.mock("@/services/purchase-order/purchase-order.service", () => ({
 const mockRequirePermission = requirePermission as jest.Mock
 const mockApprovePurchaseOrderService = approvePurchaseOrderService as jest.Mock
 const mockDeletePurchaseOrderService = deletePurchaseOrderService as jest.Mock
+const mockReceiveItemsService = receiveItemsService as jest.Mock
 
 const approvedPurchaseOrder = {
   id: "po-1",
@@ -58,6 +61,7 @@ beforeEach(() => {
   })
   mockApprovePurchaseOrderService.mockResolvedValue(approvedPurchaseOrder)
   mockDeletePurchaseOrderService.mockResolvedValue("PO-000001")
+  mockReceiveItemsService.mockResolvedValue({ ...approvedPurchaseOrder, status: "RECEIVED" })
 })
 
 describe("purchaseOrderSystemAction controls", () => {
@@ -90,6 +94,30 @@ describe("purchaseOrderSystemAction controls", () => {
       data: null,
       message: "Purchase order PO-000001 archived successfully",
     })
+  })
+
+  it("receives purchase orders with only the canonical receive permission", async () => {
+    const result = await receiveItems({
+      id: "po-1",
+      organizationId: "org-session",
+      receivedBy: "client-user",
+      items: [{ lineId: "line-1", receivedQuantity: 2 }],
+    })
+
+    expect(mockRequirePermission).toHaveBeenCalledWith("purchases.orders.receive", {
+      resource: "PurchaseOrder",
+      resourceId: "po-1",
+      auditAllowed: true,
+    })
+    expect(mockReceiveItemsService).toHaveBeenCalledWith({
+      purchaseOrderId: "po-1",
+      organizationId: "org-session",
+      receivedById: "actor-session",
+      locationId: undefined,
+      notes: undefined,
+      items: [{ lineId: "line-1", receivedQuantity: 2 }],
+    })
+    expect(result.success).toBe(true)
   })
 
   it("rejects mismatched tenant scope before calling the service", async () => {

@@ -41,6 +41,7 @@ const ROLE_PERMISSIONS = {
     "VIEW_INVENTORY_REPORTS",
     "MANAGE_INVENTORY_LEVELS",
     "ORDERS_READ",
+    "purchases.orders.receive",
     "ANALYTICS_READ",
     "CASH_SYSTEM_READ",
   ],

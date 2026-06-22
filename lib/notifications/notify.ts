@@ -15,6 +15,11 @@ type LegacyNotificationOptions = {
   duration?: number
   category?: NotificationCategory
   priority?: NotificationPriority
+  severity?: NotificationData["severity"]
+  deliveryState?: NotificationData["deliveryState"]
+  channel?: NotificationData["channel"]
+  source?: NotificationData["source"]
+  correlationId?: string
   sound?: boolean
   action?: unknown
 }
@@ -137,6 +142,11 @@ function normalizeFromArgs(
     duration: normalizedOptions.duration,
     category: normalizedOptions.category || (notificationType === "error" ? "error" : "general"),
     priority: normalizedOptions.priority || (notificationType === "error" ? "high" : "normal"),
+    severity: normalizedOptions.severity,
+    deliveryState: normalizedOptions.deliveryState,
+    channel: normalizedOptions.channel,
+    source: normalizedOptions.source,
+    correlationId: normalizedOptions.correlationId,
     sound: normalizedOptions.sound ?? (notificationType === "error"),
     action: normalizeAction(normalizedOptions.action),
   }
@@ -159,6 +169,11 @@ function normalizeInput(input: NotifyInput, fallbackType: NotificationType): Pro
     duration: input.duration,
     category: input.category || (notificationType === "error" ? "error" : "general"),
     priority: input.priority || (notificationType === "error" ? "high" : "normal"),
+    severity: input.severity,
+    deliveryState: input.deliveryState,
+    channel: input.channel,
+    source: input.source,
+    correlationId: input.correlationId,
     sound: input.sound ?? (notificationType === "error"),
     action: normalizeAction(input.action),
   }

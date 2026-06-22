@@ -357,6 +357,115 @@
       "CANCELLED": "Cancelled"
     }
   },
+  "financeSurfaces": {
+    "empty": {
+      "alerts": "No route-specific finance risk signals were found for this scope.",
+      "receivables": "No customer receivable balances were found for this scope.",
+      "payables": "No supplier payable balances were found for this scope.",
+      "receipts": "No recent customer receipts were found for this scope.",
+      "disbursements": "No recent supplier disbursements were found for this scope."
+    },
+    "actions": {
+      "pos": "Open POS",
+      "customers": "Customer ledger",
+      "sales": "Sales workflow",
+      "salesFinance": "Sales finance",
+      "apWorkbench": "AP workbench",
+      "purchaseOrders": "Purchase orders",
+      "suppliers": "Supplier ledger"
+    },
+    "payments": {
+      "title": "Payments ledger",
+      "subtitle": "Tender capture, cash clearing, provider reconciliation, and ledger posting signals for every payment rail.",
+      "refreshing": "Refreshing payment rails, tender mix, and clearing evidence.",
+      "refreshed": "The latest payment ledger data is visible.",
+      "kpis": {
+        "collected": "Collected payments",
+        "pending": "Pending clearance",
+        "netCash": "Net cash movement"
+      },
+      "details": {
+        "collected": "Customer receipts captured in the selected period.",
+        "pending": "Payments waiting for completion or operational review.",
+        "netCash": "Inbound minus outbound cash, refunds, and expense pressure."
+      },
+      "assuranceTitle": "Payment assurance",
+      "assuranceDescription": "Payment risks that can block cash trust, settlement, or close evidence.",
+      "sections": {
+        "ledger": "Payment ledger stream",
+        "ledgerDescription": "Latest inbound and outbound payments with counterparty, method, processor, status, and accounting direction.",
+        "posting": "Clearing posture",
+        "postingDescription": "Payment rails should clear receivables, supplier payables, drawer balances, and suspense only with traceable evidence.",
+        "methodsDescription": "Tender and settlement methods by captured amount for the selected period.",
+        "workflows": "Payment workflows",
+        "workflowsDescription": "Move directly from payment insight to capture, reconciliation, drawer, tax, and cash-flow work."
+      },
+      "summary": {
+        "inboundRecent": "Recent inbound receipts",
+        "outboundRecent": "Recent outbound payments"
+      }
+    },
+    "receivables": {
+      "title": "Customer receivables",
+      "subtitle": "Customer balances, open sales exposure, collection risk, and payment clearing for the receivables ledger.",
+      "refreshing": "Refreshing customer balances, aging buckets, and receipt evidence.",
+      "refreshed": "The latest receivables ledger data is visible.",
+      "kpis": {
+        "overdue": "Overdue exposure",
+        "collected": "Collected this period"
+      },
+      "details": {
+        "overdue": "Customer amounts past due based on order date and payment terms.",
+        "collected": "Receipts available to clear customer balances."
+      },
+      "assuranceTitle": "Receivables assurance",
+      "assuranceDescription": "Collection and cash-flow signals that affect customer ledger trust.",
+      "sections": {
+        "aging": "Receivables aging ladder",
+        "agingDescription": "Customer balances and open sales orders grouped into collection buckets.",
+        "posting": "Collection posture",
+        "postingDescription": "Customer receipts should clear receivables only when the sale, payment, and cash evidence are traceable.",
+        "receipts": "Recent customer receipts",
+        "receiptsDescription": "Inbound payments that can reduce customer exposure and support account follow-up.",
+        "workflows": "Receivables workflows",
+        "workflowsDescription": "Move from receivables insight to customer records, sales activity, payment evidence, and cash-flow follow-up."
+      },
+      "summary": {
+        "overdue": "Overdue receivables",
+        "recentReceipts": "Recent receipts"
+      }
+    },
+    "payables": {
+      "title": "Supplier payables",
+      "subtitle": "Supplier balances, AP aging, purchase exposure, payment release, and ledger posting readiness.",
+      "refreshing": "Refreshing supplier balances, AP aging, and payment-release evidence.",
+      "refreshed": "The latest payables ledger data is visible.",
+      "kpis": {
+        "overdue": "Payment attention",
+        "purchases": "Purchase exposure"
+      },
+      "details": {
+        "overdue": "Supplier balances that need payment attention.",
+        "purchases": "Purchase orders and supplier costs in the selected period."
+      },
+      "assuranceTitle": "Payables assurance",
+      "assuranceDescription": "Supplier payment risks that can affect cash planning, approvals, and ledger posting.",
+      "sections": {
+        "aging": "Payables aging ladder",
+        "agingDescription": "Supplier balances and open purchasing exposure grouped into payment buckets.",
+        "posting": "Payment-release posture",
+        "postingDescription": "Supplier payments should pass AP controls, maker-checker release, reconciliation, and ledger evidence before close.",
+        "disbursements": "Recent supplier disbursements",
+        "disbursementsDescription": "Outbound payments tied to purchasing counterparties and release evidence.",
+        "workflows": "Payables workflows",
+        "workflowsDescription": "Move from payables insight to AP controls, purchase orders, suppliers, reconciliation, and cash planning."
+      },
+      "summary": {
+        "overdue": "Payables needing attention",
+        "recentDisbursements": "Recent disbursements"
+      }
+    }
+  },
   "paymentReconciliationWorkbench": {
     "title": "Payment reconciliation workbench",
     "subtitle": "Rail-level payment assurance, duplicate provider-reference alerts, and suspense-ready exception queues.",

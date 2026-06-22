@@ -9,6 +9,7 @@ import {
   ColumnDef,
   ColumnFiltersState,
   FilterFn,
+  SortingFn,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -50,6 +51,7 @@ import {
 import { ModernStatusBadge } from "@/components/purchase-orders/ModernStatusBadge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
+import SortableColumn from "@/components/DataTableColumns/SortableColumn"
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
 
@@ -91,6 +93,24 @@ import type { PurchaseOrderWithRelations } from "@/types/purchase-orders-system-
 
 // Use the real type from the database
 type PurchaseOrderData = PurchaseOrderWithRelations
+
+function dateSortValue(value: unknown) {
+  if (!value) return null
+
+  const timestamp = new Date(value as Date | string).getTime()
+  return Number.isNaN(timestamp) ? null : timestamp
+}
+
+const dateSortingFn: SortingFn<PurchaseOrderData> = (rowA, rowB, columnId) => {
+  const first = dateSortValue(rowA.getValue(columnId))
+  const second = dateSortValue(rowB.getValue(columnId))
+
+  if (first === null && second === null) return 0
+  if (first === null) return 1
+  if (second === null) return -1
+
+  return first - second
+}
 
 interface SupplierData {
   id: string
@@ -173,18 +193,7 @@ const getColumns = (
     },
     {
       accessorKey: "orderNumber",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="h-auto p-0 font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100"
-          >
-            Order Number
-            {column.getIsSorted() === "asc" ? " ↑" : column.getIsSorted() === "desc" ? " ↓" : ""}
-          </Button>
-        )
-      },
+      header: ({ column }) => <SortableColumn column={column} title="Order Number" />,
       cell: ({ row }) => (
         <div className="font-mono font-medium text-sm">
           {row.getValue("orderNumber")}
@@ -237,18 +246,8 @@ const getColumns = (
     },
     {
       accessorKey: "orderDate",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="h-auto p-0 font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100"
-          >
-            Order Date
-            {column.getIsSorted() === "asc" ? " ↑" : column.getIsSorted() === "desc" ? " ↓" : ""}
-          </Button>
-        )
-      },
+      header: ({ column }) => <SortableColumn column={column} title="Order Date" />,
+      sortingFn: dateSortingFn,
       cell: ({ row }) => {
         const date = row.getValue("orderDate") as Date | string
         return (
@@ -261,7 +260,8 @@ const getColumns = (
     },
     {
       accessorKey: "expectedDeliveryDate",
-      header: "Expected Delivery",
+      header: ({ column }) => <SortableColumn column={column} title="Expected Delivery" />,
+      sortingFn: dateSortingFn,
       cell: ({ row }) => {
         const date = row.getValue("expectedDeliveryDate") as Date | string
         const now = new Date()
@@ -279,18 +279,7 @@ const getColumns = (
     },
     {
       accessorKey: "total",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="h-auto p-0 font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100"
-          >
-            Total
-            {column.getIsSorted() === "asc" ? " ↑" : column.getIsSorted() === "desc" ? " ↓" : ""}
-          </Button>
-        )
-      },
+      header: ({ column }) => <SortableColumn column={column} title="Total" />,
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue("total"))
         return (
@@ -586,12 +575,13 @@ const ModernPurchaseOrderTable = ({
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="border-[var(--dash-border-subtle)]">
+              <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead
                       key={header.id}
-                      className="font-semibold text-[var(--dash-text-soft)]"
+                      colSpan={header.colSpan}
+                      className="px-3"
                     >
                       {header.isPlaceholder
                         ? null

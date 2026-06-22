@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Plus, FileText, Settings, Users } from "lucide-react"
+import { analyticsFilterClass, analyticsPanelClass, analyticsPrimaryButtonClass } from "./analytics-dashboard-theme"
 
 const actions = [
   { label: "New Sale", icon: Plus, variant: "default" as const },
@@ -13,15 +14,21 @@ const actions = [
 
 export function QuickActionsCard() {
   return (
-    <Card className="glass-effect border-0">
+    <Card className={analyticsPanelClass}>
       <CardHeader className="pb-4">
-        <CardTitle className="text-lg font-bold font-[family-name:var(--font-montserrat)]">Quick Actions</CardTitle>
+        <CardTitle className="text-lg font-bold font-[family-name:var(--font-montserrat)] text-[var(--dash-text)]">
+          Quick Actions
+        </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
         {actions.map((action, index) => {
           const Icon = action.icon
           return (
-            <Button key={index} variant={action.variant} className="w-full justify-start h-12">
+            <Button
+              key={index}
+              variant={action.variant}
+              className={`h-12 w-full justify-start ${index === 0 ? analyticsPrimaryButtonClass : analyticsFilterClass}`}
+            >
               <Icon className="h-4 w-4 mr-3" />
               {action.label}
             </Button>

@@ -37,6 +37,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton"
 import { useNotifications } from "@/components/notifications/NotificationProvider"
 import { useFinanceDashboard } from "@/hooks/finance/useFinanceDashboard"
+import {
+  dashboardControlClass,
+  dashboardEmptyClass,
+  dashboardFilterClass,
+  dashboardMutedTextClass,
+  dashboardPanelClass,
+  dashboardRowClass,
+  dashboardSeverityClass,
+  dashboardStatStyle,
+  dashboardToneBg,
+  dashboardValueTone,
+  type DashboardTone,
+} from "@/components/finance/finance-dashboard-theme"
 import { cn } from "@/lib/utils"
 import type { FinanceDashboardPeriod, FinanceDashboardView } from "@/services/finance/finance-dashboard.schemas"
 import type {
@@ -74,22 +87,6 @@ function defaultCustomRange() {
   return { start: inputDate(start), end: inputDate(now) }
 }
 
-function severityClass(severity: "success" | "info" | "warning" | "critical") {
-  const classes = {
-    success: "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-900/60 dark:bg-emerald-950/35 dark:text-emerald-200",
-    info: "border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-900/60 dark:bg-blue-950/35 dark:text-blue-200",
-    warning: "border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-900/60 dark:bg-amber-950/35 dark:text-amber-200",
-    critical: "border-rose-200 bg-rose-50 text-rose-800 dark:border-rose-900/60 dark:bg-rose-950/35 dark:text-rose-200",
-  }
-  return classes[severity]
-}
-
-function valueTone(value: number) {
-  if (value < 0) return "text-rose-700 dark:text-rose-300"
-  if (value > 0) return "text-emerald-700 dark:text-emerald-300"
-  return "text-slate-700 dark:text-slate-300"
-}
-
 function MetricCard({
   title,
   value,
@@ -101,27 +98,20 @@ function MetricCard({
   value: string
   detail: string
   icon: LucideIcon
-  accent: "blue" | "emerald" | "amber" | "rose" | "slate"
+  accent: DashboardTone
 }) {
-  const accents = {
-    blue: "text-blue-700 bg-blue-50 border-blue-200 dark:text-blue-200 dark:bg-blue-950/35 dark:border-blue-900/60",
-    emerald: "text-emerald-700 bg-emerald-50 border-emerald-200 dark:text-emerald-200 dark:bg-emerald-950/35 dark:border-emerald-900/60",
-    amber: "text-amber-700 bg-amber-50 border-amber-200 dark:text-amber-200 dark:bg-amber-950/35 dark:border-amber-900/60",
-    rose: "text-rose-700 bg-rose-50 border-rose-200 dark:text-rose-200 dark:bg-rose-950/35 dark:border-rose-900/60",
-    slate: "text-slate-700 bg-slate-50 border-slate-200 dark:text-slate-200 dark:bg-slate-950/35 dark:border-slate-800",
-  }
-
   return (
-    <Card className={cn("rounded-md border shadow-sm", accents[accent])}>
+    <Card className="dashboard-stat-card group relative min-h-[132px] min-w-0 overflow-hidden" style={dashboardStatStyle(accent)}>
+      <div className="absolute inset-x-0 top-0 h-1 bg-[var(--stat-accent)] opacity-80" />
       <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0 pb-2">
         <CardTitle className="text-sm font-semibold">{title}</CardTitle>
-        <span className="flex h-9 w-9 items-center justify-center rounded-md border border-current/15 bg-white/45 dark:bg-white/[0.06]">
-          <Icon className="h-4 w-4" />
+        <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--stat-soft)]">
+          <Icon className="h-4 w-4 text-[var(--stat-accent)]" />
         </span>
       </CardHeader>
-      <CardContent>
+      <CardContent className="relative">
         <div className="text-2xl font-semibold tabular-nums">{value}</div>
-        <div className="mt-1 text-xs opacity-80">{detail}</div>
+        <div className="mt-1 text-xs text-[var(--dash-text-soft)]">{detail}</div>
       </CardContent>
     </Card>
   )
@@ -129,16 +119,18 @@ function MetricCard({
 
 function LoadingState() {
   return (
-    <main className="mx-auto w-full max-w-[1920px] space-y-4 p-4">
-      <Skeleton className="h-28 w-full" />
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-        {Array.from({ length: 5 }).map((_, index) => (
-          <Skeleton key={index} className="h-32" />
-        ))}
-      </div>
-      <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_420px]">
-        <Skeleton className="h-[520px]" />
-        <Skeleton className="h-[520px]" />
+    <main className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
+      <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4">
+        <Skeleton className="h-28 w-full rounded-lg bg-[var(--dash-surface-raised)]" />
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <Skeleton key={index} className="h-32 rounded-lg bg-[var(--dash-surface-raised)]" />
+          ))}
+        </div>
+        <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_420px]">
+          <Skeleton className="h-[520px] rounded-lg bg-[var(--dash-surface-raised)]" />
+          <Skeleton className="h-[520px] rounded-lg bg-[var(--dash-surface-raised)]" />
+        </div>
       </div>
     </main>
   )
@@ -208,27 +200,28 @@ export default function FinanceCommandCenterDashboard({ initialView = "overview"
   if (dashboardQuery.isLoading && !dashboard) return <LoadingState />
 
   return (
-    <main className="mx-auto w-full max-w-[1920px] space-y-4 p-4 text-slate-950 dark:text-slate-100">
-      <section className="rounded-md border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+    <main className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
+      <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)]">
+      <section className={cn(dashboardPanelClass, "p-4")}>
         <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="flex h-10 w-10 items-center justify-center rounded-md border border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-900/60 dark:bg-blue-950/35 dark:text-blue-200">
-                <Landmark className="h-5 w-5" />
+              <span className="flex h-11 w-11 items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-brand-soft)] shadow-[0_16px_34px_rgba(47,125,246,0.18)]">
+                <Landmark className="h-5 w-5 text-[var(--dash-brand-strong)]" />
               </span>
               <div>
                 <h1 className="text-2xl font-semibold tracking-normal">{t("title")}</h1>
-                <p className="text-sm text-slate-600 dark:text-slate-400">{t("subtitle")}</p>
+                <p className="text-sm text-[var(--dash-text-soft)]">{t("subtitle")}</p>
               </div>
             </div>
             {dashboard ? (
-              <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
-                <Badge variant="outline" className="gap-1 border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-900">
-                  <Building2 className="h-3 w-3" />
+              <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-[var(--dash-text-soft)]">
+                <Badge variant="outline" className={cn(dashboardFilterClass, "gap-1")}>
+                  <Building2 className="h-3 w-3 text-[var(--dash-info)]" />
                   {dashboard.organization.name}
                 </Badge>
-                <Badge variant="outline" className="gap-1 border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-900">
-                  <CalendarDays className="h-3 w-3" />
+                <Badge variant="outline" className={cn(dashboardFilterClass, "gap-1")}>
+                  <CalendarDays className="h-3 w-3 text-[var(--dash-gold)]" />
                   {dateFormatter.format(new Date(dashboard.filters.startDate))} - {dateFormatter.format(new Date(dashboard.filters.endDate))}
                 </Badge>
                 <span>{t("updated", { time: formatDateTime(dashboard.generatedAt) })}</span>
@@ -238,12 +231,12 @@ export default function FinanceCommandCenterDashboard({ initialView = "overview"
 
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-[190px_190px_190px_auto] xl:min-w-[780px]">
             <div>
-              <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-slate-600 dark:text-slate-400">
-                <BarChart3 className="h-3.5 w-3.5" />
+              <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-[var(--dash-text-soft)]">
+                <BarChart3 className="h-3.5 w-3.5 text-[var(--dash-brand-strong)]" />
                 {t("filters.view")}
               </div>
               <Select value={view} onValueChange={(value) => setView(value as FinanceDashboardView)}>
-                <SelectTrigger className="h-10 bg-white dark:bg-slate-950">
+                <SelectTrigger className={dashboardControlClass}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -257,12 +250,12 @@ export default function FinanceCommandCenterDashboard({ initialView = "overview"
             </div>
 
             <div>
-              <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-slate-600 dark:text-slate-400">
-                <MapPin className="h-3.5 w-3.5" />
+              <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-[var(--dash-text-soft)]">
+                <MapPin className="h-3.5 w-3.5 text-[var(--dash-info)]" />
                 {t("filters.location")}
               </div>
               <Select value={locationId} onValueChange={setLocationId}>
-                <SelectTrigger className="h-10 bg-white dark:bg-slate-950">
+                <SelectTrigger className={dashboardControlClass}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -277,12 +270,12 @@ export default function FinanceCommandCenterDashboard({ initialView = "overview"
             </div>
 
             <div>
-              <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-slate-600 dark:text-slate-400">
-                <Filter className="h-3.5 w-3.5" />
+              <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-[var(--dash-text-soft)]">
+                <Filter className="h-3.5 w-3.5 text-[var(--dash-gold)]" />
                 {t("filters.period")}
               </div>
               <Select value={period} onValueChange={(value) => setPeriod(value as FinanceDashboardPeriod)}>
-                <SelectTrigger className="h-10 bg-white dark:bg-slate-950">
+                <SelectTrigger className={dashboardControlClass}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -302,13 +295,13 @@ export default function FinanceCommandCenterDashboard({ initialView = "overview"
                     type="date"
                     value={customRange.start}
                     onChange={(event) => setCustomRange((current) => ({ ...current, start: event.target.value }))}
-                    className="h-10 w-36 bg-white dark:bg-slate-950"
+                    className={cn(dashboardControlClass, "w-36")}
                   />
                   <Input
                     type="date"
                     value={customRange.end}
                     onChange={(event) => setCustomRange((current) => ({ ...current, end: event.target.value }))}
-                    className="h-10 w-36 bg-white dark:bg-slate-950"
+                    className={cn(dashboardControlClass, "w-36")}
                   />
                 </>
               ) : null}
@@ -316,7 +309,7 @@ export default function FinanceCommandCenterDashboard({ initialView = "overview"
                 type="button"
                 onClick={refreshDashboard}
                 disabled={dashboardQuery.isFetching}
-                className="h-10 border border-slate-300 bg-slate-950 text-white hover:bg-slate-800 dark:border-slate-700 dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-white"
+                className="dashboard-button-primary h-10 rounded-lg"
               >
                 <RefreshCw className={cn("h-4 w-4", dashboardQuery.isFetching && "animate-spin")} />
                 {t("actions.refresh")}
@@ -327,9 +320,9 @@ export default function FinanceCommandCenterDashboard({ initialView = "overview"
       </section>
 
       {errorMessage ? (
-        <Card className="rounded-md border-rose-200 bg-rose-50 text-rose-900 dark:border-rose-900/60 dark:bg-rose-950/35 dark:text-rose-100">
+        <Card className={cn(dashboardPanelClass, "border-[var(--dash-danger)] bg-[var(--dash-danger-soft)]")}>
           <CardContent className="flex items-center gap-3 p-4">
-            <AlertTriangle className="h-5 w-5" />
+            <AlertTriangle className="h-5 w-5 text-[var(--dash-danger)]" />
             <span className="text-sm font-medium">{errorMessage}</span>
           </CardContent>
         </Card>
@@ -338,34 +331,34 @@ export default function FinanceCommandCenterDashboard({ initialView = "overview"
       {dashboard ? (
         <>
           <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-            <MetricCard title={t("metrics.cash")} value={money(dashboard.summary.cashPosition)} detail={t("details.cash", { amount: money(dashboard.summary.netCashFlow) })} icon={Wallet} accent={dashboard.summary.netCashFlow >= 0 ? "emerald" : "rose"} />
-            <MetricCard title={t("metrics.revenue")} value={money(dashboard.summary.revenue)} detail={t("details.margin", { value: percent(dashboard.summary.grossMargin) })} icon={TrendingUp} accent="blue" />
-            <MetricCard title={t("metrics.receivables")} value={money(dashboard.summary.receivables)} detail={t("details.receivables", { count: dashboard.summary.openReceivableCount })} icon={HandCoins} accent="amber" />
-            <MetricCard title={t("metrics.payables")} value={money(dashboard.summary.payables)} detail={t("details.payables", { count: dashboard.summary.openPayableCount })} icon={FileText} accent={dashboard.summary.overduePayableAmount > 0 ? "rose" : "slate"} />
-            <MetricCard title={t("metrics.confidence")} value={percent(dashboard.summary.financeConfidence)} detail={t("details.workingCapital", { amount: money(dashboard.summary.workingCapital) })} icon={ShieldCheck} accent={dashboard.summary.financeConfidence >= 85 ? "emerald" : dashboard.summary.financeConfidence >= 65 ? "amber" : "rose"} />
+            <MetricCard title={t("metrics.cash")} value={money(dashboard.summary.cashPosition)} detail={t("details.cash", { amount: money(dashboard.summary.netCashFlow) })} icon={Wallet} accent={dashboard.summary.netCashFlow >= 0 ? "success" : "danger"} />
+            <MetricCard title={t("metrics.revenue")} value={money(dashboard.summary.revenue)} detail={t("details.margin", { value: percent(dashboard.summary.grossMargin) })} icon={TrendingUp} accent="brand" />
+            <MetricCard title={t("metrics.receivables")} value={money(dashboard.summary.receivables)} detail={t("details.receivables", { count: dashboard.summary.openReceivableCount })} icon={HandCoins} accent="gold" />
+            <MetricCard title={t("metrics.payables")} value={money(dashboard.summary.payables)} detail={t("details.payables", { count: dashboard.summary.openPayableCount })} icon={FileText} accent={dashboard.summary.overduePayableAmount > 0 ? "danger" : "muted"} />
+            <MetricCard title={t("metrics.confidence")} value={percent(dashboard.summary.financeConfidence)} detail={t("details.workingCapital", { amount: money(dashboard.summary.workingCapital) })} icon={ShieldCheck} accent={dashboard.summary.financeConfidence >= 85 ? "success" : dashboard.summary.financeConfidence >= 65 ? "gold" : "danger"} />
           </section>
 
           <section className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_420px]">
-            <Card className="rounded-md border-slate-200 shadow-sm dark:border-slate-800">
+            <Card className={dashboardPanelClass}>
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
-                  <LineChart className="h-4 w-4 text-blue-600" />
+                  <LineChart className="h-4 w-4 text-[var(--dash-brand-strong)]" />
                   {t("sections.movement")}
                 </CardTitle>
-                <CardDescription>{t("sections.movementDescription")}</CardDescription>
+                <CardDescription className={dashboardMutedTextClass}>{t("sections.movementDescription")}</CardDescription>
               </CardHeader>
               <CardContent>
                 <TrendPanel trend={dashboard.trend} money={money} shortMoney={shortMoney} dateFormatter={dateFormatter} t={t} />
               </CardContent>
             </Card>
 
-            <Card className="rounded-md border-slate-200 shadow-sm dark:border-slate-800">
+            <Card className={dashboardPanelClass}>
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
-                  <ShieldCheck className="h-4 w-4 text-emerald-600" />
+                  <ShieldCheck className="h-4 w-4 text-[var(--dash-success)]" />
                   {t("sections.assurance")}
                 </CardTitle>
-                <CardDescription>{t("sections.assuranceDescription")}</CardDescription>
+                <CardDescription className={dashboardMutedTextClass}>{t("sections.assuranceDescription")}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
@@ -373,9 +366,9 @@ export default function FinanceCommandCenterDashboard({ initialView = "overview"
                     <span className="font-medium">{t("metrics.confidence")}</span>
                     <span className="font-semibold tabular-nums">{percent(dashboard.summary.financeConfidence)}</span>
                   </div>
-                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-[rgba(37,57,67,0.64)]">
                     <div
-                      className={cn("h-full rounded-full", dashboard.summary.financeConfidence >= 85 ? "bg-emerald-500" : dashboard.summary.financeConfidence >= 65 ? "bg-amber-500" : "bg-rose-500")}
+                      className={cn("h-full rounded-full", dashboard.summary.financeConfidence >= 85 ? dashboardToneBg("success") : dashboard.summary.financeConfidence >= 65 ? dashboardToneBg("gold") : dashboardToneBg("danger"))}
                       style={{ width: `${dashboard.summary.financeConfidence}%` }}
                     />
                   </div>
@@ -383,19 +376,19 @@ export default function FinanceCommandCenterDashboard({ initialView = "overview"
 
                 <div className="grid gap-2">
                   {dashboard.alerts.map((alert) => (
-                    <div key={alert.id} className={cn("flex items-start gap-2 rounded-md border p-3 text-sm", severityClass(alert.severity))}>
+                    <div key={alert.id} className={cn("flex items-start gap-2 rounded-lg border p-3 text-sm", dashboardSeverityClass(alert.severity))}>
                       {alert.severity === "success" ? <CheckCircle2 className="mt-0.5 h-4 w-4" /> : <AlertTriangle className="mt-0.5 h-4 w-4" />}
                       <span>{alertText(alert)}</span>
                     </div>
                   ))}
                 </div>
 
-                <div className="grid gap-2 rounded-md border border-slate-200 bg-slate-50 p-3 text-sm dark:border-slate-800 dark:bg-slate-950/50">
+                <div className={cn(dashboardRowClass, "grid gap-2 p-3 text-sm")}>
                   <SummaryLine label={t("summary.paymentsCollected")} value={money(dashboard.summary.paymentsCollected)} />
                   <SummaryLine label={t("summary.pendingPayments")} value={money(dashboard.summary.paymentsPending)} />
                   <SummaryLine label={t("summary.refunds")} value={money(dashboard.summary.refunds)} />
                   <SummaryLine label={t("summary.tax")} value={money(dashboard.summary.taxCollected - dashboard.summary.taxOnPurchases)} />
-                  <SummaryLine label={t("summary.drawerVariance")} value={money(dashboard.summary.drawerVariance)} tone={valueTone(dashboard.summary.drawerVariance)} />
+                  <SummaryLine label={t("summary.drawerVariance")} value={money(dashboard.summary.drawerVariance)} tone={dashboardValueTone(dashboard.summary.drawerVariance)} />
                 </div>
               </CardContent>
             </Card>
@@ -407,26 +400,26 @@ export default function FinanceCommandCenterDashboard({ initialView = "overview"
           </section>
 
           <section className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_380px]">
-            <Card className="rounded-md border-slate-200 shadow-sm dark:border-slate-800">
+            <Card className={dashboardPanelClass}>
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
-                  <CreditCard className="h-4 w-4 text-blue-600" />
+                  <CreditCard className="h-4 w-4 text-[var(--dash-brand-strong)]" />
                   {t("sections.payments")}
                 </CardTitle>
-                <CardDescription>{t("sections.paymentsDescription")}</CardDescription>
+                <CardDescription className={dashboardMutedTextClass}>{t("sections.paymentsDescription")}</CardDescription>
               </CardHeader>
               <CardContent>
                 <PaymentsTable payments={dashboard.recentPayments} money={money} formatDateTime={formatDateTime} t={t} />
               </CardContent>
             </Card>
 
-            <Card className="rounded-md border-slate-200 shadow-sm dark:border-slate-800">
+            <Card className={dashboardPanelClass}>
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
-                  <ReceiptText className="h-4 w-4 text-emerald-600" />
+                  <ReceiptText className="h-4 w-4 text-[var(--dash-success)]" />
                   {t("sections.methods")}
                 </CardTitle>
-                <CardDescription>{t("sections.methodsDescription")}</CardDescription>
+                <CardDescription className={dashboardMutedTextClass}>{t("sections.methodsDescription")}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 <MethodBreakdown methods={dashboard.paymentMethods} money={money} t={t} />
@@ -442,6 +435,7 @@ export default function FinanceCommandCenterDashboard({ initialView = "overview"
           </section>
         </>
       ) : null}
+      </div>
     </main>
   )
 }
@@ -449,7 +443,7 @@ export default function FinanceCommandCenterDashboard({ initialView = "overview"
 function SummaryLine({ label, value, tone }: { label: string; value: string; tone?: string }) {
   return (
     <div className="flex justify-between gap-3">
-      <span className="text-slate-600 dark:text-slate-400">{label}</span>
+      <span className={dashboardMutedTextClass}>{label}</span>
       <span className={cn("font-semibold tabular-nums", tone)}>{value}</span>
     </div>
   )
@@ -471,31 +465,31 @@ function TrendPanel({
   const maxValue = Math.max(1, ...trend.map((point) => Math.max(point.inflow, point.outflow, point.revenue, point.expenses, point.purchases)))
 
   if (trend.length === 0) {
-    return <div className="rounded-md border border-dashed border-slate-300 p-8 text-center text-sm text-slate-600 dark:border-slate-700 dark:text-slate-400">{t("empty.trend")}</div>
+    return <div className={dashboardEmptyClass}>{t("empty.trend")}</div>
   }
 
   return (
     <ScrollArea className="w-full">
       <div className="flex min-w-[700px] gap-2 pb-3">
         {trend.map((point) => (
-          <div key={point.key} className="flex min-w-20 flex-1 flex-col rounded-md border border-slate-200 bg-slate-50 p-2 dark:border-slate-800 dark:bg-slate-950/50">
-            <div className="mb-2 text-xs font-medium text-slate-600 dark:text-slate-400">{dateFormatter.format(new Date(point.key))}</div>
+          <div key={point.key} className={cn(dashboardRowClass, "flex min-w-20 flex-1 flex-col p-2")}>
+            <div className="mb-2 text-xs font-medium text-[var(--dash-text-soft)]">{dateFormatter.format(new Date(point.key))}</div>
             <div className="flex h-28 items-end gap-1">
-              <div className="w-full rounded-t bg-emerald-500" style={{ height: `${Math.max(4, (point.inflow / maxValue) * 100)}%` }} title={money(point.inflow)} />
-              <div className="w-full rounded-t bg-blue-500" style={{ height: `${Math.max(4, (point.revenue / maxValue) * 100)}%` }} title={money(point.revenue)} />
-              <div className="w-full rounded-t bg-amber-500" style={{ height: `${Math.max(4, (point.outflow / maxValue) * 100)}%` }} title={money(point.outflow)} />
-              <div className="w-full rounded-t bg-rose-500" style={{ height: `${Math.max(4, (point.expenses / maxValue) * 100)}%` }} title={money(point.expenses)} />
+              <div className={cn("w-full rounded-t", dashboardToneBg("success"))} style={{ height: `${Math.max(4, (point.inflow / maxValue) * 100)}%` }} title={money(point.inflow)} />
+              <div className={cn("w-full rounded-t", dashboardToneBg("brand"))} style={{ height: `${Math.max(4, (point.revenue / maxValue) * 100)}%` }} title={money(point.revenue)} />
+              <div className={cn("w-full rounded-t", dashboardToneBg("gold"))} style={{ height: `${Math.max(4, (point.outflow / maxValue) * 100)}%` }} title={money(point.outflow)} />
+              <div className={cn("w-full rounded-t", dashboardToneBg("danger"))} style={{ height: `${Math.max(4, (point.expenses / maxValue) * 100)}%` }} title={money(point.expenses)} />
             </div>
-            <div className={cn("mt-2 truncate text-xs font-semibold tabular-nums", valueTone(point.net))}>{shortMoney(point.net)}</div>
+            <div className={cn("mt-2 truncate text-xs font-semibold tabular-nums", dashboardValueTone(point.net))}>{shortMoney(point.net)}</div>
           </div>
         ))}
       </div>
       <ScrollBar orientation="horizontal" />
-      <div className="mt-2 flex flex-wrap gap-2 text-xs text-slate-600 dark:text-slate-400">
-        <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-emerald-500" />{t("legend.inflow")}</span>
-        <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-blue-500" />{t("legend.revenue")}</span>
-        <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-amber-500" />{t("legend.outflow")}</span>
-        <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-rose-500" />{t("legend.expenses")}</span>
+      <div className="mt-2 flex flex-wrap gap-2 text-xs text-[var(--dash-text-soft)]">
+        <span className="inline-flex items-center gap-1"><span className={cn("h-2 w-2 rounded-full", dashboardToneBg("success"))} />{t("legend.inflow")}</span>
+        <span className="inline-flex items-center gap-1"><span className={cn("h-2 w-2 rounded-full", dashboardToneBg("brand"))} />{t("legend.revenue")}</span>
+        <span className="inline-flex items-center gap-1"><span className={cn("h-2 w-2 rounded-full", dashboardToneBg("gold"))} />{t("legend.outflow")}</span>
+        <span className="inline-flex items-center gap-1"><span className={cn("h-2 w-2 rounded-full", dashboardToneBg("danger"))} />{t("legend.expenses")}</span>
       </div>
     </ScrollArea>
   )
@@ -518,20 +512,20 @@ function AgingCard({
 }) {
   const total = Math.max(1, aging.current + aging.d31 + aging.d61 + aging.d90)
   const buckets: Array<[keyof FinanceAgingSummary, string, string]> = [
-    ["current", t("aging.current"), "bg-emerald-500"],
-    ["d31", t("aging.d31"), "bg-blue-500"],
-    ["d61", t("aging.d61"), "bg-amber-500"],
-    ["d90", t("aging.d90"), "bg-rose-500"],
+    ["current", t("aging.current"), dashboardToneBg("success")],
+    ["d31", t("aging.d31"), dashboardToneBg("brand")],
+    ["d61", t("aging.d61"), dashboardToneBg("gold")],
+    ["d90", t("aging.d90"), dashboardToneBg("danger")],
   ]
 
   return (
-    <Card className="rounded-md border-slate-200 shadow-sm dark:border-slate-800">
+    <Card className={dashboardPanelClass}>
       <CardHeader className="pb-3">
         <CardTitle className="text-base">{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <CardDescription className={dashboardMutedTextClass}>{description}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+        <div className="overflow-hidden rounded-full bg-[rgba(37,57,67,0.64)]">
           <div className="flex h-3">
             {buckets.map(([key, _label, color]) => (
               <div key={key} className={color} style={{ width: `${(aging[key] / total) * 100}%` }} />
@@ -540,22 +534,22 @@ function AgingCard({
         </div>
         <div className="grid grid-cols-2 gap-2 text-xs">
           {buckets.map(([key, label, color]) => (
-            <div key={key} className="rounded-md border border-slate-200 bg-slate-50 p-2 dark:border-slate-800 dark:bg-slate-950/50">
-              <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400"><span className={cn("h-2 w-2 rounded-full", color)} />{label}</div>
+            <div key={key} className={cn(dashboardRowClass, "p-2")}>
+              <div className="flex items-center gap-1.5 text-[var(--dash-text-soft)]"><span className={cn("h-2 w-2 rounded-full", color)} />{label}</div>
               <div className="mt-1 font-semibold tabular-nums">{money(aging[key])}</div>
             </div>
           ))}
         </div>
         <div className="space-y-2">
           {counterparties.length === 0 ? (
-            <div className="rounded-md border border-dashed border-slate-300 p-6 text-center text-sm text-slate-600 dark:border-slate-700 dark:text-slate-400">{t("empty.counterparties")}</div>
+            <div className={cn(dashboardEmptyClass, "p-6")}>{t("empty.counterparties")}</div>
           ) : counterparties.map((party) => (
-            <div key={party.id} className="flex items-center justify-between gap-3 rounded-md border border-slate-200 p-2 text-sm dark:border-slate-800">
+            <div key={party.id} className={cn(dashboardRowClass, "flex items-center justify-between gap-3 p-2 text-sm")}>
               <div className="min-w-0">
                 <div className="truncate font-medium">{party.name}</div>
-                <div className="text-xs text-slate-600 dark:text-slate-400">{party.terms ? t("aging.terms", { count: party.terms }) : t("common.notAvailable")}</div>
+                <div className="text-xs text-[var(--dash-text-soft)]">{party.terms ? t("aging.terms", { count: party.terms }) : t("common.notAvailable")}</div>
               </div>
-              <Badge variant="outline" className={cn("shrink-0", severityClass(party.severity))}>{money(party.balance)}</Badge>
+              <Badge variant="outline" className={cn("shrink-0", dashboardSeverityClass(party.severity))}>{money(party.balance)}</Badge>
             </div>
           ))}
         </div>
@@ -576,14 +570,14 @@ function PaymentsTable({
   t: ReturnType<typeof useTranslations>
 }) {
   if (payments.length === 0) {
-    return <div className="rounded-md border border-dashed border-slate-300 p-8 text-center text-sm text-slate-600 dark:border-slate-700 dark:text-slate-400">{t("empty.payments")}</div>
+    return <div className={dashboardEmptyClass}>{t("empty.payments")}</div>
   }
 
   return (
     <ScrollArea className="w-full">
       <table className="w-full min-w-[860px] text-sm">
-        <thead className="text-left text-xs text-slate-600 dark:text-slate-400">
-          <tr className="border-b border-slate-200 dark:border-slate-800">
+        <thead className="text-left text-xs text-[var(--dash-text-soft)]">
+          <tr className="border-b border-[var(--dash-border-subtle)]">
             <th className="py-2 pr-3 font-medium">{t("table.payment")}</th>
             <th className="py-2 pr-3 font-medium">{t("table.counterparty")}</th>
             <th className="py-2 pr-3 font-medium">{t("table.method")}</th>
@@ -594,23 +588,23 @@ function PaymentsTable({
         </thead>
         <tbody>
           {payments.slice(0, 14).map((payment) => (
-            <tr key={payment.id} className="border-b border-slate-100 last:border-0 dark:border-slate-900">
+            <tr key={payment.id} className="border-b border-[var(--dash-border-subtle)] last:border-0">
               <td className="py-3 pr-3">
                 <div className="flex items-center gap-2 font-medium">
-                  {payment.direction === "out" ? <ArrowDownRight className="h-4 w-4 text-rose-600" /> : <ArrowUpRight className="h-4 w-4 text-emerald-600" />}
+                  {payment.direction === "out" ? <ArrowDownRight className="h-4 w-4 text-[var(--dash-danger)]" /> : <ArrowUpRight className="h-4 w-4 text-[var(--dash-success)]" />}
                   {payment.paymentNumber}
                 </div>
-                <div className="mt-1 text-xs text-slate-600 dark:text-slate-400">{payment.processedBy}</div>
+                <div className="mt-1 text-xs text-[var(--dash-text-soft)]">{payment.processedBy}</div>
               </td>
               <td className="py-3 pr-3">{payment.counterparty}</td>
               <td className="py-3 pr-3">{t(`methods.${payment.method}`)}</td>
               <td className="py-3 pr-3">
-                <Badge variant="outline" className={cn(payment.status === "PAID" ? severityClass("success") : payment.status === "PENDING" ? severityClass("warning") : severityClass("info"))}>
+                <Badge variant="outline" className={cn(payment.status === "PAID" ? dashboardSeverityClass("success") : payment.status === "PENDING" ? dashboardSeverityClass("warning") : dashboardSeverityClass("info"))}>
                   {t(`statuses.${payment.status}`)}
                 </Badge>
               </td>
-              <td className={cn("py-3 pr-3 text-right font-semibold tabular-nums", payment.direction === "out" ? "text-rose-700 dark:text-rose-300" : "text-emerald-700 dark:text-emerald-300")}>{money(payment.amount)}</td>
-              <td className="py-3 pr-3 text-xs text-slate-600 dark:text-slate-400">{formatDateTime(payment.createdAt)}</td>
+              <td className={cn("py-3 pr-3 text-right font-semibold tabular-nums", payment.direction === "out" ? "text-[var(--dash-danger)]" : "text-[var(--dash-success)]")}>{money(payment.amount)}</td>
+              <td className="py-3 pr-3 text-xs text-[var(--dash-text-soft)]">{formatDateTime(payment.createdAt)}</td>
             </tr>
           ))}
         </tbody>
@@ -622,7 +616,7 @@ function PaymentsTable({
 
 function MethodBreakdown({ methods, money, t }: { methods: FinancePaymentMethod[]; money: (value: number | null | undefined) => string; t: ReturnType<typeof useTranslations> }) {
   const max = Math.max(1, ...methods.map((method) => method.amount))
-  if (methods.length === 0) return <div className="rounded-md border border-dashed border-slate-300 p-6 text-center text-sm text-slate-600 dark:border-slate-700 dark:text-slate-400">{t("empty.methods")}</div>
+  if (methods.length === 0) return <div className={cn(dashboardEmptyClass, "p-6")}>{t("empty.methods")}</div>
 
   return (
     <div className="space-y-3">
@@ -630,10 +624,10 @@ function MethodBreakdown({ methods, money, t }: { methods: FinancePaymentMethod[
         <div key={method.method}>
           <div className="mb-1 flex items-center justify-between gap-3 text-sm">
             <span className="font-medium">{t(`methods.${method.method}`)}</span>
-            <span className="text-xs text-slate-600 dark:text-slate-400">{money(method.amount)} / {method.count}</span>
+            <span className="text-xs text-[var(--dash-text-soft)]">{money(method.amount)} / {method.count}</span>
           </div>
-          <div className="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-            <div className="h-full rounded-full bg-blue-500" style={{ width: `${(method.amount / max) * 100}%` }} />
+          <div className="h-2 overflow-hidden rounded-full bg-[rgba(37,57,67,0.64)]">
+            <div className="h-full rounded-full bg-[var(--dash-brand)]" style={{ width: `${(method.amount / max) * 100}%` }} />
           </div>
         </div>
       ))}
@@ -643,10 +637,10 @@ function MethodBreakdown({ methods, money, t }: { methods: FinancePaymentMethod[
 
 function ActionLink({ href, icon: Icon, label }: { href: string; icon: LucideIcon; label: string }) {
   return (
-    <Button asChild variant="outline" className="justify-between bg-white dark:bg-slate-950">
+    <Button asChild variant="outline" className="dashboard-button-secondary justify-between rounded-lg">
       <Link href={href}>
         <span className="flex items-center gap-2">
-          <Icon className="h-4 w-4" />
+          <Icon className="h-4 w-4 text-[var(--dash-brand-strong)]" />
           {label}
         </span>
         <ExternalLink className="h-4 w-4" />

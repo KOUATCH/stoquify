@@ -13,6 +13,15 @@ import { CashFlowReportComponent } from "@/components/reports/cash-flow-report"
 import { CashierPerformanceReportComponent } from "@/components/reports/cashier-performance-report"
 import { FinancialSummaryReportComponent } from "@/components/reports/financial-summary-report"
 import { ItemPerformanceReportComponent } from "@/components/reports/item-performance-report"
+import {
+  analyticsContentClass,
+  analyticsControlClass,
+  analyticsFilterClass,
+  analyticsMutedTextClass,
+  analyticsPageClass,
+  analyticsPanelClass,
+  analyticsPrimaryButtonClass,
+} from "@/components/analytics/dashboard/analytics-dashboard-theme"
 
 import {
   getCashFlowReport,
@@ -147,33 +156,40 @@ export default function ReportsClient({
   ]
 
   return (
-    <div className="container mx-auto space-y-6 p-6">
+    <div className={analyticsPageClass}>
+      <div className={analyticsContentClass}>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Financial Reports</h1>
-          <p className="text-muted-foreground">Comprehensive analytics and performance insights</p>
+          <h1 className="text-3xl font-bold text-[var(--dash-text)]">Financial Reports</h1>
+          <p className={analyticsMutedTextClass}>Comprehensive analytics and performance insights</p>
         </div>
       </div>
 
-      <Card>
+      <Card className={analyticsPanelClass}>
         <CardContent className="pt-6">
           <div className="flex flex-col gap-4 lg:flex-row">
             <div className="flex-1">
-              <label className="mb-2 block text-sm font-medium">Report Type</label>
+              <label className="mb-2 block text-sm font-medium text-[var(--dash-text)]">Report Type</label>
               <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
                 {reportTypes.map((type) => {
                   const Icon = type.icon
+                  const isSelected = selectedReport === type.id
                   return (
                     <Button
                       key={type.id}
-                      variant={selectedReport === type.id ? "default" : "outline"}
-                      className="flex h-auto flex-col items-center gap-2 p-3"
+                      variant="outline"
+                      className={cn(
+                        "flex h-auto min-h-[6.75rem] flex-col items-center gap-2 whitespace-normal p-3 text-center",
+                        isSelected ? analyticsPrimaryButtonClass : analyticsFilterClass
+                      )}
                       onClick={() => setSelectedReport(type.id)}
                     >
                       <Icon className="h-4 w-4" />
                       <div className="text-center">
                         <div className="text-xs font-medium">{type.name}</div>
-                        <div className="hidden text-xs text-muted-foreground lg:block">{type.description}</div>
+                        <div className={`hidden text-xs lg:block ${isSelected ? "text-white/80" : analyticsMutedTextClass}`}>
+                          {type.description}
+                        </div>
                       </div>
                     </Button>
                   )
@@ -182,15 +198,16 @@ export default function ReportsClient({
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">Date Range</label>
+              <label className="text-sm font-medium text-[var(--dash-text)]">Date Range</label>
               <div className="flex gap-2">
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
                       className={cn(
+                        analyticsControlClass,
                         "w-[280px] justify-start text-start font-normal",
-                        !dateRange && "text-muted-foreground"
+                        !dateRange && analyticsMutedTextClass
                       )}
                     >
                       <CalendarIcon className="me-2 h-4 w-4" />
@@ -207,7 +224,7 @@ export default function ReportsClient({
                       )}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
+                  <PopoverContent className={`${analyticsPanelClass} w-auto p-0`} align="start">
                     <Calendar
                       initialFocus
                       mode="range"
@@ -225,13 +242,13 @@ export default function ReportsClient({
               </div>
 
               <div className="flex gap-1">
-                <Button size="sm" variant="outline" onClick={() => setQuickDateRange(7)}>
+                <Button size="sm" variant="outline" className={analyticsFilterClass} onClick={() => setQuickDateRange(7)}>
                   7 days
                 </Button>
-                <Button size="sm" variant="outline" onClick={() => setQuickDateRange(30)}>
+                <Button size="sm" variant="outline" className={analyticsFilterClass} onClick={() => setQuickDateRange(30)}>
                   30 days
                 </Button>
-                <Button size="sm" variant="outline" onClick={setMonthRange}>
+                <Button size="sm" variant="outline" className={analyticsFilterClass} onClick={setMonthRange}>
                   This month
                 </Button>
               </div>
@@ -241,10 +258,10 @@ export default function ReportsClient({
       </Card>
 
       {isLoading ? (
-        <Card>
+        <Card className={analyticsPanelClass}>
           <CardContent className="py-12 text-center">
-            <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
-            <p className="text-muted-foreground">Loading report...</p>
+            <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-[var(--dash-brand)]" />
+            <p className={analyticsMutedTextClass}>Loading report...</p>
           </CardContent>
         </Card>
       ) : (
@@ -264,6 +281,7 @@ export default function ReportsClient({
           {selectedReport === "cashflow" && cashFlowReport && <CashFlowReportComponent report={cashFlowReport} />}
         </>
       )}
+      </div>
     </div>
   )
 }

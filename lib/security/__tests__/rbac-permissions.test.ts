@@ -3,6 +3,7 @@ import {
   hasAllRbacPermissions,
   hasAnyRbacPermission,
   hasRbacPermission,
+  isKnownPermission,
   permissionCandidates,
   permissionRisk,
 } from "@/lib/security/rbac-permissions"
@@ -19,10 +20,20 @@ describe("rbac permission compatibility", () => {
     expect(hasRbacPermission(["customers.read"], "READ_CUSTOMERS")).toBe(true)
   })
 
-  it("preserves wildcard semantics", () => {
-    expect(hasRbacPermission(["*"], "roles.permissions.assign")).toBe(true)
-    expect(hasAnyRbacPermission(["*"], ["users.delete", "roles.delete"])).toBe(true)
-    expect(hasAllRbacPermissions(["*"], ["users.delete", "roles.delete"])).toBe(true)
+  it("does not let wildcard grants bypass high-risk or critical permissions", () => {
+    expect(hasRbacPermission(["*"], "dashboard.read")).toBe(true)
+    expect(hasRbacPermission(["*"], "roles.permissions.assign")).toBe(false)
+    expect(hasRbacPermission(["*"], "accounting.period.close")).toBe(false)
+    expect(hasAnyRbacPermission(["*"], ["users.delete", "roles.delete"])).toBe(false)
+    expect(hasAllRbacPermissions(["*"], ["users.delete", "roles.delete"])).toBe(false)
+    expect(hasRbacPermission(["*", "roles.permissions.assign"], "roles.permissions.assign")).toBe(true)
+  })
+
+  it("fails closed for unknown permission keys", () => {
+    expect(isKnownPermission("purchases.orders.receive")).toBe(true)
+    expect(isKnownPermission("unknown.module.action")).toBe(false)
+    expect(hasRbacPermission(["unknown.module.action"], "unknown.module.action")).toBe(false)
+    expect(hasRbacPermission(["*"], "unknown.module.action")).toBe(false)
   })
 
   it("expands stored permissions into effective permission candidates", () => {
@@ -51,6 +62,31 @@ describe("rbac permission compatibility", () => {
     expect(hasRbacPermission(["MANAGE_FINANCIAL_CONTROLS"], "purchasing.supplier.bank.approve")).toBe(true)
   })
 
+  it("recognizes enterprise sensitive workflow permissions through existing grants", () => {
+    expect(hasRbacPermission(["ASSIGN_ROLES"], "admin.role.assign")).toBe(true)
+    expect(hasRbacPermission(["CREATE_USERS"], "admin.user.invite")).toBe(true)
+    expect(hasRbacPermission(["MANAGE_CASH_TRANSACTIONS"], "pos.cash.adjust")).toBe(true)
+    expect(hasRbacPermission(["PROCESS_REFUNDS"], "pos.sale.refund")).toBe(true)
+    expect(hasRbacPermission(["PROCESS_REFUNDS"], "pos.sale.void")).toBe(true)
+    expect(hasRbacPermission(["APPROVE_STOCK_ADJUSTMENTS"], "inventory.adjust.approve")).toBe(true)
+    expect(hasRbacPermission(["APPROVE_STOCK_TRANSFERS"], "inventory.transfer.approve")).toBe(true)
+    expect(hasRbacPermission(["APPROVE_PURCHASE_ORDERS"], "purchasing.purchaseOrder.approve")).toBe(true)
+    expect(hasRbacPermission(["SUPPLIER_PAYMENTS_MANAGE"], "purchasing.payment.record")).toBe(true)
+    expect(hasRbacPermission(["PAYROLL_APPROVE"], "payroll.run.approve")).toBe(true)
+    expect(hasRbacPermission(["FINANCIAL_REPORTS_EXPORT"], "reports.financial.export")).toBe(true)
+    expect(hasRbacPermission(["VIEW_AUDIT_LOGS"], "reports.audit.view")).toBe(true)
+  })
+
+  it("requires the canonical purchase order receiving permission without aliases", () => {
+    expect(hasRbacPermission(["purchases.orders.receive"], "purchases.orders.receive")).toBe(true)
+    expect(hasRbacPermission(["RECEIVE_GOODS"], "purchases.orders.receive")).toBe(false)
+    expect(hasRbacPermission(["po:receive"], "purchases.orders.receive")).toBe(false)
+    expect(hasRbacPermission(["purchases.orders.receive"], "po:receive")).toBe(false)
+    expect(hasRbacPermission(["READ_PURCHASE_ORDERS"], "purchases.orders.receive")).toBe(false)
+    expect(hasRbacPermission(["UPDATE_PURCHASE_ORDERS"], "purchases.orders.receive")).toBe(false)
+    expect(hasRbacPermission(["APPROVE_PURCHASE_ORDERS"], "purchases.orders.receive")).toBe(false)
+  })
+
   it("keeps payroll controls compatible with legacy payroll and finance grants", () => {
     expect(hasRbacPermission(["PAYROLL_APPROVE"], "payroll.runs.approve")).toBe(true)
     expect(hasRbacPermission(["PAYROLL_PROCESS"], "payroll.runs.calculate")).toBe(true)
@@ -71,6 +107,10 @@ describe("rbac permission compatibility", () => {
     expect(permissionRisk("purchasing.ap.payment.release")).toBe("crit")
     expect(permissionRisk("purchasing.supplier.bank.approve")).toBe("crit")
     expect(permissionRisk("payroll.runs.approve")).toBe("crit")
+    expect(permissionRisk("admin.role.assign")).toBe("crit")
+    expect(permissionRisk("inventory.adjust.approve")).toBe("crit")
+    expect(permissionRisk("reports.financial.export")).toBe("crit")
+    expect(permissionRisk("reports.audit.view")).toBe("high")
     expect(permissionRisk("payroll.payments.release")).toBe("crit")
   })
 })

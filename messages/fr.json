@@ -357,6 +357,115 @@
       "CANCELLED": "Annule"
     }
   },
+  "financeSurfaces": {
+    "empty": {
+      "alerts": "Aucun signal de risque finance specifique a cette route trouve pour ce perimetre.",
+      "receivables": "Aucun solde client a recevoir trouve pour ce perimetre.",
+      "payables": "Aucun solde fournisseur a payer trouve pour ce perimetre.",
+      "receipts": "Aucun encaissement client recent trouve pour ce perimetre.",
+      "disbursements": "Aucun decaissement fournisseur recent trouve pour ce perimetre."
+    },
+    "actions": {
+      "pos": "Ouvrir PDV",
+      "customers": "Grand livre clients",
+      "sales": "Flux ventes",
+      "salesFinance": "Finance ventes",
+      "apWorkbench": "Atelier AP",
+      "purchaseOrders": "Commandes achat",
+      "suppliers": "Grand livre fournisseurs"
+    },
+    "payments": {
+      "title": "Grand livre paiements",
+      "subtitle": "Encaissements, clearing caisse, rapprochement fournisseur et signaux de comptabilisation par rail de paiement.",
+      "refreshing": "Actualisation des rails de paiement, du mix d'encaissement et des preuves de clearing.",
+      "refreshed": "Les dernieres donnees du grand livre paiements sont visibles.",
+      "kpis": {
+        "collected": "Paiements encaisses",
+        "pending": "Clearing en attente",
+        "netCash": "Mouvement cash net"
+      },
+      "details": {
+        "collected": "Encaissements clients saisis sur la periode selectionnee.",
+        "pending": "Paiements en attente de finalisation ou de revue operationnelle.",
+        "netCash": "Entrees moins sorties, remboursements et pression depenses."
+      },
+      "assuranceTitle": "Assurance paiements",
+      "assuranceDescription": "Risques paiement pouvant bloquer la confiance cash, le settlement ou les preuves de cloture.",
+      "sections": {
+        "ledger": "Flux du grand livre paiements",
+        "ledgerDescription": "Derniers paiements entrants et sortants avec tiers, methode, agent, statut et direction comptable.",
+        "posting": "Posture de clearing",
+        "postingDescription": "Les rails de paiement doivent solder creances, dettes fournisseurs, tiroirs caisse et suspense avec preuve tracable.",
+        "methodsDescription": "Methodes d'encaissement et de settlement par montant capture sur la periode selectionnee.",
+        "workflows": "Flux paiements",
+        "workflowsDescription": "Passer directement de l'analyse paiement a la capture, au rapprochement, aux tiroirs, aux taxes et a la tresorerie."
+      },
+      "summary": {
+        "inboundRecent": "Encaissements recents",
+        "outboundRecent": "Paiements sortants recents"
+      }
+    },
+    "receivables": {
+      "title": "Creances clients",
+      "subtitle": "Soldes clients, exposition ventes ouvertes, risque de recouvrement et clearing paiements pour le grand livre clients.",
+      "refreshing": "Actualisation des soldes clients, aging et preuves d'encaissement.",
+      "refreshed": "Les dernieres donnees du grand livre creances sont visibles.",
+      "kpis": {
+        "overdue": "Exposition en retard",
+        "collected": "Encaisse sur periode"
+      },
+      "details": {
+        "overdue": "Montants clients echus selon date de commande et conditions de paiement.",
+        "collected": "Encaissements disponibles pour solder les balances clients."
+      },
+      "assuranceTitle": "Assurance creances",
+      "assuranceDescription": "Signaux de recouvrement et tresorerie qui influencent la confiance du grand livre clients.",
+      "sections": {
+        "aging": "Aging des creances",
+        "agingDescription": "Soldes clients et commandes ventes ouvertes groupes en tranches de recouvrement.",
+        "posting": "Posture de recouvrement",
+        "postingDescription": "Les encaissements clients doivent solder les creances seulement lorsque vente, paiement et preuve cash sont tracables.",
+        "receipts": "Encaissements clients recents",
+        "receiptsDescription": "Paiements entrants qui reduisent l'exposition client et soutiennent le suivi de compte.",
+        "workflows": "Flux creances",
+        "workflowsDescription": "Passer de l'analyse creances aux clients, ventes, preuves paiement et suivi tresorerie."
+      },
+      "summary": {
+        "overdue": "Creances en retard",
+        "recentReceipts": "Encaissements recents"
+      }
+    },
+    "payables": {
+      "title": "Dettes fournisseurs",
+      "subtitle": "Soldes fournisseurs, aging AP, exposition achat, release paiement et preparation de comptabilisation.",
+      "refreshing": "Actualisation des soldes fournisseurs, aging AP et preuves de release paiement.",
+      "refreshed": "Les dernieres donnees du grand livre dettes sont visibles.",
+      "kpis": {
+        "overdue": "Attention paiement",
+        "purchases": "Exposition achats"
+      },
+      "details": {
+        "overdue": "Soldes fournisseurs qui necessitent une attention paiement.",
+        "purchases": "Commandes achat et couts fournisseurs sur la periode selectionnee."
+      },
+      "assuranceTitle": "Assurance dettes",
+      "assuranceDescription": "Risques de paiement fournisseur pouvant affecter tresorerie, approbations et comptabilisation.",
+      "sections": {
+        "aging": "Aging des dettes",
+        "agingDescription": "Soldes fournisseurs et exposition achats ouverte groupes en tranches de paiement.",
+        "posting": "Posture de release paiement",
+        "postingDescription": "Les paiements fournisseurs doivent passer controles AP, maker-checker, rapprochement et preuve grand livre avant cloture.",
+        "disbursements": "Decaissements fournisseurs recents",
+        "disbursementsDescription": "Paiements sortants lies aux tiers achats et preuves de release.",
+        "workflows": "Flux dettes",
+        "workflowsDescription": "Passer de l'analyse dettes aux controles AP, commandes achat, fournisseurs, rapprochement et planification cash."
+      },
+      "summary": {
+        "overdue": "Dettes demandant attention",
+        "recentDisbursements": "Decaissements recents"
+      }
+    }
+  },
   "paymentReconciliationWorkbench": {
     "title": "Atelier rapprochement paiements",
     "subtitle": "Assurance par rail, alertes references fournisseur dupliquees et files d'exception pretes pour suspense.",
