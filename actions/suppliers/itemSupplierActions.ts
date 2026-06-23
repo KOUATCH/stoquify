@@ -1,292 +1,163 @@
 "use server"
 
 import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses"
-import { db } from "@/prisma/db"
-import { getSession } from "@/lib/auth-server"
-import { resolveActionOrganization } from "@/services/_shared/resolve-action-organization"
-import { removeItemSupplierForOrganization } from "@/services/supplier/supplier.service"
+import {
+  assertCanUseOrganization,
+  isRbacError,
+  requireAllPermissions,
+} from "@/lib/security/rbac"
+import {
+  createItemSupplierForOrganization,
+  getAllItemSuppliersForOrganization,
+  getItemSupplierForOrganizationById,
+  getItemSuppliersForItemInOrganization,
+  listItemSuppliersForOrganization,
+  removeItemSupplierForOrganization,
+  updateItemSupplierForOrganization,
+  type ItemSupplierData,
+  type UpdateItemSupplierData,
+} from "@/services/supplier/supplier.service"
 import { revalidatePath } from "next/cache"
-import type { Prisma } from "@prisma/client"
 
-function itemDisplayName(item: { nameEn?: string | null; nameFr?: string | null; sku?: string | null }) {
-  return item.nameEn ?? item.nameFr ?? item.sku ?? "Unnamed item"
+export type { ItemSupplierData, UpdateItemSupplierData }
+
+const ITEM_SUPPLIER_PERMISSIONS = {
+  read: ["inventory.items.read", "purchases.suppliers.read"],
+  create: ["inventory.items.update", "purchases.suppliers.create"],
+  update: ["inventory.items.update", "purchases.suppliers.update"],
+  delete: ["inventory.items.update", "purchases.suppliers.delete"],
+} as const
+
+const ACTIONABLE_ERROR_MESSAGES = new Set([
+  "Item not found",
+  "Item supplier not found",
+  "Item supplier relationship already exists",
+  "Item or supplier not found for this organization",
+  "One or more suppliers were not found for this organization",
+])
+
+function getItemSupplierActionErrorMessage(error: unknown, fallback: string) {
+  if (isRbacError(error)) return error.message
+
+  if (error instanceof Error) {
+    if (ACTIONABLE_ERROR_MESSAGES.has(error.message)) return error.message
+    if (error.message.startsWith("Item with ID ")) return error.message
+  }
+
+  return fallback
 }
 
-function withItemDisplayName<T extends { item?: { nameEn?: string | null; nameFr?: string | null; sku?: string | null } | null }>(
-  itemSupplier: T
+function itemSupplierActionError(
+  message: string,
+  error: unknown,
+  action: string,
+  fallback: string,
 ) {
-  const itemSupplierRow = itemSupplier as T & {
-    supplierSku?: string | null
-    supplierName?: string | null
-    minOrderQuantity?: unknown
-  }
-  const legacyAliases = {
-    supplierProductCode: itemSupplierRow.supplierSku,
-    supplierProductName: itemSupplierRow.supplierName,
-    minimumOrderQuantity: itemSupplierRow.minOrderQuantity,
-  }
-
-  if (!itemSupplier.item) return itemSupplier
-
-  return {
-    ...itemSupplier,
-    ...legacyAliases,
-    item: {
-      ...itemSupplier.item,
-      name: itemDisplayName(itemSupplier.item),
-    },
-  }
+  return safeLoggedActionErrorMessage(
+    message,
+    error,
+    { action },
+    getItemSupplierActionErrorMessage(error, fallback),
+  )
 }
 
-function itemSupplierOrgWhere(organizationId: string): Prisma.ItemSupplierWhereInput {
-  return {
-    item: { organizationId },
-    supplier: { organizationId },
+async function requireItemSupplierAccess(
+  permissions: readonly string[],
+  resourceId?: string,
+  requestedOrganizationId?: string | null,
+) {
+  const ctx = await requireAllPermissions(permissions, {
+    resource: "item-suppliers",
+    resourceId,
+  })
+  const requestedOrgId = requestedOrganizationId?.trim()
+
+  if (requestedOrgId) {
+    await assertCanUseOrganization(ctx, requestedOrgId)
   }
+
+  return ctx.orgId
 }
 
-function buildItemSupplierCreateData(
-  data: ItemSupplierData
-): Prisma.ItemSupplierUncheckedCreateInput {
-  return {
-    itemId: data.itemId,
-    supplierId: data.supplierId,
-    supplierSku: data.supplierProductCode,
-    supplierName: data.supplierProductName,
-    unitCost: data.unitCost,
-    minOrderQuantity: data.minimumOrderQuantity,
-    leadTimeDays: data.leadTimeDays,
-    isPreferred: data.isPreferred ?? false,
-    notes: data.notes,
+function revalidateItemSupplierPaths(itemId?: string | null) {
+  revalidatePath("/dashboard/inventory/items")
+  revalidatePath("/dashboard/purchases/suppliers")
+
+  if (itemId) {
+    revalidatePath(`/dashboard/inventory/items/${itemId}`)
   }
-}
-
-function buildItemSupplierUpdateData(
-  data: Omit<UpdateItemSupplierData, "id">
-): Prisma.ItemSupplierUncheckedUpdateInput {
-  const updateData: Prisma.ItemSupplierUncheckedUpdateInput = {}
-
-  if (data.itemId !== undefined) updateData.itemId = data.itemId
-  if (data.supplierId !== undefined) updateData.supplierId = data.supplierId
-  if (data.supplierProductCode !== undefined) updateData.supplierSku = data.supplierProductCode
-  if (data.supplierProductName !== undefined) updateData.supplierName = data.supplierProductName
-  if (data.unitCost !== undefined) updateData.unitCost = data.unitCost
-  if (data.minimumOrderQuantity !== undefined) updateData.minOrderQuantity = data.minimumOrderQuantity
-  if (data.leadTimeDays !== undefined) updateData.leadTimeDays = data.leadTimeDays
-  if (data.isPreferred !== undefined) updateData.isPreferred = data.isPreferred
-  if (data.notes !== undefined) updateData.notes = data.notes
-
-  return updateData
-}
-
-export interface ItemSupplierData {
-  itemId: string
-  supplierId: string
-  supplierProductCode?: string
-  supplierProductName?: string
-  unitCost?: number
-  minimumOrderQuantity?: number
-  leadTimeDays?: number
-  isPreferred?: boolean
-  notes?: string
-  isActive?: boolean
-}
-
-export interface UpdateItemSupplierData extends Partial<ItemSupplierData> {
-  id: string
 }
 
 export async function getItemSuppliers(organizationId?: string) {
   try {
-    const session = await getSession()
-
-    if (!session?.user) {
-      return { success: false, error: "Unauthorized", data: [] }
-    }
-
-    const orgId = organizationId || (session.user as any).organizationId as string
-
-    if (!orgId) {
-      return { success: false, error: "No organization ID", data: [] }
-    }
-
-    const itemSuppliers = await db.itemSupplier.findMany({
-      where: {
-        ...itemSupplierOrgWhere(orgId),
-      },
-      include: {
-        item: {
-          select: {
-            id: true,
-            nameEn: true,
-            nameFr: true,
-            sku: true,
-            category: true
-          }
-        },
-        supplier: {
-          select: {
-            id: true,
-            name: true,
-            code: true,
-            email: true,
-            phone: true
-          }
-        }
-      },
-      orderBy: {
-        createdAt: 'desc'
-      }
-    })
+    const orgId = await requireItemSupplierAccess(
+      ITEM_SUPPLIER_PERMISSIONS.read,
+      organizationId,
+      organizationId,
+    )
+    const itemSuppliers = await listItemSuppliersForOrganization(orgId)
 
     return {
       success: true,
-      data: itemSuppliers.map(withItemDisplayName),
-      error: null
+      data: itemSuppliers,
+      error: null,
     }
   } catch (error) {
     return {
       success: false,
-      error: safeLoggedActionErrorMessage(
+      error: itemSupplierActionError(
         "Error fetching item suppliers",
         error,
-        { action: "getItemSuppliers" },
+        "getItemSuppliers",
         "Failed to fetch item suppliers",
       ),
-      data: []
+      data: [],
     }
   }
 }
 
 export async function getItemSupplierById(id: string) {
   try {
-    const session = await getSession()
-
-    if (!session?.user) {
-      return { success: false, error: "Unauthorized", data: null }
-    }
-
-    const itemSupplier = await db.itemSupplier.findFirst({
-      where: {
-        id: id,
-        ...itemSupplierOrgWhere((session.user as any).organizationId as string)
-      },
-      include: {
-        item: {
-          select: {
-            id: true,
-            nameEn: true,
-            nameFr: true,
-            sku: true,
-            category: true
-          }
-        },
-        supplier: {
-          select: {
-            id: true,
-            name: true,
-            code: true,
-            email: true,
-            phone: true
-          }
-        }
-      }
-    })
-
-    if (!itemSupplier) {
-      return { success: false, error: "Item supplier not found", data: null }
-    }
+    const orgId = await requireItemSupplierAccess(ITEM_SUPPLIER_PERMISSIONS.read, id)
+    const itemSupplier = await getItemSupplierForOrganizationById(orgId, id)
 
     return {
       success: true,
-      data: withItemDisplayName(itemSupplier),
-      error: null
+      data: itemSupplier,
+      error: null,
     }
   } catch (error) {
-    return { 
-      success: false, 
-      error: safeLoggedActionErrorMessage(
+    return {
+      success: false,
+      error: itemSupplierActionError(
         "Error fetching item supplier",
         error,
-        { action: "getItemSupplierById" },
+        "getItemSupplierById",
         "Failed to fetch item supplier",
-      ), 
-      data: null 
+      ),
+      data: null,
     }
   }
 }
 
 export async function createItemSupplier(data: ItemSupplierData) {
   try {
-    const session = await getSession()
+    const orgId = await requireItemSupplierAccess(
+      ITEM_SUPPLIER_PERMISSIONS.create,
+      data.itemId,
+    )
+    const itemSupplier = await createItemSupplierForOrganization(orgId, data)
 
-    if (!session?.user) {
-      return { success: false, error: "Unauthorized" }
-    }
+    revalidateItemSupplierPaths(data.itemId)
 
-    // Check if the item supplier relationship already exists
-    const existingRelation = await db.itemSupplier.findFirst({
-      where: {
-        itemId: data.itemId,
-        supplierId: data.supplierId,
-        ...itemSupplierOrgWhere((session.user as any).organizationId as string),
-      }
-    })
-
-    if (existingRelation) {
-      return { success: false, error: "Item supplier relationship already exists" }
-    }
-
-    const [item, supplier] = await Promise.all([
-      db.item.findFirst({
-        where: { id: data.itemId, organizationId: (session.user as any).organizationId as string },
-        select: { id: true },
-      }),
-      db.supplier.findFirst({
-        where: { id: data.supplierId, organizationId: (session.user as any).organizationId as string },
-        select: { id: true },
-      }),
-    ])
-
-    if (!item || !supplier) {
-      return { success: false, error: "Item or supplier not found for this organization" }
-    }
-
-    const itemSupplier = await db.itemSupplier.create({
-      data: buildItemSupplierCreateData(data),
-      include: {
-        item: {
-          select: {
-            id: true,
-            nameEn: true,
-            nameFr: true,
-            sku: true,
-            category: true
-          }
-        },
-        supplier: {
-          select: {
-            id: true,
-            name: true,
-            code: true,
-            email: true,
-            phone: true
-          }
-        }
-      }
-    })
-
-    revalidatePath("/dashboard/inventory/items")
-    revalidatePath("/dashboard/purchases/suppliers")
-
-    return { success: true, data: withItemDisplayName(itemSupplier) }
+    return { success: true, data: itemSupplier }
   } catch (error) {
     return {
       success: false,
-      error: safeLoggedActionErrorMessage(
+      error: itemSupplierActionError(
         "Error creating item supplier",
         error,
-        { action: "createItemSupplier" },
+        "createItemSupplier",
         "Failed to create item supplier",
       ),
     }
@@ -295,62 +166,22 @@ export async function createItemSupplier(data: ItemSupplierData) {
 
 export async function updateItemSupplier(data: UpdateItemSupplierData) {
   try {
-    const session = await getSession()
+    const orgId = await requireItemSupplierAccess(
+      ITEM_SUPPLIER_PERMISSIONS.update,
+      data.id,
+    )
+    const itemSupplier = await updateItemSupplierForOrganization(orgId, data)
 
-    if (!session?.user) {
-      return { success: false, error: "Unauthorized" }
-    }
+    revalidateItemSupplierPaths(itemSupplier.itemId)
 
-    const { id, ...updateData } = data
-
-    const existingRelation = await db.itemSupplier.findFirst({
-      where: {
-        id,
-        ...itemSupplierOrgWhere((session.user as any).organizationId as string),
-      },
-      select: { id: true },
-    })
-
-    if (!existingRelation) {
-      return { success: false, error: "Item supplier not found" }
-    }
-
-    const itemSupplier = await db.itemSupplier.update({
-      where: { id },
-      data: buildItemSupplierUpdateData(updateData),
-      include: {
-        item: {
-          select: {
-            id: true,
-            nameEn: true,
-            nameFr: true,
-            sku: true,
-            category: true
-          }
-        },
-        supplier: {
-          select: {
-            id: true,
-            name: true,
-            code: true,
-            email: true,
-            phone: true
-          }
-        }
-      }
-    })
-
-    revalidatePath("/dashboard/inventory/items")
-    revalidatePath("/dashboard/purchases/suppliers")
-
-    return { success: true, data: withItemDisplayName(itemSupplier) }
+    return { success: true, data: itemSupplier }
   } catch (error) {
     return {
       success: false,
-      error: safeLoggedActionErrorMessage(
+      error: itemSupplierActionError(
         "Error updating item supplier",
         error,
-        { action: "updateItemSupplier" },
+        "updateItemSupplier",
         "Failed to update item supplier",
       ),
     }
@@ -359,28 +190,19 @@ export async function updateItemSupplier(data: UpdateItemSupplierData) {
 
 export async function deleteItemSupplier(id: string) {
   try {
-    const session = await getSession()
+    const orgId = await requireItemSupplierAccess(ITEM_SUPPLIER_PERMISSIONS.delete, id)
+    const itemSupplier = await removeItemSupplierForOrganization(orgId, id)
 
-    if (!session?.user) {
-      return { success: false, error: "Unauthorized" }
-    }
-
-    const itemSupplier = await removeItemSupplierForOrganization(
-      (session.user as any).organizationId as string,
-      id,
-    )
-
-    revalidatePath("/dashboard/inventory/items")
-    revalidatePath("/dashboard/purchases/suppliers")
+    revalidateItemSupplierPaths(itemSupplier.itemId)
 
     return { success: true, data: itemSupplier }
   } catch (error) {
     return {
       success: false,
-      error: safeLoggedActionErrorMessage(
+      error: itemSupplierActionError(
         "Error deleting item supplier",
         error,
-        { action: "deleteItemSupplier" },
+        "deleteItemSupplier",
         "Failed to delete item supplier",
       ),
     }
@@ -389,106 +211,52 @@ export async function deleteItemSupplier(id: string) {
 
 export async function getAllOrgItemSuppliers(organizationId: string) {
   try {
-    const scopedOrgId = await resolveActionOrganization(organizationId, "item suppliers")
-
-    const itemSuppliers = await db.itemSupplier.findMany({
-      where: {
-        ...itemSupplierOrgWhere(scopedOrgId),
-      },
-      select: {
-        id: true,
-        itemId: true,
-        supplierId: true,
-        supplierSku: true,
-        supplierName: true,
-        unitCost: true,
-        minOrderQuantity: true,
-        isPreferred: true,
-        item: {
-          select: {
-            id: true,
-            nameEn: true,
-            nameFr: true,
-            sku: true
-          }
-        },
-        supplier: {
-          select: {
-            id: true,
-            name: true,
-            code: true
-          }
-        }
-      },
-      orderBy: {
-        createdAt: 'desc'
-      }
-    })
+    const orgId = await requireItemSupplierAccess(
+      ITEM_SUPPLIER_PERMISSIONS.read,
+      organizationId,
+      organizationId,
+    )
+    const itemSuppliers = await getAllItemSuppliersForOrganization(orgId)
 
     return {
       success: true,
-      data: itemSuppliers.map(withItemDisplayName),
-      error: null
+      data: itemSuppliers,
+      error: null,
     }
   } catch (error) {
     return {
       success: false,
-      error: safeLoggedActionErrorMessage(
+      error: itemSupplierActionError(
         "Error fetching all org item suppliers",
         error,
-        { action: "getAllOrgItemSuppliers" },
+        "getAllOrgItemSuppliers",
         "Failed to fetch all org item suppliers",
       ),
-      data: []
+      data: [],
     }
   }
 }
 
 export async function getItemSuppliersByItemId(itemId: string) {
   try {
-    const session = await getSession()
-
-    if (!session?.user) {
-      return { success: false, error: "Unauthorized", data: [] }
-    }
-
-    const itemSuppliers = await db.itemSupplier.findMany({
-      where: {
-        itemId: itemId,
-        ...itemSupplierOrgWhere((session.user as any).organizationId as string),
-      },
-      include: {
-        supplier: {
-          select: {
-            id: true,
-            name: true,
-            code: true,
-            email: true,
-            phone: true
-          }
-        }
-      },
-      orderBy: [
-        { isPreferred: 'desc' },
-        { createdAt: 'desc' }
-      ]
-    })
+    const orgId = await requireItemSupplierAccess(ITEM_SUPPLIER_PERMISSIONS.read, itemId)
+    const itemSuppliers = await getItemSuppliersForItemInOrganization(orgId, itemId)
 
     return {
       success: true,
       data: itemSuppliers,
-      error: null
+      error: null,
     }
   } catch (error) {
     return {
       success: false,
-      error: safeLoggedActionErrorMessage(
+      error: itemSupplierActionError(
         "Error fetching item suppliers by item ID",
         error,
-        { action: "getItemSuppliersByItemId" },
+        "getItemSuppliersByItemId",
         "Failed to fetch item suppliers by item ID",
       ),
-      data: []
+      data: [],
     }
   }
 }

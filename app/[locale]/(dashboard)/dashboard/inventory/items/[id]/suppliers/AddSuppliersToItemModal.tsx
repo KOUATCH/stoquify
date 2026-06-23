@@ -151,7 +151,10 @@ export const AddSuppliersToItemModal = ({
     setError(null)
 
     try {
-      await addItemSuppliers(itemId, selectedSuppliers)
+      const result = await addItemSuppliers(itemId, selectedSuppliers)
+      if (!result.success) {
+        throw new Error(result.error || "Failed to add suppliers")
+      }
       notify.success(`Successfully added ${selectedSuppliers.length} supplier${selectedSuppliers.length !== 1 ? "s" : ""}`)
       // notify({
       //   title: "Success!",

@@ -67,6 +67,43 @@ export type SupplierManagementData = {
   topByBalance: SupplierManagementRow[]
 }
 
+export type SupplierPickerListInput = {
+  page?: number
+  pageSize?: number
+  search?: string
+  isActive?: boolean
+}
+
+export type SupplierPickerListItem = {
+  id: string
+  name: string
+  code: string | null
+  contactPerson: string | null
+  email: string | null
+  phone: string | null
+  address: string | null
+  city: string | null
+  state: string | null
+  zipCode: string | null
+  country: string | null
+  taxId: string | null
+  paymentTerms: number | null
+  creditLimit: number | null
+  notes: string | null
+  isActive: boolean
+  currentBalance: number
+  createdAt: Date
+  updatedAt: Date
+}
+
+export type SupplierPickerListResult = {
+  data: SupplierPickerListItem[]
+  total: number
+  page: number
+  pageSize: number
+  totalPages: number
+}
+
 export type SupplierAnalyticsOrder = {
   id: string
   orderNumber: string
@@ -104,6 +141,101 @@ export type SupplierDetailAnalytics = {
   linkedItems: SupplierAnalyticsItem[]
 }
 
+export interface ItemSupplierData {
+  itemId: string
+  supplierId: string
+  supplierProductCode?: string | null
+  supplierProductName?: string | null
+  unitCost?: number | null
+  minimumOrderQuantity?: number | null
+  leadTimeDays?: number | null
+  isPreferred?: boolean
+  notes?: string | null
+  isActive?: boolean
+}
+
+export interface UpdateItemSupplierData extends Partial<ItemSupplierData> {
+  id: string
+}
+
+export type ItemSupplierServiceDTO = {
+  id: string
+  itemId: string
+  supplierId: string
+  supplierSku: string | null
+  supplierName: string | null
+  supplierProductCode: string | null
+  supplierProductName: string | null
+  isPreferred: boolean
+  leadTimeDays: number | null
+  leadTime: number | null
+  minOrderQuantity: number | null
+  minimumOrderQuantity: number | null
+  minOrderQty: number | null
+  unitCost: number | null
+  lastPurchaseDate: Date | null
+  notes: string | null
+  createdAt: Date
+  updatedAt: Date
+  item?: {
+    id: string
+    nameEn: string | null
+    nameFr: string | null
+    name: string
+    sku: string | null
+  } | null
+  supplier?: {
+    id: string
+    name: string
+    code?: string | null
+    email?: string | null
+    phone?: string | null
+  } | null
+}
+
+export type ItemWithSupplierServiceDTO = {
+  id: string
+  name: string
+  slug: string
+  itemId: string
+  supplierId: string
+  isPreferred: boolean
+  supplierSku: string
+  leadTime: number | null
+  minOrderQty: number | null
+  unitCost: number | null
+  lastPurchaseDate: Date | null
+  notes: string
+  updatedAt: Date
+  costPrice: number
+  sellingPrice: number
+  createdAt: Date
+  imageUrls: string
+  thumbnail: string | null
+  organizationId: string
+  sku: string
+  supplierItems: {
+    id: string
+    itemId: string
+    supplierId: string
+    isPreferred: boolean
+    supplierSku: string | null
+    supplierName: string | null
+    leadTimeDays: number | null
+    minOrderQuantity: number | null
+    unitCost: number | null
+    lastPurchaseDate: Date | null
+    notes: string | null
+    createdAt: Date
+    updatedAt: Date
+  }
+  supplier: {
+    id: string | undefined
+    name: string
+    email: string | null
+  }
+}
+
 const MAX_SUPPLIER_PAGE_SIZE = 200
 const OPEN_PURCHASE_ORDER_STATUSES = [
   PurchaseOrderStatus.DRAFT,
@@ -117,6 +249,142 @@ const SUPPLIER_MANAGEMENT_ROW_LIMIT = 500
 function toNumber(value: Prisma.Decimal | number | string | null | undefined) {
   if (value === null || value === undefined) return 0
   return typeof value === "number" ? value : Number(value)
+}
+
+function toNullableNumber(value: Prisma.Decimal | number | string | null | undefined) {
+  if (value === null || value === undefined) return null
+  return typeof value === "number" ? value : Number(value)
+}
+
+function cleanId(value: string | null | undefined, fieldName: string) {
+  const trimmed = value?.trim()
+  if (!trimmed) {
+    throw new BusinessRuleError(`${fieldName} is required`)
+  }
+  return trimmed
+}
+
+function itemDisplayName(item: { nameEn?: string | null; nameFr?: string | null; sku?: string | null }) {
+  return item.nameEn ?? item.nameFr ?? item.sku ?? "Unnamed item"
+}
+
+function itemSupplierOrgWhere(organizationId: string): Prisma.ItemSupplierWhereInput {
+  return {
+    item: { organizationId, deletedAt: null },
+    supplier: { organizationId, deletedAt: null },
+  }
+}
+
+const itemSupplierInclude = {
+  item: {
+    select: {
+      id: true,
+      nameEn: true,
+      nameFr: true,
+      sku: true,
+    },
+  },
+  supplier: {
+    select: {
+      id: true,
+      name: true,
+      code: true,
+      email: true,
+      phone: true,
+    },
+  },
+} satisfies Prisma.ItemSupplierInclude
+
+type ItemSupplierWithRelations = Prisma.ItemSupplierGetPayload<{
+  include: typeof itemSupplierInclude
+}>
+
+function mapItemSupplierDTO(itemSupplier: ItemSupplierWithRelations): ItemSupplierServiceDTO {
+  const minOrderQuantity = toNullableNumber(itemSupplier.minOrderQuantity)
+  const unitCost = toNullableNumber(itemSupplier.unitCost)
+
+  return {
+    id: itemSupplier.id,
+    itemId: itemSupplier.itemId,
+    supplierId: itemSupplier.supplierId,
+    supplierSku: itemSupplier.supplierSku,
+    supplierName: itemSupplier.supplierName,
+    supplierProductCode: itemSupplier.supplierSku,
+    supplierProductName: itemSupplier.supplierName,
+    isPreferred: itemSupplier.isPreferred,
+    leadTimeDays: itemSupplier.leadTimeDays,
+    leadTime: itemSupplier.leadTimeDays,
+    minOrderQuantity,
+    minimumOrderQuantity: minOrderQuantity,
+    minOrderQty: minOrderQuantity,
+    unitCost,
+    lastPurchaseDate: itemSupplier.lastPurchaseDate,
+    notes: itemSupplier.notes,
+    createdAt: itemSupplier.createdAt,
+    updatedAt: itemSupplier.updatedAt,
+    item: itemSupplier.item
+      ? {
+          ...itemSupplier.item,
+          name: itemDisplayName(itemSupplier.item),
+        }
+      : null,
+    supplier: itemSupplier.supplier,
+  }
+}
+
+function buildItemSupplierCreateData(
+  data: ItemSupplierData,
+): Prisma.ItemSupplierUncheckedCreateInput {
+  return {
+    itemId: cleanId(data.itemId, "Item"),
+    supplierId: cleanId(data.supplierId, "Supplier"),
+    supplierSku: data.supplierProductCode ?? undefined,
+    supplierName: data.supplierProductName ?? undefined,
+    unitCost: data.unitCost ?? undefined,
+    minOrderQuantity: data.minimumOrderQuantity ?? undefined,
+    leadTimeDays: data.leadTimeDays ?? undefined,
+    isPreferred: data.isPreferred ?? false,
+    notes: data.notes ?? undefined,
+  }
+}
+
+function buildItemSupplierUpdateData(
+  data: Omit<UpdateItemSupplierData, "id">,
+): Prisma.ItemSupplierUncheckedUpdateInput {
+  const updateData: Prisma.ItemSupplierUncheckedUpdateInput = {}
+
+  if (data.itemId !== undefined) updateData.itemId = cleanId(data.itemId, "Item")
+  if (data.supplierId !== undefined) updateData.supplierId = cleanId(data.supplierId, "Supplier")
+  if (data.supplierProductCode !== undefined) updateData.supplierSku = data.supplierProductCode
+  if (data.supplierProductName !== undefined) updateData.supplierName = data.supplierProductName
+  if (data.unitCost !== undefined) updateData.unitCost = data.unitCost
+  if (data.minimumOrderQuantity !== undefined) updateData.minOrderQuantity = data.minimumOrderQuantity
+  if (data.leadTimeDays !== undefined) updateData.leadTimeDays = data.leadTimeDays
+  if (data.isPreferred !== undefined) updateData.isPreferred = data.isPreferred
+  if (data.notes !== undefined) updateData.notes = data.notes
+
+  return updateData
+}
+
+async function assertItemAndSupplierInOrganization(
+  organizationId: string,
+  itemId: string,
+  supplierId: string,
+) {
+  const [item, supplier] = await Promise.all([
+    db.item.findFirst({
+      where: { id: itemId, organizationId, deletedAt: null },
+      select: { id: true },
+    }),
+    db.supplier.findFirst({
+      where: { id: supplierId, organizationId, deletedAt: null },
+      select: { id: true },
+    }),
+  ])
+
+  if (!item || !supplier) {
+    throw new NotFoundError("Item or supplier not found for this organization")
+  }
 }
 
 const supplierManagementSelect = {
@@ -185,6 +453,76 @@ export async function listSuppliers(
   ])
 
   return buildPaginatedResult(data as SupplierDTO[], total, p, ps)
+}
+
+export async function listSuppliersForPicker(
+  orgId: string,
+  input: SupplierPickerListInput = {},
+): Promise<SupplierPickerListResult> {
+  const page = Math.max(1, Number(input.page ?? 1))
+  const pageSize = Math.min(200, Math.max(1, Number(input.pageSize ?? 20)))
+  const skip = (page - 1) * pageSize
+  const search = input.search?.trim()
+
+  const where: Prisma.SupplierWhereInput = {
+    organizationId: orgId,
+    deletedAt: null,
+    ...(typeof input.isActive === "boolean" ? { isActive: input.isActive } : {}),
+    ...(search
+      ? {
+          OR: [
+            { name: { contains: search, mode: "insensitive" } },
+            { code: { contains: search, mode: "insensitive" } },
+            { contactPerson: { contains: search, mode: "insensitive" } },
+            { email: { contains: search, mode: "insensitive" } },
+            { phone: { contains: search, mode: "insensitive" } },
+          ],
+        }
+      : {}),
+  }
+
+  const [suppliers, total] = await Promise.all([
+    db.supplier.findMany({
+      where,
+      orderBy: { name: "asc" },
+      skip,
+      take: pageSize,
+      select: {
+        id: true,
+        name: true,
+        code: true,
+        contactPerson: true,
+        email: true,
+        phone: true,
+        address: true,
+        city: true,
+        state: true,
+        zipCode: true,
+        country: true,
+        taxId: true,
+        paymentTerms: true,
+        creditLimit: true,
+        notes: true,
+        isActive: true,
+        currentBalance: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    }),
+    db.supplier.count({ where }),
+  ])
+
+  return {
+    data: suppliers.map((supplier) => ({
+      ...supplier,
+      creditLimit: supplier.creditLimit !== null ? toNumber(supplier.creditLimit) : null,
+      currentBalance: toNumber(supplier.currentBalance),
+    })),
+    total,
+    page,
+    pageSize,
+    totalPages: Math.max(1, Math.ceil(total / pageSize)),
+  }
 }
 
 export async function getSupplierById(orgId: string, id: string): Promise<SupplierDTO> {
@@ -636,21 +974,136 @@ export async function removeSupplierForManagement(
   return { id: supplierId, mode: hasHistory ? "deactivated" : "archived" }
 }
 
+export async function listItemSuppliersForOrganization(
+  organizationId: string,
+): Promise<ItemSupplierServiceDTO[]> {
+  const itemSuppliers = await db.itemSupplier.findMany({
+    where: itemSupplierOrgWhere(organizationId),
+    include: itemSupplierInclude,
+    orderBy: { createdAt: "desc" },
+  })
+
+  return itemSuppliers.map(mapItemSupplierDTO)
+}
+
+export async function getAllItemSuppliersForOrganization(
+  organizationId: string,
+): Promise<ItemSupplierServiceDTO[]> {
+  const itemSuppliers = await db.itemSupplier.findMany({
+    where: itemSupplierOrgWhere(organizationId),
+    include: itemSupplierInclude,
+    orderBy: { createdAt: "desc" },
+  })
+
+  return itemSuppliers.map(mapItemSupplierDTO)
+}
+
+export async function getItemSupplierForOrganizationById(
+  organizationId: string,
+  itemSupplierId: string,
+): Promise<ItemSupplierServiceDTO> {
+  const itemSupplier = await db.itemSupplier.findFirst({
+    where: {
+      id: cleanId(itemSupplierId, "Item supplier"),
+      ...itemSupplierOrgWhere(organizationId),
+    },
+    include: itemSupplierInclude,
+  })
+
+  if (!itemSupplier) {
+    throw new NotFoundError("Item supplier not found")
+  }
+
+  return mapItemSupplierDTO(itemSupplier)
+}
+
+export async function createItemSupplierForOrganization(
+  organizationId: string,
+  data: ItemSupplierData,
+): Promise<ItemSupplierServiceDTO> {
+  const createData = buildItemSupplierCreateData(data)
+  await assertItemAndSupplierInOrganization(organizationId, createData.itemId, createData.supplierId)
+
+  const existingRelation = await db.itemSupplier.findFirst({
+    where: {
+      itemId: createData.itemId,
+      supplierId: createData.supplierId,
+      ...itemSupplierOrgWhere(organizationId),
+    },
+    select: { id: true },
+  })
+
+  if (existingRelation) {
+    throw new ConflictError("Item supplier relationship already exists")
+  }
+
+  const itemSupplier = await db.itemSupplier.create({
+    data: createData,
+    include: itemSupplierInclude,
+  })
+
+  return mapItemSupplierDTO(itemSupplier)
+}
+
+export async function updateItemSupplierForOrganization(
+  organizationId: string,
+  data: UpdateItemSupplierData,
+): Promise<ItemSupplierServiceDTO> {
+  const id = cleanId(data.id, "Item supplier")
+  const { id: _id, ...updateData } = data
+  const existingRelation = await db.itemSupplier.findFirst({
+    where: {
+      id,
+      ...itemSupplierOrgWhere(organizationId),
+    },
+    select: {
+      id: true,
+      itemId: true,
+      supplierId: true,
+    },
+  })
+
+  if (!existingRelation) {
+    throw new NotFoundError("Item supplier not found")
+  }
+
+  const targetItemId = updateData.itemId ?? existingRelation.itemId
+  const targetSupplierId = updateData.supplierId ?? existingRelation.supplierId
+  await assertItemAndSupplierInOrganization(organizationId, targetItemId, targetSupplierId)
+
+  if (targetItemId !== existingRelation.itemId || targetSupplierId !== existingRelation.supplierId) {
+    const duplicateRelation = await db.itemSupplier.findFirst({
+      where: {
+        id: { not: id },
+        itemId: targetItemId,
+        supplierId: targetSupplierId,
+        ...itemSupplierOrgWhere(organizationId),
+      },
+      select: { id: true },
+    })
+
+    if (duplicateRelation) {
+      throw new ConflictError("Item supplier relationship already exists")
+    }
+  }
+
+  const itemSupplier = await db.itemSupplier.update({
+    where: { id },
+    data: buildItemSupplierUpdateData(updateData),
+    include: itemSupplierInclude,
+  })
+
+  return mapItemSupplierDTO(itemSupplier)
+}
+
 export async function removeItemSupplierForOrganization(
   organizationId: string,
   itemSupplierId: string,
-) {
+): Promise<ItemSupplierServiceDTO> {
   const itemSupplier = await db.itemSupplier.findFirst({
     where: {
-      id: itemSupplierId,
-      item: {
-        organizationId,
-        deletedAt: null,
-      },
-      supplier: {
-        organizationId,
-        deletedAt: null,
-      },
+      id: cleanId(itemSupplierId, "Item supplier"),
+      ...itemSupplierOrgWhere(organizationId),
     },
     select: { id: true },
   })
@@ -659,8 +1112,198 @@ export async function removeItemSupplierForOrganization(
     throw new NotFoundError("Item supplier not found")
   }
 
-  return db.itemSupplier.delete({
+  const deleted = await db.itemSupplier.delete({
     where: { id: itemSupplier.id },
+    include: itemSupplierInclude,
+  })
+
+  return mapItemSupplierDTO(deleted)
+}
+
+export async function getItemSuppliersForItemInOrganization(
+  organizationId: string,
+  itemId: string,
+): Promise<ItemSupplierServiceDTO[]> {
+  const item = await db.item.findFirst({
+    where: {
+      id: cleanId(itemId, "Item"),
+      organizationId,
+      deletedAt: null,
+    },
+    select: { id: true },
+  })
+
+  if (!item) {
+    throw new NotFoundError("Item not found")
+  }
+
+  const itemSuppliers = await db.itemSupplier.findMany({
+    where: {
+      itemId: item.id,
+      ...itemSupplierOrgWhere(organizationId),
+    },
+    include: itemSupplierInclude,
+    orderBy: [
+      { isPreferred: "desc" },
+      { createdAt: "desc" },
+    ],
+  })
+
+  return itemSuppliers.map(mapItemSupplierDTO)
+}
+
+export async function addItemSuppliersToItemForOrganization(
+  organizationId: string,
+  itemId: string,
+  supplierIds: string[],
+): Promise<{ count: number }> {
+  const scopedItemId = cleanId(itemId, "Item")
+  const uniqueSupplierIds = Array.from(
+    new Set(supplierIds.map((supplierId) => cleanId(supplierId, "Supplier"))),
+  )
+
+  const item = await db.item.findFirst({
+    where: { id: scopedItemId, organizationId, deletedAt: null },
+    select: { id: true },
+  })
+
+  if (!item) {
+    throw new NotFoundError("Item not found")
+  }
+
+  if (uniqueSupplierIds.length === 0) {
+    return { count: 0 }
+  }
+
+  const suppliers = await db.supplier.findMany({
+    where: {
+      id: { in: uniqueSupplierIds },
+      organizationId,
+      deletedAt: null,
+    },
+    select: { id: true },
+  })
+
+  if (suppliers.length !== uniqueSupplierIds.length) {
+    throw new NotFoundError("One or more suppliers were not found for this organization")
+  }
+
+  return db.itemSupplier.createMany({
+    data: uniqueSupplierIds.map((supplierId) => ({
+      itemId: item.id,
+      supplierId,
+    })),
+    skipDuplicates: true,
+  })
+}
+
+export async function getItemWithSuppliersForOrganization(
+  organizationId: string,
+  itemId: string,
+): Promise<ItemWithSupplierServiceDTO[]> {
+  const item = await db.item.findFirst({
+    where: {
+      id: cleanId(itemId, "Item"),
+      organizationId,
+      deletedAt: null,
+    },
+    select: {
+      id: true,
+      nameEn: true,
+      nameFr: true,
+      slug: true,
+      sku: true,
+      imageUrls: true,
+      thumbnail: true,
+      costPrice: true,
+      sellingPrice: true,
+      organizationId: true,
+      createdAt: true,
+      updatedAt: true,
+      supplierItems: {
+        where: {
+          supplier: {
+            organizationId,
+            deletedAt: null,
+          },
+        },
+        select: {
+          id: true,
+          itemId: true,
+          supplierId: true,
+          isPreferred: true,
+          supplierSku: true,
+          supplierName: true,
+          leadTimeDays: true,
+          minOrderQuantity: true,
+          unitCost: true,
+          lastPurchaseDate: true,
+          notes: true,
+          createdAt: true,
+          updatedAt: true,
+          supplier: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      },
+    },
+  })
+
+  if (!item) {
+    throw new NotFoundError(`Item with ID ${itemId} not found`)
+  }
+
+  return (item.supplierItems ?? []).map((relation) => {
+    const minOrderQuantity = toNullableNumber(relation.minOrderQuantity)
+    const unitCost = toNullableNumber(relation.unitCost)
+
+    return {
+      id: relation.id,
+      name: itemDisplayName(item),
+      slug: item.slug,
+      itemId: relation.itemId,
+      supplierId: relation.supplierId,
+      isPreferred: relation.isPreferred,
+      supplierSku: relation.supplierSku ?? "",
+      leadTime: relation.leadTimeDays,
+      minOrderQty: minOrderQuantity,
+      unitCost,
+      lastPurchaseDate: relation.lastPurchaseDate,
+      notes: relation.notes ?? "",
+      createdAt: relation.createdAt,
+      updatedAt: relation.updatedAt,
+      costPrice: toNumber(item.costPrice),
+      sellingPrice: toNumber(item.sellingPrice),
+      imageUrls: item.imageUrls?.[0] ?? "",
+      thumbnail: item.thumbnail,
+      organizationId: item.organizationId,
+      sku: item.sku,
+      supplierItems: {
+        id: relation.id,
+        itemId: relation.itemId,
+        supplierId: relation.supplierId,
+        isPreferred: relation.isPreferred,
+        supplierSku: relation.supplierSku,
+        supplierName: relation.supplierName,
+        leadTimeDays: relation.leadTimeDays,
+        minOrderQuantity,
+        unitCost,
+        lastPurchaseDate: relation.lastPurchaseDate,
+        notes: relation.notes,
+        createdAt: relation.createdAt,
+        updatedAt: relation.updatedAt,
+      },
+      supplier: {
+        id: relation.supplier?.id,
+        name: relation.supplier?.name ?? relation.supplierName ?? "Unknown",
+        email: relation.supplier?.email ?? null,
+      },
+    }
   })
 }
 
