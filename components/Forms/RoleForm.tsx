@@ -6,7 +6,6 @@ import { updateRole } from "@/actions/roles/updateRole";
 import { Card, CardContent } from "@/components/ui/card";
 import { permissions } from "@/lib/permissions";
 import { RoleFormData } from "@/types/types";
-import { Role } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -15,9 +14,17 @@ import TextInput from "../FormInputs/TextInput";
 import FormFooter from "./FormFooter";
 import FormHeader from "./FormHeader";
 
+type RoleFormInitialData = {
+  nameEn?: string | null;
+  nameFr?: string | null;
+  description?: string | null;
+  permissions?: string[] | null;
+  organizationId?: string | null;
+};
+
 type RoleFormProps = {
   editingId?: string;
-  initialData?: Role | null;
+  initialData?: RoleFormInitialData | null;
 };
 const RoleForm = ({ editingId, initialData }: RoleFormProps) => {
   const router = useRouter();

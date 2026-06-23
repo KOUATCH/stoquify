@@ -851,6 +851,38 @@ export async function listOrganizationUsers(organizationId: string) {
   })
 }
 
+export async function getInviteRegistrationContext(token?: string | null) {
+  const inviteToken = token?.trim()
+
+  if (!inviteToken) {
+    return {
+      email: "",
+      roleName: "",
+      organizationName: "StockFlow",
+      isValidInvite: false,
+    }
+  }
+
+  const invite = await db.invite.findUnique({
+    where: { token: inviteToken },
+    select: {
+      email: true,
+      status: true,
+      expiresAt: true,
+      organization: { select: { name: true } },
+      role: { select: { nameEn: true, nameFr: true, code: true } },
+    },
+  })
+  const isValidInvite = invite?.status === InviteStatus.PENDING && invite.expiresAt > new Date()
+
+  return {
+    email: isValidInvite ? invite.email : "",
+    roleName: isValidInvite ? invite.role.nameEn || invite.role.nameFr || invite.role.code : "",
+    organizationName: isValidInvite ? invite.organization.name : "StockFlow",
+    isValidInvite: Boolean(isValidInvite),
+  }
+}
+
 export async function listOrganizationInvites(organizationId: string) {
   return db.invite.findMany({
     where: { organizationId },

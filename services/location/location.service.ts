@@ -417,6 +417,43 @@ export async function updateLocationForManagement(
   return row
 }
 
+export async function updateLegacyLocationByIdForOrg(
+  organizationId: string,
+  locationId: string,
+  input: LocationDTO,
+): Promise<LocationDTO> {
+  const location = await db.$transaction(async (tx) => {
+    const existingLocation = await tx.location.findFirst({
+      where: { id: locationId, organizationId, deletedAt: null },
+      select: { id: true },
+    })
+
+    if (!existingLocation) {
+      throw new NotFoundError("Location not found")
+    }
+
+    return tx.location.update({
+      where: { id: locationId },
+      data: {
+        ...(input.name !== undefined ? { name: input.name } : {}),
+        ...(input.code !== undefined ? { code: input.code } : {}),
+        ...(input.type !== undefined ? { type: toLocationType(input.type) } : {}),
+        ...(input.address !== undefined ? { address: input.address } : {}),
+        ...(input.phone !== undefined ? { phone: input.phone } : {}),
+        ...(input.email !== undefined ? { email: input.email } : {}),
+        ...(input.isActive !== undefined ? { isActive: input.isActive } : {}),
+        ...(input.isDefault !== undefined ? { isDefault: input.isDefault } : {}),
+        ...(input.managerId !== undefined ? { managerId: input.managerId } : {}),
+        ...(input.allowNegativeStock !== undefined ? { allowNegativeStock: input.allowNegativeStock } : {}),
+        ...(input.requiresApproval !== undefined ? { requiresApproval: input.requiresApproval } : {}),
+        updatedAt: new Date(),
+      },
+    })
+  })
+
+  return location as unknown as LocationDTO
+}
+
 export async function archiveLocationForManagement(
   organizationId: string,
   locationId: string,

@@ -12,7 +12,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import type { LocationType } from "@prisma/client"
 import {
   AlertCircle,
   Archive,
@@ -115,6 +114,7 @@ interface LocationsManagementDashboardProps {
 type StatusFilter = "all" | "active" | "inactive"
 type PolicyFilter = "all" | "default" | "approval" | "negative-stock"
 type Density = "comfortable" | "compact"
+type LocationType = LocationManagementRow["type"]
 
 type LocationFormState = {
   name: string

@@ -1,6 +1,5 @@
 "use server"
 
-import { SuspenseType } from "@prisma/client"
 import { z } from "zod"
 
 import { protect } from "@/services/_shared/protect"
@@ -31,6 +30,23 @@ import { importProviderStatement, type ImportProviderStatementResult } from "@/s
 
 export type { PaymentReconciliationDashboardData }
 export type { ImportProviderStatementResult, ReconciliationCertificateExportResult, ReconciliationRunDetail, SignReconciliationRunResult }
+
+const suspenseTypes = [
+  "UNKNOWN_CREDIT",
+  "MISSING_CALLBACK",
+  "MISSING_STATEMENT_LINE",
+  "AMOUNT_MISMATCH",
+  "DUPLICATE_PROVIDER_ID",
+  "ORPHAN_REFUND",
+  "FEE_DEVIATION",
+  "SETTLEMENT_SHORTFALL",
+  "SIGNATURE_FAILURE",
+  "REPLAY_SPIKE",
+  "FAILED_BUT_DEBITED",
+  "SUCCEEDED_BUT_NOT_CREDITED",
+  "CASH_DEPOSIT_DELAY",
+  "OTHER",
+] as const
 
 const runInputSchema = z.object({
   providerAccountId: z.string().min(1),
@@ -73,7 +89,7 @@ const assignSuspenseItemSchema = z.object({
 
 const proposeSuspenseReclassificationSchema = z.object({
   suspenseItemId: z.string().min(1),
-  targetType: z.nativeEnum(SuspenseType),
+  targetType: z.enum(suspenseTypes),
   reason: z.string().trim().min(3),
   suspenseLedgerAccountId: z.string().trim().min(1).nullable().optional(),
   correlationId: z.string().optional(),

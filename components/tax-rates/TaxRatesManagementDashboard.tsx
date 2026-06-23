@@ -10,7 +10,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import type { TaxType } from "@prisma/client"
 import {
   AlertCircle,
   Banknote,
@@ -98,6 +97,7 @@ interface TaxRatesManagementDashboardProps {
 
 type StatusFilter = "all" | "active" | "inactive"
 type RateFilter = "all" | "zero" | "reduced" | "standard" | "high"
+type TaxType = TaxRateManagementRow["type"]
 type TaxRateFormState = {
   nameEn: string
   nameFr: string

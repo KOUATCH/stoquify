@@ -1,158 +1,52 @@
 "use server"
 
-import { safeLoggedActionErrorMessage } from '@/actions/_shared/safe-action-responses'
-import { revalidatePath } from 'next/cache'
-import { db } from '@/prisma/db'
-import { getAuthenticatedUser } from '@/lib/auth-server'
-import { generateSlug } from '@/lib/generateSlug'
-import { ForbiddenError } from '@/services/_shared/action-errors'
-import { Locale as PrismaLocale, PaymentStatus } from '@prisma/client'
-import { randomUUID } from 'crypto'
+import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses"
+import { getAuthenticatedUser } from "@/lib/auth-server"
+import { revalidatePath } from "next/cache"
+import { ForbiddenError } from "@/services/_shared/action-errors"
+import {
+  canCreateOrganizations,
+  createOrganizationForSettings,
+  getOrganizationManagementRowsForActor,
+  getOrganizationSettingsForOrg,
+  updateFiscalYearStartForOrg,
+  updateInventoryStartDateForOrg,
+  updateOrganizationCurrencyForOrg,
+  updateOrganizationSettingsForOrg,
+  updateOrganizationTimezoneForOrg,
+  type CreateOrganizationSettingsInput,
+  type OrganizationManagementRow,
+  type OrganizationSettingsInput,
+} from "@/services/organization/organization-settings.service"
 
-type OrganizationSettingsInput = {
-  name?: string
-  industry?: string
-  country?: string
-  state?: string
-  address?: string
-  currency?: string
-  timezone?: string
-  defaultLocale?: 'en' | 'fr'
-  inventoryStartDate?: Date | null
-  fiscalYearStart?: string
-}
-
-type CreateOrganizationSettingsInput = {
-  name: string
-  slug?: string
-  industry?: string | null
-  country?: string | null
-  state?: string | null
-  address?: string | null
-  currency?: string
-  timezone?: string
-  defaultLocale?: 'en' | 'fr'
-}
-
-export type OrganizationManagementRow = {
-  id: string
-  name: string
-  slug: string
-  industry: string | null
-  country: string | null
-  state: string | null
-  address: string | null
-  currency: string
-  timezone: string
-  defaultLocale: PrismaLocale
-  inventoryStartDate: Date | null
-  fiscalYearStart: string | null
-  isActive: boolean
-  createdAt: Date
-  updatedAt: Date
-  usersCount: number
-  itemsCount: number
-  locationsCount: number
-  suppliersCount: number
-  customersCount: number
-  purchaseOrdersCount: number
-  salesOrdersCount: number
-  paymentsCount: number
-  paidRevenue: number
-}
-
-function cleanText(value?: string | null) {
-  const trimmed = value?.trim()
-  return trimmed ? trimmed : null
-}
-
-function toPrismaLocale(value?: string | null) {
-  return value === 'fr' ? PrismaLocale.FR : PrismaLocale.EN
-}
-
-function normalizeSlug(value: string) {
-  const slug = generateSlug(value).replace(/^-+|-+$/g, '')
-  return slug || `organization-${randomUUID().slice(0, 8)}`
-}
-
-function canReadOrganizations(user: Awaited<ReturnType<typeof getAuthenticatedUser>>) {
-  const permissions = user.permissions || []
-
-  return (
-    permissions.includes('*') ||
-    permissions.includes('organizations.read') ||
-    permissions.includes('organizations.create') ||
-    permissions.includes('organizations.manage') ||
-    permissions.includes('settings.organization.manage')
-  )
-}
-
-function canCreateOrganizations(user: Awaited<ReturnType<typeof getAuthenticatedUser>>) {
-  const permissions = user.permissions || []
-
-  return (
-    permissions.includes('*') ||
-    permissions.includes('organizations.create') ||
-    permissions.includes('organizations.manage') ||
-    permissions.includes('settings.organization.manage')
-  )
+export type {
+  CreateOrganizationSettingsInput,
+  OrganizationManagementRow,
+  OrganizationSettingsInput,
 }
 
 async function assertOrganizationAccess(organizationId: string) {
   const user = await getAuthenticatedUser()
 
   if (user.organizationId !== organizationId) {
-    throw new ForbiddenError('You do not have access to this organization')
+    throw new ForbiddenError("You do not have access to this organization")
   }
 
   return user
 }
 
-async function resolveUniqueOrganizationSlug(value: string) {
-  const baseSlug = normalizeSlug(value)
-  let slug = baseSlug
-  let index = 1
-
-  while (await db.organization.findUnique({ where: { slug }, select: { id: true } })) {
-    slug = `${baseSlug}-${index}`
-    index += 1
-  }
-
-  return slug
-}
-
 function revalidateOrganizationSettingsPaths() {
-  revalidatePath('/[locale]/dashboard/settings/company', 'page')
-  revalidatePath('/[locale]/dashboard/settings/organization', 'page')
+  revalidatePath("/[locale]/dashboard/settings/company", "page")
+  revalidatePath("/[locale]/dashboard/settings/organization", "page")
 }
 
 export async function getOrganizationSettings(organizationId: string) {
   try {
     await assertOrganizationAccess(organizationId)
-
-    const organization = await db.organization.findUnique({
-      where: { id: organizationId },
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-        industry: true,
-        country: true,
-        state: true,
-        address: true,
-        currency: true,
-        timezone: true,
-        defaultLocale: true,
-        inventoryStartDate: true,
-        fiscalYearStart: true,
-        isActive: true,
-        createdAt: true,
-        updatedAt: true,
-      }
-    })
+    const organization = await getOrganizationSettingsForOrg(organizationId)
 
     if (!organization) {
-      return { success: false, error: 'Organization not found' }
+      return { success: false, error: "Organization not found" }
     }
 
     return { success: true, data: organization }
@@ -160,208 +54,62 @@ export async function getOrganizationSettings(organizationId: string) {
     return {
       success: false,
       error: safeLoggedActionErrorMessage(
-        'Error fetching organization settings',
+        "Error fetching organization settings",
         error,
-        { action: 'getOrganizationSettings' },
-        'Failed to fetch organization settings',
+        { action: "getOrganizationSettings" },
+        "Failed to fetch organization settings",
       ),
     }
   }
 }
 
 export async function getOrganizationManagementRows(
-  organizationId: string
+  organizationId: string,
 ): Promise<{ success: true; data: OrganizationManagementRow[] } | { success: false; error: string }> {
   try {
     const user = await assertOrganizationAccess(organizationId)
-    const canListAll = canReadOrganizations(user)
+    const data = await getOrganizationManagementRowsForActor({ organizationId, actor: user })
 
-    const organizations = await db.organization.findMany({
-      where: canListAll ? { deletedAt: null } : { id: organizationId, deletedAt: null },
-      orderBy: { name: 'asc' },
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-        industry: true,
-        country: true,
-        state: true,
-        address: true,
-        currency: true,
-        timezone: true,
-        defaultLocale: true,
-        inventoryStartDate: true,
-        fiscalYearStart: true,
-        isActive: true,
-        createdAt: true,
-        updatedAt: true,
-        _count: {
-          select: {
-            users: true,
-            items: true,
-            locations: true,
-            suppliers: true,
-            customers: true,
-            purchaseOrders: true,
-            salesOrders: true,
-            payments: true,
-          },
-        },
-      },
-    })
-
-    const organizationIds = organizations.map((organization) => organization.id)
-    const paymentSummaries = organizationIds.length
-      ? await db.payment.groupBy({
-        by: ['organizationId'],
-        where: {
-          organizationId: { in: organizationIds },
-          deletedAt: null,
-          status: PaymentStatus.PAID,
-        },
-        _sum: {
-          amount: true,
-        },
-      })
-      : []
-    const paidRevenueByOrganizationId = new Map(
-      paymentSummaries.map((summary) => [summary.organizationId, Number(summary._sum.amount ?? 0)])
-    )
-
-    return {
-      success: true,
-      data: organizations.map((organization) => ({
-        id: organization.id,
-        name: organization.name,
-        slug: organization.slug,
-        industry: organization.industry,
-        country: organization.country,
-        state: organization.state,
-        address: organization.address,
-        currency: organization.currency,
-        timezone: organization.timezone,
-        defaultLocale: organization.defaultLocale,
-        inventoryStartDate: organization.inventoryStartDate,
-        fiscalYearStart: organization.fiscalYearStart,
-        isActive: organization.isActive,
-        createdAt: organization.createdAt,
-        updatedAt: organization.updatedAt,
-        usersCount: organization._count.users,
-        itemsCount: organization._count.items,
-        locationsCount: organization._count.locations,
-        suppliersCount: organization._count.suppliers,
-        customersCount: organization._count.customers,
-        purchaseOrdersCount: organization._count.purchaseOrders,
-        salesOrdersCount: organization._count.salesOrders,
-        paymentsCount: organization._count.payments,
-        paidRevenue: paidRevenueByOrganizationId.get(organization.id) ?? 0,
-      })),
-    }
+    return { success: true, data }
   } catch (error) {
     return {
       success: false,
       error: safeLoggedActionErrorMessage(
-        'Error fetching organization management rows',
+        "Error fetching organization management rows",
         error,
-        { action: 'getOrganizationManagementRows' },
-        'Failed to fetch organization management rows',
+        { action: "getOrganizationManagementRows" },
+        "Failed to fetch organization management rows",
       ),
     }
   }
 }
 
 export async function createOrganizationSettings(
-  data: CreateOrganizationSettingsInput
+  data: CreateOrganizationSettingsInput,
 ): Promise<{ success: true; data: OrganizationManagementRow } | { success: false; error: string }> {
   try {
     const user = await getAuthenticatedUser()
 
     if (!canCreateOrganizations(user)) {
-      return { success: false, error: 'You do not have permission to create organizations' }
+      return { success: false, error: "You do not have permission to create organizations" }
     }
 
-    const name = data.name.trim()
-
-    if (!name) {
-      return { success: false, error: 'Organization name is required' }
+    if (!data.name.trim()) {
+      return { success: false, error: "Organization name is required" }
     }
 
-    const now = new Date()
-    const slug = await resolveUniqueOrganizationSlug(data.slug || name)
-
-    const organization = await db.$transaction(async (tx) => {
-      const createdOrganization = await tx.organization.create({
-        data: {
-          id: randomUUID(),
-          name,
-          slug,
-          industry: cleanText(data.industry),
-          country: cleanText(data.country),
-          state: cleanText(data.state),
-          address: cleanText(data.address),
-          currency: data.currency || 'XAF',
-          timezone: data.timezone || 'Africa/Douala',
-          defaultLocale: toPrismaLocale(data.defaultLocale),
-          isActive: true,
-          updatedAt: now,
-        },
-      })
-
-      await tx.role.create({
-        data: {
-          id: randomUUID(),
-          nameEn: 'Administrator',
-          nameFr: 'Administrateur',
-          code: 'administrator',
-          description: 'Organization administrator with full access',
-          permissions: ['*'],
-          organizationId: createdOrganization.id,
-          updatedAt: now,
-        },
-      })
-
-      return createdOrganization
-    })
-
+    const organization = await createOrganizationForSettings(data)
     revalidateOrganizationSettingsPaths()
 
-    return {
-      success: true,
-      data: {
-        id: organization.id,
-        name: organization.name,
-        slug: organization.slug,
-        industry: organization.industry,
-        country: organization.country,
-        state: organization.state,
-        address: organization.address,
-        currency: organization.currency,
-        timezone: organization.timezone,
-        defaultLocale: organization.defaultLocale,
-        inventoryStartDate: organization.inventoryStartDate,
-        fiscalYearStart: organization.fiscalYearStart,
-        isActive: organization.isActive,
-        createdAt: organization.createdAt,
-        updatedAt: organization.updatedAt,
-        usersCount: 0,
-        itemsCount: 0,
-        locationsCount: 0,
-        suppliersCount: 0,
-        customersCount: 0,
-        purchaseOrdersCount: 0,
-        salesOrdersCount: 0,
-        paymentsCount: 0,
-        paidRevenue: 0,
-      },
-    }
+    return { success: true, data: organization }
   } catch (error) {
     return {
       success: false,
       error: safeLoggedActionErrorMessage(
-        'Error creating organization',
+        "Error creating organization",
         error,
-        { action: 'createOrganizationSettings' },
-        'Failed to create organization',
+        { action: "createOrganizationSettings" },
+        "Failed to create organization",
       ),
     }
   }
@@ -369,35 +117,11 @@ export async function createOrganizationSettings(
 
 export async function updateOrganizationSettings(
   organizationId: string,
-  data: OrganizationSettingsInput
+  data: OrganizationSettingsInput,
 ) {
   try {
     await assertOrganizationAccess(organizationId)
-
-    const cleanData = {
-      ...(data.name !== undefined ? { name: data.name.trim() } : {}),
-      ...(data.industry !== undefined ? { industry: cleanText(data.industry) } : {}),
-      ...(data.country !== undefined ? { country: cleanText(data.country) } : {}),
-      ...(data.state !== undefined ? { state: cleanText(data.state) } : {}),
-      ...(data.address !== undefined ? { address: cleanText(data.address) } : {}),
-      ...(data.currency !== undefined ? { currency: data.currency } : {}),
-      ...(data.timezone !== undefined ? { timezone: data.timezone } : {}),
-      ...(data.defaultLocale !== undefined ? { defaultLocale: toPrismaLocale(data.defaultLocale) } : {}),
-      ...(data.inventoryStartDate !== undefined ? { inventoryStartDate: data.inventoryStartDate } : {}),
-      ...(data.fiscalYearStart !== undefined ? { fiscalYearStart: cleanText(data.fiscalYearStart) } : {}),
-    }
-
-    if (!cleanData.name && data.name !== undefined) {
-      return { success: false, error: 'Organization name is required' }
-    }
-
-    const organization = await db.organization.update({
-      where: { id: organizationId },
-      data: {
-        ...cleanData,
-        updatedAt: new Date(),
-      }
-    })
+    const organization = await updateOrganizationSettingsForOrg(organizationId, data)
 
     revalidateOrganizationSettingsPaths()
     return { success: true, data: organization }
@@ -405,29 +129,19 @@ export async function updateOrganizationSettings(
     return {
       success: false,
       error: safeLoggedActionErrorMessage(
-        'Error updating organization settings',
+        "Error updating organization settings",
         error,
-        { action: 'updateOrganizationSettings' },
-        'Failed to update organization settings',
+        { action: "updateOrganizationSettings" },
+        "Failed to update organization settings",
       ),
     }
   }
 }
 
-export async function updateOrganizationCurrency(
-  organizationId: string,
-  currency: string
-) {
+export async function updateOrganizationCurrency(organizationId: string, currency: string) {
   try {
     await assertOrganizationAccess(organizationId)
-
-    const organization = await db.organization.update({
-      where: { id: organizationId },
-      data: {
-        currency,
-        updatedAt: new Date(),
-      }
-    })
+    const organization = await updateOrganizationCurrencyForOrg(organizationId, currency)
 
     revalidateOrganizationSettingsPaths()
     return { success: true, data: organization }
@@ -435,29 +149,19 @@ export async function updateOrganizationCurrency(
     return {
       success: false,
       error: safeLoggedActionErrorMessage(
-        'Error updating organization currency',
+        "Error updating organization currency",
         error,
-        { action: 'updateOrganizationCurrency' },
-        'Failed to update organization currency',
+        { action: "updateOrganizationCurrency" },
+        "Failed to update organization currency",
       ),
     }
   }
 }
 
-export async function updateOrganizationTimezone(
-  organizationId: string,
-  timezone: string
-) {
+export async function updateOrganizationTimezone(organizationId: string, timezone: string) {
   try {
     await assertOrganizationAccess(organizationId)
-
-    const organization = await db.organization.update({
-      where: { id: organizationId },
-      data: {
-        timezone,
-        updatedAt: new Date(),
-      }
-    })
+    const organization = await updateOrganizationTimezoneForOrg(organizationId, timezone)
 
     revalidateOrganizationSettingsPaths()
     return { success: true, data: organization }
@@ -465,29 +169,19 @@ export async function updateOrganizationTimezone(
     return {
       success: false,
       error: safeLoggedActionErrorMessage(
-        'Error updating organization timezone',
+        "Error updating organization timezone",
         error,
-        { action: 'updateOrganizationTimezone' },
-        'Failed to update organization timezone',
+        { action: "updateOrganizationTimezone" },
+        "Failed to update organization timezone",
       ),
     }
   }
 }
 
-export async function updateInventoryStartDate(
-  organizationId: string,
-  inventoryStartDate: Date
-) {
+export async function updateInventoryStartDate(organizationId: string, inventoryStartDate: Date) {
   try {
     await assertOrganizationAccess(organizationId)
-
-    const organization = await db.organization.update({
-      where: { id: organizationId },
-      data: {
-        inventoryStartDate,
-        updatedAt: new Date(),
-      }
-    })
+    const organization = await updateInventoryStartDateForOrg(organizationId, inventoryStartDate)
 
     revalidateOrganizationSettingsPaths()
     return { success: true, data: organization }
@@ -495,29 +189,19 @@ export async function updateInventoryStartDate(
     return {
       success: false,
       error: safeLoggedActionErrorMessage(
-        'Error updating inventory start date',
+        "Error updating inventory start date",
         error,
-        { action: 'updateInventoryStartDate' },
-        'Failed to update inventory start date',
+        { action: "updateInventoryStartDate" },
+        "Failed to update inventory start date",
       ),
     }
   }
 }
 
-export async function updateFiscalYearStart(
-  organizationId: string,
-  fiscalYearStart: string
-) {
+export async function updateFiscalYearStart(organizationId: string, fiscalYearStart: string) {
   try {
     await assertOrganizationAccess(organizationId)
-
-    const organization = await db.organization.update({
-      where: { id: organizationId },
-      data: {
-        fiscalYearStart,
-        updatedAt: new Date(),
-      }
-    })
+    const organization = await updateFiscalYearStartForOrg(organizationId, fiscalYearStart)
 
     revalidateOrganizationSettingsPaths()
     return { success: true, data: organization }
@@ -525,10 +209,10 @@ export async function updateFiscalYearStart(
     return {
       success: false,
       error: safeLoggedActionErrorMessage(
-        'Error updating fiscal year start',
+        "Error updating fiscal year start",
         error,
-        { action: 'updateFiscalYearStart' },
-        'Failed to update fiscal year start',
+        { action: "updateFiscalYearStart" },
+        "Failed to update fiscal year start",
       ),
     }
   }

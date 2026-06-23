@@ -1,10 +1,9 @@
 "use server"
 
 import { revalidatePath, revalidateTag } from "next/cache"
-import { Prisma } from "@prisma/client"
 import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses"
 import { err, ok } from "@/services/_shared/action-response"
-import { BusinessRuleError, ForbiddenError } from "@/services/_shared/action-errors"
+import { BusinessRuleError, ForbiddenError, getPrismaKnownRequest } from "@/services/_shared/action-errors"
 import { requireOrg } from "@/services/_shared/require-org"
 import {
   archiveTerminalForManagement,
@@ -48,12 +47,14 @@ function cleanText(value?: string | null) {
 }
 
 function getActionErrorMessage(error: unknown, fallback: string) {
-  if (error instanceof Prisma.PrismaClientKnownRequestError) {
-    if (error.code === "P2002") {
+  const prismaError = getPrismaKnownRequest(error)
+
+  if (prismaError) {
+    if (prismaError.code === "P2002") {
       return "Terminal number already exists"
     }
 
-    if (error.code === "P2003") {
+    if (prismaError.code === "P2003") {
       return "Referenced record not found"
     }
   }

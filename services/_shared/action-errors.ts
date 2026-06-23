@@ -75,6 +75,43 @@ export function isApplicationError(error: unknown): error is ApplicationError {
   return error instanceof ApplicationError
 }
 
+export type PrismaKnownRequestLike = {
+  code: string
+  meta?: Record<string, unknown> | null
+}
+
+export function getPrismaKnownRequest(error: unknown): PrismaKnownRequestLike | null {
+  if (!error || typeof error !== "object") return null
+
+  const candidate = error as {
+    code?: unknown
+    meta?: unknown
+    name?: unknown
+    clientVersion?: unknown
+  }
+
+  if (typeof candidate.code !== "string") return null
+
+  const looksLikePrisma =
+    candidate.name === "PrismaClientKnownRequestError" ||
+    typeof candidate.clientVersion === "string" ||
+    candidate.code.startsWith("P")
+
+  if (!looksLikePrisma) return null
+
+  return {
+    code: candidate.code,
+    meta: candidate.meta && typeof candidate.meta === "object"
+      ? candidate.meta as Record<string, unknown>
+      : null,
+  }
+}
+
+export function getPrismaKnownRequestField(error: unknown): string {
+  const prismaError = getPrismaKnownRequest(error)
+  return String(prismaError?.meta?.field_name ?? prismaError?.meta?.constraint ?? "")
+}
+
 function legacyCode(code: CanonicalError["code"]): ApplicationErrorCode {
   switch (code) {
     case "VALIDATION_ERROR":

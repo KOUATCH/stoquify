@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react"
 import type { ColumnDef } from "@tanstack/react-table"
-import type { UnitType } from "@prisma/client"
 import {
   AlertCircle,
   ArrowDownUp,
@@ -83,6 +82,7 @@ interface UnitsManagementDashboardProps {
 }
 
 type StatusFilter = "all" | "active" | "inactive"
+type UnitType = UnitManagementRow["type"]
 type UnitFormState = {
   nameEn: string
   nameFr: string

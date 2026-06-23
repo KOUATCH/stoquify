@@ -1,12 +1,18 @@
 import { logger } from "@/lib/logger"
 import { db } from "@/prisma/db"
-import { PaymentStatus, SalesOrderStatus, type Customer, type Prisma } from "@prisma/client"
+import { PaymentStatus, SalesOrderStatus, type Customer as PrismaCustomer, type Prisma } from "@prisma/client"
+import type {
+  Customer as LegacyCustomer,
+  CustomerOrder,
+  CustomerOrderPayment,
+  CustomerWithStats,
+} from "@/types/customerTypes"
 import { BusinessRuleError, ConflictError, NotFoundError } from "../_shared/action-errors"
 import { buildPagination, buildPaginatedResult, MAX_PAGE_SIZES } from "../_shared/pagination"
 import type { PaginatedResult } from "../_shared/types"
 import type { CustomerCreateInput, CustomerListParams, CustomerUpdateInput } from "./customer.schemas"
 
-export type CustomerDTO = Customer
+export type CustomerDTO = PrismaCustomer
 
 export type CustomerManagementRow = {
   id: string
@@ -112,6 +118,45 @@ const CUSTOMER_MANAGEMENT_ROW_LIMIT = 500
 function toNumber(value: Prisma.Decimal | number | string | null | undefined) {
   if (value === null || value === undefined) return 0
   return typeof value === "number" ? value : Number(value)
+}
+
+function mapLegacyCustomer(customer: PrismaCustomer): LegacyCustomer {
+  return {
+    id: customer.id,
+    name: customer.name,
+    code: customer.code,
+    email: customer.email,
+    phone: customer.phone,
+    address: customer.address,
+    taxId: customer.taxId,
+    creditLimit: customer.creditLimit == null ? null : toNumber(customer.creditLimit),
+    paymentTerms: customer.paymentTerms ?? 30,
+    notes: customer.notes,
+    isActive: customer.isActive,
+    organizationId: customer.organizationId,
+    createdAt: customer.createdAt,
+    updatedAt: customer.updatedAt,
+  }
+}
+
+function mapLegacyPayment(payment: {
+  id: string
+  paymentNumber: string
+  amount: Prisma.Decimal
+  method: string
+  status: string
+  processedAt: Date | null
+  createdAt: Date
+}): CustomerOrderPayment {
+  return {
+    id: payment.id,
+    paymentNumber: payment.paymentNumber,
+    amount: toNumber(payment.amount),
+    method: payment.method,
+    status: payment.status,
+    processedAt: payment.processedAt,
+    createdAt: payment.createdAt,
+  }
 }
 
 const customerManagementSelect = {
@@ -270,6 +315,147 @@ export async function deleteCustomer(orgId: string, id: string): Promise<Custome
     data: { deletedAt: new Date(), isActive: false },
   })
   return deleted as CustomerDTO
+}
+
+export async function getLegacyCustomersForOrg(organizationId: string): Promise<CustomerWithStats[]> {
+  const customers = await db.customer.findMany({
+    where: {
+      organizationId,
+      deletedAt: null,
+    },
+    include: {
+      salesOrders: {
+        select: {
+          id: true,
+          total: true,
+          createdAt: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  })
+
+  return customers.map((customer): CustomerWithStats => {
+    const totalOrders = customer.salesOrders.length
+    const totalRevenue = customer.salesOrders.reduce((sum, order) => sum + toNumber(order.total), 0)
+
+    return {
+      ...mapLegacyCustomer(customer),
+      totalOrders,
+      totalRevenue,
+      totalOrderValue: totalRevenue,
+      averageOrderValue: totalOrders > 0 ? totalRevenue / totalOrders : 0,
+      lastOrderDate: customer.salesOrders[0]?.createdAt ?? null,
+    }
+  })
+}
+
+export async function getLegacyCustomerByIdForOrg(
+  organizationId: string,
+  customerId: string,
+): Promise<LegacyCustomer | null> {
+  const customer = await db.customer.findFirst({
+    where: {
+      id: customerId,
+      organizationId,
+      deletedAt: null,
+    },
+  })
+
+  return customer ? mapLegacyCustomer(customer) : null
+}
+
+export async function createLegacyCustomerForOrg(
+  organizationId: string,
+  input: CustomerCreateInput,
+): Promise<LegacyCustomer> {
+  const customer = await createCustomer(organizationId, input)
+  return mapLegacyCustomer(customer)
+}
+
+export async function updateLegacyCustomerForOrg(
+  organizationId: string,
+  customerId: string,
+  input: CustomerUpdateInput,
+): Promise<LegacyCustomer> {
+  const customer = await updateCustomer(organizationId, customerId, input)
+  return mapLegacyCustomer(customer)
+}
+
+export async function getLegacyCustomerOrdersForOrg(
+  organizationId: string,
+  customerId: string,
+): Promise<CustomerOrder[]> {
+  const orders = await db.salesOrder.findMany({
+    where: {
+      customerId,
+      organizationId,
+      deletedAt: null,
+    },
+    include: {
+      lines: {
+        include: {
+          item: {
+            select: {
+              nameEn: true,
+              nameFr: true,
+              sku: true,
+            },
+          },
+        },
+      },
+      payments: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  })
+
+  return orders.map((order): CustomerOrder => ({
+    id: order.id,
+    orderNumber: order.orderNumber,
+    status: order.status,
+    totalAmount: toNumber(order.total),
+    subtotal: toNumber(order.subtotal),
+    taxAmount: toNumber(order.taxAmount),
+    discountAmount: toNumber(order.discount),
+    itemCount: order.lines.reduce((sum, line) => sum + toNumber(line.quantity), 0),
+    lineItems: order.lines.length,
+    createdAt: order.createdAt,
+    updatedAt: order.updatedAt,
+    lines: order.lines.map((line) => ({
+      id: line.id,
+      itemName: line.item?.nameEn || line.item?.nameFr || "Unknown Item",
+      sku: line.item?.sku || "",
+      quantity: toNumber(line.quantity),
+      unitPrice: toNumber(line.unitPrice),
+      lineTotal: toNumber(line.lineTotal),
+    })),
+    payments: order.payments.map(mapLegacyPayment),
+  }))
+}
+
+export async function archiveLegacyCustomerForOrg(
+  organizationId: string,
+  customerId: string,
+): Promise<void> {
+  await db.customer.updateMany({
+    where: {
+      id: customerId,
+      organizationId,
+      deletedAt: null,
+    },
+    data: {
+      deletedAt: new Date(),
+      isActive: false,
+      updatedAt: new Date(),
+    },
+  })
 }
 
 async function buildCustomerManagementRows(

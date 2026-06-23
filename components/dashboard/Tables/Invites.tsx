@@ -3,10 +3,10 @@
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import type { InviteStatus } from "@prisma/client"
 import { Search } from "lucide-react"
 import { useState } from "react"
 
+type InviteStatus = "PENDING" | "ACCEPTED" | "EXPIRED" | "CANCELLED"
 
 export type InviteDataProps={
 id:string;

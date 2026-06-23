@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { localizePath, pickLocale } from "@/i18n/routing"
 import { requireSession, revokeAllSessionsForUser } from "@/lib/security/auth-session"
 import { permissionRisk, type PermissionRisk } from "@/lib/security/rbac-permissions"
-import { db } from "@/prisma/db"
+import { getSecuritySettingsAccountState } from "@/services/security/security-settings.service"
 import type { Locale } from "@/types/bilingual"
 import {
   AlertTriangle,
@@ -156,52 +156,10 @@ function riskClass(risk: PermissionRisk) {
 
 async function loadSecurityState(locale: Locale) {
   const verified = await requireSession()
-  const [user, credentialAccount] = await Promise.all([
-    db.user.findFirst({
-      where: {
-        id: verified.ctx.userId,
-        organizationId: verified.ctx.orgId,
-      },
-      select: {
-        id: true,
-        email: true,
-        emailVerified: true,
-        isVerified: true,
-        isLocked: true,
-        lockedUntil: true,
-        failedLoginAttempts: true,
-        lastFailedLogin: true,
-        lastLogin: true,
-        mfaEnabledAt: true,
-        mfaBackupCodes: true,
-        passwordHistory: {
-          orderBy: { createdAt: "desc" },
-          take: 1,
-          select: { createdAt: true },
-        },
-        sessions: {
-          where: { expiresAt: { gt: new Date() } },
-          orderBy: { updatedAt: "desc" },
-          select: {
-            id: true,
-            token: true,
-            expiresAt: true,
-            ipAddress: true,
-            userAgent: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-        },
-      },
-    }),
-    db.account.findFirst({
-      where: {
-        userId: verified.ctx.userId,
-        providerId: "credential",
-      },
-      select: { id: true, createdAt: true },
-    }),
-  ])
+  const { user, credentialAccount } = await getSecuritySettingsAccountState({
+    userId: verified.ctx.userId,
+    organizationId: verified.ctx.orgId,
+  })
 
   if (!user) {
     redirect(localizePath("/login", locale))

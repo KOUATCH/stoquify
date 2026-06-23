@@ -8,8 +8,15 @@ import { ColumnDef } from "@tanstack/react-table";
 
 import ActionColumn from "@/components/DataTableColumns/ActionColumn";
 import SortableColumn from "@/components/DataTableColumns/SortableColumn";
-import { Role } from "@prisma/client";
-export const columns: ColumnDef<Role>[] = [
+
+type RoleTableRow = {
+  id: string;
+  name: string;
+  description: string | null;
+  createdAt: Date | string;
+};
+
+export const columns: ColumnDef<RoleTableRow>[] = [
   {
     id: "select",
     header: ({ table }) => (

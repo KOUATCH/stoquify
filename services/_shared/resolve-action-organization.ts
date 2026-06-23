@@ -1,5 +1,5 @@
-import { db } from "@/prisma/db"
-import { ForbiddenError, NotFoundError } from "./action-errors"
+import { ForbiddenError } from "./action-errors"
+import { assertActiveOrganization } from "./assert-active-organization"
 import { requireOrg } from "./require-org"
 
 export async function resolveActionOrganization(explicitOrgId?: string | null, resourceName = "resources") {
@@ -14,18 +14,5 @@ export async function resolveActionOrganization(explicitOrgId?: string | null, r
     throw new ForbiddenError(`You cannot access ${resourceName} for another organization`)
   }
 
-  const organization = await db.organization.findFirst({
-    where: {
-      id: requestedOrgId,
-      isActive: true,
-      deletedAt: null,
-    },
-    select: { id: true },
-  })
-
-  if (!organization) {
-    throw new NotFoundError("Organization not found or inactive")
-  }
-
-  return organization.id
+  return assertActiveOrganization(requestedOrgId)
 }

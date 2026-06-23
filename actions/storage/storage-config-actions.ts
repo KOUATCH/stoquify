@@ -1,7 +1,7 @@
 "use server"
 
 import { getSession } from "@/lib/auth-server"
-import { db } from "@/prisma/db"
+import { assertActiveOrganization } from "@/services/_shared/assert-active-organization"
 import type { PhotoStorageSettings, StorageType } from "@/types/storage"
 import { promises as fs } from "fs"
 import { revalidatePath } from "next/cache"
@@ -174,18 +174,7 @@ export async function initializeStorageForOrganization(organizationId: string) {
       }
     }
 
-    const organizationExists = await db.organization.findUnique({
-      where: { id: trimmedOrgId },
-      select: { id: true },
-    })
-
-    if (!organizationExists) {
-      return {
-        success: false,
-        error: `Organization not found: ${trimmedOrgId}`,
-        data: null,
-      }
-    }
+    await assertActiveOrganization(trimmedOrgId)
 
     await ensureLocalStorageDirectories(trimmedOrgId)
 

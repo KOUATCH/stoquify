@@ -2,10 +2,9 @@
 
 import { revalidatePath } from "next/cache"
 import { assertCanUseOrganization, requirePermission } from "@/lib/security/rbac"
-import { db } from "@/prisma/db"
-import { Prisma } from "@prisma/client"
 import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses"
-import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
+import { assertActiveOrganization } from "@/services/_shared/assert-active-organization"
+import { BusinessRuleError, getPrismaKnownRequest, getPrismaKnownRequestField } from "@/services/_shared/action-errors"
 import {
   archiveLocationForManagement,
   createLocationForManagement,
@@ -52,8 +51,10 @@ function cleanText(value?: string | null) {
 }
 
 function getActionErrorMessage(error: unknown, fallback: string) {
-  if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2003") {
-    const fieldName = String(error.meta?.field_name ?? error.meta?.constraint ?? "")
+  const prismaError = getPrismaKnownRequest(error)
+
+  if (prismaError?.code === "P2003") {
+    const fieldName = getPrismaKnownRequestField(error)
 
     if (fieldName.includes("organizationId") || fieldName.includes("locations_organizationId_fkey")) {
       return "Organization not found or inactive"
@@ -101,20 +102,7 @@ async function assertOrganizationAccess(
   })
   await assertCanUseOrganization(ctx, requestedOrganizationId)
 
-  const organization = await db.organization.findFirst({
-    where: {
-      id: requestedOrganizationId,
-      isActive: true,
-      deletedAt: null,
-    },
-    select: { id: true },
-  })
-
-  if (!organization) {
-    throw new NotFoundError("Organization not found or inactive")
-  }
-
-  return organization.id
+  return assertActiveOrganization(requestedOrganizationId)
 }
 
 function revalidateLocationPaths() {
