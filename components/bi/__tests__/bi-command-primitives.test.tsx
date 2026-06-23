@@ -1,11 +1,9 @@
+import type { SVGProps } from "react"
 import { fireEvent, render, screen } from "@testing-library/react"
 
 jest.mock("lucide-react", () => {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const React = require("react") as typeof import("react")
   const createIcon = (name: string) => {
-    const Icon = (props: Record<string, unknown>) =>
-      React.createElement("svg", { "data-testid": `icon-${name}`, ...props })
+    const Icon = (props: SVGProps<SVGSVGElement>) => <svg data-testid={`icon-${name}`} {...props} />
     return Icon
   }
 

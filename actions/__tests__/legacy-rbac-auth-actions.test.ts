@@ -26,6 +26,11 @@ jest.mock("@/prisma/db", () => ({
   },
 }))
 
+jest.mock("@/services/customer/customer.service", () => ({
+  createLegacyCustomerForOrg: jest.fn(),
+  getLegacyCustomerByIdForOrg: jest.fn(),
+}))
+
 jest.mock("@/services/pos/pos.service", () => ({
   addPOSCartLine: jest.fn(),
   closePOSShift: jest.fn(),
@@ -59,6 +64,10 @@ jest.mock("@/services/unit/unit.service", () => ({
 
 import { assertCanUseOrganization, requirePermission } from "@/lib/security/rbac"
 import { db } from "@/prisma/db"
+import {
+  createLegacyCustomerForOrg,
+  getLegacyCustomerByIdForOrg,
+} from "@/services/customer/customer.service"
 import { addPOSCartLine, openPOSShift } from "@/services/pos/pos.service"
 import { updateTaxRateForManagement } from "@/services/tax-rate/tax-rate.service"
 import { createLocationForManagement } from "@/services/location/location.service"
@@ -72,9 +81,8 @@ import { deleteManagedUnit } from "../units/unit-management-actions"
 
 const mockRequirePermission = requirePermission as jest.Mock
 const mockAssertCanUseOrganization = assertCanUseOrganization as jest.Mock
-const mockCustomerFindFirst = db.customer.findFirst as jest.Mock
-const mockCustomerCount = db.customer.count as jest.Mock
-const mockCustomerCreate = db.customer.create as jest.Mock
+const mockGetLegacyCustomerByIdForOrg = getLegacyCustomerByIdForOrg as jest.Mock
+const mockCreateLegacyCustomerForOrg = createLegacyCustomerForOrg as jest.Mock
 const mockOrganizationFindFirst = db.organization.findFirst as jest.Mock
 const mockOpenPOSShift = openPOSShift as jest.Mock
 const mockAddPOSCartLine = addPOSCartLine as jest.Mock
@@ -118,9 +126,8 @@ beforeEach(() => {
   mockRequirePermission.mockResolvedValue(rbacContext)
   mockAssertCanUseOrganization.mockResolvedValue(true)
   mockOrganizationFindFirst.mockResolvedValue({ id: "org-session" })
-  mockCustomerFindFirst.mockResolvedValue(customerRecord)
-  mockCustomerCount.mockResolvedValue(0)
-  mockCustomerCreate.mockResolvedValue(customerRecord)
+  mockGetLegacyCustomerByIdForOrg.mockResolvedValue(customerRecord)
+  mockCreateLegacyCustomerForOrg.mockResolvedValue(customerRecord)
   mockOpenPOSShift.mockResolvedValue({ id: "session-1", terminalId: "terminal-1" })
   mockAddPOSCartLine.mockResolvedValue({ id: "cart-1" })
   mockUpdateTaxRateForManagement.mockResolvedValue({ id: "tax-1" })
@@ -137,13 +144,7 @@ describe("legacy RBAC/auth migrated actions", () => {
       resource: "Customer",
       resourceId: "customer-1",
     })
-    expect(mockCustomerFindFirst).toHaveBeenCalledWith({
-      where: {
-        id: "customer-1",
-        organizationId: "org-session",
-        deletedAt: null,
-      },
-    })
+    expect(mockGetLegacyCustomerByIdForOrg).toHaveBeenCalledWith("org-session", "customer-1")
   })
 
   it("requires customer create permission before writing new customers", async () => {
@@ -165,12 +166,22 @@ describe("legacy RBAC/auth migrated actions", () => {
       resource: "Customer",
       auditAllowed: true,
     })
-    expect(mockCustomerCreate).toHaveBeenCalledWith({
-      data: expect.objectContaining({
-        organizationId: "org-session",
+    expect(mockCreateLegacyCustomerForOrg).toHaveBeenCalledWith(
+      "org-session",
+      expect.objectContaining({
         name: "Retail customer",
+        code: null,
+        email: null,
+        preferredLocale: "EN",
       }),
-    })
+    )
+  })
+
+  it("denies customer reads before service access when RBAC rejects the user", async () => {
+    mockRequirePermission.mockRejectedValueOnce(new Error("Missing permission: customers.read"))
+
+    await expect(getCustomer("customer-1", "attacker-org")).rejects.toThrow("Missing permission: customers.read")
+    expect(mockGetLegacyCustomerByIdForOrg).not.toHaveBeenCalled()
   })
 
   it("gates POS shift opening with the POS session permission and RBAC actor", async () => {
