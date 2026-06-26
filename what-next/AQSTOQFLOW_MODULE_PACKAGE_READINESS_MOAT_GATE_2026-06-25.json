@@ -1,0 +1,739 @@
+{
+  "generatedAt": "2026-06-25T15:29:57.920Z",
+  "root": "E:\\ohada saas\\newStockFlow\\aqstoqflow",
+  "summary": {
+    "scenarioCount": 8,
+    "readyScenarioCount": 8,
+    "partialScenarioCount": 0,
+    "missingScenarioCount": 0,
+    "backfillCheckCount": 6,
+    "readyBackfillCheckCount": 6,
+    "releaseGateCount": 8,
+    "readyReleaseGateCount": 8,
+    "blockerCount": 0,
+    "criticalBlockerCount": 0,
+    "releaseStatus": "ready"
+  },
+  "scenarios": [
+    {
+      "id": "full_evidence_chain",
+      "title": "Full evidence chain",
+      "businessStory": "Sale to payment to ledger to reconciliation to close/trust proof.",
+      "status": "ready",
+      "passedCount": 5,
+      "totalCount": 5,
+      "requirements": [
+        {
+          "type": "text",
+          "file": "prisma/comprehensive-seed.ts",
+          "expression": "/accountingSourceLink/i",
+          "label": "Accounting source links seeded",
+          "passed": true,
+          "evidence": "pattern found"
+        },
+        {
+          "type": "text",
+          "file": "prisma/comprehensive-seed.ts",
+          "expression": "/journalEntry/i",
+          "label": "Journal entries seeded",
+          "passed": true,
+          "evidence": "pattern found"
+        },
+        {
+          "type": "text",
+          "file": "prisma/comprehensive-seed.ts",
+          "expression": "/payment/i",
+          "label": "Payments seeded",
+          "passed": true,
+          "evidence": "pattern found"
+        },
+        {
+          "type": "text",
+          "file": "prisma/schema.prisma",
+          "expression": "/model CloseRun\\b/",
+          "label": "Close run schema exists",
+          "passed": true,
+          "evidence": "pattern found"
+        },
+        {
+          "type": "file",
+          "file": "services/evidence/proof-trail.service.ts",
+          "label": "Proof trail service exists",
+          "passed": true,
+          "evidence": "file exists"
+        }
+      ]
+    },
+    {
+      "id": "cash_leakage",
+      "title": "Cash leakage",
+      "businessStory": "Drawer variance, refund activity, duplicate provider references, and open suspense risk.",
+      "status": "ready",
+      "passedCount": 4,
+      "totalCount": 4,
+      "requirements": [
+        {
+          "type": "text",
+          "file": "prisma/comprehensive-seed.ts",
+          "expression": "/cashDrawer/i",
+          "label": "Cash drawer data seeded",
+          "passed": true,
+          "evidence": "pattern found"
+        },
+        {
+          "type": "text",
+          "file": "prisma/comprehensive-seed.ts",
+          "expression": "/paymentRefund/i",
+          "label": "Refund data seeded",
+          "passed": true,
+          "evidence": "pattern found"
+        },
+        {
+          "type": "text",
+          "file": "prisma/schema.prisma",
+          "expression": "/duplicateFingerprint|providerReference/i",
+          "label": "Duplicate/provider reference fields exist",
+          "passed": true,
+          "evidence": "pattern found"
+        },
+        {
+          "type": "text",
+          "file": "prisma/schema.prisma",
+          "expression": "/model SuspenseItem\\b|model PaymentException\\b/",
+          "label": "Suspense/exception schema exists",
+          "passed": true,
+          "evidence": "pattern found"
+        }
+      ]
+    },
+    {
+      "id": "inventory_cash_risk",
+      "title": "Inventory cash risk",
+      "businessStory": "Dead stock, low stock, supplier obligations, and reorder affordability.",
+      "status": "ready",
+      "passedCount": 4,
+      "totalCount": 4,
+      "requirements": [
+        {
+          "type": "text",
+          "file": "prisma/comprehensive-seed.ts",
+          "expression": "/inventoryLevel/i",
+          "label": "Inventory levels seeded",
+          "passed": true,
+          "evidence": "pattern found"
+        },
+        {
+          "type": "text",
+          "file": "prisma/comprehensive-seed.ts",
+          "expression": "/purchaseOrder/i",
+          "label": "Purchase orders seeded",
+          "passed": true,
+          "evidence": "pattern found"
+        },
+        {
+          "type": "text",
+          "file": "prisma/comprehensive-seed.ts",
+          "expression": "/supplier/i",
+          "label": "Supplier data seeded",
+          "passed": true,
+          "evidence": "pattern found"
+        },
+        {
+          "type": "file",
+          "file": "services/snapshots/inventory-cash-snapshot.service.ts",
+          "label": "Inventory cash snapshot exists",
+          "passed": true,
+          "evidence": "file exists"
+        }
+      ]
+    },
+    {
+      "id": "payroll_exposure",
+      "title": "Payroll exposure",
+      "businessStory": "Approved or posted payroll with unresolved payment/reconciliation exposure.",
+      "status": "ready",
+      "passedCount": 4,
+      "totalCount": 4,
+      "requirements": [
+        {
+          "type": "text",
+          "file": "prisma/schema.prisma",
+          "expression": "/model PayrollRun\\b/",
+          "label": "Payroll run schema exists",
+          "passed": true,
+          "evidence": "pattern found"
+        },
+        {
+          "type": "text",
+          "file": "prisma/schema.prisma",
+          "expression": "/model PayrollPaymentBatch\\b/",
+          "label": "Payroll payment batch schema exists",
+          "passed": true,
+          "evidence": "pattern found"
+        },
+        {
+          "type": "file",
+          "file": "services/payroll/payroll-control.service.ts",
+          "label": "Payroll control service exists",
+          "passed": true,
+          "evidence": "file exists"
+        },
+        {
+          "type": "file",
+          "file": "services/security/redaction-policy.service.ts",
+          "label": "Payroll redaction policy exists",
+          "passed": true,
+          "evidence": "file exists"
+        }
+      ]
+    },
+    {
+      "id": "accountant_multi_client",
+      "title": "Accountant multi-client",
+      "businessStory": "Accountant sees several tenants with trust grades and close blockers.",
+      "status": "ready",
+      "passedCount": 4,
+      "totalCount": 4,
+      "requirements": [
+        {
+          "type": "text",
+          "file": "prisma/comprehensive-seed.ts",
+          "expression": "/ORG_COUNT|seedOrganizations/i",
+          "label": "Multiple organizations are seeded",
+          "passed": true,
+          "evidence": "pattern found"
+        },
+        {
+          "type": "text",
+          "file": "prisma/comprehensive-seed.ts",
+          "expression": "/auditor|accountant/i",
+          "label": "Accountant/auditor role is seeded",
+          "passed": true,
+          "evidence": "pattern found"
+        },
+        {
+          "type": "file",
+          "file": "services/evidence/evidence-grade.service.ts",
+          "label": "Evidence grade service exists",
+          "passed": true,
+          "evidence": "file exists"
+        },
+        {
+          "type": "file",
+          "file": "services/snapshots/close-readiness-snapshot.service.ts",
+          "label": "Close readiness snapshot exists",
+          "passed": true,
+          "evidence": "file exists"
+        }
+      ]
+    },
+    {
+      "id": "limited_modules",
+      "title": "Limited modules",
+      "businessStory": "POS plus inventory tenant cannot see/use finance or payroll modules.",
+      "status": "ready",
+      "passedCount": 4,
+      "totalCount": 4,
+      "requirements": [
+        {
+          "type": "text",
+          "file": "prisma/schema.prisma",
+          "expression": "/requestedModules\\s+String\\[\\]/",
+          "label": "Requested modules are stored on organizations",
+          "passed": true,
+          "evidence": "pattern found"
+        },
+        {
+          "type": "text",
+          "file": "prisma/comprehensive-seed.ts",
+          "expression": "/REGISTER_WORKFLOW_MODULES|requestedModules/i",
+          "label": "Registration module selections are seeded",
+          "passed": true,
+          "evidence": "pattern found"
+        },
+        {
+          "type": "file",
+          "file": "services/modules/module-entitlement.service.ts",
+          "label": "Module entitlement evaluator exists",
+          "passed": true,
+          "evidence": "file exists"
+        },
+        {
+          "type": "file",
+          "file": "services/modules/__tests__/module-entitlement.service.test.ts",
+          "label": "Module entitlement tests exist",
+          "passed": true,
+          "evidence": "file exists"
+        }
+      ]
+    },
+    {
+      "id": "suspended_read_only",
+      "title": "Suspended/read-only",
+      "businessStory": "Historical read remains possible while risky mutations are blocked.",
+      "status": "ready",
+      "passedCount": 3,
+      "totalCount": 3,
+      "requirements": [
+        {
+          "type": "text",
+          "file": "services/modules/module-control-contracts.ts",
+          "expression": "/read_only|suspended/i",
+          "label": "Read-only and suspended statuses exist",
+          "passed": true,
+          "evidence": "pattern found"
+        },
+        {
+          "type": "text",
+          "file": "services/modules/__tests__/module-entitlement.service.test.ts",
+          "expression": "/read-only|suspended/i",
+          "label": "Read-only/suspended behavior is tested",
+          "passed": true,
+          "evidence": "pattern found"
+        },
+        {
+          "type": "file",
+          "file": "services/security/moat-guard.service.ts",
+          "label": "Composite moat guard exists",
+          "passed": true,
+          "evidence": "file exists"
+        }
+      ]
+    },
+    {
+      "id": "partner_consent",
+      "title": "Partner consent",
+      "businessStory": "Future lender/fintech export requires scoped consent and revocation safety.",
+      "status": "ready",
+      "passedCount": 3,
+      "totalCount": 3,
+      "requirements": [
+        {
+          "type": "text",
+          "file": "prisma/schema.prisma",
+          "expression": "/revokedAt|consent/i",
+          "label": "Revocation/consent-capable schema field exists",
+          "passed": true,
+          "evidence": "pattern found"
+        },
+        {
+          "type": "file",
+          "file": "services/security/moat-guard.service.ts",
+          "label": "Consent-aware moat guard exists",
+          "passed": true,
+          "evidence": "file exists"
+        },
+        {
+          "type": "text",
+          "file": "services/security/__tests__/moat-guard.service.test.ts",
+          "expression": "/require_consent|partner consent/i",
+          "label": "Consent guard tests exist",
+          "passed": true,
+          "evidence": "pattern found"
+        }
+      ]
+    }
+  ],
+  "backfill": [
+    {
+      "id": "evidence_grade_classification",
+      "title": "Evidence grade classification",
+      "status": "ready",
+      "passedCount": 2,
+      "totalCount": 2,
+      "requirements": [
+        {
+          "type": "file",
+          "file": "services/evidence/evidence-grade.service.ts",
+          "label": "Evidence grade service exists",
+          "passed": true,
+          "evidence": "file exists"
+        },
+        {
+          "type": "text",
+          "file": "services/evidence/evidence-contracts.ts",
+          "expression": "/raw|operational|posted|reconciled|certified|blocked/i",
+          "label": "Conservative evidence grade vocabulary exists",
+          "passed": true,
+          "evidence": "pattern found"
+        }
+      ]
+    },
+    {
+      "id": "source_link_coverage",
+      "title": "Source-link coverage",
+      "status": "ready",
+      "passedCount": 2,
+      "totalCount": 2,
+      "requirements": [
+        {
+          "type": "text",
+          "file": "prisma/schema.prisma",
+          "expression": "/model AccountingSourceLink\\b/",
+          "label": "Accounting source link model exists",
+          "passed": true,
+          "evidence": "pattern found"
+        },
+        {
+          "type": "text",
+          "file": "prisma/comprehensive-seed.ts",
+          "expression": "/accountingSourceLink/i",
+          "label": "Seed creates accounting source links",
+          "passed": true,
+          "evidence": "pattern found"
+        }
+      ]
+    },
+    {
+      "id": "business_event_quality",
+      "title": "Business event quality",
+      "status": "ready",
+      "passedCount": 3,
+      "totalCount": 3,
+      "requirements": [
+        {
+          "type": "text",
+          "file": "prisma/schema.prisma",
+          "expression": "/model BusinessEvent\\b/",
+          "label": "Business event model exists",
+          "passed": true,
+          "evidence": "pattern found"
+        },
+        {
+          "type": "text",
+          "file": "prisma/schema.prisma",
+          "expression": "/model BusinessEventOutbox\\b/",
+          "label": "Business event outbox model exists",
+          "passed": true,
+          "evidence": "pattern found"
+        },
+        {
+          "type": "file",
+          "file": "services/events/business-event.service.ts",
+          "label": "Business event service exists",
+          "passed": true,
+          "evidence": "file exists"
+        }
+      ]
+    },
+    {
+      "id": "payment_reconciliation_evidence",
+      "title": "Payment reconciliation evidence",
+      "status": "ready",
+      "passedCount": 3,
+      "totalCount": 3,
+      "requirements": [
+        {
+          "type": "text",
+          "file": "prisma/schema.prisma",
+          "expression": "/model ProviderEvent\\b|model ProviderStatement\\b|model ReconciliationRun\\b/",
+          "label": "Provider/reconciliation schema exists",
+          "passed": true,
+          "evidence": "pattern found"
+        },
+        {
+          "type": "file",
+          "file": "services/reconciliation/payment-reconciliation-certification.service.ts",
+          "label": "Reconciliation certification service exists",
+          "passed": true,
+          "evidence": "file exists"
+        },
+        {
+          "type": "file",
+          "file": "services/snapshots/payment-truth-snapshot.service.ts",
+          "label": "Payment truth snapshot exists",
+          "passed": true,
+          "evidence": "file exists"
+        }
+      ]
+    },
+    {
+      "id": "close_evidence_coverage",
+      "title": "Close evidence coverage",
+      "status": "ready",
+      "passedCount": 2,
+      "totalCount": 2,
+      "requirements": [
+        {
+          "type": "text",
+          "file": "prisma/schema.prisma",
+          "expression": "/model CloseEvidenceItem\\b/",
+          "label": "Close evidence item model exists",
+          "passed": true,
+          "evidence": "pattern found"
+        },
+        {
+          "type": "file",
+          "file": "services/snapshots/close-readiness-snapshot.service.ts",
+          "label": "Close readiness snapshot exists",
+          "passed": true,
+          "evidence": "file exists"
+        }
+      ]
+    },
+    {
+      "id": "idempotent_seed_markers",
+      "title": "Idempotent tenant-scoped seed markers",
+      "status": "ready",
+      "passedCount": 3,
+      "totalCount": 3,
+      "requirements": [
+        {
+          "type": "text",
+          "file": "prisma/comprehensive-seed.ts",
+          "expression": "/seededOrganizationWhere/i",
+          "label": "Tenant-scoped seed cleanup marker exists",
+          "passed": true,
+          "evidence": "pattern found"
+        },
+        {
+          "type": "text",
+          "file": "prisma/comprehensive-seed.ts",
+          "expression": "/deleteMany\\(\\{\\s*where:\\s*seededOrganizationWhere/i",
+          "label": "Tenant-scoped deleteMany cleanup exists",
+          "passed": true,
+          "evidence": "pattern found"
+        },
+        {
+          "type": "text",
+          "file": "prisma/comprehensive-seed.ts",
+          "expression": "/function id\\(|const id\\s*=/i",
+          "label": "Stable seed IDs exist",
+          "passed": true,
+          "evidence": "pattern found"
+        }
+      ]
+    }
+  ],
+  "releaseGates": [
+    {
+      "id": "tenant_isolation",
+      "title": "Tenant isolation",
+      "status": "ready",
+      "passedCount": 2,
+      "totalCount": 2,
+      "requirements": [
+        {
+          "type": "text",
+          "file": "prisma/comprehensive-seed.ts",
+          "expression": "/organizationId/i",
+          "label": "Seed assigns organization IDs",
+          "passed": true,
+          "evidence": "pattern found"
+        },
+        {
+          "type": "text",
+          "file": "prisma/schema.prisma",
+          "expression": "/@@index\\(\\[organizationId/i",
+          "label": "Tenant indexes exist",
+          "passed": true,
+          "evidence": "pattern found"
+        }
+      ]
+    },
+    {
+      "id": "rbac",
+      "title": "RBAC",
+      "status": "ready",
+      "passedCount": 2,
+      "totalCount": 2,
+      "requirements": [
+        {
+          "type": "file",
+          "file": "lib/security/rbac-permissions.ts",
+          "label": "RBAC permission evaluator exists",
+          "passed": true,
+          "evidence": "file exists"
+        },
+        {
+          "type": "file",
+          "file": "lib/security/__tests__/rbac-permissions.test.ts",
+          "label": "RBAC tests exist",
+          "passed": true,
+          "evidence": "file exists"
+        }
+      ]
+    },
+    {
+      "id": "module_entitlement",
+      "title": "Module entitlement",
+      "status": "ready",
+      "passedCount": 2,
+      "totalCount": 2,
+      "requirements": [
+        {
+          "type": "file",
+          "file": "services/modules/module-entitlement.service.ts",
+          "label": "Module entitlement service exists",
+          "passed": true,
+          "evidence": "file exists"
+        },
+        {
+          "type": "file",
+          "file": "services/modules/__tests__/module-entitlement.service.test.ts",
+          "label": "Module entitlement tests exist",
+          "passed": true,
+          "evidence": "file exists"
+        }
+      ]
+    },
+    {
+      "id": "proof_redaction",
+      "title": "Proof-trail redaction",
+      "status": "ready",
+      "passedCount": 2,
+      "totalCount": 2,
+      "requirements": [
+        {
+          "type": "file",
+          "file": "services/evidence/evidence-redaction.service.ts",
+          "label": "Evidence redaction service exists",
+          "passed": true,
+          "evidence": "file exists"
+        },
+        {
+          "type": "file",
+          "file": "services/security/redaction-policy.service.ts",
+          "label": "Security redaction policy exists",
+          "passed": true,
+          "evidence": "file exists"
+        }
+      ]
+    },
+    {
+      "id": "snapshot_freshness",
+      "title": "Snapshot freshness",
+      "status": "ready",
+      "passedCount": 2,
+      "totalCount": 2,
+      "requirements": [
+        {
+          "type": "file",
+          "file": "services/snapshots/snapshot-contracts.ts",
+          "label": "Snapshot contracts exist",
+          "passed": true,
+          "evidence": "file exists"
+        },
+        {
+          "type": "file",
+          "file": "services/snapshots/snapshot-rebuild.service.ts",
+          "label": "Snapshot rebuild service exists",
+          "passed": true,
+          "evidence": "file exists"
+        }
+      ]
+    },
+    {
+      "id": "export_fresh_auth",
+      "title": "Export and fresh-auth safety",
+      "status": "ready",
+      "passedCount": 3,
+      "totalCount": 3,
+      "requirements": [
+        {
+          "type": "file",
+          "file": "services/controls/sensitive-action.service.ts",
+          "label": "Sensitive action backbone exists",
+          "passed": true,
+          "evidence": "file exists"
+        },
+        {
+          "type": "file",
+          "file": "services/security/export-safety.service.ts",
+          "label": "Export safety service exists",
+          "passed": true,
+          "evidence": "file exists"
+        },
+        {
+          "type": "file",
+          "file": "services/security/__tests__/export-safety.service.test.ts",
+          "label": "Export safety tests exist",
+          "passed": true,
+          "evidence": "file exists"
+        }
+      ]
+    },
+    {
+      "id": "business_signals_action_queue",
+      "title": "Business signals and action queue",
+      "status": "ready",
+      "passedCount": 4,
+      "totalCount": 4,
+      "requirements": [
+        {
+          "type": "file",
+          "file": "services/signals/business-signal-contracts.ts",
+          "label": "Business signal contracts exist",
+          "passed": true,
+          "evidence": "file exists"
+        },
+        {
+          "type": "file",
+          "file": "services/signals/business-signal-rules.service.ts",
+          "label": "Business signal rules service exists",
+          "passed": true,
+          "evidence": "file exists"
+        },
+        {
+          "type": "file",
+          "file": "services/signals/action-queue.service.ts",
+          "label": "Action queue service exists",
+          "passed": true,
+          "evidence": "file exists"
+        },
+        {
+          "type": "file",
+          "file": "services/signals/__tests__/action-queue.service.test.ts",
+          "label": "Action queue tests exist",
+          "passed": true,
+          "evidence": "file exists"
+        }
+      ]
+    },
+    {
+      "id": "policy_gates",
+      "title": "Existing policy gates",
+      "status": "ready",
+      "passedCount": 4,
+      "totalCount": 4,
+      "requirements": [
+        {
+          "type": "file",
+          "file": "scripts/service-boundary-gate.js",
+          "label": "Service boundary gate exists",
+          "passed": true,
+          "evidence": "file exists"
+        },
+        {
+          "type": "file",
+          "file": "scripts/demo-report-trust-gate.js",
+          "label": "Demo/report trust gate exists",
+          "passed": true,
+          "evidence": "file exists"
+        },
+        {
+          "type": "file",
+          "file": "scripts/hard-delete-gate.js",
+          "label": "Hard-delete gate exists",
+          "passed": true,
+          "evidence": "file exists"
+        },
+        {
+          "type": "file",
+          "file": "scripts/raw-error-boundary-gate.js",
+          "label": "Raw-error boundary gate exists",
+          "passed": true,
+          "evidence": "file exists"
+        }
+      ]
+    }
+  ],
+  "blockers": [],
+  "rollbackPlan": [
+    "Keep module entitlements in observe mode until would-block reports are clean.",
+    "Do not mark legacy data Certified during backfill; classify old unsupported records as operational or blocked.",
+    "Run backfills tenant-by-tenant and batch large tenants.",
+    "Before enforcement, archive the generated readiness report and compare the next report for regressions.",
+    "Rollback hard enforcement by returning surfaces to observe mode and disabling only the new guard caller, not the shared RBAC/accounting foundations."
+  ]
+}

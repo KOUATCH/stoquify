@@ -1,0 +1,19 @@
+# Dashboard Build — Run Notes
+
+## Approach
+I started by reading the existing `app/[locale]/(dashboard)/dashboard/page.tsx`, which already renders a `DashboardOverview` component built on **mock data**. The data layer is solid: `actions/analytics/financial-reports.ts` exposes `getFinancialSummaryReport` (sales/revenue, top sellers, hourly breakdown, comparison deltas) and `actions/inventory/inventoryAlerts.ts` exposes `getInventoryAlerts` (low/out/over-stock). i18n is handled via `next-intl` with `messages/en.json` + `messages/fr.json` (a `dashboard` namespace already exists), and a `useFormatters()` hook gives locale-aware currency/number/date/relative-time. Theme uses `next-themes` + Tailwind tokens (`bg-card`, `text-muted-foreground`, etc.). My plan therefore is: keep the same shell and i18n keys, **replace mock arrays with real server-action calls wrapped in TanStack Query hooks**, add the missing widgets the prompt asks for (sales today, stock alerts, recent activity), kill the hardcoded color classes that break dark mode, and ship one representative widget (`DashboardOverviewPro.tsx`) plus its supporting server action + hook so a developer can drop it in.
+
+## Artifacts Produced
+- `sample-widget/DashboardOverviewPro.tsx` — drop-in replacement for `DashboardOverview.tsx`. Real data via three TanStack hooks, dark-mode-safe tokens, RTL-safe `me-/ms-`, i18n via `useTranslations("dashboard")`, skeleton loading states, empty states, and "as of HH:mm" timestamp. Composes 4 KPI cards (sales today + delta vs yesterday, transactions, avg basket, low-stock count), a 14-day revenue area chart, a recent-orders feed, and a low-stock alert list. Quick-actions strip routes to existing pages.
+- `sample-widget/getDashboardSummary.ts` — new server action wrapping the existing `getFinancialSummaryReport` for today + yesterday (delta) + 14-day series + recent orders. Multi-tenant safe (scopes by `organizationId` from session). Returns plain JSON-safe numbers (Prisma Decimal converted via the project's existing `toN` pattern).
+- `sample-widget/useDashboardSummary.ts` — TanStack Query hook layered on the action, with a 60s `staleTime` and a `refetchInterval` only when the tab is visible.
+- `sample-widget/dashboard.i18n-additions.json` — only the **new** keys to merge into `messages/en.json` and `messages/fr.json` (the existing `dashboard.*` keys are reused as-is). FR copy uses Cameroonian French phrasing consistent with the existing file.
+- `ARCHITECTURE.md` — short doc explaining where each piece plugs in, dark-mode rules, the data-flow diagram, and the multi-location/multi-tenant assumption.
+
+## Considered but Skipped (time-box)
+- **Per-location selector** in the header — the data action accepts `locationId` but I default to the user's primary location; a `<LocationSwitcher>` is a follow-up.
+- **Real-time push** via Inngest / Pusher — Inngest is already a dependency, but a 60s poll covers the "at a glance" promise without WebSocket plumbing.
+- **Top-products + cashier-performance cards** — already exist under `components/analytics/dashboard/` and are wired to the same financial-reports action. The post-login dashboard should stay scannable; deeper cuts belong on `/dashboard/analytics`.
+- **Audit-log activity feed** — schema has `AuditLog` but no read action exists yet. Used `recentSalesOrders` as the activity proxy instead; a future `getRecentActivity` action can replace it without changing the widget contract.
+- **Full RTL pass** — used logical properties (`me-2`, `ms-1`, `text-end`) consistent with the existing component; didn't audit every Tailwind class for `start/end` since the project isn't currently shipping Arabic.
+- **Tests** — would add a vitest for the action (currency rollup) and a Playwright smoke for the page; out of scope for a 20-min build.

@@ -29,6 +29,9 @@ const DEFAULT_EXCLUDED_PARTS = [
   "graphify-out",
   "services/regulatory",
   "prisma/migrations",
+  "prisma/comprehensive-seed.ts",
+  "__fixtures__",
+  "fixtures",
   "__tests__",
 ]
 

@@ -7,6 +7,7 @@ import {
   AccountingPostingPurpose,
   AccountingSourceType,
   AdjustmentStatus,
+  CloseFindingDomain,
   CloseFindingSeverity,
   CloseFindingStatus,
   CloseRunStatus,
@@ -19,6 +20,7 @@ import {
   PaymentExceptionStatus,
   PaymentMethod,
   PaymentStatus,
+  PayrollDeclarationStatus,
   PayrollPaymentBatchStatus,
   PayrollRunStatus,
   POSOfflineEventStatus,
@@ -169,6 +171,9 @@ const CHECK_RUNNERS: Record<string, WorkflowAssuranceRunner> = {
   "purchasing_ap.supplier_bank_pending_release.blocked": runSupplierBankPendingReleaseCheck,
   "inventory.completed_adjustment_evidence.required": runCompletedAdjustmentEvidenceCheck,
   "payroll.released_payment_evidence.required": runReleasedPayrollPaymentEvidenceCheck,
+  "payroll.payment_reconciliation_exception.visible": runPayrollPaymentReconciliationExceptionCheck,
+  "payroll.declaration_lifecycle_exception.visible": runPayrollDeclarationLifecycleExceptionCheck,
+  "payroll.close_evidence.stale.visible": runPayrollCloseEvidenceStaleCheck,
   "compliance.submission_sla.visible": runComplianceSubmissionSlaCheck,
   "close.certified_pack_evidence.current": runCertifiedClosePackEvidenceCheck,
 }
@@ -301,6 +306,23 @@ const PAYROLL_RUN_PAYMENT_READY_STATUSES: PayrollRunStatus[] = [
   PayrollRunStatus.PAID,
   PayrollRunStatus.POSTED,
   PayrollRunStatus.ARCHIVED,
+]
+const PAYROLL_PAYMENT_RECONCILIATION_MONITORED_STATUSES: PayrollPaymentBatchStatus[] = [
+  PayrollPaymentBatchStatus.RELEASED,
+  PayrollPaymentBatchStatus.PARTIALLY_SETTLED,
+  PayrollPaymentBatchStatus.SETTLED,
+  PayrollPaymentBatchStatus.FAILED,
+]
+const PAYROLL_DECLARATION_MONITORED_STATUSES: PayrollDeclarationStatus[] = [
+  PayrollDeclarationStatus.PREPARED,
+  PayrollDeclarationStatus.SUBMITTED,
+  PayrollDeclarationStatus.REJECTED,
+  PayrollDeclarationStatus.PAYMENT_DUE,
+]
+const PAYROLL_DECLARATION_CLOSED_STATUSES: PayrollDeclarationStatus[] = [
+  PayrollDeclarationStatus.PAID,
+  PayrollDeclarationStatus.RECONCILED,
+  PayrollDeclarationStatus.ARCHIVED,
 ]
 const OPEN_COMPLIANCE_SUBMISSION_STATUSES: ComplianceSubmissionStatus[] = [
   ComplianceSubmissionStatus.PENDING,
@@ -2925,6 +2947,230 @@ async function runReleasedPayrollPaymentEvidenceCheck(
   })
 }
 
+async function runPayrollPaymentReconciliationExceptionCheck(
+  definition: WorkflowAssuranceCheckDefinitionContract,
+  input: WorkflowAssuranceRunInput,
+) {
+  const monitoredBatchWhere = {
+    organizationId: input.organizationId,
+    status: { in: PAYROLL_PAYMENT_RECONCILIATION_MONITORED_STATUSES },
+  }
+  const exceptionBatchWhere = {
+    ...monitoredBatchWhere,
+    OR: [
+      { status: PayrollPaymentBatchStatus.FAILED },
+      { paymentExceptionId: { not: null } },
+      { reconciliationStatus: { in: ["FAILED", "EXCEPTION", "UNMATCHED", "REQUIRES_REVIEW"] } },
+    ],
+  }
+  const [monitoredBatchCount, exceptionBatchCount] = await Promise.all([
+    db.payrollPaymentBatch.count({ where: monitoredBatchWhere }),
+    db.payrollPaymentBatch.count({ where: exceptionBatchWhere }),
+  ])
+  const status: WorkflowAssuranceResultStatus = exceptionBatchCount > 0 ? "warning" : "passed"
+  const sourceHash = createAssuranceSourceHash({
+    checkKey: definition.checkKey,
+    monitoredBatchCount,
+    exceptionBatchCount,
+  })
+
+  return normalizeAssuranceResult({
+    organizationId: input.organizationId,
+    checkKey: definition.checkKey,
+    status,
+    severity: exceptionBatchCount > 0 ? definition.defaultSeverity : "info",
+    sourceType: "payroll_payment_batches",
+    sourceId: "payroll_payment_reconciliation_exceptions",
+    sourceHash,
+    message:
+      exceptionBatchCount > 0
+        ? "Payroll payment batches have failed, exception, or unreconciled operational states."
+        : "Payroll payment batches have no visible reconciliation exception states.",
+    recommendedAction:
+      exceptionBatchCount > 0
+        ? "Open payroll controls, reconcile the aggregate payment exceptions, and keep destination/payment evidence redacted."
+        : undefined,
+    evidenceLinks: [
+      {
+        sourceTable: "payroll_payment_batches",
+        sourceType: "payroll_payment_reconciliation_exceptions",
+        sourceId: "aggregate",
+        sourceHash,
+        label: "Payroll payment reconciliation exceptions",
+        route: definition.actionRoute,
+        metadata: {
+          monitoredBatchCount,
+          exceptionBatchCount,
+        },
+      },
+    ],
+    counts: {
+      scanned: monitoredBatchCount,
+      passed: Math.max(monitoredBatchCount - exceptionBatchCount, 0),
+      warning: exceptionBatchCount,
+    },
+    metadata: {
+      monitoredBatchCount,
+      exceptionBatchCount,
+      redactionPolicy: "kontava-payroll-person-redaction-policy",
+    },
+  })
+}
+
+async function runPayrollDeclarationLifecycleExceptionCheck(
+  definition: WorkflowAssuranceCheckDefinitionContract,
+  input: WorkflowAssuranceRunInput,
+) {
+  const now = new Date()
+  const monitoredDeclarationWhere = {
+    organizationId: input.organizationId,
+    status: { in: PAYROLL_DECLARATION_MONITORED_STATUSES },
+  }
+  const exceptionDeclarationWhere = {
+    organizationId: input.organizationId,
+    OR: [
+      { status: PayrollDeclarationStatus.REJECTED },
+      {
+        dueDate: { lt: now },
+        status: { notIn: PAYROLL_DECLARATION_CLOSED_STATUSES },
+      },
+    ],
+  }
+  const [monitoredDeclarationCount, exceptionDeclarationCount] = await Promise.all([
+    db.payrollDeclaration.count({ where: monitoredDeclarationWhere }),
+    db.payrollDeclaration.count({ where: exceptionDeclarationWhere }),
+  ])
+  const status: WorkflowAssuranceResultStatus = exceptionDeclarationCount > 0 ? "warning" : "passed"
+  const sourceHash = createAssuranceSourceHash({
+    checkKey: definition.checkKey,
+    monitoredDeclarationCount,
+    exceptionDeclarationCount,
+  })
+
+  return normalizeAssuranceResult({
+    organizationId: input.organizationId,
+    checkKey: definition.checkKey,
+    status,
+    severity: exceptionDeclarationCount > 0 ? definition.defaultSeverity : "info",
+    sourceType: "payroll_declarations",
+    sourceId: "payroll_declaration_lifecycle_exceptions",
+    sourceHash,
+    message:
+      exceptionDeclarationCount > 0
+        ? "Payroll declarations are rejected, overdue, or waiting for manual authority evidence."
+        : "Payroll declarations have no rejected or overdue operational states.",
+    recommendedAction:
+      exceptionDeclarationCount > 0
+        ? "Open payroll controls, attach authority evidence, and do not automate statutory submission without reviewed mappings."
+        : undefined,
+    evidenceLinks: [
+      {
+        sourceTable: "payroll_declarations",
+        sourceType: "payroll_declaration_lifecycle_exceptions",
+        sourceId: "aggregate",
+        sourceHash,
+        label: "Payroll declaration lifecycle exceptions",
+        route: definition.actionRoute,
+        metadata: {
+          monitoredDeclarationCount,
+          exceptionDeclarationCount,
+        },
+      },
+    ],
+    counts: {
+      scanned: monitoredDeclarationCount,
+      passed: Math.max(monitoredDeclarationCount - exceptionDeclarationCount, 0),
+      warning: exceptionDeclarationCount,
+    },
+    metadata: {
+      monitoredDeclarationCount,
+      exceptionDeclarationCount,
+      manualAuthorityEvidenceOnly: true,
+      redactionPolicy: "kontava-payroll-person-redaction-policy",
+    },
+  })
+}
+
+async function runPayrollCloseEvidenceStaleCheck(
+  definition: WorkflowAssuranceCheckDefinitionContract,
+  input: WorkflowAssuranceRunInput,
+) {
+  const certifiedPackWhere = {
+    organizationId: input.organizationId,
+    isCertified: true,
+    ...(input.periodId ? { periodId: input.periodId } : {}),
+  }
+  const stalePayrollPackWhere = {
+    ...certifiedPackWhere,
+    closeRun: {
+      is: {
+        status: { in: [CloseRunStatus.CERTIFIED, CloseRunStatus.EXPORTED] },
+        findings: {
+          some: {
+            domain: CloseFindingDomain.PAYROLL,
+            status: { in: ACTIVE_CLOSE_FINDING_STATUSES },
+            severity: { in: SERIOUS_CLOSE_FINDING_SEVERITIES },
+          },
+        },
+      },
+    },
+  }
+  const [certifiedPackCount, stalePayrollPackCount] = await Promise.all([
+    db.closePackExport.count({ where: certifiedPackWhere }),
+    db.closePackExport.count({ where: stalePayrollPackWhere }),
+  ])
+  const status: WorkflowAssuranceResultStatus = stalePayrollPackCount > 0 ? "failed" : "passed"
+  const sourceHash = createAssuranceSourceHash({
+    checkKey: definition.checkKey,
+    certifiedPackCount,
+    stalePayrollPackCount,
+    periodId: input.periodId ?? null,
+  })
+
+  return normalizeAssuranceResult({
+    organizationId: input.organizationId,
+    checkKey: definition.checkKey,
+    status,
+    severity: stalePayrollPackCount > 0 ? definition.defaultSeverity : "info",
+    sourceType: "close_pack_exports",
+    sourceId: "payroll_stale_close_evidence",
+    sourceHash,
+    message:
+      stalePayrollPackCount > 0
+        ? "Certified close packs coexist with unresolved high or critical payroll findings."
+        : "Certified close packs have no unresolved high or critical payroll findings.",
+    recommendedAction:
+      stalePayrollPackCount > 0
+        ? "Open the close center, resolve payroll findings, and recertify the close pack before relying on payroll close evidence."
+        : undefined,
+    evidenceLinks: [
+      {
+        sourceTable: "close_pack_exports",
+        sourceType: "payroll_stale_close_evidence",
+        sourceId: input.periodId ?? "aggregate",
+        sourceHash,
+        label: "Payroll close evidence freshness",
+        route: definition.actionRoute,
+        metadata: {
+          certifiedPackCount,
+          stalePayrollPackCount,
+          periodId: input.periodId ?? null,
+        },
+      },
+    ],
+    counts: {
+      scanned: certifiedPackCount,
+      passed: Math.max(certifiedPackCount - stalePayrollPackCount, 0),
+      failed: stalePayrollPackCount,
+    },
+    metadata: {
+      certifiedPackCount,
+      stalePayrollPackCount,
+      periodId: input.periodId ?? null,
+      redactionPolicy: "kontava-payroll-person-redaction-policy",
+    },
+  })
+}
 async function runComplianceSubmissionSlaCheck(
   definition: WorkflowAssuranceCheckDefinitionContract,
   input: WorkflowAssuranceRunInput,

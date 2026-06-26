@@ -52,6 +52,24 @@ function canonicalPayload(overrides: Partial<CanonicalFiscalPayload> = {}): Cano
 }
 
 describe("Cameroon DGI sandbox compliance adapter", () => {
+  async function submitWithSandboxMode(mode: "ACCEPT" | "OUTAGE" | "RATE_LIMITED" | "REJECT") {
+    const authorityPayload = await cameroonDgiSandboxComplianceAdapter.buildAuthorityPayload(
+      canonicalPayload(),
+    )
+
+    return cameroonDgiSandboxComplianceAdapter.submit(authorityPayload, {
+      organizationId: "org-1",
+      authorityChannel: "CM_DGI_E_SERVICES_PORTAL",
+      environment: "SANDBOX",
+      adapterConfig: {
+        id: "adapter-config-1",
+        status: "ACTIVE",
+        credentialReference: "vault://org-1/cm-dgi-sandbox",
+        publicMetadata: { sandboxMode: mode },
+      },
+    })
+  }
+
   it("validates canonical Cameroon fiscal payloads against country-pack provenance", async () => {
     await expect(
       cameroonDgiSandboxComplianceAdapter.validatePayload(canonicalPayload()),
@@ -116,6 +134,35 @@ describe("Cameroon DGI sandbox compliance adapter", () => {
         statutoryEffect: "SANDBOX_ONLY_NO_PRODUCTION_CERTIFICATION",
       }),
     })
+    expect(JSON.stringify(result)).not.toContain("vault://")
+    expect(JSON.stringify(result)).not.toContain("credentialReference")
+  })
+
+  it("blocks non-sandbox environments without production certification claims", async () => {
+    const authorityPayload = await cameroonDgiSandboxComplianceAdapter.buildAuthorityPayload(
+      canonicalPayload(),
+    )
+
+    await expect(
+      cameroonDgiSandboxComplianceAdapter.submit(authorityPayload, {
+        organizationId: "org-1",
+        authorityChannel: "CM_DGI_E_SERVICES_PORTAL",
+        environment: "PRODUCTION",
+        adapterConfig: {
+          id: "adapter-config-1",
+          status: "ACTIVE",
+          credentialReference: "vault://org-1/cm-dgi-sandbox",
+          publicMetadata: { sandboxMode: "ACCEPT" },
+        },
+      }),
+    ).resolves.toMatchObject({
+      ok: false,
+      status: "CREDENTIAL_CONFIGURATION_ERROR",
+      responsePayload: expect.objectContaining({
+        environment: "PRODUCTION",
+        statutoryEffect: "SANDBOX_ONLY_NO_PRODUCTION_CERTIFICATION",
+      }),
+    })
   })
 
   it("returns safe configuration and retryable outage failures from sandbox fixtures", async () => {
@@ -157,6 +204,29 @@ describe("Cameroon DGI sandbox compliance adapter", () => {
       status: "RETRYABLE_AUTHORITY_OUTAGE",
       retryAfterSeconds: 300,
       responseHash: expect.stringMatching(/^sha256:[a-f0-9]{64}$/),
+    })
+  })
+
+  it("covers rate-limit and terminal rejection sandbox fixtures", async () => {
+    await expect(submitWithSandboxMode("RATE_LIMITED")).resolves.toMatchObject({
+      ok: false,
+      status: "RATE_LIMITED",
+      retryAfterSeconds: 300,
+      responsePayload: expect.objectContaining({
+        status: "RATE_LIMITED",
+        retryable: true,
+        statutoryEffect: "SANDBOX_ONLY_NO_PRODUCTION_CERTIFICATION",
+      }),
+    })
+
+    await expect(submitWithSandboxMode("REJECT")).resolves.toMatchObject({
+      ok: false,
+      status: "TERMINAL_REJECTION",
+      rejectionReason: "SANDBOX_FIXTURE_REJECTION",
+      responsePayload: expect.objectContaining({
+        status: "REJECTED",
+        statutoryEffect: "SANDBOX_ONLY_NO_PRODUCTION_CERTIFICATION",
+      }),
     })
   })
 })

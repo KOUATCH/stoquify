@@ -13,6 +13,7 @@ import { randomUUID } from "node:crypto"
 
 import { logger } from "@/lib/logger"
 import { db } from "@/prisma/db"
+import { recordCloseCertificationInvalidationsForSourceInTx } from "@/services/accounting/close-assurance-pack.service"
 import { recordBusinessEventInTx } from "@/services/events/business-event.service"
 
 import type { ParsedStatementLine, PaymentProviderAdapter } from "./payment-ingestion.types"
@@ -371,6 +372,17 @@ export async function importProviderStatement(
           },
         },
       ],
+    })
+    await recordCloseCertificationInvalidationsForSourceInTx(tx, input.organizationId, {
+      sourceCode: "PAYMENT_STATEMENT_IMPORT",
+      sourceId: statementFile.id,
+      periodStart: parsed.periodStart ?? parsed.lines[0].occurredAt,
+      periodEnd: parsed.periodEnd ?? parsed.lines[parsed.lines.length - 1].occurredAt,
+      staleReason: "Provider statement import changed payment evidence after close certification.",
+      newEvidenceHash: fileHash,
+      correlationId,
+    }, {
+      actorId: input.importedById ?? null,
     })
 
     return {

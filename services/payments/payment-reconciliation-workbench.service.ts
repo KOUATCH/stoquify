@@ -120,6 +120,7 @@ export type PaymentSuspenseReadyFailure = {
   currency: string
   providerReference: string | null
   paymentId: string | null
+  paymentTransactionId: string | null
   paymentNumber: string | null
   counterparty: string
   occurredAt: string | null
@@ -507,6 +508,7 @@ export async function getPaymentReconciliationWorkbench(
         currency,
         providerReference: failure.providerReference ?? suspense?.providerReference ?? null,
         paymentId: failure.paymentId ?? null,
+        paymentTransactionId: payment?.transactionId ?? null,
         paymentNumber: payment?.paymentNumber ?? null,
         counterparty: counterparty(payment),
         occurredAt: payment?.createdAt.toISOString() ?? null,

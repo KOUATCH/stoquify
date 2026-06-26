@@ -101,6 +101,31 @@ describe("owner war room service", () => {
       highCount: 1,
       upgradePromptCount: 1,
     })
+    expect(data.morningBrief.headlineMetrics).toMatchObject({
+      cashAtRisk: 125000,
+      blockedCloseItems: 1,
+      staleEvidenceItems: 0,
+      proofLinkedActionCount: 1,
+    })
+    expect(data.morningBrief.commandBrief).toMatchObject({
+      title: "Owner morning brief",
+      state: "blocked",
+      primaryAction: expect.objectContaining({ href: "/dashboard/finance/payments" }),
+    })
+    expect(data.morningBrief.priorityActions).toEqual([
+      expect.objectContaining({ title: "Resolve payment suspense", evidenceGrade: "blocked" }),
+    ])
+    expect(data.morningBrief.risks.map((risk) => risk.title)).toEqual([
+      "Cash at risk",
+      "Blocked close items",
+      "Stock-to-cash exposure",
+    ])
+    expect(data.morningBrief.zones.map((zone) => zone.title)).toEqual([
+      "Cash truth",
+      "Stock-to-cash truth",
+      "Close readiness",
+      "Payment and reconciliation truth",
+    ])
   })
 
   it("keeps proof buttons disabled when no latest supported records are available", () => {
@@ -126,6 +151,8 @@ describe("owner war room service", () => {
     expect(data.cards.find((card) => card.id === "module_observe")).toMatchObject({
       state: "ready",
     })
+    expect(data.morningBrief.priorityActions).toHaveLength(0)
+    expect(data.morningBrief.proofSubjects.every((subject) => !subject.available)).toBe(true)
   })
 })
 
@@ -304,7 +331,77 @@ function actionQueue(input: { total?: number; filteredOutCount?: number } = {}):
   return {
     organizationId: "org-1",
     generatedAt,
-    signals: [],
+    signals:
+      total > 0
+        ? [
+            {
+              id: "sig-1",
+              organizationId: "org-1",
+              moduleSlug: "payment_reconciliation",
+              sourceModule: "payments",
+              sourceSnapshotKind: "payment.truth",
+              sourceHash: "payment-hash",
+              signalType: "open_payment_suspense",
+              title: "Resolve payment suspense",
+              detail: "Suspense remains open.",
+              businessImpact: "Unresolved suspense weakens cash truth.",
+              subjectType: "payment.suspense",
+              subjectId: "open-suspense",
+              evidenceGrade: "blocked",
+              severity: "critical",
+              severityScore: 98,
+              status: "active",
+              dedupeKey: "org-1:open_payment_suspense",
+              generatedAt,
+              expiresAt: generatedAt,
+              freshness: freshness(),
+              suggestedAction: "Classify or match suspense items.",
+              actionPath: "/dashboard/finance/payments",
+              requiredPermission: "payments.reconciliation.read",
+              assignedRole: "finance",
+              assigneeId: null,
+              blockers: [],
+              redactions: [],
+              payload: { openSuspenseAmount: 125000 },
+              proofLink: { subjectType: "reconciliation.run", subjectId: "rr-1" },
+            },
+            ...(total > 1
+              ? [
+                  {
+                    id: "sig-2",
+                    organizationId: "org-1",
+                    moduleSlug: "purchasing",
+                    sourceModule: "purchasing",
+                    sourceSnapshotKind: "tenant.operating",
+                    sourceHash: "tenant-hash",
+                    signalType: "purchase_order_receiving_delay",
+                    title: "Review supplier commitment",
+                    detail: "Receiving is delayed.",
+                    businessImpact: "Receiving delays can hide supplier risk.",
+                    subjectType: "purchase.order",
+                    subjectId: "pending-receiving",
+                    evidenceGrade: "operational",
+                    severity: "high",
+                    severityScore: 78,
+                    status: "active",
+                    dedupeKey: "org-1:purchase_order_receiving_delay",
+                    generatedAt,
+                    expiresAt: generatedAt,
+                    freshness: freshness(),
+                    suggestedAction: "Check delayed receiving.",
+                    actionPath: "/dashboard/purchase-orders",
+                    requiredPermission: "purchases.orders.read",
+                    assignedRole: "purchasing",
+                    assigneeId: null,
+                    blockers: [],
+                    redactions: [],
+                    payload: { pendingPurchaseOrderCount: 3 },
+                    proofLink: null,
+                  },
+                ]
+              : []),
+          ]
+        : [],
     actionItems:
       total > 0
         ? [

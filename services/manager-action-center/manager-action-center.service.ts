@@ -1,7 +1,7 @@
 import "server-only"
 
-import { createActionLinkFromActionItem, createSignalInsight, createSnapshotKpi } from "@/services/bi/bi-evidence-adapter.service"
-import type { BIKpiCard, BIKpiState } from "@/services/bi/bi-contracts"
+import { createActionLinkFromActionItem, createSignalInsight, createSnapshotKpi, normalizeSnapshotFreshness } from "@/services/bi/bi-evidence-adapter.service"
+import type { BICommandBrief, BIKpiCard, BIKpiState } from "@/services/bi/bi-contracts"
 import { evidenceGradeToBITrustState } from "@/services/bi/bi-contracts"
 import { getAssuranceControlTowerData } from "@/services/assurance/assurance-control-tower.service"
 import type { AssuranceControlTowerIncident } from "@/services/assurance/assurance-control-tower-contracts"
@@ -18,7 +18,7 @@ import { getCloseReadinessSnapshot } from "@/services/snapshots/close-readiness-
 import { getInventoryCashSnapshot } from "@/services/snapshots/inventory-cash-snapshot.service"
 import { getPaymentTruthSnapshot } from "@/services/snapshots/payment-truth-snapshot.service"
 import type { SnapshotResult } from "@/services/snapshots/snapshot-contracts"
-import { getTenantOperatingSnapshot } from "@/services/snapshots/tenant-operating-snapshot.service"
+import { getTenantOperatingSnapshotFromRelated } from "@/services/snapshots/tenant-operating-snapshot.service"
 
 import type {
   ComposeManagerActionCenterInput,
@@ -26,6 +26,8 @@ import type {
   ManagerActionCenterData,
   ManagerActionCenterSummary,
   ManagerActionDueState,
+  ManagerActionRunSheetGroup,
+  ManagerActionRunSheetGroupId,
 } from "./manager-action-center-contracts"
 
 type ManagerActionCenterInput = {
@@ -45,6 +47,48 @@ const SEVERITY_RANK: Record<BusinessSignalSeverity, number> = {
   critical: 4,
 }
 
+const RUN_SHEET_GROUPS: Array<{
+  id: ManagerActionRunSheetGroupId
+  title: string
+  detail: string
+}> = [
+  {
+    id: "overdue",
+    title: "Overdue now",
+    detail: "Actions already past their due time. Handle these before routine work.",
+  },
+  {
+    id: "critical",
+    title: "Critical pressure",
+    detail: "Critical or high-risk actions that can block cash, stock, close, or control trust.",
+  },
+  {
+    id: "due_today",
+    title: "Due today",
+    detail: "Visible work that should be cleared before the day closes.",
+  },
+  {
+    id: "blocked",
+    title: "Blocked",
+    detail: "Actions with evidence, workflow, or source-data blockers that need manager routing.",
+  },
+  {
+    id: "waiting",
+    title: "Waiting soon",
+    detail: "Actions approaching their due window or waiting on another operating role.",
+  },
+  {
+    id: "assigned",
+    title: "Assigned",
+    detail: "Actions already routed to a responsible role and waiting for completion.",
+  },
+  {
+    id: "routine",
+    title: "Routine watch",
+    detail: "Lower-pressure actions that remain visible after urgent work is handled.",
+  },
+]
+
 export async function getManagerActionCenterData(
   input: ManagerActionCenterInput,
 ): Promise<ManagerActionCenterData> {
@@ -56,18 +100,17 @@ export async function getManagerActionCenterData(
     now: input.now ?? null,
   }
 
-  const [tenantOperating, paymentTruth, inventoryCash, closeReadiness, assuranceControlTower] = await Promise.all([
-    getTenantOperatingSnapshot(scope),
+  const [paymentTruth, inventoryCash, closeReadiness, assuranceControlTower] = await Promise.all([
     getPaymentTruthSnapshot(scope),
     getInventoryCashSnapshot(scope),
     getCloseReadinessSnapshot(scope),
-    getAssuranceControlTowerData({
-      organizationId: input.organizationId,
-      actorPermissions: input.actorPermissions,
-      now: input.now ?? null,
-      limit: 25,
-    }),
+    getSafeAssuranceControlTowerData(input),
   ])
+  const tenantOperating = await getTenantOperatingSnapshotFromRelated(scope, {
+    paymentTruth,
+    inventoryCash,
+    closeReadiness,
+  })
 
   const signals = buildBusinessSignalsFromSnapshots({
     organizationId: input.organizationId,
@@ -91,7 +134,7 @@ export async function getManagerActionCenterData(
     },
     actionQueue,
     assuranceIncidents: assuranceControlTower.incidents,
-    assuranceHiddenByPermission: assuranceControlTower.summary.hiddenByPermission,
+    assuranceHiddenByPermission: assuranceControlTower.hiddenByPermission,
   })
 }
 
@@ -109,12 +152,20 @@ export function composeManagerActionCenterData(
     .map((item) => managerActionFromItem(item, signalModuleById.get(item.signalId) ?? "dashboard", now))
     .concat(assuranceActions)
     .sort(sortManagerActions)
+  const commandBrief = buildManagerCommandBrief({
+    input,
+    summary,
+    actionItems,
+  })
+  const runSheetGroups = buildRunSheetGroups(actionItems)
 
   return {
     organizationId: input.organizationId,
     generatedAt: input.generatedAt,
     periodStart: tenantOperating.periodStart,
     periodEnd: tenantOperating.periodEnd,
+    commandBrief,
+    runSheetGroups,
     kpis: [
       managerKpi({
         id: "manager-open-actions",
@@ -180,6 +231,130 @@ export function composeManagerActionCenterData(
     summary,
     assuranceIncidents: input.assuranceIncidents ?? [],
   }
+}
+
+async function getSafeAssuranceControlTowerData(input: ManagerActionCenterInput) {
+  try {
+    const data = await getAssuranceControlTowerData({
+      organizationId: input.organizationId,
+      actorPermissions: input.actorPermissions,
+      now: input.now ?? null,
+      limit: 25,
+    })
+
+    return {
+      incidents: data.incidents,
+      hiddenByPermission: data.summary.hiddenByPermission,
+    }
+  } catch {
+    return {
+      incidents: [],
+      hiddenByPermission: 0,
+    }
+  }
+}
+
+function buildManagerCommandBrief(input: {
+  input: ComposeManagerActionCenterInput
+  summary: ManagerActionCenterSummary
+  actionItems: ManagerActionCenterAction[]
+}): BICommandBrief {
+  const { tenantOperating } = input.input.snapshots
+  const state = queueState(input.summary)
+  const evidenceGrade = strongestEvidenceGrade([
+    tenantOperating.evidenceGrade,
+    ...input.actionItems.map((item) => item.evidenceGrade),
+  ])
+  const freshness = normalizeSnapshotFreshness(tenantOperating.freshness, tenantOperating.status)
+  const blockers = input.actionItems.flatMap((item) => item.blockers)
+  const redactions = input.actionItems.flatMap((item) => item.redactions)
+
+  return {
+    id: `manager-daily-run-sheet:${input.input.organizationId}`,
+    organizationId: input.input.organizationId,
+    title: "Manager daily run sheet",
+    summary: buildManagerBriefSummary(input.summary),
+    conclusion: buildManagerBriefConclusion(input.summary),
+    mode: "brief",
+    generatedAt: input.input.generatedAt,
+    periodStart: tenantOperating.periodStart,
+    periodEnd: tenantOperating.periodEnd,
+    state,
+    evidenceGrade,
+    trustState: evidenceGradeToBITrustState(evidenceGrade),
+    freshness,
+    provenance: {
+      organizationId: tenantOperating.organizationId,
+      locationId: tenantOperating.locationId,
+      sourceKind: tenantOperating.kind,
+      sourceHash: tenantOperating.sourceHash,
+      sourceModules: tenantOperating.sourceModules,
+      generatedAt: tenantOperating.generatedAt,
+      periodStart: tenantOperating.periodStart,
+      periodEnd: tenantOperating.periodEnd,
+    },
+    sourceModules: tenantOperating.sourceModules,
+    blockers,
+    redactions,
+    primaryAction: input.actionItems[0]?.actionLink ?? null,
+    drillThrough: null,
+    reviewState: {
+      organizationId: input.input.organizationId,
+      reviewerId: null,
+      reviewerRole: "manager",
+      state: state === "blocked" ? "blocked" : state === "stale" || state === "partial" ? "stale" : "not_started",
+      reviewedAt: null,
+      previousReviewedAt: null,
+      nextReviewDueAt: null,
+      freshness,
+      blockers,
+    },
+  }
+}
+
+function buildManagerBriefSummary(summary: ManagerActionCenterSummary) {
+  return `${summary.total} visible action${summary.total === 1 ? "" : "s"}: ${summary.overdue} overdue, ${summary.critical + summary.high} critical or high, ${summary.blocked} blocked, and ${summary.hiddenByPermission} hidden by permission.`
+}
+
+function buildManagerBriefConclusion(summary: ManagerActionCenterSummary) {
+  if (summary.overdue > 0) return "Start with overdue work before the operating day drifts further out of control."
+  if (summary.critical > 0 || summary.high > 0) return "Handle critical pressure before scanning routine KPIs."
+  if (summary.blocked > 0) return "Clear blockers first so assigned teams can complete their work."
+  if (summary.hiddenByPermission > 0) return "Some work is withheld by server-side permissions; use visible actions only."
+  if (summary.total > 0) return "Work the run sheet from top to bottom, then review routine signals."
+  return "No manager action is visible for this tenant and permission set right now."
+}
+
+function buildRunSheetGroups(actionItems: ManagerActionCenterAction[]): ManagerActionRunSheetGroup[] {
+  return RUN_SHEET_GROUPS.map((group) => {
+    const actions = actionItems.filter((item) => runSheetGroupForAction(item) === group.id)
+    return {
+      ...group,
+      count: actions.length,
+      state: runSheetGroupState(group.id, actions),
+      actions,
+    }
+  })
+}
+
+function runSheetGroupForAction(item: ManagerActionCenterAction): ManagerActionRunSheetGroupId {
+  if (item.dueState === "overdue") return "overdue"
+  if (item.blockers.length > 0) return "blocked"
+  if (item.severity === "critical" || item.severity === "high") return "critical"
+  if (item.dueState === "due_today") return "due_today"
+  if (item.status === "assigned") return "assigned"
+  if (item.dueState === "due_soon") return "waiting"
+  return "routine"
+}
+
+function runSheetGroupState(
+  id: ManagerActionRunSheetGroupId,
+  actions: readonly ManagerActionCenterAction[],
+): BIKpiState {
+  if (actions.length === 0) return "empty"
+  if (id === "overdue" || id === "critical" || id === "blocked") return "blocked"
+  if (id === "waiting" || id === "assigned") return "partial"
+  return "ready"
 }
 
 function managerKpi(input: {

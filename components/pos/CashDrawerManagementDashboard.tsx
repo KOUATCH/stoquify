@@ -36,6 +36,7 @@ import { Input } from "@/components/ui/input"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
+import { DashboardErrorState } from "@/components/dashboard/DashboardErrorState"
 import { useNotifications } from "@/components/notifications/NotificationProvider"
 import { useCashDrawerDashboard } from "@/hooks/posHooks/useDrawerDashboard"
 import {
@@ -208,6 +209,10 @@ export default function CashDrawerManagementDashboard() {
     )
   }
 
+  if (errorMessage && !dashboard) {
+    return <DashboardErrorState error="Cash drawer dashboard unavailable" reset={() => { void dashboardQuery.refetch() }} />
+  }
+
   return (
     <main className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
       <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)]">
@@ -322,7 +327,7 @@ export default function CashDrawerManagementDashboard() {
         <Card className={cn(dashboardPanelClass, "border-[var(--dash-danger)] bg-[var(--dash-danger-soft)]")}>
           <CardContent className="flex items-center gap-3 p-4">
             <AlertTriangle className="h-5 w-5 text-[var(--dash-danger)]" />
-            <span className="text-sm font-medium">{errorMessage}</span>
+            <span className="text-sm font-medium">One cash drawer source failed or timed out. Retry the read-only dashboard without exposing internal details.</span>
           </CardContent>
         </Card>
       ) : null}

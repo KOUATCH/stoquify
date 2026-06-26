@@ -1,4 +1,7 @@
+"use client"
+
 import Link from "next/link"
+import { useState } from "react"
 import {
   ArrowUpRight,
   CalendarClock,
@@ -9,6 +12,8 @@ import {
   Sparkles,
 } from "lucide-react"
 
+import { BIActionPriorityBoard, BICommandBriefHeader, BIStateSurface, BITrustLegend } from "@/components/bi"
+import type { BIActionPriorityItem } from "@/components/bi/BIActionPriorityBoard"
 import { BIEvidenceBadgeRow } from "@/components/bi/BIEvidenceBadgeRow"
 import { BIEmptyState } from "@/components/bi/BIEmptyState"
 import { BIKpiCard } from "@/components/bi/BIKpiCard"
@@ -23,7 +28,8 @@ import {
   dashboardToneClass,
 } from "@/components/finance/finance-dashboard-theme"
 import { cn } from "@/lib/utils"
-import type { ManagerActionCenterData } from "@/services/manager-action-center/manager-action-center-contracts"
+import type { BICommandMode } from "@/services/bi/bi-contracts"
+import type { ManagerActionCenterData, ManagerActionRunSheetGroup } from "@/services/manager-action-center/manager-action-center-contracts"
 
 type ManagerActionCenterDashboardProps = {
   data: ManagerActionCenterData
@@ -45,6 +51,10 @@ const copy = {
     hidden: "Hidden",
     actions: "Manager actions",
     insights: "Business signals",
+    doFirst: "Do first today",
+    doFirstDetail: "Permission-filtered actions ranked by urgency, evidence, blockers, and business pressure.",
+    runSheet: "Daily run sheet",
+    runSheetDetail: "Urgency lanes for the work managers can actually move today.",
     noActions: "No manager action is visible for this tenant and permission set.",
     noSignals: "No business signal is visible for this tenant and permission set.",
     nextStep: "Next step",
@@ -66,6 +76,10 @@ const copy = {
     hidden: "Masque",
     actions: "Actions manager",
     insights: "Signaux metier",
+    doFirst: "A traiter en premier",
+    doFirstDetail: "Actions filtrees par permission et classees par urgence, preuve, blocages et pression metier.",
+    runSheet: "Plan de journee",
+    runSheetDetail: "Couloirs d'urgence pour le travail qu'un manager peut vraiment faire avancer aujourd'hui.",
     noActions: "Aucune action manager n'est visible pour ce tenant et ces permissions.",
     noSignals: "Aucun signal metier n'est visible pour ce tenant et ces permissions.",
     nextStep: "Prochaine etape",
@@ -86,10 +100,40 @@ export function ManagerActionCenterDashboard({
   const t = copy[locale]
   const formatterLocale = locale === "fr" ? "fr-FR" : "en-US"
   const periodLabel = `${formatDate(data.periodStart, formatterLocale)} - ${formatDate(data.periodEnd, formatterLocale)}`
+  const [commandMode, setCommandMode] = useState<BICommandMode>(data.commandBrief.mode)
 
   return (
     <main className="dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]">
       <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)] md:px-6 lg:px-8">
+        <BICommandBriefHeader
+          brief={data.commandBrief}
+          mode={commandMode}
+          onModeChange={setCommandMode}
+        />
+
+        <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(360px,0.9fr)]">
+          <BIActionPriorityBoard
+            items={data.actionItems.map((item) => toPriorityAction(item, formatterLocale))}
+            title={t.doFirst}
+            detail={t.doFirstDetail}
+            maxItems={8}
+          />
+          <section className={cn(dashboardPanelClass, "p-4")}>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <h2 className="text-base font-semibold text-[var(--dash-text)]">{t.runSheet}</h2>
+                <p className={cn("text-sm", dashboardMutedTextClass)}>{t.runSheetDetail}</p>
+              </div>
+              <BITrustLegend compact />
+            </div>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+              {data.runSheetGroups.map((group) => (
+                <RunSheetLane key={group.id} group={group} formatterLocale={formatterLocale} />
+              ))}
+            </div>
+          </section>
+        </section>
+
         <section className={cn(dashboardPanelClass, "p-4 md:p-5")}>
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div className="max-w-5xl space-y-3">
@@ -268,6 +312,76 @@ export function ManagerActionCenterDashboard({
         </section>
       </div>
     </main>
+  )
+}
+
+function toPriorityAction(
+  item: ManagerActionCenterData["actionItems"][number],
+  formatterLocale: string,
+): BIActionPriorityItem {
+  return {
+    id: item.id,
+    title: item.title,
+    nextStep: item.nextStep,
+    severity: item.severity,
+    state: item.state,
+    actionLink: item.actionLink,
+    evidenceGrade: item.evidenceGrade,
+    trustState: item.trustState,
+    freshness: {
+      state: item.state === "stale" ? "stale" : item.state === "blocked" ? "blocked" : "fresh",
+      generatedAt: item.dueAt,
+      sourceMaxUpdatedAt: item.dueAt,
+      maxAgeMinutes: null,
+      stale: item.state === "stale",
+      staleReason: item.state === "stale" ? "Action evidence is stale." : null,
+    },
+    dueLabel: `${formatDateTime(item.dueAt, formatterLocale)} / ${item.dueState}`,
+    ownerLabel: item.assignedRole,
+    blockers: item.blockers,
+    redactions: item.redactions,
+  }
+}
+
+function RunSheetLane({
+  group,
+  formatterLocale,
+}: {
+  group: ManagerActionRunSheetGroup
+  formatterLocale: string
+}) {
+  return (
+    <article className={cn(dashboardRowClass, "p-3")}>
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <BIStateBadge state={group.state} />
+            <Badge variant="outline" className="rounded-md border-[var(--dash-border-subtle)] text-[var(--dash-text-soft)]">
+              {group.count} action{group.count === 1 ? "" : "s"}
+            </Badge>
+          </div>
+          <h3 className="mt-2 text-sm font-semibold text-[var(--dash-text)]">{group.title}</h3>
+          <p className={cn("mt-1 text-xs leading-5", dashboardMutedTextClass)}>{group.detail}</p>
+        </div>
+      </div>
+      {group.actions.length ? (
+        <div className="mt-3 space-y-2">
+          {group.actions.slice(0, 3).map((item) => (
+            <div key={item.id} className="rounded-md border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.22)] p-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <BISeverityBadge severity={item.severity} />
+                <span className="text-xs text-[var(--dash-text-soft)]">
+                  {formatDateTime(item.dueAt, formatterLocale)} / {item.assignedRole}
+                </span>
+              </div>
+              <p className="mt-2 text-xs font-medium text-[var(--dash-text)]">{item.title}</p>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <BIStateSurface state="empty" title="No action in this lane" detail="The server did not surface a visible action for this urgency lane." className="mt-3" />
+      )}
+    </article>
   )
 }
 

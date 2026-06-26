@@ -34,6 +34,7 @@ import { Input } from "@/components/ui/input"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
+import { DashboardErrorState } from "@/components/dashboard/DashboardErrorState"
 import { useNotifications } from "@/components/notifications/NotificationProvider"
 import { useFinanceDashboard } from "@/hooks/finance/useFinanceDashboard"
 import {
@@ -222,6 +223,10 @@ function SurfaceFrame({
     return <LoadingState />
   }
 
+  if (errorMessage && !dashboard) {
+    return <DashboardErrorState error={`Finance ${context.view} data unavailable`} reset={() => { void context.dashboardQuery.refetch() }} />
+  }
+
   return (
     <main className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
       <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)]">
@@ -260,7 +265,7 @@ function SurfaceFrame({
         <Card className={cn(dashboardPanelClass, "border-[var(--dash-danger)] bg-[var(--dash-danger-soft)]")}>
           <CardContent className="flex items-center gap-3 p-4">
             <AlertTriangle className="h-5 w-5 text-[var(--dash-danger)]" />
-            <span className="text-sm font-medium">{errorMessage}</span>
+            <span className="text-sm font-medium">One finance source failed or timed out. Retry the read-only dashboard without exposing internal details.</span>
           </CardContent>
         </Card>
       ) : null}

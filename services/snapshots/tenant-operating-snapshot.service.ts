@@ -13,7 +13,15 @@ import {
 
 import { db } from "@/prisma/db"
 import type { EvidenceGrade } from "@/services/evidence/evidence-contracts"
-import type { SnapshotResult, SnapshotScopeInput, TenantOperatingMetrics } from "./snapshot-contracts"
+import type {
+  CloseReadinessMetrics,
+  InventoryCashMetrics,
+  NormalizedSnapshotScope,
+  PaymentTruthMetrics,
+  SnapshotResult,
+  SnapshotScopeInput,
+  TenantOperatingMetrics,
+} from "./snapshot-contracts"
 import { getCloseReadinessSnapshot } from "./close-readiness-snapshot.service"
 import { getInventoryCashSnapshot } from "./inventory-cash-snapshot.service"
 import { getPaymentTruthSnapshot } from "./payment-truth-snapshot.service"
@@ -62,13 +70,42 @@ export async function getTenantOperatingSnapshot(
   input: SnapshotScopeInput,
 ): Promise<SnapshotResult<TenantOperatingMetrics>> {
   const scope = normalizeSnapshotScope(input)
-  const periodWhere = { gte: scope.periodStart, lte: scope.periodEnd }
-
   const [paymentTruth, inventoryCash, closeReadiness] = await Promise.all([
     getPaymentTruthSnapshot(scope),
     getInventoryCashSnapshot(scope),
     getCloseReadinessSnapshot(scope),
   ])
+
+  return buildTenantOperatingSnapshot({
+    scope,
+    paymentTruth,
+    inventoryCash,
+    closeReadiness,
+  })
+}
+
+export async function getTenantOperatingSnapshotFromRelated(
+  input: SnapshotScopeInput,
+  related: {
+    paymentTruth: SnapshotResult<PaymentTruthMetrics>
+    inventoryCash: SnapshotResult<InventoryCashMetrics>
+    closeReadiness: SnapshotResult<CloseReadinessMetrics>
+  },
+): Promise<SnapshotResult<TenantOperatingMetrics>> {
+  return buildTenantOperatingSnapshot({
+    scope: normalizeSnapshotScope(input),
+    ...related,
+  })
+}
+
+async function buildTenantOperatingSnapshot(input: {
+  scope: NormalizedSnapshotScope
+  paymentTruth: SnapshotResult<PaymentTruthMetrics>
+  inventoryCash: SnapshotResult<InventoryCashMetrics>
+  closeReadiness: SnapshotResult<CloseReadinessMetrics>
+}): Promise<SnapshotResult<TenantOperatingMetrics>> {
+  const { scope, paymentTruth, inventoryCash, closeReadiness } = input
+  const periodWhere = { gte: scope.periodStart, lte: scope.periodEnd }
 
   const [
     activeLocationCount,

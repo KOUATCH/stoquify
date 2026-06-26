@@ -54,7 +54,7 @@ export type ComplianceCenterKernelSnapshot = {
     status: string
     countryPackVersion: string
     capabilityStatus: string
-    credentialReference: string | null
+    credentialReferencePresent: boolean
   }>
 }
 
@@ -240,7 +240,17 @@ export async function getComplianceCenterKernelSnapshot(input: {
       lastError: submission.rejectionReason ?? submission.errorMessage,
       payloadHash: submission.payloadHash,
     })),
-    adapterConfigs,
+    adapterConfigs: adapterConfigs.map((adapter) => ({
+      id: adapter.id,
+      countryCode: adapter.countryCode,
+      authorityChannel: adapter.authorityChannel,
+      adapterKey: adapter.adapterKey,
+      environment: adapter.environment,
+      status: adapter.status,
+      countryPackVersion: adapter.countryPackVersion,
+      capabilityStatus: adapter.capabilityStatus,
+      credentialReferencePresent: Boolean(adapter.credentialReference),
+    })),
   }
 }
 

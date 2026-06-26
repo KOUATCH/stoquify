@@ -2,6 +2,7 @@ import {
   CloseRunStatus,
   JournalEntryStatus,
   LedgerPostingBatchStatus,
+  PaymentTransactionState,
   ReconciliationRunStatus,
 } from "@prisma/client"
 
@@ -83,4 +84,27 @@ export function computeCloseRunEvidenceGrade(input: {
 
   return { grade: "raw", reason: "Close run exists but is not ready for certification." }
 }
+export function computePaymentTransactionEvidenceGrade(input: {
+  state: PaymentTransactionState
+  ledgerPostingBatchStatus?: LedgerPostingBatchStatus | null
+  matchRecordCount: number
+  blockers: ProofTrailBlocker[]
+}): EvidenceGradeDecision {
+  if (hasBlockingProofTrailBlocker(input.blockers)) {
+    return { grade: "blocked", reason: "Payment transaction has unresolved proof blockers." }
+  }
 
+  if (input.matchRecordCount > 0 && (input.state === PaymentTransactionState.CONFIRMED || input.state === PaymentTransactionState.SETTLED)) {
+    return { grade: "reconciled", reason: "Payment transaction is matched against provider or statement evidence." }
+  }
+
+  if (input.ledgerPostingBatchStatus === LedgerPostingBatchStatus.POSTED) {
+    return { grade: "posted", reason: "Payment transaction has a posted ledger batch." }
+  }
+
+  if (input.state === PaymentTransactionState.CONFIRMED || input.state === PaymentTransactionState.SETTLED) {
+    return { grade: "operational", reason: "Payment transaction is confirmed but not yet reconciled." }
+  }
+
+  return { grade: "raw", reason: "Payment transaction exists but has not reached confirmation or reconciliation." }
+}

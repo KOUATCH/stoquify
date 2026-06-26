@@ -33,6 +33,9 @@ jest.mock("@/prisma/db", () => ({
     chartOfAccount: {
       findFirst: jest.fn(),
     },
+    businessEvent: { findUnique: jest.fn(), create: jest.fn(), update: jest.fn() },
+    closeRun: { findMany: jest.fn(), findFirst: jest.fn(), update: jest.fn() },
+    closePackExport: { findFirst: jest.fn(), update: jest.fn() },
   },
 }))
 
@@ -49,11 +52,25 @@ const mockedDb = db as unknown as {
   auditLog: { create: jest.Mock }
   accountingPeriod: { findFirst: jest.Mock }
   chartOfAccount: { findFirst: jest.Mock }
+  businessEvent: { findUnique: jest.Mock; create: jest.Mock; update: jest.Mock }
+  closeRun: { findMany: jest.Mock; findFirst: jest.Mock; update: jest.Mock }
+  closePackExport: { findFirst: jest.Mock; update: jest.Mock }
 }
 const mockedCreateLedgerPostingBatch = createLedgerPostingBatch as jest.Mock
 
 function amount(value: number | string) {
   return new Prisma.Decimal(value)
+}
+
+function arrangeCertifiedCloseTarget() {
+  mockedDb.closeRun.findMany.mockResolvedValue([{ id: "close-run-1", packExports: [{ id: "close-pack-export-1" }] }])
+  mockedDb.closeRun.findFirst.mockResolvedValue({
+    id: "close-run-1",
+    organizationId: "org-1",
+    status: "CERTIFIED",
+    metadata: null,
+  })
+  mockedDb.closePackExport.findFirst.mockResolvedValue({ id: "close-pack-export-1", metadata: { mode: "CERTIFIED" } })
 }
 
 function suspense(overrides: Record<string, unknown> = {}) {
@@ -105,6 +122,18 @@ describe("payment suspense workflow service", () => {
     mockedDb.auditLog.create.mockResolvedValue({ id: "audit-1" })
     mockedDb.accountingPeriod.findFirst.mockResolvedValue({ id: "period-1" })
     mockedDb.chartOfAccount.findFirst.mockResolvedValue({ id: "account-47", _count: { children: 0 } })
+    mockedDb.businessEvent.findUnique.mockResolvedValue(null)
+    mockedDb.businessEvent.create.mockImplementation(async (args) => ({
+      id: "business-event-1",
+      ...args.data,
+      outboxMessages: args.data.outboxMessages.create,
+    }))
+    mockedDb.businessEvent.update.mockResolvedValue({ id: "business-event-1", status: "APPLIED" })
+    mockedDb.closeRun.findMany.mockResolvedValue([])
+    mockedDb.closeRun.findFirst.mockResolvedValue(null)
+    mockedDb.closeRun.update.mockResolvedValue({ id: "close-run-1" })
+    mockedDb.closePackExport.findFirst.mockResolvedValue(null)
+    mockedDb.closePackExport.update.mockResolvedValue({ id: "close-pack-export-1" })
     mockedCreateLedgerPostingBatch.mockResolvedValue({ id: "batch-1" })
   })
 
@@ -166,6 +195,7 @@ describe("payment suspense workflow service", () => {
   })
 
   it("approves proposed suspense posting with independent checker evidence", async () => {
+    arrangeCertifiedCloseTarget()
     mockedDb.suspenseItem.findFirst.mockResolvedValue(
       suspense({
         status: SuspenseStatus.RESOLUTION_PROPOSED,
@@ -206,5 +236,31 @@ describe("payment suspense workflow service", () => {
       mockedDb,
     )
     expect(mockedDb.paymentReconciliationInboxItem.upsert).toHaveBeenCalled()
+    expect(mockedDb.businessEvent.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          eventType: "close.certification.invalidated",
+          metadata: expect.objectContaining({
+            sourceCode: "PAYMENT_SUSPENSE_POSTING",
+            sourceTable: "suspense_items",
+          }),
+        }),
+      }),
+    )
+    expect(mockedDb.closeRun.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "close-run-1" },
+        data: expect.objectContaining({
+          status: "BLOCKED",
+          metadata: expect.objectContaining({
+            staleState: expect.objectContaining({
+              sourceCode: "PAYMENT_SUSPENSE_POSTING",
+              sourceId: "suspense-1",
+              correlationId: "corr-approve",
+            }),
+          }),
+        }),
+      }),
+    )
   })
 })

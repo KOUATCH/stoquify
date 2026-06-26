@@ -24,7 +24,7 @@ export const authCopy = {
         "Every sign-in can open access to stock, cash, payroll, supplier payments, compliance evidence, and close work, so sessions stay tenant-scoped and permission-aware.",
       commandTitle: "Secure operating entry",
       commandBody: "One guarded entry point for cashiers, accountants, payroll teams, managers, and tenant administrators.",
-      moduleShowcaseTitle: "Platform modules behind the sign-in",
+      moduleShowcaseTitle: "What opens after sign-in",
       moduleShowcaseBody:
         "POS, inventory, purchasing/AP, accounting close, compliance, reconciliation, payroll/presence, offline sync, and controls are reached from the same protected workspace.",
       moduleHighlights: {
@@ -88,8 +88,8 @@ export const authCopy = {
     layout: {
       login: {
         eyebrow: "Protected access",
-        title: "Enter the AqStoqFlow operating system",
-        body: "Sign in to a tenant-scoped workspace where POS, stock, AP, accounting close, compliance, reconciliation, payroll, and controls share one evidence trail.",
+        title: "Sign in to the operating workspace",
+        body: "Access the tenant-scoped workspace where stock, cash, close, reconciliation, payroll, and controls share one evidence trail.",
       },
       register: {
         eyebrow: "OHADA workspace onboarding",
@@ -110,7 +110,7 @@ export const authCopy = {
     login: {
       badge: "Tenant sign in",
       title: "Access your operating workspace",
-      subtitle: "Sign in to review POS sessions, inventory evidence, purchasing/AP, accounting close, compliance, reconciliation, payroll presence, and role controls.",
+      subtitle: "Review today's POS, stock, finance, close, payroll, and control work from a tenant-scoped session.",
       email: "Email address",
       emailPlaceholder: "you@company.com",
       password: "Password",
@@ -122,8 +122,8 @@ export const authCopy = {
       newHere: "New to AqStoqFlow?",
       createAccount: "Create an account",
       secureNote: "Sessions are tenant-scoped and permission-aware because the workspace touches cash, stock, payroll, suppliers, compliance, and close.",
-      methodTitle: "Protected access methods",
-      methodSubtitle: "Critical modules require verified identity, role context, and fresh auth when needed.",
+      methodTitle: "Email and password access",
+      methodSubtitle: "Use the tenant-scoped password flow. Protected modules can still request fresh verification when needed.",
       sso: "Organization SSO",
       ssoHint: "Domain routed",
       passkey: "Passkey",
@@ -281,7 +281,7 @@ export const authCopy = {
         "Chaque connexion peut ouvrir acces au stock, cash, paie, paiements fournisseurs, preuves de conformite et cloture ; les sessions restent donc portees tenant et permission-aware.",
       commandTitle: "Entree operationnelle securisee",
       commandBody: "Un point d'entree protege pour caissiers, comptables, paie, managers et administrateurs tenant.",
-      moduleShowcaseTitle: "Modules plateforme derriere la connexion",
+      moduleShowcaseTitle: "Ce qui s'ouvre apres connexion",
       moduleShowcaseBody:
         "PDV, inventaire, achats/AP, cloture comptable, conformite, rapprochement, paie/presence, sync hors ligne et controles sont accessibles depuis le meme espace protege.",
       moduleHighlights: {
@@ -345,8 +345,8 @@ export const authCopy = {
     layout: {
       login: {
         eyebrow: "Acces protege",
-        title: "Entrez dans le systeme operationnel AqStoqFlow",
-        body: "Connectez-vous a un espace tenant ou PDV, stock, AP, cloture comptable, conformite, rapprochement, paie et controles partagent une piste de preuves.",
+        title: "Connectez-vous a l'espace operationnel",
+        body: "Accedez a l'espace tenant ou stock, caisse, cloture, rapprochement, paie et controles partagent une piste de preuves.",
       },
       register: {
         eyebrow: "Demarrage espace OHADA",
@@ -367,7 +367,7 @@ export const authCopy = {
     login: {
       badge: "Connexion tenant",
       title: "Accedez a votre espace operationnel",
-      subtitle: "Connectez-vous pour revoir sessions PDV, preuves inventaire, achats/AP, cloture comptable, conformite, rapprochement, presence paie et controles roles.",
+      subtitle: "Revoyez le PDV, stock, finance, cloture, paie et controles du jour depuis une session portee tenant.",
       email: "Adresse email",
       emailPlaceholder: "vous@entreprise.com",
       password: "Mot de passe",
@@ -379,8 +379,8 @@ export const authCopy = {
       newHere: "Nouveau sur AqStoqFlow ?",
       createAccount: "Creer un compte",
       secureNote: "Les sessions sont portees tenant et permission-aware parce que l'espace touche cash, stock, paie, fournisseurs, conformite et cloture.",
-      methodTitle: "Methodes d'acces protegees",
-      methodSubtitle: "Les modules critiques exigent identite verifiee, contexte role et auth recente si necessaire.",
+      methodTitle: "Acces email et mot de passe",
+      methodSubtitle: "Utilisez le flux mot de passe porte tenant. Les modules proteges peuvent redemander une verification recente.",
       sso: "SSO organisation",
       ssoHint: "Domaine route",
       passkey: "Cle d'acces",

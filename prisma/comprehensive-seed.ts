@@ -43,10 +43,15 @@ import { PERMISSIONS } from "../lib/permissions";
 import { DEFAULT_POSTING_RULES } from "../services/accounting/default-posting-rules";
 import { CAMEROON_PAYMENT_PROVIDER_CODES } from "../services/regulatory/country-packs/cameroon.constants";
 import { resolveCameroonStandardVatRateBps } from "../services/regulatory/country-packs/resolve";
+import {
+  clearComprehensiveCoverageData,
+  seedComprehensiveCoverageData,
+  verifyComprehensiveCoverageCounts,
+} from "./comprehensive-seed-coverage";
 
 const prisma = new PrismaClient();
 
-const COUNT = 40;
+const COUNT = 50;
 const ORG_COUNT = 5;
 const ID_PREFIX = "cmp_";
 const ORGANIZATION_ID_PREFIX = `${ID_PREFIX}org_`;
@@ -663,6 +668,70 @@ const hashPassword = async (password = DEFAULT_DEMO_PASSWORD) => {
 };
 
 const deleteOrder: Array<[string, SeedDelegate]> = [
+  ["WorkflowAssuranceAlertDelivery", prisma.workflowAssuranceAlertDelivery],
+  ["WorkflowAssuranceWaiver", prisma.workflowAssuranceWaiver],
+  ["WorkflowAssuranceIncidentEvent", prisma.workflowAssuranceIncidentEvent],
+  ["WorkflowAssuranceIncident", prisma.workflowAssuranceIncident],
+  ["WorkflowAssuranceCheckRun", prisma.workflowAssuranceCheckRun],
+  ["WorkflowAssuranceCheckDefinition", prisma.workflowAssuranceCheckDefinition],
+  ["ComplianceEvidence", prisma.complianceEvidence],
+  ["ComplianceSubmission", prisma.complianceSubmission],
+  ["FiscalDocumentLine", prisma.fiscalDocumentLine],
+  ["FiscalDocument", prisma.fiscalDocument],
+  ["FiscalSequence", prisma.fiscalSequence],
+  ["ComplianceAdapterConfig", prisma.complianceAdapterConfig],
+  ["BusinessEventOutbox", prisma.businessEventOutbox],
+  ["POSOfflineSyncConflict", prisma.pOSOfflineSyncConflict],
+  ["POSOfflineEvent", prisma.pOSOfflineEvent],
+  ["POSOfflineSyncBatch", prisma.pOSOfflineSyncBatch],
+  ["POSOfflineSyncCertificate", prisma.pOSOfflineSyncCertificate],
+  ["POSOfflineDevice", prisma.pOSOfflineDevice],
+  ["BusinessEvent", prisma.businessEvent],
+  ["AccountantComment", prisma.accountantComment],
+  ["AccountantReview", prisma.accountantReview],
+  ["ClosePackExport", prisma.closePackExport],
+  ["CloseEvidenceItem", prisma.closeEvidenceItem],
+  ["CloseAssuranceFinding", prisma.closeAssuranceFinding],
+  ["CloseChecklistItem", prisma.closeChecklistItem],
+  ["CloseRun", prisma.closeRun],
+  ["PaymentException", prisma.paymentException],
+  ["PaymentReconciliationInboxItem", prisma.paymentReconciliationInboxItem],
+  ["SuspenseItem", prisma.suspenseItem],
+  ["MatchRecord", prisma.matchRecord],
+  ["ReconciliationRun", prisma.reconciliationRun],
+  ["PaymentTransaction", prisma.paymentTransaction],
+  ["StatementLine", prisma.statementLine],
+  ["StatementFile", prisma.statementFile],
+  ["ProviderEvent", prisma.providerEvent],
+  ["SettlementAccount", prisma.settlementAccount],
+  ["ProviderAccount", prisma.providerAccount],
+  ["PaymentRail", prisma.paymentRail],
+  ["PayrollPaymentAllocation", prisma.payrollPaymentAllocation],
+  ["PayrollPaymentBatch", prisma.payrollPaymentBatch],
+  ["PayrollDeclarationEvidence", prisma.payrollDeclarationEvidence],
+  ["PayrollDeclaration", prisma.payrollDeclaration],
+  ["PayrollPayslipLine", prisma.payrollPayslipLine],
+  ["PayrollPayslip", prisma.payrollPayslip],
+  ["PayrollRunLine", prisma.payrollRunLine],
+  ["PayrollRun", prisma.payrollRun],
+  ["PayrollAttendanceSnapshot", prisma.payrollAttendanceSnapshot],
+  ["PayrollPeriod", prisma.payrollPeriod],
+  ["PayrollPaymentDestinationChangeRequest", prisma.payrollPaymentDestinationChangeRequest],
+  ["PayrollSalaryChangeRequest", prisma.payrollSalaryChangeRequest],
+  ["PayrollEmployeeRubriqueAssignment", prisma.payrollEmployeeRubriqueAssignment],
+  ["PayrollRubrique", prisma.payrollRubrique],
+  ["PayrollContract", prisma.payrollContract],
+  ["PayrollEmployee", prisma.payrollEmployee],
+  ["StockCountLine", prisma.stockCountLine],
+  ["StockCountSession", prisma.stockCountSession],
+  ["SupplierPaymentAllocation", prisma.supplierPaymentAllocation],
+  ["SupplierPayment", prisma.supplierPayment],
+  ["ThreeWayMatch", prisma.threeWayMatch],
+  ["SupplierInvoiceLine", prisma.supplierInvoiceLine],
+  ["SupplierInvoice", prisma.supplierInvoice],
+  ["SupplierBankChangeRequest", prisma.supplierBankChangeRequest],
+  ["SupplierBankAccount", prisma.supplierBankAccount],
+  ["Verification", prisma.verification],
   ["PaymentRefund", prisma.paymentRefund],
   ["CashDrawerTransaction", prisma.cashDrawerTransaction],
   ["Payment", prisma.payment],
@@ -764,6 +833,8 @@ const verificationOrder = [...deleteOrder].reverse();
 
 async function clearSeededData() {
   console.log("Clearing previous comprehensive seed records...");
+
+  await clearComprehensiveCoverageData(prisma);
 
   for (const [label, operation] of accountingCleanupOrder) {
     const result = await operation();
@@ -2798,6 +2869,8 @@ async function verifyCounts() {
   }
 
   console.log(`Verified ${journalEntries.length} balanced seed journal entries.`);
+
+  await verifyComprehensiveCoverageCounts(prisma);
 }
 
 async function main() {
@@ -2813,6 +2886,7 @@ async function main() {
   for (const context of orgContexts) {
     await seedOrgDataset(context);
   }
+  await seedComprehensiveCoverageData(prisma);
   await verifyCounts();
   verifySeedImageFiles();
 

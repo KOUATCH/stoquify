@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
 import { endOfMonth, format, startOfMonth, subDays } from "date-fns"
-import { CalendarIcon, DollarSign, FileText, Package, Users } from "lucide-react"
+import { AlertTriangle, CalendarIcon, DollarSign, FileText, Package, RefreshCw, SearchX, Users } from "lucide-react"
 import { useCallback, useEffect, useState } from "react"
 
 import { CashFlowReportComponent } from "@/components/reports/cash-flow-report"
@@ -61,6 +61,85 @@ function getInitialDateRange(period?: string) {
   return { from: subDays(now, 7), to: now }
 }
 
+const REPORT_LOAD_ERROR_MESSAGE = "Reports could not be loaded safely. Try again or adjust the filters."
+
+const emptyReportCopy: Record<ReportType, { title: string; message: string }> = {
+  financial: {
+    title: "No financial report data",
+    message: "No completed sales or payments matched this report period. Try a wider date range or another location.",
+  },
+  cashier: {
+    title: "No cashier performance data",
+    message: "No cashier sessions with reportable sales matched this period. Try a wider date range or another location.",
+  },
+  items: {
+    title: "No item performance data",
+    message: "No sold inventory items matched this report period. Try a wider date range or another location.",
+  },
+  cashflow: {
+    title: "No cash flow report data",
+    message: "No cash drawer or cash payment activity matched this report period. Try a wider date range or another location.",
+  },
+}
+
+function hasSelectedReportData(
+  selectedReport: ReportType,
+  financialReport: FinancialSummaryReport | null,
+  cashierReports: CashierPerformanceReport[],
+  itemReports: ItemPerformanceReport[],
+  cashFlowReport: CashFlowReport | null,
+) {
+  switch (selectedReport) {
+    case "financial":
+      return Boolean(financialReport && financialReport.provenance.rowCount > 0)
+    case "cashier":
+      return cashierReports.length > 0
+    case "items":
+      return itemReports.length > 0
+    case "cashflow":
+      return Boolean(
+        cashFlowReport &&
+          (cashFlowReport.provenance.rowCount > 0 ||
+            cashFlowReport.dailyBreakdown.length > 0 ||
+            cashFlowReport.drawerReconciliation.length > 0),
+      )
+  }
+
+  return false
+}
+
+function ReportWorkspaceState({
+  kind,
+  title,
+  message,
+  actionLabel,
+  onAction,
+}: {
+  kind: "empty" | "error"
+  title: string
+  message: string
+  actionLabel: string
+  onAction: () => void
+}) {
+  const Icon = kind === "error" ? AlertTriangle : SearchX
+
+  return (
+    <Card className={analyticsPanelClass}>
+      <CardContent className="flex min-h-[18rem] flex-col items-center justify-center px-6 py-12 text-center">
+        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-[var(--dash-border)] bg-[var(--dash-surface-elevated)] text-[var(--dash-muted)]">
+          <Icon className="h-5 w-5" />
+        </div>
+        <h2 className="text-xl font-semibold text-[var(--dash-text)]">{title}</h2>
+        <p className={`mt-2 max-w-2xl text-sm ${analyticsMutedTextClass}`}>{message}</p>
+        <Button type="button" className={cn("mt-6", analyticsFilterClass)} variant="outline" onClick={onAction}>
+          <RefreshCw className="me-2 h-4 w-4" />
+          {actionLabel}
+        </Button>
+      </CardContent>
+    </Card>
+  )
+}
+
 export default function ReportsClient({
   organizationId,
   locationId,
@@ -71,6 +150,7 @@ export default function ReportsClient({
   const [selectedReport, setSelectedReport] = useState<ReportType>(() => normalizeReportType(initialReport))
   const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>(() => getInitialDateRange(initialPeriod))
   const [isLoading, setIsLoading] = useState(false)
+  const [loadError, setLoadError] = useState<string | null>(null)
 
   const [financialReport, setFinancialReport] = useState<FinancialSummaryReport | null>(null)
   const [cashierReports, setCashierReports] = useState<CashierPerformanceReport[]>([])
@@ -79,6 +159,12 @@ export default function ReportsClient({
 
   const loadReports = useCallback(async () => {
     setIsLoading(true)
+    setLoadError(null)
+    setFinancialReport(null)
+    setCashierReports([])
+    setItemReports([])
+    setCashFlowReport(null)
+
     try {
       switch (selectedReport) {
         case "financial": {
@@ -104,6 +190,7 @@ export default function ReportsClient({
       }
     } catch (error) {
       console.error("Error loading reports:", error)
+      setLoadError(REPORT_LOAD_ERROR_MESSAGE)
     } finally {
       setIsLoading(false)
     }
@@ -154,6 +241,14 @@ export default function ReportsClient({
       icon: DollarSign,
     },
   ]
+  const selectedReportHasData = hasSelectedReportData(
+    selectedReport,
+    financialReport,
+    cashierReports,
+    itemReports,
+    cashFlowReport,
+  )
+  const selectedEmptyCopy = emptyReportCopy[selectedReport]
 
   return (
     <div className={analyticsPageClass}>
@@ -264,22 +359,34 @@ export default function ReportsClient({
             <p className={analyticsMutedTextClass}>Loading report...</p>
           </CardContent>
         </Card>
-      ) : (
+      ) : loadError ? (
+        <ReportWorkspaceState
+          kind="error"
+          title="Reports could not load"
+          message={loadError}
+          actionLabel="Retry"
+          onAction={loadReports}
+        />
+      ) : selectedReportHasData ? (
         <>
-          {selectedReport === "financial" && financialReport && (
+          {selectedReport === "financial" && financialReport ? (
             <FinancialSummaryReportComponent report={financialReport} />
-          )}
+          ) : null}
 
-          {selectedReport === "cashier" && cashierReports.length > 0 && (
-            <CashierPerformanceReportComponent reports={cashierReports} />
-          )}
+          {selectedReport === "cashier" ? <CashierPerformanceReportComponent reports={cashierReports} /> : null}
 
-          {selectedReport === "items" && itemReports.length > 0 && (
-            <ItemPerformanceReportComponent reports={itemReports} focusItemId={focusItemId} />
-          )}
+          {selectedReport === "items" ? <ItemPerformanceReportComponent reports={itemReports} focusItemId={focusItemId} /> : null}
 
-          {selectedReport === "cashflow" && cashFlowReport && <CashFlowReportComponent report={cashFlowReport} />}
+          {selectedReport === "cashflow" && cashFlowReport ? <CashFlowReportComponent report={cashFlowReport} /> : null}
         </>
+      ) : (
+        <ReportWorkspaceState
+          kind="empty"
+          title={selectedEmptyCopy.title}
+          message={selectedEmptyCopy.message}
+          actionLabel="Try 30 days"
+          onAction={() => setQuickDateRange(30)}
+        />
       )}
       </div>
     </div>

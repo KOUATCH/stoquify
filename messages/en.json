@@ -222,6 +222,27 @@
     "title": "Finance command center",
     "subtitle": "Payments, receivables, payables, margin, tax, cash flow, and drawer assurance in one controlled finance surface.",
     "updated": "Updated {time}",
+    "command": {
+      "eyebrow": "Finance command brief",
+      "organization": "Organization",
+      "period": "Period",
+      "generated": "Generated",
+      "proofLabel": "Read model verified",
+      "proofSource": "Finance read model",
+      "statusTitle": "Operating status",
+      "statusDetail": "Cash, clearing, tax, and drawer signals for the selected scope.",
+      "actionTitle": "What needs finance action",
+      "actionDetail": "Risk-ranked finance items from the live dashboard read model.",
+      "actionEmptyTitle": "No finance action is due",
+      "actionEmptyMessage": "The selected scope has no overdue, pending, or cash-gap signal right now.",
+      "evidenceTitle": "Latest payment evidence",
+      "evidenceDetail": "Recent payment events backing the selected finance view.",
+      "riskCritical": "Critical",
+      "riskWarning": "Warning",
+      "riskWatch": "Watch",
+      "riskReady": "Ready",
+      "owner": "Finance owner"
+    },
     "common": {
       "notAvailable": "Not available"
     },
@@ -525,6 +546,20 @@
         "exportCompleteMessage": "The signed reconciliation certificate download has started."
       }
     },
+    "trustBanner": {
+      "title": "Payment trust banner",
+      "description": "Close-payment truth signals from durable reconciliation evidence and close blockers.",
+      "providerEvidence": "Provider evidence",
+      "statementEvidence": "Statement evidence",
+      "signedRuns": "Signed runs",
+      "openSuspense": "Open suspense",
+      "criticalExceptions": "Critical exceptions",
+      "closeBlockers": "Close blockers",
+      "freshness": "Freshness",
+      "available": "Available",
+      "missing": "Missing",
+      "suspenseAmount": "Exposure {amount}"
+    },
     "suspenseWorkflow": {
       "title": "Suspense approval lane",
       "description": "Assign, propose reclassification, and approve suspense posting requests with maker-checker evidence.",
@@ -596,6 +631,12 @@
     },
     "actions": {
       "refresh": "Refresh"
+    },
+    "proof": {
+      "open": "Open proof",
+      "loading": "Loading proof",
+      "unavailable": "No payment transaction proof is linked to this row.",
+      "error": "Payment transaction proof could not be loaded safely."
     },
     "metrics": {
       "activeRails": "Active rails",
@@ -702,7 +743,8 @@
       "counterparty": "Counterparty",
       "amount": "Amount",
       "suspenseType": "Suspense type",
-      "time": "Time"
+      "time": "Time",
+      "proof": "Proof"
     }
   },
   "complianceCenter": {
@@ -1108,6 +1150,7 @@
       "navAria": "Primary",
       "product": "Product",
       "workflow": "Workflow",
+      "modules": "Modules",
       "trust": "Trust",
       "pricing": "Pricing",
       "login": "Log in",
@@ -1118,12 +1161,12 @@
       "languageAria": "View in French"
     },
     "hero": {
-      "badge": "ledger-first OHADA SMB platform",
-      "titleStart": "Run stock, sales, cash, compliance, and close from",
-      "titleEmphasis": "one evidence spine",
-      "description": "AqStoqFlow connects POS, inventory, purchasing, finance, accounting, compliance, payroll, reconciliation, and branch controls so every operational move can carry tenant scope, permission context, source evidence, and ledger impact.",
+      "badge": "OHADA operating system for SMBs",
+      "titleStart": "Control sales, stock, cash, compliance, and close from",
+      "titleEmphasis": "one live workspace",
+      "description": "AqStoqFlow gives OHADA SMB teams one product state for POS, inventory, purchasing, finance, accounting close, compliance evidence, payroll, and branch controls without losing tenant scope or source proof.",
       "primaryCta": "Create workspace",
-      "secondaryCta": "Review rollout",
+      "secondaryCta": "See product state",
       "metrics": {
         "branches": { "value": "Tenant", "label": "Scoped by organization" },
         "accuracy": { "value": "Ledger", "label": "Source-linked postings" },
@@ -1138,9 +1181,9 @@
       }
     },
     "dashboard": {
-      "period": "Control day",
-      "title": "Operations assurance snapshot",
-      "synced": "tenant scoped",
+      "period": "Today",
+      "title": "Today's operating truth",
+      "synced": "evidence live",
       "rows": {
         "revenue": { "label": "Ledger state", "value": "Draft close", "meta": "source-linked" },
         "pos": { "label": "Exception queues", "value": "Open", "meta": "stock/AP/payroll" },

@@ -25,6 +25,8 @@ import {
   Workflow,
 } from "lucide-react"
 
+import { getProofTrailAction } from "@/actions/evidence/proof-trail.actions"
+import { BIProofDrawerHost } from "@/components/bi"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -33,6 +35,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Textarea } from "@/components/ui/textarea"
+import { DashboardErrorState } from "@/components/dashboard/DashboardErrorState"
 import { useNotifications } from "@/components/notifications/NotificationProvider"
 import { cn } from "@/lib/utils"
 import { usePaymentReconciliationWorkbench } from "@/hooks/payments/usePaymentReconciliationWorkbench"
@@ -50,6 +53,8 @@ import type {
   PaymentReconciliationRunSummary,
   PaymentSuspenseReadyFailure,
 } from "@/services/payments/payment-reconciliation-workbench.service"
+import type { BIProofDrawerSubject } from "@/services/bi/bi-contracts"
+import { SUBJECT_PERMISSION_MAP, type ProofTrailResult } from "@/services/evidence/evidence-contracts"
 import type { PaymentReconciliationWorkbenchPeriod } from "@/services/payments/payment-reconciliation-workbench.schemas"
 
 const allLocationsValue = "all"
@@ -63,6 +68,8 @@ const periods: PaymentReconciliationWorkbenchPeriod[] = [
   "ytd",
   "custom",
 ]
+type AvailableProofSubject = Extract<BIProofDrawerSubject, { available: true }>
+
 const suspenseTypeOptions = [
   "UNKNOWN_CREDIT",
   "MISSING_CALLBACK",
@@ -135,6 +142,36 @@ const rowSurfaceClass = "rounded-lg border border-[var(--dash-border-subtle)] bg
 const dangerPanelClass = "rounded-lg border border-[var(--dash-danger)] bg-[var(--dash-danger-soft)] text-[var(--dash-danger)]"
 const warningPanelClass = "rounded-lg border border-[var(--dash-warning)] bg-[var(--dash-warning-soft)] text-[var(--dash-warning)]"
 
+function paymentTransactionProofSubject(input: {
+  organizationId: string
+  paymentTransactionId: string | null
+  label: string
+  unavailableReason: string
+}): BIProofDrawerSubject {
+  const base = {
+    organizationId: input.organizationId,
+    moduleSlug: "payment_reconciliation" as const,
+    label: input.label,
+    requiredPermission: SUBJECT_PERMISSION_MAP["payment.transaction"],
+    sourceModules: ["payments", "finance"] as BIProofDrawerSubject["sourceModules"],
+  }
+
+  if (!input.paymentTransactionId) {
+    return {
+      ...base,
+      available: false,
+      unavailableReason: input.unavailableReason,
+    }
+  }
+
+  return {
+    ...base,
+    available: true,
+    subjectType: "payment.transaction",
+    subjectId: input.paymentTransactionId,
+  }
+}
+
 function LoadingState() {
   return (
     <main className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
@@ -154,6 +191,120 @@ function LoadingState() {
   )
 }
 
+function trustSignalClass(tone: "success" | "warning" | "danger" | "info") {
+  if (tone === "success") return "border-[var(--dash-success)] bg-[var(--dash-success-soft)] text-[var(--dash-success)]"
+  if (tone === "warning") return "border-[var(--dash-warning)] bg-[var(--dash-warning-soft)] text-[var(--dash-warning)]"
+  if (tone === "danger") return "border-[var(--dash-danger)] bg-[var(--dash-danger-soft)] text-[var(--dash-danger)]"
+  return "border-[var(--dash-info)] bg-[var(--dash-info-soft)] text-[var(--dash-info)]"
+}
+
+export function PaymentTrustBanner({
+  dashboard,
+  number,
+  money,
+  formatDateTime,
+}: {
+  dashboard: PaymentReconciliationDashboardData
+  number: (value: number | null | undefined) => string
+  money: (value: number | null | undefined) => string
+  formatDateTime: (value: string | null | undefined) => string
+}) {
+  const t = useTranslations("paymentReconciliationWorkbench")
+  const signals: Array<{
+    key: string
+    label: string
+    value: string
+    detail?: string
+    icon: LucideIcon
+    tone: "success" | "warning" | "danger" | "info"
+  }> = [
+    {
+      key: "providerEvidence",
+      label: t("trustBanner.providerEvidence"),
+      value: dashboard.source.providerEvidenceAvailable ? t("trustBanner.available") : t("trustBanner.missing"),
+      icon: Database,
+      tone: dashboard.source.providerEvidenceAvailable ? "success" : "warning",
+    },
+    {
+      key: "statementEvidence",
+      label: t("trustBanner.statementEvidence"),
+      value: dashboard.source.statementEvidenceAvailable ? t("trustBanner.available") : t("trustBanner.missing"),
+      icon: Landmark,
+      tone: dashboard.source.statementEvidenceAvailable ? "success" : "warning",
+    },
+    {
+      key: "signedRuns",
+      label: t("trustBanner.signedRuns"),
+      value: number(dashboard.summary.signedRunCount),
+      icon: ShieldCheck,
+      tone: dashboard.summary.signedRunCount > 0 ? "success" : "info",
+    },
+    {
+      key: "openSuspense",
+      label: t("trustBanner.openSuspense"),
+      value: number(dashboard.summary.openSuspenseCount),
+      detail: dashboard.summary.openSuspenseAmount > 0 ? t("trustBanner.suspenseAmount", { amount: money(dashboard.summary.openSuspenseAmount) }) : undefined,
+      icon: FileWarning,
+      tone: dashboard.summary.openSuspenseCount > 0 ? "warning" : "success",
+    },
+    {
+      key: "criticalExceptions",
+      label: t("trustBanner.criticalExceptions"),
+      value: number(dashboard.summary.criticalExceptionCount),
+      icon: ShieldAlert,
+      tone: dashboard.summary.criticalExceptionCount > 0 ? "danger" : "success",
+    },
+    {
+      key: "closeBlockers",
+      label: t("trustBanner.closeBlockers"),
+      value: number(dashboard.summary.closeBlockerCount),
+      icon: AlertTriangle,
+      tone: dashboard.summary.closeBlockerCount > 0 ? "danger" : "success",
+    },
+    {
+      key: "freshness",
+      label: t("trustBanner.freshness"),
+      value: formatDateTime(dashboard.source.asOf),
+      icon: RefreshCw,
+      tone: "info",
+    },
+  ]
+
+  return (
+    <section aria-label={t("trustBanner.title")} className={cn(glassPanelClass, "p-4")}>
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--dash-info-soft)] text-[var(--dash-info)]">
+              <CheckCircle2 className="h-4 w-4" />
+            </span>
+            <div className="min-w-0">
+              <h2 className="text-sm font-semibold uppercase leading-5 tracking-normal text-[var(--dash-text)]">{t("trustBanner.title")}</h2>
+              <p className={cn("text-xs leading-5", mutedTextClass)}>{t("trustBanner.description")}</p>
+            </div>
+          </div>
+        </div>
+        <Badge variant="outline" className={cn(filterChipClass, "shrink-0")}>{t(`certification.statuses.${dashboard.source.certificationStatus}`)}</Badge>
+      </div>
+
+      <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-7">
+        {signals.map((signal) => {
+          const Icon = signal.icon
+          return (
+            <div key={signal.key} className={cn("min-w-0 rounded-lg border p-3", trustSignalClass(signal.tone))}>
+              <div className="flex items-center gap-2 text-[0.7rem] font-semibold uppercase leading-4">
+                <Icon className="h-3.5 w-3.5 shrink-0" />
+                <span className="truncate">{signal.label}</span>
+              </div>
+              <div className="mt-2 break-words text-lg font-semibold leading-tight tabular-nums">{signal.value}</div>
+              {signal.detail ? <div className="mt-1 text-xs leading-4 opacity-85">{signal.detail}</div> : null}
+            </div>
+          )
+        })}
+      </div>
+    </section>
+  )
+}
 function MetricCard({
   title,
   value,
@@ -199,6 +350,11 @@ export default function PaymentReconciliationWorkbench() {
   const [period, setPeriod] = useState<PaymentReconciliationWorkbenchPeriod>("mtd")
   const [locationId, setLocationId] = useState(allLocationsValue)
   const [customRange, setCustomRange] = useState(defaultCustomRange)
+  const [proofTrail, setProofTrail] = useState<ProofTrailResult | null>(null)
+  const [proofOpen, setProofOpen] = useState(false)
+  const [proofError, setProofError] = useState<string | null>(null)
+  const [activeProofSubjectId, setActiveProofSubjectId] = useState<string | null>(null)
+  const [proofLoadingSubjectId, setProofLoadingSubjectId] = useState<string | null>(null)
 
   const queryInput = useMemo(
     () => ({
@@ -240,6 +396,42 @@ export default function PaymentReconciliationWorkbench() {
   const percent = (value: number | null | undefined) => `${percentFormatter.format(value ?? 0)}%`
   const formatDateTime = (value: string | null | undefined) =>
     value ? timeFormatter.format(new Date(value)) : t("common.notAvailable")
+
+  function handleProofOpenChange(open: boolean) {
+    setProofOpen(open)
+    if (!open) {
+      setActiveProofSubjectId(null)
+      setProofLoadingSubjectId(null)
+      setProofError(null)
+      setProofTrail(null)
+    }
+  }
+
+  async function openProofSubject(subject: AvailableProofSubject) {
+    setActiveProofSubjectId(subject.subjectId)
+    setProofOpen(true)
+    setProofTrail(null)
+    setProofError(null)
+    setProofLoadingSubjectId(subject.subjectId)
+
+    try {
+      const response = await getProofTrailAction({
+        subjectType: subject.subjectType,
+        subjectId: subject.subjectId,
+      })
+
+      if (response.success) {
+        setProofTrail(response.data)
+        return
+      }
+
+      setProofError(response.error || t("proof.error"))
+    } catch (error) {
+      setProofError(error instanceof Error ? error.message : t("proof.error"))
+    } finally {
+      setProofLoadingSubjectId(null)
+    }
+  }
 
   async function refreshWorkbench() {
     notifications.info(t("notifications.refreshTitle"), t("notifications.refreshMessage"), { category: "reconciliation" })
@@ -320,6 +512,10 @@ export default function PaymentReconciliationWorkbench() {
   }
 
   if (workbenchQuery.isLoading && !workbench) return <LoadingState />
+
+  if (errorMessage && !workbench) {
+    return <DashboardErrorState error="Payment reconciliation workbench unavailable" reset={() => { void workbenchQuery.refetch() }} />
+  }
 
   return (
     <main className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
@@ -430,15 +626,24 @@ export default function PaymentReconciliationWorkbench() {
         <Card className={dangerPanelClass}>
           <CardContent className="flex items-center gap-3 p-4">
             <AlertTriangle className="h-5 w-5" />
-            <span className="text-sm font-medium">{errorMessage}</span>
+            <span className="text-sm font-medium">One payment reconciliation source failed or timed out. Retry the read-only dashboard without exposing internal details.</span>
           </CardContent>
         </Card>
+      ) : null}
+
+      {durableDashboard ? (
+        <PaymentTrustBanner
+          dashboard={durableDashboard}
+          number={number}
+          money={money}
+          formatDateTime={formatDateTime}
+        />
       ) : null}
 
       <DurableEvidencePanel
         dashboard={durableDashboard}
         isLoading={durableDashboardQuery.isLoading}
-        error={durableDashboardQuery.error instanceof Error ? durableDashboardQuery.error.message : null}
+        error={durableDashboardQuery.error ? t("notifications.failedMessage") : null}
         isRunning={runReconciliation.isPending}
         isSigning={signReconciliation.isPending}
         isExporting={exportCertificate.isPending}
@@ -537,7 +742,20 @@ export default function PaymentReconciliationWorkbench() {
               <CardDescription className={mutedTextClass}>{t("sections.suspenseDescription")}</CardDescription>
             </CardHeader>
             <CardContent>
-              <SuspenseFailures failures={workbench.suspenseReadyFailures} money={money} formatDateTime={formatDateTime} t={t} />
+              <SuspenseFailures
+                organizationId={workbench.organization.id}
+                failures={workbench.suspenseReadyFailures}
+                money={money}
+                formatDateTime={formatDateTime}
+                t={t}
+                proofTrail={proofTrail}
+                proofOpen={proofOpen}
+                proofError={proofError}
+                activeProofSubjectId={activeProofSubjectId}
+                proofLoadingSubjectId={proofLoadingSubjectId}
+                onProofOpenChange={handleProofOpenChange}
+                onOpenProofSubject={openProofSubject}
+              />
             </CardContent>
           </Card>
         </>
@@ -1135,15 +1353,31 @@ function DuplicateAlerts({
 }
 
 function SuspenseFailures({
+  organizationId,
   failures,
   money,
   formatDateTime,
   t,
+  proofTrail,
+  proofOpen,
+  proofError,
+  activeProofSubjectId,
+  proofLoadingSubjectId,
+  onProofOpenChange,
+  onOpenProofSubject,
 }: {
+  organizationId: string
   failures: PaymentSuspenseReadyFailure[]
   money: (value: number | null | undefined) => string
   formatDateTime: (value: string | null | undefined) => string
   t: ReturnType<typeof useTranslations>
+  proofTrail: ProofTrailResult | null
+  proofOpen: boolean
+  proofError: string | null
+  activeProofSubjectId: string | null
+  proofLoadingSubjectId: string | null
+  onProofOpenChange: (open: boolean) => void
+  onOpenProofSubject: (subject: AvailableProofSubject) => void
 }) {
   if (failures.length === 0) {
     return <EmptyState icon={CheckCircle2} label={t("empty.suspense")} />
@@ -1151,7 +1385,7 @@ function SuspenseFailures({
 
   return (
     <ScrollArea className="w-full">
-      <table className="w-full min-w-[980px] text-sm">
+      <table className="w-full min-w-[1120px] text-sm">
         <thead className={cn("text-left text-xs", mutedTextClass)}>
           <tr className="border-b border-[var(--dash-border-subtle)]">
             <th className="py-2 pr-3 font-medium">{t("table.failure")}</th>
@@ -1161,10 +1395,20 @@ function SuspenseFailures({
             <th className="py-2 pr-3 text-right font-medium">{t("table.amount")}</th>
             <th className="py-2 pr-3 font-medium">{t("table.suspenseType")}</th>
             <th className="py-2 pr-3 font-medium">{t("table.time")}</th>
+            <th className="py-2 pr-3 font-medium">{t("table.proof")}</th>
           </tr>
         </thead>
         <tbody>
-          {failures.slice(0, 25).map((failure) => (
+          {failures.slice(0, 25).map((failure) => {
+            const proofSubject = paymentTransactionProofSubject({
+              organizationId,
+              paymentTransactionId: failure.paymentTransactionId,
+              label: t("proof.open"),
+              unavailableReason: t("proof.unavailable"),
+            })
+            const isActiveProof = proofSubject.available && activeProofSubjectId === proofSubject.subjectId
+
+            return (
             <tr key={failure.id} className="border-b border-[var(--dash-border-subtle)] last:border-0 hover:bg-[rgba(37,57,67,0.28)]">
               <td className="py-3 pr-3">
                 <div className="flex flex-wrap items-center gap-2">
@@ -1188,8 +1432,22 @@ function SuspenseFailures({
                 </Badge>
               </td>
               <td className={cn("py-3 pr-3 text-xs", mutedTextClass)}>{formatDateTime(failure.occurredAt)}</td>
+              <td className="py-3 pr-3">
+                <BIProofDrawerHost
+                  subject={proofSubject}
+                  proofTrail={isActiveProof ? proofTrail : null}
+                  open={isActiveProof && proofOpen}
+                  onOpenChange={onProofOpenChange}
+                  onOpenSubject={onOpenProofSubject}
+                  loadingLabel={t("proof.loading")}
+                  isLoading={proofSubject.available && proofLoadingSubjectId === proofSubject.subjectId}
+                  error={isActiveProof ? proofError : null}
+                  className="h-9"
+                />
+              </td>
             </tr>
-          ))}
+            )
+          })}
         </tbody>
       </table>
       <ScrollBar orientation="horizontal" />

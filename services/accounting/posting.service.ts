@@ -8,6 +8,7 @@ import {
 
 import { db } from "@/prisma/db"
 import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
+import { recordCloseCertificationInvalidationsForSourceInTx } from "./close-assurance-pack.service"
 import {
   assertSensitiveActionAllowed,
   auditSensitiveActionDecision,
@@ -331,6 +332,18 @@ export async function postJournalEntry(
       metadata: { entryNumber: posted.entryNumber },
     })
 
+    await recordCloseCertificationInvalidationsForSourceInTx(tx, organizationId, {
+      sourceCode: "LEDGER_JOURNAL_POSTED",
+      sourceId: posted.id,
+      periodId: entry.periodId,
+      periodStart: posted.entryDate,
+      periodEnd: posted.entryDate,
+      staleReason: "Ledger journal posting changed certified close evidence.",
+    }, {
+      actorId,
+      now,
+    })
+
     return { value: posted }
   })
 
@@ -488,6 +501,19 @@ export async function reverseJournalEntry(
       journalEntryId: reversal.id,
       message: `Journal entry ${original.entryNumber} reversed by ${reversal.entryNumber}`,
       metadata: { originalEntryId: original.id, reversalEntryId: reversal.id, reason: reason || null },
+    })
+
+    await recordCloseCertificationInvalidationsForSourceInTx(tx, organizationId, {
+      sourceCode: "LEDGER_JOURNAL_REVERSED",
+      sourceId: original.id,
+      periodId: original.periodId,
+      periodStart: original.period.startDate,
+      periodEnd: original.period.endDate,
+      staleReason: "Ledger journal reversal changed certified close evidence.",
+      newEvidenceHash: reversal.id,
+    }, {
+      actorId,
+      now,
     })
 
     return { value: reversal }

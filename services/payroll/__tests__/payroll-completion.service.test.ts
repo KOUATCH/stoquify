@@ -29,6 +29,10 @@ jest.mock("@/services/accounting/posting.service", () => ({
   linkAccountingSource: jest.fn(),
 }))
 
+jest.mock("@/services/accounting/close-assurance-pack.service", () => ({
+  recordCloseCertificationInvalidationsForSourceInTx: jest.fn(),
+}))
+
 jest.mock("@/services/accounting/periods.service", () => ({
   getOpenPeriodForDate: jest.fn(),
 }))
@@ -51,6 +55,7 @@ jest.mock("@/services/regulatory/country-packs/resolve", () => ({
 }))
 
 import { db } from "@/prisma/db"
+import { recordCloseCertificationInvalidationsForSourceInTx } from "@/services/accounting/close-assurance-pack.service"
 import { createLedgerPostingBatch, linkAccountingSource } from "@/services/accounting/posting.service"
 import { getOpenPeriodForDate } from "@/services/accounting/periods.service"
 import { getActivePostingRule } from "@/services/accounting/posting-rules.service"
@@ -64,6 +69,7 @@ import { BusinessRuleError } from "@/services/_shared/action-errors"
 import { preparePayrollDeclarations, releasePayrollPaymentBatch } from "../payroll-control.service"
 
 const mockDb = db as unknown as { $transaction: jest.Mock }
+const mockedRecordCloseCertificationInvalidationsForSourceInTx = recordCloseCertificationInvalidationsForSourceInTx as jest.Mock
 const mockedCreateLedgerPostingBatch = createLedgerPostingBatch as jest.Mock
 const mockedLinkAccountingSource = linkAccountingSource as jest.Mock
 const mockedGetOpenPeriodForDate = getOpenPeriodForDate as jest.Mock
@@ -86,6 +92,12 @@ function buildTx() {
     },
     payrollPaymentAllocation: {
       findMany: jest.fn(),
+    },
+    payrollEmployee: {
+      findFirst: jest.fn(),
+    },
+    payrollPaymentDestinationChangeRequest: {
+      findFirst: jest.fn(),
     },
     payrollPeriod: {
       update: jest.fn(),
@@ -223,6 +235,7 @@ describe("payroll completion service", () => {
     mockedLinkAccountingSource.mockResolvedValue({ id: "payment-source-link" })
     mockedGetOpenPeriodForDate.mockResolvedValue({ id: "acct-period-1", status: "OPEN" })
     mockedGetActivePostingRule.mockResolvedValue(payrollPaymentPostingRule())
+    mockedRecordCloseCertificationInvalidationsForSourceInTx.mockResolvedValue({ invalidatedCount: 0, results: [] })
     mockedRecordBusinessEventInTx.mockResolvedValue({ event: { id: "payment-event" }, created: true })
     mockedMarkBusinessEventAppliedInTx.mockResolvedValue({ id: "payment-event", status: "APPLIED" })
   })
@@ -233,6 +246,25 @@ describe("payroll completion service", () => {
     tx.payrollPaymentBatch.findFirst.mockResolvedValue(null)
     tx.payrollRun.findFirst.mockResolvedValue(postedPayrollRun())
     tx.payrollPaymentAllocation.findMany.mockResolvedValue([])
+    tx.payrollEmployee.findFirst.mockResolvedValue({
+      id: "employee-1",
+      displayName: "Ada Payroll",
+      paymentDestinationHash: "employee-destination-hash",
+      metadata: {
+        approvedPaymentDestinationEvidence: {
+          requestId: "dest-change-1",
+          paymentDestinationHash: "employee-destination-hash",
+          evidenceDocumentHash: "sha256:payment-destination-evidence",
+          approvalEvidenceHash: "sha256:payment-destination-approval",
+        },
+      },
+    })
+    tx.payrollPaymentDestinationChangeRequest.findFirst.mockResolvedValue({
+      id: "dest-change-1",
+      evidenceDocumentHash: "sha256:payment-destination-evidence",
+      approvalEvidenceHash: "sha256:payment-destination-approval",
+      appliedBusinessEventId: "event-destination-applied",
+    })
     tx.payrollPaymentBatch.count.mockResolvedValue(0)
     tx.payrollPaymentBatch.create.mockImplementation(async ({ data }: { data: any }) => ({
       id: "batch-1",
@@ -317,6 +349,22 @@ describe("payroll completion service", () => {
         ]),
       }),
     )
+    expect(mockedRecordCloseCertificationInvalidationsForSourceInTx).toHaveBeenCalledWith(
+      tx,
+      "org-1",
+      expect.objectContaining({
+        sourceCode: "PAYROLL_PAYMENT_RELEASED",
+        sourceId: "batch-1",
+        periodId: "acct-period-1",
+        staleReason: "Payroll payment release changed certified close evidence.",
+        newEvidenceHash: expect.stringMatching(/^sha256:/),
+        correlationId: "payroll-payment-key-1",
+      }),
+      expect.objectContaining({
+        actorId: "treasury-1",
+        now: expect.any(Date),
+      }),
+    )
   })
 
   it("blocks payroll payment release when employee payment destination evidence is missing", async () => {
@@ -379,6 +427,21 @@ describe("payroll completion service", () => {
             declarationResolutionError: "declarations not configured",
           }),
         }),
+      }),
+    )
+    expect(mockedRecordCloseCertificationInvalidationsForSourceInTx).toHaveBeenCalledWith(
+      tx,
+      "org-1",
+      expect.objectContaining({
+        sourceCode: "PAYROLL_DECLARATION_PREPARED",
+        sourceId: "run-1",
+        periodStart: postedPayrollRun().payrollPeriod.periodStart,
+        periodEnd: postedPayrollRun().payrollPeriod.periodEnd,
+        staleReason: "Payroll declaration preparation changed certified close evidence.",
+        newEvidenceHash: expect.stringMatching(/^sha256:/),
+      }),
+      expect.objectContaining({
+        actorId: "payroll-1",
       }),
     )
   })

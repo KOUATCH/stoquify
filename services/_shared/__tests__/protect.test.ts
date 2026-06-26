@@ -1,6 +1,7 @@
 import { protect } from "@/services/_shared/protect"
 import { assertCanUseOrganization, RbacError, requirePermission } from "@/lib/security/rbac"
 import { FreshAuthRequiredError, requireFreshAuth } from "@/lib/security/auth-session"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 
 jest.mock("@/lib/security/rbac", () => {
   class MockRbacError extends Error {
@@ -21,6 +22,10 @@ jest.mock("@/lib/security/rbac", () => {
   }
 })
 
+jest.mock("@/services/modules/module-entitlement.service", () => ({
+  observeModuleAccess: jest.fn(),
+}))
+
 jest.mock("@/lib/security/auth-session", () => {
   class MockFreshAuthRequiredError extends Error {
     constructor(message = "Fresh authentication required") {
@@ -38,12 +43,37 @@ jest.mock("@/lib/security/auth-session", () => {
 const mockRequirePermission = requirePermission as jest.Mock
 const mockAssertCanUseOrganization = assertCanUseOrganization as jest.Mock
 const mockRequireFreshAuth = requireFreshAuth as jest.Mock
+const mockObserveModuleAccess = observeModuleAccess as jest.Mock
+
+function moduleDecision(overrides: Record<string, unknown> = {}) {
+  return {
+    organizationId: "org-1",
+    userId: "user-1",
+    moduleSlug: "payroll",
+    surfaceType: "action",
+    surface: "payroll.runs.calculate",
+    accessIntent: "write",
+    mode: "enforce",
+    result: "allow",
+    allowed: true,
+    wouldBlock: false,
+    reason: "Tenant module entitlement is available.",
+    entitlement: { moduleSlug: "payroll", status: "active", source: "requested_modules", startsAt: null, endsAt: null, readOnly: false, trial: false },
+    missingDependencies: [],
+    rbacWildcardPresent: false,
+    rbacWildcardBypassedEntitlement: false,
+    hardEnforcementEnabled: true,
+    evaluatedAt: "2026-06-25T00:00:00.000Z",
+    ...overrides,
+  }
+}
 
 describe("protect", () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockRequireFreshAuth.mockResolvedValue({ claims: { lastAuthAt: Date.now() } })
     mockAssertCanUseOrganization.mockResolvedValue(true)
+    mockObserveModuleAccess.mockResolvedValue(moduleDecision())
   })
 
   it("passes input and RBAC context to the handler when authorized", async () => {
@@ -122,6 +152,55 @@ describe("protect", () => {
     expect(result).toEqual({ success: true, data: { ok: true }, error: null, status: 200 })
     expect(mockAssertCanUseOrganization).not.toHaveBeenCalled()
     expect(handler).toHaveBeenCalledWith({ organizationId: "caller-org" }, ctx)
+  })
+
+  it("blocks a protected action when module entitlement enforcement denies access", async () => {
+    const ctx = { userId: "user-1", orgId: "org-session", permissions: ["*", "payroll.runs.calculate"] }
+    mockRequirePermission.mockResolvedValue(ctx)
+    mockObserveModuleAccess.mockResolvedValue(moduleDecision({
+      organizationId: "org-session",
+      result: "deny",
+      allowed: false,
+      wouldBlock: true,
+      reason: "Tenant is not entitled to this module.",
+      entitlement: null,
+      rbacWildcardPresent: true,
+    }))
+    const handler = jest.fn().mockResolvedValue({ ok: true })
+
+    const action = protect<{ payrollPeriodId: string }, { ok: boolean }>(
+      {
+        permission: "payroll.runs.calculate",
+        auditResource: "PayrollRun",
+        module: {
+          moduleSlug: "payroll",
+          surface: "payroll.runs.calculate",
+          accessIntent: "write",
+          mode: "enforce",
+        },
+      },
+      handler,
+    )
+    const result = await action({ payrollPeriodId: "period-1" })
+
+    expect(result).toEqual(expect.objectContaining({
+      success: false,
+      data: null,
+      status: 403,
+      code: "FORBIDDEN",
+      retryable: false,
+    }))
+    expect(mockObserveModuleAccess).toHaveBeenCalledWith(expect.objectContaining({
+      organizationId: "org-session",
+      userId: "user-1",
+      actorPermissions: ["*", "payroll.runs.calculate"],
+      moduleSlug: "payroll",
+      surfaceType: "action",
+      surface: "payroll.runs.calculate",
+      accessIntent: "write",
+      mode: "enforce",
+    }))
+    expect(handler).not.toHaveBeenCalled()
   })
 
   it("requires fresh authentication when configured", async () => {

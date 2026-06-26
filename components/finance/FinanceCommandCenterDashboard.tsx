@@ -11,13 +11,11 @@ import {
   BarChart3,
   Building2,
   CalendarDays,
-  CheckCircle2,
   CreditCard,
   ExternalLink,
   FileText,
   Filter,
   HandCoins,
-  Landmark,
   LineChart,
   MapPin,
   Percent,
@@ -35,22 +33,38 @@ import { Input } from "@/components/ui/input"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
+import { DashboardErrorState } from "@/components/dashboard/DashboardErrorState"
+import {
+  ActionQueue,
+  CommandBriefHeader,
+  EvidenceTimeline,
+  KpiTile,
+  StatusStrip,
+  type CommandCenterAction,
+} from "@/components/dashboard/primitives"
 import { useNotifications } from "@/components/notifications/NotificationProvider"
 import { useFinanceDashboard } from "@/hooks/finance/useFinanceDashboard"
 import {
   dashboardControlClass,
   dashboardEmptyClass,
-  dashboardFilterClass,
   dashboardMutedTextClass,
   dashboardPanelClass,
   dashboardRowClass,
   dashboardSeverityClass,
-  dashboardStatStyle,
   dashboardToneBg,
   dashboardValueTone,
-  type DashboardTone,
 } from "@/components/finance/finance-dashboard-theme"
+import {
+  buildFinanceActionQueueItems,
+  buildFinanceEvidenceEvents,
+  buildFinanceStatusItems,
+  financeConfidenceTone,
+  type FinanceAlertActionLabels,
+  type FinanceRiskLabels,
+} from "@/components/finance/finance-command-center-normalization"
+import { localizePath, pickLocale } from "@/i18n/routing"
 import { cn } from "@/lib/utils"
+import type { Locale } from "@/types/bilingual"
 import type { FinanceDashboardPeriod, FinanceDashboardView } from "@/services/finance/finance-dashboard.schemas"
 import type {
   FinanceAgingSummary,
@@ -87,35 +101,6 @@ function defaultCustomRange() {
   return { start: inputDate(start), end: inputDate(now) }
 }
 
-function MetricCard({
-  title,
-  value,
-  detail,
-  icon: Icon,
-  accent,
-}: {
-  title: string
-  value: string
-  detail: string
-  icon: LucideIcon
-  accent: DashboardTone
-}) {
-  return (
-    <Card className="dashboard-stat-card group relative min-h-[132px] min-w-0 overflow-hidden" style={dashboardStatStyle(accent)}>
-      <div className="absolute inset-x-0 top-0 h-1 bg-[var(--stat-accent)] opacity-80" />
-      <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0 pb-2">
-        <CardTitle className="text-sm font-semibold">{title}</CardTitle>
-        <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--stat-soft)]">
-          <Icon className="h-4 w-4 text-[var(--stat-accent)]" />
-        </span>
-      </CardHeader>
-      <CardContent className="relative">
-        <div className="text-2xl font-semibold tabular-nums">{value}</div>
-        <div className="mt-1 text-xs text-[var(--dash-text-soft)]">{detail}</div>
-      </CardContent>
-    </Card>
-  )
-}
 
 function LoadingState() {
   return (
@@ -138,7 +123,7 @@ function LoadingState() {
 
 export default function FinanceCommandCenterDashboard({ initialView = "overview" }: { initialView?: FinanceDashboardView }) {
   const t = useTranslations("financeDashboard")
-  const locale = useLocale()
+  const locale: Locale = pickLocale(useLocale())
   const notifications = useNotifications()
   const [view, setView] = useState<FinanceDashboardView>(initialView)
   const [period, setPeriod] = useState<FinanceDashboardPeriod>("mtd")
@@ -197,133 +182,181 @@ export default function FinanceCommandCenterDashboard({ initialView = "overview"
     return t("alerts.ready")
   }
 
+  const localizedHref = (href: string) => localizePath(href, locale)
+  const commandActions = [
+    { label: t("actions.reconciliation"), href: localizedHref("/dashboard/finance/reconciliation"), icon: ShieldCheck, variant: "primary" },
+    { label: t("actions.orderPayments"), href: localizedHref("/dashboard/orders/payments"), icon: CreditCard, variant: "secondary" },
+    { label: t("actions.cashFlow"), href: localizedHref("/dashboard/finance/cash-flow"), icon: LineChart, variant: "secondary" },
+  ] satisfies CommandCenterAction[]
+  const actionLabels = {
+    OVERDUE_AR: t("views.receivables"),
+    OVERDUE_AP: t("views.payables"),
+    NEGATIVE_MARGIN: t("actions.cashFlow"),
+    PENDING_PAYMENTS: t("views.payments"),
+    CASH_GAP: t("actions.cashFlow"),
+    READY: t("sections.assurance"),
+  } satisfies FinanceAlertActionLabels
+  const riskLabels = {
+    critical: t("command.riskCritical"),
+    warning: t("command.riskWarning"),
+    watch: t("command.riskWatch"),
+    ready: t("command.riskReady"),
+  } satisfies FinanceRiskLabels
+  const actionQueueItems = dashboard
+    ? buildFinanceActionQueueItems(dashboard.alerts, {
+        alertText,
+        localizeHref: localizedHref,
+        actionLabels,
+        riskLabels,
+        ownerLabel: t("command.owner"),
+        proofSource: t("command.proofSource"),
+      })
+    : []
+  const statusItems = dashboard
+    ? buildFinanceStatusItems(dashboard.summary, {
+        money,
+        labels: {
+          paymentsCollected: t("summary.paymentsCollected"),
+          pendingPayments: t("summary.pendingPayments"),
+          netTax: t("summary.tax"),
+          drawerVariance: t("summary.drawerVariance"),
+          proofSource: t("command.proofSource"),
+        },
+      })
+    : []
+  const evidenceEvents = dashboard
+    ? buildFinanceEvidenceEvents(dashboard.recentPayments, {
+        money,
+        formatDateTime,
+        localizeHref: localizedHref,
+        labels: {
+          proofSource: t("command.proofSource"),
+          methodLabel: (method) => t(`methods.${method}`),
+          statusLabel: (status) => t(`statuses.${status}`),
+        },
+      })
+    : []
+
   if (dashboardQuery.isLoading && !dashboard) return <LoadingState />
+
+  if (errorMessage && !dashboard) {
+    return <DashboardErrorState error="Finance dashboard data unavailable" reset={() => { void dashboardQuery.refetch() }} />
+  }
 
   return (
     <main className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
       <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)]">
-      <section className={cn(dashboardPanelClass, "p-4")}>
-        <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="flex h-11 w-11 items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-brand-soft)] shadow-[0_16px_34px_rgba(47,125,246,0.18)]">
-                <Landmark className="h-5 w-5 text-[var(--dash-brand-strong)]" />
-              </span>
-              <div>
-                <h1 className="text-2xl font-semibold tracking-normal">{t("title")}</h1>
-                <p className="text-sm text-[var(--dash-text-soft)]">{t("subtitle")}</p>
-              </div>
+      <CommandBriefHeader
+        title={t("title")}
+        summary={t("subtitle")}
+        eyebrow={t("command.eyebrow")}
+        state={dashboard ? { label: `${t("metrics.confidence")} ${percent(dashboard.summary.financeConfidence)}`, tone: financeConfidenceTone(dashboard.summary.financeConfidence), icon: ShieldCheck } : { label: t("common.notAvailable"), tone: "muted" }}
+        metadata={dashboard ? [
+          { label: t("command.organization"), value: dashboard.organization.name, icon: Building2 },
+          { label: t("command.period"), value: `${dateFormatter.format(new Date(dashboard.filters.startDate))} - ${dateFormatter.format(new Date(dashboard.filters.endDate))}`, icon: CalendarDays },
+          { label: t("command.generated"), value: formatDateTime(dashboard.generatedAt), icon: RefreshCw },
+        ] : []}
+        actions={commandActions}
+        proof={dashboard ? {
+          state: dashboard.alerts.some((alert) => alert.code !== "READY" && alert.severity === "critical") ? "pending" : "verified",
+          label: t("command.proofLabel"),
+          source: t("command.proofSource"),
+          sourceCount: dashboard.recentPayments.length + dashboard.paymentMethods.length,
+        } : undefined}
+      >
+        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-[190px_190px_190px_auto]">
+          <div>
+            <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-[var(--dash-text-soft)]">
+              <BarChart3 className="h-3.5 w-3.5 text-[var(--dash-brand-strong)]" />
+              {t("filters.view")}
             </div>
-            {dashboard ? (
-              <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-[var(--dash-text-soft)]">
-                <Badge variant="outline" className={cn(dashboardFilterClass, "gap-1")}>
-                  <Building2 className="h-3 w-3 text-[var(--dash-info)]" />
-                  {dashboard.organization.name}
-                </Badge>
-                <Badge variant="outline" className={cn(dashboardFilterClass, "gap-1")}>
-                  <CalendarDays className="h-3 w-3 text-[var(--dash-gold)]" />
-                  {dateFormatter.format(new Date(dashboard.filters.startDate))} - {dateFormatter.format(new Date(dashboard.filters.endDate))}
-                </Badge>
-                <span>{t("updated", { time: formatDateTime(dashboard.generatedAt) })}</span>
-              </div>
-            ) : null}
+            <Select value={view} onValueChange={(value) => setView(value as FinanceDashboardView)}>
+              <SelectTrigger className={dashboardControlClass}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {views.map((option) => (
+                  <SelectItem key={option} value={option}>
+                    {t(`views.${option}`)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
-          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-[190px_190px_190px_auto] xl:min-w-[780px]">
-            <div>
-              <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-[var(--dash-text-soft)]">
-                <BarChart3 className="h-3.5 w-3.5 text-[var(--dash-brand-strong)]" />
-                {t("filters.view")}
-              </div>
-              <Select value={view} onValueChange={(value) => setView(value as FinanceDashboardView)}>
-                <SelectTrigger className={dashboardControlClass}>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {views.map((option) => (
-                    <SelectItem key={option} value={option}>
-                      {t(`views.${option}`)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          <div>
+            <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-[var(--dash-text-soft)]">
+              <MapPin className="h-3.5 w-3.5 text-[var(--dash-info)]" />
+              {t("filters.location")}
             </div>
+            <Select value={locationId} onValueChange={setLocationId}>
+              <SelectTrigger className={dashboardControlClass}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={allLocationsValue}>{t("filters.allLocations")}</SelectItem>
+                {dashboard?.locations.map((location) => (
+                  <SelectItem key={location.id} value={location.id}>
+                    {location.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-            <div>
-              <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-[var(--dash-text-soft)]">
-                <MapPin className="h-3.5 w-3.5 text-[var(--dash-info)]" />
-                {t("filters.location")}
-              </div>
-              <Select value={locationId} onValueChange={setLocationId}>
-                <SelectTrigger className={dashboardControlClass}>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={allLocationsValue}>{t("filters.allLocations")}</SelectItem>
-                  {dashboard?.locations.map((location) => (
-                    <SelectItem key={location.id} value={location.id}>
-                      {location.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          <div>
+            <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-[var(--dash-text-soft)]">
+              <Filter className="h-3.5 w-3.5 text-[var(--dash-gold)]" />
+              {t("filters.period")}
             </div>
+            <Select value={period} onValueChange={(value) => setPeriod(value as FinanceDashboardPeriod)}>
+              <SelectTrigger className={dashboardControlClass}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {periods.map((option) => (
+                  <SelectItem key={option} value={option}>
+                    {t(`periods.${option}`)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-            <div>
-              <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-[var(--dash-text-soft)]">
-                <Filter className="h-3.5 w-3.5 text-[var(--dash-gold)]" />
-                {t("filters.period")}
-              </div>
-              <Select value={period} onValueChange={(value) => setPeriod(value as FinanceDashboardPeriod)}>
-                <SelectTrigger className={dashboardControlClass}>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {periods.map((option) => (
-                    <SelectItem key={option} value={option}>
-                      {t(`periods.${option}`)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex items-end gap-2">
-              {period === "custom" ? (
-                <>
-                  <Input
-                    type="date"
-                    value={customRange.start}
-                    onChange={(event) => setCustomRange((current) => ({ ...current, start: event.target.value }))}
-                    className={cn(dashboardControlClass, "w-36")}
-                  />
-                  <Input
-                    type="date"
-                    value={customRange.end}
-                    onChange={(event) => setCustomRange((current) => ({ ...current, end: event.target.value }))}
-                    className={cn(dashboardControlClass, "w-36")}
-                  />
-                </>
-              ) : null}
-              <Button
-                type="button"
-                onClick={refreshDashboard}
-                disabled={dashboardQuery.isFetching}
-                className="dashboard-button-primary h-10 rounded-lg"
-              >
-                <RefreshCw className={cn("h-4 w-4", dashboardQuery.isFetching && "animate-spin")} />
-                {t("actions.refresh")}
-              </Button>
-            </div>
+          <div className="flex items-end gap-2">
+            {period === "custom" ? (
+              <>
+                <Input
+                  type="date"
+                  value={customRange.start}
+                  onChange={(event) => setCustomRange((current) => ({ ...current, start: event.target.value }))}
+                  className={cn(dashboardControlClass, "w-36")}
+                />
+                <Input
+                  type="date"
+                  value={customRange.end}
+                  onChange={(event) => setCustomRange((current) => ({ ...current, end: event.target.value }))}
+                  className={cn(dashboardControlClass, "w-36")}
+                />
+              </>
+            ) : null}
+            <Button
+              type="button"
+              onClick={refreshDashboard}
+              disabled={dashboardQuery.isFetching}
+              className="dashboard-button-primary h-10 rounded-lg"
+            >
+              <RefreshCw className={cn("h-4 w-4", dashboardQuery.isFetching && "animate-spin")} />
+              {t("actions.refresh")}
+            </Button>
           </div>
         </div>
-      </section>
-
+      </CommandBriefHeader>
       {errorMessage ? (
         <Card className={cn(dashboardPanelClass, "border-[var(--dash-danger)] bg-[var(--dash-danger-soft)]")}>
           <CardContent className="flex items-center gap-3 p-4">
             <AlertTriangle className="h-5 w-5 text-[var(--dash-danger)]" />
-            <span className="text-sm font-medium">{errorMessage}</span>
+            <span className="text-sm font-medium">One finance source failed or timed out. Retry the read-only dashboard without exposing internal details.</span>
           </CardContent>
         </Card>
       ) : null}
@@ -331,11 +364,26 @@ export default function FinanceCommandCenterDashboard({ initialView = "overview"
       {dashboard ? (
         <>
           <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-            <MetricCard title={t("metrics.cash")} value={money(dashboard.summary.cashPosition)} detail={t("details.cash", { amount: money(dashboard.summary.netCashFlow) })} icon={Wallet} accent={dashboard.summary.netCashFlow >= 0 ? "success" : "danger"} />
-            <MetricCard title={t("metrics.revenue")} value={money(dashboard.summary.revenue)} detail={t("details.margin", { value: percent(dashboard.summary.grossMargin) })} icon={TrendingUp} accent="brand" />
-            <MetricCard title={t("metrics.receivables")} value={money(dashboard.summary.receivables)} detail={t("details.receivables", { count: dashboard.summary.openReceivableCount })} icon={HandCoins} accent="gold" />
-            <MetricCard title={t("metrics.payables")} value={money(dashboard.summary.payables)} detail={t("details.payables", { count: dashboard.summary.openPayableCount })} icon={FileText} accent={dashboard.summary.overduePayableAmount > 0 ? "danger" : "muted"} />
-            <MetricCard title={t("metrics.confidence")} value={percent(dashboard.summary.financeConfidence)} detail={t("details.workingCapital", { amount: money(dashboard.summary.workingCapital) })} icon={ShieldCheck} accent={dashboard.summary.financeConfidence >= 85 ? "success" : dashboard.summary.financeConfidence >= 65 ? "gold" : "danger"} />
+            <KpiTile label={t("metrics.cash")} value={money(dashboard.summary.cashPosition)} detail={t("details.cash", { amount: money(dashboard.summary.netCashFlow) })} icon={Wallet} tone={dashboard.summary.netCashFlow >= 0 ? "success" : "danger"} proof={{ state: "verified", source: t("command.proofSource") }} />
+            <KpiTile label={t("metrics.revenue")} value={money(dashboard.summary.revenue)} detail={t("details.margin", { value: percent(dashboard.summary.grossMargin) })} icon={TrendingUp} tone="brand" proof={{ state: "posted", source: t("command.proofSource") }} />
+            <KpiTile label={t("metrics.receivables")} value={money(dashboard.summary.receivables)} detail={t("details.receivables", { count: dashboard.summary.openReceivableCount })} icon={HandCoins} tone="gold" proof={{ state: dashboard.summary.overdueReceivableAmount > 0 ? "pending" : "verified", source: t("command.proofSource") }} />
+            <KpiTile label={t("metrics.payables")} value={money(dashboard.summary.payables)} detail={t("details.payables", { count: dashboard.summary.openPayableCount })} icon={FileText} tone={dashboard.summary.overduePayableAmount > 0 ? "danger" : "muted"} proof={{ state: dashboard.summary.overduePayableAmount > 0 ? "pending" : "verified", source: t("command.proofSource") }} />
+            <KpiTile label={t("metrics.confidence")} value={percent(dashboard.summary.financeConfidence)} detail={t("details.workingCapital", { amount: money(dashboard.summary.workingCapital) })} icon={ShieldCheck} tone={financeConfidenceTone(dashboard.summary.financeConfidence)} proof={{ state: dashboard.summary.financeConfidence >= 85 ? "certified" : "pending", source: t("command.proofSource") }} />
+          </section>
+
+          <section className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_420px]">
+            <StatusStrip
+              title={t("command.statusTitle")}
+              detail={t("command.statusDetail")}
+              items={statusItems}
+            />
+            <ActionQueue
+              title={t("command.actionTitle")}
+              detail={t("command.actionDetail")}
+              emptyTitle={t("command.actionEmptyTitle")}
+              emptyMessage={t("command.actionEmptyMessage")}
+              items={actionQueueItems}
+            />
           </section>
 
           <section className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_420px]">
@@ -352,48 +400,13 @@ export default function FinanceCommandCenterDashboard({ initialView = "overview"
               </CardContent>
             </Card>
 
-            <Card className={dashboardPanelClass}>
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <ShieldCheck className="h-4 w-4 text-[var(--dash-success)]" />
-                  {t("sections.assurance")}
-                </CardTitle>
-                <CardDescription className={dashboardMutedTextClass}>{t("sections.assuranceDescription")}</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium">{t("metrics.confidence")}</span>
-                    <span className="font-semibold tabular-nums">{percent(dashboard.summary.financeConfidence)}</span>
-                  </div>
-                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-[rgba(37,57,67,0.64)]">
-                    <div
-                      className={cn("h-full rounded-full", dashboard.summary.financeConfidence >= 85 ? dashboardToneBg("success") : dashboard.summary.financeConfidence >= 65 ? dashboardToneBg("gold") : dashboardToneBg("danger"))}
-                      style={{ width: `${dashboard.summary.financeConfidence}%` }}
-                    />
-                  </div>
-                </div>
-
-                <div className="grid gap-2">
-                  {dashboard.alerts.map((alert) => (
-                    <div key={alert.id} className={cn("flex items-start gap-2 rounded-lg border p-3 text-sm", dashboardSeverityClass(alert.severity))}>
-                      {alert.severity === "success" ? <CheckCircle2 className="mt-0.5 h-4 w-4" /> : <AlertTriangle className="mt-0.5 h-4 w-4" />}
-                      <span>{alertText(alert)}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className={cn(dashboardRowClass, "grid gap-2 p-3 text-sm")}>
-                  <SummaryLine label={t("summary.paymentsCollected")} value={money(dashboard.summary.paymentsCollected)} />
-                  <SummaryLine label={t("summary.pendingPayments")} value={money(dashboard.summary.paymentsPending)} />
-                  <SummaryLine label={t("summary.refunds")} value={money(dashboard.summary.refunds)} />
-                  <SummaryLine label={t("summary.tax")} value={money(dashboard.summary.taxCollected - dashboard.summary.taxOnPurchases)} />
-                  <SummaryLine label={t("summary.drawerVariance")} value={money(dashboard.summary.drawerVariance)} tone={dashboardValueTone(dashboard.summary.drawerVariance)} />
-                </div>
-              </CardContent>
-            </Card>
+            <EvidenceTimeline
+              title={t("command.evidenceTitle")}
+              detail={t("command.evidenceDetail")}
+              emptyMessage={t("empty.payments")}
+              events={evidenceEvents}
+            />
           </section>
-
           <section className="grid gap-3 xl:grid-cols-2">
             <AgingCard title={t("sections.receivables")} description={t("sections.receivablesDescription")} aging={dashboard.aging.receivables} counterparties={dashboard.topReceivables} money={money} t={t} />
             <AgingCard title={t("sections.payables")} description={t("sections.payablesDescription")} aging={dashboard.aging.payables} counterparties={dashboard.topPayables} money={money} t={t} />
@@ -424,11 +437,11 @@ export default function FinanceCommandCenterDashboard({ initialView = "overview"
               <CardContent className="space-y-3">
                 <MethodBreakdown methods={dashboard.paymentMethods} money={money} t={t} />
                 <div className="grid gap-2 pt-2">
-                  <ActionLink href="/dashboard/orders/payments" icon={CreditCard} label={t("actions.orderPayments")} />
-                  <ActionLink href="/dashboard/finance/reconciliation" icon={ShieldCheck} label={t("actions.reconciliation")} />
-                  <ActionLink href="/dashboard/finance/cash-drawer" icon={Wallet} label={t("actions.cashDrawers")} />
-                  <ActionLink href="/dashboard/finance/cash-flow" icon={LineChart} label={t("actions.cashFlow")} />
-                  <ActionLink href="/dashboard/settings/tax-rates" icon={Percent} label={t("actions.taxRates")} />
+                  <ActionLink href={localizedHref("/dashboard/orders/payments")} icon={CreditCard} label={t("actions.orderPayments")} />
+                  <ActionLink href={localizedHref("/dashboard/finance/reconciliation")} icon={ShieldCheck} label={t("actions.reconciliation")} />
+                  <ActionLink href={localizedHref("/dashboard/finance/cash-drawer")} icon={Wallet} label={t("actions.cashDrawers")} />
+                  <ActionLink href={localizedHref("/dashboard/finance/cash-flow")} icon={LineChart} label={t("actions.cashFlow")} />
+                  <ActionLink href={localizedHref("/dashboard/settings/tax-rates")} icon={Percent} label={t("actions.taxRates")} />
                 </div>
               </CardContent>
             </Card>
@@ -440,14 +453,6 @@ export default function FinanceCommandCenterDashboard({ initialView = "overview"
   )
 }
 
-function SummaryLine({ label, value, tone }: { label: string; value: string; tone?: string }) {
-  return (
-    <div className="flex justify-between gap-3">
-      <span className={dashboardMutedTextClass}>{label}</span>
-      <span className={cn("font-semibold tabular-nums", tone)}>{value}</span>
-    </div>
-  )
-}
 
 function TrendPanel({
   trend,

@@ -56,6 +56,25 @@ describe("rbac permission compatibility", () => {
     expect(hasRbacPermission(["payments.reconciliation.run"], "payments.reconciliation.suspense.post")).toBe(false)
   })
 
+  it("allows reconciliation read without granting elevated reconciliation operations", () => {
+    const elevatedPermissions = [
+      "payments.reconciliation.import",
+      "payments.reconciliation.run",
+      "payments.reconciliation.match",
+      "payments.reconciliation.override",
+      "payments.reconciliation.exception.assign",
+      "payments.reconciliation.exception.resolve",
+      "payments.reconciliation.suspense.propose",
+      "payments.reconciliation.suspense.post",
+      "payments.reconciliation.sign",
+      "payments.reconciliation.certificate.export",
+    ]
+
+    expect(hasRbacPermission(["payments.reconciliation.read"], "payments.reconciliation.read")).toBe(true)
+    for (const permission of elevatedPermissions) {
+      expect(hasRbacPermission(["payments.reconciliation.read"], permission)).toBe(false)
+    }
+  })
   it("keeps AP controls compatible with legacy purchasing and supplier payment grants", () => {
     expect(hasRbacPermission(["SUPPLIER_PAYABLES_READ"], "purchasing.ap.invoice.view")).toBe(true)
     expect(hasRbacPermission(["SUPPLIER_PAYMENTS_MANAGE"], "purchasing.ap.payment.release")).toBe(true)
@@ -88,9 +107,15 @@ describe("rbac permission compatibility", () => {
   })
 
   it("keeps payroll controls compatible with legacy payroll and finance grants", () => {
+    expect(hasRbacPermission(["PAYROLL_READ"], "payroll.command.read")).toBe(false)
+    expect(hasRbacPermission(["PAYROLL_REPORTS_READ"], "payroll.command.read")).toBe(true)
+    expect(hasRbacPermission(["PAYROLL_READ"], "payroll.payslips.self.read")).toBe(true)
+    expect(hasRbacPermission(["EMPLOYEE_SALARY_READ"], "payroll.payslips.self.read")).toBe(true)
     expect(hasRbacPermission(["PAYROLL_APPROVE"], "payroll.runs.approve")).toBe(true)
     expect(hasRbacPermission(["PAYROLL_PROCESS"], "payroll.runs.calculate")).toBe(true)
     expect(hasRbacPermission(["MANAGE_FINANCIAL_CONTROLS"], "payroll.payments.release")).toBe(true)
+    expect(hasRbacPermission(["MANAGE_FINANCIAL_CONTROLS"], "payroll.payments.reconcile")).toBe(true)
+    expect(hasRbacPermission(["PAYROLL_APPROVE"], "payroll.declarations.manage")).toBe(true)
     expect(hasRbacPermission(["EMPLOYEE_SALARY_READ"], "payroll.payslips.read")).toBe(true)
   })
 
@@ -112,5 +137,7 @@ describe("rbac permission compatibility", () => {
     expect(permissionRisk("reports.financial.export")).toBe("crit")
     expect(permissionRisk("reports.audit.view")).toBe("high")
     expect(permissionRisk("payroll.payments.release")).toBe("crit")
+    expect(permissionRisk("payroll.payments.reconcile")).toBe("crit")
+    expect(permissionRisk("payroll.declarations.manage")).toBe("crit")
   })
 })

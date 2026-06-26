@@ -83,6 +83,23 @@ const getCloseRunProofTrail = protect<unknown, ProofTrailResult>(
   },
 )
 
+const getPaymentTransactionProofTrail = protect<unknown, ProofTrailResult>(
+  {
+    permission: SUBJECT_PERMISSION_MAP["payment.transaction"],
+    auditResource: "EvidenceProofTrail",
+    auditAllowed: true,
+  },
+  async (input, ctx) => {
+    const parsed = subjectOnlyInputSchema.parse(asRecord(input))
+    return getProofTrail({
+      organizationId: ctx.orgId,
+      subjectType: "payment.transaction",
+      subjectId: parsed.subjectId,
+      actorId: ctx.userId,
+    })
+  },
+)
+
 export async function getProofTrailAction(input: unknown) {
   const parsed = proofTrailInputSchema.parse(asRecord(input))
   const subjectType = requireSubjectType(parsed.subjectType)
@@ -94,6 +111,8 @@ export async function getProofTrailAction(input: unknown) {
       return getReconciliationRunProofTrail({ subjectId: parsed.subjectId })
     case "close.run":
       return getCloseRunProofTrail({ subjectId: parsed.subjectId })
+    case "payment.transaction":
+      return getPaymentTransactionProofTrail({ subjectId: parsed.subjectId })
   }
 }
 
@@ -107,4 +126,7 @@ export async function getReconciliationRunProofTrailAction(input: unknown) {
 
 export async function getCloseRunProofTrailAction(input: unknown) {
   return getCloseRunProofTrail(input)
+}
+export async function getPaymentTransactionProofTrailAction(input: unknown) {
+  return getPaymentTransactionProofTrail(input)
 }

@@ -1,4 +1,12 @@
 import type {
+  BIActionLink,
+  BIDailyDigest,
+  BIFreshness,
+  BIKpiState,
+  BIProofDrawerSubject,
+  BITrustState,
+} from "@/services/bi/bi-contracts"
+import type {
   EvidenceGrade,
   ProofTrailSubjectType,
 } from "@/services/evidence/evidence-contracts"
@@ -91,6 +99,41 @@ export type OwnerWarRoomSummary = {
   upgradePromptCount: number
 }
 
+export type OwnerMorningBriefPriorityAction = {
+  id: string
+  title: string
+  nextStep: string
+  severity: BusinessSignalSeverity
+  state: BIKpiState
+  actionLink: BIActionLink
+  evidenceGrade: EvidenceGrade
+  trustState: BITrustState
+  freshness: BIFreshness
+  dueLabel: string | null
+  ownerLabel: string | null
+  blockers: SnapshotBlocker[]
+  redactions: SnapshotRedaction[]
+}
+
+export type OwnerMorningBriefAcknowledgement = {
+  supported: boolean
+  state: "not_supported" | "not_started" | "acknowledged"
+  acknowledgedAt: string | null
+  detail: string
+}
+
+export type OwnerMorningBriefData = BIDailyDigest & {
+  priorityActions: OwnerMorningBriefPriorityAction[]
+  proofSubjects: BIProofDrawerSubject[]
+  acknowledgement: OwnerMorningBriefAcknowledgement
+  headlineMetrics: {
+    cashAtRisk: number
+    blockedCloseItems: number
+    staleEvidenceItems: number
+    proofLinkedActionCount: number
+  }
+}
+
 export type OwnerWarRoomData = {
   organizationId: string
   organizationName: string | null
@@ -106,6 +149,7 @@ export type OwnerWarRoomData = {
     "mode" | "hardEnforcementEnabled" | "summary" | "generatedAt" | "unknownRequestedModules"
   >
   summary: OwnerWarRoomSummary
+  morningBrief: OwnerMorningBriefData
 }
 
 export type OwnerWarRoomSnapshotBundle = {

@@ -8,19 +8,13 @@ const modules = [
   ["finance", "/dashboard/finance", "bg-[var(--signal-info)]"],
   ["accounting", "/dashboard/accounting", "bg-[var(--editorial)]"],
   ["compliance", "/dashboard/compliance", "bg-[var(--signal-down)]"],
-  ["reconciliation", "/dashboard/finance/reconciliation", "bg-[var(--signal-info)]"],
-  ["payroll", "/dashboard/payroll", "bg-[var(--copper)]"],
-  ["customers", "/dashboard/customers", "bg-[var(--signal-up)]"],
-  ["suppliers", "/dashboard/purchases/suppliers", "bg-[var(--signal-warn)]"],
-  ["users", "/dashboard/settings/users", "bg-[var(--editorial)]"],
-  ["roles", "/dashboard/settings/roles", "bg-[var(--copper)]"],
 ]
 
 export function OperationsMap() {
   const t = useTranslations("landing.operations")
 
   return (
-    <section className="section-divider bg-[var(--ink-1)] px-6 py-16 lg:px-8">
+    <section id="modules" className="section-divider bg-[var(--ink-1)] px-6 py-16 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="eyebrow mb-4">{t("eyebrow")}</div>
         <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">

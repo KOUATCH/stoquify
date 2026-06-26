@@ -1,3 +1,5 @@
+jest.mock("server-only", () => ({}))
+
 import {
   ExceptionSeverity,
   PaymentExceptionType,
@@ -20,6 +22,9 @@ jest.mock("@/prisma/db", () => ({
     statementLine: { findMany: jest.fn(), createMany: jest.fn() },
     paymentReconciliationInboxItem: { upsert: jest.fn() },
     paymentException: { create: jest.fn() },
+    closeRun: { findMany: jest.fn(), findFirst: jest.fn(), update: jest.fn() },
+    closePackExport: { findFirst: jest.fn(), update: jest.fn() },
+    ledgerAuditEvent: { create: jest.fn() },
     businessEvent: { findUnique: jest.fn(), create: jest.fn(), update: jest.fn() },
     auditLog: { create: jest.fn() },
   },
@@ -32,6 +37,9 @@ const mockedDb = db as unknown as {
   statementLine: { findMany: jest.Mock; createMany: jest.Mock }
   paymentReconciliationInboxItem: { upsert: jest.Mock }
   paymentException: { create: jest.Mock }
+  closeRun: { findMany: jest.Mock; findFirst: jest.Mock; update: jest.Mock }
+  closePackExport: { findFirst: jest.Mock; update: jest.Mock }
+  ledgerAuditEvent: { create: jest.Mock }
   businessEvent: { findUnique: jest.Mock; create: jest.Mock; update: jest.Mock }
   auditLog: { create: jest.Mock }
 }
@@ -71,6 +79,12 @@ describe("statement import ingestion", () => {
     mockedDb.statementLine.createMany.mockResolvedValue({ count: 1 })
     mockedDb.paymentReconciliationInboxItem.upsert.mockResolvedValue({ id: "inbox-1" })
     mockedDb.paymentException.create.mockResolvedValue({ id: "exception-1" })
+    mockedDb.closeRun.findMany.mockResolvedValue([])
+    mockedDb.closeRun.findFirst.mockResolvedValue(null)
+    mockedDb.closeRun.update.mockResolvedValue({ id: "close-run-1" })
+    mockedDb.closePackExport.findFirst.mockResolvedValue({ id: "close-pack-export-1", metadata: { mode: "CERTIFIED" } })
+    mockedDb.closePackExport.update.mockResolvedValue({ id: "close-pack-export-1" })
+    mockedDb.ledgerAuditEvent.create.mockResolvedValue({ id: "ledger-audit-1" })
     mockedDb.businessEvent.findUnique.mockResolvedValue(null)
     mockedDb.businessEvent.create.mockImplementation(async (args) => ({
       id: "business-event-1",
@@ -146,6 +160,73 @@ describe("statement import ingestion", () => {
     )
   })
 
+  it("invalidates certified close evidence when a new statement import overlaps the closed period", async () => {
+    const rawContent = statementContent()
+    mockedDb.closeRun.findMany.mockResolvedValue([
+      { id: "close-run-1", packExports: [{ id: "close-pack-export-1" }] },
+    ])
+    mockedDb.closeRun.findFirst.mockResolvedValue({
+      id: "close-run-1",
+      organizationId: "org-1",
+      periodId: "period-1",
+      status: "CERTIFIED",
+      metadata: { certifiedExportId: "close-pack-export-1" },
+    })
+
+    await importProviderStatement({
+      organizationId: "org-1",
+      providerAccountId: "provider-account-1",
+      adapter,
+      rawContent,
+      fileName: "momo-2026-06-14.json",
+      importedById: "user-1",
+      correlationId: "corr-1",
+    })
+
+    expect(mockedDb.closeRun.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ organizationId: "org-1" }),
+      }),
+    )
+    expect(mockedDb.businessEvent.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          eventType: "close.certification.invalidated",
+          documentHash: sha256(rawContent),
+          metadata: expect.objectContaining({
+            sourceCode: "PAYMENT_STATEMENT_IMPORT",
+            sourceRing: "FIRST_RING",
+          }),
+        }),
+      }),
+    )
+    expect(mockedDb.closePackExport.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "close-pack-export-1" },
+        data: expect.objectContaining({
+          metadata: expect.objectContaining({
+            staleState: expect.objectContaining({
+              sourceCode: "PAYMENT_STATEMENT_IMPORT",
+              newEvidenceHash: sha256(rawContent),
+            }),
+          }),
+        }),
+      }),
+    )
+    expect(mockedDb.closeRun.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          status: "BLOCKED",
+          metadata: expect.objectContaining({
+            staleState: expect.objectContaining({
+              sourceCode: "PAYMENT_STATEMENT_IMPORT",
+              sourceModel: "StatementFile",
+            }),
+          }),
+        }),
+      }),
+    )
+  })
   it("treats a repeated statement file hash as an idempotent duplicate", async () => {
     const rawContent = statementContent()
     mockedDb.statementFile.findFirst.mockResolvedValue({ id: "statement-file-1" })

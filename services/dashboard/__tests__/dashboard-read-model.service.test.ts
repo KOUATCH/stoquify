@@ -6,6 +6,13 @@ jest.mock('@/prisma/db', () => ({
     customer: { count: jest.fn() },
     location: { count: jest.fn(), findMany: jest.fn() },
     pOSSession: { count: jest.fn() },
+    user: { count: jest.fn() },
+    role: { count: jest.fn() },
+    pOSStation: { count: jest.fn() },
+    organizationAccountingSettings: { findUnique: jest.fn() },
+    payrollEmployee: { count: jest.fn() },
+    payrollPeriod: { count: jest.fn() },
+    businessEvent: { count: jest.fn() },
     purchaseOrder: { count: jest.fn(), aggregate: jest.fn(), findMany: jest.fn() },
     item: { count: jest.fn(), findMany: jest.fn() },
     salesOrderLine: { groupBy: jest.fn() },
@@ -15,6 +22,7 @@ jest.mock('@/prisma/db', () => ({
 
 import { db } from '@/prisma/db'
 import {
+  AccountingSetupStatus,
   LocationType,
   PurchaseOrderStatus,
   SalesOrderStatus,
@@ -29,6 +37,13 @@ const mockDb = db as unknown as {
   customer: { count: jest.Mock }
   location: { count: jest.Mock; findMany: jest.Mock }
   pOSSession: { count: jest.Mock }
+  user: { count: jest.Mock }
+  role: { count: jest.Mock }
+  pOSStation: { count: jest.Mock }
+  organizationAccountingSettings: { findUnique: jest.Mock }
+  payrollEmployee: { count: jest.Mock }
+  payrollPeriod: { count: jest.Mock }
+  businessEvent: { count: jest.Mock }
   purchaseOrder: { count: jest.Mock; aggregate: jest.Mock; findMany: jest.Mock }
   item: { count: jest.Mock; findMany: jest.Mock }
   salesOrderLine: { groupBy: jest.Mock }
@@ -49,7 +64,15 @@ function decimal(value: number) {
 function seedDashboardQueries(options: { empty?: boolean } = {}) {
   const empty = options.empty ?? false
 
-  mockDb.organization.findFirst.mockResolvedValue({ id: 'org-1', name: 'Tenant One', currency: 'XAF' })
+  mockDb.organization.findFirst.mockResolvedValue({
+    id: 'org-1',
+    name: 'Tenant One',
+    slug: 'tenant-one',
+    country: empty ? null : 'Cameroon',
+    countryCode: empty ? null : 'CM',
+    taxIdentifier: empty ? null : 'M012345678901A',
+    currency: 'XAF',
+  })
   mockDb.salesOrder.aggregate
     .mockResolvedValueOnce({ _sum: { total: decimal(empty ? 0 : 1000) }, _count: empty ? 0 : 4 })
     .mockResolvedValueOnce({ _sum: { total: decimal(empty ? 0 : 500) }, _count: empty ? 0 : 2 })
@@ -62,6 +85,21 @@ function seedDashboardQueries(options: { empty?: boolean } = {}) {
     .mockResolvedValueOnce(empty ? 0 : 2)
   mockDb.location.count.mockResolvedValue(empty ? 0 : 1)
   mockDb.pOSSession.count.mockResolvedValue(empty ? 0 : 1)
+  mockDb.user.count.mockResolvedValue(empty ? 0 : 2)
+  mockDb.role.count.mockResolvedValue(empty ? 0 : 3)
+  mockDb.pOSStation.count.mockResolvedValue(empty ? 0 : 1)
+  mockDb.organizationAccountingSettings.findUnique.mockResolvedValue(
+    empty
+      ? null
+      : {
+          accountingEnabled: true,
+          setupStatus: AccountingSetupStatus.IN_PROGRESS,
+          countryPack: 'CM_OHADA',
+        },
+  )
+  mockDb.payrollEmployee.count.mockResolvedValue(0)
+  mockDb.payrollPeriod.count.mockResolvedValue(0)
+  mockDb.businessEvent.count.mockResolvedValue(empty ? 0 : 1)
   mockDb.salesOrder.count.mockResolvedValue(empty ? 0 : 2)
   mockDb.purchaseOrder.count.mockResolvedValue(empty ? 0 : 1)
   mockDb.purchaseOrder.aggregate.mockResolvedValue({ _sum: { total: decimal(empty ? 0 : 250) } })
@@ -202,7 +240,15 @@ describe('dashboard read-model service', () => {
 
     expect(mockDb.organization.findFirst).toHaveBeenCalledWith({
       where: { id: 'org-1', deletedAt: null, isActive: true },
-      select: { id: true, name: true, currency: true },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        country: true,
+        countryCode: true,
+        taxIdentifier: true,
+        currency: true,
+      },
     })
     expect(mockDb.salesOrder.aggregate).toHaveBeenNthCalledWith(
       1,
@@ -271,6 +317,11 @@ describe('dashboard read-model service', () => {
         totalCustomers: 10,
         totalItems: 2,
       },
+      setupProgress: {
+        completedRequiredSteps: 6,
+        totalRequiredSteps: 7,
+        percent: 86,
+      },
     })
     expect(result.activities[0]).toEqual(expect.objectContaining({
       id: 'inventory-txn-1',
@@ -298,6 +349,12 @@ describe('dashboard read-model service', () => {
     expect(result.locations).toEqual([])
     expect(result.activities).toEqual([])
     expect(result.generatedAt).toBe('2026-06-18T12:00:00.000Z')
+    expect(result.setupProgress).toMatchObject({
+      completedRequiredSteps: 0,
+      totalRequiredSteps: 7,
+      percent: 0,
+    })
+    expect(result.setupProgress.steps.find((step) => step.key === 'payroll_setup')?.status).toBe('optional')
   })
 
   it('derives legacy dashboard metrics from the same verified read model', async () => {

@@ -11,6 +11,7 @@ import {
 import { createHash, randomUUID } from "node:crypto"
 
 import { db } from "@/prisma/db"
+import { recordCloseCertificationInvalidationsForSourceInTx } from "@/services/accounting/close-assurance-pack.service"
 import { createLedgerPostingBatch } from "@/services/accounting/posting.service"
 import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
 import {
@@ -603,6 +604,20 @@ export async function approveSuspensePosting(
       correlationId,
       dedupeKey: `${suspense.id}:reclassification-approved:${input.approvedById}`,
     }, tx)
+
+    await recordCloseCertificationInvalidationsForSourceInTx(tx, input.organizationId, {
+      sourceCode: "PAYMENT_SUSPENSE_POSTING",
+      sourceId: suspense.id,
+      periodId: period.id,
+      periodStart: periodDate,
+      periodEnd: periodDate,
+      staleReason: "Payment suspense posting changed certified close evidence.",
+      newEvidenceHash: payloadHash,
+      correlationId,
+    }, {
+      actorId: input.approvedById,
+      now,
+    })
 
     return {
       value: {

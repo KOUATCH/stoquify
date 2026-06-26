@@ -24,6 +24,7 @@ import {
   markBusinessEventAppliedInTx,
   recordBusinessEventInTx,
 } from "@/services/events/business-event.service"
+import { recordInventoryValuationCloseInvalidationInTx } from "./inventory-close-invalidation.service"
 
 import {
   createStockAdjustmentInputSchema,
@@ -1291,6 +1292,16 @@ export async function postStockAdjustment(
     })
 
     await markBusinessEventAppliedInTx(tx, parsed.organizationId, eventResult.event.id)
+
+    await recordInventoryValuationCloseInvalidationInTx(tx, {
+      organizationId: parsed.organizationId,
+      sourceId: adjustment.id,
+      periodId: period.id,
+      occurredAt,
+      actorId: parsed.approvedById,
+      documentHash,
+      correlationId: parsed.correlationId ?? null,
+    })
 
     return {
       adjustment: postedAdjustment,

@@ -1,8 +1,11 @@
+jest.mock("server-only", () => ({}))
+
 import {
   AccountingPeriodStatus,
   ReconciliationRunStatus,
   Prisma,
 } from "@prisma/client"
+import { createHash } from "node:crypto"
 
 import { db } from "@/prisma/db"
 
@@ -53,6 +56,15 @@ jest.mock("@/prisma/db", () => ({
     paymentReconciliationInboxItem: {
       upsert: jest.fn(),
     },
+    closeRun: {
+      findMany: jest.fn(),
+      findFirst: jest.fn(),
+      update: jest.fn(),
+    },
+    closePackExport: {
+      findFirst: jest.fn(),
+      update: jest.fn(),
+    },
   },
 }))
 
@@ -69,6 +81,22 @@ const mockedDb = db as unknown as {
   ledgerAuditEvent: { create: jest.Mock }
   businessEvent: { findUnique: jest.Mock; create: jest.Mock; update: jest.Mock }
   paymentReconciliationInboxItem: { upsert: jest.Mock }
+  closeRun: { findMany: jest.Mock; findFirst: jest.Mock; update: jest.Mock }
+  closePackExport: { findFirst: jest.Mock; update: jest.Mock }
+}
+
+function stableTestStringify(value: unknown): string {
+  if (value === null || typeof value !== "object") return JSON.stringify(value)
+  if (Array.isArray(value)) return `[${value.map(stableTestStringify).join(",")}]`
+
+  return `{${Object.keys(value as Record<string, unknown>)
+    .sort()
+    .map((key) => `${JSON.stringify(key)}:${stableTestStringify((value as Record<string, unknown>)[key])}`)
+    .join(",")}}`
+}
+
+function stableTestCertificateHash(payload: unknown) {
+  return createHash("sha256").update(stableTestStringify(payload)).digest("hex")
 }
 
 function amount(value: number | string) {
@@ -145,6 +173,11 @@ describe("payment reconciliation certification service", () => {
       outboxMessages: args.data.outboxMessages.create,
     }))
     mockedDb.paymentReconciliationInboxItem.upsert.mockResolvedValue({ id: "inbox-1" })
+    mockedDb.closeRun.findMany.mockResolvedValue([])
+    mockedDb.closeRun.findFirst.mockResolvedValue(null)
+    mockedDb.closeRun.update.mockResolvedValue({ id: "close-run-1" })
+    mockedDb.closePackExport.findFirst.mockResolvedValue({ id: "close-pack-export-1", metadata: { mode: "CERTIFIED" } })
+    mockedDb.closePackExport.update.mockResolvedValue({ id: "close-pack-export-1" })
   })
 
   it("signs a ready run with maker-checker, fresh-auth, evidence, and period controls", async () => {
@@ -232,13 +265,15 @@ describe("payment reconciliation certification service", () => {
   })
 
   it("exports signed certificates with watermark, audit trail, and inbox record", async () => {
+    const certificatePayload = { version: 1, runId: "run-1" }
+    const certificateHash = stableTestCertificateHash(certificatePayload)
     mockedDb.reconciliationRun.findFirst.mockResolvedValue(
       readyRun({
         status: ReconciliationRunStatus.SIGNED,
         signedById: "signer-1",
         signedAt: new Date("2026-06-14T12:00:00Z"),
-        certificateHash: "a".repeat(64),
-        certificatePayload: { version: 1, runId: "run-1" },
+        certificateHash,
+        certificatePayload,
       }),
     )
     mockedDb.matchRecord.count.mockResolvedValue(2)
@@ -260,7 +295,7 @@ describe("payment reconciliation certification service", () => {
     expect(result).toMatchObject({
       runId: "run-1",
       mimeType: "application/json",
-      certificateHash: "a".repeat(64),
+      certificateHash,
       rowCount: 3,
       inboxItemId: "inbox-1",
       correlationId: "corr-export",
@@ -278,6 +313,72 @@ describe("payment reconciliation certification service", () => {
       expect.objectContaining({
         data: expect.objectContaining({
           action: "PAYMENT_RECONCILIATION_CERTIFICATE_EXPORT_CONTROL",
+        }),
+      }),
+    )
+  })
+
+  it("blocks certificate export and invalidates close evidence when the certificate hash drifts", async () => {
+    const certificatePayload = { version: 1, runId: "run-1" }
+    const currentHash = stableTestCertificateHash(certificatePayload)
+    mockedDb.reconciliationRun.findFirst.mockResolvedValue(
+      readyRun({
+        status: ReconciliationRunStatus.SIGNED,
+        signedById: "signer-1",
+        signedAt: new Date("2026-06-14T12:00:00Z"),
+        certificateHash: "stale-certificate-hash",
+        certificatePayload,
+      }),
+    )
+    mockedDb.closeRun.findMany.mockResolvedValue([
+      { id: "close-run-1", packExports: [{ id: "close-pack-export-1" }] },
+    ])
+    mockedDb.closeRun.findFirst.mockResolvedValue({
+      id: "close-run-1",
+      organizationId: "org-1",
+      periodId: "period-1",
+      status: "CERTIFIED",
+      metadata: { certifiedExportId: "close-pack-export-1" },
+    })
+
+    await expect(
+      exportReconciliationCertificate({
+        organizationId: "org-1",
+        runId: "run-1",
+        exportedById: "exporter-1",
+        control: {
+          actorPermissions: ["payments.reconciliation.certificate.export"],
+          lastAuthAt: new Date("2026-06-14T13:00:00Z"),
+          now: new Date("2026-06-14T13:00:00Z"),
+        },
+        correlationId: "corr-export-drift",
+      }),
+    ).rejects.toThrow(/hash drift/i)
+
+    expect(mockedDb.paymentReconciliationInboxItem.upsert).not.toHaveBeenCalled()
+    expect(mockedDb.businessEvent.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          eventType: "close.certification.invalidated",
+          documentHash: currentHash,
+          metadata: expect.objectContaining({
+            sourceCode: "PAYMENT_RECONCILIATION_CERTIFICATE_HASH_DRIFT",
+            sourceRing: "FIRST_RING",
+          }),
+        }),
+      }),
+    )
+    expect(mockedDb.closeRun.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          status: "BLOCKED",
+          metadata: expect.objectContaining({
+            staleState: expect.objectContaining({
+              sourceCode: "PAYMENT_RECONCILIATION_CERTIFICATE_HASH_DRIFT",
+              previousEvidenceHash: "stale-certificate-hash",
+              newEvidenceHash: currentHash,
+            }),
+          }),
         }),
       }),
     )

@@ -1,7 +1,9 @@
 import type { Metadata } from "next"
 
+import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
 import { OwnerWarRoomDashboard } from "@/components/owner-war-room/OwnerWarRoomDashboard"
-import { requirePermission } from "@/lib/security/rbac"
+import { localizePath } from "@/i18n/routing"
+import { RbacError, requirePermission } from "@/lib/security/rbac"
 import { getOwnerWarRoomData } from "@/services/owner-war-room/owner-war-room.service"
 
 export const metadata: Metadata = {
@@ -33,10 +35,34 @@ export default async function OwnerWarRoomPage({
 }) {
   const { locale } = await params
   const resolvedLocale = pickLocale(locale)
-  const ctx = await requirePermission("dashboard.read", {
-    resource: "KontavaOwnerWarRoom",
-    auditAllowed: true,
-  })
+  let ctx: Awaited<ReturnType<typeof requirePermission>>
+
+  try {
+    ctx = await requirePermission("dashboard.read", {
+      resource: "KontavaOwnerWarRoom",
+      auditAllowed: true,
+    })
+  } catch (error) {
+    if (error instanceof RbacError) {
+      const noActiveOrg = error.code === "NO_ACTIVE_ORG"
+
+      return (
+        <DashboardRouteState
+          kind={noActiveOrg ? "no_active_org" : "permission_denied"}
+          title={noActiveOrg ? "Owner War Room needs an active organization" : "Owner War Room is not available for this role"}
+          message={
+            noActiveOrg
+              ? "Refresh your session from the dashboard so the command center can load tenant-scoped evidence."
+              : "This read-only command center requires dashboard access. The denial was recorded by the RBAC guard."
+          }
+          primaryHref={localizePath("/dashboard", resolvedLocale)}
+        />
+      )
+    }
+
+    throw error
+  }
+
   const data = await getOwnerWarRoomData({
     organizationId: ctx.orgId,
     actorId: ctx.userId,

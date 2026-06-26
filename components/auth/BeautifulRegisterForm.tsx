@@ -175,7 +175,7 @@ export default function BeautifulRegisterForm() {
   };
 
   return (
-    <AuthFormCard className="flex flex-col lg:min-h-[720px]">
+    <AuthFormCard className="flex flex-col">
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
           <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[#10181d] text-white shadow-[0_16px_36px_rgba(16,24,29,0.16)] ring-1 ring-white/25 dark:bg-white/[0.08] dark:text-[#7de8dc] dark:ring-white/10">

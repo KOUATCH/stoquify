@@ -28,7 +28,15 @@ const rbacContext = {
 }
 
 const dashboardData = {
-  organization: { id: 'org-session', name: 'Tenant A', currency: 'XAF' },
+  organization: {
+    id: 'org-session',
+    name: 'Tenant A',
+    slug: 'tenant-a',
+    country: 'Cameroon',
+    countryCode: 'CM',
+    taxIdentifier: 'M012345678901A',
+    currency: 'XAF',
+  },
   period: {
     key: '30d',
     from: '2026-06-01T00:00:00.000Z',
@@ -47,6 +55,12 @@ const dashboardData = {
   activities: [],
   pendingActions: [],
   counts: {},
+  setupProgress: {
+    completedRequiredSteps: 0,
+    totalRequiredSteps: 7,
+    percent: 0,
+    steps: [],
+  },
 }
 
 describe('dashboard data actions', () => {

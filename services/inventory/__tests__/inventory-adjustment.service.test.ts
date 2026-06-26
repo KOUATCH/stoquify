@@ -29,6 +29,8 @@ jest.mock("@/prisma/db", () => ({
     journalEntry: { count: jest.fn(), create: jest.fn() },
     chartOfAccount: { findFirst: jest.fn(), findMany: jest.fn() },
     accountingSourceLink: { findFirst: jest.fn(), create: jest.fn() },
+    closeRun: { findMany: jest.fn(), findFirst: jest.fn(), update: jest.fn() },
+    closePackExport: { findFirst: jest.fn(), update: jest.fn() },
     auditLog: { create: jest.fn() },
   },
 }))
@@ -50,6 +52,8 @@ const mockedDb = db as unknown as {
   journalEntry: { count: jest.Mock; create: jest.Mock }
   chartOfAccount: { findFirst: jest.Mock; findMany: jest.Mock }
   accountingSourceLink: { findFirst: jest.Mock; create: jest.Mock }
+  closeRun: { findMany: jest.Mock; findFirst: jest.Mock; update: jest.Mock }
+  closePackExport: { findFirst: jest.Mock; update: jest.Mock }
   auditLog: { create: jest.Mock }
 }
 
@@ -57,6 +61,17 @@ const adjustmentDate = new Date("2026-06-15T09:00:00Z")
 
 function decimal(value: string | number) {
   return new Prisma.Decimal(value)
+}
+
+function arrangeCertifiedCloseTarget() {
+  mockedDb.closeRun.findMany.mockResolvedValue([{ id: "close-run-1", packExports: [{ id: "close-pack-export-1" }] }])
+  mockedDb.closeRun.findFirst.mockResolvedValue({
+    id: "close-run-1",
+    organizationId: "org-1",
+    status: "CERTIFIED",
+    metadata: null,
+  })
+  mockedDb.closePackExport.findFirst.mockResolvedValue({ id: "close-pack-export-1", metadata: { mode: "CERTIFIED" } })
 }
 
 function adjustment(overrides: Record<string, unknown> = {}) {
@@ -224,6 +239,11 @@ beforeEach(() => {
       ledgerPostingBatchId: args.data.ledgerPostingBatchId,
     }),
   )
+  mockedDb.closeRun.findMany.mockResolvedValue([])
+  mockedDb.closeRun.findFirst.mockResolvedValue(null)
+  mockedDb.closeRun.update.mockResolvedValue({ id: "close-run-1" })
+  mockedDb.closePackExport.findFirst.mockResolvedValue(null)
+  mockedDb.closePackExport.update.mockResolvedValue({ id: "close-pack-export-1" })
   mockedDb.auditLog.create.mockResolvedValue({ id: "audit-1" })
 })
 
@@ -283,6 +303,7 @@ describe("requestManualItemStockAdjustment", () => {
 
 describe("postStockAdjustment", () => {
   it("posts stock movement, records the event, and creates an explicit ledger blocker when posting rules are missing", async () => {
+    arrangeCertifiedCloseTarget()
     const result = await postStockAdjustment({
       organizationId: "org-1",
       adjustmentId: "adjustment-1",
@@ -323,6 +344,32 @@ describe("postStockAdjustment", () => {
         data: expect.objectContaining({
           action: "INVENTORY_ADJUSTMENT_LEDGER_BLOCKED",
           postingBatchId: "posting-batch-1",
+        }),
+      }),
+    )
+    expect(mockedDb.businessEvent.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          eventType: "close.certification.invalidated",
+          metadata: expect.objectContaining({
+            sourceCode: "INVENTORY_VALUATION_WRITE",
+            sourceDomain: "inventory",
+            sourceTable: "inventory_transactions",
+          }),
+        }),
+      }),
+    )
+    expect(mockedDb.closeRun.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "close-run-1" },
+        data: expect.objectContaining({
+          status: "BLOCKED",
+          metadata: expect.objectContaining({
+            staleState: expect.objectContaining({
+              sourceCode: "INVENTORY_VALUATION_WRITE",
+              sourceId: "adjustment-1",
+            }),
+          }),
         }),
       }),
     )

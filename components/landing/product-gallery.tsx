@@ -12,7 +12,7 @@ export function ProductGallery() {
   const t = useTranslations("landing.gallery")
 
   return (
-    <section className="section-divider bg-[var(--ink-1)] px-6 py-20 lg:px-8">
+    <section id="product" className="section-divider bg-[var(--ink-1)] px-6 py-20 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="grid gap-8 lg:grid-cols-[0.86fr_1.14fr] lg:items-end">
           <div>

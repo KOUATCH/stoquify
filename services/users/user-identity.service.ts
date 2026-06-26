@@ -94,7 +94,7 @@ function addDetail(target: Record<string, unknown>, key: string, value: unknown)
   target[key] = value
 }
 
-const REGISTER_MODULE_DEFAULTS = ["POS", "Inventory", "Accounting", "Payment reconciliation"]
+const REGISTER_MODULE_DEFAULTS = ["POS", "Inventory", "Accounting", "Payment reconciliation", "Payroll"]
 
 function normalizeRequestedModules(value?: string[] | null) {
   const modules = (value?.length ? value : REGISTER_MODULE_DEFAULTS)

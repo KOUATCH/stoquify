@@ -27,6 +27,10 @@ export type SensitiveActionId =
   | "supplier.payment.release"
   | "payroll.run.approve"
   | "payroll.payment.release"
+  | "payroll.payment.reconcile"
+  | "payroll.declaration.lifecycle"
+  | "payroll.payslip.self.export"
+  | "payroll.register.export"
   | "accounting.export"
   | "accounting.journal.post"
   | "accounting.journal.reverse"
@@ -232,6 +236,46 @@ export const SENSITIVE_ACTION_POLICIES: Record<SensitiveActionId, SensitiveActio
     blockSelfApproval: true,
     auditAction: "PAYROLL_PAYMENT_RELEASE_CONTROL",
     detectorSignals: ["payroll_payment_release", "bank_file_divergence", "after_hours_disbursement"],
+  },
+  "payroll.payment.reconcile": {
+    action: "payroll.payment.reconcile",
+    permission: "payroll.payments.reconcile",
+    riskTier: "critical",
+    requiredAssurance: "L1",
+    freshAuthMaxAgeSeconds: 300,
+    blockSelfApproval: true,
+    auditAction: "PAYROLL_PAYMENT_RECONCILIATION_CONTROL",
+    detectorSignals: ["payroll_payment_settlement", "provider_evidence_match", "cash_movement_proof"],
+  },
+  "payroll.declaration.lifecycle": {
+    action: "payroll.declaration.lifecycle",
+    permission: "payroll.declarations.manage",
+    riskTier: "critical",
+    requiredAssurance: "L1",
+    freshAuthMaxAgeSeconds: 300,
+    blockSelfApproval: true,
+    auditAction: "PAYROLL_DECLARATION_LIFECYCLE_CONTROL",
+    detectorSignals: ["payroll_declaration_transition", "manual_authority_evidence", "statutory_close_impact"],
+  },
+  "payroll.payslip.self.export": {
+    action: "payroll.payslip.self.export",
+    permission: "payroll.payslips.self.export",
+    riskTier: "critical",
+    requiredAssurance: "L1",
+    freshAuthMaxAgeSeconds: 300,
+    exportControl: true,
+    auditAction: "PAYROLL_PAYSLIP_SELF_EXPORT_CONTROL",
+    detectorSignals: ["own_payslip_export", "after_hours_export", "repeated_failed_export"],
+  },
+  "payroll.register.export": {
+    action: "payroll.register.export",
+    permission: "payroll.exports.create",
+    riskTier: "critical",
+    requiredAssurance: "L1",
+    freshAuthMaxAgeSeconds: 300,
+    exportControl: true,
+    auditAction: "PAYROLL_REGISTER_EXPORT_CONTROL",
+    detectorSignals: ["payroll_register_export", "statutory_export", "mass_export"],
   },
   "accounting.export": {
     action: "accounting.export",
@@ -469,3 +513,4 @@ export async function enforceSensitiveAction(
   const decision = await evaluateAndAuditSensitiveAction(tx, input)
   return assertSensitiveActionAllowed(decision)
 }
+

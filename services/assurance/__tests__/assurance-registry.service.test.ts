@@ -56,6 +56,9 @@ jest.mock("@/prisma/db", () => ({
     payrollPaymentBatch: {
       count: jest.fn(),
     },
+    payrollDeclaration: {
+      count: jest.fn(),
+    },
     complianceSubmission: {
       count: jest.fn(),
     },
@@ -160,6 +163,9 @@ const mockDb = db as unknown as {
     count: jest.Mock
   }
   payrollPaymentBatch: {
+    count: jest.Mock
+  }
+  payrollDeclaration: {
     count: jest.Mock
   }
   complianceSubmission: {
@@ -1165,6 +1171,76 @@ describe("workflow assurance registry service", () => {
     })
   })
 
+  it("flags payroll payment reconciliation exceptions for operations triage", async () => {
+    mockSingleDefinition("payroll.payment_reconciliation_exception.visible")
+    mockDb.payrollPaymentBatch.count.mockResolvedValueOnce(5).mockResolvedValueOnce(2)
+
+    const result = await runRegistryForCheck()
+
+    expect(result.runs[0]).toMatchObject({
+      checkKey: "payroll.payment_reconciliation_exception.visible",
+      resultStatus: "warning",
+      severity: "high",
+      actionRoute: "/dashboard/payroll",
+      counts: expect.objectContaining({
+        scanned: 5,
+        passed: 3,
+        warning: 2,
+      }),
+    })
+    expect(mockUpsertIncident).toHaveBeenCalledWith(
+      expect.objectContaining({
+        result: expect.objectContaining({
+          metadata: expect.objectContaining({ redactionPolicy: "kontava-payroll-person-redaction-policy" }),
+        }),
+      }),
+    )
+  })
+
+  it("flags payroll declaration lifecycle exceptions without authority payload exposure", async () => {
+    mockSingleDefinition("payroll.declaration_lifecycle_exception.visible")
+    mockDb.payrollDeclaration.count.mockResolvedValueOnce(4).mockResolvedValueOnce(1)
+
+    const result = await runRegistryForCheck()
+
+    expect(result.runs[0]).toMatchObject({
+      checkKey: "payroll.declaration_lifecycle_exception.visible",
+      resultStatus: "warning",
+      severity: "high",
+      actionRoute: "/dashboard/payroll",
+      counts: expect.objectContaining({
+        scanned: 4,
+        passed: 3,
+        warning: 1,
+      }),
+    })
+    expect(result.runs[0].evidenceLinks[0].metadata).toEqual(
+      expect.objectContaining({
+        monitoredDeclarationCount: 4,
+        exceptionDeclarationCount: 1,
+      }),
+    )
+    expect(JSON.stringify(result.runs[0].evidenceLinks[0].metadata).toLowerCase()).not.toMatch(/salary|bank|payload/)
+  })
+
+  it("flags certified close packs with unresolved payroll findings", async () => {
+    mockSingleDefinition("payroll.close_evidence.stale.visible")
+    mockDb.closePackExport.count.mockResolvedValueOnce(3).mockResolvedValueOnce(1)
+
+    const result = await runRegistryForCheck()
+
+    expect(result.runs[0]).toMatchObject({
+      checkKey: "payroll.close_evidence.stale.visible",
+      resultStatus: "failed",
+      severity: "blocking",
+      actionRoute: "/dashboard/accounting/close",
+      counts: expect.objectContaining({
+        scanned: 3,
+        passed: 2,
+        failed: 1,
+      }),
+    })
+  })
   it("does not flag compliance submissions that are still inside SLA", async () => {
     mockSingleDefinition("compliance.submission_sla.visible")
     mockDb.complianceSubmission.count.mockResolvedValueOnce(3).mockResolvedValueOnce(0).mockResolvedValueOnce(0)
@@ -1251,6 +1327,8 @@ function runRegistryForCheck() {
       "inventory.adjust.approve",
       "payments.reconciliation.read",
       "payroll.payments.release",
+      "payroll.payments.reconcile",
+      "payroll.declarations.manage",
       "pos.transactions.read",
       "purchases.orders.read",
       "purchasing.ap.invoice.view",

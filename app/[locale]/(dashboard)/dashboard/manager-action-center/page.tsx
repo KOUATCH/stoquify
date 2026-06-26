@@ -1,7 +1,9 @@
 import type { Metadata } from "next"
 
+import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
 import { ManagerActionCenterDashboard } from "@/components/manager-action-center/ManagerActionCenterDashboard"
-import { requirePermission } from "@/lib/security/rbac"
+import { localizePath } from "@/i18n/routing"
+import { RbacError, requirePermission } from "@/lib/security/rbac"
 import { getManagerActionCenterData } from "@/services/manager-action-center/manager-action-center.service"
 
 export const metadata: Metadata = {
@@ -33,10 +35,34 @@ export default async function ManagerActionCenterPage({
 }) {
   const { locale } = await params
   const resolvedLocale = pickLocale(locale)
-  const ctx = await requirePermission("dashboard.read", {
-    resource: "KontavaManagerActionCenter",
-    auditAllowed: true,
-  })
+  let ctx: Awaited<ReturnType<typeof requirePermission>>
+
+  try {
+    ctx = await requirePermission("dashboard.read", {
+      resource: "KontavaManagerActionCenter",
+      auditAllowed: true,
+    })
+  } catch (error) {
+    if (error instanceof RbacError) {
+      const noActiveOrg = error.code === "NO_ACTIVE_ORG"
+
+      return (
+        <DashboardRouteState
+          kind={noActiveOrg ? "no_active_org" : "permission_denied"}
+          title={noActiveOrg ? "Manager Action Center needs an active organization" : "Manager Action Center is not available for this role"}
+          message={
+            noActiveOrg
+              ? "Refresh your session from the dashboard so the action center can load tenant-scoped operating work."
+              : "This read-only action center requires dashboard access. The denial was recorded by the RBAC guard."
+          }
+          primaryHref={localizePath("/dashboard", resolvedLocale)}
+        />
+      )
+    }
+
+    throw error
+  }
+
   const data = await getManagerActionCenterData({
     organizationId: ctx.orgId,
     actorPermissions: ctx.permissions,

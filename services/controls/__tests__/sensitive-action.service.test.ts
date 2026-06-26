@@ -170,6 +170,27 @@ describe("sensitive action fraud-control backbone", () => {
     })
   })
 
+  it("blocks self-approval for payroll payment reconciliation settlement", () => {
+    const decision = evaluateSensitiveAction({
+      action: "payroll.payment.reconcile",
+      actorId: "treasurer-1",
+      organizationId: "org-1",
+      actorPermissions: ["payroll.payments.reconcile"],
+      subjectActorId: "treasurer-1",
+      lastAuthAt: Date.now(),
+    })
+
+    expect(decision).toMatchObject({
+      allowed: false,
+      reasonCode: "SELF_APPROVAL_BLOCKED",
+      policy: expect.objectContaining({
+        auditAction: "PAYROLL_PAYMENT_RECONCILIATION_CONTROL",
+        riskTier: "critical",
+        requiredAssurance: "L1",
+      }),
+    })
+  })
+
   it("audits denied attempts in the caller transaction with detector inputs", async () => {
     const tx = {
       auditLog: {
@@ -252,3 +273,4 @@ describe("sensitive action fraud-control backbone", () => {
     )
   })
 })
+

@@ -1,5 +1,6 @@
 import type {
   BIActionLink,
+  BICommandBrief,
   BIInsight,
   BIKpiCard,
   BIKpiState,
@@ -25,6 +26,15 @@ import type {
 
 export type ManagerActionDueState = "overdue" | "due_today" | "due_soon" | "scheduled"
 
+export type ManagerActionRunSheetGroupId =
+  | "overdue"
+  | "critical"
+  | "due_today"
+  | "blocked"
+  | "waiting"
+  | "assigned"
+  | "routine"
+
 export type ManagerActionCenterAction = {
   id: string
   signalId: string
@@ -46,6 +56,15 @@ export type ManagerActionCenterAction = {
   actionLink: BIActionLink
 }
 
+export type ManagerActionRunSheetGroup = {
+  id: ManagerActionRunSheetGroupId
+  title: string
+  detail: string
+  state: BIKpiState
+  count: number
+  actions: ManagerActionCenterAction[]
+}
+
 export type ManagerActionCenterSummary = {
   total: number
   open: number
@@ -65,6 +84,8 @@ export type ManagerActionCenterData = {
   generatedAt: string
   periodStart: string
   periodEnd: string
+  commandBrief: BICommandBrief
+  runSheetGroups: ManagerActionRunSheetGroup[]
   kpis: BIKpiCard[]
   insights: BIInsight[]
   actionItems: ManagerActionCenterAction[]

@@ -11,6 +11,7 @@ import {
 import { createHash, randomUUID } from "node:crypto"
 
 import { db } from "@/prisma/db"
+import { recordCloseCertificationInvalidationsForSourceInTx } from "@/services/accounting/close-assurance-pack.service"
 import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
 import {
   assertSensitiveActionAllowed,
@@ -152,6 +153,10 @@ function stableStringify(value: unknown): string {
 
 function sha256(value: string) {
   return createHash("sha256").update(value).digest("hex")
+}
+
+function certificatePayloadHash(payload: unknown) {
+  return sha256(stableStringify(payload))
 }
 
 function decimalString(value: Prisma.Decimal.Value | null | undefined) {
@@ -516,7 +521,7 @@ export async function signReconciliationRun(input: SignReconciliationRunInput): 
       signedAt: now.toISOString(),
       correlationId,
     }
-    const certificateHash = sha256(stableStringify(certificatePayload))
+    const certificateHash = certificatePayloadHash(certificatePayload)
 
     const signed = await tx.reconciliationRun.update({
       where: { id: run.id },
@@ -589,6 +594,19 @@ export async function signReconciliationRun(input: SignReconciliationRunInput): 
         },
       ],
     })
+    await recordCloseCertificationInvalidationsForSourceInTx(tx, input.organizationId, {
+      sourceCode: "PAYMENT_RECONCILIATION_SIGNED",
+      sourceId: run.id,
+      periodId: period.id,
+      periodStart: run.periodStart,
+      periodEnd: run.periodEnd,
+      staleReason: "Payment reconciliation sign-off changed certified close evidence.",
+      newEvidenceHash: certificateHash,
+      correlationId,
+    }, {
+      actorId: input.signedById,
+      now,
+    })
 
     return {
       value: {
@@ -660,6 +678,25 @@ export async function exportReconciliationCertificate(
     await auditSensitiveActionDecision(tx, decision)
     if (!decision.allowed) return { denied: decision }
 
+    const currentCertificateHash = certificatePayloadHash(run.certificatePayload)
+    if (currentCertificateHash !== run.certificateHash) {
+      await recordCloseCertificationInvalidationsForSourceInTx(tx, input.organizationId, {
+        sourceCode: "PAYMENT_RECONCILIATION_CERTIFICATE_HASH_DRIFT",
+        sourceId: run.id,
+        periodId: run.accountingPeriodId ?? run.accountingPeriod?.id ?? null,
+        periodStart: run.periodStart,
+        periodEnd: run.periodEnd,
+        staleReason: "Payment reconciliation certificate hash drift was detected before export.",
+        previousEvidenceHash: run.certificateHash,
+        newEvidenceHash: currentCertificateHash,
+        correlationId,
+      }, {
+        actorId: input.exportedById,
+        now,
+      })
+      throw new BusinessRuleError("Reconciliation certificate hash drift detected; rerun sign-off before export.")
+    }
+
     const payload = {
       certificate: run.certificatePayload,
       export: {
@@ -722,6 +759,60 @@ export async function exportReconciliationCertificate(
         watermarkId,
         correlationId,
       }),
+    })
+    await recordBusinessEventInTx(tx, {
+      organizationId: input.organizationId,
+      eventType: "payment.reconciliation.certificate.exported",
+      eventSource: "SYSTEM",
+      idempotencyKey: `reconciliation-run:${run.id}:certificate-export:${exportHash}`,
+      actorId: input.exportedById,
+      sourceType: "PAYMENT_RECONCILIATION",
+      sourceId: run.id,
+      documentHash: exportHash,
+      payload: {
+        runId: run.id,
+        providerAccountId: run.providerAccountId,
+        paymentRailId: run.paymentRailId,
+        accountingPeriodId: run.accountingPeriodId ?? run.accountingPeriod?.id ?? null,
+        certificateHash: run.certificateHash,
+        exportHash,
+        rowCount,
+        watermarkId,
+        inboxItemId: inbox.id,
+        exportedById: input.exportedById,
+        exportedAt: now.toISOString(),
+        correlationId,
+      },
+      outboxMessages: [
+        {
+          channel: "REPORT_EXPORT",
+          eventName: "payment.reconciliation.certificate.exported",
+          idempotencyKey: `reconciliation-run:${run.id}:certificate-export:${exportHash}:report-export`,
+          payload: {
+            runId: run.id,
+            certificateHash: run.certificateHash,
+            exportHash,
+            watermarkId,
+            rowCount,
+            correlationId,
+          },
+        },
+      ],
+    })
+
+    await recordCloseCertificationInvalidationsForSourceInTx(tx, input.organizationId, {
+      sourceCode: "PAYMENT_RECONCILIATION_CERTIFICATE_EXPORTED",
+      sourceId: run.id,
+      periodId: run.accountingPeriodId ?? run.accountingPeriod?.id ?? null,
+      periodStart: run.periodStart,
+      periodEnd: run.periodEnd,
+      staleReason: "Payment reconciliation certificate export changed certified close evidence.",
+      previousEvidenceHash: run.certificateHash,
+      newEvidenceHash: exportHash,
+      correlationId,
+    }, {
+      actorId: input.exportedById,
+      now,
     })
 
     return {

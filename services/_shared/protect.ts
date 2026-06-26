@@ -4,8 +4,15 @@ import {
   assertCanUseOrganization,
   isRbacError,
   requirePermission,
+  RbacError,
   type RbacContext,
 } from "@/lib/security/rbac"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
+import type {
+  CommercialModuleSlug,
+  ModuleAccessIntent,
+  ModuleSurfaceType,
+} from "@/services/modules/module-control-contracts"
 import { toSafeActionError, type ApplicationErrorCode, type SafeActionStatus } from "./action-errors"
 import { createCorrelationId } from "@/lib/error-handling/canonical"
 import { type ErrorCategory, type ErrorSeverity } from "@/lib/error-handling/types"
@@ -25,6 +32,16 @@ export type ProtectedActionResponse<T> =
     }
 
 export type TenantGuardMode = boolean | "handler-derived"
+export type ModuleGateMode = "observe" | "enforce"
+
+export type ProtectedActionModuleGate = {
+  moduleSlug: CommercialModuleSlug
+  surface?: string
+  surfaceType?: ModuleSurfaceType
+  accessIntent?: ModuleAccessIntent
+  mode?: ModuleGateMode
+  audit?: boolean
+}
 
 export function protect<I, O>(
   options: {
@@ -33,6 +50,7 @@ export function protect<I, O>(
     auditAllowed?: boolean
     freshAuth?: boolean | { maxAgeSeconds?: number }
     tenantGuard?: TenantGuardMode
+    module?: ProtectedActionModuleGate
   },
   handler: (input: I, ctx: RbacContext) => Promise<O>,
 ) {
@@ -50,6 +68,23 @@ export function protect<I, O>(
         resource: options.auditResource,
         ...(options.auditAllowed !== undefined ? { auditAllowed: options.auditAllowed } : {}),
       })
+      if (options.module) {
+        const decision = await observeModuleAccess({
+          organizationId: ctx.orgId,
+          userId: ctx.userId,
+          actorPermissions: ctx.permissions,
+          moduleSlug: options.module.moduleSlug,
+          surfaceType: options.module.surfaceType ?? "action",
+          surface: options.module.surface ?? options.permission,
+          accessIntent: options.module.accessIntent ?? "read",
+          mode: options.module.mode ?? "enforce",
+          audit: options.module.audit,
+        })
+
+        if (!decision.allowed) {
+          throw new RbacError("Forbidden: module is not available for this tenant", "FORBIDDEN", 403)
+        }
+      }
       if (options.tenantGuard !== false && options.tenantGuard !== "handler-derived") {
         await assertTrustedTenantInput(input, ctx)
       }

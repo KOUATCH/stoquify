@@ -227,34 +227,34 @@ model Role {
 // ============================================================
 
 model Organization {
-  id                 String    @id @default(cuid())
-  name               String
-  slug               String // per-org unique handled at app + index; tenants don't share slug space anyway
-  industry           String?
-  tradeName          String?
-  taxIdentifier      String?
-  country            String?
-  countryCode        String?
-  state              String?
-  address            String?
-  currency           String    @default("XAF") // FCFA default — adjust per tenant
-  timezone           String    @default("Africa/Douala")
-  defaultLocale      Locale    @default(EN)
-  companySize        String?
-  businessType       String?
-  branchCount        String?
-  primaryPain        String?
-  setupRole          String?
-  requestedModules   String[]  @default([])
-  assistedSetupRequested Boolean @default(false)
-  onboardingSource   String?
-  onboardingCompletedAt DateTime?
-  inventoryStartDate DateTime?
-  fiscalYearStart    String?   @default("01-01") // MM-DD
-  isActive           Boolean   @default(true)
-  deletedAt          DateTime?
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  id                     String    @id @default(cuid())
+  name                   String
+  slug                   String // per-org unique handled at app + index; tenants don't share slug space anyway
+  industry               String?
+  tradeName              String?
+  taxIdentifier          String?
+  country                String?
+  countryCode            String?
+  state                  String?
+  address                String?
+  currency               String    @default("XAF") // FCFA default — adjust per tenant
+  timezone               String    @default("Africa/Douala")
+  defaultLocale          Locale    @default(EN)
+  companySize            String?
+  businessType           String?
+  branchCount            String?
+  primaryPain            String?
+  setupRole              String?
+  requestedModules       String[]  @default([])
+  assistedSetupRequested Boolean   @default(false)
+  onboardingSource       String?
+  onboardingCompletedAt  DateTime?
+  inventoryStartDate     DateTime?
+  fiscalYearStart        String?   @default("01-01") // MM-DD
+  isActive               Boolean   @default(true)
+  deletedAt              DateTime?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
 
   // Relationships
   users                 User[]
@@ -279,81 +279,86 @@ model Organization {
   dailySalesReports     DailySalesReport[]
   payments              Payment[]
 
-  recipes                  Recipe[]
-  productionBatches        ProductionBatch[]
-  expenseCategories        ExpenseCategory[]
-  expenses                 Expense[]
-  customerLedgerEntries    CustomerLedgerEntry[]
-  supplierLedgerEntries    SupplierLedgerEntry[]
-  accountingSettings       OrganizationAccountingSettings?
-  fiscalYears              FiscalYear[]
-  accountingPeriods        AccountingPeriod[]
-  chartOfAccounts          ChartOfAccount[]
-  journals                 Journal[]
-  journalEntries           JournalEntry[]
-  journalEntryLines        JournalEntryLine[]
-  ledgerPostingBatches     LedgerPostingBatch[]
-  accountingSourceLinks    AccountingSourceLink[]
-  postingRules             PostingRule[]
-  postingRuleLines         PostingRuleLine[]
-  ledgerAuditEvents        LedgerAuditEvent[]
-  businessEvents           BusinessEvent[]
-  businessEventOutbox      BusinessEventOutbox[]
-  auditLogs                AuditLog[]
-  posOfflineDevices        POSOfflineDevice[]
-  posOfflineSyncBatches    POSOfflineSyncBatch[]
-  posOfflineEvents         POSOfflineEvent[]
-  posOfflineSyncConflicts  POSOfflineSyncConflict[]
-  posOfflineSyncCertificates POSOfflineSyncCertificate[]
-  payrollEmployees         PayrollEmployee[]
-  payrollContracts         PayrollContract[]
-  payrollPeriods           PayrollPeriod[]
-  payrollAttendanceSnapshots PayrollAttendanceSnapshot[]
-  payrollRuns              PayrollRun[]
-  payrollRunLines          PayrollRunLine[]
-  payrollPayslips          PayrollPayslip[]
-  payrollPayslipLines      PayrollPayslipLine[]
-  payrollDeclarations      PayrollDeclaration[]
-  payrollPaymentBatches    PayrollPaymentBatch[]
-  payrollPaymentAllocations PayrollPaymentAllocation[]
-  paymentRails             PaymentRail[]
-  providerAccounts         ProviderAccount[]
-  settlementAccounts       SettlementAccount[]
-  providerEvents           ProviderEvent[]
-  statementFiles           StatementFile[]
-  statementLines           StatementLine[]
-  paymentTransactions      PaymentTransaction[]
-  matchRecords             MatchRecord[]
-  suspenseItems            SuspenseItem[]
-  reconciliationRuns       ReconciliationRun[]
-  paymentExceptions        PaymentException[]
-  reconciliationInbox      PaymentReconciliationInboxItem[]
-  closeRuns                CloseRun[]
-  closeChecklistItems      CloseChecklistItem[]
-  closeAssuranceFindings   CloseAssuranceFinding[]
-  closeEvidenceItems       CloseEvidenceItem[]
-  closePackExports         ClosePackExport[]
-  accountantReviews        AccountantReview[]
-  accountantComments       AccountantComment[]
-  fiscalDocuments          FiscalDocument[]
-  fiscalDocumentLines      FiscalDocumentLine[]
-  fiscalSequences          FiscalSequence[]
-  complianceSubmissions    ComplianceSubmission[]
-  complianceAdapterConfigs ComplianceAdapterConfig[]
-  complianceEvidence       ComplianceEvidence[]
-  stockCountSessions       StockCountSession[]
-  supplierBankAccounts     SupplierBankAccount[]
-  supplierBankChanges      SupplierBankChangeRequest[]
-  supplierInvoices         SupplierInvoice[]
-  supplierInvoiceLines     SupplierInvoiceLine[]
-  threeWayMatches          ThreeWayMatch[]
-  supplierPayments         SupplierPayment[]
-  supplierPaymentAllocations SupplierPaymentAllocation[]
-  workflowAssuranceCheckRuns WorkflowAssuranceCheckRun[]
-  workflowAssuranceIncidents WorkflowAssuranceIncident[]
-  workflowAssuranceIncidentEvents WorkflowAssuranceIncidentEvent[]
-  workflowAssuranceAlertDeliveries WorkflowAssuranceAlertDelivery[]
-  workflowAssuranceWaivers WorkflowAssuranceWaiver[]
+  recipes                                 Recipe[]
+  productionBatches                       ProductionBatch[]
+  expenseCategories                       ExpenseCategory[]
+  expenses                                Expense[]
+  customerLedgerEntries                   CustomerLedgerEntry[]
+  supplierLedgerEntries                   SupplierLedgerEntry[]
+  accountingSettings                      OrganizationAccountingSettings?
+  fiscalYears                             FiscalYear[]
+  accountingPeriods                       AccountingPeriod[]
+  chartOfAccounts                         ChartOfAccount[]
+  journals                                Journal[]
+  journalEntries                          JournalEntry[]
+  journalEntryLines                       JournalEntryLine[]
+  ledgerPostingBatches                    LedgerPostingBatch[]
+  accountingSourceLinks                   AccountingSourceLink[]
+  postingRules                            PostingRule[]
+  postingRuleLines                        PostingRuleLine[]
+  ledgerAuditEvents                       LedgerAuditEvent[]
+  businessEvents                          BusinessEvent[]
+  businessEventOutbox                     BusinessEventOutbox[]
+  auditLogs                               AuditLog[]
+  posOfflineDevices                       POSOfflineDevice[]
+  posOfflineSyncBatches                   POSOfflineSyncBatch[]
+  posOfflineEvents                        POSOfflineEvent[]
+  posOfflineSyncConflicts                 POSOfflineSyncConflict[]
+  posOfflineSyncCertificates              POSOfflineSyncCertificate[]
+  payrollEmployees                        PayrollEmployee[]
+  payrollContracts                        PayrollContract[]
+  payrollRubriques                        PayrollRubrique[]
+  payrollRubriqueAssignments              PayrollEmployeeRubriqueAssignment[]
+  payrollSalaryChangeRequests             PayrollSalaryChangeRequest[]
+  payrollPaymentDestinationChangeRequests PayrollPaymentDestinationChangeRequest[]
+  payrollPeriods                          PayrollPeriod[]
+  payrollAttendanceSnapshots              PayrollAttendanceSnapshot[]
+  payrollRuns                             PayrollRun[]
+  payrollRunLines                         PayrollRunLine[]
+  payrollPayslips                         PayrollPayslip[]
+  payrollPayslipLines                     PayrollPayslipLine[]
+  payrollDeclarations                     PayrollDeclaration[]
+  payrollDeclarationEvidence              PayrollDeclarationEvidence[]
+  payrollPaymentBatches                   PayrollPaymentBatch[]
+  payrollPaymentAllocations               PayrollPaymentAllocation[]
+  paymentRails                            PaymentRail[]
+  providerAccounts                        ProviderAccount[]
+  settlementAccounts                      SettlementAccount[]
+  providerEvents                          ProviderEvent[]
+  statementFiles                          StatementFile[]
+  statementLines                          StatementLine[]
+  paymentTransactions                     PaymentTransaction[]
+  matchRecords                            MatchRecord[]
+  suspenseItems                           SuspenseItem[]
+  reconciliationRuns                      ReconciliationRun[]
+  paymentExceptions                       PaymentException[]
+  reconciliationInbox                     PaymentReconciliationInboxItem[]
+  closeRuns                               CloseRun[]
+  closeChecklistItems                     CloseChecklistItem[]
+  closeAssuranceFindings                  CloseAssuranceFinding[]
+  closeEvidenceItems                      CloseEvidenceItem[]
+  closePackExports                        ClosePackExport[]
+  accountantReviews                       AccountantReview[]
+  accountantComments                      AccountantComment[]
+  fiscalDocuments                         FiscalDocument[]
+  fiscalDocumentLines                     FiscalDocumentLine[]
+  fiscalSequences                         FiscalSequence[]
+  complianceSubmissions                   ComplianceSubmission[]
+  complianceAdapterConfigs                ComplianceAdapterConfig[]
+  complianceEvidence                      ComplianceEvidence[]
+  stockCountSessions                      StockCountSession[]
+  supplierBankAccounts                    SupplierBankAccount[]
+  supplierBankChanges                     SupplierBankChangeRequest[]
+  supplierInvoices                        SupplierInvoice[]
+  supplierInvoiceLines                    SupplierInvoiceLine[]
+  threeWayMatches                         ThreeWayMatch[]
+  supplierPayments                        SupplierPayment[]
+  supplierPaymentAllocations              SupplierPaymentAllocation[]
+  workflowAssuranceCheckRuns              WorkflowAssuranceCheckRun[]
+  workflowAssuranceIncidents              WorkflowAssuranceIncident[]
+  workflowAssuranceIncidentEvents         WorkflowAssuranceIncidentEvent[]
+  workflowAssuranceAlertDeliveries        WorkflowAssuranceAlertDelivery[]
+  workflowAssuranceWaivers                WorkflowAssuranceWaiver[]
 
   @@unique([slug])
   @@index([slug])
@@ -417,26 +422,26 @@ model Location {
   allowNegativeStock Boolean @default(false)
   requiresApproval   Boolean @default(false)
 
-  inventoryLevels       InventoryLevel[]
-  inventoryTransactions InventoryTransaction[]
-  transfersFrom         StockTransfer[]        @relation("TransferFrom")
-  transfersTo           StockTransfer[]        @relation("TransferTo")
-  purchaseOrders        PurchaseOrder[]
-  salesOrders           SalesOrder[]
-  stockAdjustments      StockAdjustment[]
-  goodsReceipts         GoodsReceipt[]
-  posStations           POSStation[]
-  cashDrawers           CashDrawer[]
-  dailySalesReports     DailySalesReport[]
-  posSessions           POSSession[]
-  posOfflineDevices     POSOfflineDevice[]
-  posOfflineEvents      POSOfflineEvent[]
+  inventoryLevels            InventoryLevel[]
+  inventoryTransactions      InventoryTransaction[]
+  transfersFrom              StockTransfer[]             @relation("TransferFrom")
+  transfersTo                StockTransfer[]             @relation("TransferTo")
+  purchaseOrders             PurchaseOrder[]
+  salesOrders                SalesOrder[]
+  stockAdjustments           StockAdjustment[]
+  goodsReceipts              GoodsReceipt[]
+  posStations                POSStation[]
+  cashDrawers                CashDrawer[]
+  dailySalesReports          DailySalesReport[]
+  posSessions                POSSession[]
+  posOfflineDevices          POSOfflineDevice[]
+  posOfflineEvents           POSOfflineEvent[]
   posOfflineSyncCertificates POSOfflineSyncCertificate[]
-  productionBatches     ProductionBatch[]
-  expenses              Expense[]
-  serialNumbers         SerialNumber[]
-  stockCountSessions    StockCountSession[]
-  stockCountLines       StockCountLine[]
+  productionBatches          ProductionBatch[]
+  expenses                   Expense[]
+  serialNumbers              SerialNumber[]
+  stockCountSessions         StockCountSession[]
+  stockCountLines            StockCountLine[]
 
   @@unique([organizationId, code])
   @@index([organizationId])
@@ -654,13 +659,13 @@ model Item {
   supplierItems ItemSupplier[]
 
   // Order lines
-  purchaseOrderLines    PurchaseOrderLine[]
-  salesOrderLines       SalesOrderLine[]
-  adjustmentLines       StockAdjustmentLine[]
-  transferLines         StockTransferLine[]
-  goodsReceiptLines     GoodsReceiptLine[]
-  supplierInvoiceLines  SupplierInvoiceLine[]
-  stockCountLines       StockCountLine[]
+  purchaseOrderLines   PurchaseOrderLine[]
+  salesOrderLines      SalesOrderLine[]
+  adjustmentLines      StockAdjustmentLine[]
+  transferLines        StockTransferLine[]
+  goodsReceiptLines    GoodsReceiptLine[]
+  supplierInvoiceLines SupplierInvoiceLine[]
+  stockCountLines      StockCountLine[]
 
   // Production
   recipesAsOutput     Recipe[]           @relation("RecipeOutput")
@@ -874,12 +879,12 @@ model Supplier {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  supplierItems  ItemSupplier[]
-  purchaseOrders PurchaseOrder[]
-  expenses       Expense[]
-  ledgerEntries  SupplierLedgerEntry[]
-  bankAccounts   SupplierBankAccount[]
-  bankChanges    SupplierBankChangeRequest[]
+  supplierItems    ItemSupplier[]
+  purchaseOrders   PurchaseOrder[]
+  expenses         Expense[]
+  ledgerEntries    SupplierLedgerEntry[]
+  bankAccounts     SupplierBankAccount[]
+  bankChanges      SupplierBankChangeRequest[]
   supplierInvoices SupplierInvoice[]
   supplierPayments SupplierPayment[]
 
@@ -996,9 +1001,9 @@ model PurchaseOrder {
   approvedBy   User?     @relation("PurchaseOrderApprovedBy", fields: [approvedById], references: [id])
   approvedAt   DateTime?
 
-  lines         PurchaseOrderLine[]
-  goodsReceipts GoodsReceipt[]
-  payments      Payment[]
+  lines            PurchaseOrderLine[]
+  goodsReceipts    GoodsReceipt[]
+  payments         Payment[]
   supplierInvoices SupplierInvoice[]
   threeWayMatches  ThreeWayMatch[]
 
@@ -1173,15 +1178,15 @@ model SupplierBankAccount {
   supplierId String
   supplier   Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
 
-  bankName              String?
-  accountName           String?
-  accountNumberMasked   String?
-  accountNumberHash     String?
-  mobileMoneyProvider   String?
+  bankName               String?
+  accountName            String?
+  accountNumberMasked    String?
+  accountNumberHash      String?
+  mobileMoneyProvider    String?
   mobileMoneyPhoneMasked String?
   mobileMoneyPhoneHash   String?
 
-  isPrimary Boolean @default(false)
+  isPrimary Boolean                   @default(false)
   status    SupplierBankAccountStatus @default(PENDING_APPROVAL)
 
   requestedById String?
@@ -1194,7 +1199,7 @@ model SupplierBankAccount {
   metadata     Json?
   deletedAt    DateTime?
 
-  changeRequests  SupplierBankChangeRequest[]
+  changeRequests   SupplierBankChangeRequest[]
   supplierPayments SupplierPayment[]
 
   createdAt DateTime @default(now())
@@ -1222,20 +1227,20 @@ model SupplierBankChangeRequest {
 
   requestedById String
   approvedById  String?
-  requestedAt   DateTime @default(now())
+  requestedAt   DateTime  @default(now())
   approvedAt    DateTime?
   rejectedAt    DateTime?
   reason        String?
 
-  newBankName              String?
-  newAccountName           String?
-  newAccountNumberMasked   String?
-  newAccountNumberHash     String?
-  newMobileMoneyProvider   String?
+  newBankName               String?
+  newAccountName            String?
+  newAccountNumberMasked    String?
+  newAccountNumberHash      String?
+  newMobileMoneyProvider    String?
   newMobileMoneyPhoneMasked String?
   newMobileMoneyPhoneHash   String?
 
-  changeHash  String
+  changeHash   String
   documentHash String?
   metadata     Json?
 
@@ -1271,10 +1276,10 @@ model SupplierInvoice {
   amountPaid Decimal @default(0) @db.Decimal(14, 2)
   currency   String  @default("XAF")
 
-  duplicateFingerprint String
-  idempotencyKey       String?
-  documentHash         String?
-  evidenceHash         String?
+  duplicateFingerprint  String
+  idempotencyKey        String?
+  documentHash          String?
+  evidenceHash          String?
   postedBusinessEventId String?
   ledgerPostingBatchId  String?
 
@@ -1318,14 +1323,14 @@ model SupplierInvoiceLine {
   goodsReceiptLine   GoodsReceiptLine? @relation(fields: [goodsReceiptLineId], references: [id])
 
   itemId String?
-  item   Item? @relation(fields: [itemId], references: [id])
+  item   Item?   @relation(fields: [itemId], references: [id])
 
   description String
-  quantity    Decimal @db.Decimal(12, 3)
-  unitCost    Decimal @db.Decimal(12, 2)
-  taxRate     Decimal @default(0) @db.Decimal(6, 3)
-  taxAmount   Decimal @default(0) @db.Decimal(14, 2)
-  lineTotal   Decimal @db.Decimal(14, 2)
+  quantity    Decimal             @db.Decimal(12, 3)
+  unitCost    Decimal             @db.Decimal(12, 2)
+  taxRate     Decimal             @default(0) @db.Decimal(6, 3)
+  taxAmount   Decimal             @default(0) @db.Decimal(14, 2)
+  lineTotal   Decimal             @db.Decimal(14, 2)
   matchStatus ThreeWayMatchStatus @default(MATCHED)
   notes       String?
   metadata    Json?
@@ -1357,7 +1362,7 @@ model ThreeWayMatch {
 
   status ThreeWayMatchStatus @default(MATCHED)
 
-  matchedAt DateTime @default(now())
+  matchedAt   DateTime @default(now())
   matchedById String?
 
   toleranceAmount  Decimal @default(0) @db.Decimal(14, 2)
@@ -1393,9 +1398,9 @@ model SupplierPayment {
   paymentNumber String
   status        SupplierPaymentStatus @default(DRAFT)
   method        PaymentMethod
-  amount        Decimal @db.Decimal(14, 2)
-  currency      String  @default("XAF")
-  paymentDate   DateTime @default(now())
+  amount        Decimal               @db.Decimal(14, 2)
+  currency      String                @default("XAF")
+  paymentDate   DateTime              @default(now())
 
   idempotencyKey String?
   documentHash   String?
@@ -1476,6 +1481,49 @@ enum PayrollContractStatus {
   CANCELLED
 }
 
+enum PayrollRubriqueKind {
+  EARNING
+  DEDUCTION
+  EMPLOYER_CHARGE
+  INFORMATION
+}
+
+enum PayrollRubriqueValueType {
+  FIXED_AMOUNT
+  RATE_BPS
+  QUANTITY_RATE
+  FORMULA_REFERENCE
+}
+
+enum PayrollRubriqueStatus {
+  DRAFT
+  ACTIVE
+  RETIRED
+}
+
+enum PayrollRubriqueAssignmentStatus {
+  DRAFT
+  ACTIVE
+  SUSPENDED
+  ENDED
+}
+
+enum PayrollSalaryChangeStatus {
+  REQUESTED
+  APPROVED
+  REJECTED
+  CANCELLED
+  APPLIED
+}
+
+enum PayrollPaymentDestinationChangeStatus {
+  REQUESTED
+  APPROVED
+  REJECTED
+  CANCELLED
+  APPLIED
+}
+
 enum PayrollPeriodStatus {
   OPEN
   INPUTS_LOCKED
@@ -1545,6 +1593,17 @@ enum PayrollDeclarationStatus {
   ARCHIVED
 }
 
+enum PayrollDeclarationEvidenceTransition {
+  SUBMIT
+  ACCEPT
+  REJECT
+  MARK_PAYMENT_DUE
+  MARK_PAID
+  RECONCILE
+  ARCHIVE
+  AMEND
+}
+
 enum PayrollPaymentBatchStatus {
   DRAFT
   APPROVED
@@ -1575,26 +1634,29 @@ model PayrollEmployee {
   jobTitle        String?
   costCenter      String?
 
-  taxIdentifierMasked      String?
-  taxIdentifierHash        String?
-  socialIdentifierMasked   String?
-  socialIdentifierHash     String?
-  paymentMethod            PaymentMethod?
-  bankAccountMasked        String?
-  bankAccountHash          String?
-  mobileMoneyProvider      String?
-  mobileMoneyPhoneMasked   String?
-  mobileMoneyPhoneHash     String?
-  paymentDestinationHash   String?
+  taxIdentifierMasked    String?
+  taxIdentifierHash      String?
+  socialIdentifierMasked String?
+  socialIdentifierHash   String?
+  paymentMethod          PaymentMethod?
+  bankAccountMasked      String?
+  bankAccountHash        String?
+  mobileMoneyProvider    String?
+  mobileMoneyPhoneMasked String?
+  mobileMoneyPhoneHash   String?
+  paymentDestinationHash String?
 
   metadata  Json?
   deletedAt DateTime?
 
-  contracts          PayrollContract[]
-  attendanceSnapshots PayrollAttendanceSnapshot[]
-  runLines           PayrollRunLine[]
-  payslips           PayrollPayslip[]
-  paymentAllocations PayrollPaymentAllocation[]
+  contracts                        PayrollContract[]
+  rubriqueAssignments              PayrollEmployeeRubriqueAssignment[]
+  salaryChangeRequests             PayrollSalaryChangeRequest[]
+  paymentDestinationChangeRequests PayrollPaymentDestinationChangeRequest[]
+  attendanceSnapshots              PayrollAttendanceSnapshot[]
+  runLines                         PayrollRunLine[]
+  payslips                         PayrollPayslip[]
+  paymentAllocations               PayrollPaymentAllocation[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1623,20 +1685,22 @@ model PayrollContract {
 
   effectiveFrom DateTime
   effectiveTo   DateTime?
-  baseSalary    Decimal @db.Decimal(14, 2)
-  currency      String  @default("XAF")
+  baseSalary    Decimal   @db.Decimal(14, 2)
+  currency      String    @default("XAF")
 
-  workingHoursPerMonth Decimal? @db.Decimal(8, 2)
-  classification       String?
-  echelon              String?
-  convention           String?
-  signedDocumentHash   String?
+  workingHoursPerMonth     Decimal? @db.Decimal(8, 2)
+  classification           String?
+  echelon                  String?
+  convention               String?
+  signedDocumentHash       String?
   activatedBusinessEventId String?
 
   metadata  Json?
   deletedAt DateTime?
 
-  runLines PayrollRunLine[]
+  runLines                        PayrollRunLine[]
+  salaryChangeRequests            PayrollSalaryChangeRequest[] @relation("SalaryChangeSourceContract")
+  supersedingSalaryChangeRequests PayrollSalaryChangeRequest[] @relation("SalaryChangeSupersedingContract")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1645,6 +1709,192 @@ model PayrollContract {
   @@index([organizationId, employeeId, status, effectiveFrom])
   @@index([organizationId, status])
   @@map("payroll_contracts")
+}
+
+model PayrollRubrique {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  code        String
+  label       String
+  description String?
+  kind        PayrollRubriqueKind
+  valueType   PayrollRubriqueValueType
+  status      PayrollRubriqueStatus    @default(DRAFT)
+
+  taxableBase    Boolean @default(false)
+  socialBase     Boolean @default(false)
+  employerCharge Boolean @default(false)
+  payslipLabel   String?
+
+  postingDebitAccountCode  String?
+  postingCreditAccountCode String?
+
+  countryCode                   String?
+  statutoryParameterPath        String?
+  countryPackVersion            String?
+  countryPackSchemaVersion      String?
+  countryPackResolutionHash     String?
+  countryPackLegalRef           String?
+  countryPackVerificationStatus String?
+  countryPackCapabilityStatus   String?
+
+  metadata  Json?
+  deletedAt DateTime?
+
+  assignments PayrollEmployeeRubriqueAssignment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([organizationId, code])
+  @@index([organizationId, status, kind])
+  @@index([organizationId, statutoryParameterPath])
+  @@map("payroll_rubriques")
+}
+
+model PayrollEmployeeRubriqueAssignment {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  employeeId String
+  employee   PayrollEmployee @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  rubriqueId String
+  rubrique   PayrollRubrique @relation(fields: [rubriqueId], references: [id], onDelete: Restrict)
+
+  status PayrollRubriqueAssignmentStatus @default(DRAFT)
+
+  amount   Decimal? @db.Decimal(14, 2)
+  rateBps  Int?
+  quantity Decimal? @db.Decimal(12, 3)
+  currency String   @default("XAF")
+
+  effectiveFrom           DateTime
+  effectiveTo             DateTime?
+  evidenceDocumentHash    String?
+  approvalBusinessEventId String?
+
+  metadata  Json?
+  deletedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId, employeeId, status, effectiveFrom])
+  @@index([organizationId, rubriqueId, status])
+  @@index([organizationId, effectiveFrom])
+  @@map("payroll_employee_rubrique_assignments")
+}
+
+model PayrollSalaryChangeRequest {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  employeeId String
+  employee   PayrollEmployee @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  sourceContractId String
+  sourceContract   PayrollContract @relation("SalaryChangeSourceContract", fields: [sourceContractId], references: [id], onDelete: Restrict)
+
+  supersedingContractId String?
+  supersedingContract   PayrollContract? @relation("SalaryChangeSupersedingContract", fields: [supersedingContractId], references: [id], onDelete: SetNull)
+
+  status PayrollSalaryChangeStatus @default(REQUESTED)
+
+  currentBaseSalary  Decimal  @db.Decimal(14, 2)
+  proposedBaseSalary Decimal  @db.Decimal(14, 2)
+  currency           String   @default("XAF")
+  effectiveFrom      DateTime
+
+  requestedById String
+  approvedById  String?
+  rejectedById  String?
+  appliedById   String?
+
+  requestedAt DateTime  @default(now())
+  approvedAt  DateTime?
+  rejectedAt  DateTime?
+  appliedAt   DateTime?
+
+  requestReason        String
+  decisionReason       String?
+  evidenceDocumentHash String
+  approvalEvidenceHash String?
+
+  requestBusinessEventId  String?
+  approvalBusinessEventId String?
+  appliedBusinessEventId  String?
+
+  metadata  Json?
+  deletedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId, employeeId, status, effectiveFrom])
+  @@index([organizationId, sourceContractId])
+  @@index([organizationId, supersedingContractId])
+  @@index([requestedById])
+  @@index([approvedById])
+  @@map("payroll_salary_change_requests")
+}
+
+model PayrollPaymentDestinationChangeRequest {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  employeeId String
+  employee   PayrollEmployee @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  status PayrollPaymentDestinationChangeStatus @default(REQUESTED)
+
+  paymentMethod          PaymentMethod
+  bankAccountMasked      String?
+  bankAccountHash        String?
+  mobileMoneyProvider    String?
+  mobileMoneyPhoneMasked String?
+  mobileMoneyPhoneHash   String?
+  paymentDestinationHash String
+
+  requestedById String
+  approvedById  String?
+  rejectedById  String?
+  appliedById   String?
+
+  requestedAt DateTime  @default(now())
+  approvedAt  DateTime?
+  rejectedAt  DateTime?
+  appliedAt   DateTime?
+
+  requestReason        String
+  decisionReason       String?
+  evidenceDocumentHash String
+  approvalEvidenceHash String?
+
+  requestBusinessEventId  String?
+  approvalBusinessEventId String?
+  appliedBusinessEventId  String?
+
+  metadata  Json?
+  deletedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId, employeeId, status, requestedAt], map: "pay_dest_change_employee_status_idx")
+  @@index([organizationId, paymentDestinationHash])
+  @@index([requestedById])
+  @@index([approvedById])
+  @@map("payroll_payment_destination_change_requests")
 }
 
 model PayrollPeriod {
@@ -1656,24 +1906,24 @@ model PayrollPeriod {
   accountingPeriodId String?
 
   name        String
-  frequency   PayrollFrequency @default(MONTHLY)
+  frequency   PayrollFrequency    @default(MONTHLY)
   periodStart DateTime
   periodEnd   DateTime
   payDate     DateTime
   status      PayrollPeriodStatus @default(OPEN)
 
-  countryCode                   String
-  countryPackVersion            String?
-  countryPackSchemaVersion      String?
-  countryPackResolutionHash     String?
-  countryPackCapabilityStatus   String?
+  countryCode                 String
+  countryPackVersion          String?
+  countryPackSchemaVersion    String?
+  countryPackResolutionHash   String?
+  countryPackCapabilityStatus String?
 
-  inputLockedAt DateTime?
+  inputLockedAt   DateTime?
   inputLockedById String?
-  approvedAt     DateTime?
-  approvedById   String?
-  closedAt       DateTime?
-  closedById     String?
+  approvedAt      DateTime?
+  approvedById    String?
+  closedAt        DateTime?
+  closedById      String?
 
   metadata Json?
 
@@ -1711,9 +1961,9 @@ model PayrollAttendanceSnapshot {
   absenceMinutes   Int @default(0)
   leaveMinutes     Int @default(0)
 
-  sourceHash   String
-  frozenById   String?
-  frozenAt     DateTime?
+  sourceHash      String
+  frozenById      String?
+  frozenAt        DateTime?
   correctedFromId String?
   correctedFrom   PayrollAttendanceSnapshot?  @relation("AttendanceSnapshotCorrection", fields: [correctedFromId], references: [id])
   corrections     PayrollAttendanceSnapshot[] @relation("AttendanceSnapshotCorrection")
@@ -1741,8 +1991,8 @@ model PayrollRun {
   payrollPeriodId String
   payrollPeriod   PayrollPeriod @relation(fields: [payrollPeriodId], references: [id], onDelete: Restrict)
 
-  originalRunId String?
-  originalRun   PayrollRun?  @relation("PayrollRunCorrections", fields: [originalRunId], references: [id])
+  originalRunId  String?
+  originalRun    PayrollRun?  @relation("PayrollRunCorrections", fields: [originalRunId], references: [id])
   correctiveRuns PayrollRun[] @relation("PayrollRunCorrections")
 
   runNumber String
@@ -1769,9 +2019,9 @@ model PayrollRun {
   documentHash   String?
   evidenceHash   String?
 
-  ledgerPostingBatchId  String?
-  postedBusinessEventId String?
-  journalEntryId        String?
+  ledgerPostingBatchId   String?
+  postedBusinessEventId  String?
+  journalEntryId         String?
   accountingSourceLinkId String?
 
   preparedById String?
@@ -1788,10 +2038,10 @@ model PayrollRun {
   metadata  Json?
   deletedAt DateTime?
 
-  lines            PayrollRunLine[]
-  payslips         PayrollPayslip[]
-  declarations     PayrollDeclaration[]
-  paymentBatches   PayrollPaymentBatch[]
+  lines          PayrollRunLine[]
+  payslips       PayrollPayslip[]
+  declarations   PayrollDeclaration[]
+  paymentBatches PayrollPaymentBatch[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1859,7 +2109,7 @@ model PayrollPayslip {
   payrollRunId String
   payrollRun   PayrollRun @relation(fields: [payrollRunId], references: [id], onDelete: Restrict)
 
-  runLineId String @unique
+  runLineId String         @unique
   runLine   PayrollRunLine @relation(fields: [runLineId], references: [id], onDelete: Restrict)
 
   employeeId String
@@ -1954,12 +2204,62 @@ model PayrollDeclaration {
   payloadHash String?
   metadata    Json?
 
+  evidenceItems PayrollDeclarationEvidence[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@unique([organizationId, payrollRunId, authority, declarationType])
   @@index([organizationId, status, dueDate])
   @@map("payroll_declarations")
+}
+
+model PayrollDeclarationEvidence {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  declarationId String
+  declaration   PayrollDeclaration @relation(fields: [declarationId], references: [id], onDelete: Cascade)
+
+  transition     PayrollDeclarationEvidenceTransition
+  previousStatus PayrollDeclarationStatus
+  nextStatus     PayrollDeclarationStatus
+
+  authority       String
+  declarationType String
+
+  authorityChannel     String
+  authorityEnvironment String  @default("MANUAL_PORTAL")
+  authorityReference   String?
+  authorityStatus      String
+
+  submittedAt          DateTime?
+  submittedById        String?
+  approvedById         String?
+  evidenceCapturedById String
+
+  evidenceHash                  String
+  submittedPayloadHash          String?
+  authorityResponseHash         String?
+  portalReceiptHash             String?
+  supportingFileHash            String?
+  sourceRegisterHash            String?
+  countryPackResolutionHash     String
+  automationCapabilityStatus    String  @default("AUTOMATION_BLOCKED")
+  productionSubmissionSupported Boolean @default(false)
+
+  notes          String?
+  idempotencyKey String
+  metadata       Json?
+
+  createdAt DateTime @default(now())
+
+  @@unique([organizationId, declarationId, transition, idempotencyKey])
+  @@index([organizationId, declarationId, createdAt])
+  @@index([organizationId, transition, createdAt])
+  @@map("payroll_declaration_evidence")
 }
 
 model PayrollPaymentBatch {
@@ -1974,8 +2274,8 @@ model PayrollPaymentBatch {
   batchNumber String
   status      PayrollPaymentBatchStatus @default(DRAFT)
   method      PaymentMethod
-  amount      Decimal @db.Decimal(14, 2)
-  currency    String  @default("XAF")
+  amount      Decimal                   @db.Decimal(14, 2)
+  currency    String                    @default("XAF")
   paymentDate DateTime
 
   idempotencyKey String?
@@ -2367,7 +2667,7 @@ model StockCountSession {
   createdBy   User?   @relation("StockCountCreatedBy", fields: [createdById], references: [id])
 
   submittedById String?
-  submittedBy   User?   @relation("StockCountSubmittedBy", fields: [submittedById], references: [id])
+  submittedBy   User?     @relation("StockCountSubmittedBy", fields: [submittedById], references: [id])
   submittedAt   DateTime?
 
   approvedById String?
@@ -2519,11 +2819,11 @@ model POSStation {
   currentSessionId String?     @unique
   currentSession   POSSession? @relation("StationCurrentSession", fields: [currentSessionId], references: [id])
 
-  sessions    POSSession[] @relation("StationSessions")
-  salesOrders SalesOrder[]
-  cashDrawers CashDrawer[]
-  offlineDevices POSOfflineDevice[]
-  offlineEvents POSOfflineEvent[]
+  sessions                POSSession[]                @relation("StationSessions")
+  salesOrders             SalesOrder[]
+  cashDrawers             CashDrawer[]
+  offlineDevices          POSOfflineDevice[]
+  offlineEvents           POSOfflineEvent[]
   offlineSyncCertificates POSOfflineSyncCertificate[]
 
   createdAt DateTime @default(now())
@@ -2678,18 +2978,18 @@ model POSOfflineDevice {
   lastSequence  Int     @default(0)
   highWaterHash String?
 
-  enrolledById String?
-  enrolledAt   DateTime @default(now())
-  revokedById  String?
-  revokedAt    DateTime?
+  enrolledById     String?
+  enrolledAt       DateTime  @default(now())
+  revokedById      String?
+  revokedAt        DateTime?
   revocationReason String?
-  lastSeenAt   DateTime?
+  lastSeenAt       DateTime?
 
   metadata Json?
 
-  syncBatches POSOfflineSyncBatch[]
-  events      POSOfflineEvent[]
-  conflicts   POSOfflineSyncConflict[]
+  syncBatches  POSOfflineSyncBatch[]
+  events       POSOfflineEvent[]
+  conflicts    POSOfflineSyncConflict[]
   certificates POSOfflineSyncCertificate[]
 
   createdAt DateTime @default(now())
@@ -2718,15 +3018,15 @@ model POSOfflineSyncBatch {
 
   status POSOfflineSyncBatchStatus @default(RECEIVED)
 
-  firstSequence Int?
-  lastSequence  Int?
-  eventCount    Int @default(0)
-  acceptedCount Int @default(0)
-  duplicateCount Int @default(0)
-  conflictCount Int @default(0)
+  firstSequence  Int?
+  lastSequence   Int?
+  eventCount     Int  @default(0)
+  acceptedCount  Int  @default(0)
+  duplicateCount Int  @default(0)
+  conflictCount  Int  @default(0)
 
   payloadHash String?
-  receivedAt  DateTime @default(now())
+  receivedAt  DateTime  @default(now())
   processedAt DateTime?
   metadata    Json?
 
@@ -2766,21 +3066,21 @@ model POSOfflineEvent {
   businessEvent   BusinessEvent? @relation(fields: [businessEventId], references: [id], onDelete: SetNull)
 
   eventType     POSOfflineEventType
-  schemaVersion Int @default(1)
+  schemaVersion Int                 @default(1)
   deviceSeq     Int
 
-  idempotencyKey String
+  idempotencyKey       String
   provisionalReference String?
-  payloadHash    String
-  prevHash       String?
-  entryHash      String
-  signature      String?
+  payloadHash          String
+  prevHash             String?
+  entryHash            String
+  signature            String?
 
   capturedAtDevice DateTime
-  receivedAtServer DateTime @default(now())
+  receivedAtServer DateTime              @default(now())
   status           POSOfflineEventStatus @default(PENDING_REPLAY)
 
-  payload Json
+  payload            Json
   policySnapshotHash String?
   sourceSnapshotHash String?
   postingBatchId     String?
@@ -2821,12 +3121,12 @@ model POSOfflineSyncConflict {
 
   conflictType POSOfflineSyncConflictType
   severity     POSOfflineSyncConflictSeverity @default(HIGH)
-  status       POSOfflineSyncConflictStatus @default(OPEN)
+  status       POSOfflineSyncConflictStatus   @default(OPEN)
 
-  expectedSequence Int?
-  actualSequence   Int?
-  expectedHash     String?
-  actualHash       String?
+  expectedSequence    Int?
+  actualSequence      Int?
+  expectedHash        String?
+  actualHash          String?
   existingPayloadHash String?
   incomingPayloadHash String?
 
@@ -2861,22 +3161,22 @@ model POSOfflineSyncCertificate {
   locationId String
   location   Location @relation(fields: [locationId], references: [id], onDelete: Restrict)
 
-  status POSOfflineSyncCertificateStatus @default(OPEN)
-  certificationScope String @default("DEVICE")
+  status             POSOfflineSyncCertificateStatus @default(OPEN)
+  certificationScope String                          @default("DEVICE")
 
   lastCertifiedSequence Int @default(0)
-  eventCount Int @default(0)
-  acceptedCount Int @default(0)
-  conflictCount Int @default(0)
-  pendingReplayCount Int @default(0)
+  eventCount            Int @default(0)
+  acceptedCount         Int @default(0)
+  conflictCount         Int @default(0)
+  pendingReplayCount    Int @default(0)
 
-  closeBlocker Boolean @default(true)
-  blockerCode String?
-  blockerMessage String?
+  closeBlocker    Boolean   @default(true)
+  blockerCode     String?
+  blockerMessage  String?
   certificateHash String?
-  certifiedAt DateTime?
-  certifiedById String?
-  metadata Json?
+  certifiedAt     DateTime?
+  certifiedById   String?
+  metadata        Json?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -4132,10 +4432,12 @@ model OrganizationAccountingSettings {
   fiscalYearStartMonth Int @default(1)
   fiscalYearStartDay   Int @default(1)
 
-  inventoryValuationPolicy String  @default("WEIGHTED_AVERAGE")
-  roundingMode             String  @default("HALF_UP")
-  roundingScale            Int     @default(2)
-  taxRegime                String?
+  inventoryValuationPolicy         String                            @default("WEIGHTED_AVERAGE")
+  roundingMode                     String                            @default("HALF_UP")
+  roundingScale                    Int                               @default(2)
+  taxRegime                        String?
+  payrollCnpsFamilyAllowanceSector PayrollCnpsFamilyAllowanceSector?
+  payrollCnpsOccupationalRiskGroup PayrollCnpsOccupationalRiskGroup?
 
   setupCompletedAt   DateTime?
   setupCompletedById String?
@@ -4146,6 +4448,18 @@ model OrganizationAccountingSettings {
   @@index([organizationId, accountingEnabled])
   @@index([setupStatus])
   @@map("organization_accounting_settings")
+}
+
+enum PayrollCnpsFamilyAllowanceSector {
+  GENERAL
+  AGRICULTURE
+  PRIVATE_EDUCATION
+}
+
+enum PayrollCnpsOccupationalRiskGroup {
+  A
+  B
+  C
 }
 
 enum AccountingSetupStatus {
@@ -4315,16 +4629,16 @@ model CloseRun {
   periodId String
   period   AccountingPeriod @relation(fields: [periodId], references: [id], onDelete: Cascade)
 
-  status              CloseRunStatus @default(DRAFT)
-  readinessScore      Int            @default(0)
-  criticalBlockerCount Int           @default(0)
-  highBlockerCount     Int           @default(0)
-  evidenceCoveragePct Decimal?       @db.Decimal(5, 2)
+  status               CloseRunStatus @default(DRAFT)
+  readinessScore       Int            @default(0)
+  criticalBlockerCount Int            @default(0)
+  highBlockerCount     Int            @default(0)
+  evidenceCoveragePct  Decimal?       @db.Decimal(5, 2)
 
-  asOf        DateTime @default(now())
-  startedAt   DateTime?
-  completedAt DateTime?
-  runById     String?
+  asOf          DateTime  @default(now())
+  startedAt     DateTime?
+  completedAt   DateTime?
+  runById       String?
   correlationId String?
 
   summary    Json?
@@ -4362,19 +4676,19 @@ model CloseChecklistItem {
   closeRunId String
   closeRun   CloseRun @relation(fields: [closeRunId], references: [id], onDelete: Cascade)
 
-  key          String
-  domain       CloseFindingDomain
-  status       CloseChecklistStatus
-  severity     CloseFindingSeverity @default(INFO)
-  label        String
-  detail       String
-  sourceService String
-  evidenceCount Int @default(0)
-  blockerReason String?
+  key            String
+  domain         CloseFindingDomain
+  status         CloseChecklistStatus
+  severity       CloseFindingSeverity @default(INFO)
+  label          String
+  detail         String
+  sourceService  String
+  evidenceCount  Int                  @default(0)
+  blockerReason  String?
   nextActionHref String?
-  ownerId String?
-  dueAt   DateTime?
-  metadata Json?
+  ownerId        String?
+  dueAt          DateTime?
+  metadata       Json?
 
   findings      CloseAssuranceFinding[]
   evidenceItems CloseEvidenceItem[]
@@ -4406,7 +4720,7 @@ model CloseAssuranceFinding {
 
   domain   CloseFindingDomain
   severity CloseFindingSeverity
-  status   CloseFindingStatus @default(OPEN)
+  status   CloseFindingStatus   @default(OPEN)
   title    String
   detail   String
 
@@ -4418,9 +4732,9 @@ model CloseAssuranceFinding {
   assignedAt    DateTime?
   dueAt         DateTime?
 
-  resolutionNotes String?
-  resolvedAt      DateTime?
-  resolvedById    String?
+  resolutionNotes     String?
+  resolvedAt          DateTime?
+  resolvedById        String?
   waiverRequestedById String?
   waiverRequestedAt   DateTime?
   waiverReason        String?
@@ -4462,18 +4776,18 @@ model CloseEvidenceItem {
   findingId String?
   finding   CloseAssuranceFinding? @relation(fields: [findingId], references: [id])
 
-  evidenceType CloseEvidenceType
-  sourceTable  String?
-  sourceType   String?
-  sourceId     String?
-  sourceLabel  String
-  sourceDate   DateTime?
-  sourceHash   String?
-  provenance   String @default("POSTED")
-  available    Boolean @default(true)
+  evidenceType      CloseEvidenceType
+  sourceTable       String?
+  sourceType        String?
+  sourceId          String?
+  sourceLabel       String
+  sourceDate        DateTime?
+  sourceHash        String?
+  provenance        String            @default("POSTED")
+  available         Boolean           @default(true)
   unavailableReason String?
-  metadata     Json?
-  correlationId String?
+  metadata          Json?
+  correlationId     String?
 
   comments AccountantComment[]
 
@@ -4501,15 +4815,15 @@ model ClosePackExport {
   closeRunId String
   closeRun   CloseRun @relation(fields: [closeRunId], references: [id], onDelete: Cascade)
 
-  fileType    String @default("json")
-  watermarkId String
-  contentHash String
-  rowCount    Int    @default(0)
-  isCertified Boolean @default(false)
-  exportedById String?
-  exportedAt   DateTime @default(now())
+  fileType      String   @default("json")
+  watermarkId   String
+  contentHash   String
+  rowCount      Int      @default(0)
+  isCertified   Boolean  @default(false)
+  exportedById  String?
+  exportedAt    DateTime @default(now())
   correlationId String?
-  metadata     Json?
+  metadata      Json?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -4533,10 +4847,10 @@ model AccountantReview {
   closeRunId String
   closeRun   CloseRun @relation(fields: [closeRunId], references: [id], onDelete: Cascade)
 
-  status      AccountantReviewStatus @default(OPEN)
-  reviewerId  String?
-  openedById  String?
-  reviewedAt  DateTime?
+  status        AccountantReviewStatus @default(OPEN)
+  reviewerId    String?
+  openedById    String?
+  reviewedAt    DateTime?
   decisionNotes String?
   correlationId String?
   metadata      Json?
@@ -4574,11 +4888,11 @@ model AccountantComment {
   reviewId String?
   review   AccountantReview? @relation(fields: [reviewId], references: [id])
 
-  authorId String?
-  body     String
-  visibility String @default("INTERNAL_AND_ACCOUNTANT")
+  authorId      String?
+  body          String
+  visibility    String  @default("INTERNAL_AND_ACCOUNTANT")
   correlationId String?
-  metadata Json?
+  metadata      Json?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -5039,8 +5353,8 @@ model BusinessEvent {
   payloadHash    String
   payload        Json
 
-  occurredAt DateTime
-  recordedAt DateTime @default(now())
+  occurredAt  DateTime
+  recordedAt  DateTime  @default(now())
   processedAt DateTime?
   failedAt    DateTime?
 
@@ -5058,7 +5372,7 @@ model BusinessEvent {
   failureMessage String?
   metadata       Json?
 
-  outboxMessages BusinessEventOutbox[]
+  outboxMessages   BusinessEventOutbox[]
   offlinePosEvents POSOfflineEvent[]
 
   createdAt DateTime @default(now())
@@ -5093,7 +5407,7 @@ model BusinessEventOutbox {
   attempts    Int                  @default(0)
   maxAttempts Int                  @default(5)
 
-  availableAt DateTime @default(now())
+  availableAt DateTime  @default(now())
   lockedAt    DateTime?
   lockedBy    String?
   processedAt DateTime?
@@ -5522,22 +5836,22 @@ enum ComplianceEvidenceSource {
 model WorkflowAssuranceCheckDefinition {
   id String @id @default(cuid())
 
-  checkKey         String
-  version          Int
-  workflow         WorkflowAssuranceWorkflow
-  moduleSlug       String
-  invariantName    String
-  executionMode    WorkflowAssuranceExecutionMode
-  defaultSeverity  WorkflowAssuranceSeverity @default(WARNING)
+  checkKey           String
+  version            Int
+  workflow           WorkflowAssuranceWorkflow
+  moduleSlug         String
+  invariantName      String
+  executionMode      WorkflowAssuranceExecutionMode
+  defaultSeverity    WorkflowAssuranceSeverity      @default(WARNING)
   requiredPermission String
-  ownerRole        String
-  enabled          Boolean @default(true)
-  enforceMode      Boolean @default(false)
-  sourceTables     Json
-  actionRoute      String
-  metadata         Json?
+  ownerRole          String
+  enabled            Boolean                        @default(true)
+  enforceMode        Boolean                        @default(false)
+  sourceTables       Json
+  actionRoute        String
+  metadata           Json?
 
-  runs WorkflowAssuranceCheckRun[]
+  runs      WorkflowAssuranceCheckRun[]
   incidents WorkflowAssuranceIncident[]
 
   createdAt DateTime @default(now())
@@ -5562,7 +5876,7 @@ model WorkflowAssuranceCheckRun {
   definitionVersion Int
 
   runType      WorkflowAssuranceRunType
-  runStatus    WorkflowAssuranceRunStatus @default(RUNNING)
+  runStatus    WorkflowAssuranceRunStatus     @default(RUNNING)
   resultStatus WorkflowAssuranceResultStatus?
   severity     WorkflowAssuranceSeverity?
 
@@ -5582,7 +5896,7 @@ model WorkflowAssuranceCheckRun {
   skippedCount Int @default(0)
   errorCount   Int @default(0)
 
-  startedAt   DateTime @default(now())
+  startedAt   DateTime  @default(now())
   completedAt DateTime?
   durationMs  Int?
 
@@ -5689,7 +6003,7 @@ model WorkflowAssuranceIncident {
   detail        String
   severity      WorkflowAssuranceSeverity
   status        WorkflowAssuranceIncidentStatus @default(OPEN)
-  evidenceGrade String @default("blocked")
+  evidenceGrade String                          @default("blocked")
   sourceLinks   Json?
 
   assignedRole String?
@@ -5697,19 +6011,19 @@ model WorkflowAssuranceIncident {
   dueAt        DateTime?
   actionRoute  String
 
-  firstDetectedAt DateTime @default(now())
-  lastDetectedAt  DateTime @default(now())
+  firstDetectedAt DateTime  @default(now())
+  lastDetectedAt  DateTime  @default(now())
   resolvedAt      DateTime?
   resolvedById    String?
   reopenedAt      DateTime?
   suppressedAt    DateTime?
   suppressedById  String?
   closedAt        DateTime?
-  occurrenceCount Int @default(1)
+  occurrenceCount Int       @default(1)
 
-  resolutionNote   String?
+  resolutionNote    String?
   suppressionReason String?
-  metadata         Json?
+  metadata          Json?
 
   events     WorkflowAssuranceIncidentEvent[]
   deliveries WorkflowAssuranceAlertDelivery[]
@@ -5770,11 +6084,11 @@ model WorkflowAssuranceAlertDelivery {
   message       String
   actionRoute   String?
 
-  deliveredAt  DateTime?
-  failedAt     DateTime?
-  failureCode  String?
+  deliveredAt   DateTime?
+  failedAt      DateTime?
+  failureCode   String?
   failureReason String?
-  metadata     Json?
+  metadata      Json?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -5802,7 +6116,7 @@ model WorkflowAssuranceWaiver {
   evidenceHash String
   expiresAt    DateTime
 
-  requestedAt DateTime @default(now())
+  requestedAt DateTime  @default(now())
   approvedAt  DateTime?
   rejectedAt  DateTime?
   revokedAt   DateTime?

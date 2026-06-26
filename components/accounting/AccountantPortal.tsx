@@ -414,7 +414,7 @@ export function AccountantPortal({
         )}
       </Panel>
 
-      <div className="grid min-w-0 gap-5 xl:grid-cols-2">
+      <div className="grid min-w-0 gap-5">
         <SourceLinksTable data={data} locale={locale} />
         <AuditEventsTable data={data} locale={locale} />
       </div>

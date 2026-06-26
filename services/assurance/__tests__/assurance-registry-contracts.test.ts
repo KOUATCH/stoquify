@@ -15,6 +15,28 @@ describe("workflow assurance registry contracts", () => {
     }
   })
 
+  it("registers payroll operations checks with safe aggregate routing", () => {
+    const prompt20CheckKeys = [
+      "payroll.released_payment_evidence.required",
+      "payroll.payment_reconciliation_exception.visible",
+      "payroll.declaration_lifecycle_exception.visible",
+      "payroll.close_evidence.stale.visible",
+    ]
+    const definitions = INITIAL_WORKFLOW_ASSURANCE_CHECK_DEFINITIONS.filter((definition) =>
+      prompt20CheckKeys.includes(definition.checkKey),
+    )
+
+    expect(definitions).toHaveLength(prompt20CheckKeys.length)
+
+    for (const definition of definitions) {
+      expect(definition.workflow).toBe("payroll")
+      expect(definition.moduleSlug).toBe("payroll")
+      expect(definition.enforceMode).toBe(false)
+      expect(["/dashboard/payroll", "/dashboard/accounting/close"]).toContain(definition.actionRoute)
+      expect(definition.metadata).toEqual(expect.objectContaining({ evidenceLevel: "aggregate_redacted" }))
+      expect(JSON.stringify(definition.metadata).toLowerCase()).not.toMatch(/salary|bank|iban|raw|payload|destination/)
+    }
+  })
   it("rejects an enforce-mode definition during the foundation rollout", () => {
     const definition = {
       ...INITIAL_WORKFLOW_ASSURANCE_CHECK_DEFINITIONS[0],

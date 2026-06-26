@@ -1,12 +1,16 @@
 import {
+  AccountingSourceType,
   AccountingPeriodStatus,
   BusinessEventStatus,
   FiscalDocumentStatus,
   JournalEntryStatus,
   LedgerPostingBatchStatus,
   PaymentExceptionStatus,
+  PayrollDeclarationEvidenceTransition,
   PayrollDeclarationStatus,
   PayrollPaymentBatchStatus,
+  PayrollPayslipStatus,
+  PayrollRunStatus,
   Prisma,
   ProviderAccountStatus,
   ReconciliationRunStatus,
@@ -18,10 +22,7 @@ import { createHash, randomUUID } from "node:crypto"
 
 import { db } from "@/prisma/db"
 import { BusinessRuleError } from "@/services/_shared/action-errors"
-import {
-  assertSensitiveActionAllowed,
-  evaluateAndAuditSensitiveAction,
-} from "@/services/controls/sensitive-action.service"
+import { assertSensitiveActionAllowed, evaluateAndAuditSensitiveAction } from "@/services/controls/sensitive-action.service"
 
 type DbClient = typeof db | Prisma.TransactionClient
 type TrustLevel = "T0" | "T1" | "T2" | "T3" | "T4"
@@ -182,10 +183,16 @@ const DATA_TRUST_SOURCE_TABLES = [
   "statement_lines",
   "reconciliation_runs",
   "payment_exceptions",
+  "payment_transactions",
   "supplier_invoices",
   "supplier_payments",
+  "payroll_runs",
+  "payroll_run_lines",
+  "payroll_payslips",
   "payroll_declarations",
+  "payroll_declaration_evidence",
   "payroll_payment_batches",
+  "payroll_payment_allocations",
   "fiscal_documents",
 ] as const
 
@@ -287,7 +294,9 @@ function statementFileScope(scope: ReturnType<typeof normalizedScope>) {
   return {
     organizationId: scope.organizationId,
     providerAccount: { status: ProviderAccountStatus.ACTIVE },
-    status: { in: [StatementFileStatus.IMPORTED, StatementFileStatus.PROCESSED] },
+    status: {
+      in: [StatementFileStatus.IMPORTED, StatementFileStatus.PROCESSED],
+    },
     ...periodOverlap,
   } satisfies Prisma.StatementFileWhereInput
 }
@@ -347,10 +356,7 @@ function positiveInteger(value: unknown, fallback: number) {
 
 function statementCadenceDays(account: ActiveProviderStatementFreshnessRow) {
   const metadata = jsonObject(account.metadata)
-  return positiveInteger(
-    metadata.statementCadenceDays ?? metadata.statement_cadence_days ?? metadata.cadenceDays,
-    1,
-  )
+  return positiveInteger(metadata.statementCadenceDays ?? metadata.statement_cadence_days ?? metadata.cadenceDays, 1)
 }
 
 function startOfUtcDay(date: Date) {
@@ -374,10 +380,7 @@ function statementFreshnessAnchor(
   return candidate > now ? now : candidate
 }
 
-function staleProviderStatementAccounts(
-  accounts: ActiveProviderStatementFreshnessRow[],
-  anchor: Date,
-) {
+function staleProviderStatementAccounts(accounts: ActiveProviderStatementFreshnessRow[], anchor: Date) {
   return accounts.filter((account) => {
     const latestStatement = account.statementFiles[0]
     if (!latestStatement) return false
@@ -399,10 +402,7 @@ function openPaymentExceptionStatuses() {
   ]
 }
 
-function addBlocker(
-  blockers: DataTrustBlocker[],
-  blocker: Omit<DataTrustBlocker, "sourceTables"> & { sourceTables?: string[] },
-) {
+function addBlocker(blockers: DataTrustBlocker[], blocker: Omit<DataTrustBlocker, "sourceTables"> & { sourceTables?: string[] }) {
   blockers.push({
     ...blocker,
     sourceTables: blocker.sourceTables ?? [],
@@ -468,11 +468,7 @@ function figure(
   }
 }
 
-async function resolveScopePeriod(
-  client: DbClient,
-  scope: ReturnType<typeof normalizedScope>,
-  now: Date,
-) {
+async function resolveScopePeriod(client: DbClient, scope: ReturnType<typeof normalizedScope>, now: Date) {
   const anchor = scope.startDate ?? scope.endDate ?? now
 
   return client.accountingPeriod.findFirst({
@@ -494,10 +490,7 @@ async function resolveScopePeriod(
   })
 }
 
-async function loadOptionalLedgerRows(
-  client: DbClient,
-  scope: ReturnType<typeof normalizedScope>,
-) {
+async function loadOptionalLedgerRows(client: DbClient, scope: ReturnType<typeof normalizedScope>) {
   const rows = await client.journalEntryLine.findMany({
     where: {
       organizationId: scope.organizationId,
@@ -564,7 +557,12 @@ export async function getAccountantPortalData(
       endDate: scope.endDate?.toISOString() ?? null,
     }),
   )
-  const sourceQueryId = sha256(stableStringify({ scopeHash, sourceTables: ["journal_entries", "journal_entry_lines"] }))
+  const sourceQueryId = sha256(
+    stableStringify({
+      scopeHash,
+      sourceTables: ["journal_entries", "journal_entry_lines"],
+    }),
+  )
 
   const [
     settings,
@@ -586,7 +584,18 @@ export async function getAccountantPortalData(
     signedReconciliationRunCount,
     payrollDeclarationPreparedCount,
     payrollDeclarationRejectedCount,
+    payrollDeclarationInProgressCount,
+    payrollDeclarationLifecycleEvidenceMissingCount,
+    payrollDeclarationAmendmentEvidenceCount,
     payrollPaymentUnsettledCount,
+    payrollPaymentReconciliationEvidenceMissingCount,
+    payrollPaymentAllocationMissingCount,
+    payrollPostedRunMissingLedgerCount,
+    payrollPostedRunLineMissingPayslipCount,
+    payrollEmittedPayslipMissingProofCount,
+    payrollPaidRunMissingSettledPaymentCount,
+    payrollPaymentMissingLedgerCount,
+    payrollPostedLedgerMissingSourceLinkCount,
     supplierInvoiceOpenCount,
     supplierPaymentMissingLedgerCount,
     fiscalQueuedCount,
@@ -602,7 +611,11 @@ export async function getAccountantPortalData(
   ] = await Promise.all([
     client.organizationAccountingSettings.findUnique({
       where: { organizationId: scope.organizationId },
-      select: { accountingEnabled: true, setupStatus: true, baseCurrency: true },
+      select: {
+        accountingEnabled: true,
+        setupStatus: true,
+        baseCurrency: true,
+      },
     }),
     resolveScopePeriod(client, scope, now),
     client.journalEntryLine.aggregate({
@@ -614,8 +627,12 @@ export async function getAccountantPortalData(
       _count: { _all: true },
     }),
     client.journalEntry.count({ where: entryWhere }),
-    client.journalEntry.count({ where: { ...entryWhere, sourceLinks: { none: {} } } }),
-    client.journalEntry.count({ where: { ...entryWhere, postingBatchId: null } }),
+    client.journalEntry.count({
+      where: { ...entryWhere, sourceLinks: { none: {} } },
+    }),
+    client.journalEntry.count({
+      where: { ...entryWhere, postingBatchId: null },
+    }),
     client.accountingSourceLink.count({
       where: {
         organizationId: scope.organizationId,
@@ -626,12 +643,18 @@ export async function getAccountantPortalData(
       where: { ...batchWhere, status: LedgerPostingBatchStatus.FAILED },
     }),
     client.ledgerPostingBatch.count({
-      where: { ...batchWhere, status: LedgerPostingBatchStatus.POSTED, journalEntries: { none: {} } },
+      where: {
+        ...batchWhere,
+        status: LedgerPostingBatchStatus.POSTED,
+        journalEntries: { none: {} },
+      },
     }),
     client.businessEvent.count({
       where: {
         ...eventWhere,
-        status: { in: [BusinessEventStatus.FAILED, BusinessEventStatus.REJECTED] },
+        status: {
+          in: [BusinessEventStatus.FAILED, BusinessEventStatus.REJECTED],
+        },
       },
     }),
     client.paymentException.count({
@@ -668,7 +691,9 @@ export async function getAccountantPortalData(
         metadata: true,
         statementFiles: {
           where: {
-            status: { in: [StatementFileStatus.IMPORTED, StatementFileStatus.PROCESSED] },
+            status: {
+              in: [StatementFileStatus.IMPORTED, StatementFileStatus.PROCESSED],
+            },
           },
           orderBy: { periodEnd: "desc" },
           take: 1,
@@ -696,24 +721,146 @@ export async function getAccountantPortalData(
         ...createdAtFilter(scope),
       },
     }),
+    client.payrollDeclaration.count({
+      where: {
+        organizationId: scope.organizationId,
+        status: {
+          in: [
+            PayrollDeclarationStatus.SUBMITTED,
+            PayrollDeclarationStatus.ACCEPTED,
+            PayrollDeclarationStatus.PAYMENT_DUE,
+            PayrollDeclarationStatus.PAID,
+          ],
+        },
+        ...createdAtFilter(scope),
+      },
+    }),
+    client.payrollDeclaration.count({
+      where: {
+        organizationId: scope.organizationId,
+        status: {
+          in: [
+            PayrollDeclarationStatus.SUBMITTED,
+            PayrollDeclarationStatus.ACCEPTED,
+            PayrollDeclarationStatus.REJECTED,
+            PayrollDeclarationStatus.PAYMENT_DUE,
+            PayrollDeclarationStatus.PAID,
+            PayrollDeclarationStatus.RECONCILED,
+            PayrollDeclarationStatus.ARCHIVED,
+          ],
+        },
+        evidenceItems: { none: {} },
+        ...createdAtFilter(scope),
+      },
+    }),
+    client.payrollDeclarationEvidence.count({
+      where: {
+        organizationId: scope.organizationId,
+        transition: PayrollDeclarationEvidenceTransition.AMEND,
+        ...createdAtFilter(scope),
+      },
+    }),
     client.payrollPaymentBatch.count({
       where: {
         organizationId: scope.organizationId,
-        status: { in: [PayrollPaymentBatchStatus.RELEASED, PayrollPaymentBatchStatus.PARTIALLY_SETTLED] },
+        status: {
+          in: [PayrollPaymentBatchStatus.RELEASED, PayrollPaymentBatchStatus.PARTIALLY_SETTLED],
+        },
         ...createdAtFilter(scope),
+      },
+    }),
+    client.payrollPaymentBatch.count({
+      where: {
+        organizationId: scope.organizationId,
+        status: {
+          in: [PayrollPaymentBatchStatus.RELEASED, PayrollPaymentBatchStatus.PARTIALLY_SETTLED, PayrollPaymentBatchStatus.SETTLED],
+        },
+        OR: [{ evidenceHash: null }, { paymentTransactionId: null }, { reconciliationStatus: null }],
+        ...createdAtFilter(scope),
+      },
+    }),
+    client.payrollPaymentBatch.count({
+      where: {
+        organizationId: scope.organizationId,
+        status: {
+          in: [PayrollPaymentBatchStatus.RELEASED, PayrollPaymentBatchStatus.PARTIALLY_SETTLED, PayrollPaymentBatchStatus.SETTLED],
+        },
+        allocations: { none: {} },
+        ...createdAtFilter(scope),
+      },
+    }),
+    client.payrollRun.count({
+      where: {
+        organizationId: scope.organizationId,
+        status: { in: [PayrollRunStatus.POSTED, PayrollRunStatus.PAID] },
+        ledgerPostingBatchId: null,
+        deletedAt: null,
+        ...createdAtFilter(scope),
+      },
+    }),
+    client.payrollRunLine.count({
+      where: {
+        organizationId: scope.organizationId,
+        payrollRun: {
+          status: { in: [PayrollRunStatus.POSTED, PayrollRunStatus.PAID] },
+          deletedAt: null,
+          ...createdAtFilter(scope),
+        },
+        payslip: { is: null },
+      },
+    }),
+    client.payrollPayslip.count({
+      where: {
+        organizationId: scope.organizationId,
+        status: PayrollPayslipStatus.EMITTED,
+        documentHash: "",
+        ...createdAtFilter(scope),
+      },
+    }),
+    client.payrollRun.count({
+      where: {
+        organizationId: scope.organizationId,
+        status: PayrollRunStatus.PAID,
+        paymentBatches: { none: { status: PayrollPaymentBatchStatus.SETTLED } },
+        deletedAt: null,
+        ...createdAtFilter(scope),
+      },
+    }),
+    client.payrollPaymentBatch.count({
+      where: {
+        organizationId: scope.organizationId,
+        status: {
+          in: [PayrollPaymentBatchStatus.RELEASED, PayrollPaymentBatchStatus.PARTIALLY_SETTLED],
+        },
+        ledgerPostingBatchId: null,
+        ...createdAtFilter(scope),
+      },
+    }),
+    client.ledgerPostingBatch.count({
+      where: {
+        ...batchWhere,
+        status: LedgerPostingBatchStatus.POSTED,
+        sourceType: {
+          in: [AccountingSourceType.PAYROLL_RUN, AccountingSourceType.PAYROLL_PAYMENT],
+        },
+        sourceLinks: { none: {} },
       },
     }),
     client.supplierInvoice.count({
       where: {
         organizationId: scope.organizationId,
-        status: { in: [SupplierInvoiceStatus.POSTED, SupplierInvoiceStatus.PAYMENT_PENDING, SupplierInvoiceStatus.DISPUTED] },
+        status: {
+          in: [SupplierInvoiceStatus.POSTED, SupplierInvoiceStatus.PAYMENT_PENDING, SupplierInvoiceStatus.DISPUTED],
+        },
         ...createdAtFilter(scope),
       },
     }),
     client.supplierPayment.count({
       where: {
         organizationId: scope.organizationId,
-        status: { in: [SupplierPaymentStatus.APPROVED, SupplierPaymentStatus.RELEASED, SupplierPaymentStatus.POSTED] },
+        status: {
+          in: [SupplierPaymentStatus.APPROVED, SupplierPaymentStatus.RELEASED, SupplierPaymentStatus.POSTED],
+        },
         ledgerPostingBatchId: null,
         ...createdAtFilter(scope),
       },
@@ -721,7 +868,9 @@ export async function getAccountantPortalData(
     client.fiscalDocument.count({
       where: {
         organizationId: scope.organizationId,
-        status: { in: [FiscalDocumentStatus.QUEUED, FiscalDocumentStatus.SUBMITTED] },
+        status: {
+          in: [FiscalDocumentStatus.QUEUED, FiscalDocumentStatus.SUBMITTED],
+        },
         ...createdAtFilter(scope),
       },
     }),
@@ -753,8 +902,18 @@ export async function getAccountantPortalData(
         ...createdAtFilter(scope),
       },
     }),
-    client.ledgerAuditEvent.count({ where: { organizationId: scope.organizationId, ...createdAtFilter(scope) } }),
-    client.auditLog.count({ where: { organizationId: scope.organizationId, ...createdAtFilter(scope) } }),
+    client.ledgerAuditEvent.count({
+      where: {
+        organizationId: scope.organizationId,
+        ...createdAtFilter(scope),
+      },
+    }),
+    client.auditLog.count({
+      where: {
+        organizationId: scope.organizationId,
+        ...createdAtFilter(scope),
+      },
+    }),
     client.accountingSourceLink.findMany({
       where: {
         organizationId: scope.organizationId,
@@ -768,7 +927,10 @@ export async function getAccountantPortalData(
       },
     }),
     client.ledgerAuditEvent.findMany({
-      where: { organizationId: scope.organizationId, ...createdAtFilter(scope) },
+      where: {
+        organizationId: scope.organizationId,
+        ...createdAtFilter(scope),
+      },
       orderBy: { createdAt: "desc" },
       take: Math.min(scope.limit, 20),
       select: {
@@ -781,7 +943,10 @@ export async function getAccountantPortalData(
       },
     }),
     client.auditLog.findMany({
-      where: { organizationId: scope.organizationId, ...createdAtFilter(scope) },
+      where: {
+        organizationId: scope.organizationId,
+        ...createdAtFilter(scope),
+      },
       orderBy: { createdAt: "desc" },
       take: Math.min(scope.limit, 20),
       select: {
@@ -803,16 +968,12 @@ export async function getAccountantPortalData(
   const creditTotal = decimal(ledgerAggregate._sum.credit)
   const ledgerBalanced = debitTotal.eq(creditTotal)
   const linkedPostedEntryCount = Math.max(postedEntryCount - orphanPostedEntryCount, 0)
-  const sourceLinkCoveragePct =
-    postedEntryCount === 0 ? null : Number(((linkedPostedEntryCount / postedEntryCount) * 100).toFixed(2))
+  const sourceLinkCoveragePct = postedEntryCount === 0 ? null : Number(((linkedPostedEntryCount / postedEntryCount) * 100).toFixed(2))
   const providerStatementEvidenceMissing =
     activeProviderAccountCount > 0 && (providerStatementFileCount === 0 || providerStatementLineCount === 0)
   const staleStatementAccounts = providerStatementEvidenceMissing
     ? []
-    : staleProviderStatementAccounts(
-        activeProviderStatementFreshnessRows,
-        statementFreshnessAnchor(scope, period, now),
-      )
+    : staleProviderStatementAccounts(activeProviderStatementFreshnessRows, statementFreshnessAnchor(scope, period, now))
   const providerStatementCadenceStale = activeProviderAccountCount > 0 && staleStatementAccounts.length > 0
   const providerReconciliationSignoffMissing =
     activeProviderAccountCount > 0 &&
@@ -1010,6 +1171,28 @@ export async function getAccountantPortalData(
     })
   }
 
+  if (payrollDeclarationLifecycleEvidenceMissingCount > 0) {
+    addBlocker(blockers, {
+      id: "payroll-declaration-lifecycle-evidence-missing",
+      severity: "high",
+      gate: "payroll.declarations.evidence",
+      title: "Payroll declaration lifecycle evidence is incomplete",
+      detail: `${payrollDeclarationLifecycleEvidenceMissingCount} advanced payroll declaration lacks append-only authority evidence.`,
+      sourceTables: ["payroll_declarations", "payroll_declaration_evidence"],
+    })
+  }
+
+  if (payrollDeclarationInProgressCount > 0) {
+    addBlocker(blockers, {
+      id: "payroll-declarations-in-progress",
+      severity: "medium",
+      gate: "payroll.declarations.lifecycle",
+      title: "Payroll declarations are still in lifecycle processing",
+      detail: `${payrollDeclarationInProgressCount} payroll declaration is submitted, accepted, payment-due, or paid but not yet reconciled or archived.`,
+      sourceTables: ["payroll_declarations", "payroll_declaration_evidence"],
+    })
+  }
+
   if (payrollPaymentUnsettledCount > 0) {
     addBlocker(blockers, {
       id: "payroll-payments-unsettled",
@@ -1018,6 +1201,94 @@ export async function getAccountantPortalData(
       title: "Payroll payments are not settled",
       detail: `${payrollPaymentUnsettledCount} released or partially settled payroll payment batch still needs reconciliation evidence.`,
       sourceTables: ["payroll_payment_batches"],
+    })
+  }
+
+  if (payrollPaymentReconciliationEvidenceMissingCount > 0) {
+    addBlocker(blockers, {
+      id: "payroll-payments-without-reconciliation-evidence",
+      severity: "high",
+      gate: "payroll.payment.reconciliation.evidence",
+      title: "Payroll payments lack reconciliation evidence",
+      detail: `${payrollPaymentReconciliationEvidenceMissingCount} released, partially settled, or settled payroll payment batch is missing batch evidence, a linked payment transaction, or reconciliation status.`,
+      sourceTables: ["payroll_payment_batches", "payment_transactions"],
+    })
+  }
+
+  if (payrollPaymentAllocationMissingCount > 0) {
+    addBlocker(blockers, {
+      id: "payroll-payment-allocations-missing",
+      severity: "high",
+      gate: "payroll.register.payment-allocations",
+      title: "Payroll payment allocations are missing",
+      detail: `${payrollPaymentAllocationMissingCount} released, partially settled, or settled payroll payment batch has no payslip allocations for register tie-out.`,
+      sourceTables: ["payroll_payment_batches", "payroll_payment_allocations", "payroll_payslips"],
+    })
+  }
+
+  if (payrollPostedRunMissingLedgerCount > 0) {
+    addBlocker(blockers, {
+      id: "payroll-runs-without-ledger",
+      severity: "critical",
+      gate: "payroll.accounting.posting",
+      title: "Posted payroll runs lack ledger posting",
+      detail: `${payrollPostedRunMissingLedgerCount} posted or paid payroll run is missing a ledger posting batch.`,
+      sourceTables: ["payroll_runs", "ledger_posting_batches"],
+    })
+  }
+
+  if (payrollPostedRunLineMissingPayslipCount > 0) {
+    addBlocker(blockers, {
+      id: "payroll-run-lines-without-payslips",
+      severity: "critical",
+      gate: "payroll.register.payslip-tieout",
+      title: "Payroll run lines lack emitted payslips",
+      detail: `${payrollPostedRunLineMissingPayslipCount} posted or paid payroll run line has no emitted payslip evidence for register tie-out.`,
+      sourceTables: ["payroll_runs", "payroll_run_lines", "payroll_payslips"],
+    })
+  }
+
+  if (payrollEmittedPayslipMissingProofCount > 0) {
+    addBlocker(blockers, {
+      id: "payroll-payslips-without-proof-hash",
+      severity: "high",
+      gate: "payroll.payslip.proof",
+      title: "Emitted payroll payslips lack proof hashes",
+      detail: `${payrollEmittedPayslipMissingProofCount} emitted payroll payslip has an empty document hash and cannot support certified close evidence.`,
+      sourceTables: ["payroll_payslips"],
+    })
+  }
+
+  if (payrollPaidRunMissingSettledPaymentCount > 0) {
+    addBlocker(blockers, {
+      id: "payroll-paid-runs-without-settled-payments",
+      severity: "high",
+      gate: "payroll.register.payment-tieout",
+      title: "Paid payroll runs lack settled payment evidence",
+      detail: `${payrollPaidRunMissingSettledPaymentCount} paid payroll run has no settled payment batch for register tie-out.`,
+      sourceTables: ["payroll_runs", "payroll_payment_batches", "payroll_payment_allocations"],
+    })
+  }
+
+  if (payrollPaymentMissingLedgerCount > 0) {
+    addBlocker(blockers, {
+      id: "payroll-payments-without-ledger",
+      severity: "critical",
+      gate: "payroll.payment.posting",
+      title: "Released payroll payments lack ledger posting",
+      detail: `${payrollPaymentMissingLedgerCount} released or partially settled payroll payment batch is missing a ledger posting batch.`,
+      sourceTables: ["payroll_payment_batches", "ledger_posting_batches"],
+    })
+  }
+
+  if (payrollPostedLedgerMissingSourceLinkCount > 0) {
+    addBlocker(blockers, {
+      id: "payroll-ledger-source-link-missing",
+      severity: "critical",
+      gate: "payroll.accounting.source-link",
+      title: "Payroll ledger postings lack source links",
+      detail: `${payrollPostedLedgerMissingSourceLinkCount} posted payroll ledger batch is missing accounting source-link evidence.`,
+      sourceTables: ["ledger_posting_batches", "accounting_source_links"],
     })
   }
 
@@ -1108,7 +1379,10 @@ export async function getAccountantPortalData(
       facts: [
         { label: "Posted entries", value: postedEntryCount },
         { label: "Journal lines", value: ledgerAggregate._count._all },
-        { label: "Source-link coverage", value: sourceLinkCoveragePct === null ? "n/a" : `${sourceLinkCoveragePct}%` },
+        {
+          label: "Source-link coverage",
+          value: sourceLinkCoveragePct === null ? "n/a" : `${sourceLinkCoveragePct}%`,
+        },
       ],
     },
     {
@@ -1131,11 +1405,20 @@ export async function getAccountantPortalData(
       label: "Payment reconciliation",
       detail: "Open payment exceptions, provider statement cadence, and signed reconciliation runs gate certification.",
       facts: [
-        { label: "Active provider accounts", value: activeProviderAccountCount },
+        {
+          label: "Active provider accounts",
+          value: activeProviderAccountCount,
+        },
         { label: "Statement files", value: providerStatementFileCount },
         { label: "Statement lines", value: providerStatementLineCount },
-        { label: "Stale statement accounts", value: staleStatementAccounts.length },
-        { label: "Signed reconciliation runs", value: signedReconciliationRunCount },
+        {
+          label: "Stale statement accounts",
+          value: staleStatementAccounts.length,
+        },
+        {
+          label: "Signed reconciliation runs",
+          value: signedReconciliationRunCount,
+        },
         { label: "Open exceptions", value: openPaymentExceptionCount },
         { label: "High/Critical", value: criticalPaymentExceptionCount },
       ],
@@ -1147,18 +1430,85 @@ export async function getAccountantPortalData(
       detail: "Supplier invoices and payments must reconcile to ledger evidence.",
       facts: [
         { label: "Open AP invoices", value: supplierInvoiceOpenCount },
-        { label: "Payments without ledger", value: supplierPaymentMissingLedgerCount },
+        {
+          label: "Payments without ledger",
+          value: supplierPaymentMissingLedgerCount,
+        },
       ],
     },
     {
       module: "payroll",
-      status: statusFor(false, payrollDeclarationRejectedCount > 0 || payrollPaymentUnsettledCount > 0, payrollDeclarationPreparedCount > 0),
+      status: statusFor(
+        payrollPostedRunMissingLedgerCount > 0 ||
+          payrollPostedRunLineMissingPayslipCount > 0 ||
+          payrollPaymentMissingLedgerCount > 0 ||
+          payrollPostedLedgerMissingSourceLinkCount > 0,
+        payrollDeclarationRejectedCount > 0 ||
+          payrollDeclarationLifecycleEvidenceMissingCount > 0 ||
+          payrollPaymentUnsettledCount > 0 ||
+          payrollPaymentReconciliationEvidenceMissingCount > 0 ||
+          payrollPaymentAllocationMissingCount > 0 ||
+          payrollEmittedPayslipMissingProofCount > 0 ||
+          payrollPaidRunMissingSettledPaymentCount > 0,
+        payrollDeclarationPreparedCount > 0 || payrollDeclarationInProgressCount > 0,
+      ),
       label: "Payroll and declarations",
-      detail: "Payroll payment and declaration evidence is consumed from the 012 payroll kernel.",
+      detail:
+        "Payroll register tie-out, payslip proof, payment reconciliation, ledger source-link, and declaration lifecycle evidence is consumed from payroll services.",
       facts: [
-        { label: "Prepared declarations", value: payrollDeclarationPreparedCount },
-        { label: "Rejected declarations", value: payrollDeclarationRejectedCount },
+        {
+          label: "Prepared declarations",
+          value: payrollDeclarationPreparedCount,
+        },
+        {
+          label: "Rejected declarations",
+          value: payrollDeclarationRejectedCount,
+        },
+        {
+          label: "In-progress declarations",
+          value: payrollDeclarationInProgressCount,
+        },
+        {
+          label: "Declaration evidence gaps",
+          value: payrollDeclarationLifecycleEvidenceMissingCount,
+        },
+        {
+          label: "Declaration amendments",
+          value: payrollDeclarationAmendmentEvidenceCount,
+        },
         { label: "Unsettled batches", value: payrollPaymentUnsettledCount },
+        {
+          label: "Payment reconciliation evidence gaps",
+          value: payrollPaymentReconciliationEvidenceMissingCount,
+        },
+        {
+          label: "Payment allocation gaps",
+          value: payrollPaymentAllocationMissingCount,
+        },
+        {
+          label: "Runs missing ledger",
+          value: payrollPostedRunMissingLedgerCount,
+        },
+        {
+          label: "Run lines missing payslips",
+          value: payrollPostedRunLineMissingPayslipCount,
+        },
+        {
+          label: "Payslips missing proof hashes",
+          value: payrollEmittedPayslipMissingProofCount,
+        },
+        {
+          label: "Paid runs missing settled payments",
+          value: payrollPaidRunMissingSettledPaymentCount,
+        },
+        {
+          label: "Payments missing ledger",
+          value: payrollPaymentMissingLedgerCount,
+        },
+        {
+          label: "Payroll batches missing source links",
+          value: payrollPostedLedgerMissingSourceLinkCount,
+        },
       ],
     },
     {
@@ -1231,6 +1581,7 @@ export async function getAccountantPortalData(
         "business-event failure scan",
         "provider statement and reconciliation sign-off evidence scan",
         "payment/AP/payroll/compliance blocker scan",
+        "payroll register tie-out, payslip proof, payment settlement, and declaration lifecycle evidence scan",
         "audit/control-event visibility",
       ],
       requiredForNextLevel,
@@ -1286,9 +1637,10 @@ export async function getAccountantPortalData(
         status: "recorded",
       })),
       ...latestControlAuditEvents.map((event) => {
-        const changes = event.changes && typeof event.changes === "object" && !Array.isArray(event.changes)
-          ? (event.changes as Record<string, unknown>)
-          : {}
+        const changes =
+          event.changes && typeof event.changes === "object" && !Array.isArray(event.changes)
+            ? (event.changes as Record<string, unknown>)
+            : {}
 
         return {
           id: event.id,
@@ -1313,9 +1665,7 @@ export async function getAccountantPortalData(
   }
 }
 
-export async function exportAccountantTrustPack(
-  input: ExportAccountantTrustPackServiceInput,
-): Promise<AccountantTrustPackExport> {
+export async function exportAccountantTrustPack(input: ExportAccountantTrustPackServiceInput): Promise<AccountantTrustPackExport> {
   const now = input.now ? new Date(input.now) : new Date()
   const exportId = randomUUID()
   const fileType = input.fileType ?? "json"

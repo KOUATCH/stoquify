@@ -1,4 +1,5 @@
 import {
+  AccountingSourceType,
   BusinessEventStatus,
   CloseChecklistStatus,
   CloseFindingStatus,
@@ -6,6 +7,7 @@ import {
   JournalEntryStatus,
   LedgerPostingBatchStatus,
   PaymentExceptionStatus,
+  PaymentTransactionState,
   Prisma,
   ReconciliationRunStatus,
   SuspenseStatus,
@@ -28,6 +30,7 @@ import type {
 import {
   computeCloseRunEvidenceGrade,
   computeJournalEntryEvidenceGrade,
+  computePaymentTransactionEvidenceGrade,
   computeReconciliationRunEvidenceGrade,
 } from "./evidence-grade.service"
 import { applyProofTrailRedactions, createProofTrailRedaction } from "./evidence-redaction.service"
@@ -51,6 +54,13 @@ const OPEN_SUSPENSE_STATUSES: readonly SuspenseStatus[] = [
   SuspenseStatus.RESOLUTION_PROPOSED,
   SuspenseStatus.REOPENED,
 ]
+
+const ACCOUNTING_SOURCE_TYPES = new Set<string>(Object.values(AccountingSourceType))
+
+function accountingSourceType(value: string | null | undefined): AccountingSourceType | null {
+  if (!value) return null
+  return ACCOUNTING_SOURCE_TYPES.has(value) ? (value as AccountingSourceType) : null
+}
 
 const OPEN_CLOSE_FINDING_STATUSES: readonly CloseFindingStatus[] = [
   CloseFindingStatus.OPEN,
@@ -640,6 +650,403 @@ async function buildReconciliationRunProofTrail(input: ProofTrailInput, client: 
   }, client)
 }
 
+async function buildPaymentTransactionProofTrail(input: ProofTrailInput, client: DbClient) {
+  const transaction = await client.paymentTransaction.findFirst({
+    where: { id: input.subjectId, organizationId: input.organizationId },
+    include: {
+      providerAccount: {
+        select: {
+          id: true,
+          providerCode: true,
+          displayName: true,
+          status: true,
+          paymentRail: { select: { id: true, code: true, name: true } },
+        },
+      },
+      ledgerPostingBatch: {
+        select: {
+          id: true,
+          sourceType: true,
+          sourceId: true,
+          postingPurpose: true,
+          status: true,
+          errorMessage: true,
+          postedAt: true,
+        },
+      },
+      matchRecords: {
+        select: {
+          id: true,
+          status: true,
+          confidence: true,
+          amountMatched: true,
+          currencyCode: true,
+          ledgerPostingBatchId: true,
+          providerEventId: true,
+          statementLineId: true,
+          reconciliationRunId: true,
+        },
+        orderBy: { createdAt: "desc" },
+        take: 10,
+      },
+      suspenseItems: {
+        select: { id: true, status: true, severity: true, amount: true, currencyCode: true, ledgerPostingBatchId: true },
+        orderBy: { createdAt: "desc" },
+        take: 10,
+      },
+      paymentExceptions: {
+        select: { id: true, status: true, severity: true, type: true, resolutionNotes: true, suspenseItemId: true },
+        orderBy: { createdAt: "desc" },
+        take: 10,
+      },
+    },
+  })
+
+  if (!transaction) throw new NotFoundError("Payment transaction proof subject not found")
+
+  const eventSourceType = accountingSourceType(transaction.sourceType)
+  const events = eventSourceType && transaction.sourceId
+    ? await client.businessEvent.findMany({
+        where: {
+          organizationId: input.organizationId,
+          sourceType: eventSourceType,
+          sourceId: transaction.sourceId,
+        },
+        select: { id: true, status: true, eventType: true, failureMessage: true },
+        orderBy: { recordedAt: "desc" },
+        take: 10,
+      })
+    : []
+
+  const openExceptions = transaction.paymentExceptions.filter((entry) => OPEN_PAYMENT_EXCEPTION_STATUSES.includes(entry.status))
+  const openSuspense = transaction.suspenseItems.filter((entry) => OPEN_SUSPENSE_STATUSES.includes(entry.status))
+  const blockers: ProofTrailBlocker[] = [...failedEventBlockers(events)]
+
+  if (transaction.state === PaymentTransactionState.FAILED || transaction.state === PaymentTransactionState.CANCELLED) {
+    blockers.push(createProofTrailBlocker({
+      id: "payment-transaction-failed-or-cancelled",
+      severity: "critical",
+      gate: "payments.transaction.state",
+      title: "Payment transaction failed or was cancelled",
+      detail: `Payment transaction state is ${transaction.state}.`,
+      sourceTables: ["payment_transactions"],
+      nextAction: "Review the payment transaction before relying on this proof.",
+    }))
+  }
+
+  if (transaction.state === PaymentTransactionState.DISPUTED || transaction.state === PaymentTransactionState.SUSPENSE) {
+    blockers.push(createProofTrailBlocker({
+      id: "payment-transaction-disputed-or-suspense",
+      severity: "high",
+      gate: "payments.transaction.state",
+      title: "Payment transaction needs reconciliation review",
+      detail: `Payment transaction state is ${transaction.state}.`,
+      sourceTables: ["payment_transactions"],
+      nextAction: "Resolve the dispute or suspense state in payment reconciliation.",
+    }))
+  }
+
+  if (transaction.ledgerPostingBatch?.status === LedgerPostingBatchStatus.FAILED) {
+    blockers.push(createProofTrailBlocker({
+      id: "payment-transaction-posting-batch-failed",
+      severity: "critical",
+      gate: "accounting.posting-batch",
+      title: "Payment posting batch failed",
+      detail: transaction.ledgerPostingBatch.errorMessage || "The linked payment ledger posting batch failed.",
+      sourceTables: ["ledger_posting_batches"],
+    }))
+  }
+
+  if (openExceptions.length > 0) {
+    blockers.push(createProofTrailBlocker({
+      id: "payment-transaction-open-exceptions",
+      severity: openExceptions.some((entry) => entry.severity === "CRITICAL" || entry.severity === "HIGH") ? "high" : "medium",
+      gate: "payments.reconciliation.exceptions",
+      title: "Open payment exceptions remain",
+      detail: `${openExceptions.length} exception(s) remain open for this transaction.`,
+      sourceTables: ["payment_exceptions"],
+      nextAction: "Resolve payment exceptions before trusting this transaction as reconciled.",
+    }))
+  }
+
+  if (openSuspense.length > 0) {
+    blockers.push(createProofTrailBlocker({
+      id: "payment-transaction-open-suspense",
+      severity: openSuspense.some((entry) => entry.severity === "CRITICAL" || entry.severity === "HIGH") ? "high" : "medium",
+      gate: "payments.reconciliation.suspense",
+      title: "Open suspense remains",
+      detail: `${openSuspense.length} suspense item(s) remain open for this transaction.`,
+      sourceTables: ["suspense_items"],
+      nextAction: "Resolve or post suspense before relying on this transaction proof.",
+    }))
+  }
+
+  const decision = computePaymentTransactionEvidenceGrade({
+    state: transaction.state,
+    ledgerPostingBatchStatus: transaction.ledgerPostingBatch?.status,
+    matchRecordCount: transaction.matchRecords.length,
+    blockers,
+  })
+
+  const subjectNodeId = "payment-transaction"
+  const redactions: ProofTrailRedaction[] = []
+  if (transaction.providerAccount) {
+    redactions.push(createProofTrailRedaction({
+      id: "payment-provider-account-internal-id",
+      field: "nodes.provider-account",
+      reason: "Provider account internals are masked in payment transaction proof trails.",
+      policy: "kontava-proof-hidden-identifier-policy",
+    }))
+  }
+  if (transaction.providerTransactionId || transaction.providerReference) {
+    redactions.push(createProofTrailRedaction({
+      id: "payment-provider-reference",
+      field: "nodes.provider-reference",
+      reason: "Provider references are protected by payment provider reference redaction policy.",
+      policy: "kontava-payment-provider-reference-mask-policy",
+    }))
+  }
+
+  const nodes: ProofTrailNode[] = [
+    node({
+      id: subjectNodeId,
+      nodeType: "payment.transaction",
+      nodeId: transaction.id,
+      label: `Payment transaction ${transaction.id}`,
+      moduleSlug: "payments",
+      evidenceGrade: decision.grade,
+      sourceTable: "payment_transactions",
+      available: true,
+      redacted: false,
+      metadata: {
+        state: transaction.state,
+        direction: transaction.direction,
+        amount: money(transaction.amount),
+        feeAmount: money(transaction.feeAmount),
+        currencyCode: transaction.currencyCode,
+        occurredAt: transaction.occurredAt?.toISOString() ?? null,
+        confirmedAt: transaction.confirmedAt?.toISOString() ?? null,
+        settledAt: transaction.settledAt?.toISOString() ?? null,
+        sourceType: transaction.sourceType,
+        sourceId: transaction.sourceId,
+        providerReferencePresent: Boolean(transaction.providerTransactionId || transaction.providerReference),
+      },
+    }),
+  ]
+  const edges: ProofTrailEdge[] = []
+
+  if (transaction.providerAccount) {
+    nodes.push(node({
+      id: "provider-account",
+      nodeType: "payment.provider_account",
+      nodeId: transaction.providerAccount.id,
+      label: `${transaction.providerAccount.providerCode} account`,
+      moduleSlug: "payments",
+      evidenceGrade: "operational",
+      sourceTable: "provider_accounts",
+      available: true,
+      redacted: true,
+      metadata: { status: transaction.providerAccount.status, rail: transaction.providerAccount.paymentRail.code },
+    }))
+    edges.push(edge({
+      fromNodeId: "provider-account",
+      toNodeId: subjectNodeId,
+      edgeType: "source",
+      label: "Provides payment rail context",
+      evidenceGrade: "operational",
+    }))
+  }
+
+  if (transaction.providerTransactionId || transaction.providerReference) {
+    nodes.push(node({
+      id: "provider-reference",
+      nodeType: "payment.provider_reference",
+      nodeId: transaction.providerTransactionId || transaction.providerReference || "redacted",
+      label: "Provider reference",
+      moduleSlug: "payments",
+      evidenceGrade: "operational",
+      sourceTable: "payment_transactions",
+      available: true,
+      redacted: true,
+      metadata: undefined,
+    }))
+    edges.push(edge({
+      fromNodeId: "provider-reference",
+      toNodeId: subjectNodeId,
+      edgeType: "source",
+      label: "Identifies provider-side transaction",
+      evidenceGrade: "operational",
+    }))
+  }
+
+  if (transaction.ledgerPostingBatch) {
+    const batchGrade: EvidenceGrade = transaction.ledgerPostingBatch.status === LedgerPostingBatchStatus.POSTED ? "posted" : "operational"
+    nodes.push(node({
+      id: "ledger-posting-batch",
+      nodeType: "ledger.posting.batch",
+      nodeId: transaction.ledgerPostingBatch.id,
+      label: `Posting batch ${transaction.ledgerPostingBatch.postingPurpose}`,
+      moduleSlug: "accounting",
+      evidenceGrade: transaction.ledgerPostingBatch.status === LedgerPostingBatchStatus.FAILED ? "blocked" : batchGrade,
+      sourceTable: "ledger_posting_batches",
+      available: transaction.ledgerPostingBatch.status !== LedgerPostingBatchStatus.FAILED,
+      redacted: false,
+      metadata: {
+        status: transaction.ledgerPostingBatch.status,
+        sourceType: transaction.ledgerPostingBatch.sourceType,
+        postedAt: transaction.ledgerPostingBatch.postedAt?.toISOString() ?? null,
+      },
+    }))
+    edges.push(edge({
+      fromNodeId: "ledger-posting-batch",
+      toNodeId: subjectNodeId,
+      edgeType: transaction.ledgerPostingBatch.status === LedgerPostingBatchStatus.FAILED ? "blocks" : "posts_to",
+      label: transaction.ledgerPostingBatch.status === LedgerPostingBatchStatus.FAILED ? "Blocks posting proof" : "Posts payment transaction",
+      evidenceGrade: transaction.ledgerPostingBatch.status === LedgerPostingBatchStatus.FAILED ? "blocked" : batchGrade,
+    }))
+  }
+
+  transaction.matchRecords.forEach((matchRecord, index) => {
+    const matchNodeId = `match-${index + 1}`
+    const blocked = matchRecord.status === "REJECTED" || matchRecord.status === "VOIDED"
+    const grade: EvidenceGrade = blocked
+      ? "blocked"
+      : matchRecord.status === "APPROVED" || matchRecord.status === "AUTO_MATCHED"
+        ? "reconciled"
+        : "operational"
+    nodes.push(node({
+      id: matchNodeId,
+      nodeType: "reconciliation.match",
+      nodeId: matchRecord.id,
+      label: `Match ${matchRecord.status}`,
+      moduleSlug: "reconciliation",
+      evidenceGrade: grade,
+      sourceTable: "match_records",
+      available: !blocked,
+      redacted: false,
+      metadata: {
+        confidence: matchRecord.confidence.toString(),
+        amountMatched: money(matchRecord.amountMatched),
+        currencyCode: matchRecord.currencyCode,
+        ledgerPostingBatchId: matchRecord.ledgerPostingBatchId,
+        providerEventLinked: Boolean(matchRecord.providerEventId),
+        statementLineLinked: Boolean(matchRecord.statementLineId),
+        reconciliationRunId: matchRecord.reconciliationRunId,
+      },
+    }))
+    edges.push(edge({
+      fromNodeId: matchNodeId,
+      toNodeId: subjectNodeId,
+      edgeType: blocked ? "blocks" : "matches",
+      label: blocked ? "Blocks payment reconciliation" : "Matches payment transaction",
+      evidenceGrade: grade,
+    }))
+  })
+
+  transaction.suspenseItems.forEach((suspenseItem, index) => {
+    const suspenseNodeId = `suspense-${index + 1}`
+    const blocked = OPEN_SUSPENSE_STATUSES.includes(suspenseItem.status)
+    nodes.push(node({
+      id: suspenseNodeId,
+      nodeType: "reconciliation.suspense",
+      nodeId: suspenseItem.id,
+      label: blocked ? "Open suspense item" : `Suspense ${suspenseItem.status}`,
+      moduleSlug: "reconciliation",
+      evidenceGrade: blocked ? "blocked" : "reconciled",
+      sourceTable: "suspense_items",
+      available: !blocked,
+      redacted: false,
+      metadata: {
+        status: suspenseItem.status,
+        severity: suspenseItem.severity,
+        amount: money(suspenseItem.amount),
+        currencyCode: suspenseItem.currencyCode,
+        ledgerPostingBatchId: suspenseItem.ledgerPostingBatchId,
+      },
+    }))
+    edges.push(edge({
+      fromNodeId: suspenseNodeId,
+      toNodeId: subjectNodeId,
+      edgeType: blocked ? "blocks" : "matches",
+      label: blocked ? "Blocks payment trust" : "Resolved suspense",
+      evidenceGrade: blocked ? "blocked" : "reconciled",
+    }))
+  })
+
+  transaction.paymentExceptions.forEach((paymentException, index) => {
+    const exceptionNodeId = `exception-${index + 1}`
+    const blocked = OPEN_PAYMENT_EXCEPTION_STATUSES.includes(paymentException.status)
+    nodes.push(node({
+      id: exceptionNodeId,
+      nodeType: "payment.exception",
+      nodeId: paymentException.id,
+      label: blocked ? "Open payment exception" : `Payment exception ${paymentException.status}`,
+      moduleSlug: "payments",
+      evidenceGrade: blocked ? "blocked" : "reconciled",
+      sourceTable: "payment_exceptions",
+      available: !blocked,
+      redacted: false,
+      metadata: {
+        status: paymentException.status,
+        severity: paymentException.severity,
+        type: paymentException.type,
+        suspenseItemId: paymentException.suspenseItemId,
+      },
+    }))
+    edges.push(edge({
+      fromNodeId: exceptionNodeId,
+      toNodeId: subjectNodeId,
+      edgeType: blocked ? "blocks" : "matches",
+      label: blocked ? "Blocks payment trust" : "Resolved exception",
+      evidenceGrade: blocked ? "blocked" : "reconciled",
+    }))
+  })
+
+  events.forEach((event, index) => {
+    const eventNodeId = `business-event-${index + 1}`
+    const eventGrade: EvidenceGrade =
+      event.status === BusinessEventStatus.FAILED || event.status === BusinessEventStatus.REJECTED
+        ? "blocked"
+        : "operational"
+    nodes.push(node({
+      id: eventNodeId,
+      nodeType: "business.event",
+      nodeId: event.id,
+      label: event.eventType,
+      moduleSlug: "controls",
+      evidenceGrade: eventGrade,
+      sourceTable: "business_events",
+      available: eventGrade !== "blocked",
+      redacted: false,
+      metadata: { status: event.status },
+    }))
+    edges.push(edge({
+      fromNodeId: eventNodeId,
+      toNodeId: subjectNodeId,
+      edgeType: eventGrade === "blocked" ? "blocks" : "source",
+      label: eventGrade === "blocked" ? "Blocks payment transaction trust" : "Supports payment transaction event",
+      evidenceGrade: eventGrade,
+    }))
+  })
+
+  return finalizeProofTrail({
+    input,
+    moduleSlug: "payments",
+    decision,
+    nodes,
+    edges,
+    blockers,
+    redactions,
+    nextActions: blockers.length
+      ? [nextAction({
+          id: "review-payment-transaction-proof",
+          label: "Review payment transaction proof blockers",
+          href: "/dashboard/finance/reconciliation",
+          requiredPermission: "payments.reconciliation.read",
+        })]
+      : [],
+  }, client)
+}
 async function buildCloseRunProofTrail(input: ProofTrailInput, client: DbClient) {
   const closeRun = await client.closeRun.findFirst({
     where: { id: input.subjectId, organizationId: input.organizationId },
@@ -947,6 +1354,8 @@ export async function getProofTrail(input: ProofTrailInput, client: DbClient = d
       return buildJournalEntryProofTrail(input, client)
     case "reconciliation.run":
       return buildReconciliationRunProofTrail(input, client)
+    case "payment.transaction":
+      return buildPaymentTransactionProofTrail(input, client)
     case "close.run":
       return buildCloseRunProofTrail(input, client)
   }

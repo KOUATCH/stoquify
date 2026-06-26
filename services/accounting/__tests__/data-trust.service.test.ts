@@ -19,7 +19,11 @@ jest.mock("@/prisma/db", () => {
     statementLine: { count: jest.fn() },
     reconciliationRun: { count: jest.fn() },
     paymentException: { count: jest.fn() },
+    payrollRun: { count: jest.fn() },
+    payrollRunLine: { count: jest.fn() },
+    payrollPayslip: { count: jest.fn() },
     payrollDeclaration: { count: jest.fn() },
+    payrollDeclarationEvidence: { count: jest.fn() },
     payrollPaymentBatch: { count: jest.fn() },
     supplierInvoice: { count: jest.fn() },
     supplierPayment: { count: jest.fn() },
@@ -42,18 +46,10 @@ jest.mock("@/prisma/db", () => {
   return { db: dbMock }
 })
 
-import {
-  AccountingPeriodStatus,
-  AccountingSourceType,
-  LedgerPostingBatchStatus,
-  Prisma,
-} from "@prisma/client"
+import { AccountingPeriodStatus, AccountingSourceType, LedgerPostingBatchStatus, Prisma } from "@prisma/client"
 
 import { db } from "@/prisma/db"
-import {
-  exportAccountantTrustPack,
-  getAccountantPortalData,
-} from "../data-trust.service"
+import { exportAccountantTrustPack, getAccountantPortalData } from "../data-trust.service"
 
 const mockDb = db as unknown as {
   $transaction: jest.Mock
@@ -75,7 +71,11 @@ const mockDb = db as unknown as {
   statementLine: { count: jest.Mock }
   reconciliationRun: { count: jest.Mock }
   paymentException: { count: jest.Mock }
+  payrollRun: { count: jest.Mock }
+  payrollRunLine: { count: jest.Mock }
+  payrollPayslip: { count: jest.Mock }
   payrollDeclaration: { count: jest.Mock }
+  payrollDeclarationEvidence: { count: jest.Mock }
   payrollPaymentBatch: { count: jest.Mock }
   supplierInvoice: { count: jest.Mock }
   supplierPayment: { count: jest.Mock }
@@ -119,32 +119,25 @@ function seedCleanTrustData() {
     },
     _count: { _all: 4 },
   })
-  mockDb.journalEntry.count
-    .mockResolvedValueOnce(2)
-    .mockResolvedValueOnce(0)
-    .mockResolvedValueOnce(0)
+  mockDb.journalEntry.count.mockResolvedValueOnce(2).mockResolvedValueOnce(0).mockResolvedValueOnce(0)
   mockDb.accountingSourceLink.count.mockResolvedValue(2)
-  mockDb.ledgerPostingBatch.count
-    .mockResolvedValueOnce(0)
-    .mockResolvedValueOnce(0)
+  mockDb.ledgerPostingBatch.count.mockResolvedValue(0).mockResolvedValueOnce(0).mockResolvedValueOnce(0).mockResolvedValueOnce(0)
   mockDb.businessEvent.count.mockResolvedValue(0)
-  mockDb.paymentException.count
-    .mockResolvedValueOnce(0)
-    .mockResolvedValueOnce(0)
+  mockDb.paymentException.count.mockResolvedValueOnce(0).mockResolvedValueOnce(0)
   mockDb.providerAccount.count.mockResolvedValue(0)
   mockDb.providerAccount.findMany.mockResolvedValue([])
   mockDb.statementFile.count.mockResolvedValue(0)
   mockDb.statementLine.count.mockResolvedValue(0)
   mockDb.reconciliationRun.count.mockResolvedValue(0)
-  mockDb.payrollDeclaration.count
-    .mockResolvedValueOnce(0)
-    .mockResolvedValueOnce(0)
+  mockDb.payrollDeclaration.count.mockResolvedValue(0)
+  mockDb.payrollDeclarationEvidence.count.mockResolvedValue(0)
   mockDb.payrollPaymentBatch.count.mockResolvedValue(0)
+  mockDb.payrollRun.count.mockResolvedValue(0)
+  mockDb.payrollRunLine.count.mockResolvedValue(0)
+  mockDb.payrollPayslip.count.mockResolvedValue(0)
   mockDb.supplierInvoice.count.mockResolvedValue(0)
   mockDb.supplierPayment.count.mockResolvedValue(0)
-  mockDb.fiscalDocument.count
-    .mockResolvedValueOnce(0)
-    .mockResolvedValueOnce(0)
+  mockDb.fiscalDocument.count.mockResolvedValueOnce(0).mockResolvedValueOnce(0)
   mockDb.pOSOfflineEvent.count.mockResolvedValue(0)
   mockDb.pOSOfflineSyncConflict.count.mockResolvedValue(0)
   mockDb.pOSOfflineSyncCertificate.count.mockResolvedValue(0)
@@ -209,11 +202,7 @@ describe("accountant data trust service", () => {
 
   it("marks critical source-link failures as T0 and suppresses financial figures", async () => {
     seedCleanTrustData()
-    mockDb.journalEntry.count
-      .mockReset()
-      .mockResolvedValueOnce(2)
-      .mockResolvedValueOnce(1)
-      .mockResolvedValueOnce(0)
+    mockDb.journalEntry.count.mockReset().mockResolvedValueOnce(2).mockResolvedValueOnce(1).mockResolvedValueOnce(0)
 
     const result = await getAccountantPortalData({ organizationId: "org-1" }, db, now)
 
@@ -267,11 +256,7 @@ describe("accountant data trust service", () => {
 
   it("blocks trust-pack export when certification gates fail", async () => {
     seedCleanTrustData()
-    mockDb.journalEntry.count
-      .mockReset()
-      .mockResolvedValueOnce(2)
-      .mockResolvedValueOnce(1)
-      .mockResolvedValueOnce(0)
+    mockDb.journalEntry.count.mockReset().mockResolvedValueOnce(2).mockResolvedValueOnce(1).mockResolvedValueOnce(0)
 
     await expect(
       exportAccountantTrustPack({
@@ -320,6 +305,140 @@ describe("accountant data trust service", () => {
     )
   })
 
+  it("blocks certified trust packs when payroll posting and source-link evidence is incomplete", async () => {
+    seedCleanTrustData()
+    mockDb.payrollRun.count.mockReset().mockResolvedValueOnce(1).mockResolvedValueOnce(0)
+    mockDb.payrollPaymentBatch.count
+      .mockReset()
+      .mockResolvedValueOnce(0)
+      .mockResolvedValueOnce(0)
+      .mockResolvedValueOnce(0)
+      .mockResolvedValueOnce(1)
+    mockDb.ledgerPostingBatch.count.mockReset().mockResolvedValueOnce(0).mockResolvedValueOnce(0).mockResolvedValueOnce(1)
+
+    const result = await getAccountantPortalData({ organizationId: "org-1" }, db, now)
+
+    expect(result.certificate.level).toBe("T0")
+    expect(result.exportReadiness.canExportCertifiedPack).toBe(false)
+    expect(result.blockers).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "payroll-runs-without-ledger",
+          severity: "critical",
+          gate: "payroll.accounting.posting",
+        }),
+        expect.objectContaining({
+          id: "payroll-payments-without-ledger",
+          severity: "critical",
+          gate: "payroll.payment.posting",
+        }),
+        expect.objectContaining({
+          id: "payroll-ledger-source-link-missing",
+          severity: "critical",
+          gate: "payroll.accounting.source-link",
+        }),
+      ]),
+    )
+    expect(result.moduleEvidence).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          module: "payroll",
+          status: "blocked",
+          facts: expect.arrayContaining([
+            { label: "Runs missing ledger", value: 1 },
+            { label: "Payments missing ledger", value: 1 },
+            { label: "Payroll batches missing source links", value: 1 },
+          ]),
+        }),
+      ]),
+    )
+  })
+
+  it("expands payroll close data-trust gates to register, declaration, payslip, and payment evidence", async () => {
+    seedCleanTrustData()
+    mockDb.payrollDeclaration.count
+      .mockReset()
+      .mockResolvedValueOnce(0)
+      .mockResolvedValueOnce(0)
+      .mockResolvedValueOnce(1)
+      .mockResolvedValueOnce(1)
+    mockDb.payrollDeclarationEvidence.count.mockResolvedValue(1)
+    mockDb.payrollPaymentBatch.count
+      .mockReset()
+      .mockResolvedValueOnce(1)
+      .mockResolvedValueOnce(1)
+      .mockResolvedValueOnce(1)
+      .mockResolvedValueOnce(0)
+    mockDb.payrollRun.count.mockReset().mockResolvedValueOnce(0).mockResolvedValueOnce(1)
+    mockDb.payrollRunLine.count.mockResolvedValue(2)
+    mockDb.payrollPayslip.count.mockResolvedValue(1)
+
+    const result = await getAccountantPortalData({ organizationId: "org-1" }, db, now)
+
+    expect(result.certificate.level).toBe("T0")
+    expect(result.exportReadiness.canExportCertifiedPack).toBe(false)
+    expect(result.source.sourceTables).toEqual(
+      expect.arrayContaining(["payroll_run_lines", "payroll_payslips", "payroll_declaration_evidence", "payroll_payment_allocations"]),
+    )
+    expect(result.certificate.evidence).toEqual(
+      expect.arrayContaining(["payroll register tie-out, payslip proof, payment settlement, and declaration lifecycle evidence scan"]),
+    )
+    expect(result.blockers).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "payroll-declaration-lifecycle-evidence-missing",
+          severity: "high",
+        }),
+        expect.objectContaining({
+          id: "payroll-declarations-in-progress",
+          severity: "medium",
+        }),
+        expect.objectContaining({
+          id: "payroll-payments-unsettled",
+          severity: "high",
+        }),
+        expect.objectContaining({
+          id: "payroll-payments-without-reconciliation-evidence",
+          severity: "high",
+        }),
+        expect.objectContaining({
+          id: "payroll-payment-allocations-missing",
+          severity: "high",
+        }),
+        expect.objectContaining({
+          id: "payroll-run-lines-without-payslips",
+          severity: "critical",
+        }),
+        expect.objectContaining({
+          id: "payroll-payslips-without-proof-hash",
+          severity: "high",
+        }),
+        expect.objectContaining({
+          id: "payroll-paid-runs-without-settled-payments",
+          severity: "high",
+        }),
+      ]),
+    )
+    expect(result.moduleEvidence).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          module: "payroll",
+          status: "blocked",
+          facts: expect.arrayContaining([
+            { label: "In-progress declarations", value: 1 },
+            { label: "Declaration evidence gaps", value: 1 },
+            { label: "Declaration amendments", value: 1 },
+            { label: "Payment reconciliation evidence gaps", value: 1 },
+            { label: "Payment allocation gaps", value: 1 },
+            { label: "Run lines missing payslips", value: 2 },
+            { label: "Payslips missing proof hashes", value: 1 },
+            { label: "Paid runs missing settled payments", value: 1 },
+          ]),
+        }),
+      ]),
+    )
+  })
+
   it("blocks certified trust packs when provider statement cadence is stale", async () => {
     seedCleanTrustData()
     mockDb.providerAccount.count.mockResolvedValue(1)
@@ -358,7 +477,9 @@ describe("accountant data trust service", () => {
     expect(result.blockers).toEqual(
       expect.not.arrayContaining([
         expect.objectContaining({ id: "provider-statement-evidence-missing" }),
-        expect.objectContaining({ id: "provider-reconciliation-signoff-missing" }),
+        expect.objectContaining({
+          id: "provider-reconciliation-signoff-missing",
+        }),
       ]),
     )
     expect(result.moduleEvidence).toEqual(
@@ -402,7 +523,9 @@ describe("accountant data trust service", () => {
       expect.not.arrayContaining([
         expect.objectContaining({ id: "provider-statement-evidence-missing" }),
         expect.objectContaining({ id: "provider-statement-cadence-stale" }),
-        expect.objectContaining({ id: "provider-reconciliation-signoff-missing" }),
+        expect.objectContaining({
+          id: "provider-reconciliation-signoff-missing",
+        }),
       ]),
     )
     expect(result.moduleEvidence).toEqual(

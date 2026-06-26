@@ -741,7 +741,7 @@ function AdapterHealthPanel({
                 <SummaryLine label={t("adapter.capability")} value={adapter.capabilityStatus} />
                 <SummaryLine
                   label={t("adapter.credential")}
-                  value={adapter.credentialReference ? t("adapter.credentialPresent") : t("adapter.credentialMissing")}
+                  value={adapter.credentialReferencePresent ? t("adapter.credentialPresent") : t("adapter.credentialMissing")}
                 />
               </div>
             </div>

@@ -3,15 +3,18 @@ import { PaymentMethod } from "@prisma/client"
 
 import { requireFreshAuth, FreshAuthRequiredError } from "@/lib/security/auth-session"
 import { requirePermission, RbacError } from "@/lib/security/rbac"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import {
   getPayrollWorkbenchData,
   preparePayrollDeclarations,
   releasePayrollPaymentBatch,
 } from "@/services/payroll/payroll-control.service"
+import { recordPayrollDeclarationEvidence } from "@/services/payroll/declaration-lifecycle.service"
 
 import {
   getPayrollWorkbenchAction,
   preparePayrollDeclarationsAction,
+  recordPayrollDeclarationEvidenceAction,
   releasePayrollPaymentBatchAction,
 } from "../payroll-control.actions"
 
@@ -58,6 +61,10 @@ jest.mock("@/lib/logger", () => ({
   },
 }))
 
+jest.mock("@/services/modules/module-entitlement.service", () => ({
+  observeModuleAccess: jest.fn(),
+}))
+
 jest.mock("@/services/payroll/payroll-control.service", () => ({
   getPayrollWorkbenchData: jest.fn(),
   releasePayrollPaymentBatch: jest.fn(),
@@ -66,12 +73,44 @@ jest.mock("@/services/payroll/payroll-control.service", () => ({
   approveAndPostPayrollRun: jest.fn(),
 }))
 
+jest.mock("@/services/payroll/declaration-lifecycle.service", () => ({
+  recordPayrollDeclarationEvidence: jest.fn(),
+  recordPayrollDeclarationEvidenceInputSchema: {
+    parse: jest.fn((input) => input),
+  },
+}))
+
 const mockRequirePermission = requirePermission as jest.Mock
 const mockRequireFreshAuth = requireFreshAuth as jest.Mock
+const mockObserveModuleAccess = observeModuleAccess as jest.Mock
 const mockGetPayrollWorkbenchData = getPayrollWorkbenchData as jest.Mock
 const mockReleasePayrollPaymentBatch = releasePayrollPaymentBatch as jest.Mock
 const mockPreparePayrollDeclarations = preparePayrollDeclarations as jest.Mock
+const mockRecordPayrollDeclarationEvidence = recordPayrollDeclarationEvidence as jest.Mock
 const mockRevalidatePath = revalidatePath as jest.Mock
+
+function moduleDecision(overrides: Record<string, unknown> = {}) {
+  return {
+    organizationId: "org-1",
+    userId: "actor-1",
+    moduleSlug: "payroll",
+    surfaceType: "action",
+    surface: "payroll.read",
+    accessIntent: "read",
+    mode: "enforce",
+    result: "allow",
+    allowed: true,
+    wouldBlock: false,
+    reason: "Tenant module entitlement is available.",
+    entitlement: { moduleSlug: "payroll", status: "active", source: "requested_modules", startsAt: null, endsAt: null, readOnly: false, trial: false },
+    missingDependencies: [],
+    rbacWildcardPresent: false,
+    rbacWildcardBypassedEntitlement: false,
+    hardEnforcementEnabled: true,
+    evaluatedAt: "2026-06-25T00:00:00.000Z",
+    ...overrides,
+  }
+}
 
 function rbacContext(userId = "actor-1", permissions: string[] = []) {
   return {
@@ -95,6 +134,7 @@ describe("payroll control actions", () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockRequireFreshAuth.mockResolvedValue({})
+    mockObserveModuleAccess.mockResolvedValue(moduleDecision())
   })
 
   it("returns a client-safe RBAC denial for the payroll workbench", async () => {
@@ -111,6 +151,57 @@ describe("payroll control actions", () => {
       retryable: false,
     }))
     expect(result).toHaveProperty("correlationId")
+    expect(mockGetPayrollWorkbenchData).not.toHaveBeenCalled()
+  })
+
+  it("passes actor context into salary-bearing payroll workbench reads", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext("payroll-reader-1", ["PAYROLL_READ"]))
+    mockGetPayrollWorkbenchData.mockResolvedValue({
+      organizationId: "org-1",
+      asOf: "2026-06-25T00:00:00.000Z",
+      counts: {},
+      queues: {},
+    })
+
+    const result = await getPayrollWorkbenchAction({ limit: 10 })
+
+    expect(result.success).toBe(true)
+    expect(mockGetPayrollWorkbenchData).toHaveBeenCalledWith({
+      organizationId: "org-1",
+      limit: 10,
+      actorId: "payroll-reader-1",
+      actorPermissions: ["PAYROLL_READ"],
+    })
+  })
+
+  it("blocks payroll workbench reads when the payroll module is not entitled", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext("payroll-reader-1", ["PAYROLL_READ"]))
+    mockObserveModuleAccess.mockResolvedValue(moduleDecision({
+      result: "deny",
+      allowed: false,
+      wouldBlock: true,
+      reason: "Tenant is not entitled to this module.",
+      entitlement: null,
+    }))
+
+    const result = await getPayrollWorkbenchAction({ limit: 10 })
+
+    expect(result).toEqual(expect.objectContaining({
+      success: false,
+      data: null,
+      status: 403,
+      code: "FORBIDDEN",
+      retryable: false,
+    }))
+    expect(mockObserveModuleAccess).toHaveBeenCalledWith(expect.objectContaining({
+      organizationId: "org-1",
+      userId: "payroll-reader-1",
+      moduleSlug: "payroll",
+      surfaceType: "page",
+      surface: "/dashboard/payroll",
+      accessIntent: "read",
+      mode: "enforce",
+    }))
     expect(mockGetPayrollWorkbenchData).not.toHaveBeenCalled()
   })
 
@@ -197,4 +288,43 @@ describe("payroll control actions", () => {
       }),
     )
   })
+  it("derives declaration lifecycle tenant and actor fields from authenticated context", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext("controller-1", ["payroll.declarations.manage"]))
+    mockRecordPayrollDeclarationEvidence.mockResolvedValue({
+      declaration: { id: "declaration-1" },
+      evidence: { id: "evidence-1" },
+      automationCapabilityStatus: "AUTOMATION_BLOCKED",
+      productionSubmissionSupported: false,
+    })
+
+    const result = await recordPayrollDeclarationEvidenceAction({
+      organizationId: "client-org",
+      actorId: "client-actor",
+      declarationId: "declaration-1",
+      transition: "submit",
+      authorityChannel: "CNPS_MANUAL_PORTAL",
+      authorityEnvironment: "MANUAL_PORTAL",
+      authorityStatus: "SUBMITTED",
+      submittedPayloadHash: "sha256:submitted-payload",
+      portalReceiptHash: "sha256:portal-receipt",
+      approvedById: "approver-1",
+      idempotencyKey: "submit-key-1",
+    })
+
+    expect(result.success).toBe(true)
+    expect(mockRecordPayrollDeclarationEvidence).toHaveBeenCalledWith(
+      expect.objectContaining({
+        organizationId: "org-1",
+        actorId: "controller-1",
+        actorPermissions: ["payroll.declarations.manage"],
+        lastAuthAt: expect.any(Date),
+      }),
+    )
+    expect(mockRecordPayrollDeclarationEvidence.mock.calls[0][0]).not.toMatchObject({
+      organizationId: "client-org",
+      actorId: "client-actor",
+    })
+    expect(mockRevalidatePath).toHaveBeenCalledWith("/dashboard/payroll", "page")
+  })
 })
+

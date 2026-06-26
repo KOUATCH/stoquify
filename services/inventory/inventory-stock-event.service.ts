@@ -16,6 +16,7 @@ import {
   markBusinessEventAppliedInTx,
   recordBusinessEventInTx,
 } from "@/services/events/business-event.service"
+import { recordInventoryValuationCloseInvalidationInTx } from "./inventory-close-invalidation.service"
 
 import { ConcurrentStockUpdateError, InsufficientStockError } from "./inventory-errors"
 
@@ -690,6 +691,18 @@ async function postInventoryStockEvent(
     })
 
     await markBusinessEventAppliedInTx(tx, input.organizationId, eventResult.event.id)
+
+    if (input.eventType !== "stock.reservation.posted") {
+      await recordInventoryValuationCloseInvalidationInTx(tx, {
+        organizationId: input.organizationId,
+        sourceId: input.sourceId ?? eventResult.event.id,
+        periodId: period?.id ?? null,
+        occurredAt,
+        actorId: input.actorId ?? null,
+        documentHash,
+        correlationId: typeof input.metadata?.correlationId === "string" ? input.metadata.correlationId : null,
+      })
+    }
 
     return {
       eventId: eventResult.event.id,

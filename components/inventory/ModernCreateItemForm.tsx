@@ -348,6 +348,18 @@ export function ModernCreateItemForm({
   }
 
   const handleSubmit = async (data: ItemCreationFormData) => {
+    if (currentStepIndex < FORM_STEPS.length - 1) {
+      const isValid = await validateStep(currentStep)
+
+      if (isValid) {
+        const nextStep = FORM_STEPS[currentStepIndex + 1]
+        setCurrentStep(nextStep.id)
+        info("Step Progress", `Moving to ${nextStep.title} - ${nextStep.description}`)
+      }
+
+      return
+    }
+
     // Auto-generate missing required fields
     // Note: Product name auto-generation removed - user must provide name
 
@@ -1340,6 +1352,7 @@ export function ModernCreateItemForm({
 
                 return (
                   <button
+                    type="button"
                     key={step.id}
                     onClick={() => isAccessible && handleStepClick(step.id)}
                     disabled={!isAccessible}

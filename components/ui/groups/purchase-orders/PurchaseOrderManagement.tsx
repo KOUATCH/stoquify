@@ -937,6 +937,10 @@ const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
     return `${purchaseOrdersArray.length} ${purchaseOrdersArray.length === 1 ? "order" : "orders"} | Total Value: ${formatCurrencyValue(totalValue)}`
   }, [purchaseOrdersArray, formatCurrencyValue])
 
+  if (error) {
+    throw error instanceof Error ? error : new Error(error.message || "Purchase order list failed to load")
+  }
+
   return (
     <>
       <ModernPurchaseOrderTable

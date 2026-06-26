@@ -3,12 +3,16 @@ import {
   CAMEROON_DGI_E_SERVICES_CHANNEL,
   CAMEROON_DGI_SANDBOX_ADAPTER_CODE,
   CAMEROON_PAYMENT_PROVIDER_CODES,
-} from "./cameroon.constants"
-import { sealCountryPack } from "./hash"
-import type { CountryPack } from "./schemas"
+} from "./cameroon.constants";
+import { sealCountryPack } from "./hash";
+import type { CountryPack } from "./schemas";
 
-const VERIFIED_ON = "2026-06-11"
-const VERIFIED_BY = "Codex regulatory source pass; legal-owner approval required before statutory publication"
+const VERIFIED_ON = "2026-06-11";
+const VERIFIED_BY =
+  "Codex regulatory source pass; legal-owner approval required before statutory publication";
+const CNPS_REGULATOR_CONFIRMED_ON = "2026-06-26";
+const CNPS_REGULATOR_CONFIRMED_BY =
+  "Official CNPS-published contribution decree and employer-rules source review; regulator source URLs recorded in legal references";
 
 const cameroonCountryPackUnsealed: CountryPack = {
   header: {
@@ -44,7 +48,8 @@ const cameroonCountryPackUnsealed: CountryPack = {
         title: "Code General des Impots mis a jour au 1er janvier 2025",
         jurisdiction: "CM",
         issuedBy: "Direction Generale des Impots du Cameroun",
-        sourceUrl: "https://www.impots.cm/fr/code-general-des-impots-mis-jour-au-1er-janvier-2025",
+        sourceUrl:
+          "https://www.impots.cm/fr/code-general-des-impots-mis-jour-au-1er-janvier-2025",
         documentDate: "2025-01-01",
         retrievedOn: VERIFIED_ON,
       },
@@ -74,7 +79,8 @@ const cameroonCountryPackUnsealed: CountryPack = {
       },
       {
         id: "CM_DGI_EINVOICING_REVIEW_REQUIRED",
-        title: "Cameroon e-invoicing and fiscal certification metadata requiring official technical and legal review",
+        title:
+          "Cameroon e-invoicing and fiscal certification metadata requiring official technical and legal review",
         jurisdiction: "CM",
         issuedBy: "Direction Generale des Impots du Cameroun",
         sourceUrl: "https://www.impots.cm/",
@@ -84,7 +90,8 @@ const cameroonCountryPackUnsealed: CountryPack = {
       },
       {
         id: "CM_CNPS_CONTRIBUTION_DECREE_2016",
-        title: "Decret fixant les taux de cotisations sociales et les plafonds des remunerations",
+        title:
+          "Decret fixant les taux de cotisations sociales et les plafonds des remunerations",
         jurisdiction: "CM",
         issuedBy: "Presidence de la Republique du Cameroun / CNPS",
         sourceUrl:
@@ -97,7 +104,8 @@ const cameroonCountryPackUnsealed: CountryPack = {
         title: "Regles generales pour les employeurs",
         jurisdiction: "CM",
         issuedBy: "Caisse Nationale de Prevoyance Sociale",
-        sourceUrl: "https://www.cnps.cm/fr/employeurs/regles-generales-pour-les-employeurs1.html",
+        sourceUrl:
+          "https://www.cnps.cm/fr/employeurs/regles-generales-pour-les-employeurs1.html",
         retrievedOn: VERIFIED_ON,
       },
       {
@@ -151,7 +159,8 @@ const cameroonCountryPackUnsealed: CountryPack = {
             issuingAuthority: "DGI",
             localName: "NIU",
             validationMode: "EXTERNAL_REGISTRY_REQUIRED",
-            formatHint: "Assigned by DGI online immatriculation; do not infer validity from length alone.",
+            formatHint:
+              "Assigned by DGI online immatriculation; do not infer validity from length alone.",
           },
           legalRef: "CM_DGI_IMMATRICULATION",
           effectiveFrom: "2026-01-01",
@@ -311,9 +320,9 @@ const cameroonCountryPackUnsealed: CountryPack = {
             legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
             effectiveFrom: "2026-01-01",
             effectiveTo: null,
-            verifiedOn: VERIFIED_ON,
-            verifiedBy: VERIFIED_BY,
-            verificationStatus: "SOURCE_CHECKED",
+            verifiedOn: CNPS_REGULATOR_CONFIRMED_ON,
+            verifiedBy: CNPS_REGULATOR_CONFIRMED_BY,
+            verificationStatus: "REGULATOR_CONFIRMED",
           },
         ],
         pensionRatesBps: [
@@ -328,9 +337,9 @@ const cameroonCountryPackUnsealed: CountryPack = {
             legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
             effectiveFrom: "2026-01-01",
             effectiveTo: null,
-            verifiedOn: VERIFIED_ON,
-            verifiedBy: VERIFIED_BY,
-            verificationStatus: "SOURCE_CHECKED",
+            verifiedOn: CNPS_REGULATOR_CONFIRMED_ON,
+            verifiedBy: CNPS_REGULATOR_CONFIRMED_BY,
+            verificationStatus: "REGULATOR_CONFIRMED",
           },
         ],
         occupationalRiskRatesBps: [
@@ -345,9 +354,9 @@ const cameroonCountryPackUnsealed: CountryPack = {
             legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
             effectiveFrom: "2026-01-01",
             effectiveTo: null,
-            verifiedOn: VERIFIED_ON,
-            verifiedBy: VERIFIED_BY,
-            verificationStatus: "SOURCE_CHECKED",
+            verifiedOn: CNPS_REGULATOR_CONFIRMED_ON,
+            verifiedBy: CNPS_REGULATOR_CONFIRMED_BY,
+            verificationStatus: "REGULATOR_CONFIRMED",
           },
         ],
         employerRules: [
@@ -360,9 +369,9 @@ const cameroonCountryPackUnsealed: CountryPack = {
             legalRef: "CM_CNPS_EMPLOYER_RULES",
             effectiveFrom: "2026-01-01",
             effectiveTo: null,
-            verifiedOn: VERIFIED_ON,
-            verifiedBy: VERIFIED_BY,
-            verificationStatus: "SOURCE_CHECKED",
+            verifiedOn: CNPS_REGULATOR_CONFIRMED_ON,
+            verifiedBy: CNPS_REGULATOR_CONFIRMED_BY,
+            verificationStatus: "REGULATOR_CONFIRMED",
           },
         ],
       },
@@ -384,7 +393,8 @@ const cameroonCountryPackUnsealed: CountryPack = {
           verifiedOn: VERIFIED_ON,
           verifiedBy: VERIFIED_BY,
           verificationStatus: "SOURCE_CHECKED",
-          notes: "Use only for non-statutory scheduling hints until an official annual calendar source is attached.",
+          notes:
+            "Use only for non-statutory scheduling hints until an official annual calendar source is attached.",
         },
       ],
       movableRules: [
@@ -392,7 +402,11 @@ const cameroonCountryPackUnsealed: CountryPack = {
           value: {
             officialAnnualCalendarRequired: true,
             supportedAutomation: "NONE_WITHOUT_OFFICIAL_CALENDAR",
-            affectedDomains: ["payroll", "bank_settlement", "tax_deadline_adjustment"],
+            affectedDomains: [
+              "payroll",
+              "bank_settlement",
+              "tax_deadline_adjustment",
+            ],
           },
           legalRef: "CM_HOLIDAY_LEGAL_CALENDAR",
           effectiveFrom: "2026-01-01",
@@ -409,7 +423,10 @@ const cameroonCountryPackUnsealed: CountryPack = {
           {
             value: CAMEROON_PAYMENT_PROVIDER_CODES.map((code) => ({
               code,
-              legalStatus: code === "OTHER" ? "MANUAL_LEGAL_REVIEW_REQUIRED" : "SUPPORTED_WITH_PROVIDER_KYC",
+              legalStatus:
+                code === "OTHER"
+                  ? "MANUAL_LEGAL_REVIEW_REQUIRED"
+                  : "SUPPORTED_WITH_PROVIDER_KYC",
               settlementEvidenceRequired: true,
               duplicateProviderReferenceBlocked: true,
             })),
@@ -434,7 +451,11 @@ const cameroonCountryPackUnsealed: CountryPack = {
               productionAutomationAllowed: false,
               automationBlockReason:
                 "Cameroon e-invoicing/fiscal certification details require official DGI technical specifications and qualified legal/accounting review before any production adapter or certification workflow is enabled.",
-              supportedDocumentTypes: ["POS_RECEIPT", "SALES_INVOICE", "CREDIT_NOTE"],
+              supportedDocumentTypes: [
+                "POS_RECEIPT",
+                "SALES_INVOICE",
+                "CREDIT_NOTE",
+              ],
               requiresPostedLedgerSource: true,
               requiresOfficialTechnicalSpec: true,
               requiredExpertReviewBeforeAdapter: true,
@@ -458,7 +479,8 @@ const cameroonCountryPackUnsealed: CountryPack = {
                   scope: "SELLER",
                   field: "taxpayerIdentifier",
                   required: true,
-                  notes: "NIU expected; exact statutory mention requires expert review.",
+                  notes:
+                    "NIU expected; exact statutory mention requires expert review.",
                 },
                 { scope: "SELLER", field: "legalName", required: true },
                 { scope: "SELLER", field: "registeredAddress", required: true },
@@ -467,7 +489,8 @@ const cameroonCountryPackUnsealed: CountryPack = {
                   field: "taxpayerIdentifier",
                   required: true,
                   when: "Buyer is a professional taxpayer or the final DGI rules require buyer identification.",
-                  notes: "Consumer/B2B threshold rules require official confirmation.",
+                  notes:
+                    "Consumer/B2B threshold rules require official confirmation.",
                 },
                 { scope: "DOCUMENT", field: "documentType", required: true },
                 { scope: "DOCUMENT", field: "issueDate", required: true },
@@ -524,7 +547,11 @@ const cameroonCountryPackUnsealed: CountryPack = {
                 adapterReadiness: "REQUIRES_EXPERT_REVIEW",
                 adapterKey: CAMEROON_DGI_SANDBOX_ADAPTER_CODE,
                 sandboxOnly: true,
-                supportedDocumentTypes: ["POS_RECEIPT", "SALES_INVOICE", "CREDIT_NOTE"],
+                supportedDocumentTypes: [
+                  "POS_RECEIPT",
+                  "SALES_INVOICE",
+                  "CREDIT_NOTE",
+                ],
                 requiresTenantCredentials: true,
                 credentialStoragePolicy: "VAULT_ONLY",
                 endpointMetadata: {
@@ -587,14 +614,16 @@ const cameroonCountryPackUnsealed: CountryPack = {
                   source: "AUTHORITY",
                   required: false,
                   verificationStatus: "REQUIRES_EXPERT_REVIEW",
-                  notes: "Exact final reference format requires official DGI specification.",
+                  notes:
+                    "Exact final reference format requires official DGI specification.",
                 },
                 {
                   code: "QR_CODE_PAYLOAD",
                   source: "AUTHORITY",
                   required: false,
                   verificationStatus: "REQUIRES_EXPERT_REVIEW",
-                  notes: "Do not render QR codes as statutory evidence until confirmed by official specification.",
+                  notes:
+                    "Do not render QR codes as statutory evidence until confirmed by official specification.",
                 },
                 {
                   code: "SUBMITTED_PAYLOAD_HASH",
@@ -609,7 +638,11 @@ const cameroonCountryPackUnsealed: CountryPack = {
                   verificationStatus: "REQUIRES_EXPERT_REVIEW",
                 },
               ],
-              receiptDisplayFields: ["certificationStatus", "authorityReference", "qrCodePayload"],
+              receiptDisplayFields: [
+                "certificationStatus",
+                "authorityReference",
+                "qrCodePayload",
+              ],
             },
             legalRef: "CM_DGI_EINVOICING_REVIEW_REQUIRED",
             effectiveFrom: "2026-01-01",
@@ -665,6 +698,51 @@ const cameroonCountryPackUnsealed: CountryPack = {
       expectedPackVersion: "CM-2026.1",
     },
     {
+      id: "cm-cnps-family-allowance-2026",
+      countryCode: CAMEROON_COUNTRY_CODE,
+      parameterPath: "payroll.cnps.familyAllowanceRatesBps",
+      date: "2026-06-11",
+      purpose: "PAYROLL_CNPS_FAMILY_ALLOWANCE",
+      expectedValue: {
+        general: 700,
+        agriculture: 565,
+        privateEducation: 370,
+        paidBy: "EMPLOYER",
+      },
+      expectedLegalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
+      expectedPackVersion: "CM-2026.1",
+    },
+    {
+      id: "cm-cnps-occupational-risk-2026",
+      countryCode: CAMEROON_COUNTRY_CODE,
+      parameterPath: "payroll.cnps.occupationalRiskRatesBps",
+      date: "2026-06-11",
+      purpose: "PAYROLL_CNPS_OCCUPATIONAL_RISK",
+      expectedValue: {
+        groupA: 175,
+        groupB: 250,
+        groupC: 500,
+        paidBy: "EMPLOYER",
+        classificationRequired: true,
+      },
+      expectedLegalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
+      expectedPackVersion: "CM-2026.1",
+    },
+    {
+      id: "cm-cnps-employer-rules-2026",
+      countryCode: CAMEROON_COUNTRY_CODE,
+      parameterPath: "payroll.cnps.employerRules",
+      date: "2026-06-11",
+      purpose: "PAYROLL_EMPLOYER_RULES",
+      expectedValue: {
+        registrationRequired: true,
+        employeeDeclarationRequired: true,
+        payrollBaseRequiresCnpsReview: true,
+      },
+      expectedLegalRef: "CM_CNPS_EMPLOYER_RULES",
+      expectedPackVersion: "CM-2026.1",
+    },
+    {
       id: "cm-niu-required-2026",
       countryCode: CAMEROON_COUNTRY_CODE,
       parameterPath: "identifiers.niu",
@@ -675,7 +753,8 @@ const cameroonCountryPackUnsealed: CountryPack = {
         issuingAuthority: "DGI",
         localName: "NIU",
         validationMode: "EXTERNAL_REGISTRY_REQUIRED",
-        formatHint: "Assigned by DGI online immatriculation; do not infer validity from length alone.",
+        formatHint:
+          "Assigned by DGI online immatriculation; do not infer validity from length alone.",
       },
       expectedLegalRef: "CM_DGI_IMMATRICULATION",
       expectedPackVersion: "CM-2026.1",
@@ -716,6 +795,6 @@ const cameroonCountryPackUnsealed: CountryPack = {
       expectedPackVersion: "CM-2026.1",
     },
   ],
-}
+};
 
-export const cameroonCountryPack = sealCountryPack(cameroonCountryPackUnsealed)
+export const cameroonCountryPack = sealCountryPack(cameroonCountryPackUnsealed);

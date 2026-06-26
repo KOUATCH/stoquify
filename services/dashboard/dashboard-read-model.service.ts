@@ -3,6 +3,7 @@ import 'server-only'
 import { db } from '@/prisma/db'
 import { NotFoundError } from '@/services/_shared/action-errors'
 import {
+  AccountingSetupStatus,
   LocationType,
   POSSessionStatus,
   PaymentStatus,
@@ -118,10 +119,41 @@ export interface DashboardStockHealth {
   reservedUnits: number
 }
 
+export type DashboardSetupStepKey =
+  | 'company_profile'
+  | 'locations'
+  | 'roles_permissions'
+  | 'inventory_catalog'
+  | 'pos_setup'
+  | 'finance_accounts'
+  | 'payroll_setup'
+  | 'proof_checkpoint'
+
+export type DashboardSetupStepStatus = 'complete' | 'in_progress' | 'not_started' | 'optional'
+
+export interface DashboardSetupStep {
+  key: DashboardSetupStepKey
+  status: DashboardSetupStepStatus
+  href: string
+  sourceCount: number
+  required: boolean
+}
+
+export interface DashboardSetupProgress {
+  completedRequiredSteps: number
+  totalRequiredSteps: number
+  percent: number
+  steps: DashboardSetupStep[]
+}
+
 export interface DashboardData {
   organization: {
     id: string
     name: string
+    slug: string
+    country: string | null
+    countryCode: string | null
+    taxIdentifier: string | null
     currency: string
   }
   period: {
@@ -151,6 +183,7 @@ export interface DashboardData {
     totalCustomers: number
     totalItems: number
   }
+  setupProgress: DashboardSetupProgress
 }
 
 interface LegacyDashboardMetrics {
@@ -270,6 +303,13 @@ export async function getAllDashboardData(input: DashboardReadModelInput): Promi
     _newCustomers,
     activeLocations,
     activeSessions,
+    activeUsers,
+    roleCount,
+    activePosStations,
+    accountingSettings,
+    payrollEmployeeCount,
+    payrollPeriodCount,
+    businessEventCount,
     openSalesOrders,
     pendingPurchaseOrders,
     _pendingPurchaseValue,
@@ -284,7 +324,15 @@ export async function getAllDashboardData(input: DashboardReadModelInput): Promi
   ] = await Promise.all([
     db.organization.findFirst({
       where: { id: organizationId, deletedAt: null, isActive: true },
-      select: { id: true, name: true, currency: true },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        country: true,
+        countryCode: true,
+        taxIdentifier: true,
+        currency: true,
+      },
     }),
     db.salesOrder.aggregate({
       where: salesWhere,
@@ -328,6 +376,35 @@ export async function getAllDashboardData(input: DashboardReadModelInput): Promi
         status: POSSessionStatus.ACTIVE,
         ...(locationId ? { locationId } : {}),
       },
+    }),
+    db.user.count({ where: { organizationId, isActive: true } }),
+    db.role.count({ where: { organizationId } }),
+    db.pOSStation.count({
+      where: {
+        organizationId,
+        isActive: true,
+        ...(locationId ? { locationId } : {}),
+      },
+    }),
+    db.organizationAccountingSettings.findUnique({
+      where: { organizationId },
+      select: {
+        accountingEnabled: true,
+        setupStatus: true,
+        countryPack: true,
+      },
+    }),
+    db.payrollEmployee.count({
+      where: {
+        organizationId,
+        deletedAt: null,
+      },
+    }),
+    db.payrollPeriod.count({
+      where: { organizationId },
+    }),
+    db.businessEvent.count({
+      where: { organizationId },
     }),
     db.salesOrder.count({
       where: {
@@ -694,6 +771,24 @@ export async function getAllDashboardData(input: DashboardReadModelInput): Promi
     },
   ]
 
+  const setupProgress = buildSetupProgress({
+    organization,
+    activeLocations,
+    activeUsers,
+    roleCount,
+    totalItems,
+    trackedItems: inventoryItems.length,
+    activePosStations,
+    activeSessions,
+    accountingSettings,
+    payrollEmployeeCount,
+    payrollPeriodCount,
+    businessEventCount,
+    activities,
+    alerts,
+    pendingActions,
+  })
+
   return {
     organization,
     period: {
@@ -761,7 +856,153 @@ export async function getAllDashboardData(input: DashboardReadModelInput): Promi
       totalCustomers: customersTotal,
       totalItems,
     },
+    setupProgress,
   }
+}
+
+function buildSetupProgress({
+  organization,
+  activeLocations,
+  activeUsers,
+  roleCount,
+  totalItems,
+  trackedItems,
+  activePosStations,
+  activeSessions,
+  accountingSettings,
+  payrollEmployeeCount,
+  payrollPeriodCount,
+  businessEventCount,
+  activities,
+  alerts,
+  pendingActions,
+}: {
+  organization: DashboardData['organization']
+  activeLocations: number
+  activeUsers: number
+  roleCount: number
+  totalItems: number
+  trackedItems: number
+  activePosStations: number
+  activeSessions: number
+  accountingSettings: {
+    accountingEnabled: boolean
+    setupStatus: AccountingSetupStatus
+    countryPack: string | null
+  } | null
+  payrollEmployeeCount: number
+  payrollPeriodCount: number
+  businessEventCount: number
+  activities: DashboardActivity[]
+  alerts: DashboardAlert[]
+  pendingActions: DashboardPendingAction[]
+}): DashboardSetupProgress {
+  const companyProfileSignals = [
+    organization.name,
+    organization.currency,
+    organization.countryCode || organization.country,
+    organization.taxIdentifier,
+  ].filter(Boolean).length
+  const proofSignals =
+    businessEventCount +
+    activities.length +
+    alerts.length +
+    pendingActions.filter((action) => action.count > 0).length
+
+  const steps: DashboardSetupStep[] = [
+    {
+      key: 'company_profile',
+      status: companyProfileSignals >= 3 ? 'complete' : companyProfileSignals > 1 ? 'in_progress' : 'not_started',
+      href: '/dashboard/settings/company',
+      sourceCount: companyProfileSignals,
+      required: true,
+    },
+    {
+      key: 'locations',
+      status: activeLocations > 0 ? 'complete' : 'not_started',
+      href: '/dashboard/settings/locations',
+      sourceCount: activeLocations,
+      required: true,
+    },
+    {
+      key: 'roles_permissions',
+      status: activeUsers > 0 && roleCount > 0 ? 'complete' : activeUsers > 0 || roleCount > 0 ? 'in_progress' : 'not_started',
+      href: '/dashboard/settings/roles',
+      sourceCount: activeUsers + roleCount,
+      required: true,
+    },
+    {
+      key: 'inventory_catalog',
+      status: totalItems > 0 && trackedItems > 0 ? 'complete' : totalItems > 0 ? 'in_progress' : 'not_started',
+      href: '/dashboard/inventory/items',
+      sourceCount: totalItems,
+      required: true,
+    },
+    {
+      key: 'pos_setup',
+      status: activePosStations > 0 ? 'complete' : activeSessions > 0 ? 'in_progress' : 'not_started',
+      href: '/dashboard/settings/terminals',
+      sourceCount: activePosStations,
+      required: true,
+    },
+    {
+      key: 'finance_accounts',
+      status: getAccountingSetupStatus(accountingSettings),
+      href: '/dashboard/accounting/setup',
+      sourceCount: accountingSettings ? 1 : 0,
+      required: true,
+    },
+    {
+      key: 'payroll_setup',
+      status:
+        payrollEmployeeCount > 0 && payrollPeriodCount > 0
+          ? 'complete'
+          : payrollEmployeeCount > 0 || payrollPeriodCount > 0
+            ? 'in_progress'
+            : 'optional',
+      href: '/dashboard/payroll',
+      sourceCount: payrollEmployeeCount + payrollPeriodCount,
+      required: false,
+    },
+    {
+      key: 'proof_checkpoint',
+      status: businessEventCount > 0 || activities.length > 0 ? 'complete' : proofSignals > 0 ? 'in_progress' : 'not_started',
+      href: '/dashboard/assurance/control-tower',
+      sourceCount: proofSignals,
+      required: true,
+    },
+  ]
+  const requiredSteps = steps.filter((step) => step.required)
+  const completedRequiredSteps = requiredSteps.filter((step) => step.status === 'complete').length
+  const totalRequiredSteps = requiredSteps.length
+
+  return {
+    completedRequiredSteps,
+    totalRequiredSteps,
+    percent: totalRequiredSteps > 0 ? Math.round((completedRequiredSteps / totalRequiredSteps) * 100) : 0,
+    steps,
+  }
+}
+
+function getAccountingSetupStatus(
+  settings: {
+    accountingEnabled: boolean
+    setupStatus: AccountingSetupStatus
+    countryPack: string | null
+  } | null,
+): DashboardSetupStepStatus {
+  if (!settings) return 'not_started'
+  if (
+    settings.setupStatus === AccountingSetupStatus.READY ||
+    settings.setupStatus === AccountingSetupStatus.LOCKED
+  ) {
+    return 'complete'
+  }
+  if (settings.accountingEnabled || settings.setupStatus === AccountingSetupStatus.IN_PROGRESS || settings.countryPack) {
+    return 'in_progress'
+  }
+
+  return 'not_started'
 }
 
 export async function getDashboardMetrics(input: { context: DashboardReadModelContext }): Promise<LegacyDashboardMetrics> {

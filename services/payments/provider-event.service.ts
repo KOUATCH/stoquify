@@ -13,6 +13,7 @@ import { randomUUID } from "node:crypto"
 import { AlertSeverity, AlertType, createAlert } from "@/lib/error-handling/monitoring"
 import { logger } from "@/lib/logger"
 import { db } from "@/prisma/db"
+import { recordCloseCertificationInvalidationsForSourceInTx } from "@/services/accounting/close-assurance-pack.service"
 import { recordBusinessEventInTx } from "@/services/events/business-event.service"
 
 import type { ParsedProviderEvent, PaymentProviderAdapter, ProviderWebhookHeaders } from "./payment-ingestion.types"
@@ -429,6 +430,16 @@ export async function captureProviderEvent(input: CaptureProviderEventInput): Pr
           },
         },
       ],
+    })
+
+    await recordCloseCertificationInvalidationsForSourceInTx(tx, input.organizationId, {
+      sourceCode: "PAYMENT_PROVIDER_EVENT_CAPTURED",
+      sourceId: event.id,
+      periodStart: parsed.occurredAt ?? receivedAt,
+      periodEnd: parsed.occurredAt ?? receivedAt,
+      staleReason: "Provider event capture changed certified close evidence.",
+      newEvidenceHash: rawPayloadHash,
+      correlationId,
     })
 
     return {

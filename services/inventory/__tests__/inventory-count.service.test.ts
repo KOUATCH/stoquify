@@ -21,6 +21,8 @@ jest.mock("@/prisma/db", () => ({
     stockAdjustment: { count: jest.fn(), create: jest.fn(), findFirst: jest.fn(), update: jest.fn() },
     stockAdjustmentLine: { update: jest.fn() },
     businessEvent: { findUnique: jest.fn(), create: jest.fn(), update: jest.fn() },
+    closeRun: { findMany: jest.fn(), findFirst: jest.fn(), update: jest.fn() },
+    closePackExport: { findFirst: jest.fn(), update: jest.fn() },
     accountingPeriod: { findFirst: jest.fn() },
     ledgerPostingBatch: { findFirst: jest.fn(), create: jest.fn(), update: jest.fn() },
     postingRule: { findFirst: jest.fn() },
@@ -44,6 +46,8 @@ const mockedDb = db as unknown as {
   stockAdjustment: { count: jest.Mock; create: jest.Mock; findFirst: jest.Mock; update: jest.Mock }
   stockAdjustmentLine: { update: jest.Mock }
   businessEvent: { findUnique: jest.Mock; create: jest.Mock; update: jest.Mock }
+  closeRun: { findMany: jest.Mock; findFirst: jest.Mock; update: jest.Mock }
+  closePackExport: { findFirst: jest.Mock; update: jest.Mock }
   accountingPeriod: { findFirst: jest.Mock }
   ledgerPostingBatch: { findFirst: jest.Mock; create: jest.Mock; update: jest.Mock }
   postingRule: { findFirst: jest.Mock }
@@ -267,6 +271,11 @@ beforeEach(() => {
     outboxMessages: args.data.outboxMessages.create,
   }))
   mockedDb.businessEvent.update.mockResolvedValue({ id: "event-1", status: "APPLIED" })
+  mockedDb.closeRun.findMany.mockResolvedValue([])
+  mockedDb.closeRun.findFirst.mockResolvedValue(null)
+  mockedDb.closeRun.update.mockResolvedValue({ id: "close-run-1" })
+  mockedDb.closePackExport.findFirst.mockResolvedValue(null)
+  mockedDb.closePackExport.update.mockResolvedValue({ id: "close-pack-export-1" })
   mockedDb.accountingPeriod.findFirst.mockResolvedValue({
     id: "period-1",
     organizationId: "org-1",

@@ -1,5 +1,13 @@
 import FinanceCommandCenterDashboard from "@/components/finance/FinanceCommandCenterDashboard"
 
-export default function FinanceCashFlowPage() {
-  return <FinanceCommandCenterDashboard initialView="cash-flow" />
+import { FinanceRouteAccess, financeViewPermissions, type FinanceRouteParams } from "../FinanceRouteAccess"
+
+export default async function FinanceCashFlowPage({ params }: { params: FinanceRouteParams }) {
+  return FinanceRouteAccess({
+    params,
+    permissions: financeViewPermissions("cash-flow"),
+    resource: "FinanceCashFlowDashboard",
+    title: "Finance cash flow dashboard",
+    children: <FinanceCommandCenterDashboard initialView="cash-flow" />,
+  })
 }

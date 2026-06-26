@@ -1,0 +1,144 @@
+{
+  "generatedAt": "2026-06-26T17:57:46.786Z",
+  "mode": "fail",
+  "status": "ready",
+  "safety": {
+    "dbName": "stockflow_immutability_test",
+    "host": "localhost"
+  },
+  "migration": {
+    "applied": true,
+    "exitCode": 0
+  },
+  "summary": {
+    "presentTriggers": 8,
+    "requiredTriggers": 8,
+    "blockedMutations": 12,
+    "expectedBlockedMutations": 12,
+    "allowedLifecycleMutations": 3,
+    "expectedAllowedLifecycleMutations": 3,
+    "blockerCount": 0
+  },
+  "triggers": [
+    {
+      "tableName": "payroll_runs",
+      "triggerName": "payroll_runs_prevent_finalized_mutation_trigger",
+      "present": true
+    },
+    {
+      "tableName": "payroll_run_lines",
+      "triggerName": "payroll_run_lines_prevent_posted_mutation_trigger",
+      "present": true
+    },
+    {
+      "tableName": "payroll_payslips",
+      "triggerName": "payroll_payslips_prevent_emitted_mutation_trigger",
+      "present": true
+    },
+    {
+      "tableName": "payroll_payslip_lines",
+      "triggerName": "payroll_payslip_lines_prevent_emitted_mutation_trigger",
+      "present": true
+    },
+    {
+      "tableName": "payroll_payment_batches",
+      "triggerName": "payroll_payment_batches_prevent_released_mutation_trigger",
+      "present": true
+    },
+    {
+      "tableName": "payroll_payment_allocations",
+      "triggerName": "payroll_payment_allocations_prevent_released_mutation_trigger",
+      "present": true
+    },
+    {
+      "tableName": "payroll_declarations",
+      "triggerName": "payroll_declarations_prevent_payload_mutation_trigger",
+      "present": true
+    },
+    {
+      "tableName": "payroll_declaration_evidence",
+      "triggerName": "payroll_declaration_evidence_prevent_mutation_trigger",
+      "present": true
+    }
+  ],
+  "blockedChecks": [
+    {
+      "label": "block_run_update",
+      "passed": true,
+      "message": "P2010: PrismaClientKnownRequestError"
+    },
+    {
+      "label": "block_run_delete",
+      "passed": true,
+      "message": "P2010: PrismaClientKnownRequestError"
+    },
+    {
+      "label": "block_run_line_update",
+      "passed": true,
+      "message": "P2010: PrismaClientKnownRequestError"
+    },
+    {
+      "label": "block_payslip_update",
+      "passed": true,
+      "message": "P2010: PrismaClientKnownRequestError"
+    },
+    {
+      "label": "block_payslip_line_update",
+      "passed": true,
+      "message": "P2010: PrismaClientKnownRequestError"
+    },
+    {
+      "label": "block_payment_batch_update",
+      "passed": true,
+      "message": "P2010: PrismaClientKnownRequestError"
+    },
+    {
+      "label": "block_payment_batch_status_reversal",
+      "passed": true,
+      "message": "P2010: PrismaClientKnownRequestError"
+    },
+    {
+      "label": "block_payment_allocation_update",
+      "passed": true,
+      "message": "P2010: PrismaClientKnownRequestError"
+    },
+    {
+      "label": "block_declaration_update",
+      "passed": true,
+      "message": "P2010: PrismaClientKnownRequestError"
+    },
+    {
+      "label": "block_declaration_delete",
+      "passed": true,
+      "message": "P2010: PrismaClientKnownRequestError"
+    },
+    {
+      "label": "block_declaration_evidence_update",
+      "passed": true,
+      "message": "P2010: PrismaClientKnownRequestError"
+    },
+    {
+      "label": "block_declaration_evidence_delete",
+      "passed": true,
+      "message": "P2010: PrismaClientKnownRequestError"
+    }
+  ],
+  "allowedChecks": [
+    {
+      "label": "allow_run_metadata",
+      "passed": true,
+      "message": "Allowed lifecycle metadata mutation succeeded."
+    },
+    {
+      "label": "allow_declaration_status",
+      "passed": true,
+      "message": "Allowed lifecycle metadata mutation succeeded."
+    },
+    {
+      "label": "allow_payment_reconciliation_status",
+      "passed": true,
+      "message": "Allowed lifecycle metadata mutation succeeded."
+    }
+  ],
+  "blockers": []
+}

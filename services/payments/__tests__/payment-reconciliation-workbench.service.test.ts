@@ -140,4 +140,28 @@ describe("payment reconciliation workbench read model", () => {
       ]),
     )
   })
+
+  it("carries payment transaction ids on payment-linked suspense failures", async () => {
+    mockedDb.payment.findMany.mockResolvedValue([
+      payment({
+        status: PaymentStatus.PENDING,
+        transactionId: "pt-pending-1",
+      }),
+    ])
+
+    const workbench = await getPaymentReconciliationWorkbench({
+      organizationId: "org-1",
+      period: "7d",
+    })
+
+    expect(workbench.suspenseReadyFailures).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          paymentId: "payment-1",
+          paymentTransactionId: "pt-pending-1",
+          type: "NON_FINAL_PAYMENT_STATUS",
+        }),
+      ]),
+    )
+  })
 })

@@ -1,4 +1,5 @@
 import { getAllDashboardData } from "@/actions/dashboard/getDashboardData";
+import { DashboardErrorState } from "@/components/dashboard/DashboardErrorState";
 import EnhancedEnterpriseDashboard, {
   type EnterpriseDashboardLabels,
 } from '@/components/dashboard/EnhancedEnterpriseDashboard';
@@ -6,7 +7,6 @@ import { SessionRecoverySignOutButton } from "@/components/dashboard/SessionReco
 import { ErrorBoundary } from '@/config/error-boundary';
 import { localizePath, pickLocale } from "@/i18n/routing";
 import { RbacError, requireRbacContext } from "@/lib/security/rbac";
-import { Package } from "lucide-react";
 import { redirect } from "next/navigation";
 
 function isRecoverableDashboardSessionError(error: unknown) {
@@ -39,20 +39,12 @@ function DashboardSessionRecovery({ locale }: { locale: 'en' | 'fr' }) {
         }
 
   return (
-    <div className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
-      <div className="dashboard-landing-content mx-auto w-full max-w-[88rem] px-4 py-6 sm:px-6 sm:py-8">
-        <div className="mx-auto max-w-md py-16 text-center">
-          <div className="dashboard-glass-panel rounded-lg px-6 py-12">
-            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-danger-soft)]">
-              <Package className="h-8 w-8 text-[var(--dash-danger)]" />
-            </div>
-            <h3 className="mb-3 text-xl font-semibold text-[var(--dash-text)]">{copy.title}</h3>
-            <p className="mb-6 text-sm leading-6 text-[var(--dash-text-soft)]">{copy.description}</p>
-            <SessionRecoverySignOutButton label={copy.action} locale={locale} />
-          </div>
-        </div>
-      </div>
-    </div>
+    <DashboardErrorState
+      error={copy.description}
+      title={copy.title}
+      message={copy.description}
+      actions={<SessionRecoverySignOutButton label={copy.action} locale={locale} />}
+    />
   )
 }
 

@@ -21,6 +21,9 @@ jest.mock("@/prisma/db", () => ({
     paymentReconciliationInboxItem: { upsert: jest.fn() },
     paymentException: { create: jest.fn() },
     businessEvent: { findUnique: jest.fn(), create: jest.fn(), update: jest.fn() },
+    ledgerAuditEvent: { create: jest.fn() },
+    closeRun: { findMany: jest.fn(), findFirst: jest.fn(), update: jest.fn() },
+    closePackExport: { findFirst: jest.fn(), update: jest.fn() },
     auditLog: { create: jest.fn() },
   },
 }))
@@ -38,6 +41,9 @@ const mockedDb = db as unknown as {
   paymentReconciliationInboxItem: { upsert: jest.Mock }
   paymentException: { create: jest.Mock }
   businessEvent: { findUnique: jest.Mock; create: jest.Mock; update: jest.Mock }
+  ledgerAuditEvent: { create: jest.Mock }
+  closeRun: { findMany: jest.Mock; findFirst: jest.Mock; update: jest.Mock }
+  closePackExport: { findFirst: jest.Mock; update: jest.Mock }
   auditLog: { create: jest.Mock }
 }
 
@@ -71,6 +77,20 @@ function headersFor(rawBody: string, timestamp = now.getTime(), signingSecret = 
   }
 }
 
+function arrangeCertifiedCloseTarget() {
+  mockedDb.closeRun.findMany.mockResolvedValue([{ id: "close-run-1", packExports: [{ id: "close-pack-export-1" }] }])
+  mockedDb.closeRun.findFirst.mockResolvedValue({
+    id: "close-run-1",
+    organizationId: "org-1",
+    status: "CERTIFIED",
+    metadata: null,
+  })
+  mockedDb.closePackExport.findFirst.mockResolvedValue({ id: "close-pack-export-1", metadata: { mode: "CERTIFIED" } })
+  mockedDb.closePackExport.update.mockResolvedValue({ id: "close-pack-export-1" })
+  mockedDb.closeRun.update.mockResolvedValue({ id: "close-run-1" })
+  mockedDb.ledgerAuditEvent.create.mockResolvedValue({ id: "ledger-audit-1" })
+}
+
 describe("provider event ingestion", () => {
   beforeEach(() => {
     jest.clearAllMocks()
@@ -89,6 +109,12 @@ describe("provider event ingestion", () => {
       ...args.data,
       outboxMessages: args.data.outboxMessages.create,
     }))
+    mockedDb.closeRun.findMany.mockResolvedValue([])
+    mockedDb.closeRun.findFirst.mockResolvedValue(null)
+    mockedDb.closeRun.update.mockResolvedValue({ id: "close-run-1" })
+    mockedDb.closePackExport.findFirst.mockResolvedValue(null)
+    mockedDb.closePackExport.update.mockResolvedValue({ id: "close-pack-export-1" })
+    mockedDb.ledgerAuditEvent.create.mockResolvedValue({ id: "ledger-audit-1" })
   })
 
   it("captures a valid provider event as verified evidence", async () => {
@@ -142,6 +168,50 @@ describe("provider event ingestion", () => {
           },
         }),
         include: { outboxMessages: true },
+      }),
+    )
+  })
+
+  it("invalidates certified close evidence when a captured provider event overlaps the closed period", async () => {
+    arrangeCertifiedCloseTarget()
+    const rawBody = rawEvent()
+
+    await captureProviderEvent({
+      organizationId: "org-1",
+      providerAccountId: "provider-account-1",
+      adapter,
+      rawBody,
+      headers: headersFor(rawBody),
+      secret,
+      now,
+      correlationId: "corr-close-provider",
+    })
+
+    expect(mockedDb.businessEvent.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          eventType: "close.certification.invalidated",
+          metadata: expect.objectContaining({
+            sourceCode: "PAYMENT_PROVIDER_EVENT_CAPTURED",
+            sourceDomain: "payments",
+            sourceTable: "provider_events",
+          }),
+        }),
+      }),
+    )
+    expect(mockedDb.closeRun.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "close-run-1" },
+        data: expect.objectContaining({
+          status: "BLOCKED",
+          metadata: expect.objectContaining({
+            staleState: expect.objectContaining({
+              sourceCode: "PAYMENT_PROVIDER_EVENT_CAPTURED",
+              newEvidenceHash: sha256(adapter.canonicalPayload(rawBody)),
+              correlationId: "corr-close-provider",
+            }),
+          }),
+        }),
       }),
     )
   })

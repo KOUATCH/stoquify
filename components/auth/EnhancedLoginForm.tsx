@@ -10,11 +10,9 @@ import { LoginProps } from "@/types/types";
 import {
   AlertCircle,
   ArrowRight,
-  Building2,
   CheckCircle2,
   Eye,
   EyeOff,
-  Fingerprint,
   KeyRound,
   Loader2,
   Lock,
@@ -23,7 +21,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import type { ComponentType } from "react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { AuthFormCard } from "./AuthLayout";
@@ -62,9 +59,6 @@ export default function EnhancedLoginForm() {
 
   const emailValue = watch("email");
 
-  const handleUnavailableMethod = () => {
-    formError(copy.unavailableTitle, copy.unavailableBody, copy.unavailableHint);
-  };
 
   useEffect(() => {
     if (!emailValue) {
@@ -127,7 +121,7 @@ export default function EnhancedLoginForm() {
   };
 
   return (
-    <AuthFormCard className="flex flex-col lg:min-h-[720px]">
+    <AuthFormCard className="flex flex-col">
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
           <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[#10181d] text-white shadow-[0_16px_36px_rgba(16,24,29,0.16)] ring-1 ring-white/25 dark:bg-white/[0.08] dark:text-[#8fb7ff] dark:ring-white/10">
@@ -153,37 +147,16 @@ export default function EnhancedLoginForm() {
         </div>
       </div>
 
-      <div className="mb-6 rounded-xl border border-[#9fb4bb]/25 bg-[#e2ecef]/78 p-3 dark:border-white/10 dark:bg-white/[0.04]">
-        <div className="mb-3 px-1">
-          <p className="text-sm font-black text-[#132028] dark:text-white">{copy.methodTitle}</p>
-          <p className="mt-1 text-xs font-semibold leading-5 text-[#58707a] dark:text-[#8fa4ab]">{copy.methodSubtitle}</p>
+      <div className="mb-6 rounded-xl border border-[#9fb4bb]/25 bg-[#e2ecef]/78 p-4 dark:border-white/10 dark:bg-white/[0.04]">
+        <div className="flex items-start gap-3">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#2f7df6]/10 text-[#2f7df6] dark:bg-[#8fb7ff]/10 dark:text-[#8fb7ff]">
+            <Lock className="h-4 w-4" />
+          </span>
+          <div className="min-w-0">
+            <p className="text-sm font-black text-[#132028] dark:text-white">{copy.methodTitle}</p>
+            <p className="mt-1 text-xs font-semibold leading-5 text-[#58707a] dark:text-[#8fa4ab]">{copy.methodSubtitle}</p>
+          </div>
         </div>
-        <div className="grid gap-2 sm:grid-cols-3">
-          <AuthMethodButton
-            icon={Building2}
-            label={copy.sso}
-            hint={copy.ssoHint}
-            onClick={handleUnavailableMethod}
-          />
-          <AuthMethodButton
-            icon={Fingerprint}
-            label={copy.passkey}
-            hint={copy.passkeyHint}
-            onClick={handleUnavailableMethod}
-          />
-          <AuthMethodButton
-            icon={Lock}
-            label={copy.passwordMethod}
-            hint={copy.passwordHint}
-            active
-          />
-        </div>
-      </div>
-
-      <div className="mb-5 flex items-center gap-3">
-        <span className="h-px flex-1 bg-[#9fb4bb]/30 dark:bg-white/10" />
-        <span className="text-xs font-bold uppercase tracking-[0.14em] text-[#7f969f]">{copy.divider}</span>
-        <span className="h-px flex-1 bg-[#9fb4bb]/30 dark:bg-white/10" />
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
@@ -309,42 +282,4 @@ export default function EnhancedLoginForm() {
   );
 }
 
-function AuthMethodButton({
-  icon: Icon,
-  label,
-  hint,
-  active,
-  onClick,
-}: {
-  icon: ComponentType<{ className?: string }>;
-  label: string;
-  hint: string;
-  active?: boolean;
-  onClick?: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        "flex min-h-[76px] items-center gap-3 rounded-xl border px-3 py-3 text-left transition-all",
-        active
-          ? "border-[#f0c54d]/45 bg-[rgba(240,197,77,0.14)] text-[#132028] shadow-sm dark:border-[#f0c54d]/35 dark:bg-[#bf7145]/20 dark:text-white"
-          : "border-[#9fb4bb]/25 bg-white/45 text-[#253943] hover:border-[#f0c54d]/45 hover:bg-[#f0c54d]/12 dark:border-white/10 dark:bg-white/[0.035] dark:text-[#d3ddd8] dark:hover:bg-[#bf7145]/20"
-      )}
-    >
-      <span
-        className={cn(
-          "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg",
-          active ? "bg-[#f0c54d]/18 text-[#8b4a2f] dark:text-[#f6d574]" : "bg-[#132028]/6 text-[#58707a] dark:bg-white/[0.06] dark:text-[#9fb4bb]"
-        )}
-      >
-        <Icon className="h-4 w-4" />
-      </span>
-      <span className="min-w-0">
-        <span className="block text-sm font-black">{label}</span>
-        <span className="mt-0.5 block text-xs font-semibold text-[#7f969f]">{hint}</span>
-      </span>
-    </button>
-  );
-}
+

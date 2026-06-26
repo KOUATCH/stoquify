@@ -553,9 +553,9 @@ export function CloseAssuranceCenter({
         </div>
       </section>
 
-      <div className="grid min-w-0 gap-5 xl:grid-cols-[1.1fr_0.9fr]">
+      <div data-testid="close-readiness-workspace" className="grid min-w-0 gap-5">
         <ChecklistPanel data={data} locale={locale} />
-        <div className="space-y-5">
+        <div data-testid="close-certification-row" className="grid min-w-0 gap-5 xl:grid-cols-2">
           <ControlsPanel data={data} locale={locale} />
           <ClosePackExportPanel
             data={data}
@@ -603,7 +603,7 @@ function ChecklistPanel({ data, locale }: { data: CloseAssuranceDashboardData; l
 
   return (
     <Panel title={t.checklist} description={t.checklistDescription}>
-      <div className="divide-y divide-[var(--dash-border-subtle)]">
+      <div data-testid="close-readiness-checklist" className="divide-y divide-[var(--dash-border-subtle)]">
         {data.checklist.map((item) => (
           <div key={item.key} className="grid gap-3 px-4 py-3 lg:grid-cols-[minmax(0,0.8fr)_auto_minmax(0,1.1fr)] lg:items-center">
             <div className="min-w-0">

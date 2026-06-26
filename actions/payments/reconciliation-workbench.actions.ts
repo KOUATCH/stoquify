@@ -11,7 +11,7 @@ export type { PaymentReconciliationWorkbenchData }
 
 const getWorkbench = protect<unknown, PaymentReconciliationWorkbenchData>(
   {
-    permission: "payments.reconciliation.run",
+    permission: "payments.reconciliation.read",
     auditResource: "PaymentReconciliation",
     auditAllowed: false,
   },

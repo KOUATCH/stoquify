@@ -47,9 +47,238 @@ export type ClosePackExportResult = {
   certificationLimitations: string[]
 }
 
+export type CloseCertificationInvalidationSourceCode =
+  | "INVENTORY_VALUATION_ANNEX"
+  | "INVENTORY_VALUATION_WRITE"
+  | "LEDGER_JOURNAL_POSTED"
+  | "LEDGER_JOURNAL_REVERSED"
+  | "PAYROLL_RUN_POSTED"
+  | "PAYROLL_PAYMENT_RELEASED"
+  | "PAYROLL_PAYMENT_RECONCILED"
+  | "PAYROLL_DECLARATION_PREPARED"
+  | "PAYROLL_DECLARATION_SUBMITTED"
+  | "PAYROLL_DECLARATION_ACCEPTED"
+  | "PAYROLL_DECLARATION_REJECTED"
+  | "PAYROLL_DECLARATION_PAYMENT_DUE"
+  | "PAYROLL_DECLARATION_PAID"
+  | "PAYROLL_DECLARATION_RECONCILED"
+  | "PAYROLL_DECLARATION_AMENDED"
+  | "PAYMENT_PROVIDER_EVENT_CAPTURED"
+  | "PAYMENT_STATEMENT_IMPORT"
+  | "PAYMENT_RECONCILIATION_SIGNED"
+  | "PAYMENT_RECONCILIATION_CERTIFICATE_EXPORTED"
+  | "PAYMENT_RECONCILIATION_CERTIFICATE_HASH_DRIFT"
+  | "PAYMENT_SUSPENSE_POSTING"
+  | "CUSTOM"
+
+export type CloseCertificationInvalidationSourceMetadata = {
+  sourceCode: CloseCertificationInvalidationSourceCode
+  ring: "FIRST_RING" | "DOMAIN_RECHECK" | "CUSTOM"
+  domain: "inventory" | "ledger" | "payments" | "payroll" | "custom"
+  sourceModel: string
+  sourceTable: string | null
+  sourceEventName: string
+  closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE"
+}
+
+export const CLOSE_CERTIFICATION_INVALIDATION_SOURCES = {
+  INVENTORY_VALUATION_ANNEX: {
+    sourceCode: "INVENTORY_VALUATION_ANNEX",
+    ring: "DOMAIN_RECHECK",
+    domain: "inventory",
+    sourceModel: "InventoryValuationAnnex",
+    sourceTable: null,
+    sourceEventName: "inventory.valuation.annex.checked",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
+  INVENTORY_VALUATION_WRITE: {
+    sourceCode: "INVENTORY_VALUATION_WRITE",
+    ring: "DOMAIN_RECHECK",
+    domain: "inventory",
+    sourceModel: "InventoryTransaction",
+    sourceTable: "inventory_transactions",
+    sourceEventName: "inventory.valuation.write",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
+  LEDGER_JOURNAL_POSTED: {
+    sourceCode: "LEDGER_JOURNAL_POSTED",
+    ring: "FIRST_RING",
+    domain: "ledger",
+    sourceModel: "JournalEntry",
+    sourceTable: "journal_entries",
+    sourceEventName: "ledger.journal.posted",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
+  LEDGER_JOURNAL_REVERSED: {
+    sourceCode: "LEDGER_JOURNAL_REVERSED",
+    ring: "FIRST_RING",
+    domain: "ledger",
+    sourceModel: "JournalEntry",
+    sourceTable: "journal_entries",
+    sourceEventName: "ledger.journal.reversed",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
+  PAYROLL_RUN_POSTED: {
+    sourceCode: "PAYROLL_RUN_POSTED",
+    ring: "FIRST_RING",
+    domain: "payroll",
+    sourceModel: "PayrollRun",
+    sourceTable: "payroll_runs",
+    sourceEventName: "payroll.run.posted",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
+  PAYROLL_PAYMENT_RELEASED: {
+    sourceCode: "PAYROLL_PAYMENT_RELEASED",
+    ring: "FIRST_RING",
+    domain: "payroll",
+    sourceModel: "PayrollPaymentBatch",
+    sourceTable: "payroll_payment_batches",
+    sourceEventName: "payroll.payment_batch.released",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
+  PAYROLL_PAYMENT_RECONCILED: {
+    sourceCode: "PAYROLL_PAYMENT_RECONCILED",
+    ring: "FIRST_RING",
+    domain: "payroll",
+    sourceModel: "PayrollPaymentBatch",
+    sourceTable: "payroll_payment_batches",
+    sourceEventName: "payroll.payment_batch.reconciled",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
+  PAYROLL_DECLARATION_PREPARED: {
+    sourceCode: "PAYROLL_DECLARATION_PREPARED",
+    ring: "FIRST_RING",
+    domain: "payroll",
+    sourceModel: "PayrollRun",
+    sourceTable: "payroll_declarations",
+    sourceEventName: "payroll.declaration.prepared",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
+  PAYROLL_DECLARATION_SUBMITTED: {
+    sourceCode: "PAYROLL_DECLARATION_SUBMITTED",
+    ring: "FIRST_RING",
+    domain: "payroll",
+    sourceModel: "PayrollDeclaration",
+    sourceTable: "payroll_declarations",
+    sourceEventName: "payroll.declaration.submitted",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
+  PAYROLL_DECLARATION_ACCEPTED: {
+    sourceCode: "PAYROLL_DECLARATION_ACCEPTED",
+    ring: "FIRST_RING",
+    domain: "payroll",
+    sourceModel: "PayrollDeclaration",
+    sourceTable: "payroll_declarations",
+    sourceEventName: "payroll.declaration.accepted",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
+  PAYROLL_DECLARATION_REJECTED: {
+    sourceCode: "PAYROLL_DECLARATION_REJECTED",
+    ring: "FIRST_RING",
+    domain: "payroll",
+    sourceModel: "PayrollDeclaration",
+    sourceTable: "payroll_declarations",
+    sourceEventName: "payroll.declaration.rejected",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
+  PAYROLL_DECLARATION_PAYMENT_DUE: {
+    sourceCode: "PAYROLL_DECLARATION_PAYMENT_DUE",
+    ring: "FIRST_RING",
+    domain: "payroll",
+    sourceModel: "PayrollDeclaration",
+    sourceTable: "payroll_declarations",
+    sourceEventName: "payroll.declaration.payment_due",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
+  PAYROLL_DECLARATION_PAID: {
+    sourceCode: "PAYROLL_DECLARATION_PAID",
+    ring: "FIRST_RING",
+    domain: "payroll",
+    sourceModel: "PayrollDeclaration",
+    sourceTable: "payroll_declarations",
+    sourceEventName: "payroll.declaration.paid",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
+  PAYROLL_DECLARATION_RECONCILED: {
+    sourceCode: "PAYROLL_DECLARATION_RECONCILED",
+    ring: "FIRST_RING",
+    domain: "payroll",
+    sourceModel: "PayrollDeclaration",
+    sourceTable: "payroll_declarations",
+    sourceEventName: "payroll.declaration.reconciled",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
+  PAYROLL_DECLARATION_AMENDED: {
+    sourceCode: "PAYROLL_DECLARATION_AMENDED",
+    ring: "FIRST_RING",
+    domain: "payroll",
+    sourceModel: "PayrollDeclarationEvidence",
+    sourceTable: "payroll_declaration_evidence",
+    sourceEventName: "payroll.declaration.amended",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
+  PAYMENT_PROVIDER_EVENT_CAPTURED: {
+    sourceCode: "PAYMENT_PROVIDER_EVENT_CAPTURED",
+    ring: "FIRST_RING",
+    domain: "payments",
+    sourceModel: "ProviderEvent",
+    sourceTable: "provider_events",
+    sourceEventName: "payment.provider_event.captured",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
+  PAYMENT_STATEMENT_IMPORT: {
+    sourceCode: "PAYMENT_STATEMENT_IMPORT",
+    ring: "FIRST_RING",
+    domain: "payments",
+    sourceModel: "StatementFile",
+    sourceTable: "statement_files",
+    sourceEventName: "payment.statement.imported",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
+  PAYMENT_RECONCILIATION_SIGNED: {
+    sourceCode: "PAYMENT_RECONCILIATION_SIGNED",
+    ring: "FIRST_RING",
+    domain: "payments",
+    sourceModel: "ReconciliationRun",
+    sourceTable: "reconciliation_runs",
+    sourceEventName: "payment.reconciliation.signed",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
+  PAYMENT_RECONCILIATION_CERTIFICATE_EXPORTED: {
+    sourceCode: "PAYMENT_RECONCILIATION_CERTIFICATE_EXPORTED",
+    ring: "FIRST_RING",
+    domain: "payments",
+    sourceModel: "ReconciliationRun",
+    sourceTable: "reconciliation_runs",
+    sourceEventName: "payment.reconciliation.certificate.exported",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
+  PAYMENT_RECONCILIATION_CERTIFICATE_HASH_DRIFT: {
+    sourceCode: "PAYMENT_RECONCILIATION_CERTIFICATE_HASH_DRIFT",
+    ring: "FIRST_RING",
+    domain: "payments",
+    sourceModel: "ReconciliationRun",
+    sourceTable: "reconciliation_runs",
+    sourceEventName: "payment.reconciliation.certificate.hash_drift_detected",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
+  PAYMENT_SUSPENSE_POSTING: {
+    sourceCode: "PAYMENT_SUSPENSE_POSTING",
+    ring: "FIRST_RING",
+    domain: "payments",
+    sourceModel: "SuspenseItem",
+    sourceTable: "suspense_items",
+    sourceEventName: "payment.reconciliation.suspense.posted",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
+} as const satisfies Record<
+  Exclude<CloseCertificationInvalidationSourceCode, "CUSTOM">,
+  CloseCertificationInvalidationSourceMetadata
+>
 export type CloseCertificationInvalidationInput = {
   closeRunId: string
   closePackExportId?: string | null
+  sourceCode?: CloseCertificationInvalidationSourceCode
   sourceModel: string
   sourceId?: string | null
   sourceEventName: string
@@ -66,6 +295,24 @@ export type CloseCertificationInvalidationResult = {
   staleReason: string
 }
 
+export type RecordCloseCertificationInvalidationsForSourceInput = {
+  sourceCode: Exclude<CloseCertificationInvalidationSourceCode, "CUSTOM">
+  sourceId?: string | null
+  closeRunId?: string | null
+  closePackExportId?: string | null
+  periodId?: string | null
+  periodStart?: Date | string | null
+  periodEnd?: Date | string | null
+  staleReason: string
+  previousEvidenceHash?: string | null
+  newEvidenceHash?: string | null
+  correlationId?: string | null
+}
+
+export type RecordCloseCertificationInvalidationsForSourceResult = {
+  invalidatedCount: number
+  results: CloseCertificationInvalidationResult[]
+}
 type InventoryAnnexFreshness = {
   status: "FRESH" | "MISSING" | "STALE" | "BLOCKED" | "UNAVAILABLE"
   sourceModel: "InventoryValuationAnnex"
@@ -129,6 +376,43 @@ function decimalNumber(value: Prisma.Decimal | number | string | null | undefine
 function metadataRecord(value: unknown): Record<string, unknown> {
   if (!value || typeof value !== "object" || Array.isArray(value)) return {}
   return value as Record<string, unknown>
+}
+
+function dateOrNull(value: Date | string | null | undefined) {
+  if (!value) return null
+  const date = value instanceof Date ? value : new Date(value)
+  return Number.isNaN(date.getTime()) ? null : date
+}
+
+function sourceMetadataForInput(input: CloseCertificationInvalidationInput): CloseCertificationInvalidationSourceMetadata {
+  if (input.sourceCode && input.sourceCode !== "CUSTOM") return CLOSE_CERTIFICATION_INVALIDATION_SOURCES[input.sourceCode]
+
+  const matchedSource = Object.values(CLOSE_CERTIFICATION_INVALIDATION_SOURCES).find(
+    (source) => source.sourceModel === input.sourceModel && source.sourceEventName === input.sourceEventName,
+  )
+  if (matchedSource) return matchedSource
+
+  return {
+    sourceCode: input.sourceCode ?? "CUSTOM",
+    ring: "CUSTOM",
+    domain: "custom",
+    sourceModel: input.sourceModel,
+    sourceTable: null,
+    sourceEventName: input.sourceEventName,
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  }
+}
+
+function sourcePayload(source: CloseCertificationInvalidationSourceMetadata) {
+  return {
+    sourceCode: source.sourceCode,
+    ring: source.ring,
+    domain: source.domain,
+    sourceModel: source.sourceModel,
+    sourceTable: source.sourceTable,
+    sourceEventName: source.sourceEventName,
+    closeImpact: source.closeImpact,
+  }
 }
 
 function stringField(value: Record<string, unknown> | null, key: string) {
@@ -572,12 +856,19 @@ async function recordInvalidationEvidenceInTx(
   control: ExportClosePackControl,
 ) {
   const detectedAt = (control.now ? new Date(control.now) : new Date()).toISOString()
+  const sourceMetadata = sourceMetadataForInput(input)
+  const source = sourcePayload(sourceMetadata)
   const payload = {
     closeRunId: run.id,
     closePackExportId: input.closePackExportId ?? null,
-    sourceModel: input.sourceModel,
+    sourceCode: source.sourceCode,
+    sourceRing: source.ring,
+    sourceDomain: source.domain,
+    sourceTable: source.sourceTable,
+    sourceModel: source.sourceModel,
     sourceId: input.sourceId ?? null,
-    sourceEventName: input.sourceEventName,
+    sourceEventName: source.sourceEventName,
+    invalidationSource: source,
     staleReason: input.staleReason,
     detectedAt,
     actorId: control.actorId ?? null,
@@ -588,9 +879,10 @@ async function recordInvalidationEvidenceInTx(
   const eventHashPart = sha256(stableStringify({
     closeRunId: run.id,
     closePackExportId: input.closePackExportId ?? null,
-    sourceModel: input.sourceModel,
+    sourceCode: source.sourceCode,
+    sourceModel: source.sourceModel,
     sourceId: input.sourceId ?? null,
-    sourceEventName: input.sourceEventName,
+    sourceEventName: source.sourceEventName,
     previousEvidenceHash: input.previousEvidenceHash ?? null,
     newEvidenceHash: input.newEvidenceHash ?? null,
   })).slice(7, 23)
@@ -607,7 +899,12 @@ async function recordInvalidationEvidenceInTx(
     metadata: {
       closeRunId: run.id,
       closePackExportId: input.closePackExportId ?? null,
+      sourceCode: source.sourceCode,
+      sourceRing: source.ring,
+      sourceDomain: source.domain,
+      sourceTable: source.sourceTable,
       staleReason: input.staleReason,
+      invalidationSource: source,
       correlationId: input.correlationId ?? null,
     },
     outboxMessages: [{
@@ -616,8 +913,11 @@ async function recordInvalidationEvidenceInTx(
       idempotencyKey: `close-certification-invalidated:${run.id}:${input.closePackExportId ?? "run"}:${eventHashPart}:report-export`,
       payload,
       metadata: {
-        sourceModel: input.sourceModel,
-        sourceEventName: input.sourceEventName,
+        sourceCode: source.sourceCode,
+        sourceRing: source.ring,
+        sourceDomain: source.domain,
+        sourceModel: source.sourceModel,
+        sourceEventName: source.sourceEventName,
       },
     }],
   })
@@ -640,72 +940,188 @@ async function recordInvalidationEvidenceInTx(
   return eventResult.event.id
 }
 
-export async function recordCloseCertificationInvalidation(
+async function recordCloseCertificationInvalidationInTx(
+  tx: Prisma.TransactionClient,
   organizationId: string,
   input: CloseCertificationInvalidationInput,
   control: ExportClosePackControl = {},
 ): Promise<CloseCertificationInvalidationResult> {
-  return db.$transaction(async (tx) => {
-    const run = await loadCloseRunForPack(organizationId, input.closeRunId, tx)
-    if (!run) throw new NotFoundError("Close run not found")
+  const run = await loadCloseRunForPack(organizationId, input.closeRunId, tx)
+  if (!run) throw new NotFoundError("Close run not found")
 
-    const closePackExport = input.closePackExportId
-      ? await tx.closePackExport.findFirst({
-        where: {
-          id: input.closePackExportId,
-          organizationId,
-          closeRunId: run.id,
-        },
-      })
-      : null
+  const closePackExport = input.closePackExportId
+    ? await tx.closePackExport.findFirst({
+      where: {
+        id: input.closePackExportId,
+        organizationId,
+        closeRunId: run.id,
+      },
+    })
+    : null
 
-    const businessEventId = await recordInvalidationEvidenceInTx(tx, run, input, control)
-    const staleState = {
-      status: "EVIDENCE_STALE",
-      sourceModel: input.sourceModel,
-      sourceId: input.sourceId ?? null,
-      sourceEventName: input.sourceEventName,
-      staleReason: input.staleReason,
-      detectedAt: (control.now ? new Date(control.now) : new Date()).toISOString(),
-      actorId: control.actorId ?? null,
-      previousEvidenceHash: input.previousEvidenceHash ?? null,
-      newEvidenceHash: input.newEvidenceHash ?? null,
-      businessEventId,
-      correlationId: input.correlationId ?? null,
-    }
+  const source = sourcePayload(sourceMetadataForInput(input))
+  const businessEventId = await recordInvalidationEvidenceInTx(tx, run, input, control)
+  const staleState = {
+    status: "EVIDENCE_STALE",
+    sourceCode: source.sourceCode,
+    sourceRing: source.ring,
+    sourceDomain: source.domain,
+    sourceTable: source.sourceTable,
+    sourceModel: source.sourceModel,
+    sourceId: input.sourceId ?? null,
+    sourceEventName: source.sourceEventName,
+    invalidationSource: source,
+    staleReason: input.staleReason,
+    detectedAt: (control.now ? new Date(control.now) : new Date()).toISOString(),
+    actorId: control.actorId ?? null,
+    previousEvidenceHash: input.previousEvidenceHash ?? null,
+    newEvidenceHash: input.newEvidenceHash ?? null,
+    businessEventId,
+    correlationId: input.correlationId ?? null,
+  }
 
-    if (closePackExport) {
-      await tx.closePackExport.update({
-        where: { id: closePackExport.id },
-        data: {
-          metadata: jsonObject({
-            ...metadataRecord(closePackExport.metadata),
-            staleState,
-            statutoryCertification: statutoryCertificationBlockerMetadata(),
-          }),
-        },
-      })
-    }
-
-    await tx.closeRun.update({
-      where: { id: run.id },
+  if (closePackExport) {
+    await tx.closePackExport.update({
+      where: { id: closePackExport.id },
       data: {
-        status: run.status === CloseRunStatus.CERTIFIED ? CloseRunStatus.BLOCKED : run.status,
         metadata: jsonObject({
-          ...metadataRecord(run.metadata),
+          ...metadataRecord(closePackExport.metadata),
           staleState,
           statutoryCertification: statutoryCertificationBlockerMetadata(),
         }),
       },
     })
+  }
 
-    return {
-      closeRunId: run.id,
-      closePackExportId: closePackExport?.id ?? null,
-      businessEventId,
-      staleReason: input.staleReason,
-    }
+  await tx.closeRun.update({
+    where: { id: run.id },
+    data: {
+      status: run.status === CloseRunStatus.CERTIFIED ? CloseRunStatus.BLOCKED : run.status,
+      metadata: jsonObject({
+        ...metadataRecord(run.metadata),
+        staleState,
+        statutoryCertification: statutoryCertificationBlockerMetadata(),
+      }),
+    },
   })
+
+  return {
+    closeRunId: run.id,
+    closePackExportId: closePackExport?.id ?? null,
+    businessEventId,
+    staleReason: input.staleReason,
+  }
+}
+
+export async function recordCloseCertificationInvalidation(
+  organizationId: string,
+  input: CloseCertificationInvalidationInput,
+  control: ExportClosePackControl = {},
+): Promise<CloseCertificationInvalidationResult> {
+  return db.$transaction((tx) => recordCloseCertificationInvalidationInTx(tx, organizationId, input, control))
+}
+
+type CloseInvalidationTarget = {
+  closeRunId: string
+  closePackExportId: string | null
+}
+
+async function closeInvalidationTargetsInTx(
+  tx: Prisma.TransactionClient,
+  organizationId: string,
+  input: RecordCloseCertificationInvalidationsForSourceInput,
+): Promise<CloseInvalidationTarget[]> {
+  if (input.closeRunId) {
+    return [{ closeRunId: input.closeRunId, closePackExportId: input.closePackExportId ?? null }]
+  }
+
+  const periodStart = dateOrNull(input.periodStart)
+  const periodEnd = dateOrNull(input.periodEnd)
+  const periodFilters: Prisma.CloseRunWhereInput[] = []
+
+  if (input.periodId) periodFilters.push({ periodId: input.periodId })
+  if (periodStart && periodEnd) {
+    periodFilters.push({
+      period: {
+        startDate: { lte: periodEnd },
+        endDate: { gte: periodStart },
+      },
+    })
+  } else if (periodStart) {
+    periodFilters.push({ period: { endDate: { gte: periodStart } } })
+  } else if (periodEnd) {
+    periodFilters.push({ period: { startDate: { lte: periodEnd } } })
+  }
+
+  if (periodFilters.length === 0) return []
+
+  const runs = await tx.closeRun.findMany({
+    where: {
+      organizationId,
+      AND: [
+        { OR: periodFilters },
+        {
+          OR: [
+            { status: CloseRunStatus.CERTIFIED },
+            { packExports: { some: { isCertified: true } } },
+          ],
+        },
+      ],
+    },
+    select: {
+      id: true,
+      packExports: {
+        where: { isCertified: true },
+        orderBy: { exportedAt: "desc" },
+        take: 1,
+        select: { id: true },
+      },
+    },
+  })
+
+  return runs.map((run) => ({
+    closeRunId: run.id,
+    closePackExportId: input.closePackExportId ?? run.packExports[0]?.id ?? null,
+  }))
+}
+
+export async function recordCloseCertificationInvalidationsForSourceInTx(
+  tx: Prisma.TransactionClient,
+  organizationId: string,
+  input: RecordCloseCertificationInvalidationsForSourceInput,
+  control: ExportClosePackControl = {},
+): Promise<RecordCloseCertificationInvalidationsForSourceResult> {
+  const source = CLOSE_CERTIFICATION_INVALIDATION_SOURCES[input.sourceCode]
+  const targets = await closeInvalidationTargetsInTx(tx, organizationId, input)
+  const results: CloseCertificationInvalidationResult[] = []
+
+  for (const target of targets) {
+    results.push(await recordCloseCertificationInvalidationInTx(tx, organizationId, {
+      closeRunId: target.closeRunId,
+      closePackExportId: target.closePackExportId,
+      sourceCode: source.sourceCode,
+      sourceModel: source.sourceModel,
+      sourceId: input.sourceId ?? null,
+      sourceEventName: source.sourceEventName,
+      staleReason: input.staleReason,
+      previousEvidenceHash: input.previousEvidenceHash ?? null,
+      newEvidenceHash: input.newEvidenceHash ?? null,
+      correlationId: input.correlationId ?? null,
+    }, control))
+  }
+
+  return {
+    invalidatedCount: results.length,
+    results,
+  }
+}
+
+export async function recordCloseCertificationInvalidationsForSource(
+  organizationId: string,
+  input: RecordCloseCertificationInvalidationsForSourceInput,
+  control: ExportClosePackControl = {},
+): Promise<RecordCloseCertificationInvalidationsForSourceResult> {
+  return db.$transaction((tx) => recordCloseCertificationInvalidationsForSourceInTx(tx, organizationId, input, control))
 }
 
 export async function exportClosePack(
@@ -889,3 +1305,4 @@ export async function exportClosePack(
     }
   })
 }
+

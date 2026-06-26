@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { localizePath } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 import {
-  Activity,
   Calculator,
   CheckCircle2,
   Command,
@@ -17,7 +16,6 @@ import {
   ShoppingCart,
   Sparkles,
   Sun,
-  Truck,
   Users,
   Workflow,
 } from "lucide-react";
@@ -70,25 +68,11 @@ export default function AuthLayout({
       metricClass: "text-[#2f7df6] dark:text-[#8fb7ff]",
     },
     {
-      ...pageCopy.common.moduleHighlights.purchasing,
-      icon: Truck,
-      iconClass: "text-[#bf4b6a] dark:text-[#ff9ab1]",
-      surfaceClass: "bg-[#bf4b6a]/10 ring-[#bf4b6a]/20",
-      metricClass: "text-[#bf4b6a] dark:text-[#ff9ab1]",
-    },
-    {
       ...pageCopy.common.moduleHighlights.accounting,
       icon: Calculator,
       iconClass: "text-[#a87516] dark:text-[#f0c76a]",
       surfaceClass: "bg-[#d7a84f]/10 ring-[#d7a84f]/20",
       metricClass: "text-[#a87516] dark:text-[#f0c76a]",
-    },
-    {
-      ...pageCopy.common.moduleHighlights.compliance,
-      icon: Globe2,
-      iconClass: "text-[#5c6df6] dark:text-[#aeb8ff]",
-      surfaceClass: "bg-[#5c6df6]/10 ring-[#5c6df6]/20",
-      metricClass: "text-[#5c6df6] dark:text-[#aeb8ff]",
     },
     {
       ...pageCopy.common.moduleHighlights.reconciliation,
@@ -98,31 +82,12 @@ export default function AuthLayout({
       metricClass: "text-[#2f7df6] dark:text-[#8fb7ff]",
     },
     {
-      ...pageCopy.common.moduleHighlights.payroll,
-      icon: Users,
-      iconClass: "text-[#178e83] dark:text-[#7de8dc]",
-      surfaceClass: "bg-[#2dd4bf]/10 ring-[#2dd4bf]/20",
-      metricClass: "text-[#178e83] dark:text-[#7de8dc]",
-    },
-    {
-      ...pageCopy.common.moduleHighlights.offline,
-      icon: Workflow,
-      iconClass: "text-[#bf4b6a] dark:text-[#ff9ab1]",
-      surfaceClass: "bg-[#bf4b6a]/10 ring-[#bf4b6a]/20",
-      metricClass: "text-[#bf4b6a] dark:text-[#ff9ab1]",
-    },
-    {
       ...pageCopy.common.moduleHighlights.controls,
       icon: ShieldCheck,
       iconClass: "text-[#a87516] dark:text-[#f0c76a]",
       surfaceClass: "bg-[#d7a84f]/10 ring-[#d7a84f]/20",
       metricClass: "text-[#a87516] dark:text-[#f0c76a]",
     },
-  ];
-  const statusCards = [
-    { label: pageCopy.common.statusCards.uptime, value: "Tenant", icon: Activity },
-    { label: pageCopy.common.statusCards.audit, value: "Proof", icon: Radar },
-    { label: pageCopy.common.statusCards.sync, value: "Replay", icon: Workflow },
   ];
   const assuranceItems = [
     pageCopy.common.encrypted,
@@ -132,7 +97,7 @@ export default function AuthLayout({
   const renderModuleHighlights = (containerClassName?: string) => (
     <div
       className={cn(
-        "rounded-xl border border-[#9fb4bb]/25 bg-[#eef4f5]/72 p-3 shadow-sm backdrop-blur-xl dark:border-white/10 dark:bg-white/[0.055] sm:p-4",
+        "rounded-xl border border-[#9fb4bb]/25 bg-[#eef4f5]/72 p-3 shadow-sm backdrop-blur-xl dark:border-white/10 dark:bg-white/[0.055]",
         containerClassName
       )}
     >
@@ -141,7 +106,7 @@ export default function AuthLayout({
           <p className="text-xs font-black uppercase tracking-[0.14em] text-[#2f7df6] dark:text-[#8fb7ff]">
             {pageCopy.common.moduleShowcaseTitle}
           </p>
-          <p className="mt-1 max-w-xl text-sm leading-6 text-[#58707a] dark:text-[#9fb4bb]">
+          <p className="mt-1 max-w-xl text-xs leading-5 text-[#58707a] dark:text-[#9fb4bb] sm:text-sm">
             {pageCopy.common.moduleShowcaseBody}
           </p>
         </div>
@@ -151,19 +116,19 @@ export default function AuthLayout({
         </span>
       </div>
 
-      <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="mt-2.5 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
         {moduleHighlights.map((item, index) => {
           const Icon = item.icon;
           return (
             <div
               key={item.label}
               className={cn(
-                "min-h-[132px] rounded-lg border border-[#9fb4bb]/25 bg-white/55 p-3 transition-all hover:-translate-y-0.5 hover:border-[#2f7df6]/35 hover:bg-white dark:border-white/10 dark:bg-white/[0.045] dark:hover:bg-white/[0.075]",
+                "min-h-[112px] rounded-lg border border-[#9fb4bb]/25 bg-white/55 p-2.5 transition-all hover:-translate-y-0.5 hover:border-[#2f7df6]/35 hover:bg-white dark:border-white/10 dark:bg-white/[0.045] dark:hover:bg-white/[0.075]",
                 index === moduleHighlights.length - 1 ? "sm:col-span-2 xl:col-span-1" : ""
               )}
             >
               <div className="flex items-start justify-between gap-2">
-                <span className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ring-1", item.surfaceClass)}>
+                <span className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ring-1", item.surfaceClass)}>
                   <Icon className={cn("h-4 w-4", item.iconClass)} />
                 </span>
                 <span
@@ -175,7 +140,7 @@ export default function AuthLayout({
                   {item.metric}
                 </span>
               </div>
-              <p className="mt-3 text-sm font-black text-[#132028] dark:text-white">{item.label}</p>
+              <p className="mt-2.5 text-sm font-black text-[#132028] dark:text-white">{item.label}</p>
               <p className="mt-1.5 text-xs leading-5 text-[#58707a] dark:text-[#9fb4bb]">{item.body}</p>
             </div>
           );
@@ -237,41 +202,25 @@ export default function AuthLayout({
           </div>
         </header>
 
-        <section className="mx-auto grid w-full max-w-7xl flex-1 items-start gap-6 px-4 pb-8 pt-2 sm:px-6 lg:grid-cols-[minmax(0,0.98fr)_minmax(420px,0.88fr)] lg:gap-8 lg:px-8 lg:pb-10 lg:pt-6">
+        <section className="mx-auto grid w-full max-w-7xl flex-1 items-start gap-6 px-4 pb-8 pt-2 sm:px-6 lg:grid-cols-[minmax(0,0.94fr)_minmax(420px,0.88fr)] lg:gap-8 lg:px-8 lg:pb-10 lg:pt-5">
           <aside className="hidden min-w-0 self-start lg:block">
             <div className="max-w-2xl">
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#9fb4bb]/35 bg-[#eef4f5]/72 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-[#31515d] shadow-sm backdrop-blur-xl dark:border-white/10 dark:bg-white/[0.055] dark:text-[#9fb4bb]">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#9fb4bb]/35 bg-[#eef4f5]/72 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-[#31515d] shadow-sm backdrop-blur-xl dark:border-white/10 dark:bg-white/[0.055] dark:text-[#9fb4bb]">
                 <Sparkles className="h-3.5 w-3.5 text-[#a87516] dark:text-[#f0c76a]" />
                 {copy.eyebrow}
               </div>
 
-              <h1 className="max-w-2xl text-4xl font-black tracking-normal text-[#10181d] dark:text-white xl:text-[2.8rem]">
+              <h1 className="max-w-2xl text-3xl font-black tracking-normal text-[#10181d] dark:text-white xl:text-[2.45rem]">
                 {copy.title}
               </h1>
-              <p className="mt-4 max-w-xl text-base leading-7 text-[#45606a] dark:text-[#b9c8c3]">
+              <p className="mt-3 max-w-xl text-sm leading-6 text-[#45606a] dark:text-[#b9c8c3]">
                 {copy.body}
               </p>
 
-              {renderModuleHighlights("mt-6")}
+              {renderModuleHighlights("mt-4")}
 
-              <div className="mt-4 grid max-w-2xl grid-cols-3 gap-2">
-                {statusCards.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <div
-                      key={item.label}
-                      className="rounded-xl border border-[#9fb4bb]/25 bg-[#eef4f5]/70 p-3 shadow-sm backdrop-blur-xl dark:border-white/10 dark:bg-white/[0.055]"
-                    >
-                      <Icon className="mb-3 h-4 w-4 text-[#2f7df6] dark:text-[#8fb7ff]" />
-                      <p className="text-xl font-black text-[#10181d] dark:text-white">{item.value}</p>
-                      <p className="mt-1 text-xs font-semibold text-[#58707a] dark:text-[#8fa4ab]">{item.label}</p>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <div className="mt-4 overflow-hidden rounded-xl border border-[#9fb4bb]/25 bg-[#10181d] shadow-[0_24px_70px_rgba(16,24,29,0.22)] dark:border-white/10">
-                <div className="flex flex-col gap-2 border-b border-white/10 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="mt-3 overflow-hidden rounded-xl border border-[#9fb4bb]/25 bg-[#10181d] shadow-[0_24px_70px_rgba(16,24,29,0.22)] dark:border-white/10">
+                <div className="flex flex-col gap-2 border-b border-white/10 px-3.5 py-2.5 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-[#9fb4bb]">
                     <LockKeyhole className="h-4 w-4 text-[#2dd4bf]" />
                     {pageCopy.common.liveAccess}
@@ -280,19 +229,19 @@ export default function AuthLayout({
                     {pageCopy.common.workspaceSignal}
                   </span>
                 </div>
-                <div className="p-4">
+                <div className="p-3.5">
                   <div className="flex items-start gap-3">
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#2dd4bf]/12 text-[#7de8dc]">
                       <ShieldCheck className="h-5 w-5" />
                     </span>
                     <div className="min-w-0">
-                      <p className="text-lg font-black text-white">{pageCopy.common.commandTitle}</p>
+                      <p className="text-base font-black text-white">{pageCopy.common.commandTitle}</p>
                       <p className="mt-1 text-sm leading-6 text-[#9fb4bb]">{pageCopy.common.commandBody}</p>
                     </div>
                   </div>
-                  <div className="mt-4 grid gap-2 sm:grid-cols-3">
+                  <div className="mt-3 grid gap-2 sm:grid-cols-3">
                     {assuranceItems.map((item) => (
-                      <div key={item} className="flex min-h-[46px] items-center gap-2 rounded-lg bg-white/[0.055] px-3 py-2 text-sm font-semibold text-[#d3ddd8]">
+                      <div key={item} className="flex min-h-[42px] items-center gap-2 rounded-lg bg-white/[0.055] px-2.5 py-2 text-xs font-semibold text-[#d3ddd8]">
                         <CheckCircle2 className="h-4 w-4 shrink-0 text-[#2ec98a]" />
                         <span className="min-w-0">{item}</span>
                       </div>

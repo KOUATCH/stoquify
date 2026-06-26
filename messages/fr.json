@@ -222,6 +222,27 @@
     "title": "Centre de commande finance",
     "subtitle": "Paiements, creances, dettes, marge, taxes, tresorerie et assurance caisse dans une surface finance controlee.",
     "updated": "Mis a jour {time}",
+    "command": {
+      "eyebrow": "Brief de commande finance",
+      "organization": "Organisation",
+      "period": "Periode",
+      "generated": "Genere",
+      "proofLabel": "Modele de lecture verifie",
+      "proofSource": "Modele de lecture finance",
+      "statusTitle": "Statut operationnel",
+      "statusDetail": "Signaux cash, clearing, taxe et caisse pour le perimetre choisi.",
+      "actionTitle": "Actions finance a traiter",
+      "actionDetail": "Items finance classes par risque depuis le modele de lecture actif.",
+      "actionEmptyTitle": "Aucune action finance due",
+      "actionEmptyMessage": "Le perimetre choisi n'a pas de signal en retard, en attente ou d'ecart cash maintenant.",
+      "evidenceTitle": "Dernieres preuves de paiement",
+      "evidenceDetail": "Evenements de paiement recents qui appuient la vue finance choisie.",
+      "riskCritical": "Critique",
+      "riskWarning": "Alerte",
+      "riskWatch": "Surveillance",
+      "riskReady": "Pret",
+      "owner": "Responsable finance"
+    },
     "common": {
       "notAvailable": "Non disponible"
     },
@@ -525,6 +546,20 @@
         "exportCompleteMessage": "Le telechargement du certificat de rapprochement signe a demarre."
       }
     },
+    "trustBanner": {
+      "title": "Banniere confiance paiements",
+      "description": "Signaux de verite cloture-paiement issus des preuves durables et des blocages de cloture.",
+      "providerEvidence": "Preuve fournisseur",
+      "statementEvidence": "Preuve releve",
+      "signedRuns": "Runs signes",
+      "openSuspense": "Suspense ouvert",
+      "criticalExceptions": "Exceptions critiques",
+      "closeBlockers": "Blocages cloture",
+      "freshness": "Fraicheur",
+      "available": "Disponible",
+      "missing": "Manquante",
+      "suspenseAmount": "Exposition {amount}"
+    },
     "suspenseWorkflow": {
       "title": "File approbation suspense",
       "description": "Assigner, proposer la reclassification et approuver les demandes de passage en suspense avec preuve maker-checker.",
@@ -596,6 +631,12 @@
     },
     "actions": {
       "refresh": "Actualiser"
+    },
+    "proof": {
+      "open": "Ouvrir preuve",
+      "loading": "Chargement preuve",
+      "unavailable": "Aucune preuve de transaction paiement n'est liee a cette ligne.",
+      "error": "La preuve de transaction paiement n'a pas pu etre chargee en securite."
     },
     "metrics": {
       "activeRails": "Rails actifs",
@@ -702,7 +743,8 @@
       "counterparty": "Tiers",
       "amount": "Montant",
       "suspenseType": "Type suspense",
-      "time": "Heure"
+      "time": "Heure",
+      "proof": "Preuve"
     }
   },
   "complianceCenter": {
@@ -1108,6 +1150,7 @@
       "navAria": "Navigation principale",
       "product": "Produit",
       "workflow": "Flux",
+      "modules": "Modules",
       "trust": "Confiance",
       "pricing": "Tarifs",
       "login": "Connexion",
@@ -1119,11 +1162,11 @@
     },
     "hero": {
       "badge": "plateforme PME OHADA centree grand livre",
-      "titleStart": "Pilotez stock, ventes, caisse, conformite et cloture depuis",
-      "titleEmphasis": "une colonne de preuves",
-      "description": "AqStoqFlow relie point de vente, inventaire, achats, finance, comptabilite, conformite, paie, rapprochement et controles agence avec portee tenant, contexte permission, preuve source et impact grand livre.",
+      "titleStart": "Controlez ventes, stock, caisse, conformite et cloture depuis",
+      "titleEmphasis": "un espace vivant",
+      "description": "AqStoqFlow donne aux equipes PME OHADA un etat produit commun pour PDV, inventaire, achats, finance, cloture comptable, preuves de conformite, paie et controles agence sans perdre la portee tenant ni la preuve source.",
       "primaryCta": "Creer espace",
-      "secondaryCta": "Voir le deploiement",
+      "secondaryCta": "Voir l'etat produit",
       "metrics": {
         "branches": { "value": "Tenant", "label": "Porte par organisation" },
         "accuracy": { "value": "Grand livre", "label": "Ecritures sourcees" },
@@ -1138,9 +1181,9 @@
       }
     },
     "dashboard": {
-      "period": "Jour controle",
+      "period": "Aujourd'hui",
       "title": "Instantane assurance operations",
-      "synced": "portee tenant",
+      "synced": "preuve active",
       "rows": {
         "revenue": { "label": "Etat grand livre", "value": "Brouillon", "meta": "source liee" },
         "pos": { "label": "Files exception", "value": "Ouvert", "meta": "revue requise" },

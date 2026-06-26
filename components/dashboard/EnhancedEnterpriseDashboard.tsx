@@ -5,7 +5,6 @@ import {
   AlertDescription,
   AlertTitle,
 } from "@/components/ui/alert"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -25,38 +24,42 @@ import {
 } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {
+  ActionQueue,
+  CommandBriefHeader,
+  EvidenceTimeline,
+  KpiTile,
+  StatusStrip,
+  dashboardPanelClass,
+  dashboardToneClass,
+} from "@/components/dashboard/primitives"
+import {
+  buildTodaysOperatingTruthModel,
+  type TodaysOperatingTruthModel,
+} from "@/components/dashboard/todays-operating-truth"
 import { useNotifications } from "@/components/notifications/NotificationProvider"
 import useDashboardData from "@/hooks/useDashboardData"
 import type {
   DashboardAlert,
   DashboardData,
-  DashboardMetric,
   DashboardPeriod,
 } from "@/actions/dashboard/getDashboardData"
 import { cn } from "@/lib/utils"
 import {
   Activity,
   AlertTriangle,
-  ArrowDownRight,
-  ArrowUpRight,
   BarChart3,
   Boxes,
   Building2,
   CheckCircle2,
-  Clock3,
   CreditCard,
-  DollarSign,
   ExternalLink,
   Package,
   RefreshCw,
   ShoppingCart,
-  Sparkles,
-  TrendingUp,
-  Users,
 } from "lucide-react"
 import Link from "next/link"
 import { useMemo, useState } from "react"
-import type { ComponentType, CSSProperties } from "react"
 import {
   Area,
   AreaChart,
@@ -251,21 +254,6 @@ interface EnhancedEnterpriseDashboardProps {
 
 const periodOptions: DashboardPeriod[] = ["7d", "30d", "90d", "mtd"]
 
-function getTrend(metric: DashboardMetric) {
-  if (metric.change > 0) return "up"
-  if (metric.change < 0) return "down"
-  return "flat"
-}
-
-function formatChange(value: number, locale: string) {
-  const formatter = new Intl.NumberFormat(locale, {
-    maximumFractionDigits: 1,
-    minimumFractionDigits: 0,
-  })
-
-  return `${value > 0 ? "+" : ""}${formatter.format(value)}%`
-}
-
 function formatNumber(value: number, locale: string) {
   return new Intl.NumberFormat(locale, {
     maximumFractionDigits: 0,
@@ -311,91 +299,6 @@ function alertClasses(type: DashboardAlert["type"]) {
   }
 }
 
-function MetricCard({
-  title,
-  description,
-  value,
-  metric,
-  icon: Icon,
-  locale,
-  labels,
-  accent,
-  soft,
-  href,
-  dashboardBasePath,
-}: {
-  title: string
-  description: string
-  value: string
-  metric: DashboardMetric
-  icon: ComponentType<{ className?: string }>
-  locale: string
-  labels: EnterpriseDashboardLabels
-  accent: string
-  soft: string
-  href?: string
-  dashboardBasePath: string
-}) {
-  const trend = getTrend(metric)
-  const TrendIcon = trend === "up" ? ArrowUpRight : trend === "down" ? ArrowDownRight : Activity
-  const trendClass =
-    trend === "up"
-      ? "text-[var(--dash-success)]"
-      : trend === "down"
-        ? "text-[var(--dash-danger)]"
-        : "text-[var(--dash-text-faint)]"
-
-  const card = (
-    <Card
-      className={cn(
-        "dashboard-stat-card group relative min-h-[146px] min-w-0 overflow-hidden transition-colors",
-        href && "cursor-pointer hover:border-[var(--dash-border)] hover:bg-[rgba(73,198,229,0.08)]"
-      )}
-      style={{
-        "--stat-accent": accent,
-        "--stat-soft": soft,
-      } as CSSProperties}
-    >
-      <div className="absolute inset-x-0 top-0 h-1 bg-[var(--stat-accent)] opacity-80" />
-      <div className="absolute end-4 top-4 flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--stat-soft)] text-[var(--stat-accent)] transition-transform duration-200 group-hover:scale-105">
-        <Icon className="h-5 w-5" />
-      </div>
-      <CardContent className="relative z-10 p-5 pe-16">
-        <div className="flex items-start justify-between gap-4">
-          <div className="min-w-0 space-y-2">
-            <p className="text-[0.7rem] font-semibold uppercase leading-4 tracking-[0.08em] text-[var(--dash-text-faint)]">{title}</p>
-            <p className="break-words text-2xl font-semibold leading-tight tracking-tight text-[var(--dash-text)]">{value}</p>
-          </div>
-        </div>
-        <div className="mt-4 flex items-center gap-2 text-xs">
-          <span className={cn("inline-flex items-center gap-1 font-medium", trendClass)}>
-            <TrendIcon className="h-3.5 w-3.5" />
-            {formatChange(metric.change, locale)}
-          </span>
-          <span className="text-[var(--dash-text-soft)]">{labels.comparison}</span>
-        </div>
-        <p className="mt-2 line-clamp-2 text-xs leading-5 text-[var(--dash-text-soft)]">{description}</p>
-        {href ? (
-          <span className="absolute bottom-4 end-4 text-[var(--dash-text-faint)] opacity-0 transition-opacity group-hover:opacity-100">
-            <ExternalLink className="h-3.5 w-3.5" />
-          </span>
-        ) : null}
-      </CardContent>
-    </Card>
-  )
-
-  if (!href) return card
-
-  return (
-    <Link
-      href={resolveDashboardHref(href, dashboardBasePath)}
-      className="block h-full rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dash-brand)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--dash-surface)]"
-    >
-      {card}
-    </Link>
-  )
-}
-
 function LoadingDashboard() {
   return (
     <div className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
@@ -412,6 +315,57 @@ function LoadingDashboard() {
         </div>
       </div>
     </div>
+  )
+}
+
+function WorkspaceSetupPanel({ onboarding }: { onboarding: TodaysOperatingTruthModel["onboarding"] }) {
+  return (
+    <section className={cn(dashboardPanelClass, "p-4")}>
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div className="min-w-0 max-w-3xl">
+          <h2 className="text-base font-semibold text-[var(--dash-text)]">{onboarding.title}</h2>
+          <p className="mt-1 text-sm leading-6 text-[var(--dash-text-soft)]">{onboarding.detail}</p>
+        </div>
+        <div className="w-full min-w-0 lg:w-[320px]">
+          <div className="flex items-center justify-between gap-3 text-xs font-semibold text-[var(--dash-text-soft)]">
+            <span>{onboarding.progressLabel}</span>
+            <span>{onboarding.progressValue}%</span>
+          </div>
+          <Progress value={onboarding.progressValue} className="mt-2 h-2 bg-[var(--dash-surface-raised)]" />
+        </div>
+      </div>
+
+      <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {onboarding.steps.map((step) => {
+          const Icon = step.icon
+
+          return (
+            <article
+              key={step.id}
+              className="min-w-0 rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.30)] p-3"
+            >
+              <div className="flex min-w-0 items-start justify-between gap-3">
+                <span className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border", dashboardToneClass(step.tone))}>
+                  <Icon className="h-4 w-4" aria-hidden="true" />
+                </span>
+                <span className={cn("rounded-md border px-2 py-1 text-xs font-semibold", dashboardToneClass(step.tone))}>
+                  {step.stateLabel}
+                </span>
+              </div>
+              <h3 className="mt-3 line-clamp-2 text-sm font-semibold text-[var(--dash-text)]">{step.title}</h3>
+              <p className="mt-1 line-clamp-3 text-sm leading-6 text-[var(--dash-text-soft)]">{step.detail}</p>
+              <Link
+                href={step.href}
+                className="mt-3 inline-flex min-h-8 max-w-full items-center gap-1.5 rounded-md border border-[var(--dash-border-subtle)] px-2.5 py-1 text-xs font-semibold text-[var(--dash-text-soft)] transition hover:bg-[var(--dash-surface-raised)] hover:text-[var(--dash-text)]"
+              >
+                <span className="truncate">{step.actionLabel}</span>
+                <ExternalLink className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              </Link>
+            </article>
+          )
+        })}
+      </div>
+    </section>
   )
 }
 
@@ -448,68 +402,16 @@ export default function EnhancedEnterpriseDashboard({
   const dashboard = data || dashboardData
   const currency = dashboard.organization.currency || "XAF"
 
-  const kpis = [
-    {
-      title: labels.metrics.revenue,
-      description: labels.metricDescriptions.revenue,
-      value: formatCurrency(dashboard.kpis.revenue.current, currency, locale),
-      metric: dashboard.kpis.revenue,
-      icon: DollarSign,
-      accent: "var(--dash-success)",
-      soft: "var(--dash-success-soft)",
-      href: "/dashboard/finance/sales",
-    },
-    {
-      title: labels.metrics.orders,
-      description: labels.metricDescriptions.orders,
-      value: formatNumber(dashboard.kpis.orders.current, locale),
-      metric: dashboard.kpis.orders,
-      icon: ShoppingCart,
-      accent: "var(--dash-info)",
-      soft: "var(--dash-info-soft)",
-      href: "/dashboard/sales",
-    },
-    {
-      title: labels.metrics.customers,
-      description: labels.metricDescriptions.customers,
-      value: formatNumber(dashboard.kpis.customers.current, locale),
-      metric: dashboard.kpis.customers,
-      icon: Users,
-      accent: "var(--dash-spruce)",
-      soft: "var(--dash-spruce-soft)",
-      href: "/dashboard/customers",
-    },
-    {
-      title: labels.metrics.inventoryValue,
-      description: labels.metricDescriptions.inventoryValue,
-      value: formatCurrency(dashboard.kpis.inventoryValue.current, currency, locale),
-      metric: dashboard.kpis.inventoryValue,
-      icon: Package,
-      accent: "var(--dash-gold)",
-      soft: "var(--dash-gold-soft)",
-      href: "/dashboard/inventory/items",
-    },
-    {
-      title: labels.metrics.averageOrderValue,
-      description: labels.metricDescriptions.averageOrderValue,
-      value: formatCurrency(dashboard.kpis.averageOrderValue.current, currency, locale),
-      metric: dashboard.kpis.averageOrderValue,
-      icon: TrendingUp,
-      accent: "var(--dash-warm)",
-      soft: "var(--dash-warm-soft)",
-      href: "/dashboard/analytics/reports?report=financial",
-    },
-    {
-      title: labels.metrics.cashCollected,
-      description: labels.metricDescriptions.cashCollected,
-      value: formatCurrency(dashboard.kpis.cashCollected.current, currency, locale),
-      metric: dashboard.kpis.cashCollected,
-      icon: CreditCard,
-      accent: "var(--dash-brand)",
-      soft: "var(--dash-brand-soft)",
-      href: "/dashboard/finance/payments",
-    },
-  ]
+  const selectedLocationLabel =
+    locationId === "all"
+      ? labels.allLocations
+      : locationOptions.find((location) => location.id === locationId)?.name ?? labels.allLocations
+  const operatingTruth = buildTodaysOperatingTruthModel({
+    dashboard,
+    locale,
+    dashboardBasePath,
+    selectedLocationLabel,
+  })
 
   const criticalAlert = dashboard.alerts.find((alert) => alert.type === "critical")
   const stockTotal = Math.max(dashboard.stockHealth.trackedItems, 1)
@@ -577,86 +479,47 @@ export default function EnhancedEnterpriseDashboard({
   return (
     <div className={cn("dashboard-landing-theme dark min-h-screen overflow-x-hidden", className)}>
       <div className="dashboard-landing-content mx-auto w-full max-w-[88rem] min-w-0 space-y-6 px-4 py-6 text-[var(--dash-text)] sm:px-6 sm:py-8">
-        <section className="dashboard-glass-panel rounded-lg p-5 sm:p-6">
-          <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
-            <div className="min-w-0">
-              <div className="dashboard-eyebrow mb-4">
-                <span className="dashboard-live-dot" />
-                <Sparkles className="h-3.5 w-3.5 text-[var(--dash-spruce)]" />
-                <span>
-                  {labels.connected}
-                </span>
-              </div>
-              <div className="flex min-w-0 items-start gap-4">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-brand-soft)] shadow-[0_16px_34px_rgba(47,125,246,0.18)]">
-                  <BarChart3 className="h-6 w-6 text-[var(--dash-brand-strong)]" />
-                </div>
-                <div className="min-w-0">
-                  <h1 className="text-3xl font-semibold tracking-tight text-[var(--dash-text)] sm:text-4xl">
-                    {labels.title}
-                  </h1>
-                  <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--dash-text-soft)] sm:text-base">
-                    {labels.subtitle}
-                  </p>
-                  <div className="mt-3 flex flex-wrap items-center gap-2">
-                    <Badge variant="outline" className="dashboard-filter-chip gap-1 rounded-lg">
-                      <Clock3 className="h-3.5 w-3.5 text-[var(--dash-gold)]" />
-                      {labels.generated}: {formatDateTime(dashboard.generatedAt, locale)}
-                    </Badge>
-                    <Badge variant="outline" className="dashboard-filter-chip gap-1 rounded-lg">
-                      <Building2 className="h-3.5 w-3.5 text-[var(--dash-info)]" />
-                      {locationId === "all"
-                        ? labels.allLocations
-                        : locationOptions.find((location) => location.id === locationId)?.name ?? labels.allLocations}
-                    </Badge>
-                  </div>
-                </div>
-              </div>
+        <CommandBriefHeader {...operatingTruth.brief}>
+          <div className="mt-4 grid gap-3 rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.34)] p-3 sm:grid-cols-2 xl:grid-cols-[170px_210px_auto] xl:items-end">
+            <div className="space-y-1.5">
+              <p className="text-xs font-semibold uppercase tracking-normal text-[var(--dash-text-faint)]">{labels.filters.period}</p>
+              <Select value={period} onValueChange={(value) => setPeriod(value as DashboardPeriod)}>
+                <SelectTrigger className="dashboard-control h-10 w-full rounded-lg">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
+                  {periodOptions.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {labels.periods[option]}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
-            <div className="dashboard-glass-panel w-full rounded-lg border border-[var(--dash-border-subtle)] p-3 xl:w-auto">
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-[170px_210px_auto] xl:items-end">
-                <div className="space-y-1.5">
-                  <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[var(--dash-text-faint)]">{labels.filters.period}</p>
-                  <Select value={period} onValueChange={(value) => setPeriod(value as DashboardPeriod)}>
-                    <SelectTrigger className="dashboard-control h-10 w-full rounded-lg">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
-                      {periodOptions.map((option) => (
-                        <SelectItem key={option} value={option}>
-                          {labels.periods[option]}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-1.5">
-                  <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[var(--dash-text-faint)]">{labels.filters.location}</p>
-                  <Select value={locationId} onValueChange={setLocationId}>
-                    <SelectTrigger className="dashboard-control h-10 w-full rounded-lg">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
-                      <SelectItem value="all">{labels.allLocations}</SelectItem>
-                      {locationOptions.map((location) => (
-                        <SelectItem key={location.id} value={location.id}>
-                          {location.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <Button onClick={handleRefresh} disabled={isFetching} className="dashboard-button-primary h-10 rounded-lg px-4">
-                  <RefreshCw className={cn("mr-2 h-4 w-4", isFetching && "animate-spin")} />
-                  {isFetching ? labels.refreshing : labels.refresh}
-                </Button>
-              </div>
+            <div className="space-y-1.5">
+              <p className="text-xs font-semibold uppercase tracking-normal text-[var(--dash-text-faint)]">{labels.filters.location}</p>
+              <Select value={locationId} onValueChange={setLocationId}>
+                <SelectTrigger className="dashboard-control h-10 w-full rounded-lg">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
+                  <SelectItem value="all">{labels.allLocations}</SelectItem>
+                  {locationOptions.map((location) => (
+                    <SelectItem key={location.id} value={location.id}>
+                      {location.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
+
+            <Button onClick={handleRefresh} disabled={isFetching} className="dashboard-button-primary h-10 rounded-lg px-4">
+              <RefreshCw className={cn("mr-2 h-4 w-4", isFetching && "animate-spin")} />
+              {isFetching ? labels.refreshing : labels.refresh}
+            </Button>
           </div>
-        </section>
+        </CommandBriefHeader>
 
         {error && (
           <Alert className="dashboard-glass-panel border-[var(--dash-danger)] bg-[var(--dash-danger-soft)] text-[var(--dash-text)]">
@@ -684,10 +547,58 @@ export default function EnhancedEnterpriseDashboard({
           </Alert>
         )}
 
-        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-6">
-          {kpis.map((kpi) => (
-            <MetricCard key={kpi.title} {...kpi} locale={locale} labels={labels} dashboardBasePath={dashboardBasePath} />
+        <WorkspaceSetupPanel onboarding={operatingTruth.onboarding} />
+
+        <StatusStrip
+          title={operatingTruth.status.title}
+          detail={operatingTruth.status.detail}
+          items={operatingTruth.status.items}
+        />
+
+        <div className="grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
+          <ActionQueue
+            title={operatingTruth.actionQueue.title}
+            detail={operatingTruth.actionQueue.detail}
+            emptyTitle={operatingTruth.actionQueue.emptyTitle}
+            emptyMessage={operatingTruth.actionQueue.emptyMessage}
+            items={operatingTruth.actionQueue.items}
+          />
+          <EvidenceTimeline
+            title={operatingTruth.evidence.title}
+            detail={operatingTruth.evidence.detail}
+            emptyMessage={operatingTruth.evidence.emptyMessage}
+            events={operatingTruth.evidence.events}
+          />
+        </div>
+
+        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+          {operatingTruth.kpis.map((kpi) => (
+            <KpiTile key={kpi.label} {...kpi} />
           ))}
+        </section>
+
+        <section className={cn(dashboardPanelClass, "p-4")}>
+          <div className="flex flex-col gap-1">
+            <h2 className="text-base font-semibold text-[var(--dash-text)]">{operatingTruth.shortcuts.title}</h2>
+            <p className="text-sm leading-6 text-[var(--dash-text-soft)]">{operatingTruth.shortcuts.detail}</p>
+          </div>
+          <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+            {operatingTruth.shortcuts.actions.map((action) => {
+              const Icon = action.icon
+
+              return (
+                <Button key={`${action.label}-${action.href}`} asChild variant="outline" className="dashboard-button-secondary h-11 justify-between rounded-lg">
+                  <Link href={action.href ?? dashboardBasePath}>
+                    <span className="inline-flex min-w-0 items-center gap-2">
+                      {Icon ? <Icon className="h-4 w-4 shrink-0" aria-hidden="true" /> : null}
+                      <span className="truncate">{action.label}</span>
+                    </span>
+                    <ExternalLink className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  </Link>
+                </Button>
+              )
+            })}
+          </div>
         </section>
 
         <Tabs defaultValue="overview" className="space-y-5">
@@ -796,46 +707,6 @@ export default function EnhancedEnterpriseDashboard({
               </Card>
             </div>
 
-            <Card className={panelClassName}>
-              <CardHeader className={panelHeaderClassName}>
-                <CardTitle className={panelTitleClassName}>{labels.sections.pendingActions}</CardTitle>
-                <CardDescription className={panelDescriptionClassName}>{labels.sections.quickActionsDescription}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-3 md:grid-cols-3">
-                  {dashboard.pendingActions.map((action) => (
-                    <Link
-                      key={action.id}
-                      href={resolveDashboardHref(action.href, dashboardBasePath)}
-                      className="group rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.32)] p-4 transition-colors hover:border-[var(--dash-border)] hover:bg-[rgba(73,198,229,0.10)]"
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <p className="text-sm font-medium">{action.label}</p>
-                          <p className="mt-2 text-3xl font-semibold">{formatNumber(action.count, locale)}</p>
-                        </div>
-                        <Badge
-                          variant="outline"
-                          className={cn(
-                            "rounded-lg border px-2.5 py-1 text-xs font-semibold capitalize",
-                            action.severity === "critical"
-                              ? "border-[var(--dash-danger)] bg-[var(--dash-danger-soft)] text-[var(--dash-danger)]"
-                              : action.severity === "warning"
-                                ? "border-[var(--dash-warning)] bg-[var(--dash-warning-soft)] text-[var(--dash-warning)]"
-                                : "border-[var(--dash-spruce)] bg-[var(--dash-spruce-soft)] text-[var(--dash-spruce)]"
-                          )}
-                        >
-                          {action.severity}
-                        </Badge>
-                      </div>
-                      <div className="mt-3 flex items-center justify-end text-[var(--dash-text-faint)] opacity-0 transition-opacity group-hover:opacity-100">
-                        <ExternalLink className="h-3.5 w-3.5" />
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
           </TabsContent>
 
           <TabsContent value="inventory" className="space-y-5">

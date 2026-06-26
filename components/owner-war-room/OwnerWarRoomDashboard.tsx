@@ -6,6 +6,7 @@ import { useMemo, useState, useTransition } from "react"
 import {
   AlertTriangle,
   Boxes,
+  CheckCircle2,
   Clock,
   CreditCard,
   EyeOff,
@@ -24,8 +25,17 @@ import {
 
 import { getProofTrailAction } from "@/actions/evidence/proof-trail.actions"
 import { EvidenceGradeBadge } from "@/components/evidence/EvidenceGradeBadge"
-import { ProofTrailDrawer } from "@/components/evidence/ProofTrailDrawer"
+import {
+  BIActionPriorityBoard,
+  BIBusinessTruthZone,
+  BICommandBriefHeader,
+  BIProofDrawerHost,
+  BIRiskOpportunityRadar,
+  BITrustLegend,
+  BIWhatChangedStrip,
+} from "@/components/bi"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   dashboardEmptyClass,
   dashboardFaintTextClass,
@@ -39,6 +49,7 @@ import {
   type DashboardSeverity,
 } from "@/components/finance/finance-dashboard-theme"
 import { cn } from "@/lib/utils"
+import type { BICommandMode, BIProofDrawerSubject } from "@/services/bi/bi-contracts"
 import type { ProofTrailResult } from "@/services/evidence/evidence-contracts"
 import type {
   OwnerWarRoomCardId,
@@ -53,6 +64,8 @@ type OwnerWarRoomDashboardProps = {
   title: string
   subtitle: string
 }
+
+type AvailableBIProofSubject = Extract<BIProofDrawerSubject, { available: true }>
 
 const cardIcons: Record<OwnerWarRoomCardId, typeof Wallet> = {
   cash_at_risk: Wallet,
@@ -70,6 +83,17 @@ const copy = {
     readOnly: "Read-only",
     evidenceBacked: "Evidence-backed",
     observeMode: "Observe mode",
+    sinceYesterday: "Since yesterday",
+    sinceYesterdayDetail: "Important cash, close, evidence, and proof-linked movements opened in the last day.",
+    ownerRisks: "Owner risks",
+    ownerRisksDetail: "Cash at risk, blocked close items, stale evidence, and stock-to-cash exposure ranked for today.",
+    proofLinkedActions: "Top proof-linked actions",
+    proofLinkedActionsDetail: "Visible actions opened since yesterday with proof context already authorized for this user.",
+    truthZones: "Business truth zones",
+    briefProof: "Brief proof",
+    acknowledgeBrief: "Acknowledge brief",
+    acknowledged: "Acknowledged",
+    acknowledgedDetail: "Marked for this session.",
     generated: "Generated",
     period: "Period",
     critical: "Critical",
@@ -125,6 +149,17 @@ const copy = {
     readOnly: "Lecture seule",
     evidenceBacked: "Appuye sur preuves",
     observeMode: "Mode observation",
+    sinceYesterday: "Depuis hier",
+    sinceYesterdayDetail: "Mouvements importants de tresorerie, cloture, preuves et actions liees aux preuves sur la derniere journee.",
+    ownerRisks: "Risques proprietaire",
+    ownerRisksDetail: "Tresorerie a risque, blocages de cloture, preuves anciennes et exposition stock-tresorerie classes pour aujourd hui.",
+    proofLinkedActions: "Actions liees aux preuves",
+    proofLinkedActionsDetail: "Actions visibles ouvertes depuis hier avec contexte de preuve deja autorise pour cet utilisateur.",
+    truthZones: "Zones de verite metier",
+    briefProof: "Preuve du brief",
+    acknowledgeBrief: "Accuser reception",
+    acknowledged: "Accuse",
+    acknowledgedDetail: "Marque pour cette session.",
     generated: "Genere",
     period: "Periode",
     critical: "Critique",
@@ -196,14 +231,27 @@ export function OwnerWarRoomDashboard({ data, locale, title, subtitle }: OwnerWa
   const [proofTrail, setProofTrail] = useState<ProofTrailResult | null>(null)
   const [proofOpen, setProofOpen] = useState(false)
   const [proofError, setProofError] = useState<string | null>(null)
+  const [commandMode, setCommandMode] = useState<BICommandMode>(data.morningBrief.commandBrief.mode)
+  const [briefAcknowledged, setBriefAcknowledged] = useState(
+    data.morningBrief.acknowledgement.state === "acknowledged",
+  )
   const [isPending, startTransition] = useTransition()
   const t = copy[locale]
   const formatterLocale = locale === "fr" ? "fr-FR" : "en-US"
   const periodLabel = `${formatDate(data.periodStart, formatterLocale)} - ${formatDate(data.periodEnd, formatterLocale)}`
   const topCards = useMemo(() => data.cards.slice(0, 8), [data.cards])
+  const briefProofSubject = useMemo<BIProofDrawerSubject | null>(
+    () =>
+      data.morningBrief.proofSubjects.find(
+        (subject): subject is AvailableBIProofSubject => subject.available,
+      ) ??
+      data.morningBrief.proofSubjects[0] ??
+      null,
+    [data.morningBrief.proofSubjects],
+  )
 
-  function openProofTrail(subject: OwnerWarRoomData["proofSubjects"][number]) {
-    if (!subject.enabled || !subject.subjectId) return
+  function loadProofTrail(subject: { subjectType: OwnerWarRoomData["proofSubjects"][number]["subjectType"]; subjectId: string }) {
+    if (!subject.subjectId) return
     setProofError(null)
     setProofOpen(true)
     startTransition(async () => {
@@ -220,9 +268,102 @@ export function OwnerWarRoomDashboard({ data, locale, title, subtitle }: OwnerWa
     })
   }
 
+  function openProofTrail(subject: OwnerWarRoomData["proofSubjects"][number]) {
+    if (!subject.enabled || !subject.subjectId) return
+    loadProofTrail(subject)
+  }
+
+  function openBIProofTrail(subject: AvailableBIProofSubject) {
+    loadProofTrail(subject)
+  }
+
   return (
     <main className="dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]">
       <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)] md:px-6 lg:px-8">
+        <BICommandBriefHeader
+          brief={data.morningBrief.commandBrief}
+          mode={commandMode}
+          onModeChange={setCommandMode}
+        />
+
+        {data.morningBrief.acknowledgement.supported ? (
+          <section className={cn(dashboardPanelClass, "flex flex-col gap-3 p-3 sm:flex-row sm:items-center sm:justify-between")}>
+            <div className="flex min-w-0 items-start gap-3">
+              <span className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border", dashboardToneClass(briefAcknowledged ? "success" : "brand"))}>
+                <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+              </span>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-[var(--dash-text)]">
+                  {briefAcknowledged ? t.acknowledged : t.acknowledgeBrief}
+                </p>
+                <p className={cn("mt-1 text-xs", dashboardMutedTextClass)}>
+                  {briefAcknowledged ? t.acknowledgedDetail : data.morningBrief.acknowledgement.state.replace("_", " ")}
+                </p>
+              </div>
+            </div>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              disabled={briefAcknowledged}
+              onClick={() => setBriefAcknowledged(true)}
+              className="w-full rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)] sm:w-auto"
+            >
+              <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+              {briefAcknowledged ? t.acknowledged : t.acknowledgeBrief}
+            </Button>
+          </section>
+        ) : null}
+
+        <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(360px,0.9fr)]">
+          <BIWhatChangedStrip
+            changes={data.morningBrief.changes}
+            title={t.sinceYesterday}
+            detail={t.sinceYesterdayDetail}
+            maxItems={4}
+          />
+          <BIRiskOpportunityRadar
+            risks={data.morningBrief.risks}
+            title={t.ownerRisks}
+            detail={t.ownerRisksDetail}
+            maxItems={3}
+          />
+        </section>
+
+        <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(320px,0.7fr)]">
+          <BIActionPriorityBoard
+            items={data.morningBrief.priorityActions}
+            title={t.proofLinkedActions}
+            detail={t.proofLinkedActionsDetail}
+            maxItems={3}
+          />
+          <section className={cn(dashboardPanelClass, "p-4")}>
+            <div>
+              <h2 className="text-base font-semibold text-[var(--dash-text)]">{t.briefProof}</h2>
+              <p className={cn("mt-1 text-sm leading-6", dashboardMutedTextClass)}>
+                {data.morningBrief.commandBrief.conclusion}
+              </p>
+            </div>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <BIProofDrawerHost
+                subject={briefProofSubject}
+                proofTrail={proofTrail}
+                open={proofOpen}
+                onOpenChange={setProofOpen}
+                onOpenSubject={openBIProofTrail}
+                triggerLabel={t.openProof}
+              />
+            </div>
+            <BITrustLegend compact className="mt-4" />
+          </section>
+        </section>
+
+        <section className="grid gap-4 xl:grid-cols-2">
+          {data.morningBrief.zones.map((zone) => (
+            <BIBusinessTruthZone key={zone.id} zone={zone} locale={formatterLocale} currencyCode="XAF" />
+          ))}
+        </section>
+
         <section className={cn(dashboardPanelClass, "p-4 md:p-5")}>
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div className="max-w-5xl space-y-3">
@@ -501,7 +642,6 @@ export function OwnerWarRoomDashboard({ data, locale, title, subtitle }: OwnerWa
         </section>
       </div>
 
-      <ProofTrailDrawer open={proofOpen} onOpenChange={setProofOpen} proofTrail={proofTrail} />
     </main>
   )
 }

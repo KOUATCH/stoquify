@@ -1,7 +1,7 @@
 "use client"
 
 import type { ReactNode } from "react"
-import { AlertTriangle, CheckCircle2, CircleDot, EyeOff, GitBranch, ShieldCheck } from "lucide-react"
+import { AlertTriangle, CheckCircle2, CircleDot, EyeOff, GitBranch, RefreshCw, ShieldCheck } from "lucide-react"
 
 import { EvidenceGradeBadge } from "@/components/evidence/EvidenceGradeBadge"
 import { Badge } from "@/components/ui/badge"
@@ -19,12 +19,36 @@ type ProofTrailDrawerProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
   proofTrail: ProofTrailResult | null
+  isLoading?: boolean
+  error?: string | null
 }
 
 function EmptyState() {
   return (
     <div className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.34)] p-4 text-sm text-[var(--dash-text-soft)]">
       Proof trail unavailable. Select a supported record to inspect its evidence chain.
+    </div>
+  )
+}
+
+function LoadingState() {
+  return (
+    <div className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.34)] p-4 text-sm text-[var(--dash-text-soft)]">
+      <div className="flex items-center gap-2">
+        <RefreshCw className="h-4 w-4 animate-spin text-[var(--dash-info)]" aria-hidden="true" />
+        <span>Loading proof trail.</span>
+      </div>
+    </div>
+  )
+}
+
+function ErrorState({ error }: { error: string }) {
+  return (
+    <div className="rounded-lg border border-[var(--dash-danger)] bg-[var(--dash-danger-soft)] p-4 text-sm text-[var(--dash-text)]">
+      <div className="flex gap-2">
+        <AlertTriangle className="mt-0.5 h-4 w-4 text-[var(--dash-danger)]" aria-hidden="true" />
+        <p>{error}</p>
+      </div>
     </div>
   )
 }
@@ -46,7 +70,7 @@ function Section({
   )
 }
 
-export function ProofTrailDrawer({ open, onOpenChange, proofTrail }: ProofTrailDrawerProps) {
+export function ProofTrailDrawer({ open, onOpenChange, proofTrail, isLoading = false, error = null }: ProofTrailDrawerProps) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="w-full overflow-y-auto bg-[var(--dash-bg)] text-[var(--dash-text)] sm:max-w-2xl">
@@ -58,7 +82,11 @@ export function ProofTrailDrawer({ open, onOpenChange, proofTrail }: ProofTrailD
         </SheetHeader>
 
         <div className="mt-6 space-y-6">
-          {!proofTrail ? (
+          {isLoading ? (
+            <LoadingState />
+          ) : error ? (
+            <ErrorState error={error} />
+          ) : !proofTrail ? (
             <EmptyState />
           ) : (
             <>

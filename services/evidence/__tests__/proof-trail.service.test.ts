@@ -6,6 +6,7 @@ import {
   JournalEntryStatus,
   LedgerPostingBatchStatus,
   PaymentExceptionStatus,
+  PaymentTransactionState,
   ReconciliationRunStatus,
   SuspenseStatus,
   Prisma,
@@ -16,6 +17,7 @@ jest.mock("@/prisma/db", () => ({
     journalEntry: { findFirst: jest.fn() },
     businessEvent: { findMany: jest.fn() },
     reconciliationRun: { findFirst: jest.fn() },
+    paymentTransaction: { findFirst: jest.fn() },
     closeRun: { findFirst: jest.fn() },
     auditLog: { create: jest.fn() },
   },
@@ -29,6 +31,7 @@ const mockDb = db as unknown as {
   journalEntry: { findFirst: jest.Mock }
   businessEvent: { findMany: jest.Mock }
   reconciliationRun: { findFirst: jest.Mock }
+  paymentTransaction: { findFirst: jest.Mock }
   closeRun: { findFirst: jest.Mock }
   auditLog: { create: jest.Mock }
 }
@@ -102,6 +105,57 @@ function signedReconciliationRun(overrides: Record<string, unknown> = {}) {
   }
 }
 
+
+function reconciledPaymentTransaction(overrides: Record<string, unknown> = {}) {
+  return {
+    id: "pt-1",
+    organizationId: "org-1",
+    direction: "INBOUND",
+    state: PaymentTransactionState.CONFIRMED,
+    amount: amount(150000),
+    feeAmount: amount(1500),
+    currencyCode: "XAF",
+    providerTransactionId: "provider-tx-1",
+    providerReference: "provider-ref-1",
+    sourceType: "MOBILE_MONEY_STATEMENT",
+    sourceId: "statement-line-1",
+    occurredAt: new Date("2026-06-15T08:00:00.000Z"),
+    confirmedAt: new Date("2026-06-15T08:01:00.000Z"),
+    settledAt: null,
+    providerAccount: {
+      id: "provider-account-1",
+      providerCode: "MOMO",
+      displayName: "Provider Main",
+      status: "ACTIVE",
+      paymentRail: { id: "rail-1", code: "MOMO", name: "Mobile Money" },
+    },
+    ledgerPostingBatch: {
+      id: "batch-1",
+      sourceType: "PAYMENT_RECONCILIATION",
+      sourceId: "pt-1",
+      postingPurpose: "PAYMENT_RECONCILIATION",
+      status: LedgerPostingBatchStatus.POSTED,
+      errorMessage: null,
+      postedAt: new Date("2026-06-15T08:05:00.000Z"),
+    },
+    matchRecords: [
+      {
+        id: "match-1",
+        status: "AUTO_MATCHED",
+        confidence: amount(100),
+        amountMatched: amount(150000),
+        currencyCode: "XAF",
+        ledgerPostingBatchId: null,
+        providerEventId: "provider-event-1",
+        statementLineId: null,
+        reconciliationRunId: "recon-1",
+      },
+    ],
+    suspenseItems: [],
+    paymentExceptions: [],
+    ...overrides,
+  }
+}
 function certifiedCloseRun(overrides: Record<string, unknown> = {}) {
   return {
     id: "close-1",
@@ -297,6 +351,86 @@ describe("proof trail service", () => {
     )
   })
 
+
+  it("returns reconciled payment transaction proof with redacted provider evidence", async () => {
+    mockDb.paymentTransaction.findFirst.mockResolvedValue(reconciledPaymentTransaction())
+
+    const result = await getProofTrail({
+      organizationId: "org-1",
+      subjectType: "payment.transaction",
+      subjectId: "pt-1",
+      actorId: "user-1",
+    })
+
+    expect(mockDb.paymentTransaction.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "pt-1", organizationId: "org-1" },
+      }),
+    )
+    expect(result.evidenceGrade).toBe("reconciled")
+    expect(result.redactions).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: "payment-provider-account-internal-id" }),
+        expect.objectContaining({ id: "payment-provider-reference" }),
+      ]),
+    )
+    expect(result.nodes).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: "provider-account", nodeId: "redacted", redacted: true }),
+        expect.objectContaining({ id: "provider-reference", nodeId: "redacted", redacted: true }),
+      ]),
+    )
+    expect(result.edges).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ edgeType: "matches", toNodeId: "payment-transaction" }),
+      ]),
+    )
+    expect(result.audit.accessLogged).toBe(true)
+  })
+
+  it("blocks payment transaction proof when open suspense or exceptions remain", async () => {
+    mockDb.paymentTransaction.findFirst.mockResolvedValue(
+      reconciledPaymentTransaction({
+        state: PaymentTransactionState.SUSPENSE,
+        matchRecords: [],
+        suspenseItems: [
+          {
+            id: "suspense-1",
+            status: SuspenseStatus.OPEN,
+            severity: "HIGH",
+            amount: amount(150000),
+            currencyCode: "XAF",
+            ledgerPostingBatchId: null,
+          },
+        ],
+        paymentExceptions: [
+          {
+            id: "exception-1",
+            status: PaymentExceptionStatus.OPEN,
+            severity: "HIGH",
+            type: "MISSING_PROVIDER_EVENT",
+            resolutionNotes: null,
+            suspenseItemId: "suspense-1",
+          },
+        ],
+      }),
+    )
+
+    const result = await getProofTrail({
+      organizationId: "org-1",
+      subjectType: "payment.transaction",
+      subjectId: "pt-1",
+    })
+
+    expect(result.evidenceGrade).toBe("blocked")
+    expect(result.blockers.map((entry) => entry.id)).toEqual(
+      expect.arrayContaining([
+        "payment-transaction-disputed-or-suspense",
+        "payment-transaction-open-exceptions",
+        "payment-transaction-open-suspense",
+      ]),
+    )
+  })
   it("returns certified close proof with redacted close-pack export internals", async () => {
     mockDb.closeRun.findFirst.mockResolvedValue(certifiedCloseRun())
 

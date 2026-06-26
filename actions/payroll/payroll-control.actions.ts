@@ -11,6 +11,10 @@ import {
   type PayrollWorkbenchData,
 } from "@/services/payroll/payroll-control.service"
 import {
+  recordPayrollDeclarationEvidence,
+  recordPayrollDeclarationEvidenceInputSchema,
+} from "@/services/payroll/declaration-lifecycle.service"
+import {
   approveAndPostPayrollRunInputSchema,
   calculatePayrollRunInputSchema,
   preparePayrollDeclarationsInputSchema,
@@ -36,11 +40,23 @@ const getWorkbench = protect<unknown, PayrollWorkbenchData>(
     permission: "payroll.read",
     auditResource: "PayrollWorkbench",
     auditAllowed: false,
+    module: {
+      moduleSlug: "payroll",
+      surfaceType: "page",
+      surface: "/dashboard/payroll",
+      accessIntent: "read",
+      mode: "enforce",
+    },
   },
   async (input, ctx) => {
     const raw = asRecord(input) as { limit?: unknown }
     const limit = typeof raw.limit === "number" ? raw.limit : undefined
-    return getPayrollWorkbenchData({ organizationId: ctx.orgId, limit })
+    return getPayrollWorkbenchData({
+      organizationId: ctx.orgId,
+      limit,
+      actorId: ctx.userId,
+      actorPermissions: ctx.permissions,
+    })
   },
 )
 
@@ -53,6 +69,12 @@ const calculateRun = protect<unknown, Awaited<ReturnType<typeof calculatePayroll
     permission: "payroll.runs.calculate",
     auditResource: "PayrollRun",
     tenantGuard: "handler-derived",
+    module: {
+      moduleSlug: "payroll",
+      surface: "payroll.runs.calculate",
+      accessIntent: "write",
+      mode: "enforce",
+    },
   },
   async (input, ctx) => {
     const parsed = calculatePayrollRunInputSchema.parse({
@@ -76,6 +98,12 @@ const approveRun = protect<unknown, Awaited<ReturnType<typeof approveAndPostPayr
     auditResource: "PayrollRun",
     freshAuth: true,
     tenantGuard: "handler-derived",
+    module: {
+      moduleSlug: "payroll",
+      surface: "payroll.runs.approve",
+      accessIntent: "write",
+      mode: "enforce",
+    },
   },
   async (input, ctx) => {
     const parsed = approveAndPostPayrollRunInputSchema.parse({
@@ -101,6 +129,12 @@ const releasePaymentBatch = protect<unknown, Awaited<ReturnType<typeof releasePa
     auditResource: "PayrollPaymentBatch",
     freshAuth: true,
     tenantGuard: "handler-derived",
+    module: {
+      moduleSlug: "payroll",
+      surface: "payroll.payments.release",
+      accessIntent: "write",
+      mode: "enforce",
+    },
   },
   async (input, ctx) => {
     const parsed = releasePayrollPaymentBatchInputSchema.parse({
@@ -126,6 +160,12 @@ const prepareDeclarations = protect<unknown, Awaited<ReturnType<typeof preparePa
     permission: "payroll.declarations.prepare",
     auditResource: "PayrollDeclaration",
     tenantGuard: "handler-derived",
+    module: {
+      moduleSlug: "payroll",
+      surface: "payroll.declarations.prepare",
+      accessIntent: "write",
+      mode: "enforce",
+    },
   },
   async (input, ctx) => {
     const parsed = preparePayrollDeclarationsInputSchema.parse({
@@ -141,4 +181,34 @@ const prepareDeclarations = protect<unknown, Awaited<ReturnType<typeof preparePa
 
 export async function preparePayrollDeclarationsAction(input: unknown) {
   return prepareDeclarations(input)
+}
+const recordDeclarationEvidence = protect<unknown, Awaited<ReturnType<typeof recordPayrollDeclarationEvidence>>>(
+  {
+    permission: "payroll.declarations.manage",
+    auditResource: "PayrollDeclaration",
+    freshAuth: true,
+    tenantGuard: "handler-derived",
+    module: {
+      moduleSlug: "payroll",
+      surface: "payroll.declarations.manage",
+      accessIntent: "write",
+      mode: "enforce",
+    },
+  },
+  async (input, ctx) => {
+    const parsed = recordPayrollDeclarationEvidenceInputSchema.parse({
+      ...asRecord(input),
+      organizationId: ctx.orgId,
+      actorId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      lastAuthAt: new Date(),
+    })
+    const result = await recordPayrollDeclarationEvidence(parsed)
+    revalidatePayrollPaths()
+    return result
+  },
+)
+
+export async function recordPayrollDeclarationEvidenceAction(input: unknown) {
+  return recordDeclarationEvidence(input)
 }

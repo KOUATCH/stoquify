@@ -22,17 +22,34 @@ jest.mock("@/services/snapshots/payment-truth-snapshot.service", () => ({
 
 jest.mock("@/services/snapshots/tenant-operating-snapshot.service", () => ({
   getTenantOperatingSnapshot: jest.fn(),
+  getTenantOperatingSnapshotFromRelated: jest.fn(),
 }))
 
 jest.mock("@/services/assurance/assurance-control-tower.service", () => ({
   getAssuranceControlTowerData: jest.fn(),
 }))
 
-import { composeManagerActionCenterData } from "../manager-action-center.service"
+import { getCloseReadinessSnapshot } from "@/services/snapshots/close-readiness-snapshot.service"
+import { getInventoryCashSnapshot } from "@/services/snapshots/inventory-cash-snapshot.service"
+import { getPaymentTruthSnapshot } from "@/services/snapshots/payment-truth-snapshot.service"
+import { getTenantOperatingSnapshotFromRelated } from "@/services/snapshots/tenant-operating-snapshot.service"
+import { getAssuranceControlTowerData } from "@/services/assurance/assurance-control-tower.service"
+
+import { composeManagerActionCenterData, getManagerActionCenterData } from "../manager-action-center.service"
+
+const mockGetCloseReadinessSnapshot = getCloseReadinessSnapshot as jest.Mock
+const mockGetInventoryCashSnapshot = getInventoryCashSnapshot as jest.Mock
+const mockGetPaymentTruthSnapshot = getPaymentTruthSnapshot as jest.Mock
+const mockGetTenantOperatingSnapshotFromRelated = getTenantOperatingSnapshotFromRelated as jest.Mock
+const mockGetAssuranceControlTowerData = getAssuranceControlTowerData as jest.Mock
 
 const generatedAt = "2026-06-20T10:00:00.000Z"
 
 describe("manager action center service", () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
   it("composes BI-backed manager actions from the permission-filtered action queue", () => {
     const data = composeManagerActionCenterData({
       organizationId: "org-1",
@@ -53,6 +70,26 @@ describe("manager action center service", () => {
       "manager-stock-work",
       "manager-hidden-actions",
     ])
+    expect(data.commandBrief).toMatchObject({
+      title: "Manager daily run sheet",
+      state: "blocked",
+      primaryAction: expect.objectContaining({
+        href: "/dashboard/finance/payments/reconciliation",
+      }),
+    })
+    expect(data.runSheetGroups.map((group) => group.id)).toEqual([
+      "overdue",
+      "critical",
+      "due_today",
+      "blocked",
+      "waiting",
+      "assigned",
+      "routine",
+    ])
+    expect(data.runSheetGroups.find((group) => group.id === "critical")).toMatchObject({
+      count: 2,
+      state: "blocked",
+    })
     expect(data.summary).toMatchObject({
       total: 2,
       critical: 1,
@@ -88,11 +125,32 @@ describe("manager action center service", () => {
     })
 
     expect(data.actionItems).toEqual([])
+    expect(data.runSheetGroups.every((group) => group.count === 0)).toBe(true)
+    expect(data.commandBrief.state).toBe("empty")
     expect(data.insights).toEqual([])
     expect(data.kpis.find((card) => card.id === "manager-open-actions")).toMatchObject({
       state: "empty",
       value: 0,
     })
+  })
+
+  it("keeps manager page data available when assurance control tower fails", async () => {
+    mockGetPaymentTruthSnapshot.mockResolvedValue(paymentSnapshot())
+    mockGetInventoryCashSnapshot.mockResolvedValue(inventorySnapshot())
+    mockGetCloseReadinessSnapshot.mockResolvedValue(closeSnapshot())
+    mockGetTenantOperatingSnapshotFromRelated.mockResolvedValue(tenantSnapshot())
+    mockGetAssuranceControlTowerData.mockRejectedValue(new Error("assurance timeout"))
+
+    const data = await getManagerActionCenterData({
+      organizationId: "org-1",
+      actorPermissions: ["dashboard.read", "payments.reconciliation.read", "inventory.read", "purchases.orders.read"],
+      now: generatedAt,
+    })
+
+    expect(mockGetAssuranceControlTowerData).toHaveBeenCalled()
+    expect(data.assuranceIncidents).toEqual([])
+    expect(data.commandBrief.title).toBe("Manager daily run sheet")
+    expect(data.runSheetGroups).toHaveLength(7)
   })
 
   it("adds visible workflow assurance incidents to manager action items", () => {
@@ -115,6 +173,10 @@ describe("manager action center service", () => {
       critical: 1,
       blocked: 1,
       hiddenByPermission: 2,
+    })
+    expect(data.runSheetGroups.find((group) => group.id === "overdue")).toMatchObject({
+      count: 1,
+      state: "blocked",
     })
     expect(data.actionItems[0]).toMatchObject({
       id: "assurance-incident-1",

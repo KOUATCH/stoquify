@@ -371,9 +371,10 @@ describe("BI command primitives", () => {
       </>,
     )
 
+    expect(screen.getByRole("button", { name: "Proof blocked" })).toBeDisabled()
+
     fireEvent.click(screen.getByRole("button", { name: "View journal proof" }))
     expect(onOpenSubject).toHaveBeenCalledWith(availableSubject)
-    expect(screen.getByRole("button", { name: "Proof blocked" })).toBeDisabled()
   })
 
   it("renders trust legend and explicit safe state surfaces", () => {
@@ -389,6 +390,6 @@ describe("BI command primitives", () => {
     expect(screen.getByText("Trust legend")).toBeInTheDocument()
     expect(screen.getByText("Sensitive command data is redacted")).toBeInTheDocument()
     expect(screen.getByText("Permission required")).toBeInTheDocument()
-    expect(screen.getByText("Module unavailable")).toBeInTheDocument()
+    expect(screen.getAllByText("Module unavailable")).toHaveLength(2)
   })
 })

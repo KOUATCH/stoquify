@@ -16,6 +16,8 @@ jest.mock("@/prisma/db", () => ({
     location: { findFirst: jest.fn() },
     item: { findMany: jest.fn() },
     businessEvent: { findUnique: jest.fn(), create: jest.fn(), update: jest.fn() },
+    closeRun: { findMany: jest.fn(), findFirst: jest.fn(), update: jest.fn() },
+    closePackExport: { findFirst: jest.fn(), update: jest.fn() },
     accountingPeriod: { findFirst: jest.fn() },
     inventoryLevel: { findUnique: jest.fn(), updateMany: jest.fn(), create: jest.fn() },
     inventoryTransaction: { create: jest.fn() },
@@ -30,6 +32,8 @@ const mockedDb = db as unknown as {
   location: { findFirst: jest.Mock }
   item: { findMany: jest.Mock }
   businessEvent: { findUnique: jest.Mock; create: jest.Mock; update: jest.Mock }
+  closeRun: { findMany: jest.Mock; findFirst: jest.Mock; update: jest.Mock }
+  closePackExport: { findFirst: jest.Mock; update: jest.Mock }
   accountingPeriod: { findFirst: jest.Mock }
   inventoryLevel: { findUnique: jest.Mock; updateMany: jest.Mock; create: jest.Mock }
   inventoryTransaction: { create: jest.Mock }
@@ -200,6 +204,11 @@ beforeEach(() => {
     outboxMessages: args.data.outboxMessages.create,
   }))
   mockedDb.businessEvent.update.mockResolvedValue({ id: "event-1", status: "APPLIED" })
+  mockedDb.closeRun.findMany.mockResolvedValue([])
+  mockedDb.closeRun.findFirst.mockResolvedValue(null)
+  mockedDb.closeRun.update.mockResolvedValue({ id: "close-run-1" })
+  mockedDb.closePackExport.findFirst.mockResolvedValue(null)
+  mockedDb.closePackExport.update.mockResolvedValue({ id: "close-pack-export-1" })
   mockedDb.inventoryLevel.findUnique
     .mockResolvedValueOnce(sourceLevel())
     .mockResolvedValueOnce(destinationLevel())

@@ -13,6 +13,7 @@ import {
   markBusinessEventAppliedInTx,
   recordBusinessEventInTx,
 } from "@/services/events/business-event.service"
+import { recordInventoryValuationCloseInvalidationInTx } from "./inventory-close-invalidation.service"
 
 import {
   createStockTransferInputSchema,
@@ -219,7 +220,7 @@ async function assertTransferAccountingPeriodOpen(
   eventDate: Date,
 ) {
   try {
-    await getOpenPeriodForDate(organizationId, eventDate, tx)
+    return await getOpenPeriodForDate(organizationId, eventDate, tx)
   } catch {
     throw new BusinessRuleError("An open accounting period is required before posting stock transfers.")
   }
@@ -732,7 +733,7 @@ export async function postStockTransfer(
 
     assertTransferCanPost(transfer, parsed.approvedById)
     const occurredAt = parsed.occurredAt ?? transfer.transferDate
-    await assertTransferAccountingPeriodOpen(tx, parsed.organizationId, occurredAt)
+    const period = await assertTransferAccountingPeriodOpen(tx, parsed.organizationId, occurredAt)
 
     const plans = await loadPostingPlans(tx, transfer)
     const documentHash = parsed.documentHash ?? defaultDocumentHash(transfer)
@@ -827,6 +828,16 @@ export async function postStockTransfer(
     })
 
     await markBusinessEventAppliedInTx(tx, parsed.organizationId, eventResult.event.id)
+
+    await recordInventoryValuationCloseInvalidationInTx(tx, {
+      organizationId: parsed.organizationId,
+      sourceId: transfer.id,
+      periodId: period.id,
+      occurredAt,
+      actorId: parsed.approvedById,
+      documentHash,
+      correlationId: parsed.correlationId ?? null,
+    })
 
     return {
       transfer: postedTransfer,

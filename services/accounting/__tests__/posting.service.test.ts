@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client"
 
-import { postJournalEntry } from "../posting.service"
+import { postJournalEntry, reverseJournalEntry } from "../posting.service"
 
 jest.mock("@/prisma/db", () => ({
   db: {
@@ -15,6 +15,8 @@ const mockTx = {
     findMany: jest.fn(),
   },
   journalEntry: {
+    count: jest.fn(),
+    create: jest.fn(),
     findFirst: jest.fn(),
     update: jest.fn(),
   },
@@ -33,6 +35,23 @@ const mockTx = {
   auditLog: {
     create: jest.fn(),
   },
+  accountingPeriod: {
+    findFirst: jest.fn(),
+  },
+  businessEvent: {
+    findUnique: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+  },
+  closeRun: {
+    findMany: jest.fn(),
+    findFirst: jest.fn(),
+    update: jest.fn(),
+  },
+  closePackExport: {
+    findFirst: jest.fn(),
+    update: jest.fn(),
+  },
 }
 
 const mockDb = db as unknown as { $transaction: jest.Mock }
@@ -44,6 +63,17 @@ const openPeriod = {
   startDate: new Date("2026-06-01T00:00:00.000Z"),
   endDate: new Date("2026-06-30T23:59:59.999Z"),
   status: "OPEN",
+}
+
+function arrangeCertifiedCloseTarget() {
+  mockTx.closeRun.findMany.mockResolvedValue([{ id: "close-run-1", packExports: [{ id: "close-pack-export-1" }] }])
+  mockTx.closeRun.findFirst.mockResolvedValue({
+    id: "close-run-1",
+    organizationId: "org-1",
+    status: "CERTIFIED",
+    metadata: null,
+  })
+  mockTx.closePackExport.findFirst.mockResolvedValue({ id: "close-pack-export-1", metadata: { mode: "CERTIFIED" } })
 }
 
 const postableAccounts = [
@@ -74,6 +104,21 @@ describe("posting service", () => {
     mockTx.accountingSourceLink.create.mockResolvedValue({ id: "link-1" })
     mockTx.ledgerAuditEvent.create.mockResolvedValue({ id: "audit-1" })
     mockTx.auditLog.create.mockResolvedValue({ id: "control-audit-1" })
+    mockTx.accountingPeriod.findFirst.mockResolvedValue(openPeriod)
+    mockTx.journalEntry.count.mockResolvedValue(0)
+    mockTx.journalEntry.create.mockResolvedValue({ id: "rv-1", entryNumber: "RV-20260610-0001", status: "POSTED" })
+    mockTx.businessEvent.findUnique.mockResolvedValue(null)
+    mockTx.businessEvent.create.mockImplementation(async (args) => ({
+      id: "business-event-1",
+      ...args.data,
+      outboxMessages: args.data.outboxMessages.create,
+    }))
+    mockTx.businessEvent.update.mockResolvedValue({ id: "business-event-1", status: "APPLIED" })
+    mockTx.closeRun.findMany.mockResolvedValue([])
+    mockTx.closeRun.findFirst.mockResolvedValue(null)
+    mockTx.closeRun.update.mockResolvedValue({ id: "close-run-1" })
+    mockTx.closePackExport.findFirst.mockResolvedValue(null)
+    mockTx.closePackExport.update.mockResolvedValue({ id: "close-pack-export-1" })
   })
 
   it("rejects posting anything other than a draft journal entry", async () => {
@@ -89,6 +134,7 @@ describe("posting service", () => {
   })
 
   it("posts a balanced draft journal entry through an idempotent batch", async () => {
+    arrangeCertifiedCloseTarget()
     mockTx.journalEntry.findFirst.mockResolvedValue({
       id: "je-1",
       organizationId: "org-1",
@@ -151,6 +197,96 @@ describe("posting service", () => {
           status: "POSTED",
           postingBatchId: "batch-1",
           postedById: "user-1",
+        }),
+      }),
+    )
+    expect(mockTx.closeRun.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "close-run-1" },
+        data: expect.objectContaining({
+          status: "BLOCKED",
+          metadata: expect.objectContaining({
+            staleState: expect.objectContaining({
+              sourceCode: "LEDGER_JOURNAL_POSTED",
+              sourceId: "je-1",
+            }),
+          }),
+        }),
+      }),
+    )
+  })
+
+  it("invalidates certified close evidence when a posted journal is reversed", async () => {
+    arrangeCertifiedCloseTarget()
+    mockTx.journalEntry.findFirst.mockResolvedValue({
+      id: "je-1",
+      organizationId: "org-1",
+      status: "POSTED",
+      periodId: "period-1",
+      period: openPeriod,
+      journalId: "journal-1",
+      entryDate: new Date("2026-06-09T12:00:00.000Z"),
+      entryNumber: "JE-20260609-0001",
+      postedById: "poster-1",
+      createdById: "maker-1",
+      currency: "XAF",
+      reference: "MANUAL-1",
+      lines: [
+        {
+          accountId: "cash",
+          debit: new Prisma.Decimal(100),
+          credit: new Prisma.Decimal(0),
+          baseDebit: new Prisma.Decimal(100),
+          baseCredit: new Prisma.Decimal(0),
+          currency: "XAF",
+          exchangeRate: new Prisma.Decimal(1),
+        },
+        {
+          accountId: "sales",
+          debit: new Prisma.Decimal(0),
+          credit: new Prisma.Decimal(100),
+          baseDebit: new Prisma.Decimal(0),
+          baseCredit: new Prisma.Decimal(100),
+          currency: "XAF",
+          exchangeRate: new Prisma.Decimal(1),
+        },
+      ],
+      reversedByEntries: [],
+    })
+    mockTx.ledgerPostingBatch.findFirst.mockResolvedValue(null)
+    mockTx.ledgerPostingBatch.create.mockResolvedValue({ id: "batch-rv-1" })
+    mockTx.ledgerPostingBatch.update.mockResolvedValue({ id: "batch-rv-1", status: "POSTED" })
+    mockTx.journalEntry.create.mockResolvedValue({
+      id: "rv-1",
+      entryNumber: "RV-20260610-0001",
+      status: "POSTED",
+    })
+
+    const result = await reverseJournalEntry(
+      "org-1",
+      "je-1",
+      "user-2",
+      "Correct close-period posting",
+      new Date("2026-06-10T12:00:00.000Z"),
+      {
+        actorPermissions: ["accounting.journal.reverse"],
+        lastAuthAt: Date.now(),
+      },
+    )
+
+    expect(result).toMatchObject({ id: "rv-1", status: "POSTED" })
+    expect(mockTx.closeRun.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "close-run-1" },
+        data: expect.objectContaining({
+          status: "BLOCKED",
+          metadata: expect.objectContaining({
+            staleState: expect.objectContaining({
+              sourceCode: "LEDGER_JOURNAL_REVERSED",
+              sourceId: "je-1",
+              newEvidenceHash: "rv-1",
+            }),
+          }),
         }),
       }),
     )

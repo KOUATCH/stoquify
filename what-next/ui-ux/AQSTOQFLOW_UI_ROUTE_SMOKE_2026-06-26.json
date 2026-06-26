@@ -1,0 +1,255 @@
+{
+  "checkedAt": "2026-06-26T14:51:34.269Z",
+  "baseUrl": "http://localhost:3001",
+  "mode": "fail",
+  "ok": true,
+  "routeCount": 7,
+  "screenshotTool": "unavailable",
+  "routes": [
+    {
+      "route": {
+        "id": "public-home",
+        "path": "/en",
+        "surface": "Public first impression",
+        "requiresAuth": false,
+        "viewports": [
+          "mobile",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": 200,
+        "finalUrl": "http://localhost:3001/en",
+        "durationMs": 1856,
+        "errorMarkers": []
+      }
+    },
+    {
+      "route": {
+        "id": "login",
+        "path": "/en/login",
+        "surface": "Authentication",
+        "requiresAuth": false,
+        "viewports": [
+          "mobile",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": 200,
+        "finalUrl": "http://localhost:3001/en/login",
+        "durationMs": 21493,
+        "errorMarkers": []
+      }
+    },
+    {
+      "route": {
+        "id": "dashboard",
+        "path": "/en/dashboard",
+        "surface": "Today's Operating Truth",
+        "requiresAuth": true,
+        "viewports": [
+          "mobile",
+          "tablet",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": 200,
+        "finalUrl": "http://localhost:3001/en/login?callbackUrl=%2Fen%2Fdashboard",
+        "durationMs": 1024,
+        "errorMarkers": []
+      }
+    },
+    {
+      "route": {
+        "id": "finance",
+        "path": "/en/dashboard/finance",
+        "surface": "Finance command center",
+        "requiresAuth": true,
+        "viewports": [
+          "tablet",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": 200,
+        "finalUrl": "http://localhost:3001/en/login?callbackUrl=%2Fen%2Fdashboard%2Ffinance",
+        "durationMs": 999,
+        "errorMarkers": []
+      }
+    },
+    {
+      "route": {
+        "id": "payroll",
+        "path": "/en/dashboard/payroll",
+        "surface": "Payroll command center",
+        "requiresAuth": true,
+        "viewports": [
+          "tablet",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": 200,
+        "finalUrl": "http://localhost:3001/en/login?callbackUrl=%2Fen%2Fdashboard%2Fpayroll",
+        "durationMs": 1071,
+        "errorMarkers": []
+      }
+    },
+    {
+      "route": {
+        "id": "inventory-items",
+        "path": "/en/dashboard/inventory/items",
+        "surface": "Inventory items",
+        "requiresAuth": true,
+        "viewports": [
+          "mobile",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": 200,
+        "finalUrl": "http://localhost:3001/en/login?callbackUrl=%2Fen%2Fdashboard%2Finventory%2Fitems",
+        "durationMs": 1696,
+        "errorMarkers": []
+      }
+    },
+    {
+      "route": {
+        "id": "pos",
+        "path": "/en/dashboard/pos",
+        "surface": "Point of sale",
+        "requiresAuth": true,
+        "viewports": [
+          "tablet",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": 200,
+        "finalUrl": "http://localhost:3001/en/login?callbackUrl=%2Fen%2Fdashboard%2Fpos",
+        "durationMs": 975,
+        "errorMarkers": []
+      }
+    }
+  ],
+  "screenshots": {
+    "available": false,
+    "reason": "playwright package is not installed",
+    "captures": [
+      {
+        "routeId": "public-home",
+        "viewport": "mobile",
+        "ok": false,
+        "skipped": true,
+        "reason": "missing_playwright"
+      },
+      {
+        "routeId": "public-home",
+        "viewport": "desktop",
+        "ok": false,
+        "skipped": true,
+        "reason": "missing_playwright"
+      },
+      {
+        "routeId": "login",
+        "viewport": "mobile",
+        "ok": false,
+        "skipped": true,
+        "reason": "missing_playwright"
+      },
+      {
+        "routeId": "login",
+        "viewport": "desktop",
+        "ok": false,
+        "skipped": true,
+        "reason": "missing_playwright"
+      },
+      {
+        "routeId": "dashboard",
+        "viewport": "mobile",
+        "ok": false,
+        "skipped": true,
+        "reason": "missing_playwright"
+      },
+      {
+        "routeId": "dashboard",
+        "viewport": "tablet",
+        "ok": false,
+        "skipped": true,
+        "reason": "missing_playwright"
+      },
+      {
+        "routeId": "dashboard",
+        "viewport": "desktop",
+        "ok": false,
+        "skipped": true,
+        "reason": "missing_playwright"
+      },
+      {
+        "routeId": "finance",
+        "viewport": "tablet",
+        "ok": false,
+        "skipped": true,
+        "reason": "missing_playwright"
+      },
+      {
+        "routeId": "finance",
+        "viewport": "desktop",
+        "ok": false,
+        "skipped": true,
+        "reason": "missing_playwright"
+      },
+      {
+        "routeId": "payroll",
+        "viewport": "tablet",
+        "ok": false,
+        "skipped": true,
+        "reason": "missing_playwright"
+      },
+      {
+        "routeId": "payroll",
+        "viewport": "desktop",
+        "ok": false,
+        "skipped": true,
+        "reason": "missing_playwright"
+      },
+      {
+        "routeId": "inventory-items",
+        "viewport": "mobile",
+        "ok": false,
+        "skipped": true,
+        "reason": "missing_playwright"
+      },
+      {
+        "routeId": "inventory-items",
+        "viewport": "desktop",
+        "ok": false,
+        "skipped": true,
+        "reason": "missing_playwright"
+      },
+      {
+        "routeId": "pos",
+        "viewport": "tablet",
+        "ok": false,
+        "skipped": true,
+        "reason": "missing_playwright"
+      },
+      {
+        "routeId": "pos",
+        "viewport": "desktop",
+        "ok": false,
+        "skipped": true,
+        "reason": "missing_playwright"
+      }
+    ]
+  }
+}
