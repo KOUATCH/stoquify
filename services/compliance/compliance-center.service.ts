@@ -4,8 +4,42 @@ import {
 } from "@prisma/client"
 
 import { db } from "@/prisma/db"
+import { getCloseReadinessSnapshot } from "@/services/snapshots/close-readiness-snapshot.service"
+import { getInventoryCashSnapshot } from "@/services/snapshots/inventory-cash-snapshot.service"
+import { getPaymentTruthSnapshot } from "@/services/snapshots/payment-truth-snapshot.service"
+import type {
+  SnapshotBlocker,
+  SnapshotRedaction,
+  SnapshotResult,
+  SnapshotSourceModule,
+  TenantOperatingMetrics,
+} from "@/services/snapshots/snapshot-contracts"
+import { getTenantOperatingSnapshotFromRelated } from "@/services/snapshots/tenant-operating-snapshot.service"
 
 import { resolveEInvoicingMetadata } from "./country-pack-hooks"
+
+type CompliancePayrollForecastReadiness = {
+  state: "READY" | "BLOCKED"
+  status: TenantOperatingMetrics["payrollFinanceForecast"]["status"]
+  authoritative: boolean
+  reasonCode: string
+  message: string
+  upcomingStatutoryLiabilityAmount: number
+  totalUpcomingAmount: number
+  declarationCount: number
+  nextDeclarationDueDate: string | null
+  blockerCodes: string[]
+  blockers: SnapshotBlocker[]
+  redactions: SnapshotRedaction[]
+  sourceHash: string | null
+  sourceModules: SnapshotSourceModule[]
+  generatedAt: string
+  action: {
+    href: string
+    requiredPermission: string
+    label: string
+  }
+}
 
 export type ComplianceCenterKernelSnapshot = {
   asOf: string
@@ -56,6 +90,7 @@ export type ComplianceCenterKernelSnapshot = {
     capabilityStatus: string
     credentialReferencePresent: boolean
   }>
+  payrollForecastReadiness: CompliancePayrollForecastReadiness
 }
 
 function zeroDocumentCounts() {
@@ -87,7 +122,14 @@ export async function getComplianceCenterKernelSnapshot(input: {
     ? { countryCode: input.countryCode.toUpperCase() }
     : {}
 
-  const [documentCountsRaw, submissionCountsRaw, recentDocuments, queuedSubmissions, adapterConfigs] =
+  const [
+    documentCountsRaw,
+    submissionCountsRaw,
+    recentDocuments,
+    queuedSubmissions,
+    adapterConfigs,
+    payrollForecastReadiness,
+  ] =
     await Promise.all([
       Promise.all(
         Object.values(FiscalDocumentStatus).map(async (status) => ({
@@ -190,6 +232,7 @@ export async function getComplianceCenterKernelSnapshot(input: {
           credentialReference: true,
         },
       }),
+      getCompliancePayrollForecastReadiness({ organizationId: input.organizationId }),
     ])
 
   const documentCounts = zeroDocumentCounts()
@@ -251,7 +294,94 @@ export async function getComplianceCenterKernelSnapshot(input: {
       capabilityStatus: adapter.capabilityStatus,
       credentialReferencePresent: Boolean(adapter.credentialReference),
     })),
+    payrollForecastReadiness,
   }
+}
+
+async function getCompliancePayrollForecastReadiness(input: {
+  organizationId: string
+}): Promise<CompliancePayrollForecastReadiness> {
+  const scope = { organizationId: input.organizationId }
+  const [paymentTruth, inventoryCash, closeReadiness] = await Promise.all([
+    getPaymentTruthSnapshot(scope),
+    getInventoryCashSnapshot(scope),
+    getCloseReadinessSnapshot(scope),
+  ])
+  const tenantOperating = await getTenantOperatingSnapshotFromRelated(scope, {
+    paymentTruth,
+    inventoryCash,
+    closeReadiness,
+  })
+
+  return mapPayrollForecastReadiness(tenantOperating)
+}
+
+function mapPayrollForecastReadiness(
+  snapshot: SnapshotResult<TenantOperatingMetrics>,
+): CompliancePayrollForecastReadiness {
+  const forecast = snapshot.metrics.payrollFinanceForecast
+  const blocked = !forecast.authoritative || forecast.blockerCodes.length > 0
+  const action = payrollForecastActionFor(forecast.blockerCodes)
+
+  return {
+    state: blocked ? "BLOCKED" : "READY",
+    status: forecast.status,
+    authoritative: forecast.authoritative,
+    reasonCode: forecast.reasonCode,
+    message: forecast.message,
+    upcomingStatutoryLiabilityAmount: forecast.upcomingStatutoryLiabilityAmount,
+    totalUpcomingAmount: forecast.totalUpcomingAmount,
+    declarationCount: forecast.declarationCount,
+    nextDeclarationDueDate: forecast.nextDeclarationDueDate,
+    blockerCodes: forecast.blockerCodes,
+    blockers: snapshot.blockers.filter((blocker) => blocker.gate === "payroll_finance_forecast"),
+    redactions: uniqueById([
+      ...snapshot.redactions,
+      {
+        id: "compliance-payroll-forecast-person-level-redacted",
+        field: "payroll.personLevelAmounts",
+        reason: "Compliance Center exposes aggregate payroll declaration readiness only; person-level payroll values stay inside payroll.",
+        policy: "KONTAVA_SENSITIVE_PAYROLL_EVIDENCE",
+      },
+    ]),
+    sourceHash: snapshot.sourceHash,
+    sourceModules: snapshot.sourceModules,
+    generatedAt: snapshot.generatedAt,
+    action,
+  }
+}
+
+function payrollForecastActionFor(blockerCodes: readonly string[]) {
+  if (blockerCodes.some((code) => code.includes("DECLARATION"))) {
+    return {
+      href: "/dashboard/payroll/declarations",
+      requiredPermission: "payroll.declarations.manage",
+      label: "Open payroll declarations",
+    }
+  }
+
+  if (blockerCodes.some((code) => code.includes("PAYMENT") || code.includes("PROVIDER"))) {
+    return {
+      href: "/dashboard/payroll/payments",
+      requiredPermission: "payroll.payments.reconcile",
+      label: "Open payroll payments",
+    }
+  }
+
+  return {
+    href: "/dashboard/payroll/register",
+    requiredPermission: "payroll.runs.review",
+    label: "Open payroll register",
+  }
+}
+
+function uniqueById<T extends { id: string }>(items: T[]): T[] {
+  const seen = new Set<string>()
+  return items.filter((item) => {
+    if (seen.has(item.id)) return false
+    seen.add(item.id)
+    return true
+  })
 }
 
 export function getEInvoicingMetadataReadiness(input: {

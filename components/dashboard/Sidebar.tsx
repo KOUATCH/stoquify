@@ -21,7 +21,6 @@ import {
   Activity,
   ChevronDown,
   ChevronRight,
-  Command,
   Crown,
   LogOut,
   Search,
@@ -30,6 +29,7 @@ import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useMemo, useState } from "react"
 import { NotificationMenu } from "../NotificationMenu"
+import StoquifyLogo from "../global/kit-logo"
 
 interface SidebarProps {
   session: any
@@ -47,7 +47,7 @@ const Sidebar = ({ session, notifications = [] }: SidebarProps) => {
   const pathname = usePathname()
   const { hasPermission } = useShellPermissions(session)
   const userRole = session?.user?.roles?.[0]?.name ?? "User"
-  const organizationName = session?.user?.organizationName ?? "StockFlow"
+  const organizationName = session?.user?.organizationName ?? "Stoquify"
   const localePrefix = pathname.match(/^\/(en|fr)(?=\/)/)?.[1]
   const locale = localePrefix === "fr" ? "fr" : "en"
   const normalizedPath = localePrefix ? pathname.replace(`/${localePrefix}`, "") : pathname
@@ -113,19 +113,10 @@ const Sidebar = ({ session, notifications = [] }: SidebarProps) => {
           <div className="flex items-center justify-between gap-3">
             <Link
               href={localizedHref("/dashboard")}
-              aria-label="StockFlow dashboard home"
+              aria-label="Stoquify dashboard home"
               className="group flex min-w-0 items-center gap-3"
             >
-              <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[rgba(47,125,246,0.18)] text-[#8fb7ff] shadow-[0_16px_36px_rgba(47,125,246,0.18)] ring-1 ring-white/10">
-                <Command className="h-5 w-5" aria-hidden="true" />
-                <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-[#2dd4bf] shadow-[0_0_0_4px_rgba(45,212,191,0.14)]" />
-              </div>
-              <div className="min-w-0">
-                <p className="truncate text-base font-black tracking-[0.1em] text-white">STOCKFLOW</p>
-                <p className="truncate text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-[#9fb4bb]">
-                  Enterprise OS
-                </p>
-              </div>
+              <StoquifyLogo theme="dark" width={180} height={52} tagline="Enterprise OS" />
             </Link>
             <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/[0.055]">
               <NotificationMenu notifications={notifications} />
@@ -172,7 +163,7 @@ const Sidebar = ({ session, notifications = [] }: SidebarProps) => {
         <div className="min-h-0 flex-1 px-3 pb-3 lg:px-4">
           <div className="mb-3 flex items-center justify-between px-2">
             <span className="text-[0.66rem] font-bold uppercase tracking-[0.18em] text-[#7f969f]">
-              {isSearching ? "Search" : "Focus"}
+              {isSearching ? "Search" : "Modules"}
             </span>
             <span
               className="rounded-full border border-white/10 bg-white/[0.05] px-2 py-0.5 text-[0.66rem] font-semibold text-[#a9b8b2]"

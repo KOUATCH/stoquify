@@ -99,7 +99,7 @@ export const authCopy = {
       forgot: {
         eyebrow: "Account recovery",
         title: "Recover access securely",
-        body: "Reset credentials with the same safeguards used across the StockFlow platform.",
+        body: "Reset credentials with the same safeguards used across the Stoquify platform.",
       },
       verify: {
         eyebrow: "Verification",
@@ -119,7 +119,7 @@ export const authCopy = {
       forgot: "Forgot password?",
       submit: "Sign in securely",
       loading: "Signing in",
-      newHere: "New to AqStoqFlow?",
+      newHere: "New to Stoquify?",
       createAccount: "Create an account",
       secureNote: "Sessions are tenant-scoped and permission-aware because the workspace touches cash, stock, payroll, suppliers, compliance, and close.",
       methodTitle: "Email and password access",
@@ -210,7 +210,7 @@ export const authCopy = {
         enterprise: "201+ employees",
       },
       infoBox:
-        "AqStoqFlow creates your organization, assigns administrator access, and prepares a tenant-scoped workspace.",
+        "Stoquify creates your organization, assigns administrator access, and prepares a tenant-scoped workspace.",
       passwordStrength: "Password strength",
       passwordLevels: {
         developing: "Developing",
@@ -235,7 +235,7 @@ export const authCopy = {
       networkBody: "Unable to create account. Please try again.",
       networkHint: "Registration failed",
       blueprintTitle: "Operating workspace blueprint",
-      blueprintBody: "AqStoqFlow prepares tenant scope, module gates, and evidence-ready defaults while you complete setup.",
+      blueprintBody: "Stoquify prepares tenant scope, module gates, and evidence-ready defaults while you complete setup.",
       setupTime: "Guided setup",
       setupTrust: "Tenant admin security",
       blueprintItems: {
@@ -356,7 +356,7 @@ export const authCopy = {
       forgot: {
         eyebrow: "Recuperation compte",
         title: "Recuperez l'acces en securite",
-        body: "Reinitialisez vos identifiants avec les memes protections que la plateforme StockFlow.",
+        body: "Reinitialisez vos identifiants avec les memes protections que la plateforme Stoquify.",
       },
       verify: {
         eyebrow: "Verification",
@@ -376,7 +376,7 @@ export const authCopy = {
       forgot: "Mot de passe oublie ?",
       submit: "Connexion securisee",
       loading: "Connexion",
-      newHere: "Nouveau sur AqStoqFlow ?",
+      newHere: "Nouveau sur Stoquify ?",
       createAccount: "Creer un compte",
       secureNote: "Les sessions sont portees tenant et permission-aware parce que l'espace touche cash, stock, paie, fournisseurs, conformite et cloture.",
       methodTitle: "Acces email et mot de passe",
@@ -467,7 +467,7 @@ export const authCopy = {
         enterprise: "201+ employes",
       },
       infoBox:
-        "AqStoqFlow cree votre organisation, prepare l'acces administrateur et un espace porte tenant.",
+        "Stoquify cree votre organisation, prepare l'acces administrateur et un espace porte tenant.",
       passwordStrength: "Force du mot de passe",
       passwordLevels: {
         developing: "En progression",
@@ -492,7 +492,7 @@ export const authCopy = {
       networkBody: "Impossible de creer le compte. Veuillez reessayer.",
       networkHint: "Inscription echouee",
       blueprintTitle: "Plan espace operationnel",
-      blueprintBody: "AqStoqFlow prepare portee tenant, gates modules et valeurs pretes preuves pendant la configuration.",
+      blueprintBody: "Stoquify prepare portee tenant, gates modules et valeurs pretes preuves pendant la configuration.",
       setupTime: "Setup guide",
       setupTrust: "Securite admin tenant",
       blueprintItems: {

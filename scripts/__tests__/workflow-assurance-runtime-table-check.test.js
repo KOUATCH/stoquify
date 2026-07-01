@@ -1,7 +1,13 @@
+const fs = require("fs")
+const os = require("os")
+const path = require("path")
+
 const {
+  applyRuntimeDatabaseEnv,
   evaluateRuntimeTablePresence,
   exitCodeForReport,
   parseArgs,
+  readDotenvValue,
   renderMarkdown,
 } = require("../workflow-assurance-runtime-table-check")
 
@@ -87,6 +93,43 @@ describe("workflow assurance runtime table check", () => {
 
     expect(renderMarkdown(report, "fail")).toContain("Status: `ready`")
     expect(renderMarkdown(report, "fail")).toContain("present: workflow_assurance_incidents")
+  })
+
+  it("loads DATABASE_URL from dotenv with variable expansion when env is missing", () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "workflow-runtime-env-"))
+    const envPath = path.join(root, ".env")
+    fs.writeFileSync(
+      envPath,
+      [
+        "DB_USER=user",
+        "DB_PASSWORD=pass",
+        "DB_HOST=localhost",
+        "DB_PORT=5432",
+        "DB_NAME=stockflow",
+        "DATABASE_URL=\"postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?schema=public\"",
+      ].join(os.EOL),
+      "utf8",
+    )
+
+    const env = {}
+
+    expect(readDotenvValue("DATABASE_URL", envPath, env)).toBe(
+      "postgresql://user:pass@localhost:5432/stockflow?schema=public",
+    )
+    expect(applyRuntimeDatabaseEnv(env, envPath)).toBe(true)
+    expect(env.DATABASE_URL).toBe(
+      "postgresql://user:pass@localhost:5432/stockflow?schema=public",
+    )
+  })
+
+  it("does not overwrite an existing DATABASE_URL", () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "workflow-runtime-env-"))
+    const envPath = path.join(root, ".env")
+    fs.writeFileSync(envPath, "DATABASE_URL=postgresql://dotenv/db", "utf8")
+    const env = { DATABASE_URL: "postgresql://existing/db" }
+
+    expect(applyRuntimeDatabaseEnv(env, envPath)).toBe(false)
+    expect(env.DATABASE_URL).toBe("postgresql://existing/db")
   })
 
   it("parses report mode by default", () => {

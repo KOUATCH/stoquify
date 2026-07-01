@@ -8,7 +8,7 @@ interface SupplierSystemAnalyticsPageProps {
 }
 
 export const metadata = {
-  title: "Supplier Analytics | StockFlow",
+  title: "Supplier Analytics | Stoquify",
   description: "Review supplier purchase activity, payable ledger, item links, and exposure.",
 }
 

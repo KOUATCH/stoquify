@@ -1,5 +1,5 @@
 import { logger } from "@/lib/logger"
-import { FreshAuthRequiredError, requireFreshAuth } from "@/lib/security/auth-session"
+import { FreshAuthRequiredError, requireFreshAuth, type AuthSessionClaims } from "@/lib/security/auth-session"
 import {
   assertCanUseOrganization,
   isRbacError,
@@ -16,6 +16,13 @@ import type {
 import { toSafeActionError, type ApplicationErrorCode, type SafeActionStatus } from "./action-errors"
 import { createCorrelationId } from "@/lib/error-handling/canonical"
 import { type ErrorCategory, type ErrorSeverity } from "@/lib/error-handling/types"
+
+export type ProtectedActionContext = RbacContext & {
+  freshAuth?: {
+    claims: AuthSessionClaims
+    lastAuthAt: Date
+  }
+}
 
 export type ProtectedActionResponse<T> =
   | { success: true; data: T; error: null; status: 200 }
@@ -52,16 +59,21 @@ export function protect<I, O>(
     tenantGuard?: TenantGuardMode
     module?: ProtectedActionModuleGate
   },
-  handler: (input: I, ctx: RbacContext) => Promise<O>,
+  handler: (input: I, ctx: ProtectedActionContext) => Promise<O>,
 ) {
   return async (input: I): Promise<ProtectedActionResponse<O>> => {
     const correlationId = createCorrelationId("act")
 
     try {
+      let freshAuth: ProtectedActionContext["freshAuth"] | undefined
       if (options.freshAuth) {
         const maxAgeSeconds =
           typeof options.freshAuth === "object" ? options.freshAuth.maxAgeSeconds : undefined
-        await requireFreshAuth(maxAgeSeconds)
+        const verified = await requireFreshAuth(maxAgeSeconds)
+        freshAuth = {
+          claims: verified.claims,
+          lastAuthAt: new Date(verified.claims.lastAuthAt),
+        }
       }
 
       const ctx = await requirePermission(options.permission, {
@@ -88,7 +100,8 @@ export function protect<I, O>(
       if (options.tenantGuard !== false && options.tenantGuard !== "handler-derived") {
         await assertTrustedTenantInput(input, ctx)
       }
-      const data = await handler(input, ctx)
+      const actionCtx: ProtectedActionContext = freshAuth ? { ...ctx, freshAuth } : ctx
+      const data = await handler(input, actionCtx)
       return { success: true, data, error: null, status: 200 }
     } catch (error) {
       const safeError = toSafeActionError(error, {

@@ -179,6 +179,7 @@ export default function FinanceCommandCenterDashboard({ initialView = "overview"
     if (alert.code === "NEGATIVE_MARGIN") return t("alerts.negativeMargin", { amount: money(alert.amount) })
     if (alert.code === "PENDING_PAYMENTS") return t("alerts.pendingPayments", { count: alert.count, amount: money(alert.amount) })
     if (alert.code === "CASH_GAP") return t("alerts.cashGap", { amount: money(alert.amount) })
+    if (alert.code === "PAYROLL_FORECAST_PROOF") return alert.message || t("alerts.payrollForecastProof", { count: alert.count, amount: money(alert.amount) })
     return t("alerts.ready")
   }
 
@@ -194,6 +195,7 @@ export default function FinanceCommandCenterDashboard({ initialView = "overview"
     NEGATIVE_MARGIN: t("actions.cashFlow"),
     PENDING_PAYMENTS: t("views.payments"),
     CASH_GAP: t("actions.cashFlow"),
+    PAYROLL_FORECAST_PROOF: t("actions.payroll"),
     READY: t("sections.assurance"),
   } satisfies FinanceAlertActionLabels
   const riskLabels = {

@@ -829,15 +829,21 @@
 
   .notification-control {
     border: 1px solid var(--dash-border-subtle, #344a54) !important;
-    background: color-mix(in srgb, var(--dash-surface-raised, #253943) 92%, transparent) !important;
+    background:
+      linear-gradient(135deg, rgba(73, 198, 229, 0.12), rgba(215, 168, 79, 0.08) 48%, rgba(45, 212, 191, 0.1)),
+      color-mix(in srgb, var(--dash-surface-raised, #253943) 78%, #0f2b32) !important;
     color: var(--dash-text-muted, #d3ddd8) !important;
-    box-shadow: 0 16px 42px rgba(5, 12, 16, 0.28);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      0 16px 42px rgba(5, 12, 16, 0.28);
     backdrop-filter: blur(18px);
   }
 
   .notification-control:hover {
     border-color: color-mix(in srgb, var(--dash-brand, #2f7df6) 42%, var(--dash-border, #54707a)) !important;
-    background: color-mix(in srgb, var(--dash-surface-raised, #253943) 78%, var(--dash-brand-soft, rgba(47, 125, 246, 0.16))) !important;
+    background:
+      linear-gradient(135deg, rgba(73, 198, 229, 0.18), rgba(215, 168, 79, 0.1) 48%, rgba(45, 212, 191, 0.14)),
+      color-mix(in srgb, var(--dash-surface-raised, #253943) 66%, #123943) !important;
     color: var(--dash-text, #f7faf8) !important;
   }
 
@@ -866,12 +872,45 @@
     --notification-accent-soft: var(--dash-info-soft, rgba(73, 198, 229, 0.14));
     border: 1px solid color-mix(in srgb, var(--notification-accent) 34%, var(--dash-border-subtle, #344a54));
     border-left: 4px solid var(--notification-accent);
-    background: color-mix(in srgb, var(--dash-surface-raised, #253943) 92%, var(--notification-accent-soft));
+    background:
+      linear-gradient(135deg, color-mix(in srgb, var(--notification-accent-soft) 88%, transparent), transparent 44%),
+      linear-gradient(155deg, color-mix(in srgb, var(--dash-surface-raised, #253943) 74%, #102f37), color-mix(in srgb, var(--dash-chrome, #142129) 78%, #1c3d40)) !important;
     color: var(--dash-text, #f7faf8);
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.05),
       0 22px 60px rgba(5, 12, 16, 0.34);
     backdrop-filter: blur(20px);
+  }
+
+  .notification-drawer {
+    border-color: color-mix(in srgb, var(--dash-info, #49c6e5) 24%, var(--dash-border-subtle, #344a54)) !important;
+    background:
+      radial-gradient(circle at 0% 0%, rgba(73, 198, 229, 0.16), transparent 34%),
+      radial-gradient(circle at 92% 8%, rgba(215, 168, 79, 0.12), transparent 30%),
+      linear-gradient(180deg, color-mix(in srgb, var(--dash-surface-raised, #253943) 76%, #102d33), color-mix(in srgb, var(--dash-canvas, #10191d) 76%, #173b3f)) !important;
+    color: var(--dash-text, #f7faf8) !important;
+    box-shadow:
+      inset 1px 0 0 rgba(255, 255, 255, 0.055),
+      26px 0 70px rgba(5, 12, 16, 0.42);
+  }
+
+  .notification-drawer-header {
+    border-color: color-mix(in srgb, var(--dash-info, #49c6e5) 26%, var(--dash-border-subtle, #344a54)) !important;
+    color: var(--dash-text, #f7faf8);
+  }
+
+  .notification-bell-trigger {
+    border: 1px solid color-mix(in srgb, var(--dash-info, #49c6e5) 28%, var(--dash-border-subtle, #344a54));
+    background:
+      linear-gradient(135deg, rgba(73, 198, 229, 0.14), rgba(45, 212, 191, 0.1)),
+      color-mix(in srgb, var(--dash-surface-raised, #253943) 72%, #0f2b32);
+    color: var(--dash-info, #49c6e5);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+
+  .notification-bell-trigger:hover {
+    border-color: color-mix(in srgb, var(--dash-info, #49c6e5) 54%, var(--dash-border, #54707a));
+    color: var(--dash-text, #f7faf8);
   }
 
   .notification-toast--success {
@@ -1057,8 +1096,8 @@
     --notification-row-soft: var(--dash-info-soft, rgba(73, 198, 229, 0.14));
     border-color: color-mix(in srgb, var(--notification-row-accent) 34%, var(--dash-border-subtle, #344a54));
     background:
-      linear-gradient(90deg, var(--notification-row-soft), transparent 44%),
-      color-mix(in srgb, var(--dash-surface-raised, #253943) 58%, transparent);
+      linear-gradient(90deg, color-mix(in srgb, var(--notification-row-soft) 92%, transparent), transparent 48%),
+      linear-gradient(135deg, color-mix(in srgb, var(--dash-surface-raised, #253943) 68%, #102d33), color-mix(in srgb, var(--dash-chrome, #142129) 76%, #1a373b));
     color: var(--dash-text, #f7faf8);
   }
 

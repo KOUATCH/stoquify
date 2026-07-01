@@ -6,7 +6,7 @@ import { RbacError, requireAnyPermission } from "@/lib/security/rbac"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 
 export const metadata = {
-  title: "Payroll Command Center | StockFlow",
+  title: "Payroll Command Center | Stoquify",
   description: "Role-aware payroll command center for blockers, evidence, readiness, payment, declaration, posting, and close state.",
 }
 

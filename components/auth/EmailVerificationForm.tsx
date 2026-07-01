@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Logo from "../global/Logo";
 import { useNotifications } from "../notifications/NotificationProvider";
@@ -38,7 +38,7 @@ export default function EmailVerificationForm() {
   const router = useRouter();
   const pathname = usePathname();
   const locale = getLocaleFromPathname(pathname) ?? DEFAULT_LOCALE;
-  const localizedHref = (href: string) => localizePath(href, locale);
+  const localizedHref = useCallback((href: string) => localizePath(href, locale), [locale]);
   const email = searchParams.get("email") || "";
   const userId = searchParams.get("id") || "";
 
@@ -63,12 +63,6 @@ export default function EmailVerificationForm() {
     }
   }, [timeLeft]);
 
-  // Auto-submit when code is complete
-  useEffect(() => {
-    if (codeValue && codeValue.length === 6) {
-      handleSubmit(onSubmit)();
-    }
-  }, [codeValue]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -76,7 +70,7 @@ export default function EmailVerificationForm() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const onSubmit = async (data: VerificationFormData) => {
+  const onSubmit = useCallback(async (data: VerificationFormData) => {
     try {
       setLoading(true);
 
@@ -88,7 +82,7 @@ export default function EmailVerificationForm() {
         setIsVerified(true);
         formSuccess(
           "Email Verified",
-          "Your email has been successfully verified. Welcome to StockFlow!"
+          "Your email has been successfully verified. Welcome to Stoquify!"
         );
 
         setTimeout(() => {
@@ -107,7 +101,14 @@ export default function EmailVerificationForm() {
         "Code may have expired or is incorrect"
       );
     }
-  };
+  }, [formError, formSuccess, localizedHref, router]);
+
+  // Auto-submit when code is complete
+  useEffect(() => {
+    if (codeValue && codeValue.length === 6) {
+      handleSubmit(onSubmit)();
+    }
+  }, [codeValue, handleSubmit, onSubmit]);
 
   const resendCode = async () => {
     try {
@@ -150,7 +151,7 @@ export default function EmailVerificationForm() {
             <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 via-green-900 to-teal-900 bg-clip-text text-transparent">
               Email Verified!
             </h1>
-            <p className="text-gray-600 mt-2">Welcome to StockFlow</p>
+            <p className="text-gray-600 mt-2">Welcome to Stoquify</p>
           </div>
         </div>
 
@@ -173,7 +174,7 @@ export default function EmailVerificationForm() {
                 <div className="text-sm text-green-800">
                   <p className="font-medium mb-1">Account Activated</p>
                   <p className="text-green-700">
-                    Your StockFlow account is now active. You can start managing your inventory right away.
+                    Your Stoquify account is now active. You can start managing your inventory right away.
                   </p>
                 </div>
               </div>

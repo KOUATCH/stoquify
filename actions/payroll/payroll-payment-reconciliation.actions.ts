@@ -21,6 +21,8 @@ function asRecord(input: unknown) {
 function revalidatePayrollPaymentReconciliationPaths() {
   revalidatePath("/dashboard/payroll", "page")
   revalidatePath("/[locale]/dashboard/payroll", "page")
+  revalidatePath("/dashboard/payroll/payments", "page")
+  revalidatePath("/[locale]/dashboard/payroll/payments", "page")
 }
 
 const getReconciliation = protect<unknown, PayrollPaymentReconciliationReadModel>(
@@ -66,13 +68,14 @@ const recordSettlement = protect<unknown, PayrollPaymentSettlementResult>(
     },
   },
   async (input, ctx) => {
+    const now = new Date()
     const parsed = recordPayrollPaymentSettlementInputSchema.parse({
       ...asRecord(input),
       organizationId: ctx.orgId,
       actorId: ctx.userId,
       actorPermissions: ctx.permissions,
-      lastAuthAt: new Date(),
-      now: new Date(),
+      lastAuthAt: ctx.freshAuth?.lastAuthAt ?? now,
+      now,
     })
     const result = await recordPayrollPaymentSettlementEvidence(parsed)
     revalidatePayrollPaymentReconciliationPaths()

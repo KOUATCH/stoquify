@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-26T17:57:46.786Z",
+  "generatedAt": "2026-07-01T17:04:34.073Z",
   "mode": "fail",
   "status": "ready",
   "safety": {
@@ -11,10 +11,10 @@
     "exitCode": 0
   },
   "summary": {
-    "presentTriggers": 8,
-    "requiredTriggers": 8,
-    "blockedMutations": 12,
-    "expectedBlockedMutations": 12,
+    "presentTriggers": 9,
+    "requiredTriggers": 9,
+    "blockedMutations": 14,
+    "expectedBlockedMutations": 14,
     "allowedLifecycleMutations": 3,
     "expectedAllowedLifecycleMutations": 3,
     "blockerCount": 0
@@ -58,6 +58,11 @@
     {
       "tableName": "payroll_declaration_evidence",
       "triggerName": "payroll_declaration_evidence_prevent_mutation_trigger",
+      "present": true
+    },
+    {
+      "tableName": "payroll_employee_balance_events",
+      "triggerName": "payroll_employee_balance_events_prevent_mutation_trigger",
       "present": true
     }
   ],
@@ -119,6 +124,16 @@
     },
     {
       "label": "block_declaration_evidence_delete",
+      "passed": true,
+      "message": "P2010: PrismaClientKnownRequestError"
+    },
+    {
+      "label": "block_employee_balance_event_update",
+      "passed": true,
+      "message": "P2010: PrismaClientKnownRequestError"
+    },
+    {
+      "label": "block_employee_balance_event_delete",
       "passed": true,
       "message": "P2010: PrismaClientKnownRequestError"
     }

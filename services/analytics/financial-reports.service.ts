@@ -109,9 +109,14 @@ export interface ItemPerformanceReport {
   profitMargin: number
   averageSellingPrice: number
   currentStock: number
+  availableToSell: number
+  reservedStock: number
   stockValue: number
   turnoverRate: number
   daysOfStock: number
+  daysOfAvailableStock: number
+  stockScope: "organization" | "location"
+  stockScopeLabel: string
   stockStatus: "in_stock" | "low_stock" | "out_of_stock"
   salesTrend: "increasing" | "decreasing" | "stable"
   revenueChange: number
@@ -483,7 +488,10 @@ export async function getItemPerformanceReportReadModel(
     include: {
       category: { select: { titleEn: true } },
       brand: { select: { nameEn: true } },
-      inventoryLevels: { where: locationScope ? { locationId: locationScope } : undefined, select: { quantityOnHand: true, totalValue: true } },
+      inventoryLevels: {
+        where: locationScope ? { locationId: locationScope } : undefined,
+        select: { quantityOnHand: true, quantityAvailable: true, quantityReserved: true, totalValue: true },
+      },
       salesOrderLines: {
         where: {
           salesOrder: {
@@ -515,12 +523,15 @@ export async function getItemPerformanceReportReadModel(
     const profitMargin = totalRevenue > 0 ? (grossProfit / totalRevenue) * 100 : 0
     const averageSellingPrice = quantitySold > 0 ? totalRevenue / quantitySold : toNumber(item.sellingPrice)
     const currentStock = item.inventoryLevels.reduce((sum, level) => sum + toNumber(level.quantityOnHand), 0)
+    const availableToSell = item.inventoryLevels.reduce((sum, level) => sum + toNumber(level.quantityAvailable), 0)
+    const reservedStock = item.inventoryLevels.reduce((sum, level) => sum + toNumber(level.quantityReserved), 0)
     const stockValue = item.inventoryLevels.reduce((sum, level) => sum + toNumber(level.totalValue), 0)
     const turnoverRate = currentStock > 0 ? quantitySold / currentStock : quantitySold > 0 ? quantitySold : 0
     const daysOfStock = quantitySold > 0 ? (currentStock / quantitySold) * 30 : 0
+    const daysOfAvailableStock = quantitySold > 0 ? (availableToSell / quantitySold) * 30 : 0
     const minStock = toNumber(item.minStockLevel)
     const stockStatus: ItemPerformanceReport["stockStatus"] =
-      currentStock <= 0 ? "out_of_stock" : currentStock <= minStock ? "low_stock" : "in_stock"
+      availableToSell <= 0 ? "out_of_stock" : availableToSell <= minStock ? "low_stock" : "in_stock"
 
     return {
       provenance,
@@ -536,9 +547,14 @@ export async function getItemPerformanceReportReadModel(
       profitMargin,
       averageSellingPrice,
       currentStock,
+      availableToSell,
+      reservedStock,
       stockValue,
       turnoverRate,
       daysOfStock,
+      daysOfAvailableStock,
+      stockScope: locationScope ? "location" : "organization",
+      stockScopeLabel: locationScope ? "Selected report location" : "Organization-wide stock",
       stockStatus,
       salesTrend: "stable",
       revenueChange: 0,

@@ -80,7 +80,7 @@ const surfaceMeta: Record<
   payments: {
     Icon: CreditCard,
     accent: "brand",
-    alertCodes: ["PENDING_PAYMENTS", "CASH_GAP", "READY"],
+    alertCodes: ["PENDING_PAYMENTS", "CASH_GAP", "PAYROLL_FORECAST_PROOF", "READY"],
   },
   receivables: {
     Icon: HandCoins,
@@ -90,7 +90,7 @@ const surfaceMeta: Record<
   payables: {
     Icon: FileText,
     accent: "danger",
-    alertCodes: ["OVERDUE_AP", "CASH_GAP", "READY"],
+    alertCodes: ["OVERDUE_AP", "CASH_GAP", "PAYROLL_FORECAST_PROOF", "READY"],
   },
 }
 
@@ -396,6 +396,7 @@ function alertText(alert: FinanceAlert, t: ReturnType<typeof useTranslations>, m
   if (alert.code === "NEGATIVE_MARGIN") return t("alerts.negativeMargin", { amount: money(alert.amount) })
   if (alert.code === "PENDING_PAYMENTS") return t("alerts.pendingPayments", { count: alert.count, amount: money(alert.amount) })
   if (alert.code === "CASH_GAP") return t("alerts.cashGap", { amount: money(alert.amount) })
+  if (alert.code === "PAYROLL_FORECAST_PROOF") return alert.message || t("alerts.payrollForecastProof", { count: alert.count, amount: money(alert.amount) })
   return t("alerts.ready")
 }
 

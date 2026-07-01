@@ -6,7 +6,7 @@ import { RbacError, requireAnyPermission } from "@/lib/security/rbac"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 
 export const metadata = {
-  title: "My Payslips | StockFlow",
+  title: "My Payslips | Stoquify",
   description: "Employee payslip self-service with immutable payroll evidence.",
 }
 

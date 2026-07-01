@@ -1,5 +1,5 @@
 import Link from "next/link";
-import PosinventLogo from "./kit-logo";
+import StoquifyLogo from "./kit-logo";
 
 export default function Logo({
   variant = "light",
@@ -10,14 +10,14 @@ export default function Logo({
 }) {
   if (variant === "light") {
     return (
-      <Link href={href} className="flex items-center space-x-2">
-        <PosinventLogo width={200} height={60} />
+      <Link href={href} aria-label="Stoquify home" className="flex items-center space-x-2">
+        <StoquifyLogo width={200} height={60} />
       </Link>
     );
   } else {
     return (
-      <Link href={"/"} className="flex items-center space-x-2">
-        <PosinventLogo width={200} height={60} theme="dark" />
+      <Link href={href} aria-label="Stoquify home" className="flex items-center space-x-2">
+        <StoquifyLogo width={200} height={60} theme="dark" />
       </Link>
     );
   }

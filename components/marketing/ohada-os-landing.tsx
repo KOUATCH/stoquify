@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import StoquifyLogo from "@/components/global/kit-logo"
 import { Link } from "@/i18n/navigation"
 import {
   ArrowRight,
@@ -59,7 +60,7 @@ const copy: Record<Locale, LandingCopy> = {
     heroBadge: "OHADA SMB operating system",
     heroTitle: "Run your OHADA business from sale to ledger truth.",
     heroBody:
-      "AqStoqFlow connects POS, inventory, purchases, payments, payroll, accounting, compliance, and reports so every important business event becomes trusted evidence.",
+      "Stoquify connects POS, inventory, purchases, payments, payroll, accounting, compliance, and reports so every important business event becomes trusted evidence.",
     proof: [
       "Sale-to-ledger traceability",
       "Payment reconciliation evidence",
@@ -76,7 +77,7 @@ const copy: Record<Locale, LandingCopy> = {
       "Owners, accountants, cashiers, stockkeepers, HR teams, and partners need different proof from the same operating spine.",
     workflowsTitle: "Replace module overload with evidence workflows",
     workflowsBody:
-      "AqStoqFlow should show how one operational event becomes documents, approvals, ledger entries, exceptions, and reports.",
+      "Stoquify should show how one operational event becomes documents, approvals, ledger entries, exceptions, and reports.",
     proofTitle: "Proof artifacts instead of decorative metrics",
     proofBody:
       "The strongest marketing asset is a visible evidence trail: receipt, stock movement, payment match, journal entry, audit log, and close pack.",
@@ -88,7 +89,7 @@ const copy: Record<Locale, LandingCopy> = {
       "Serious SMBs, accountants, and regulated partners need implementation paths that match risk, branches, country context, and integration needs.",
     finalTitle: "Make the product feel like operating discipline",
     finalBody:
-      "The new presentation should make buyers feel that AqStoqFlow helps them trust their business while it is running.",
+      "The new presentation should make buyers feel that Stoquify helps them trust their business while it is running.",
   },
   fr: {
     nav: ["Flux", "Dirigeants", "Comptables", "Confiance", "Partenaires", "Deploiement"],
@@ -98,7 +99,7 @@ const copy: Record<Locale, LandingCopy> = {
     heroBadge: "Systeme d'exploitation PME OHADA",
     heroTitle: "Pilotez votre entreprise OHADA de la vente a la preuve comptable.",
     heroBody:
-      "AqStoqFlow connecte POS, stock, achats, paiements, paie, comptabilite, conformite et rapports pour transformer chaque evenement important en preuve fiable.",
+      "Stoquify connecte POS, stock, achats, paiements, paie, comptabilite, conformite et rapports pour transformer chaque evenement important en preuve fiable.",
     proof: [
       "Traçabilite vente-comptabilite",
       "Preuve de rapprochement paiement",
@@ -115,7 +116,7 @@ const copy: Record<Locale, LandingCopy> = {
       "Dirigeants, comptables, caissiers, magasiniers, RH et partenaires ont besoin de preuves differentes issues du meme socle operationnel.",
     workflowsTitle: "Remplacer la surcharge de modules par des flux de preuve",
     workflowsBody:
-      "AqStoqFlow doit montrer comment un evenement operationnel devient documents, validations, ecritures, exceptions et rapports.",
+      "Stoquify doit montrer comment un evenement operationnel devient documents, validations, ecritures, exceptions et rapports.",
     proofTitle: "Des preuves plutot que des metriques decoratives",
     proofBody:
       "Le meilleur actif marketing est une trace visible: recu, mouvement de stock, rapprochement, ecriture, audit et dossier de cloture.",
@@ -127,7 +128,7 @@ const copy: Record<Locale, LandingCopy> = {
       "Les PME serieuses, cabinets comptables et partenaires regules ont besoin de parcours adaptes au risque, aux agences, au pays et aux integrations.",
     finalTitle: "Presenter le produit comme une discipline operationnelle",
     finalBody:
-      "La nouvelle experience doit faire sentir qu'AqStoqFlow aide l'entreprise a faire confiance a son activite pendant qu'elle tourne.",
+      "La nouvelle experience doit faire sentir que Stoquify aide l'entreprise a faire confiance a son activite pendant qu'elle tourne.",
   },
 }
 
@@ -276,7 +277,7 @@ export function OhadaOsLanding({ locale }: { locale: Locale }) {
       <section className="relative isolate min-h-[84vh] overflow-hidden bg-[#10181d] text-white">
         <Image
           src="/images/dash.webp"
-          alt="AqStoqFlow dashboard evidence preview"
+          alt="Stoquify dashboard evidence preview"
           fill
           priority
           sizes="100vw"
@@ -285,11 +286,7 @@ export function OhadaOsLanding({ locale }: { locale: Locale }) {
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(16,24,29,0.96),rgba(16,24,29,0.77)_48%,rgba(16,24,29,0.48))]" />
         <div className="relative z-10 mx-auto flex max-w-7xl items-center justify-between px-5 py-5 sm:px-8">
           <Link href="/ohada-os" className="flex items-center gap-3">
-            <span className="grid h-10 w-10 place-items-center rounded-lg bg-[#f0c54d] font-black text-[#132028]">AQ</span>
-            <span>
-              <span className="block text-sm font-black uppercase tracking-[0.2em]">AqStoqFlow</span>
-              <span className="block text-xs font-semibold text-[#b8c7c2]">{t.heroBadge}</span>
-            </span>
+            <StoquifyLogo theme="dark" width={236} height={52} tagline={t.heroBadge} />
           </Link>
           <nav className="hidden items-center gap-1 rounded-lg border border-white/10 bg-white/8 p-1 md:flex" aria-label="Primary">
             {t.nav.map((item, index) => (

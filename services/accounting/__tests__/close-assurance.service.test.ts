@@ -59,9 +59,14 @@ jest.mock("@/services/inventory/inventory-valuation.service", () => ({
   reconcileInventoryClass3: jest.fn(),
 }))
 
+jest.mock("@/services/snapshots/tenant-operating-snapshot.service", () => ({
+  getTenantOperatingSnapshot: jest.fn(),
+}))
+
 import { db } from "@/prisma/db"
 import { getAccountantPortalData } from "../data-trust.service"
 import { reconcileInventoryClass3 } from "@/services/inventory/inventory-valuation.service"
+import { getTenantOperatingSnapshot } from "@/services/snapshots/tenant-operating-snapshot.service"
 import {
   getPeriodClosePreflight,
   getPeriodClosePreflightFailures,
@@ -116,6 +121,7 @@ const mockReconcileLedger = reconcileLedger as jest.Mock
 const mockGetAccountantPortalData = getAccountantPortalData as jest.Mock
 const mockGetPaymentReconciliationDashboardData = getPaymentReconciliationDashboardData as jest.Mock
 const mockReconcileInventoryClass3 = reconcileInventoryClass3 as jest.Mock
+const mockGetTenantOperatingSnapshot = getTenantOperatingSnapshot as jest.Mock
 
 const period = {
   id: "period-1",
@@ -297,6 +303,60 @@ function cleanInventoryValuation() {
   }
 }
 
+function payrollForecastMetrics(overrides: Record<string, unknown> = {}) {
+  return {
+    status: "AUTHORITATIVE",
+    authoritative: true,
+    reasonCode: "PAYROLL_FORECAST_SOURCE_LINKED",
+    message: "Upcoming payroll net-pay and statutory-liability forecasts are sourced from posted payroll evidence.",
+    horizonStart: "2026-06-15T00:00:00.000Z",
+    horizonEnd: "2026-06-30T23:59:59.999Z",
+    upcomingNetPayAmount: 125000,
+    upcomingStatutoryLiabilityAmount: 45000,
+    totalUpcomingAmount: 170000,
+    payrollPeriodCount: 1,
+    payrollRunCount: 1,
+    paymentBatchCount: 1,
+    declarationCount: 1,
+    sourceLinkCount: 2,
+    evidenceHashCount: 4,
+    nextPayDate: "2026-06-25T00:00:00.000Z",
+    nextDeclarationDueDate: "2026-06-28T00:00:00.000Z",
+    personLevelAmountsRedacted: true,
+    blockerCodes: [],
+    ...overrides,
+  }
+}
+
+function tenantOperatingSnapshot(overrides: Record<string, unknown> = {}) {
+  return {
+    kind: "tenant.operating",
+    organizationId: "org-1",
+    locationId: null,
+    periodStart: period.startDate.toISOString(),
+    periodEnd: period.endDate.toISOString(),
+    status: "fresh",
+    uiState: "fresh",
+    evidenceGrade: "posted",
+    freshness: {
+      generatedAt: "2026-06-15T12:00:00.000Z",
+      sourceMaxUpdatedAt: "2026-06-15T11:00:00.000Z",
+      maxAgeMinutes: 1440,
+      stale: false,
+      staleReason: null,
+    },
+    sourceHash: "sha256:tenant-operating-payroll-forecast",
+    generatedAt: "2026-06-15T12:00:00.000Z",
+    sourceModules: ["payroll", "payments", "accounting", "close"],
+    metrics: {
+      payrollFinanceForecast: payrollForecastMetrics(),
+    },
+    blockers: [],
+    redactions: [],
+    ...overrides,
+  }
+}
+
 function persistedRun(overrides: Record<string, unknown> = {}) {
   return {
     id: "close-run-1",
@@ -402,6 +462,7 @@ function seedCleanSources() {
   mockGetPaymentReconciliationDashboardData.mockResolvedValue(cleanPaymentDashboard())
   mockGetAccountantPortalData.mockResolvedValue(cleanDataTrust())
   mockReconcileInventoryClass3.mockResolvedValue(cleanInventoryValuation())
+  mockGetTenantOperatingSnapshot.mockResolvedValue(tenantOperatingSnapshot())
 }
 
 describe("close assurance service", () => {
@@ -423,11 +484,90 @@ describe("close assurance service", () => {
         expect.objectContaining({ evidenceType: "RECONCILIATION_CERTIFICATE", sourceId: "recon-run-1" }),
         expect.objectContaining({ evidenceType: "DATA_TRUST_CERTIFICATE", sourceHash: "sha256:scope" }),
         expect.objectContaining({ sourceType: "InventoryValuationAnnex", sourceHash: "sha256:inventory-valuation" }),
+        expect.objectContaining({
+          sourceType: "PayrollFinanceForecastProof",
+          sourceHash: "sha256:tenant-operating-payroll-forecast",
+          available: true,
+          metadata: expect.objectContaining({
+            personLevelAmounts: "redacted",
+            redactions: expect.arrayContaining([
+              expect.objectContaining({ field: "payroll.personLevelAmounts" }),
+            ]),
+          }),
+        }),
       ]),
     )
     expect(result.checklist).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ key: "inventory-valuation", status: "PASSED" }),
+        expect.objectContaining({ key: "payroll-finance-forecast-proof", status: "PASSED" }),
+      ]),
+    )
+  })
+
+  it("blocks close readiness when payroll finance forecast proof is incomplete", async () => {
+    mockGetTenantOperatingSnapshot.mockResolvedValue(tenantOperatingSnapshot({
+      status: "blocked",
+      uiState: "blocked",
+      evidenceGrade: "blocked",
+      metrics: {
+        payrollFinanceForecast: payrollForecastMetrics({
+          status: "NON_AUTHORITATIVE",
+          authoritative: false,
+          reasonCode: "PAYROLL_FORECAST_PROOF_INCOMPLETE",
+          message: "Upcoming payroll finance forecasts are withheld because declaration proof is incomplete.",
+          upcomingNetPayAmount: 0,
+          upcomingStatutoryLiabilityAmount: 0,
+          totalUpcomingAmount: 0,
+          blockerCodes: ["PAYROLL_FORECAST_DECLARATION_PROOF_MISSING"],
+        }),
+      },
+      blockers: [
+        {
+          id: "tenant-payroll-finance-forecast-payroll-forecast-declaration-proof-missing",
+          severity: "high",
+          gate: "payroll_finance_forecast",
+          title: "Payroll declaration proof is missing",
+          detail: "Upcoming statutory liability is withheld until declaration evidence is complete.",
+          sourceTables: ["payroll_declarations", "payroll_declaration_evidence"],
+          nextAction: "Open payroll declarations and attach source-register-backed declaration evidence.",
+        },
+      ],
+    }))
+
+    const result = await getCloseAssuranceDashboard("org-1", period.id)
+
+    expect(result.run.status).toBe("BLOCKED")
+    expect(result.checklist).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          key: "payroll-finance-forecast-proof",
+          status: "FAILED",
+          nextActionHref: "/dashboard/payroll/declarations",
+        }),
+      ]),
+    )
+    expect(result.findings).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          domain: "PAYROLL",
+          severity: "HIGH",
+          sourceType: "payroll_finance_forecast",
+          title: "Payroll declaration proof is missing",
+        }),
+      ]),
+    )
+    expect(result.evidenceItems).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          sourceType: "PayrollFinanceForecastProof",
+          available: false,
+          provenance: "UNAVAILABLE",
+          metadata: expect.objectContaining({
+            personLevelAmounts: "redacted",
+            blockerCodes: ["PAYROLL_FORECAST_DECLARATION_PROOF_MISSING"],
+          }),
+        }),
       ]),
     )
   })

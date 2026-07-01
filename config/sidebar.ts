@@ -88,6 +88,7 @@ export const sidebarLinks: ISidebarLink[] = [
     description: "Ledger, close, reports, and controls",
     moduleSlug: "accounting",
     section: "finance",
+    priority: "primary",
     dropdownMenu: [
       { title: "Overview", href: "/dashboard/accounting", permission: "accounting.reports.read" },
       { title: "Accountant Portal", href: "/dashboard/accounting/accountant-portal", permission: "accounting.audit.read" },
@@ -108,6 +109,7 @@ export const sidebarLinks: ISidebarLink[] = [
     description: "Business pulse and reports",
     moduleSlug: "analytics",
     section: "command",
+    priority: "primary",
     dropdownMenu: [
       { title: "Overview", href: "/dashboard/analytics", permission: PERMISSIONS.VIEW_ANALYTICS },
       { title: "Reports", href: "/dashboard/analytics/reports", permission: PERMISSIONS.VIEW_ANALYTICS },
@@ -148,6 +150,7 @@ export const sidebarLinks: ISidebarLink[] = [
     description: "Fiscal controls and compliance evidence",
     moduleSlug: "compliance",
     section: "finance",
+    priority: "primary",
   },
   {
     title: "Finance",
@@ -187,8 +190,16 @@ export const sidebarLinks: ISidebarLink[] = [
     priority: "primary",
     dropdownMenu: [
       { title: "Overview", href: "/dashboard/payroll", permission: "payroll.command.read" },
+      { title: "Attendance", href: "/dashboard/payroll/attendance", permission: "payroll.payment_destination.read" },
+      { title: "Compensation", href: "/dashboard/payroll/compensation", permission: "payroll.compensation.read" },
+      { title: "Contracts", href: "/dashboard/payroll/contracts", permission: "payroll.contracts.read" },
+      { title: "Declarations", href: "/dashboard/payroll/declarations", permission: "payroll.command.read" },
+      { title: "Employees", href: "/dashboard/payroll/employees", permission: "payroll.employees.read" },
       { title: "My Payslips", href: "/dashboard/payroll/payslips", permission: "payroll.payslips.self.read" },
+      { title: "Payments", href: "/dashboard/payroll/payments", permission: "payroll.command.read" },
       { title: "Register", href: "/dashboard/payroll/register", permission: "payroll.reports.read" },
+      { title: "Runs", href: "/dashboard/payroll/runs", permission: "payroll.command.read" },
+      { title: "Setup", href: "/dashboard/payroll/setup", permission: "payroll.runs.calculate" },
     ],
   },
   {
@@ -219,6 +230,7 @@ export const sidebarLinks: ISidebarLink[] = [
     description: "Purchase orders, suppliers, and AP workbench",
     moduleSlug: "purchasing",
     section: "operations",
+    priority: "primary",
     dropdownMenu: [
       { title: "Overview", href: "/dashboard/purchases", permission: PERMISSIONS.READ_PURCHASE_ORDERS },
       { title: "AP Workbench", href: "/dashboard/purchases/payables", permission: "finance.payables.read" },
@@ -236,6 +248,7 @@ export const sidebarLinks: ISidebarLink[] = [
     description: "Customers, sales, and POS entry points",
     moduleSlug: "sales",
     section: "operations",
+    priority: "primary",
     dropdownMenu: [
       { title: "Overview", href: "/dashboard/sales", permission: PERMISSIONS.READ_SALES_ORDERS },
       { title: "Customers", href: "/dashboard/customers", permission: PERMISSIONS.READ_CUSTOMERS },

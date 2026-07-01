@@ -128,6 +128,7 @@ export type OwnerMorningBriefData = BIDailyDigest & {
   acknowledgement: OwnerMorningBriefAcknowledgement
   headlineMetrics: {
     cashAtRisk: number
+    payrollForecastTotal: number
     blockedCloseItems: number
     staleEvidenceItems: number
     proofLinkedActionCount: number

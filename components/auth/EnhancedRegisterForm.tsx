@@ -302,7 +302,7 @@ export default function EnhancedRegisterForm() {
             <h1 className="text-3xl font-bold bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
               Create Your Account
             </h1>
-            <p className="text-gray-600 mt-2">Join thousands of businesses using StockFlow</p>
+            <p className="text-gray-600 mt-2">Join thousands of businesses using Stoquify</p>
           </div>
         </div>
 

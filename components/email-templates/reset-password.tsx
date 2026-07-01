@@ -26,16 +26,16 @@ export const ResetPasswordEmail = ({
   return (
     <Html>
       <Head />
-      <Preview>PosInvent reset your password</Preview>
+      <Preview>Stoquify reset your password</Preview>
       <Body style={main}>
         <Container style={container}>
           <Heading style={textBlue} className="text-center ">
-            PosInvent
+            Stoquify
           </Heading>
           <Section>
             <Text style={text}>Hi {userFirstname},</Text>
             <Text style={text}>
-              Someone recently requested a password change for your Posinvent
+              Someone recently requested a password change for your Stoquify
               account. If this was you, you can set a new password by clicking
               the button below:
             </Text>
@@ -51,7 +51,7 @@ export const ResetPasswordEmail = ({
               to anyone. See our Help Center for{" "}
               <Link
                 style={anchor}
-                href="https://next-admin-starter-kit.vercel.app/"
+                href="https://stoquify.com/help"
               >
                 Help Center
               </Link>
@@ -59,7 +59,7 @@ export const ResetPasswordEmail = ({
 
             <Hr className="my-[16px] border-t-2 border-gray-300" />
             <Text className="text-muted-foreground">
-              © {new Date().getFullYear()} NextAdmin. All rights reserved.
+              © {new Date().getFullYear()} Stoquify. All rights reserved.
             </Text>
           </Section>
         </Container>

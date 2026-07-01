@@ -84,6 +84,8 @@ describe("owner war room service", () => {
     expect(data.cards.find((card) => card.id === "payroll_exposure")).toMatchObject({
       state: "redacted",
       requiredPermission: "payroll.read",
+      value: 440000,
+      unit: "value",
     })
     expect(data.cards.find((card) => card.id === "module_observe")).toMatchObject({
       state: "upgrade_request",
@@ -103,6 +105,7 @@ describe("owner war room service", () => {
     })
     expect(data.morningBrief.headlineMetrics).toMatchObject({
       cashAtRisk: 125000,
+      payrollForecastTotal: 440000,
       blockedCloseItems: 1,
       staleEvidenceItems: 0,
       proofLinkedActionCount: 1,
@@ -122,10 +125,111 @@ describe("owner war room service", () => {
     ])
     expect(data.morningBrief.zones.map((zone) => zone.title)).toEqual([
       "Cash truth",
+      "Payroll finance forecast",
       "Stock-to-cash truth",
       "Close readiness",
       "Payment and reconciliation truth",
     ])
+  })
+
+  it("shows employee balance recovery cases as redacted payroll exposure", () => {
+    const data = composeOwnerWarRoomData({
+      organizationId: "org-1",
+      organizationName: "Kontava Demo",
+      generatedAt,
+      snapshots: {
+        tenantOperating: tenantSnapshot({
+          approvedOrPaidPayrollRunCount: 0,
+          activeEmployeeBalanceCaseCount: 2,
+          openEmployeeBalanceCaseCount: 1,
+          partiallySettledEmployeeBalanceCaseCount: 1,
+          employeeBalanceOutstandingAmount: 27500,
+        }),
+        paymentTruth: paymentSnapshot(),
+        inventoryCash: inventorySnapshot(),
+        closeReadiness: closeSnapshot(),
+      },
+      actionQueue: actionQueue({ total: 0 }),
+      moduleControl: moduleControl({ wouldBlockCount: 0, dependencyGapCount: 0 }),
+      proofSubjectIds: {},
+    })
+
+    expect(data.cards.find((card) => card.id === "payroll_exposure")).toMatchObject({
+      value: 2,
+      unit: "cases",
+      tone: "danger",
+      href: "/dashboard/payroll/payments",
+      state: "redacted",
+      redactions: [expect.objectContaining({ field: "payroll.personLevelAmounts" })],
+    })
+  })
+
+  it("surfaces blocked payroll forecast proof as owner risk without unrelated tenant blockers", () => {
+    const tenant = tenantSnapshot({
+      payrollFinanceForecast: payrollForecastMetrics({
+        status: "NON_AUTHORITATIVE",
+        authoritative: false,
+        reasonCode: "PAYROLL_FORECAST_PROOF_INCOMPLETE",
+        message: "Upcoming payroll finance forecasts are withheld because payroll proof is incomplete.",
+        upcomingNetPayAmount: 0,
+        upcomingStatutoryLiabilityAmount: 0,
+        totalUpcomingAmount: 0,
+        blockerCodes: ["PAYROLL_FORECAST_PAYMENT_EVIDENCE_MISSING"],
+      }),
+    })
+    tenant.status = "blocked"
+    tenant.uiState = "blocked"
+    tenant.evidenceGrade = "blocked"
+    tenant.blockers = [
+      {
+        id: "tenant-payroll-finance-forecast-payment-evidence-missing",
+        severity: "high",
+        gate: "payroll_finance_forecast",
+        title: "Payroll payment proof is missing",
+        detail: "Upcoming net-pay forecast is withheld until released payment batches include immutable payment and ledger evidence.",
+        sourceTables: ["payroll_runs", "payroll_payment_batches"],
+        nextAction: "Open payroll payments and complete payment release evidence.",
+      },
+      {
+        id: "tenant-unrelated-close-blocker",
+        severity: "high",
+        gate: "close_readiness",
+        title: "Close blocker",
+        detail: "Close is blocked.",
+        sourceTables: ["close_runs"],
+      },
+    ]
+
+    const data = composeOwnerWarRoomData({
+      organizationId: "org-1",
+      organizationName: "Kontava Demo",
+      generatedAt,
+      snapshots: {
+        tenantOperating: tenant,
+        paymentTruth: paymentSnapshot(),
+        inventoryCash: inventorySnapshot(),
+        closeReadiness: closeSnapshot(),
+      },
+      actionQueue: actionQueue({ total: 0 }),
+      moduleControl: moduleControl({ wouldBlockCount: 0, dependencyGapCount: 0 }),
+      proofSubjectIds: {},
+    })
+
+    const card = data.cards.find((item) => item.id === "payroll_exposure")
+
+    expect(card).toMatchObject({
+      state: "blocked",
+      tone: "danger",
+      value: 0,
+      blockers: [expect.objectContaining({ gate: "payroll_finance_forecast" })],
+      redactions: [expect.objectContaining({ field: "payroll.personLevelAmounts" })],
+    })
+    expect(card?.blockers).toEqual(
+      expect.not.arrayContaining([expect.objectContaining({ gate: "close_readiness" })]),
+    )
+    expect(data.morningBrief.risks.map((risk) => risk.title)).toEqual(
+      expect.arrayContaining(["Payroll forecast proof"]),
+    )
   })
 
   it("keeps proof buttons disabled when no latest supported records are available", () => {
@@ -188,8 +292,15 @@ function tenantSnapshot(overrides: Partial<TenantOperatingMetrics> = {}): Snapsh
       cashCollected: 180000,
       pendingPurchaseOrderCount: 3,
       approvedOrPaidPayrollRunCount: 1,
+      activeEmployeeBalanceCaseCount: 0,
+      openEmployeeBalanceCaseCount: 0,
+      partiallySettledEmployeeBalanceCaseCount: 0,
+      employeeBalanceOutstandingAmount: 0,
+      periodEmployeeBalanceSettlementCount: 0,
+      periodEmployeeBalanceSettlementAmount: 0,
       postedJournalEntryCount: 1,
       sourceLinkCount: 1,
+      payrollFinanceForecast: payrollForecastMetrics(),
       paymentTruth: paymentMetrics(),
       inventoryCash: inventoryMetrics(),
       closeReadiness: closeMetrics(),
@@ -200,6 +311,32 @@ function tenantSnapshot(overrides: Partial<TenantOperatingMetrics> = {}): Snapsh
   }
 }
 
+function payrollForecastMetrics(
+  overrides: Partial<TenantOperatingMetrics["payrollFinanceForecast"]> = {},
+): TenantOperatingMetrics["payrollFinanceForecast"] {
+  return {
+    status: "AUTHORITATIVE",
+    authoritative: true,
+    reasonCode: "PAYROLL_FORECAST_SOURCE_LINKED",
+    message: "Forecast is source linked.",
+    horizonStart: "2026-06-20T00:00:00.000Z",
+    horizonEnd: "2026-07-20T23:59:59.999Z",
+    upcomingNetPayAmount: 350000,
+    upcomingStatutoryLiabilityAmount: 90000,
+    totalUpcomingAmount: 440000,
+    payrollPeriodCount: 1,
+    payrollRunCount: 1,
+    paymentBatchCount: 1,
+    declarationCount: 1,
+    sourceLinkCount: 2,
+    evidenceHashCount: 4,
+    nextPayDate: "2026-06-30T00:00:00.000Z",
+    nextDeclarationDueDate: "2026-07-15T00:00:00.000Z",
+    personLevelAmountsRedacted: true,
+    blockerCodes: [],
+    ...overrides,
+  }
+}
 function paymentSnapshot(overrides: Partial<PaymentTruthMetrics> = {}): SnapshotResult<PaymentTruthMetrics> {
   return {
     kind: "payment.truth",

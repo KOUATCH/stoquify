@@ -1,6 +1,7 @@
 "use server"
 
 import { assertCanUseOrganization, requirePermission } from "@/lib/security/rbac"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import {
   getDailyReportDataReadModel,
   getFinancialMetricsReadModel,
@@ -18,12 +19,24 @@ async function financialAnalyticsInput(
 ): Promise<FinancialAnalyticsReadModelInput> {
   const ctx = await requirePermission("reports.read", { resource: "FinancialAnalytics" })
   await assertCanUseOrganization(ctx, organizationId)
+  const scopedOrganizationId = ctx.isSuperUser ? organizationId : ctx.orgId
+  const payrollModuleDecision = await observeModuleAccess({
+    organizationId: scopedOrganizationId,
+    userId: ctx.userId,
+    moduleSlug: "payroll",
+    surfaceType: "report",
+    surface: "FinancialAnalytics.payrollFacts",
+    accessIntent: "read",
+    actorPermissions: ctx.permissions,
+  })
 
   return {
-    organizationId: ctx.isSuperUser ? organizationId : ctx.orgId,
+    organizationId: scopedOrganizationId,
     locationId,
     startDate,
     endDate,
+    actorPermissions: ctx.permissions,
+    payrollModuleDecision,
   }
 }
 

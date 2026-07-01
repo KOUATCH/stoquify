@@ -1,6 +1,6 @@
-import "server-only"
+import "server-only";
 
-import { randomUUID } from "node:crypto"
+import { randomUUID } from "node:crypto";
 
 import type {
   BranchOperatingMetrics,
@@ -8,6 +8,7 @@ import type {
   InventoryCashMetrics,
   NormalizedSnapshotScope,
   PaymentTruthMetrics,
+  PayrollFinanceForecastMetrics,
   SnapshotBuildRunMetrics,
   SnapshotBuildRunResult,
   SnapshotKind,
@@ -15,12 +16,12 @@ import type {
   SnapshotScopeInput,
   SnapshotStatus,
   TenantOperatingMetrics,
-} from "./snapshot-contracts"
-import { getBranchOperatingSnapshot } from "./branch-operating-snapshot.service"
-import { getCloseReadinessSnapshot } from "./close-readiness-snapshot.service"
-import { getInventoryCashSnapshot } from "./inventory-cash-snapshot.service"
-import { getPaymentTruthSnapshot } from "./payment-truth-snapshot.service"
-import { getTenantOperatingSnapshot } from "./tenant-operating-snapshot.service"
+} from "./snapshot-contracts";
+import { getBranchOperatingSnapshot } from "./branch-operating-snapshot.service";
+import { getCloseReadinessSnapshot } from "./close-readiness-snapshot.service";
+import { getInventoryCashSnapshot } from "./inventory-cash-snapshot.service";
+import { getPaymentTruthSnapshot } from "./payment-truth-snapshot.service";
+import { getTenantOperatingSnapshot } from "./tenant-operating-snapshot.service";
 import {
   blocker,
   buildSnapshotResult,
@@ -28,22 +29,44 @@ import {
   deriveAggregateSnapshotStatus,
   normalizeSnapshotScope,
   weakestEvidenceGrade,
-} from "./snapshot-utils"
+} from "./snapshot-utils";
 
 export type SnapshotBundleInput = SnapshotScopeInput & {
-  includeBranch?: boolean
-}
+  includeBranch?: boolean;
+};
 
-type AnySnapshot = SnapshotBuildRunResult["snapshots"][number]
+type AnySnapshot = SnapshotBuildRunResult["snapshots"][number];
 
-export async function rebuildSnapshotBundle(input: SnapshotBundleInput): Promise<SnapshotBuildRunResult> {
-  const scope = normalizeSnapshotScope(input)
+export async function rebuildSnapshotBundle(
+  input: SnapshotBundleInput,
+): Promise<SnapshotBuildRunResult> {
+  const scope = normalizeSnapshotScope(input);
 
   const snapshots: SnapshotBuildRunResult["snapshots"] = await Promise.all([
-    runSnapshotBuilder("tenant.operating", scope, () => getTenantOperatingSnapshot(scope), emptyTenantMetrics()),
-    runSnapshotBuilder("payment.truth", scope, () => getPaymentTruthSnapshot(scope), emptyPaymentTruthMetrics()),
-    runSnapshotBuilder("inventory.cash", scope, () => getInventoryCashSnapshot(scope), emptyInventoryCashMetrics()),
-    runSnapshotBuilder("close.readiness", scope, () => getCloseReadinessSnapshot(scope), emptyCloseReadinessMetrics()),
+    runSnapshotBuilder(
+      "tenant.operating",
+      scope,
+      () => getTenantOperatingSnapshot(scope),
+      emptyTenantMetrics(),
+    ),
+    runSnapshotBuilder(
+      "payment.truth",
+      scope,
+      () => getPaymentTruthSnapshot(scope),
+      emptyPaymentTruthMetrics(),
+    ),
+    runSnapshotBuilder(
+      "inventory.cash",
+      scope,
+      () => getInventoryCashSnapshot(scope),
+      emptyInventoryCashMetrics(),
+    ),
+    runSnapshotBuilder(
+      "close.readiness",
+      scope,
+      () => getCloseReadinessSnapshot(scope),
+      emptyCloseReadinessMetrics(),
+    ),
     ...(input.includeBranch || scope.locationId
       ? [
           runSnapshotBuilder(
@@ -54,14 +77,16 @@ export async function rebuildSnapshotBundle(input: SnapshotBundleInput): Promise
           ),
         ]
       : []),
-  ])
+  ]);
 
-  const statuses = snapshots.map((snapshot) => snapshot.status)
-  const metrics = buildRunMetrics(statuses)
-  const status = deriveAggregateSnapshotStatus(statuses)
-  const blockers = snapshots.flatMap((snapshot) => snapshot.blockers)
-  const redactions = snapshots.flatMap((snapshot) => snapshot.redactions)
-  const evidenceGrade = weakestEvidenceGrade(snapshots.map((snapshot) => snapshot.evidenceGrade))
+  const statuses = snapshots.map((snapshot) => snapshot.status);
+  const metrics = buildRunMetrics(statuses);
+  const status = deriveAggregateSnapshotStatus(statuses);
+  const blockers = snapshots.flatMap((snapshot) => snapshot.blockers);
+  const redactions = snapshots.flatMap((snapshot) => snapshot.redactions);
+  const evidenceGrade = weakestEvidenceGrade(
+    snapshots.map((snapshot) => snapshot.evidenceGrade),
+  );
 
   return {
     buildId: randomUUID(),
@@ -88,7 +113,7 @@ export async function rebuildSnapshotBundle(input: SnapshotBundleInput): Promise
     snapshots,
     blockers,
     redactions,
-  }
+  };
 }
 
 async function runSnapshotBuilder<TMetrics>(
@@ -98,7 +123,7 @@ async function runSnapshotBuilder<TMetrics>(
   fallbackMetrics: TMetrics,
 ): Promise<AnySnapshot> {
   try {
-    return (await builder()) as AnySnapshot
+    return (await builder()) as AnySnapshot;
   } catch {
     return buildSnapshotResult({
       kind,
@@ -116,28 +141,38 @@ async function runSnapshotBuilder<TMetrics>(
           detail:
             "This snapshot could not be generated safely. Other snapshots in the rebuild bundle remain available.",
           sourceTables: [],
-          nextAction: "Review server logs and retry the snapshot rebuild after the upstream module is healthy.",
+          nextAction:
+            "Review server logs and retry the snapshot rebuild after the upstream module is healthy.",
         }),
       ],
       sourceHashParts: { failed: true, kind },
-    }) as AnySnapshot
+    }) as AnySnapshot;
   }
 }
 
 function buildRunMetrics(statuses: SnapshotStatus[]): SnapshotBuildRunMetrics {
   return {
     requestedSnapshotCount: statuses.length,
-    completedSnapshotCount: statuses.filter((status) => !["failed", "building"].includes(status)).length,
-    blockedSnapshotCount: statuses.filter((status) => status === "blocked").length,
-    partialSnapshotCount: statuses.filter((status) => status === "partial" || status === "empty").length,
+    completedSnapshotCount: statuses.filter(
+      (status) => !["failed", "building"].includes(status),
+    ).length,
+    blockedSnapshotCount: statuses.filter((status) => status === "blocked")
+      .length,
+    partialSnapshotCount: statuses.filter(
+      (status) => status === "partial" || status === "empty",
+    ).length,
     staleSnapshotCount: statuses.filter((status) => status === "stale").length,
-    failedSnapshotCount: statuses.filter((status) => status === "failed").length,
-  }
+    failedSnapshotCount: statuses.filter((status) => status === "failed")
+      .length,
+  };
 }
 
 export function snapshotSummary(
   snapshot: SnapshotResult<unknown>,
-): Pick<SnapshotResult<unknown>, "kind" | "status" | "evidenceGrade" | "sourceHash" | "blockers" | "redactions"> {
+): Pick<
+  SnapshotResult<unknown>,
+  "kind" | "status" | "evidenceGrade" | "sourceHash" | "blockers" | "redactions"
+> {
   return {
     kind: snapshot.kind,
     status: snapshot.status,
@@ -145,7 +180,7 @@ export function snapshotSummary(
     sourceHash: snapshot.sourceHash,
     blockers: snapshot.blockers,
     redactions: snapshot.redactions,
-  }
+  };
 }
 
 function emptyTenantMetrics(): TenantOperatingMetrics {
@@ -156,14 +191,47 @@ function emptyTenantMetrics(): TenantOperatingMetrics {
     cashCollected: 0,
     pendingPurchaseOrderCount: 0,
     approvedOrPaidPayrollRunCount: 0,
+    activeEmployeeBalanceCaseCount: 0,
+    openEmployeeBalanceCaseCount: 0,
+    partiallySettledEmployeeBalanceCaseCount: 0,
+    employeeBalanceOutstandingAmount: 0,
+    periodEmployeeBalanceSettlementCount: 0,
+    periodEmployeeBalanceSettlementAmount: 0,
     postedJournalEntryCount: 0,
     sourceLinkCount: 0,
+    payrollFinanceForecast: emptyPayrollFinanceForecastMetrics(),
     paymentTruth: emptyPaymentTruthMetrics(),
     inventoryCash: emptyInventoryCashMetrics(),
     closeReadiness: emptyCloseReadinessMetrics(),
-  }
+  };
 }
 
+function emptyPayrollFinanceForecastMetrics(): PayrollFinanceForecastMetrics {
+  const emptyHorizon = "1970-01-01T00:00:00.000Z";
+
+  return {
+    status: "NON_AUTHORITATIVE",
+    authoritative: false,
+    reasonCode: "PAYROLL_FORECAST_NOT_BUILT",
+    message:
+      "Payroll finance forecast was not built for this fallback snapshot.",
+    horizonStart: emptyHorizon,
+    horizonEnd: emptyHorizon,
+    upcomingNetPayAmount: 0,
+    upcomingStatutoryLiabilityAmount: 0,
+    totalUpcomingAmount: 0,
+    payrollPeriodCount: 0,
+    payrollRunCount: 0,
+    paymentBatchCount: 0,
+    declarationCount: 0,
+    sourceLinkCount: 0,
+    evidenceHashCount: 0,
+    nextPayDate: null,
+    nextDeclarationDueDate: null,
+    personLevelAmountsRedacted: true,
+    blockerCodes: ["PAYROLL_FORECAST_NOT_BUILT"],
+  };
+}
 function emptyPaymentTruthMetrics(): PaymentTruthMetrics {
   return {
     providerAccountCount: 0,
@@ -176,7 +244,7 @@ function emptyPaymentTruthMetrics(): PaymentTruthMetrics {
     openSuspenseCount: 0,
     openSuspenseAmount: 0,
     pendingTransactionCount: 0,
-  }
+  };
 }
 
 function emptyInventoryCashMetrics(): InventoryCashMetrics {
@@ -194,7 +262,7 @@ function emptyInventoryCashMetrics(): InventoryCashMetrics {
     periodTransactionCount: 0,
     periodAdjustmentCount: 0,
     periodTransferCount: 0,
-  }
+  };
 }
 
 function emptyCloseReadinessMetrics(): CloseReadinessMetrics {
@@ -208,7 +276,7 @@ function emptyCloseReadinessMetrics(): CloseReadinessMetrics {
     openFindingCount: 0,
     criticalOpenFindingCount: 0,
     unavailableEvidenceCount: 0,
-  }
+  };
 }
 
 function emptyBranchOperatingMetrics(): BranchOperatingMetrics {
@@ -222,5 +290,16 @@ function emptyBranchOperatingMetrics(): BranchOperatingMetrics {
     pendingPurchaseOrderCount: 0,
     openTransferCount: 0,
     postedJournalLineCount: 0,
-  }
+    posShiftCount: 0,
+    closedPosShiftCount: 0,
+    payrollEmployeeAtLocationCount: 0,
+    frozenAttendanceSnapshotCount: 0,
+    approvedPayrollRunLineCount: 0,
+    unallocatedPayrollRunLineCount: 0,
+    payrollGrossAmount: 0,
+    payrollEmployerChargeAmount: 0,
+    payrollNetPayAmount: 0,
+    payrollAllocatedCostAmount: 0,
+    payrollProfitContribution: null,
+  };
 }

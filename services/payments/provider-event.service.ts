@@ -240,6 +240,13 @@ export async function captureProviderEvent(input: CaptureProviderEventInput): Pr
       }
     }
 
+    const failureReason = signatureValid
+      ? null
+      : signatureFailureReason(input.headers, input.adapter.timestampToleranceSeconds, now)
+    const rejectedStatus = failureReason === "REPLAYED_EVENT"
+      ? ProviderEventStatus.REPLAYED
+      : ProviderEventStatus.TAMPERED
+
     const event = await tx.providerEvent.create({
       data: {
         organizationId: input.organizationId,
@@ -248,7 +255,7 @@ export async function captureProviderEvent(input: CaptureProviderEventInput): Pr
         providerTransactionId: parsed.providerTransactionId,
         providerReference: parsed.providerReference,
         eventType: parsed.eventType,
-        status: signatureValid ? ProviderEventStatus.VERIFIED : ProviderEventStatus.TAMPERED,
+        status: signatureValid ? ProviderEventStatus.VERIFIED : rejectedStatus,
         direction: parsed.direction,
         amount: toDecimal(parsed.amount),
         feeAmount: toDecimal(parsed.feeAmount),
@@ -270,10 +277,6 @@ export async function captureProviderEvent(input: CaptureProviderEventInput): Pr
       },
       select: { id: true },
     })
-
-    const failureReason = signatureValid
-      ? null
-      : signatureFailureReason(input.headers, input.adapter.timestampToleranceSeconds, now)
 
     const inbox = await tx.paymentReconciliationInboxItem.upsert({
       where: {
@@ -348,7 +351,7 @@ export async function captureProviderEvent(input: CaptureProviderEventInput): Pr
           providerAccountId: providerAccount.id,
           inboxItemId: inbox.id,
           exceptionId: exception.id,
-          status: ProviderEventStatus.TAMPERED,
+          status: rejectedStatus,
           failureReason,
           rawPayloadHash,
           headersHash,

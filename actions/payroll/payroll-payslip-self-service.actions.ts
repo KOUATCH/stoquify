@@ -69,13 +69,14 @@ const prepareMyPayslipExport = protect<unknown, PayrollPayslipExportResult>(
     },
   },
   async (input, ctx) => {
+    const now = new Date()
     const parsed = preparePayrollPayslipExportInputSchema.parse({
       ...asRecord(input),
       organizationId: ctx.orgId,
       actorId: ctx.userId,
       actorPermissions: ctx.permissions,
-      lastAuthAt: new Date(),
-      now: new Date(),
+      lastAuthAt: ctx.freshAuth?.lastAuthAt ?? now,
+      now,
     })
     const result = await preparePayrollPayslipExport(parsed)
     revalidatePayrollPayslipPaths()

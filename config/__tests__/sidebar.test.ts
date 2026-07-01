@@ -92,9 +92,18 @@ describe("sidebar information architecture", () => {
 
   it("introduces real primary dashboard routes that were previously absent", () => {
     expect(allSidebarHrefs()).toEqual(expect.arrayContaining([
+      "/dashboard/accounting",
+      "/dashboard/analytics",
       "/dashboard/assurance/control-tower",
+      "/dashboard/compliance",
+      "/dashboard/customers",
       "/dashboard/finance/profit-loss",
+      "/dashboard/purchase-orders",
+      "/dashboard/purchase-orders/new",
+      "/dashboard/purchases",
       "/dashboard/purchases/payables",
+      "/dashboard/purchases/suppliers",
+      "/dashboard/sales",
       "/dashboard/settings/appearance",
       "/dashboard/settings/notifications",
       "/dashboard/settings/security",
@@ -139,7 +148,7 @@ describe("sidebar finance reconciliation permissions", () => {
 })
 
 describe("sidebar HR and payroll visibility", () => {
-  it("exposes the payroll command center and real employee self-service route", () => {
+  it("exposes the implemented payroll command, declaration, payment, employee, and self-service routes", () => {
     const hrPayroll = sidebarLinks.find((link) => link.title === "HR & Payroll")
 
     expect(hrPayroll).toEqual(
@@ -150,21 +159,28 @@ describe("sidebar HR and payroll visibility", () => {
     )
     expect(hrPayroll?.dropdownMenu).toEqual([
       expect.objectContaining({ title: "Overview", href: "/dashboard/payroll", permission: "payroll.command.read" }),
+      expect.objectContaining({ title: "Attendance", href: "/dashboard/payroll/attendance", permission: "payroll.payment_destination.read" }),
+      expect.objectContaining({ title: "Compensation", href: "/dashboard/payroll/compensation", permission: "payroll.compensation.read" }),
+      expect.objectContaining({ title: "Contracts", href: "/dashboard/payroll/contracts", permission: "payroll.contracts.read" }),
+      expect.objectContaining({ title: "Declarations", href: "/dashboard/payroll/declarations", permission: "payroll.command.read" }),
+      expect.objectContaining({ title: "Employees", href: "/dashboard/payroll/employees", permission: "payroll.employees.read" }),
       expect.objectContaining({ title: "My Payslips", href: "/dashboard/payroll/payslips", permission: "payroll.payslips.self.read" }),
+      expect.objectContaining({ title: "Payments", href: "/dashboard/payroll/payments", permission: "payroll.command.read" }),
       expect.objectContaining({ title: "Register", href: "/dashboard/payroll/register", permission: "payroll.reports.read" }),
+      expect.objectContaining({ title: "Runs", href: "/dashboard/payroll/runs", permission: "payroll.command.read" }),
+      expect.objectContaining({ title: "Setup", href: "/dashboard/payroll/setup", permission: "payroll.runs.calculate" }),
     ])
   })
 
   it("does not expose missing presence or payroll subroutes", () => {
     expect(allSidebarHrefs()).not.toEqual(expect.arrayContaining([
       "/dashboard/presence",
-      "/dashboard/payroll/employees",
       "/dashboard/payroll/salary-list",
     ]))
   })
 
   it("keeps payroll pages visible for legacy payroll grants", () => {
-    const legacyPayrollGrants = ["PAYROLL_READ", "PAYROLL_REPORTS_READ", "EMPLOYEE_SALARY_READ"]
+    const legacyPayrollGrants = ["PAYROLL_READ", "PAYROLL_REPORTS_READ", "EMPLOYEE_SALARY_READ", "PAYROLL_PROCESS"]
     const filtered = filterSidebarLinksByPermission(sidebarLinks, (permission) =>
       hasRbacPermission(legacyPayrollGrants, permission),
     )
@@ -172,8 +188,16 @@ describe("sidebar HR and payroll visibility", () => {
 
     expect(hrPayroll?.dropdownMenu?.map((item) => item.href)).toEqual([
       "/dashboard/payroll",
+      "/dashboard/payroll/attendance",
+      "/dashboard/payroll/compensation",
+      "/dashboard/payroll/contracts",
+      "/dashboard/payroll/declarations",
+      "/dashboard/payroll/employees",
       "/dashboard/payroll/payslips",
+      "/dashboard/payroll/payments",
       "/dashboard/payroll/register",
+      "/dashboard/payroll/runs",
+      "/dashboard/payroll/setup",
     ])
   })
 })
@@ -193,16 +217,21 @@ describe("sidebar filtering and route matching", () => {
     ])
   })
 
-  it("keeps the default sidebar focused while preserving the five command lanes", () => {
+  it("keeps the default sidebar broad enough for functional testability", () => {
     const focused = getDefaultSidebarLinks(sidebarLinks, "/dashboard")
 
     expect(focused.map((link) => link.title)).toEqual([
       "Dashboard",
+      "Accounting",
+      "Analytics",
       "Assurance Control Tower",
       "Command Center",
+      "Compliance",
       "Finance",
       "HR & Payroll",
       "Inventory",
+      "Purchases",
+      "Sales",
       "Settings",
     ])
     expect(getSidebarSections(focused).map((section) => section.key)).toEqual([
@@ -212,10 +241,10 @@ describe("sidebar filtering and route matching", () => {
       "people",
       "governance",
     ])
-    expect(focused.length).toBeLessThan(sidebarLinks.length)
+    expect(focused.length).toBe(sidebarLinks.length)
   })
 
-  it("keeps an active hidden parent visible in the focused sidebar", () => {
+  it("keeps the active parent visible for child routes", () => {
     const focused = getDefaultSidebarLinks(sidebarLinks, "/dashboard/purchases/payables")
 
     expect(focused.map((link) => link.title)).toContain("Purchases")

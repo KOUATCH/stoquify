@@ -6,6 +6,46 @@ const path = require("path")
 
 const MODES = new Set(["report", "warn", "fail"])
 
+function unquote(value) {
+  return value.trim().replace(/^["']|["']$/g, "")
+}
+
+function readDotenv(filePath = path.join(process.cwd(), ".env")) {
+  if (!fs.existsSync(filePath)) return null
+  const values = {}
+  const lines = fs.readFileSync(filePath, "utf8").split(/\r?\n/)
+  for (const rawLine of lines) {
+    const line = rawLine.trim()
+    if (!line || line.startsWith("#")) continue
+    const match = line.match(/^([A-Za-z_][A-Za-z0-9_]*)=(.*)$/)
+    if (!match) continue
+    values[match[1]] = unquote(match[2])
+  }
+  return values
+}
+
+function expandEnvReferences(value, values, env = process.env) {
+  return value.replace(/\$\{([A-Za-z_][A-Za-z0-9_]*)\}/g, (_match, key) => {
+    if (Object.prototype.hasOwnProperty.call(values, key)) return values[key]
+    if (Object.prototype.hasOwnProperty.call(env, key)) return env[key]
+    return ""
+  })
+}
+
+function readDotenvValue(key, filePath = path.join(process.cwd(), ".env"), env = process.env) {
+  const values = readDotenv(filePath)
+  if (!values || !Object.prototype.hasOwnProperty.call(values, key)) return null
+  return expandEnvReferences(values[key], values, env)
+}
+
+function applyRuntimeDatabaseEnv(env = process.env, filePath = path.join(process.cwd(), ".env")) {
+  if (env.DATABASE_URL) return false
+  const dotenvValue = readDotenvValue("DATABASE_URL", filePath, env)
+  if (!dotenvValue) return false
+  env.DATABASE_URL = dotenvValue
+  return true
+}
+
 const REQUIRED_WORKFLOW_ASSURANCE_TABLES = [
   "workflow_assurance_check_definitions",
   "workflow_assurance_check_runs",
@@ -132,6 +172,8 @@ async function queryRuntimeDatabase(prisma) {
 }
 
 async function checkRuntimeDatabase() {
+  applyRuntimeDatabaseEnv()
+
   let PrismaClient
   try {
     ;({ PrismaClient } = require("@prisma/client"))
@@ -231,7 +273,10 @@ if (require.main === module) {
 module.exports = {
   REQUIRED_WORKFLOW_ASSURANCE_MIGRATIONS,
   REQUIRED_WORKFLOW_ASSURANCE_TABLES,
+  applyRuntimeDatabaseEnv,
   checkRuntimeDatabase,
+  expandEnvReferences,
+  readDotenvValue,
   evaluateRuntimeTablePresence,
   exitCodeForReport,
   parseArgs,

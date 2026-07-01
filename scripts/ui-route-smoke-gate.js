@@ -40,6 +40,76 @@ const DEFAULT_ROUTES = [
     viewports: ["tablet", "desktop"],
   },
   {
+    id: "payroll-attendance",
+    path: "/en/dashboard/payroll/attendance",
+    surface: "Payroll payment and attendance readiness",
+    requiresAuth: true,
+    viewports: ["tablet", "desktop"],
+  },
+  {
+    id: "payroll-compensation",
+    path: "/en/dashboard/payroll/compensation",
+    surface: "Payroll compensation readiness",
+    requiresAuth: true,
+    viewports: ["tablet", "desktop"],
+  },
+  {
+    id: "payroll-contracts",
+    path: "/en/dashboard/payroll/contracts",
+    surface: "Payroll contract lifecycle",
+    requiresAuth: true,
+    viewports: ["tablet", "desktop"],
+  },
+  {
+    id: "payroll-employees",
+    path: "/en/dashboard/payroll/employees",
+    surface: "Payroll employee source data",
+    requiresAuth: true,
+    viewports: ["tablet", "desktop"],
+  },
+  {
+    id: "payroll-declarations",
+    path: "/en/dashboard/payroll/declarations",
+    surface: "Payroll declaration evidence workbench",
+    requiresAuth: true,
+    viewports: ["tablet", "desktop"],
+  },
+  {
+    id: "payroll-payments",
+    path: "/en/dashboard/payroll/payments",
+    surface: "Payroll payment reconciliation",
+    requiresAuth: true,
+    viewports: ["tablet", "desktop"],
+  },
+  {
+    id: "payroll-runs",
+    path: "/en/dashboard/payroll/runs",
+    surface: "Payroll run lifecycle workbench",
+    requiresAuth: true,
+    viewports: ["tablet", "desktop"],
+  },
+  {
+    id: "payroll-payslips",
+    path: "/en/dashboard/payroll/payslips",
+    surface: "Payroll payslip self-service",
+    requiresAuth: true,
+    viewports: ["tablet", "desktop"],
+  },
+  {
+    id: "payroll-register",
+    path: "/en/dashboard/payroll/register",
+    surface: "Payroll register tie-out",
+    requiresAuth: true,
+    viewports: ["tablet", "desktop"],
+  },
+  {
+    id: "payroll-setup",
+    path: "/en/dashboard/payroll/setup",
+    surface: "Payroll setup control plane",
+    requiresAuth: true,
+    viewports: ["tablet", "desktop"],
+  },
+  {
     id: "inventory-items",
     path: "/en/dashboard/inventory/items",
     surface: "Inventory items",
@@ -78,6 +148,7 @@ function parseArgs(argv) {
     mode: "report",
     out: path.join(process.cwd(), "what-next", "ui-ux", `ui-route-smoke-${today}.json`),
     screenshotsDir: path.join(process.cwd(), "what-next", "ui-ux", "screenshots", today),
+    storageState: process.env.PLAYWRIGHT_STORAGE_STATE ? path.resolve(process.env.PLAYWRIGHT_STORAGE_STATE) : null,
     timeoutMs: 15000,
     requireScreenshots: false,
     routeIds: null,
@@ -90,6 +161,7 @@ function parseArgs(argv) {
     else if (arg === "--mode") args.mode = argv[++index]
     else if (arg === "--out") args.out = path.resolve(argv[++index])
     else if (arg === "--screenshots-dir") args.screenshotsDir = path.resolve(argv[++index])
+    else if (arg === "--storage-state") args.storageState = path.resolve(argv[++index])
     else if (arg === "--timeout-ms") args.timeoutMs = Number.parseInt(argv[++index], 10)
     else if (arg === "--require-screenshots") args.requireScreenshots = true
     else if (arg === "--route") {
@@ -123,10 +195,13 @@ Options:
   --route id               Limit the run to one route id. Can be repeated.
   --require-screenshots    Fail when Playwright is unavailable or screenshot capture fails.
   --screenshots-dir dir    Directory for screenshots when Playwright is installed.
+  --storage-state file     Playwright storage state for authenticated route screenshots.
 
-The gate always checks HTTP reachability. If the optional playwright package is
-installed, it also captures desktop/tablet/mobile screenshots for the selected
-high-value routes.
+The gate checks HTTP reachability for public and unauthenticated routes. If the
+optional playwright package is installed, it also captures desktop/tablet/mobile
+screenshots for the selected high-value routes. Authenticated route screenshots
+can reuse a local saved storage state; when supplied with required screenshots,
+protected routes are validated in the browser and fail if they redirect to login.
 `)
 }
 
@@ -152,6 +227,16 @@ async function withTimeout(timeoutMs, operation) {
 async function checkHttp(args, route) {
   const startedAt = Date.now()
   const url = routeUrl(args.baseUrl, route.path)
+
+  if (route.requiresAuth && args.storageState && args.requireScreenshots) {
+    return {
+      ok: true,
+      status: "browser-auth",
+      finalUrl: url,
+      durationMs: Date.now() - startedAt,
+      reason: "protected route validated with Playwright storage state",
+    }
+  }
 
   try {
     const response = await withTimeout(args.timeoutMs, (signal) =>
@@ -187,11 +272,24 @@ async function checkHttp(args, route) {
 }
 
 function loadPlaywright(root) {
+  for (const packageName of ["playwright", "@playwright/test"]) {
+    try {
+      const modulePath = require.resolve(packageName, { paths: [root] })
+      const mod = require(modulePath)
+      if (mod.chromium) return mod
+    } catch {
+      // Try the next supported Playwright package name.
+    }
+  }
+  return null
+}
+
+function isAuthRedirect(url) {
   try {
-    const modulePath = require.resolve("playwright", { paths: [root] })
-    return require(modulePath)
+    const pathname = new URL(url).pathname.toLowerCase()
+    return pathname.endsWith("/login") || pathname.includes("/login/")
   } catch {
-    return null
+    return false
   }
 }
 
@@ -221,21 +319,32 @@ async function captureScreenshots(args, routes, playwright) {
     for (const route of routes) {
       for (const viewportName of route.viewports) {
         const viewport = VIEWPORTS[viewportName]
-        const page = await browser.newPage({ viewport })
+        const context = await browser.newContext({
+          viewport,
+          ...(args.storageState ? { storageState: args.storageState } : {}),
+        })
+        const page = await context.newPage()
         const fileName = `${route.id}-${viewportName}.png`
         const filePath = path.join(args.screenshotsDir, fileName)
 
         try {
           await page.goto(routeUrl(args.baseUrl, route.path), {
-            waitUntil: "networkidle",
+            waitUntil: "domcontentloaded",
             timeout: args.timeoutMs,
           })
+          const finalUrl = page.url()
+          const authRedirected = route.requiresAuth && isAuthRedirect(finalUrl)
+          if (args.storageState && authRedirected) {
+            throw new Error(`authenticated route redirected to ${finalUrl}`)
+          }
           await page.screenshot({ path: filePath, fullPage: true })
           captures.push({
             routeId: route.id,
             viewport: viewportName,
             ok: true,
             file: path.relative(args.root, filePath).replace(/\\/g, "/"),
+            finalUrl,
+            authenticated: route.requiresAuth ? !authRedirected : null,
           })
         } catch (error) {
           captures.push({
@@ -246,7 +355,7 @@ async function captureScreenshots(args, routes, playwright) {
             error: error instanceof Error ? error.message : String(error),
           })
         } finally {
-          await page.close().catch(() => {})
+          await context.close().catch(() => {})
         }
       }
     }
@@ -272,6 +381,9 @@ async function main() {
   if (routes.length === 0) {
     throw new Error("No routes selected. Use one of: " + DEFAULT_ROUTES.map((route) => route.id).join(", "))
   }
+  if (args.storageState && !fs.existsSync(args.storageState)) {
+    throw new Error(`Storage state file not found: ${args.storageState}`)
+  }
 
   const httpResults = []
   for (const route of routes) {
@@ -294,6 +406,10 @@ async function main() {
     ok,
     routeCount: routes.length,
     screenshotTool: screenshots.available ? "playwright" : "unavailable",
+    auth: {
+      storageState: args.storageState ? path.relative(args.root, args.storageState).replace(/\\/g, "/") : null,
+      protectedRouteScreenshotMode: args.storageState ? "saved-storage-state" : "unauthenticated-or-redirect-safe",
+    },
     routes: httpResults,
     screenshots,
   }

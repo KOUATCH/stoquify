@@ -321,6 +321,8 @@ model Organization {
   payrollDeclarationEvidence              PayrollDeclarationEvidence[]
   payrollPaymentBatches                   PayrollPaymentBatch[]
   payrollPaymentAllocations               PayrollPaymentAllocation[]
+  payrollEmployeeBalanceCases             PayrollEmployeeBalanceCase[]
+  payrollEmployeeBalanceEvents            PayrollEmployeeBalanceEvent[]
   paymentRails                            PaymentRail[]
   providerAccounts                        ProviderAccount[]
   settlementAccounts                      SettlementAccount[]
@@ -1614,6 +1616,30 @@ enum PayrollPaymentBatchStatus {
   CANCELLED
 }
 
+enum PayrollEmployeeBalanceCaseType {
+  RECEIVABLE
+  REFUND
+}
+
+enum PayrollEmployeeBalanceCaseStatus {
+  OPEN
+  PARTIALLY_SETTLED
+  SETTLED
+  CANCELLED
+  WRITTEN_OFF
+}
+
+enum PayrollEmployeeBalanceEventType {
+  OPEN
+  SETTLE_CASH
+  SETTLE_BANK
+  SETTLE_MOBILE_MONEY
+  SETTLE_DEDUCTION
+  REFUND_PAYMENT
+  WRITE_OFF
+  CANCEL
+}
+
 model PayrollEmployee {
   id String @id @default(cuid())
 
@@ -1657,6 +1683,7 @@ model PayrollEmployee {
   runLines                         PayrollRunLine[]
   payslips                         PayrollPayslip[]
   paymentAllocations               PayrollPaymentAllocation[]
+  balanceCases                     PayrollEmployeeBalanceCase[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -2038,10 +2065,11 @@ model PayrollRun {
   metadata  Json?
   deletedAt DateTime?
 
-  lines          PayrollRunLine[]
-  payslips       PayrollPayslip[]
-  declarations   PayrollDeclaration[]
-  paymentBatches PayrollPaymentBatch[]
+  lines                PayrollRunLine[]
+  payslips             PayrollPayslip[]
+  declarations         PayrollDeclaration[]
+  paymentBatches       PayrollPaymentBatch[]
+  employeeBalanceCases PayrollEmployeeBalanceCase[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -2138,6 +2166,7 @@ model PayrollPayslip {
 
   lines              PayrollPayslipLine[]
   paymentAllocations PayrollPaymentAllocation[]
+  balanceCases       PayrollEmployeeBalanceCase[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -2336,6 +2365,99 @@ model PayrollPaymentAllocation {
   @@index([organizationId, employeeId])
   @@index([payslipId])
   @@map("payroll_payment_allocations")
+}
+
+model PayrollEmployeeBalanceCase {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  employeeId String
+  employee   PayrollEmployee @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  payrollRunId String
+  payrollRun   PayrollRun @relation(fields: [payrollRunId], references: [id], onDelete: Restrict)
+
+  payslipId String?
+  payslip   PayrollPayslip? @relation(fields: [payslipId], references: [id], onDelete: SetNull)
+
+  caseNumber String
+  caseType   PayrollEmployeeBalanceCaseType
+  status     PayrollEmployeeBalanceCaseStatus @default(OPEN)
+
+  amount                 Decimal @db.Decimal(14, 2)
+  settledAmount          Decimal @default(0) @db.Decimal(14, 2)
+  outstandingAmount      Decimal @db.Decimal(14, 2)
+  sourceNetPayableAmount Decimal @db.Decimal(14, 2)
+  currency               String  @default("XAF")
+
+  reason      String
+  openedAt    DateTime  @default(now())
+  openedById  String
+  settledAt   DateTime?
+  settledById String?
+
+  documentHash String
+  evidenceHash String
+
+  ledgerPostingBatchId   String?
+  journalEntryId         String?
+  accountingSourceLinkId String?
+  openedBusinessEventId  String?
+
+  idempotencyKey String?
+  metadata       Json?
+
+  events PayrollEmployeeBalanceEvent[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([organizationId, caseNumber])
+  @@unique([organizationId, idempotencyKey])
+  @@index([organizationId, employeeId, status])
+  @@index([organizationId, payrollRunId])
+  @@index([payslipId])
+  @@index([ledgerPostingBatchId])
+  @@map("payroll_employee_balance_cases")
+}
+
+model PayrollEmployeeBalanceEvent {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  balanceCaseId String
+  balanceCase   PayrollEmployeeBalanceCase @relation(fields: [balanceCaseId], references: [id], onDelete: Cascade)
+
+  eventType PayrollEmployeeBalanceEventType
+  amount    Decimal                         @db.Decimal(14, 2)
+  currency  String                          @default("XAF")
+  eventDate DateTime
+  actorId   String
+  method    PaymentMethod?
+
+  documentHash String?
+  evidenceHash String
+
+  ledgerPostingBatchId   String?
+  journalEntryId         String?
+  accountingSourceLinkId String?
+  businessEventId        String?
+
+  idempotencyKey String
+  metadata       Json?
+
+  createdAt DateTime @default(now())
+
+  @@unique([organizationId, idempotencyKey])
+  @@unique([organizationId, balanceCaseId, eventType, idempotencyKey])
+  @@index([organizationId, balanceCaseId, createdAt])
+  @@index([organizationId, eventType, createdAt])
+  @@index([ledgerPostingBatchId])
+  @@map("payroll_employee_balance_events")
 }
 
 // ============================================================
@@ -4152,6 +4274,8 @@ model PaymentReconciliationInboxItem {
   attempts      Int       @default(0)
   lastError     String?
   nextAttemptAt DateTime?
+  leasedBy      String?
+  leaseToken    String?
   processedAt   DateTime?
   correlationId String?
 
@@ -4160,6 +4284,8 @@ model PaymentReconciliationInboxItem {
 
   @@unique([organizationId, source, idempotencyKey])
   @@index([organizationId, status, nextAttemptAt])
+  @@index([organizationId, status, leasedBy])
+  @@index([organizationId, leaseToken])
   @@index([organizationId, source, externalId])
   @@index([providerAccountId, status])
   @@index([correlationId])
@@ -5303,6 +5429,8 @@ enum AccountingSourceType {
   STOCK_TRANSFER
   PAYROLL_RUN
   PAYROLL_PAYMENT
+  PAYROLL_EMPLOYEE_BALANCE
+  PAYROLL_EMPLOYEE_BALANCE_SETTLEMENT
   PRODUCTION_BATCH
   PAYMENT_RECONCILIATION
   PAYMENT_SUSPENSE
@@ -5326,6 +5454,8 @@ enum AccountingPostingPurpose {
   STOCK_TRANSFER
   PAYROLL_RUN
   PAYROLL_PAYMENT
+  PAYROLL_EMPLOYEE_RECEIVABLE
+  PAYROLL_EMPLOYEE_BALANCE_SETTLEMENT
   PRODUCTION_BATCH
   PAYMENT_RECONCILIATION
   SUSPENSE_RECLASSIFICATION

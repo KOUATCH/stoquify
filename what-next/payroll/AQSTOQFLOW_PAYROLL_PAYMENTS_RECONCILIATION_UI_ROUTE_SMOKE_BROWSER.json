@@ -1,0 +1,54 @@
+{
+  "checkedAt": "2026-06-29T07:48:47.749Z",
+  "baseUrl": "http://127.0.0.1:3001",
+  "mode": "fail",
+  "ok": true,
+  "routeCount": 1,
+  "screenshotTool": "playwright",
+  "auth": {
+    "storageState": "playwright/.auth/payroll.json",
+    "protectedRouteScreenshotMode": "saved-storage-state"
+  },
+  "routes": [
+    {
+      "route": {
+        "id": "payroll-payments",
+        "path": "/en/dashboard/payroll/payments",
+        "surface": "Payroll payment reconciliation",
+        "requiresAuth": true,
+        "viewports": [
+          "tablet",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": "browser-auth",
+        "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/payments",
+        "durationMs": 0,
+        "reason": "protected route validated with Playwright storage state"
+      }
+    }
+  ],
+  "screenshots": {
+    "available": true,
+    "captures": [
+      {
+        "routeId": "payroll-payments",
+        "viewport": "tablet",
+        "ok": true,
+        "file": "what-next/payroll/screenshots/payroll-payments-reconciliation-smoke/payroll-payments-tablet.png",
+        "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/payments",
+        "authenticated": true
+      },
+      {
+        "routeId": "payroll-payments",
+        "viewport": "desktop",
+        "ok": true,
+        "file": "what-next/payroll/screenshots/payroll-payments-reconciliation-smoke/payroll-payments-desktop.png",
+        "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/payments",
+        "authenticated": true
+      }
+    ]
+  }
+}

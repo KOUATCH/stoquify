@@ -17,7 +17,14 @@ import {
   getModuleCatalogEntry,
   normalizeRequestedModuleSlugs,
 } from "../modules/module-catalog.service";
+import { getCountryPack } from "../regulatory/country-packs/registry";
 import { resolveRegulatoryParameter } from "../regulatory/country-packs/resolve";
+import { validatePayrollCountryPackCalculationFixtures } from "./payroll-country-pack-fixture-runner";
+import {
+  buildPayrollStatutoryScenarioCoverageSummary,
+  type PayrollStatutoryScenarioCoverageSummary,
+  type PayrollStatutoryScenarioReviewEvidenceSummary,
+} from "./payroll-statutory-scenario-coverage.service";
 
 type DbClient = typeof db | Prisma.TransactionClient;
 
@@ -33,6 +40,27 @@ export type PayrollSetupReadinessIssue = {
   severity: PayrollSetupIssueSeverity;
   message: string;
   evidence?: Record<string, string | number | boolean | null>;
+};
+
+export type PayrollSetupCalculationFixtureStatus =
+  | "NOT_CHECKED"
+  | "READY"
+  | "BLOCKED_BY_COUNTRY_PACK_REVIEW"
+  | "NO_EXECUTABLE_SCENARIOS"
+  | "FAILED"
+  | "COUNTRY_PACK_UNAVAILABLE";
+
+export type PayrollSetupCalculationFixtureEvidence = {
+  status: PayrollSetupCalculationFixtureStatus;
+  packVersion: string | null;
+  executableScenarioCount: number;
+  passedScenarioCount: number;
+  failedScenarioCount: number;
+  issueCount: number;
+  issueCodes: string[];
+  fixtureIds: string[];
+  reviewEvidence: PayrollStatutoryScenarioReviewEvidenceSummary | null;
+  scenarioCoverage: PayrollStatutoryScenarioCoverageSummary | null;
 };
 
 export type PayrollSetupReadinessInput = {
@@ -82,9 +110,11 @@ export type PayrollSetupReadinessResult = {
     countryPack: {
       countryCode: string | null;
       checked: boolean;
+      requiredParameterPaths: string[];
       capabilityStatuses: string[];
       packVersions: string[];
       resolutionHashes: string[];
+      calculationFixtures: PayrollSetupCalculationFixtureEvidence;
     };
     employeeUserMapping: {
       sourceMode: PayrollEmployeeSourceMode;
@@ -133,6 +163,12 @@ const PAYROLL_ACCOUNT_MAPPING_SPECS = [
     normalBalance: ChartAccountNormalBalance.CREDIT,
   },
   {
+    key: "EMPLOYEE_RECEIVABLES",
+    label: "employee receivables",
+    type: ChartAccountType.ASSET,
+    normalBalance: ChartAccountNormalBalance.DEBIT,
+  },
+  {
     key: "PAYROLL_WITHHOLDING_PAYABLE",
     label: "payroll withholding payable",
     type: ChartAccountType.LIABILITY,
@@ -157,6 +193,22 @@ export const REQUIRED_PAYROLL_ACCOUNT_MAPPING_KEYS =
   PAYROLL_ACCOUNT_MAPPING_SPECS.map((item) => item.key);
 export const REQUIRED_PAYROLL_POSTING_RULE_CODES =
   DEFAULT_PAYROLL_POSTING_RULES.map((rule) => rule.code);
+export const REQUIRED_PAYROLL_COUNTRY_PACK_PARAMETER_PATHS = [
+  "payroll.cnps.pensionRatesBps",
+  "payroll.cnps.familyAllowanceRatesBps",
+  "payroll.cnps.occupationalRiskRatesBps",
+  "payroll.cnps.employerRules",
+  "payroll.irpp.incomeTaxRules",
+  "payroll.compensation.allowances",
+  "payroll.compensation.benefits",
+  "payroll.attendance.leave",
+  "payroll.attendance.overtime",
+] as const;
+
+const PRODUCTION_PAYROLL_COUNTRY_PACK_CAPABILITY_STATUSES = new Set([
+  "SUPPORTED",
+  "SUPPORTED_CERTIFIED",
+]);
 
 function normalizeDate(value: Date | string) {
   const parsed =
@@ -189,6 +241,24 @@ function uniqueValues(values: Array<string | null | undefined>) {
   return Array.from(
     new Set(values.filter((value): value is string => Boolean(value))),
   );
+}
+
+function emptyCalculationFixtureEvidence(
+  status: PayrollSetupCalculationFixtureStatus,
+  packVersion: string | null = null,
+): PayrollSetupCalculationFixtureEvidence {
+  return {
+    status,
+    packVersion,
+    executableScenarioCount: 0,
+    passedScenarioCount: 0,
+    failedScenarioCount: 0,
+    issueCount: 0,
+    issueCodes: [],
+    fixtureIds: [],
+    reviewEvidence: null,
+    scenarioCoverage: null,
+  };
 }
 
 export function redactPayrollSetupRef(value?: string | null) {
@@ -338,9 +408,13 @@ export async function getPayrollSetupReadiness(
         countryPack: {
           countryCode: normalizedInput.countryCode,
           checked: false,
+          requiredParameterPaths: [
+            ...REQUIRED_PAYROLL_COUNTRY_PACK_PARAMETER_PATHS,
+          ],
           capabilityStatuses: [],
           packVersions: [],
           resolutionHashes: [],
+          calculationFixtures: emptyCalculationFixtureEvidence("NOT_CHECKED"),
         },
         employeeUserMapping: {
           sourceMode: employeeSourceMode,
@@ -714,12 +788,7 @@ export async function getPayrollSetupReadiness(
       message: "Payroll setup readiness requires a country code.",
     });
   } else {
-    for (const parameterPath of [
-      "payroll.cnps.pensionRatesBps",
-      "payroll.cnps.familyAllowanceRatesBps",
-      "payroll.cnps.occupationalRiskRatesBps",
-      "payroll.cnps.employerRules",
-    ] as const) {
+    for (const parameterPath of REQUIRED_PAYROLL_COUNTRY_PACK_PARAMETER_PATHS) {
       try {
         const resolution = resolveRegulatoryParameter(parameterPath, {
           countryCode,
@@ -759,6 +828,116 @@ export async function getPayrollSetupReadiness(
     }
   }
 
+  const uniqueCountryPackVersions = uniqueValues(countryPackVersions);
+  const countryPackVersion = uniqueCountryPackVersions[0] ?? null;
+  const countryPackCapabilitiesProductionReady =
+    countryPackStatuses.length ===
+      REQUIRED_PAYROLL_COUNTRY_PACK_PARAMETER_PATHS.length &&
+    countryPackStatuses.every((status) =>
+      PRODUCTION_PAYROLL_COUNTRY_PACK_CAPABILITY_STATUSES.has(status),
+    );
+  let calculationFixtures = emptyCalculationFixtureEvidence(
+    countryCode ? "COUNTRY_PACK_UNAVAILABLE" : "NOT_CHECKED",
+    countryPackVersion,
+  );
+
+  if (countryCode && countryPackVersion) {
+    const countryPack = getCountryPack(countryCode, countryPackVersion);
+    if (!countryPack) {
+      addIssue(blockers, {
+        code: "PAYROLL_COUNTRY_PACK_CALCULATION_FIXTURE_PACK_UNAVAILABLE",
+        message:
+          "Payroll setup could not load the active country pack for calculation fixture evidence.",
+        evidence: { countryCode, packVersion: countryPackVersion },
+      });
+    } else {
+      const fixtureValidation =
+        validatePayrollCountryPackCalculationFixtures(countryPack);
+      const scenarioCoverage = buildPayrollStatutoryScenarioCoverageSummary(
+        countryPack,
+        fixtureValidation,
+      );
+      const passedScenarioCount = fixtureValidation.runs.filter(
+        (run) => run.status === "PASSED",
+      ).length;
+      const failedScenarioCount = fixtureValidation.runs.filter(
+        (run) => run.status === "FAILED",
+      ).length;
+      const issueCodes = uniqueValues(
+        fixtureValidation.issues.map((issue) => issue.code),
+      );
+      const fixtureIds = uniqueValues([
+        ...fixtureValidation.runs.map((run) => run.fixtureId),
+        ...fixtureValidation.issues.map((issue) => issue.fixtureId),
+      ]);
+      let fixtureStatus: PayrollSetupCalculationFixtureStatus = "READY";
+
+      if (!fixtureValidation.valid) {
+        fixtureStatus = "FAILED";
+        addIssue(blockers, {
+          code: "PAYROLL_COUNTRY_PACK_CALCULATION_FIXTURES_FAILED",
+          message:
+            "Executable payroll country-pack calculation fixtures must pass before full production readiness.",
+          evidence: {
+            packVersion: countryPackVersion,
+            executableScenarioCount: fixtureValidation.runs.length,
+            issueCount: fixtureValidation.issues.length,
+            issueCodes: issueCodes.join(", ") || null,
+          },
+        });
+      } else if (fixtureValidation.runs.length === 0) {
+        fixtureStatus = countryPackCapabilitiesProductionReady
+          ? "NO_EXECUTABLE_SCENARIOS"
+          : "BLOCKED_BY_COUNTRY_PACK_REVIEW";
+        if (countryPackCapabilitiesProductionReady) {
+          addIssue(blockers, {
+            code: "PAYROLL_COUNTRY_PACK_CALCULATION_FIXTURES_MISSING",
+            message:
+              "Production-supported payroll country-pack capabilities require executable calculation scenario fixtures.",
+            evidence: { packVersion: countryPackVersion },
+          });
+        }
+      } else if (!countryPackCapabilitiesProductionReady) {
+        fixtureStatus = "BLOCKED_BY_COUNTRY_PACK_REVIEW";
+      }
+
+      if (scenarioCoverage.status === "BLOCKED") {
+        addIssue(blockers, {
+          code: "PAYROLL_STATUTORY_SCENARIO_COVERAGE_INCOMPLETE",
+          message:
+            "Full-production payroll requires reviewed executable scenario coverage across statutory, adjustment, correction, allowance, benefit, leave, and overtime families.",
+          evidence: {
+            packVersion: countryPackVersion,
+            readyFamilyCount: scenarioCoverage.readyFamilyCount,
+            requiredFamilyCount: scenarioCoverage.requiredFamilyCount,
+            blockedFamilyCount: scenarioCoverage.blockers.length,
+            missingReviewEvidenceCount:
+              scenarioCoverage.reviewEvidence.missingCount,
+            reviewEvidenceSourceHashes:
+              scenarioCoverage.reviewEvidence.sourceEvidenceHashes.join(", ") ||
+              null,
+            blockerCodes:
+              uniqueValues(
+                scenarioCoverage.blockers.map((item) => item.code),
+              ).join(", ") || null,
+          },
+        });
+      }
+
+      calculationFixtures = {
+        status: fixtureStatus,
+        packVersion: countryPackVersion,
+        executableScenarioCount: fixtureValidation.runs.length,
+        passedScenarioCount,
+        failedScenarioCount,
+        issueCount: fixtureValidation.issues.length,
+        issueCodes,
+        fixtureIds,
+        reviewEvidence: scenarioCoverage.reviewEvidence,
+        scenarioCoverage,
+      };
+    }
+  }
   if (employeeSourceMode !== "users") {
     addIssue(blockers, {
       code: "PAYROLL_EMPLOYEE_SOURCE_ADAPTER_NOT_IMPLEMENTED",
@@ -884,9 +1063,13 @@ export async function getPayrollSetupReadiness(
     countryPack: {
       countryCode,
       checked: Boolean(countryCode),
+      requiredParameterPaths: [
+        ...REQUIRED_PAYROLL_COUNTRY_PACK_PARAMETER_PATHS,
+      ],
       capabilityStatuses: uniqueValues(countryPackStatuses),
-      packVersions: uniqueValues(countryPackVersions),
+      packVersions: uniqueCountryPackVersions,
       resolutionHashes: uniqueValues(countryPackResolutionHashes),
+      calculationFixtures,
     },
     employeeUserMapping: {
       sourceMode: employeeSourceMode,

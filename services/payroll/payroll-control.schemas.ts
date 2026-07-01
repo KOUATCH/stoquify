@@ -1,9 +1,17 @@
-import { PayrollFrequency, PayrollRunType, PaymentMethod } from "@prisma/client"
-import { z } from "zod"
+import {
+  PayrollFrequency,
+  PayrollRunType,
+  PaymentMethod,
+} from "@prisma/client";
+import { z } from "zod";
 
-const idSchema = z.string().trim().min(1)
-const dateInputSchema = z.union([z.date(), z.string().trim().min(1)])
-const decimalInputSchema = z.union([z.string().trim().min(1), z.number(), z.bigint()])
+const idSchema = z.string().trim().min(1);
+const dateInputSchema = z.union([z.date(), z.string().trim().min(1)]);
+const decimalInputSchema = z.union([
+  z.string().trim().min(1),
+  z.number(),
+  z.bigint(),
+]);
 
 export const createPayrollPeriodInputSchema = z.object({
   organizationId: idSchema,
@@ -16,7 +24,7 @@ export const createPayrollPeriodInputSchema = z.object({
   accountingPeriodId: idSchema.optional(),
   actorId: idSchema.optional(),
   metadata: z.unknown().optional(),
-})
+});
 
 export const freezeAttendanceSnapshotInputSchema = z.object({
   organizationId: idSchema,
@@ -31,7 +39,7 @@ export const freezeAttendanceSnapshotInputSchema = z.object({
   frozenById: idSchema,
   idempotencyKey: idSchema.optional(),
   metadata: z.unknown().optional(),
-})
+});
 
 export const calculatePayrollRunInputSchema = z.object({
   organizationId: idSchema,
@@ -39,10 +47,11 @@ export const calculatePayrollRunInputSchema = z.object({
   preparedById: idSchema,
   idempotencyKey: idSchema,
   runType: z.nativeEnum(PayrollRunType).default(PayrollRunType.ORDINARY),
+  originalRunId: idSchema.optional(),
   employeeIds: z.array(idSchema).min(1).optional(),
   runDate: dateInputSchema.optional(),
   metadata: z.unknown().optional(),
-})
+});
 
 export const approveAndPostPayrollRunInputSchema = z.object({
   organizationId: idSchema,
@@ -54,7 +63,7 @@ export const approveAndPostPayrollRunInputSchema = z.object({
   idempotencyKey: idSchema.optional(),
   documentHash: z.string().trim().min(1).optional(),
   metadata: z.unknown().optional(),
-})
+});
 
 export const releasePayrollPaymentBatchInputSchema = z.object({
   organizationId: idSchema,
@@ -81,7 +90,7 @@ export const releasePayrollPaymentBatchInputSchema = z.object({
   now: dateInputSchema.optional(),
   notes: z.string().trim().optional(),
   metadata: z.unknown().optional(),
-})
+});
 
 export const preparePayrollDeclarationsInputSchema = z.object({
   organizationId: idSchema,
@@ -90,11 +99,23 @@ export const preparePayrollDeclarationsInputSchema = z.object({
   declarationTypes: z.array(z.string().trim().min(1)).optional(),
   idempotencyKey: idSchema.optional(),
   metadata: z.unknown().optional(),
-})
+});
 
-export type CreatePayrollPeriodInput = z.input<typeof createPayrollPeriodInputSchema>
-export type FreezeAttendanceSnapshotInput = z.input<typeof freezeAttendanceSnapshotInputSchema>
-export type CalculatePayrollRunInput = z.input<typeof calculatePayrollRunInputSchema>
-export type ApproveAndPostPayrollRunInput = z.input<typeof approveAndPostPayrollRunInputSchema>
-export type ReleasePayrollPaymentBatchInput = z.input<typeof releasePayrollPaymentBatchInputSchema>
-export type PreparePayrollDeclarationsInput = z.input<typeof preparePayrollDeclarationsInputSchema>
+export type CreatePayrollPeriodInput = z.input<
+  typeof createPayrollPeriodInputSchema
+>;
+export type FreezeAttendanceSnapshotInput = z.input<
+  typeof freezeAttendanceSnapshotInputSchema
+>;
+export type CalculatePayrollRunInput = z.input<
+  typeof calculatePayrollRunInputSchema
+>;
+export type ApproveAndPostPayrollRunInput = z.input<
+  typeof approveAndPostPayrollRunInputSchema
+>;
+export type ReleasePayrollPaymentBatchInput = z.input<
+  typeof releasePayrollPaymentBatchInputSchema
+>;
+export type PreparePayrollDeclarationsInput = z.input<
+  typeof preparePayrollDeclarationsInputSchema
+>;

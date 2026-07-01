@@ -23,7 +23,7 @@ jest.mock("@/prisma/db", () => ({
   db: {
     $transaction: jest.fn(),
     providerAccount: { findFirst: jest.fn() },
-    reconciliationRun: { create: jest.fn(), update: jest.fn() },
+    reconciliationRun: { findFirst: jest.fn(), create: jest.fn(), update: jest.fn() },
     paymentTransaction: { findMany: jest.fn() },
     providerEvent: { findMany: jest.fn() },
     statementLine: { findMany: jest.fn() },
@@ -37,7 +37,7 @@ jest.mock("@/prisma/db", () => ({
 const mockedDb = db as unknown as {
   $transaction: jest.Mock
   providerAccount: { findFirst: jest.Mock }
-  reconciliationRun: { create: jest.Mock; update: jest.Mock }
+  reconciliationRun: { findFirst: jest.Mock; create: jest.Mock; update: jest.Mock }
   paymentTransaction: { findMany: jest.Mock }
   providerEvent: { findMany: jest.Mock }
   statementLine: { findMany: jest.Mock }
@@ -60,6 +60,7 @@ describe("durable payment reconciliation run service", () => {
       paymentRailId: "rail-1",
       currencyCode: "XAF",
     })
+    mockedDb.reconciliationRun.findFirst.mockResolvedValue(null)
     mockedDb.reconciliationRun.create.mockResolvedValue({ id: "run-1" })
     mockedDb.reconciliationRun.update.mockResolvedValue({ id: "run-1" })
     mockedDb.matchRecord.create.mockResolvedValue({ id: "match-1" })
@@ -147,6 +148,59 @@ describe("durable payment reconciliation run service", () => {
         }),
       }),
     )
+  })
+
+  it("blocks a duplicate same-day reconciliation run before creating new rows", async () => {
+    mockedDb.reconciliationRun.findFirst.mockResolvedValue({
+      id: "existing-run-1",
+      status: ReconciliationRunStatus.READY_FOR_SIGNOFF,
+      correlationId: "existing-corr",
+    })
+
+    await expect(
+      runPaymentReconciliation({
+        organizationId: "org-1",
+        providerAccountId: "provider-account-1",
+        businessDate: new Date("2026-06-14T09:00:00Z"),
+        correlationId: "corr-duplicate",
+      }),
+    ).rejects.toThrow("already exists")
+
+    expect(mockedDb.reconciliationRun.create).not.toHaveBeenCalled()
+    expect(mockedDb.matchRecord.create).not.toHaveBeenCalled()
+  })
+
+  it("blocks concurrent same-day reconciliation when a run is already in progress", async () => {
+    mockedDb.reconciliationRun.findFirst.mockResolvedValue({
+      id: "running-run-1",
+      status: ReconciliationRunStatus.RUNNING,
+      correlationId: "running-corr",
+    })
+
+    await expect(
+      runPaymentReconciliation({
+        organizationId: "org-1",
+        providerAccountId: "provider-account-1",
+        businessDate: new Date("2026-06-14T09:00:00Z"),
+      }),
+    ).rejects.toThrow("already in progress")
+
+    expect(mockedDb.reconciliationRun.create).not.toHaveBeenCalled()
+  })
+
+  it("converts unique-key races into a controlled duplicate-run conflict", async () => {
+    mockedDb.reconciliationRun.create.mockRejectedValueOnce({ code: "P2002" })
+    mockedDb.paymentTransaction.findMany.mockResolvedValue([])
+    mockedDb.providerEvent.findMany.mockResolvedValue([])
+    mockedDb.statementLine.findMany.mockResolvedValue([])
+
+    await expect(
+      runPaymentReconciliation({
+        organizationId: "org-1",
+        providerAccountId: "provider-account-1",
+        businessDate: new Date("2026-06-14T09:00:00Z"),
+      }),
+    ).rejects.toThrow("already exists")
   })
 
   it("creates an amount-mismatch exception instead of auto-matching conflicting evidence", async () => {

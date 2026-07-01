@@ -2,7 +2,7 @@ import { pickLocale } from "@/i18n/routing"
 import NotificationsSettingsClient from "./NotificationsSettingsClient"
 
 export const metadata = {
-  title: "Notification Settings | StockFlow",
+  title: "Notification Settings | Stoquify",
   description: "Review in-app notification provider state and sound preference.",
 }
 

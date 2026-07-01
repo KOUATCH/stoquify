@@ -788,7 +788,7 @@ export default function ModernPurchaseOrderDetailPage({
                                         <div className="mt-3 space-y-2 rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(24,38,45,0.58)] p-3">
                                           {line.item?.trackBatches && (
                                             <label className="block text-xs font-medium text-[var(--dash-text-soft)]">
-                                              Batch number
+                                              Supplier batch / lot (optional)
                                               <input
                                                 type="text"
                                                 value={receiveItems[line.id]?.batchNumber || ""}
@@ -804,8 +804,11 @@ export default function ModernPurchaseOrderDetailPage({
                                                   }))
                                                 }
                                                 className="dashboard-control mt-1 w-full rounded-lg px-2 py-1 text-xs"
-                                                placeholder="Batch / lot number"
+                                                placeholder="Auto-generated from receipt if blank"
                                               />
+                                              <span className="mt-1 block text-[0.68rem] font-normal text-[var(--dash-text-faint)]">
+                                                Leave blank when the supplier did not provide a lot number.
+                                              </span>
                                             </label>
                                           )}
                                           {line.item?.trackExpiry && (

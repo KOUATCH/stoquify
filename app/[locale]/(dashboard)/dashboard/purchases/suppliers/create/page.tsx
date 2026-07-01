@@ -4,7 +4,7 @@ import { localizePath, pickLocale } from "@/i18n/routing"
 import { redirect } from "next/navigation"
 
 export const metadata = {
-  title: "Create Supplier | StockFlow",
+  title: "Create Supplier | Stoquify",
   description: "Create a supplier for purchasing, item links, payment terms, and payable workflows.",
 }
 

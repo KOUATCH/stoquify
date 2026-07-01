@@ -459,7 +459,7 @@ function mapEmployeeReadiness(employee: EmployeeReadinessRecord, parsed: z.outpu
       maskedDestination: maskedDestinationFor(employee),
       approvedEvidenceHashPresent: Boolean(approvedEvidence.approvalEvidenceHash),
       paymentDestinationHashPresent: Boolean(employee.paymentDestinationHash),
-      latestChange: change ? mapChange(change as DestinationChangeRecord) : null,
+      latestChange: change ? mapChange({ ...change, employee } as DestinationChangeRecord) : null,
     },
     evidence: {
       contractEvidenceHashes,

@@ -66,13 +66,14 @@ const prepareRegisterExport = protect<unknown, PayrollRegisterExportResult>(
     },
   },
   async (input, ctx) => {
+    const now = new Date()
     const parsed = preparePayrollRegisterExportInputSchema.parse({
       ...asRecord(input),
       organizationId: ctx.orgId,
       actorId: ctx.userId,
       actorPermissions: ctx.permissions,
-      lastAuthAt: new Date(),
-      now: new Date(),
+      lastAuthAt: ctx.freshAuth?.lastAuthAt ?? now,
+      now,
     })
     const result = await preparePayrollRegisterExport(parsed)
     revalidatePayrollRegisterPaths()

@@ -1,12 +1,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import StoquifyLogo from "@/components/global/kit-logo";
 import { localizePath } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 import {
   Calculator,
   CheckCircle2,
-  Command,
   Globe2,
   LockKeyhole,
   Moon,
@@ -162,18 +162,7 @@ export default function AuthLayout({
       <div className="relative z-10 flex min-h-screen flex-col">
         <header className="mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:px-8">
           <Link href={localizedHref("/")} className="group flex min-w-0 items-center gap-3">
-            <span className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#132028] text-white shadow-[0_18px_40px_rgba(19,32,40,0.18)] ring-1 ring-white/25 dark:bg-white/[0.08] dark:ring-white/10">
-              <Command className="h-5 w-5" />
-              <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-[#2dd4bf] shadow-[0_0_0_4px_rgba(45,212,191,0.14)]" />
-            </span>
-            <span className="min-w-0">
-              <span className="block truncate text-base font-black tracking-[0.12em] text-[#132028] dark:text-white">
-                AQSTOQFLOW
-              </span>
-              <span className="block truncate text-[0.68rem] font-bold uppercase tracking-[0.16em] text-[#58707a] dark:text-[#9fb4bb]">
-                {pageCopy.common.brandSubtitle}
-              </span>
-            </span>
+            <StoquifyLogo theme={isDarkTheme ? "dark" : "light"} width={232} height={54} tagline={pageCopy.common.brandSubtitle} />
           </Link>
 
           <div className="flex shrink-0 items-center gap-2">

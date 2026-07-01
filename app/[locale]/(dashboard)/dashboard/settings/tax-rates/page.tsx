@@ -4,7 +4,7 @@ import { localizePath, pickLocale } from "@/i18n/routing"
 import { redirect } from "next/navigation"
 
 export const metadata = {
-  title: "Tax Rates | StockFlow",
+  title: "Tax Rates | Stoquify",
   description: "Manage organization tax rates, item usage, tax types, and active status.",
 }
 

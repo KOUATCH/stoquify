@@ -289,6 +289,8 @@ function buildData(): CashCommandData {
       drawerVariance: 37000,
       drawerAlertCount: 2,
       providerRiskCount: 1,
+      activeEmployeeBalanceCaseCount: 0,
+      employeeBalanceOutstandingAmount: 0,
       actionCountToday: 1,
       staleCount: 0,
       blockedCount: 1,

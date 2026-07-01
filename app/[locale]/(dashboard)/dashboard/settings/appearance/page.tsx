@@ -2,7 +2,7 @@ import { pickLocale } from "@/i18n/routing"
 import AppearanceSettingsClient from "./AppearanceSettingsClient"
 
 export const metadata = {
-  title: "Appearance Settings | StockFlow",
+  title: "Appearance Settings | Stoquify",
   description: "Review and update the active dashboard theme mode.",
 }
 

@@ -100,6 +100,43 @@ function inventoryAnnex(sourceHash = "sha256:inventory-valuation") {
   }
 }
 
+function payrollForecastProof() {
+  return {
+    status: "AUTHORITATIVE",
+    authoritative: true,
+    reasonCode: "PAYROLL_FORECAST_SOURCE_LINKED",
+    message: "Upcoming payroll forecast is backed by payroll, payment, declaration, and ledger proof.",
+    horizonStart: "2026-06-15T00:00:00.000Z",
+    horizonEnd: "2026-06-30T23:59:59.999Z",
+    upcomingNetPayAmount: 125000,
+    upcomingStatutoryLiabilityAmount: 45000,
+    totalUpcomingAmount: 170000,
+    payrollPeriodCount: 1,
+    payrollRunCount: 1,
+    paymentBatchCount: 1,
+    declarationCount: 1,
+    sourceLinkCount: 2,
+    evidenceHashCount: 4,
+    nextPayDate: "2026-06-25T00:00:00.000Z",
+    nextDeclarationDueDate: "2026-06-28T00:00:00.000Z",
+    blockerCodes: [],
+    blockers: [],
+    redactions: [
+      {
+        id: "close-payroll-forecast-person-level-redacted",
+        field: "payroll.personLevelAmounts",
+        reason: "Close assurance exposes aggregate payroll obligations only.",
+        policy: "KONTAVA_SENSITIVE_PAYROLL_EVIDENCE",
+      },
+    ],
+    sourceHash: "sha256:tenant-operating-payroll-forecast",
+    generatedAt: "2026-06-15T12:00:00.000Z",
+    sourceModules: ["payroll", "payments", "accounting", "close"],
+    personLevelAmounts: "redacted",
+    personLevelAmountsRedacted: true,
+  }
+}
+
 function cleanInventoryValuation(sourceHash = "sha256:inventory-valuation") {
   return {
     organizationId: "org-1",
@@ -135,6 +172,7 @@ function closeRun(overrides: Record<string, unknown> = {}) {
     metadata: {
       trustLevel: "T4",
       inventoryValuationAnnex: inventoryAnnex(),
+      payrollFinanceForecastProof: payrollForecastProof(),
       statutoryCertification: {
         systemEvidenceStatus: "SYSTEM_EVIDENCE_ONLY",
         statutoryReadinessStatus: "STATUTORY_BLOCKED",
@@ -202,6 +240,21 @@ function closeRun(overrides: Record<string, unknown> = {}) {
         ownerId: null,
         dueAt: null,
       },
+      {
+        id: "check-payroll-forecast",
+        key: "payroll-finance-forecast-proof",
+        domain: "PAYROLL",
+        status: "PASSED",
+        severity: "INFO",
+        label: "Payroll finance forecast proof",
+        detail: "Aggregate payroll forecast is authoritative.",
+        sourceService: "services/snapshots/tenant-operating-snapshot.service.ts",
+        evidenceCount: 1,
+        blockerReason: null,
+        nextActionHref: "/dashboard/payroll/runs",
+        ownerId: null,
+        dueAt: null,
+      },
     ],
     findings: [],
     evidenceItems: [
@@ -253,6 +306,23 @@ function closeRun(overrides: Record<string, unknown> = {}) {
         unavailableReason: null,
         metadata: inventoryAnnex(),
         correlationId: "inventory-corr-1",
+      },
+      {
+        id: "evidence-payroll-forecast",
+        checklistItemId: "check-payroll-forecast",
+        findingId: null,
+        evidenceType: "REPORT_EXPORT",
+        sourceTable: "payroll_runs",
+        sourceType: "PayrollFinanceForecastProof",
+        sourceId: "sha256:tenant-operating-payroll-forecast",
+        sourceLabel: "Authoritative payroll forecast proof: total upcoming 170000",
+        sourceDate: new Date("2026-06-15T12:00:00.000Z"),
+        sourceHash: "sha256:tenant-operating-payroll-forecast",
+        provenance: "POSTED",
+        available: true,
+        unavailableReason: null,
+        metadata: payrollForecastProof(),
+        correlationId: "payroll-forecast-corr-1",
       },
     ],
     reviews: [
@@ -366,6 +436,22 @@ describe("close assurance pack service", () => {
     expect(result.contentHash).toMatch(/^sha256:/)
     expect(result.watermarkId).toContain("draft-not-certified")
     expect(result.content).toContain("Draft close pack is not certified")
+    const payload = JSON.parse(result.content)
+    expect(payload.annexes.payrollFinanceForecast).toEqual(
+      expect.objectContaining({
+        saved: expect.objectContaining({
+          sourceHash: "sha256:tenant-operating-payroll-forecast",
+          personLevelAmounts: "redacted",
+          totalUpcomingAmount: 170000,
+        }),
+        redaction: expect.stringContaining("person-level payroll amounts are redacted"),
+      }),
+    )
+    expect(payload.evidenceItems).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ sourceType: "PayrollFinanceForecastProof" }),
+      ]),
+    )
     expect(mockDb.closePackExport.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({

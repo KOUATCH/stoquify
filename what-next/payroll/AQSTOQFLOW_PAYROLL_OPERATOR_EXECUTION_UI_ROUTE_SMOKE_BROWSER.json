@@ -1,0 +1,54 @@
+{
+  "checkedAt": "2026-07-01T11:22:11.206Z",
+  "baseUrl": "http://127.0.0.1:3000",
+  "mode": "fail",
+  "ok": true,
+  "routeCount": 1,
+  "screenshotTool": "playwright",
+  "auth": {
+    "storageState": "playwright/.auth/payroll.json",
+    "protectedRouteScreenshotMode": "saved-storage-state"
+  },
+  "routes": [
+    {
+      "route": {
+        "id": "payroll-setup",
+        "path": "/en/dashboard/payroll/setup",
+        "surface": "Payroll setup control plane",
+        "requiresAuth": true,
+        "viewports": [
+          "tablet",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": "browser-auth",
+        "finalUrl": "http://127.0.0.1:3000/en/dashboard/payroll/setup",
+        "durationMs": 1,
+        "reason": "protected route validated with Playwright storage state"
+      }
+    }
+  ],
+  "screenshots": {
+    "available": true,
+    "captures": [
+      {
+        "routeId": "payroll-setup",
+        "viewport": "tablet",
+        "ok": true,
+        "file": "what-next/payroll/screenshots/payroll-operator-execution/payroll-setup-tablet.png",
+        "finalUrl": "http://127.0.0.1:3000/en/dashboard/payroll/setup",
+        "authenticated": true
+      },
+      {
+        "routeId": "payroll-setup",
+        "viewport": "desktop",
+        "ok": true,
+        "file": "what-next/payroll/screenshots/payroll-operator-execution/payroll-setup-desktop.png",
+        "finalUrl": "http://127.0.0.1:3000/en/dashboard/payroll/setup",
+        "authenticated": true
+      }
+    ]
+  }
+}

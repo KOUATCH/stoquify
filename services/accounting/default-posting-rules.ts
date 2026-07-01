@@ -4,36 +4,38 @@ import {
   PostingRuleAmountSource,
   PostingRuleLineSide,
   type Prisma,
-} from "@prisma/client"
+} from "@prisma/client";
 
 export type DefaultPostingRuleLineTemplate = {
-  lineNumber: number
-  side: PostingRuleLineSide
-  mappingKey: string
-  amountSource: PostingRuleAmountSource
-  condition?: Prisma.InputJsonValue | null
-  description: string
-}
+  lineNumber: number;
+  side: PostingRuleLineSide;
+  mappingKey: string;
+  amountSource: PostingRuleAmountSource;
+  condition?: Prisma.InputJsonValue | null;
+  description: string;
+};
 
 export type DefaultPostingRuleTemplate = {
-  code: string
-  nameEn: string
-  nameFr: string
-  descriptionEn: string
-  descriptionFr: string
-  sourceType: AccountingSourceType
-  postingPurpose: AccountingPostingPurpose
-  priority: number
-  lines: DefaultPostingRuleLineTemplate[]
-}
+  code: string;
+  nameEn: string;
+  nameFr: string;
+  descriptionEn: string;
+  descriptionFr: string;
+  sourceType: AccountingSourceType;
+  postingPurpose: AccountingPostingPurpose;
+  priority: number;
+  lines: DefaultPostingRuleLineTemplate[];
+};
 
 export const DEFAULT_POS_POSTING_RULES: DefaultPostingRuleTemplate[] = [
   {
     code: "POS-SALE-COMPLETION",
     nameEn: "POS sale completion",
     nameFr: "Validation vente POS",
-    descriptionEn: "Recognizes completed POS sales, output VAT, and inventory cost when available.",
-    descriptionFr: "Comptabilise les ventes POS validees, la TVA collectee et le cout du stock si disponible.",
+    descriptionEn:
+      "Recognizes completed POS sales, output VAT, and inventory cost when available.",
+    descriptionFr:
+      "Comptabilise les ventes POS validees, la TVA collectee et le cout du stock si disponible.",
     sourceType: AccountingSourceType.POS_SALE,
     postingPurpose: AccountingPostingPurpose.SALE_COMPLETION,
     priority: 10,
@@ -79,8 +81,10 @@ export const DEFAULT_POS_POSTING_RULES: DefaultPostingRuleTemplate[] = [
     code: "POS-PAYMENT-RECEIPT",
     nameEn: "POS payment receipt",
     nameFr: "Encaissement POS",
-    descriptionEn: "Clears customer receivables through the captured POS tender or clearing account.",
-    descriptionFr: "Solde les creances clients par le moyen d'encaissement ou le compte de transit POS.",
+    descriptionEn:
+      "Clears customer receivables through the captured POS tender or clearing account.",
+    descriptionFr:
+      "Solde les creances clients par le moyen d'encaissement ou le compte de transit POS.",
     sourceType: AccountingSourceType.POS_PAYMENT,
     postingPurpose: AccountingPostingPurpose.PAYMENT_RECEIPT,
     priority: 10,
@@ -146,8 +150,10 @@ export const DEFAULT_POS_POSTING_RULES: DefaultPostingRuleTemplate[] = [
     code: "POS-REFUND",
     nameEn: "POS refund",
     nameFr: "Remboursement POS",
-    descriptionEn: "Reverses POS sale revenue, output VAT, inventory cost, and the refunded tender amount.",
-    descriptionFr: "Extourne le chiffre d'affaires POS, la TVA collectee, le cout du stock et le montant rembourse.",
+    descriptionEn:
+      "Reverses POS sale revenue, output VAT, inventory cost, and the refunded tender amount.",
+    descriptionFr:
+      "Extourne le chiffre d'affaires POS, la TVA collectee, le cout du stock et le montant rembourse.",
     sourceType: AccountingSourceType.POS_REFUND,
     postingPurpose: AccountingPostingPurpose.REFUND,
     priority: 10,
@@ -234,8 +240,10 @@ export const DEFAULT_POS_POSTING_RULES: DefaultPostingRuleTemplate[] = [
     code: "POS-VOID",
     nameEn: "POS sale void",
     nameFr: "Annulation vente POS",
-    descriptionEn: "Voids a completed POS sale by reversing sale recognition, inventory cost, and tender settlement.",
-    descriptionFr: "Annule une vente POS validee en extournant la vente, le cout du stock et le reglement.",
+    descriptionEn:
+      "Voids a completed POS sale by reversing sale recognition, inventory cost, and tender settlement.",
+    descriptionFr:
+      "Annule une vente POS validee en extournant la vente, le cout du stock et le reglement.",
     sourceType: AccountingSourceType.POS_VOID,
     postingPurpose: AccountingPostingPurpose.VOID,
     priority: 10,
@@ -326,15 +334,17 @@ export const DEFAULT_POS_POSTING_RULES: DefaultPostingRuleTemplate[] = [
       },
     ],
   },
-]
+];
 
 export const DEFAULT_AP_POSTING_RULES: DefaultPostingRuleTemplate[] = [
   {
     code: "AP-SUPPLIER-INVOICE",
     nameEn: "Supplier invoice posting",
     nameFr: "Comptabilisation facture fournisseur",
-    descriptionEn: "Recognizes received inventory, deductible input VAT, and supplier payables from matched AP invoices.",
-    descriptionFr: "Comptabilise le stock recu, la TVA deductible et la dette fournisseur des factures rapprochees.",
+    descriptionEn:
+      "Recognizes received inventory, deductible input VAT, and supplier payables from matched AP invoices.",
+    descriptionFr:
+      "Comptabilise le stock recu, la TVA deductible et la dette fournisseur des factures rapprochees.",
     sourceType: AccountingSourceType.SUPPLIER_INVOICE,
     postingPurpose: AccountingPostingPurpose.SUPPLIER_INVOICE,
     priority: 10,
@@ -366,8 +376,10 @@ export const DEFAULT_AP_POSTING_RULES: DefaultPostingRuleTemplate[] = [
     code: "AP-SUPPLIER-PAYMENT",
     nameEn: "Supplier payment settlement",
     nameFr: "Reglement fournisseur",
-    descriptionEn: "Clears supplier payables through the released payment rail or clearing account.",
-    descriptionFr: "Solde la dette fournisseur par le moyen de paiement ou le compte de transit libere.",
+    descriptionEn:
+      "Clears supplier payables through the released payment rail or clearing account.",
+    descriptionFr:
+      "Solde la dette fournisseur par le moyen de paiement ou le compte de transit libere.",
     sourceType: AccountingSourceType.SUPPLIER_PAYMENT,
     postingPurpose: AccountingPostingPurpose.SUPPLIER_PAYMENT,
     priority: 10,
@@ -421,7 +433,7 @@ export const DEFAULT_AP_POSTING_RULES: DefaultPostingRuleTemplate[] = [
       },
     ],
   },
-]
+];
 
 export const DEFAULT_PAYROLL_POSTING_RULES: DefaultPostingRuleTemplate[] = [
   {
@@ -477,8 +489,10 @@ export const DEFAULT_PAYROLL_POSTING_RULES: DefaultPostingRuleTemplate[] = [
     code: "PAYROLL-PAYMENT",
     nameEn: "Payroll payment settlement",
     nameFr: "Reglement paie",
-    descriptionEn: "Clears employee payables through the released payroll payment rail or clearing account.",
-    descriptionFr: "Solde les dettes envers le personnel par le moyen de paiement ou le compte de transit.",
+    descriptionEn:
+      "Clears employee payables through the released payroll payment rail or clearing account.",
+    descriptionFr:
+      "Solde les dettes envers le personnel par le moyen de paiement ou le compte de transit.",
     sourceType: AccountingSourceType.PAYROLL_PAYMENT,
     postingPurpose: AccountingPostingPurpose.PAYROLL_PAYMENT,
     priority: 10,
@@ -524,10 +538,93 @@ export const DEFAULT_PAYROLL_POSTING_RULES: DefaultPostingRuleTemplate[] = [
       },
     ],
   },
-]
+  {
+    code: "PAYROLL-EMPLOYEE-RECEIVABLE",
+    nameEn: "Payroll employee receivable recognition",
+    nameFr: "Constatation creance salariale",
+    descriptionEn:
+      "Reclasses negative payroll correction employee-payable balances into employee receivables.",
+    descriptionFr:
+      "Reclasse les soldes crediteurs issus des corrections de paie negatives en creances sur salaries.",
+    sourceType: AccountingSourceType.PAYROLL_EMPLOYEE_BALANCE,
+    postingPurpose: AccountingPostingPurpose.PAYROLL_EMPLOYEE_RECEIVABLE,
+    priority: 10,
+    lines: [
+      {
+        lineNumber: 1,
+        side: PostingRuleLineSide.DEBIT,
+        mappingKey: "EMPLOYEE_RECEIVABLES",
+        amountSource: PostingRuleAmountSource.SOURCE_AMOUNT,
+        description: "Recognize employee receivable from payroll correction",
+      },
+      {
+        lineNumber: 2,
+        side: PostingRuleLineSide.CREDIT,
+        mappingKey: "EMPLOYEE_PAYABLES",
+        amountSource: PostingRuleAmountSource.SOURCE_AMOUNT,
+        description: "Clear negative employee payable balance into receivable",
+      },
+    ],
+  },
+  {
+    code: "PAYROLL-EMPLOYEE-BALANCE-SETTLEMENT",
+    nameEn: "Payroll employee balance settlement",
+    nameFr: "Reglement solde salarial",
+    descriptionEn:
+      "Settles employee receivables through repayment rails or approved future payroll deduction.",
+    descriptionFr:
+      "Solde les creances salariales par remboursement ou retenue de paie approuvee.",
+    sourceType: AccountingSourceType.PAYROLL_EMPLOYEE_BALANCE_SETTLEMENT,
+    postingPurpose:
+      AccountingPostingPurpose.PAYROLL_EMPLOYEE_BALANCE_SETTLEMENT,
+    priority: 10,
+    lines: [
+      {
+        lineNumber: 1,
+        side: PostingRuleLineSide.DEBIT,
+        mappingKey: "CASH_ON_HAND",
+        amountSource: PostingRuleAmountSource.SOURCE_AMOUNT,
+        condition: { settlementMethod: "CASH" },
+        description: "Receive employee cash repayment",
+      },
+      {
+        lineNumber: 2,
+        side: PostingRuleLineSide.DEBIT,
+        mappingKey: "BANK",
+        amountSource: PostingRuleAmountSource.SOURCE_AMOUNT,
+        condition: { settlementMethod: "BANK_TRANSFER" },
+        description: "Receive employee bank repayment",
+      },
+      {
+        lineNumber: 3,
+        side: PostingRuleLineSide.DEBIT,
+        mappingKey: "MOBILE_MONEY_CLEARING",
+        amountSource: PostingRuleAmountSource.SOURCE_AMOUNT,
+        condition: { settlementMethod: "MOBILE_MONEY" },
+        description: "Receive employee mobile-money repayment",
+      },
+      {
+        lineNumber: 4,
+        side: PostingRuleLineSide.DEBIT,
+        mappingKey: "EMPLOYEE_PAYABLES",
+        amountSource: PostingRuleAmountSource.SOURCE_AMOUNT,
+        condition: { settlementMethod: "PAYROLL_DEDUCTION" },
+        description:
+          "Recover employee receivable through future payroll deduction",
+      },
+      {
+        lineNumber: 5,
+        side: PostingRuleLineSide.CREDIT,
+        mappingKey: "EMPLOYEE_RECEIVABLES",
+        amountSource: PostingRuleAmountSource.SOURCE_AMOUNT,
+        description: "Clear employee receivable balance",
+      },
+    ],
+  },
+];
 
 export const DEFAULT_POSTING_RULES: DefaultPostingRuleTemplate[] = [
   ...DEFAULT_POS_POSTING_RULES,
   ...DEFAULT_AP_POSTING_RULES,
   ...DEFAULT_PAYROLL_POSTING_RULES,
-]
+];

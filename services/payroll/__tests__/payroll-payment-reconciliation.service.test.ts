@@ -1,26 +1,26 @@
-jest.mock("server-only", () => ({}))
+jest.mock("server-only", () => ({}));
 
 jest.mock("@/prisma/db", () => ({
   db: {
     $transaction: jest.fn(),
   },
-}))
+}));
 
 jest.mock("@/services/accounting/close-assurance-pack.service", () => ({
   recordCloseCertificationInvalidationsForSourceInTx: jest.fn(),
-}))
+}));
 
 jest.mock("@/services/controls/sensitive-action.service", () => ({
   auditSensitiveActionDecision: jest.fn(),
   assertSensitiveActionAllowed: jest.fn(),
   evaluateSensitiveAction: jest.fn(),
-}))
+}));
 
 jest.mock("@/services/events/business-event.service", () => ({
   hashBusinessPayload: jest.fn(() => "payroll-payment-settlement-hash"),
   markBusinessEventAppliedInTx: jest.fn(),
   recordBusinessEventInTx: jest.fn(),
-}))
+}));
 
 import {
   ExceptionSeverity,
@@ -35,33 +35,64 @@ import {
   PayrollPayslipStatus,
   PayrollRunStatus,
   Prisma,
-} from "@prisma/client"
+} from "@prisma/client";
 
-import { db } from "@/prisma/db"
-import { BusinessRuleError } from "@/services/_shared/action-errors"
-import { recordCloseCertificationInvalidationsForSourceInTx } from "@/services/accounting/close-assurance-pack.service"
+import { db } from "@/prisma/db";
+import { BusinessRuleError } from "@/services/_shared/action-errors";
+import { recordCloseCertificationInvalidationsForSourceInTx } from "@/services/accounting/close-assurance-pack.service";
 import {
   assertSensitiveActionAllowed,
   auditSensitiveActionDecision,
   evaluateSensitiveAction,
-} from "@/services/controls/sensitive-action.service"
+} from "@/services/controls/sensitive-action.service";
 import {
   markBusinessEventAppliedInTx,
   recordBusinessEventInTx,
-} from "@/services/events/business-event.service"
+} from "@/services/events/business-event.service";
 
 import {
   getPayrollPaymentReconciliation,
   recordPayrollPaymentSettlementEvidence,
-} from "../payment-reconciliation.service"
+} from "../payment-reconciliation.service";
 
-const mockDb = db as unknown as { $transaction: jest.Mock }
-const mockRecordCloseInvalidation = recordCloseCertificationInvalidationsForSourceInTx as jest.Mock
-const mockEvaluateSensitiveAction = evaluateSensitiveAction as jest.Mock
-const mockAuditSensitiveActionDecision = auditSensitiveActionDecision as jest.Mock
-const mockAssertSensitiveActionAllowed = assertSensitiveActionAllowed as jest.Mock
-const mockRecordBusinessEventInTx = recordBusinessEventInTx as jest.Mock
-const mockMarkBusinessEventAppliedInTx = markBusinessEventAppliedInTx as jest.Mock
+const mockDb = db as unknown as { $transaction: jest.Mock };
+const mockRecordCloseInvalidation =
+  recordCloseCertificationInvalidationsForSourceInTx as jest.Mock;
+const mockEvaluateSensitiveAction = evaluateSensitiveAction as jest.Mock;
+const mockAuditSensitiveActionDecision =
+  auditSensitiveActionDecision as jest.Mock;
+const mockAssertSensitiveActionAllowed =
+  assertSensitiveActionAllowed as jest.Mock;
+const mockRecordBusinessEventInTx = recordBusinessEventInTx as jest.Mock;
+const mockMarkBusinessEventAppliedInTx =
+  markBusinessEventAppliedInTx as jest.Mock;
+
+const PAYROLL_PAYMENT_PROOF_METADATA = {
+  componentRegisterProofHash: "sha256:component-proof",
+  componentRegisterProofStatus: "MATCHED",
+  payrollComponentMappingHash: "sha256:component-mapping",
+  payrollComponentMappingStatus: "BLOCKED_REQUIRES_EXPERT_REVIEW",
+  yearToDatePolicy: {
+    kind: "AQSTOQFLOW_PAYROLL_YEAR_TO_DATE_POLICY",
+    ytdPolicyHash: "sha256:ytd-policy",
+  },
+  yearToDatePolicyHash: "sha256:ytd-policy",
+  yearToDateAccumulatorHashes: ["sha256:ytd-accumulator"],
+  paymentAdapterProofHash: "sha256:payment-adapter-proof",
+  paymentAdapterRegistryVersion: 1,
+  paymentProviderAdapterContractHash: "sha256:payment-adapter-contract",
+  paymentAdapterStatus: "MANUAL_PROVIDER_SETTLEMENT_REQUIRED",
+  paymentProviderAdapterKey: "BANK_TRANSFER:MANUAL_DISBURSEMENT_FILE",
+  providerSettlementProofRequired: true,
+  productionPaymentAutomationSupported: false,
+};
+
+const PAYROLL_SETTLEMENT_LIFECYCLE_METADATA = {
+  providerSettlementLifecycleContractHash:
+    "sha256:payroll-payment-settlement-hash",
+  providerSettlementLifecycleStatus: "SETTLED_WITH_PROVIDER_EVIDENCE",
+  providerSettlementLifecycleCloseImpact: "CLOSE_EVIDENCE_STALE_ON_CHANGE",
+};
 
 function batchFixture(overrides: Record<string, unknown> = {}) {
   return {
@@ -89,7 +120,7 @@ function batchFixture(overrides: Record<string, unknown> = {}) {
     paymentExceptionId: "exception-1",
     reconciliationStatus: "AWAITING_STATEMENT_MATCH",
     notes: null,
-    metadata: { ledgerStatus: "POSTED" },
+    metadata: { ledgerStatus: "POSTED", ...PAYROLL_PAYMENT_PROOF_METADATA },
     createdAt: new Date("2026-06-30T00:00:00.000Z"),
     updatedAt: new Date("2026-06-30T00:00:00.000Z"),
     payrollRun: {
@@ -131,7 +162,7 @@ function batchFixture(overrides: Record<string, unknown> = {}) {
       },
     ],
     ...overrides,
-  }
+  };
 }
 
 function transactionFixture(overrides: Record<string, unknown> = {}) {
@@ -166,7 +197,7 @@ function transactionFixture(overrides: Record<string, unknown> = {}) {
       externalAccountMasked: "****1234",
     },
     ...overrides,
-  }
+  };
 }
 
 function matchFixture(overrides: Record<string, unknown> = {}) {
@@ -218,7 +249,7 @@ function matchFixture(overrides: Record<string, unknown> = {}) {
       certificateHash: null,
     },
     ...overrides,
-  }
+  };
 }
 
 function exceptionFixture(overrides: Record<string, unknown> = {}) {
@@ -247,22 +278,30 @@ function exceptionFixture(overrides: Record<string, unknown> = {}) {
     createdAt: new Date("2026-06-30T00:00:00.000Z"),
     updatedAt: new Date("2026-06-30T00:00:00.000Z"),
     ...overrides,
-  }
+  };
 }
 
 function buildTx(overrides: Record<string, unknown> = {}) {
-  const batch = batchFixture()
-  const transaction = transactionFixture()
+  const batch = batchFixture();
+  const transaction = transactionFixture();
   return {
     payrollPaymentBatch: {
       findMany: jest.fn().mockResolvedValue([batch]),
       findFirst: jest.fn().mockResolvedValue(batch),
-      update: jest.fn().mockImplementation(({ data }) => Promise.resolve({ ...batch, ...data })),
+      update: jest
+        .fn()
+        .mockImplementation(({ data }) =>
+          Promise.resolve({ ...batch, ...data }),
+        ),
     },
     paymentTransaction: {
       findMany: jest.fn().mockResolvedValue([transaction]),
       findFirst: jest.fn().mockResolvedValue(transaction),
-      update: jest.fn().mockImplementation(({ data }) => Promise.resolve({ ...transaction, ...data })),
+      update: jest
+        .fn()
+        .mockImplementation(({ data }) =>
+          Promise.resolve({ ...transaction, ...data }),
+        ),
     },
     paymentException: {
       findMany: jest.fn().mockResolvedValue([exceptionFixture()]),
@@ -282,43 +321,59 @@ function buildTx(overrides: Record<string, unknown> = {}) {
       create: jest.fn().mockResolvedValue({ id: "audit-1" }),
     },
     ...overrides,
-  }
+  };
 }
 
 describe("payroll payment reconciliation service", () => {
   beforeEach(() => {
-    jest.clearAllMocks()
-    mockDb.$transaction.mockImplementation((callback) => callback(buildTx()))
+    jest.clearAllMocks();
+    mockDb.$transaction.mockImplementation((callback) => callback(buildTx()));
     mockEvaluateSensitiveAction.mockReturnValue({
       allowed: true,
       reasonCode: "ALLOWED",
       policy: { auditAction: "PAYROLL_PAYMENT_RECONCILIATION_CONTROL" },
       detectorInputs: {},
       input: {},
-    })
-    mockAuditSensitiveActionDecision.mockResolvedValue({ id: "control-audit-1" })
-    mockAssertSensitiveActionAllowed.mockImplementation((decision) => decision)
-    mockRecordBusinessEventInTx.mockResolvedValue({ event: { id: "event-1" }, created: true })
-    mockMarkBusinessEventAppliedInTx.mockResolvedValue({ id: "event-1" })
-    mockRecordCloseInvalidation.mockResolvedValue([])
-  })
+    });
+    mockAuditSensitiveActionDecision.mockResolvedValue({
+      id: "control-audit-1",
+    });
+    mockAssertSensitiveActionAllowed.mockImplementation((decision) => decision);
+    mockRecordBusinessEventInTx.mockResolvedValue({
+      event: { id: "event-1" },
+      created: true,
+    });
+    mockMarkBusinessEventAppliedInTx.mockResolvedValue({ id: "event-1" });
+    mockRecordCloseInvalidation.mockResolvedValue([]);
+  });
 
   it("builds a server-owned reconciliation read model with payment evidence links", async () => {
-    const tx = buildTx()
-    tx.paymentException.findMany.mockResolvedValue([])
+    const tx = buildTx();
+    tx.paymentException.findMany.mockResolvedValue([]);
 
-    const result = await getPayrollPaymentReconciliation({
-      organizationId: "org-1",
-      actorId: "controller-1",
-      actorPermissions: [
-        "payments.reconciliation.read",
-        "payments.reconciliation.exception.resolve",
-        "payroll.payslips.read",
-      ],
-      limit: 10,
-    }, tx as never)
+    const result = await getPayrollPaymentReconciliation(
+      {
+        organizationId: "org-1",
+        actorId: "controller-1",
+        actorPermissions: [
+          "payments.reconciliation.read",
+          "payments.reconciliation.exception.resolve",
+          "payroll.payslips.read",
+        ],
+        limit: 10,
+      },
+      tx as never,
+    );
 
-    expect(result.summary.readyToSettle).toBe(1)
+    expect(result.summary.readyToSettle).toBe(1);
+    expect(result.redaction.proofIdentifiers).toEqual(
+      expect.objectContaining({
+        allowed: true,
+        mode: "allow",
+        reasonCode: "ALLOWED",
+        policy: "kontava-proof-hidden-identifier-policy",
+      }),
+    );
     expect(result.batches[0]).toMatchObject({
       id: "batch-1",
       amount: "143700.00",
@@ -327,23 +382,76 @@ describe("payroll payment reconciliation service", () => {
         id: "payment-tx-1",
         providerReference: "PB-2026-06-0001",
       }),
-    })
+    });
     expect(result.batches[0].matches[0]).toMatchObject({
       id: "match-1",
       statementFileHash: "sha256:statement-file",
-    })
+    });
     expect(tx.auditLog.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
           action: "PAYROLL_PAYMENT_RECONCILIATION_READ",
         }),
       }),
-    )
-  })
+    );
+  });
+
+  it("redacts payment proof identifiers for command readers without proof permissions", async () => {
+    const tx = buildTx();
+    tx.paymentException.findMany.mockResolvedValue([]);
+
+    const result = await getPayrollPaymentReconciliation(
+      {
+        organizationId: "org-1",
+        actorId: "command-reader-1",
+        actorPermissions: ["payroll.command.read"],
+        limit: 10,
+      },
+      tx as never,
+    );
+
+    expect(result.summary.readyToSettle).toBe(1);
+    expect(result.redaction.proofIdentifiers).toEqual(
+      expect.objectContaining({
+        allowed: false,
+        mode: "redact",
+        reasonCode: "MISSING_PERMISSION",
+        policy: "kontava-proof-hidden-identifier-policy",
+      }),
+    );
+    expect(result.batches[0]).toMatchObject({
+      derivedState: "READY_TO_SETTLE",
+      paymentTransactionId: "[REDACTED:IDENTIFIER]",
+      evidenceHash: "[REDACTED:IDENTIFIER]",
+      documentHash: "[REDACTED:IDENTIFIER]",
+      bankFileHash: "[REDACTED:IDENTIFIER]",
+      paymentTransaction: expect.objectContaining({
+        providerReference: "[MASKED:PAYMENT]",
+        payloadHash: "[REDACTED:IDENTIFIER]",
+      }),
+    });
+    expect(result.batches[0].matches[0]).toMatchObject({
+      providerEventId: "[REDACTED:IDENTIFIER]",
+      statementLineId: "[REDACTED:IDENTIFIER]",
+      statementFileHash: "[REDACTED:IDENTIFIER]",
+    });
+    expect(result.batches[0].proof.sourceLinks).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ evidenceHash: "[REDACTED:IDENTIFIER]" }),
+        expect.objectContaining({ payloadHash: "[REDACTED:IDENTIFIER]" }),
+      ]),
+    );
+    expect(JSON.stringify(result.batches[0])).not.toContain(
+      "sha256:payment-evidence",
+    );
+    expect(JSON.stringify(result.batches[0])).not.toContain(
+      "sha256:payment-payload",
+    );
+  });
 
   it("records settlement evidence, resolves exceptions, and stales close evidence", async () => {
-    const tx = buildTx()
-    mockDb.$transaction.mockImplementation((callback) => callback(tx))
+    const tx = buildTx();
+    mockDb.$transaction.mockImplementation((callback) => callback(tx));
 
     const result = await recordPayrollPaymentSettlementEvidence({
       organizationId: "org-1",
@@ -355,8 +463,9 @@ describe("payroll payment reconciliation service", () => {
       now: "2026-06-30T09:01:00.000Z",
       matchRecordId: "match-1",
       evidenceHash: "sha256:settlement-input",
+      sourceRegisterHash: "sha256:register",
       idempotencyKey: "settlement-key-1",
-    })
+    });
 
     expect(result).toMatchObject({
       payrollPaymentBatchId: "batch-1",
@@ -364,38 +473,109 @@ describe("payroll payment reconciliation service", () => {
       reconciliationStatus: "SETTLED",
       businessEventId: "event-1",
       settlementEvidenceHash: "sha256:payroll-payment-settlement-hash",
-    })
+    });
     expect(mockEvaluateSensitiveAction).toHaveBeenCalledWith(
       expect.objectContaining({
         action: "payroll.payment.reconcile",
         actorId: "controller-1",
         subjectActorId: "releaser-1",
+        metadata: expect.objectContaining({
+          sourceRegisterHash: "sha256:register",
+          ...PAYROLL_PAYMENT_PROOF_METADATA,
+          ...PAYROLL_SETTLEMENT_LIFECYCLE_METADATA,
+        }),
       }),
-    )
+    );
     expect(tx.paymentTransaction.update).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
           state: PaymentTransactionState.SETTLED,
           settledAt: expect.any(Date),
+          metadata: expect.objectContaining({
+            ...PAYROLL_PAYMENT_PROOF_METADATA,
+            ...PAYROLL_SETTLEMENT_LIFECYCLE_METADATA,
+            latestPayrollSettlementComponentRegisterProofHash:
+              "sha256:component-proof",
+            latestPayrollSettlementPayrollComponentMappingHash:
+              "sha256:component-mapping",
+            latestPayrollSettlementProviderAdapterProofHash:
+              "sha256:payment-adapter-proof",
+            latestPayrollSettlementProviderAdapterContractHash:
+              "sha256:payment-adapter-contract",
+            latestPayrollSettlementLifecycleContractHash:
+              "sha256:payroll-payment-settlement-hash",
+            latestPayrollSettlementLifecycleStatus:
+              "SETTLED_WITH_PROVIDER_EVIDENCE",
+          }),
         }),
       }),
-    )
+    );
     expect(tx.paymentException.updateMany).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
           status: PaymentExceptionStatus.RESOLVED,
           resolutionNotes: "Resolved by payroll payment settlement evidence.",
+          metadata: expect.objectContaining({
+            ...PAYROLL_PAYMENT_PROOF_METADATA,
+            ...PAYROLL_SETTLEMENT_LIFECYCLE_METADATA,
+          }),
         }),
       }),
-    )
+    );
     expect(mockRecordBusinessEventInTx).toHaveBeenCalledWith(
       tx,
       expect.objectContaining({
         eventType: "payroll.payment_batch.reconciled",
         sourceType: "PAYROLL_PAYMENT",
         documentHash: "sha256:payroll-payment-settlement-hash",
+        payload: expect.objectContaining({
+          sourceRegisterHash: "sha256:register",
+          ...PAYROLL_PAYMENT_PROOF_METADATA,
+          ...PAYROLL_SETTLEMENT_LIFECYCLE_METADATA,
+        }),
+        metadata: expect.objectContaining({
+          ...PAYROLL_PAYMENT_PROOF_METADATA,
+          ...PAYROLL_SETTLEMENT_LIFECYCLE_METADATA,
+        }),
       }),
-    )
+    );
+    const batchUpdateMetadata = tx.payrollPaymentBatch.update.mock.calls[0][0]
+      .data.metadata as Record<string, any>;
+    expect(batchUpdateMetadata).toEqual(
+      expect.objectContaining({
+        ...PAYROLL_PAYMENT_PROOF_METADATA,
+        ...PAYROLL_SETTLEMENT_LIFECYCLE_METADATA,
+        latestSettlementComponentRegisterProofHash: "sha256:component-proof",
+        latestSettlementPayrollComponentMappingHash: "sha256:component-mapping",
+        latestSettlementProviderAdapterProofHash:
+          "sha256:payment-adapter-proof",
+        latestSettlementProviderAdapterContractHash:
+          "sha256:payment-adapter-contract",
+        latestSettlementLifecycleContractHash:
+          "sha256:payroll-payment-settlement-hash",
+        latestSettlementLifecycleStatus: "SETTLED_WITH_PROVIDER_EVIDENCE",
+      }),
+    );
+    expect(batchUpdateMetadata["settlement:settlement-key-1"]).toEqual(
+      expect.objectContaining({
+        componentRegisterProofHash: "sha256:component-proof",
+        payrollComponentMappingHash: "sha256:component-mapping",
+        paymentAdapterProofHash: "sha256:payment-adapter-proof",
+        yearToDatePolicyHash: "sha256:ytd-policy",
+        yearToDateAccumulatorHashes: ["sha256:ytd-accumulator"],
+        paymentProviderAdapterContractHash: "sha256:payment-adapter-contract",
+        providerSettlementLifecycleContractHash:
+          "sha256:payroll-payment-settlement-hash",
+        providerSettlementLifecycleStatus: "SETTLED_WITH_PROVIDER_EVIDENCE",
+      }),
+    );
+    const auditChanges = tx.auditLog.create.mock.calls[0][0].data.changes;
+    expect(auditChanges.after).toEqual(
+      expect.objectContaining({
+        ...PAYROLL_PAYMENT_PROOF_METADATA,
+        ...PAYROLL_SETTLEMENT_LIFECYCLE_METADATA,
+      }),
+    );
     expect(mockRecordCloseInvalidation).toHaveBeenCalledWith(
       tx,
       "org-1",
@@ -405,8 +585,196 @@ describe("payroll payment reconciliation service", () => {
         newEvidenceHash: "sha256:payroll-payment-settlement-hash",
       }),
       expect.objectContaining({ actorId: "controller-1" }),
-    )
-  })
+    );
+  });
+
+
+  it("replays duplicate provider settlement callbacks without mutating settled evidence", async () => {
+    const tx = buildTx();
+    tx.payrollPaymentBatch.findFirst.mockResolvedValue(
+      batchFixture({
+        status: PayrollPaymentBatchStatus.SETTLED,
+        reconciliationStatus: "SETTLED",
+        metadata: {
+          ledgerStatus: "POSTED",
+          ...PAYROLL_PAYMENT_PROOF_METADATA,
+          "settlement:settlement-key-1": {
+            businessEventId: "event-settlement-1",
+            inputEvidenceHash: "sha256:settlement-input",
+            sourceRegisterHash: "sha256:register",
+            settlementEvidenceHash: "sha256:settlement-existing",
+          },
+        },
+      }),
+    );
+    tx.paymentTransaction.findFirst.mockResolvedValue(
+      transactionFixture({
+        state: PaymentTransactionState.SETTLED,
+        settledAt: new Date("2026-06-30T09:01:00.000Z"),
+      }),
+    );
+    tx.paymentException.findMany.mockResolvedValue([]);
+    mockDb.$transaction.mockImplementation((callback) => callback(tx));
+
+    const result = await recordPayrollPaymentSettlementEvidence({
+      organizationId: "org-1",
+      payrollPaymentBatchId: "batch-1",
+      settlementStatus: "settled",
+      actorId: "controller-1",
+      actorPermissions: ["payroll.payments.reconcile"],
+      lastAuthAt: "2026-06-30T09:00:00.000Z",
+      now: "2026-06-30T09:02:00.000Z",
+      matchRecordId: "match-1",
+      evidenceHash: "sha256:settlement-input",
+      sourceRegisterHash: "sha256:register",
+      idempotencyKey: "settlement-key-1",
+    });
+
+    expect(result).toEqual({
+      payrollPaymentBatchId: "batch-1",
+      payrollRunId: "run-1",
+      status: PayrollPaymentBatchStatus.SETTLED,
+      reconciliationStatus: "SETTLED",
+      paymentTransactionId: "payment-tx-1",
+      businessEventId: "event-settlement-1",
+      settlementEvidenceHash: "sha256:settlement-existing",
+      idempotent: true,
+    });
+    expect(mockEvaluateSensitiveAction).not.toHaveBeenCalled();
+    expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled();
+    expect(mockRecordCloseInvalidation).not.toHaveBeenCalled();
+    expect(tx.paymentTransaction.update).not.toHaveBeenCalled();
+    expect(tx.paymentException.updateMany).not.toHaveBeenCalled();
+    expect(tx.payrollPaymentBatch.update).not.toHaveBeenCalled();
+    expect(tx.auditLog.create).not.toHaveBeenCalled();
+  });
+
+  it("rejects duplicate provider settlement callbacks with conflicting proof", async () => {
+    const tx = buildTx();
+    tx.payrollPaymentBatch.findFirst.mockResolvedValue(
+      batchFixture({
+        status: PayrollPaymentBatchStatus.SETTLED,
+        reconciliationStatus: "SETTLED",
+        metadata: {
+          ledgerStatus: "POSTED",
+          ...PAYROLL_PAYMENT_PROOF_METADATA,
+          "settlement:settlement-key-1": {
+            businessEventId: "event-settlement-1",
+            inputEvidenceHash: "sha256:settlement-input",
+            sourceRegisterHash: "sha256:register",
+            settlementEvidenceHash: "sha256:settlement-existing",
+          },
+        },
+      }),
+    );
+    tx.paymentTransaction.findFirst.mockResolvedValue(
+      transactionFixture({
+        state: PaymentTransactionState.SETTLED,
+        settledAt: new Date("2026-06-30T09:01:00.000Z"),
+      }),
+    );
+    tx.paymentException.findMany.mockResolvedValue([]);
+    mockDb.$transaction.mockImplementation((callback) => callback(tx));
+
+    await expect(
+      recordPayrollPaymentSettlementEvidence({
+        organizationId: "org-1",
+        payrollPaymentBatchId: "batch-1",
+        settlementStatus: "settled",
+        actorId: "controller-1",
+        actorPermissions: ["payroll.payments.reconcile"],
+        lastAuthAt: "2026-06-30T09:00:00.000Z",
+        now: "2026-06-30T09:02:00.000Z",
+        matchRecordId: "match-1",
+        evidenceHash: "sha256:settlement-input",
+        sourceRegisterHash: "sha256:other-register",
+        idempotencyKey: "settlement-key-1",
+      }),
+    ).rejects.toThrow("different register proof");
+
+    expect(tx.paymentTransaction.update).not.toHaveBeenCalled();
+    expect(tx.paymentException.updateMany).not.toHaveBeenCalled();
+    expect(tx.payrollPaymentBatch.update).not.toHaveBeenCalled();
+  });
+
+  it("requires released batch component proof for settlement evidence", async () => {
+    const tx = buildTx();
+    tx.payrollPaymentBatch.findFirst.mockResolvedValue(
+      batchFixture({ metadata: { ledgerStatus: "POSTED" } }),
+    );
+    mockDb.$transaction.mockImplementation((callback) => callback(tx));
+
+    await expect(
+      recordPayrollPaymentSettlementEvidence({
+        organizationId: "org-1",
+        payrollPaymentBatchId: "batch-1",
+        settlementStatus: "settled",
+        actorId: "controller-1",
+        actorPermissions: ["payroll.payments.reconcile"],
+        lastAuthAt: "2026-06-30T09:00:00.000Z",
+        now: "2026-06-30T09:01:00.000Z",
+        matchRecordId: "match-1",
+        evidenceHash: "sha256:settlement-input",
+        sourceRegisterHash: "sha256:register",
+        idempotencyKey: "settlement-key-1",
+      }),
+    ).rejects.toThrow("component register proof");
+
+    expect(tx.paymentTransaction.update).not.toHaveBeenCalled();
+    expect(tx.payrollPaymentBatch.update).not.toHaveBeenCalled();
+  });
+
+  it("requires released batch provider adapter proof for settlement evidence", async () => {
+    const tx = buildTx();
+    tx.payrollPaymentBatch.findFirst.mockResolvedValue(
+      batchFixture({
+        metadata: {
+          ledgerStatus: "POSTED",
+          componentRegisterProofHash: "sha256:component-proof",
+          componentRegisterProofStatus: "MATCHED",
+          payrollComponentMappingHash: "sha256:component-mapping",
+          payrollComponentMappingStatus: "BLOCKED_REQUIRES_EXPERT_REVIEW",
+        },
+      }),
+    );
+    mockDb.$transaction.mockImplementation((callback) => callback(tx));
+
+    await expect(
+      recordPayrollPaymentSettlementEvidence({
+        organizationId: "org-1",
+        payrollPaymentBatchId: "batch-1",
+        settlementStatus: "settled",
+        actorId: "controller-1",
+        actorPermissions: ["payroll.payments.reconcile"],
+        lastAuthAt: "2026-06-30T09:00:00.000Z",
+        now: "2026-06-30T09:01:00.000Z",
+        matchRecordId: "match-1",
+        evidenceHash: "sha256:settlement-input",
+        sourceRegisterHash: "sha256:register",
+        idempotencyKey: "settlement-key-1",
+      }),
+    ).rejects.toThrow("provider adapter proof");
+
+    expect(tx.paymentTransaction.update).not.toHaveBeenCalled();
+    expect(tx.payrollPaymentBatch.update).not.toHaveBeenCalled();
+  });
+
+  it("requires source register proof for settlement evidence", async () => {
+    await expect(
+      recordPayrollPaymentSettlementEvidence({
+        organizationId: "org-1",
+        payrollPaymentBatchId: "batch-1",
+        settlementStatus: "settled",
+        actorId: "controller-1",
+        actorPermissions: ["payroll.payments.reconcile"],
+        lastAuthAt: "2026-06-30T09:00:00.000Z",
+        now: "2026-06-30T09:01:00.000Z",
+        matchRecordId: "match-1",
+        evidenceHash: "sha256:settlement-input",
+        idempotencyKey: "settlement-key-1",
+      }),
+    ).rejects.toThrow("source payroll register hash");
+  });
 
   it("blocks cash settlement claims without provider or statement evidence", async () => {
     await expect(
@@ -419,8 +787,9 @@ describe("payroll payment reconciliation service", () => {
         lastAuthAt: "2026-06-30T09:00:00.000Z",
         now: "2026-06-30T09:01:00.000Z",
         evidenceHash: "sha256:settlement-input",
+        sourceRegisterHash: "sha256:register",
         idempotencyKey: "settlement-key-1",
       }),
-    ).rejects.toThrow(BusinessRuleError)
-  })
-})
+    ).rejects.toThrow(BusinessRuleError);
+  });
+});

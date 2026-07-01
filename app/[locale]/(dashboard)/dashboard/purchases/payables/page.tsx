@@ -6,7 +6,7 @@ import { getAPWorkbenchAction } from "@/actions/purchasing/ap-control.actions"
 import { redirect } from "next/navigation"
 
 export const metadata = {
-  title: "AP Workbench | StockFlow",
+  title: "AP Workbench | Stoquify",
   description: "Supplier AP ledger, payment, reconciliation, and country-pack control workbench.",
 }
 

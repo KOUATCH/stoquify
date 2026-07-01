@@ -40,18 +40,18 @@ export function NotificationMenu({
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <button className="relative inline-flex items-center p-3 text-sm font-medium text-center text-white bg-transparent rounded-lg ">
-          <Bell className="h-6 w-6 text-slate-700" />
+        <button className="notification-bell-trigger relative inline-flex h-10 w-10 items-center justify-center rounded-lg text-sm font-medium transition-colors">
+          <Bell className="h-5 w-5" />
           <span className="sr-only">Notifications</span>
-          <div className="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500  rounded-full -top-0 end-0 dark:border-gray-900">
+          <div className="notification-unread-count absolute -right-1 -top-1 inline-flex min-h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px] font-bold leading-none">
             {notifications.length}
           </div>
         </button>
       </SheetTrigger>
       {notifications && notifications.length > 0 ? (
-        <SheetContent side={"left"} className="w-[400px] sm:w-[540px]">
+        <SheetContent side={"left"} className="notification-drawer w-[400px] sm:w-[540px]">
           <SheetHeader>
-            <h2 className="scroll-m-20 text-xl font-semibold tracking-tight first:mt-0 border-b pb-3">
+            <h2 className="notification-drawer-header scroll-m-20 border-b pb-3 text-xl font-semibold tracking-tight first:mt-0">
               Notifications ({notifications.length})
             </h2>
           </SheetHeader>
@@ -61,17 +61,17 @@ export function NotificationMenu({
               {notifications.map((item, i) => {
                 const statusClass =
                   item.status === "WARNING"
-                    ? "border-yellow-500 bg-yellow-50"
+                    ? "notification-list-row notification-list-row--warning border-l-4"
                     : item.status === "DANGER"
-                      ? "border-red-500 bg-red-50"
-                      : "border-blue-500 bg-blue-50";
+                      ? "notification-list-row notification-list-row--error border-l-4"
+                      : "notification-list-row notification-list-row--info border-l-4";
 
                 const textClass =
                   item.status === "WARNING"
-                    ? "text-yellow-600"
+                    ? "text-[var(--dash-warning)]"
                     : item.status === "DANGER"
-                      ? "text-red-600"
-                      : "text-blue-600";
+                      ? "text-[var(--dash-danger)]"
+                      : "text-[var(--dash-info)]";
 
                 const Icon =
                   item.status === "WARNING" || item.status === "DANGER"
@@ -82,7 +82,7 @@ export function NotificationMenu({
                   <div
                     key={i}
                     className={cn(
-                      "flex justify-between gap-4 py-3 border-b-2 items-center px-3 rounded-md",
+                      "flex items-center justify-between gap-4 rounded-lg border px-3 py-3",
                       statusClass
                     )}
                   >
@@ -95,7 +95,7 @@ export function NotificationMenu({
                         <SheetClose asChild>
                           <button
                             onClick={() => handleChangeStatus(item.id)}
-                            className="text-xs flex items-center text-red-500"
+                            className="flex items-center text-xs text-[var(--dash-text-soft)] transition hover:text-[var(--dash-text)]"
                           >
                             <Trash className="w-4 h-4 mr-1" />
                             <span>Mark it Read</span>
@@ -111,20 +111,20 @@ export function NotificationMenu({
           </ScrollArea>
         </SheetContent>
       ) : (
-        <SheetContent side={"left"} className="w-[400px] sm:w-[540px]">
+        <SheetContent side={"left"} className="notification-drawer w-[400px] sm:w-[540px]">
           <SheetHeader>
-            <h2 className="scroll-m-20 text-xl font-semibold tracking-tight first:mt-0 border-b pb-3">
+            <h2 className="notification-drawer-header scroll-m-20 border-b pb-3 text-xl font-semibold tracking-tight first:mt-0">
               Notifications
             </h2>
           </SheetHeader>
           {/* CONTENT HWRE */}
-          <div className="min-h-80  flex-col space-y-4 flex items-center justify-center">
+          <div className="flex min-h-80 flex-col items-center justify-center space-y-4 text-[var(--dash-text-soft)]">
             <Image
               src="/bell.png"
               width={300}
               height={300}
               alt="empty notification"
-              className="w-36 h-36 object-cover"
+              className="h-36 w-36 object-cover opacity-80"
             />
             <h2>No Notifications</h2>
           </div>

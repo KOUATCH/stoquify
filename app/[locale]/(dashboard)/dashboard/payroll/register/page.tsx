@@ -6,7 +6,7 @@ import { RbacError, requireAnyPermission } from "@/lib/security/rbac"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 
 export const metadata = {
-  title: "Payroll Register | StockFlow",
+  title: "Payroll Register | Stoquify",
   description: "Payroll register tie-out for payslips, ledger, payments, declarations, and close evidence.",
 }
 

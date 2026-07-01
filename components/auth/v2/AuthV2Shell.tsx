@@ -1,4 +1,5 @@
 import { Link } from "@/i18n/navigation"
+import StoquifyLogo from "@/components/global/kit-logo"
 import type { Locale } from "@/types/bilingual"
 import {
   BadgeCheck,
@@ -100,11 +101,7 @@ export function AuthV2Shell({ children, locale, variant, alternatePath }: AuthV2
           <div className="absolute inset-0 bg-[linear-gradient(rgba(125,232,220,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(240,197,77,0.07)_1px,transparent_1px)] bg-[size:44px_44px]" />
           <div className="relative z-10 flex items-center justify-between">
             <Link href="/ohada-os" className="flex items-center gap-3">
-              <span className="grid h-10 w-10 place-items-center rounded-lg bg-[#f0c54d] font-black text-[#132028]">AQ</span>
-              <span>
-                <span className="block text-sm font-black uppercase tracking-[0.18em]">AqStoqFlow</span>
-                <span className="block text-xs text-[#b8c7c2]">{t.brandSubtitle}</span>
-              </span>
+              <StoquifyLogo theme="dark" width={236} height={52} tagline={t.brandSubtitle} />
             </Link>
             <Link
               href={currentPath}
@@ -154,11 +151,7 @@ export function AuthV2Shell({ children, locale, variant, alternatePath }: AuthV2
         <section className="flex min-h-screen flex-col">
           <header className="flex items-center justify-between gap-3 px-5 py-5 sm:px-8 lg:hidden">
             <Link href="/ohada-os" className="flex items-center gap-3">
-              <span className="grid h-10 w-10 place-items-center rounded-lg bg-[#132028] font-black text-white">AQ</span>
-              <span>
-                <span className="block text-sm font-black uppercase tracking-[0.14em]">AqStoqFlow</span>
-                <span className="block text-xs text-[#53675f]">{t.brandSubtitle}</span>
-              </span>
+              <StoquifyLogo theme="light" width={236} height={52} tagline={t.brandSubtitle} />
             </Link>
             <Link
               href={currentPath}

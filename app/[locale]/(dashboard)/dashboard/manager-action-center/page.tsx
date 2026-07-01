@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 
-import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
+import { DashboardErrorState } from "@/components/dashboard/DashboardErrorState"
 import { ManagerActionCenterDashboard } from "@/components/manager-action-center/ManagerActionCenterDashboard"
 import { localizePath } from "@/i18n/routing"
 import { RbacError, requirePermission } from "@/lib/security/rbac"
@@ -47,15 +47,15 @@ export default async function ManagerActionCenterPage({
       const noActiveOrg = error.code === "NO_ACTIVE_ORG"
 
       return (
-        <DashboardRouteState
-          kind={noActiveOrg ? "no_active_org" : "permission_denied"}
+        <DashboardErrorState
+          error={error.message}
           title={noActiveOrg ? "Manager Action Center needs an active organization" : "Manager Action Center is not available for this role"}
           message={
             noActiveOrg
               ? "Refresh your session from the dashboard so the action center can load tenant-scoped operating work."
               : "This read-only action center requires dashboard access. The denial was recorded by the RBAC guard."
           }
-          primaryHref={localizePath("/dashboard", resolvedLocale)}
+          dashboardHref={localizePath("/dashboard", resolvedLocale)}
         />
       )
     }

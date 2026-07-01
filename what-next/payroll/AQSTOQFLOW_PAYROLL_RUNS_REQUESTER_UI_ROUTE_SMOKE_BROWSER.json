@@ -1,0 +1,54 @@
+{
+  "checkedAt": "2026-06-28T19:54:45.311Z",
+  "baseUrl": "http://127.0.0.1:3000",
+  "mode": "fail",
+  "ok": true,
+  "routeCount": 1,
+  "screenshotTool": "playwright",
+  "auth": {
+    "storageState": "playwright/.auth/payroll.json",
+    "protectedRouteScreenshotMode": "saved-storage-state"
+  },
+  "routes": [
+    {
+      "route": {
+        "id": "payroll-runs",
+        "path": "/en/dashboard/payroll/runs",
+        "surface": "Payroll run lifecycle workbench",
+        "requiresAuth": true,
+        "viewports": [
+          "tablet",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": "browser-auth",
+        "finalUrl": "http://127.0.0.1:3000/en/dashboard/payroll/runs",
+        "durationMs": 0,
+        "reason": "protected route validated with Playwright storage state"
+      }
+    }
+  ],
+  "screenshots": {
+    "available": true,
+    "captures": [
+      {
+        "routeId": "payroll-runs",
+        "viewport": "tablet",
+        "ok": true,
+        "file": "what-next/payroll/screenshots/payroll-runs-requester-smoke/payroll-runs-tablet.png",
+        "finalUrl": "http://127.0.0.1:3000/en/dashboard/payroll/runs",
+        "authenticated": true
+      },
+      {
+        "routeId": "payroll-runs",
+        "viewport": "desktop",
+        "ok": true,
+        "file": "what-next/payroll/screenshots/payroll-runs-requester-smoke/payroll-runs-desktop.png",
+        "finalUrl": "http://127.0.0.1:3000/en/dashboard/payroll/runs",
+        "authenticated": true
+      }
+    ]
+  }
+}

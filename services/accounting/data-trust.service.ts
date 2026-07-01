@@ -17,158 +17,170 @@ import {
   StatementFileStatus,
   SupplierInvoiceStatus,
   SupplierPaymentStatus,
-} from "@prisma/client"
-import { createHash, randomUUID } from "node:crypto"
+} from "@prisma/client";
+import { createHash, randomUUID } from "node:crypto";
 
-import { db } from "@/prisma/db"
-import { BusinessRuleError } from "@/services/_shared/action-errors"
-import { assertSensitiveActionAllowed, evaluateAndAuditSensitiveAction } from "@/services/controls/sensitive-action.service"
+import { db } from "@/prisma/db";
+import { BusinessRuleError } from "@/services/_shared/action-errors";
+import {
+  assertSensitiveActionAllowed,
+  evaluateAndAuditSensitiveAction,
+} from "@/services/controls/sensitive-action.service";
 
-type DbClient = typeof db | Prisma.TransactionClient
-type TrustLevel = "T0" | "T1" | "T2" | "T3" | "T4"
-type TrustVerdict = "CERTIFIED" | "PARTIAL" | "NON_COMPLIANT"
-type BlockerSeverity = "critical" | "high" | "medium" | "low"
-type ModuleStatus = "ready" | "needs_review" | "blocked"
-type PeriodStatus = AccountingPeriodStatus | "UNAVAILABLE"
+type DbClient = typeof db | Prisma.TransactionClient;
+type TrustLevel = "T0" | "T1" | "T2" | "T3" | "T4";
+type TrustVerdict = "CERTIFIED" | "PARTIAL" | "NON_COMPLIANT";
+type BlockerSeverity = "critical" | "high" | "medium" | "low";
+type ModuleStatus = "ready" | "needs_review" | "blocked";
+type PeriodStatus = AccountingPeriodStatus | "UNAVAILABLE";
 
 export type AccountantFinancialFigure =
   | {
-      available: true
-      amount: string
-      currency: string
-      provenance: "POSTED"
-      asOf: string
-      periodStatus: PeriodStatus
-      sourceTables: string[]
-      sourceQueryId: string
+      available: true;
+      amount: string;
+      currency: string;
+      provenance: "POSTED";
+      asOf: string;
+      periodStatus: PeriodStatus;
+      sourceTables: string[];
+      sourceQueryId: string;
     }
   | {
-      available: false
-      amount: null
-      currency: string
-      provenance: "UNAVAILABLE"
-      reason: string
-      asOf: string
-      periodStatus: PeriodStatus
-      sourceTables: string[]
-      sourceQueryId: string
-    }
+      available: false;
+      amount: null;
+      currency: string;
+      provenance: "UNAVAILABLE";
+      reason: string;
+      asOf: string;
+      periodStatus: PeriodStatus;
+      sourceTables: string[];
+      sourceQueryId: string;
+    };
 
 export type DataTrustBlocker = {
-  id: string
-  severity: BlockerSeverity
-  gate: string
-  title: string
-  detail: string
-  sourceTables: string[]
-}
+  id: string;
+  severity: BlockerSeverity;
+  gate: string;
+  title: string;
+  detail: string;
+  sourceTables: string[];
+};
 
 export type AccountantPortalData = {
   source: {
-    mode: "LEDGER_BACKED_DATA_TRUST"
-    asOf: string
-    organizationScoped: true
-    trustLevel: TrustLevel
-    certificationStatus: TrustVerdict
-    scopeHash: string
-    sourceTables: string[]
-  }
+    mode: "LEDGER_BACKED_DATA_TRUST";
+    asOf: string;
+    organizationScoped: true;
+    trustLevel: TrustLevel;
+    certificationStatus: TrustVerdict;
+    scopeHash: string;
+    sourceTables: string[];
+  };
   scope: {
-    organizationId: string
-    periodId: string | null
-    periodName: string | null
-    periodStatus: PeriodStatus
-    startDate: string | null
-    endDate: string | null
-  }
+    organizationId: string;
+    periodId: string | null;
+    periodName: string | null;
+    periodStatus: PeriodStatus;
+    startDate: string | null;
+    endDate: string | null;
+  };
   certificate: {
-    surface: "dashboard/accounting/accountant-portal"
-    level: TrustLevel
-    verdict: TrustVerdict
-    generatedAt: string
-    evidence: string[]
-    requiredForNextLevel: string[]
-  }
+    surface: "dashboard/accounting/accountant-portal";
+    level: TrustLevel;
+    verdict: TrustVerdict;
+    generatedAt: string;
+    evidence: string[];
+    requiredForNextLevel: string[];
+  };
   summary: {
-    postedJournalEntries: number
-    journalLines: number
-    sourceLinks: number
-    linkedPostedEntries: number
-    sourceLinkCoveragePct: number | null
-    ledgerBalanced: boolean
-    blockerCount: number
-    criticalBlockers: number
-    highBlockers: number
-  }
+    postedJournalEntries: number;
+    journalLines: number;
+    sourceLinks: number;
+    linkedPostedEntries: number;
+    sourceLinkCoveragePct: number | null;
+    ledgerBalanced: boolean;
+    blockerCount: number;
+    criticalBlockers: number;
+    highBlockers: number;
+  };
   figures: {
-    activityDebit: AccountantFinancialFigure
-    activityCredit: AccountantFinancialFigure
-  }
+    activityDebit: AccountantFinancialFigure;
+    activityCredit: AccountantFinancialFigure;
+  };
   moduleEvidence: Array<{
-    module: "ledger" | "events" | "payments" | "purchasing" | "payroll" | "compliance" | "offline_pos" | "audit"
-    status: ModuleStatus
-    label: string
-    detail: string
-    facts: Array<{ label: string; value: string | number }>
-  }>
-  blockers: DataTrustBlocker[]
+    module:
+      | "ledger"
+      | "events"
+      | "payments"
+      | "purchasing"
+      | "payroll"
+      | "compliance"
+      | "offline_pos"
+      | "audit";
+    status: ModuleStatus;
+    label: string;
+    detail: string;
+    facts: Array<{ label: string; value: string | number }>;
+  }>;
+  blockers: DataTrustBlocker[];
   latestSourceLinks: Array<{
-    id: string
-    sourceType: string
-    sourceId: string
-    sourceNumber: string | null
-    journalEntryNumber: string | null
-    postingBatchId: string
-    postingStatus: string
-    createdAt: string
-  }>
+    id: string;
+    sourceType: string;
+    sourceId: string;
+    sourceNumber: string | null;
+    journalEntryNumber: string | null;
+    postingBatchId: string;
+    postingStatus: string;
+    createdAt: string;
+  }>;
   latestAuditEvents: Array<{
-    id: string
-    source: "ledger" | "control"
-    action: string
-    resourceType: string
-    resourceId: string | null
-    actorId: string | null
-    createdAt: string
-    status: string
-  }>
+    id: string;
+    source: "ledger" | "control";
+    action: string;
+    resourceType: string;
+    resourceId: string | null;
+    actorId: string | null;
+    createdAt: string;
+    status: string;
+  }>;
   exportReadiness: {
-    canExportCertifiedPack: boolean
-    disabledReason: string | null
-    requiredPermission: "accounting.exports.create"
-    sensitivity: "statutory"
-  }
-}
+    canExportCertifiedPack: boolean;
+    disabledReason: string | null;
+    requiredPermission: "accounting.exports.create";
+    sensitivity: "statutory";
+  };
+};
 
 export type GetAccountantPortalDataInput = {
-  organizationId: string
-  periodId?: string | null
-  startDate?: Date | string | null
-  endDate?: Date | string | null
-  limit?: number
-}
+  organizationId: string;
+  periodId?: string | null;
+  startDate?: Date | string | null;
+  endDate?: Date | string | null;
+  limit?: number;
+};
 
-export type ExportAccountantTrustPackServiceInput = GetAccountantPortalDataInput & {
-  exportedById: string
-  actorPermissions: readonly string[]
-  lastAuthAt?: Date | number | string | null
-  now?: Date | number | string | null
-  fileType?: "json"
-  includeLedgerRows?: boolean
-}
+export type ExportAccountantTrustPackServiceInput =
+  GetAccountantPortalDataInput & {
+    exportedById: string;
+    actorPermissions: readonly string[];
+    lastAuthAt?: Date | number | string | null;
+    now?: Date | number | string | null;
+    fileType?: "json";
+    includeLedgerRows?: boolean;
+  };
 
 export type AccountantTrustPackExport = {
-  exportId: string
-  fileName: string
-  mimeType: "application/json"
-  content: string
-  contentHash: string
-  watermarkId: string
-  rowCount: number
-  trustLevel: TrustLevel
-  verdict: TrustVerdict
-  generatedAt: string
-}
+  exportId: string;
+  fileName: string;
+  mimeType: "application/json";
+  content: string;
+  contentHash: string;
+  watermarkId: string;
+  rowCount: number;
+  trustLevel: TrustLevel;
+  verdict: TrustVerdict;
+  generatedAt: string;
+};
 
 const DATA_TRUST_SOURCE_TABLES = [
   "journal_entries",
@@ -194,41 +206,44 @@ const DATA_TRUST_SOURCE_TABLES = [
   "payroll_payment_batches",
   "payroll_payment_allocations",
   "fiscal_documents",
-] as const
+] as const;
 
 function parseOptionalDate(value: Date | string | null | undefined) {
-  if (!value) return null
-  const date = value instanceof Date ? value : new Date(value)
-  if (Number.isNaN(date.getTime())) return null
-  return date
+  if (!value) return null;
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  return date;
 }
 
 function stableStringify(value: unknown): string {
-  if (value === null || typeof value !== "object") return JSON.stringify(value)
-  if (Array.isArray(value)) return `[${value.map(stableStringify).join(",")}]`
+  if (value === null || typeof value !== "object") return JSON.stringify(value);
+  if (Array.isArray(value)) return `[${value.map(stableStringify).join(",")}]`;
 
   return `{${Object.keys(value as Record<string, unknown>)
     .sort()
-    .map((key) => `${JSON.stringify(key)}:${stableStringify((value as Record<string, unknown>)[key])}`)
-    .join(",")}}`
+    .map(
+      (key) =>
+        `${JSON.stringify(key)}:${stableStringify((value as Record<string, unknown>)[key])}`,
+    )
+    .join(",")}}`;
 }
 
 function sha256(value: string) {
-  return `sha256:${createHash("sha256").update(value).digest("hex")}`
+  return `sha256:${createHash("sha256").update(value).digest("hex")}`;
 }
 
 function decimal(value: Prisma.Decimal.Value | null | undefined) {
-  if (value === null || value === undefined) return new Prisma.Decimal(0)
-  return new Prisma.Decimal(value)
+  if (value === null || value === undefined) return new Prisma.Decimal(0);
+  return new Prisma.Decimal(value);
 }
 
 function money(value: Prisma.Decimal.Value | null | undefined) {
-  return decimal(value).toDecimalPlaces(2).toFixed(2)
+  return decimal(value).toDecimalPlaces(2).toFixed(2);
 }
 
 function normalizedScope(input: GetAccountantPortalDataInput, now: Date) {
-  const startDate = parseOptionalDate(input.startDate)
-  const endDate = parseOptionalDate(input.endDate)
+  const startDate = parseOptionalDate(input.startDate);
+  const endDate = parseOptionalDate(input.endDate);
 
   return {
     organizationId: input.organizationId,
@@ -237,29 +252,29 @@ function normalizedScope(input: GetAccountantPortalDataInput, now: Date) {
     endDate,
     limit: Math.min(Math.max(input.limit ?? 12, 1), 50),
     asOf: now.toISOString(),
-  }
+  };
 }
 
 function entryDateFilter(scope: ReturnType<typeof normalizedScope>) {
-  if (!scope.startDate && !scope.endDate) return {}
+  if (!scope.startDate && !scope.endDate) return {};
 
   return {
     entryDate: {
       ...(scope.startDate ? { gte: scope.startDate } : {}),
       ...(scope.endDate ? { lte: scope.endDate } : {}),
     },
-  } satisfies Prisma.JournalEntryWhereInput
+  } satisfies Prisma.JournalEntryWhereInput;
 }
 
 function createdAtFilter(scope: ReturnType<typeof normalizedScope>) {
-  if (!scope.startDate && !scope.endDate) return {}
+  if (!scope.startDate && !scope.endDate) return {};
 
   return {
     createdAt: {
       ...(scope.startDate ? { gte: scope.startDate } : {}),
       ...(scope.endDate ? { lte: scope.endDate } : {}),
     },
-  }
+  };
 }
 
 function journalEntryScope(scope: ReturnType<typeof normalizedScope>) {
@@ -268,7 +283,7 @@ function journalEntryScope(scope: ReturnType<typeof normalizedScope>) {
     status: { in: [JournalEntryStatus.POSTED, JournalEntryStatus.REVERSED] },
     ...(scope.periodId ? { periodId: scope.periodId } : {}),
     ...entryDateFilter(scope),
-  } satisfies Prisma.JournalEntryWhereInput
+  } satisfies Prisma.JournalEntryWhereInput;
 }
 
 function postingBatchScope(scope: ReturnType<typeof normalizedScope>) {
@@ -276,20 +291,20 @@ function postingBatchScope(scope: ReturnType<typeof normalizedScope>) {
     organizationId: scope.organizationId,
     ...(scope.periodId ? { periodId: scope.periodId } : {}),
     ...createdAtFilter(scope),
-  } satisfies Prisma.LedgerPostingBatchWhereInput
+  } satisfies Prisma.LedgerPostingBatchWhereInput;
 }
 
 function businessEventScope(scope: ReturnType<typeof normalizedScope>) {
   return {
     organizationId: scope.organizationId,
     ...createdAtFilter(scope),
-  } satisfies Prisma.BusinessEventWhereInput
+  } satisfies Prisma.BusinessEventWhereInput;
 }
 
 function statementFileScope(scope: ReturnType<typeof normalizedScope>) {
-  const periodOverlap: Prisma.StatementFileWhereInput = {}
-  if (scope.startDate) periodOverlap.periodEnd = { gte: scope.startDate }
-  if (scope.endDate) periodOverlap.periodStart = { lte: scope.endDate }
+  const periodOverlap: Prisma.StatementFileWhereInput = {};
+  if (scope.startDate) periodOverlap.periodEnd = { gte: scope.startDate };
+  if (scope.endDate) periodOverlap.periodStart = { lte: scope.endDate };
 
   return {
     organizationId: scope.organizationId,
@@ -298,32 +313,34 @@ function statementFileScope(scope: ReturnType<typeof normalizedScope>) {
       in: [StatementFileStatus.IMPORTED, StatementFileStatus.PROCESSED],
     },
     ...periodOverlap,
-  } satisfies Prisma.StatementFileWhereInput
+  } satisfies Prisma.StatementFileWhereInput;
 }
 
 function statementLineScope(scope: ReturnType<typeof normalizedScope>) {
-  const occurredAt: Prisma.StatementLineWhereInput = {}
+  const occurredAt: Prisma.StatementLineWhereInput = {};
   if (scope.startDate || scope.endDate) {
     occurredAt.occurredAt = {
       ...(scope.startDate ? { gte: scope.startDate } : {}),
       ...(scope.endDate ? { lte: scope.endDate } : {}),
-    }
+    };
   }
 
   return {
     organizationId: scope.organizationId,
     providerAccount: { status: ProviderAccountStatus.ACTIVE },
     ...occurredAt,
-  } satisfies Prisma.StatementLineWhereInput
+  } satisfies Prisma.StatementLineWhereInput;
 }
 
-function signedReconciliationRunScope(scope: ReturnType<typeof normalizedScope>) {
-  const businessDate: Prisma.ReconciliationRunWhereInput = {}
+function signedReconciliationRunScope(
+  scope: ReturnType<typeof normalizedScope>,
+) {
+  const businessDate: Prisma.ReconciliationRunWhereInput = {};
   if (scope.startDate || scope.endDate) {
     businessDate.businessDate = {
       ...(scope.startDate ? { gte: scope.startDate } : {}),
       ...(scope.endDate ? { lte: scope.endDate } : {}),
-    }
+    };
   }
 
   return {
@@ -332,43 +349,138 @@ function signedReconciliationRunScope(scope: ReturnType<typeof normalizedScope>)
     status: ReconciliationRunStatus.SIGNED,
     ...(scope.periodId ? { accountingPeriodId: scope.periodId } : {}),
     ...businessDate,
-  } satisfies Prisma.ReconciliationRunWhereInput
+  } satisfies Prisma.ReconciliationRunWhereInput;
 }
 
 type ActiveProviderStatementFreshnessRow = {
-  id: string
-  displayName: string
-  providerCode: string
-  settlementLagDays: number
-  metadata: Prisma.JsonValue | null
-  statementFiles: Array<{ id: string; periodEnd: Date }>
-}
+  id: string;
+  displayName: string;
+  providerCode: string;
+  settlementLagDays: number;
+  metadata: Prisma.JsonValue | null;
+  statementFiles: Array<{ id: string; periodEnd: Date }>;
+};
 
 function jsonObject(value: Prisma.JsonValue | null | undefined) {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return {}
-  return value as Record<string, unknown>
+  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+  return value as Record<string, unknown>;
+}
+
+function jsonRecord(value: Prisma.JsonValue | null | undefined) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  return value as Record<string, unknown>;
+}
+
+function numericSnapshotValue(value: unknown) {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string" && value.trim().length > 0) {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+  return null;
+}
+
+function hasNumericSnapshotField(
+  snapshot: Record<string, unknown>,
+  key: string,
+) {
+  return numericSnapshotValue(snapshot[key]) !== null;
+}
+
+function hasNonZeroSnapshotAmount(
+  snapshot: Record<string, unknown>,
+  key: string,
+) {
+  const value = numericSnapshotValue(snapshot[key]);
+  return value !== null && Math.abs(value) > 0.000001;
+}
+
+function payrollRubriqueComponents(snapshot: Record<string, unknown>) {
+  const components = snapshot.payrollRubriqueComponents;
+  return Array.isArray(components)
+    ? components.filter(
+        (component) =>
+          component && typeof component === "object" && !Array.isArray(component),
+      )
+    : [];
+}
+
+function hasEffectiveComponentProofGap(
+  calculationSnapshot: Prisma.JsonValue | null,
+) {
+  const snapshot = jsonRecord(calculationSnapshot);
+  if (!snapshot) return true;
+
+  const hasRubriqueAmount = [
+    "payrollRubriqueGrossAmount",
+    "payrollRubriqueTaxableBaseAmount",
+    "payrollRubriqueSocialBaseAmount",
+    "payrollRubriqueEmployeeDeductionAmount",
+    "payrollRubriqueEmployerChargeAmount",
+  ].some((key) => hasNonZeroSnapshotAmount(snapshot, key));
+  if (hasRubriqueAmount && payrollRubriqueComponents(snapshot).length === 0) {
+    return true;
+  }
+
+  const overtimeMinutes = numericSnapshotValue(snapshot.overtimeMinutes) ?? 0;
+  if (
+    overtimeMinutes > 0 &&
+    !hasNumericSnapshotField(snapshot, "overtimePremiumAmount")
+  ) {
+    return true;
+  }
+
+  const leaveMinutes = numericSnapshotValue(snapshot.leaveMinutes) ?? 0;
+  if (leaveMinutes > 0) {
+    return (
+      !hasNumericSnapshotField(snapshot, "scheduledMinutes") ||
+      !hasNumericSnapshotField(snapshot, "workedMinutes") ||
+      !hasNumericSnapshotField(snapshot, "paidMinutes") ||
+      !hasNumericSnapshotField(snapshot, "baseSalary")
+    );
+  }
+
+  return false;
+}
+
+function countEffectiveComponentProofGaps(
+  lines: Array<{ calculationSnapshot: Prisma.JsonValue | null }>,
+) {
+  return lines.filter((line) =>
+    hasEffectiveComponentProofGap(line.calculationSnapshot),
+  ).length;
 }
 
 function positiveInteger(value: unknown, fallback: number) {
-  const numeric = typeof value === "number" ? value : typeof value === "string" ? Number(value) : NaN
-  return Number.isInteger(numeric) && numeric > 0 ? numeric : fallback
+  const numeric =
+    typeof value === "number"
+      ? value
+      : typeof value === "string"
+        ? Number(value)
+        : NaN;
+  return Number.isInteger(numeric) && numeric > 0 ? numeric : fallback;
 }
 
 function statementCadenceDays(account: ActiveProviderStatementFreshnessRow) {
-  const metadata = jsonObject(account.metadata)
-  return positiveInteger(metadata.statementCadenceDays ?? metadata.statement_cadence_days ?? metadata.cadenceDays, 1)
+  const metadata = jsonObject(account.metadata);
+  return positiveInteger(
+    metadata.statementCadenceDays ??
+      metadata.statement_cadence_days ??
+      metadata.cadenceDays,
+    1,
+  );
 }
 
 function startOfUtcDay(date: Date) {
-  const next = new Date(date)
-  next.setUTCHours(0, 0, 0, 0)
-  return next
+  const next = new Date(date);
+  next.setUTCHours(0, 0, 0, 0);
+  return next;
 }
 
 function addUtcDays(date: Date, days: number) {
-  const next = new Date(date)
-  next.setUTCDate(next.getUTCDate() + days)
-  return next
+  const next = new Date(date);
+  next.setUTCDate(next.getUTCDate() + days);
+  return next;
 }
 
 function statementFreshnessAnchor(
@@ -376,19 +488,23 @@ function statementFreshnessAnchor(
   period: Awaited<ReturnType<typeof resolveScopePeriod>>,
   now: Date,
 ) {
-  const candidate = scope.endDate ?? period?.endDate ?? now
-  return candidate > now ? now : candidate
+  const candidate = scope.endDate ?? period?.endDate ?? now;
+  return candidate > now ? now : candidate;
 }
 
-function staleProviderStatementAccounts(accounts: ActiveProviderStatementFreshnessRow[], anchor: Date) {
+function staleProviderStatementAccounts(
+  accounts: ActiveProviderStatementFreshnessRow[],
+  anchor: Date,
+) {
   return accounts.filter((account) => {
-    const latestStatement = account.statementFiles[0]
-    if (!latestStatement) return false
+    const latestStatement = account.statementFiles[0];
+    if (!latestStatement) return false;
 
-    const freshnessWindowDays = statementCadenceDays(account) + Math.max(account.settlementLagDays, 0)
-    const cutoff = addUtcDays(startOfUtcDay(anchor), -freshnessWindowDays)
-    return latestStatement.periodEnd < cutoff
-  })
+    const freshnessWindowDays =
+      statementCadenceDays(account) + Math.max(account.settlementLagDays, 0);
+    const cutoff = addUtcDays(startOfUtcDay(anchor), -freshnessWindowDays);
+    return latestStatement.periodEnd < cutoff;
+  });
 }
 
 function openPaymentExceptionStatuses() {
@@ -399,48 +515,60 @@ function openPaymentExceptionStatuses() {
     PaymentExceptionStatus.ESCALATED,
     PaymentExceptionStatus.RESOLUTION_PROPOSED,
     PaymentExceptionStatus.REOPENED,
-  ]
+  ];
 }
 
-function addBlocker(blockers: DataTrustBlocker[], blocker: Omit<DataTrustBlocker, "sourceTables"> & { sourceTables?: string[] }) {
+function addBlocker(
+  blockers: DataTrustBlocker[],
+  blocker: Omit<DataTrustBlocker, "sourceTables"> & { sourceTables?: string[] },
+) {
   blockers.push({
     ...blocker,
     sourceTables: blocker.sourceTables ?? [],
-  })
+  });
 }
 
-function statusFor(hasCritical: boolean, hasHigh: boolean, hasMedium: boolean): ModuleStatus {
-  if (hasCritical || hasHigh) return "blocked"
-  if (hasMedium) return "needs_review"
-  return "ready"
+function statusFor(
+  hasCritical: boolean,
+  hasHigh: boolean,
+  hasMedium: boolean,
+): ModuleStatus {
+  if (hasCritical || hasHigh) return "blocked";
+  if (hasMedium) return "needs_review";
+  return "ready";
 }
 
-function levelFromBlockers(blockers: DataTrustBlocker[], sourceLinkCoveragePct: number | null, ledgerBalanced: boolean): TrustLevel {
-  if (blockers.some((blocker) => blocker.severity === "critical")) return "T0"
-  if (!ledgerBalanced) return "T0"
-  if (blockers.some((blocker) => blocker.severity === "high")) return "T2"
-  if (blockers.some((blocker) => blocker.severity === "medium")) return "T3"
-  if (sourceLinkCoveragePct !== null && sourceLinkCoveragePct < 100) return "T3"
-  return "T4"
+function levelFromBlockers(
+  blockers: DataTrustBlocker[],
+  sourceLinkCoveragePct: number | null,
+  ledgerBalanced: boolean,
+): TrustLevel {
+  if (blockers.some((blocker) => blocker.severity === "critical")) return "T0";
+  if (!ledgerBalanced) return "T0";
+  if (blockers.some((blocker) => blocker.severity === "high")) return "T2";
+  if (blockers.some((blocker) => blocker.severity === "medium")) return "T3";
+  if (sourceLinkCoveragePct !== null && sourceLinkCoveragePct < 100)
+    return "T3";
+  return "T4";
 }
 
 function verdictFor(level: TrustLevel): TrustVerdict {
-  if (level === "T4") return "CERTIFIED"
-  if (level === "T0") return "NON_COMPLIANT"
-  return "PARTIAL"
+  if (level === "T4") return "CERTIFIED";
+  if (level === "T0") return "NON_COMPLIANT";
+  return "PARTIAL";
 }
 
 function figure(
   amount: Prisma.Decimal,
   params: {
-    currency: string
-    asOf: string
-    periodStatus: PeriodStatus
-    sourceQueryId: string
-    criticalBlockers: number
+    currency: string;
+    asOf: string;
+    periodStatus: PeriodStatus;
+    sourceQueryId: string;
+    criticalBlockers: number;
   },
 ): AccountantFinancialFigure {
-  const sourceTables = ["journal_entries", "journal_entry_lines"]
+  const sourceTables = ["journal_entries", "journal_entry_lines"];
 
   if (params.criticalBlockers > 0) {
     return {
@@ -448,12 +576,13 @@ function figure(
       amount: null,
       currency: params.currency,
       provenance: "UNAVAILABLE",
-      reason: "Critical data-trust blockers must be resolved before this financial figure is rendered.",
+      reason:
+        "Critical data-trust blockers must be resolved before this financial figure is rendered.",
       asOf: params.asOf,
       periodStatus: params.periodStatus,
       sourceTables,
       sourceQueryId: params.sourceQueryId,
-    }
+    };
   }
 
   return {
@@ -465,11 +594,15 @@ function figure(
     periodStatus: params.periodStatus,
     sourceTables,
     sourceQueryId: params.sourceQueryId,
-  }
+  };
 }
 
-async function resolveScopePeriod(client: DbClient, scope: ReturnType<typeof normalizedScope>, now: Date) {
-  const anchor = scope.startDate ?? scope.endDate ?? now
+async function resolveScopePeriod(
+  client: DbClient,
+  scope: ReturnType<typeof normalizedScope>,
+  now: Date,
+) {
+  const anchor = scope.startDate ?? scope.endDate ?? now;
 
   return client.accountingPeriod.findFirst({
     where: scope.periodId
@@ -487,10 +620,13 @@ async function resolveScopePeriod(client: DbClient, scope: ReturnType<typeof nor
       startDate: true,
       endDate: true,
     },
-  })
+  });
 }
 
-async function loadOptionalLedgerRows(client: DbClient, scope: ReturnType<typeof normalizedScope>) {
+async function loadOptionalLedgerRows(
+  client: DbClient,
+  scope: ReturnType<typeof normalizedScope>,
+) {
   const rows = await client.journalEntryLine.findMany({
     where: {
       organizationId: scope.organizationId,
@@ -517,7 +653,7 @@ async function loadOptionalLedgerRows(client: DbClient, scope: ReturnType<typeof
         },
       },
     },
-  })
+  });
 
   return rows.map((row) => ({
     id: row.id,
@@ -534,7 +670,7 @@ async function loadOptionalLedgerRows(client: DbClient, scope: ReturnType<typeof
     debit: money(row.debit),
     credit: money(row.credit),
     currency: row.currency,
-  }))
+  }));
 }
 
 export async function getAccountantPortalData(
@@ -542,13 +678,13 @@ export async function getAccountantPortalData(
   client: DbClient = db,
   now = new Date(),
 ): Promise<AccountantPortalData> {
-  const scope = normalizedScope(input, now)
-  const entryWhere = journalEntryScope(scope)
-  const batchWhere = postingBatchScope(scope)
-  const eventWhere = businessEventScope(scope)
-  const statementFileWhere = statementFileScope(scope)
-  const statementLineWhere = statementLineScope(scope)
-  const signedReconciliationRunWhere = signedReconciliationRunScope(scope)
+  const scope = normalizedScope(input, now);
+  const entryWhere = journalEntryScope(scope);
+  const batchWhere = postingBatchScope(scope);
+  const eventWhere = businessEventScope(scope);
+  const statementFileWhere = statementFileScope(scope);
+  const statementLineWhere = statementLineScope(scope);
+  const signedReconciliationRunWhere = signedReconciliationRunScope(scope);
   const scopeHash = sha256(
     stableStringify({
       organizationId: scope.organizationId,
@@ -556,13 +692,13 @@ export async function getAccountantPortalData(
       startDate: scope.startDate?.toISOString() ?? null,
       endDate: scope.endDate?.toISOString() ?? null,
     }),
-  )
+  );
   const sourceQueryId = sha256(
     stableStringify({
       scopeHash,
       sourceTables: ["journal_entries", "journal_entry_lines"],
     }),
-  )
+  );
 
   const [
     settings,
@@ -586,11 +722,19 @@ export async function getAccountantPortalData(
     payrollDeclarationRejectedCount,
     payrollDeclarationInProgressCount,
     payrollDeclarationLifecycleEvidenceMissingCount,
+    payrollDeclarationRegisterProofMissingCount,
+    payrollDeclarationAuthorityAdapterProofMissingCount,
+    payrollDeclarationAuthorityLifecycleProofMissingCount,
     payrollDeclarationAmendmentEvidenceCount,
+    payrollPaymentSettlementRegisterProofMissingCount,
+    payrollPaymentSettlementComponentProofMissingCount,
+    payrollPaymentProviderAdapterProofMissingCount,
     payrollPaymentUnsettledCount,
     payrollPaymentReconciliationEvidenceMissingCount,
     payrollPaymentAllocationMissingCount,
     payrollPostedRunMissingLedgerCount,
+    payrollPostedRunComponentProofMissingCount,
+    payrollEffectiveComponentProofMissingCount,
     payrollPostedRunLineMissingPayslipCount,
     payrollEmittedPayslipMissingProofCount,
     payrollPaidRunMissingSettledPaymentCount,
@@ -756,6 +900,109 @@ export async function getAccountantPortalData(
     client.payrollDeclarationEvidence.count({
       where: {
         organizationId: scope.organizationId,
+        transition: {
+          in: [
+            PayrollDeclarationEvidenceTransition.SUBMIT,
+            PayrollDeclarationEvidenceTransition.ACCEPT,
+            PayrollDeclarationEvidenceTransition.REJECT,
+            PayrollDeclarationEvidenceTransition.MARK_PAYMENT_DUE,
+            PayrollDeclarationEvidenceTransition.MARK_PAID,
+            PayrollDeclarationEvidenceTransition.RECONCILE,
+            PayrollDeclarationEvidenceTransition.AMEND,
+          ],
+        },
+        OR: [{ sourceRegisterHash: null }, { sourceRegisterHash: "" }],
+        ...createdAtFilter(scope),
+      },
+    }),
+    client.payrollDeclarationEvidence.count({
+      where: {
+        organizationId: scope.organizationId,
+        transition: {
+          in: [
+            PayrollDeclarationEvidenceTransition.SUBMIT,
+            PayrollDeclarationEvidenceTransition.ACCEPT,
+            PayrollDeclarationEvidenceTransition.REJECT,
+            PayrollDeclarationEvidenceTransition.MARK_PAYMENT_DUE,
+            PayrollDeclarationEvidenceTransition.MARK_PAID,
+            PayrollDeclarationEvidenceTransition.RECONCILE,
+            PayrollDeclarationEvidenceTransition.AMEND,
+          ],
+        },
+        OR: [
+          { metadata: { equals: Prisma.AnyNull } },
+          {
+            metadata: {
+              path: ["authorityAdapterProofHash"],
+              equals: Prisma.AnyNull,
+            },
+          },
+          { metadata: { path: ["authorityAdapterProofHash"], equals: "" } },
+          {
+            metadata: {
+              path: ["authorityAdapterContractHash"],
+              equals: Prisma.AnyNull,
+            },
+          },
+          { metadata: { path: ["authorityAdapterContractHash"], equals: "" } },
+        ],
+        ...createdAtFilter(scope),
+      },
+    }),
+    client.payrollDeclarationEvidence.count({
+      where: {
+        organizationId: scope.organizationId,
+        transition: {
+          in: [
+            PayrollDeclarationEvidenceTransition.SUBMIT,
+            PayrollDeclarationEvidenceTransition.ACCEPT,
+            PayrollDeclarationEvidenceTransition.REJECT,
+            PayrollDeclarationEvidenceTransition.MARK_PAYMENT_DUE,
+            PayrollDeclarationEvidenceTransition.MARK_PAID,
+            PayrollDeclarationEvidenceTransition.RECONCILE,
+            PayrollDeclarationEvidenceTransition.AMEND,
+          ],
+        },
+        OR: [
+          { metadata: { equals: Prisma.AnyNull } },
+          {
+            metadata: {
+              path: ["authorityLifecycleContractHash"],
+              equals: Prisma.AnyNull,
+            },
+          },
+          {
+            metadata: {
+              path: ["authorityLifecycleContractHash"],
+              equals: "",
+            },
+          },
+          {
+            metadata: {
+              path: ["authorityLifecycleStatus"],
+              equals: Prisma.AnyNull,
+            },
+          },
+          { metadata: { path: ["authorityLifecycleStatus"], equals: "" } },
+          {
+            metadata: {
+              path: ["authorityLifecycleCloseImpact"],
+              equals: Prisma.AnyNull,
+            },
+          },
+          {
+            metadata: {
+              path: ["authorityLifecycleCloseImpact"],
+              equals: "",
+            },
+          },
+        ],
+        ...createdAtFilter(scope),
+      },
+    }),
+    client.payrollDeclarationEvidence.count({
+      where: {
+        organizationId: scope.organizationId,
         transition: PayrollDeclarationEvidenceTransition.AMEND,
         ...createdAtFilter(scope),
       },
@@ -764,7 +1011,111 @@ export async function getAccountantPortalData(
       where: {
         organizationId: scope.organizationId,
         status: {
-          in: [PayrollPaymentBatchStatus.RELEASED, PayrollPaymentBatchStatus.PARTIALLY_SETTLED],
+          in: [
+            PayrollPaymentBatchStatus.PARTIALLY_SETTLED,
+            PayrollPaymentBatchStatus.SETTLED,
+          ],
+        },
+        OR: [
+          { metadata: { equals: Prisma.AnyNull } },
+          {
+            metadata: {
+              path: ["latestSettlementSourceRegisterHash"],
+              equals: Prisma.AnyNull,
+            },
+          },
+          {
+            metadata: {
+              path: ["latestSettlementSourceRegisterHash"],
+              equals: "",
+            },
+          },
+        ],
+        ...createdAtFilter(scope),
+      },
+    }),
+    client.payrollPaymentBatch.count({
+      where: {
+        organizationId: scope.organizationId,
+        status: {
+          in: [
+            PayrollPaymentBatchStatus.PARTIALLY_SETTLED,
+            PayrollPaymentBatchStatus.SETTLED,
+          ],
+        },
+        OR: [
+          { metadata: { equals: Prisma.AnyNull } },
+          {
+            metadata: {
+              path: ["latestSettlementComponentRegisterProofHash"],
+              equals: Prisma.AnyNull,
+            },
+          },
+          {
+            metadata: {
+              path: ["latestSettlementComponentRegisterProofHash"],
+              equals: "",
+            },
+          },
+          {
+            metadata: {
+              path: ["latestSettlementPayrollComponentMappingHash"],
+              equals: Prisma.AnyNull,
+            },
+          },
+          {
+            metadata: {
+              path: ["latestSettlementPayrollComponentMappingHash"],
+              equals: "",
+            },
+          },
+        ],
+        ...createdAtFilter(scope),
+      },
+    }),
+    client.payrollPaymentBatch.count({
+      where: {
+        organizationId: scope.organizationId,
+        status: {
+          in: [
+            PayrollPaymentBatchStatus.RELEASED,
+            PayrollPaymentBatchStatus.PARTIALLY_SETTLED,
+            PayrollPaymentBatchStatus.SETTLED,
+          ],
+        },
+        OR: [
+          { metadata: { equals: Prisma.AnyNull } },
+          {
+            metadata: {
+              path: ["paymentAdapterProofHash"],
+              equals: Prisma.AnyNull,
+            },
+          },
+          { metadata: { path: ["paymentAdapterProofHash"], equals: "" } },
+          {
+            metadata: {
+              path: ["paymentProviderAdapterContractHash"],
+              equals: Prisma.AnyNull,
+            },
+          },
+          {
+            metadata: {
+              path: ["paymentProviderAdapterContractHash"],
+              equals: "",
+            },
+          },
+        ],
+        ...createdAtFilter(scope),
+      },
+    }),
+    client.payrollPaymentBatch.count({
+      where: {
+        organizationId: scope.organizationId,
+        status: {
+          in: [
+            PayrollPaymentBatchStatus.RELEASED,
+            PayrollPaymentBatchStatus.PARTIALLY_SETTLED,
+          ],
         },
         ...createdAtFilter(scope),
       },
@@ -773,9 +1124,17 @@ export async function getAccountantPortalData(
       where: {
         organizationId: scope.organizationId,
         status: {
-          in: [PayrollPaymentBatchStatus.RELEASED, PayrollPaymentBatchStatus.PARTIALLY_SETTLED, PayrollPaymentBatchStatus.SETTLED],
+          in: [
+            PayrollPaymentBatchStatus.RELEASED,
+            PayrollPaymentBatchStatus.PARTIALLY_SETTLED,
+            PayrollPaymentBatchStatus.SETTLED,
+          ],
         },
-        OR: [{ evidenceHash: null }, { paymentTransactionId: null }, { reconciliationStatus: null }],
+        OR: [
+          { evidenceHash: null },
+          { paymentTransactionId: null },
+          { reconciliationStatus: null },
+        ],
         ...createdAtFilter(scope),
       },
     }),
@@ -783,7 +1142,11 @@ export async function getAccountantPortalData(
       where: {
         organizationId: scope.organizationId,
         status: {
-          in: [PayrollPaymentBatchStatus.RELEASED, PayrollPaymentBatchStatus.PARTIALLY_SETTLED, PayrollPaymentBatchStatus.SETTLED],
+          in: [
+            PayrollPaymentBatchStatus.RELEASED,
+            PayrollPaymentBatchStatus.PARTIALLY_SETTLED,
+            PayrollPaymentBatchStatus.SETTLED,
+          ],
         },
         allocations: { none: {} },
         ...createdAtFilter(scope),
@@ -798,6 +1161,44 @@ export async function getAccountantPortalData(
         ...createdAtFilter(scope),
       },
     }),
+    client.payrollRun.count({
+      where: {
+        organizationId: scope.organizationId,
+        status: { in: [PayrollRunStatus.POSTED, PayrollRunStatus.PAID] },
+        deletedAt: null,
+        OR: [
+          { metadata: { equals: Prisma.AnyNull } },
+          {
+            metadata: {
+              path: ["componentRegisterProofHash"],
+              equals: Prisma.AnyNull,
+            },
+          },
+          { metadata: { path: ["componentRegisterProofHash"], equals: "" } },
+          {
+            metadata: {
+              path: ["componentRegisterProofStatus"],
+              equals: Prisma.AnyNull,
+            },
+          },
+          { metadata: { path: ["componentRegisterProofStatus"], equals: "" } },
+        ],
+        ...createdAtFilter(scope),
+      },
+    }),
+    client.payrollRunLine
+      .findMany({
+        where: {
+          organizationId: scope.organizationId,
+          payrollRun: {
+            status: { in: [PayrollRunStatus.POSTED, PayrollRunStatus.PAID] },
+            deletedAt: null,
+            ...createdAtFilter(scope),
+          },
+        },
+        select: { calculationSnapshot: true },
+      })
+      .then(countEffectiveComponentProofGaps),
     client.payrollRunLine.count({
       where: {
         organizationId: scope.organizationId,
@@ -826,11 +1227,15 @@ export async function getAccountantPortalData(
         ...createdAtFilter(scope),
       },
     }),
+
     client.payrollPaymentBatch.count({
       where: {
         organizationId: scope.organizationId,
         status: {
-          in: [PayrollPaymentBatchStatus.RELEASED, PayrollPaymentBatchStatus.PARTIALLY_SETTLED],
+          in: [
+            PayrollPaymentBatchStatus.RELEASED,
+            PayrollPaymentBatchStatus.PARTIALLY_SETTLED,
+          ],
         },
         ledgerPostingBatchId: null,
         ...createdAtFilter(scope),
@@ -841,7 +1246,10 @@ export async function getAccountantPortalData(
         ...batchWhere,
         status: LedgerPostingBatchStatus.POSTED,
         sourceType: {
-          in: [AccountingSourceType.PAYROLL_RUN, AccountingSourceType.PAYROLL_PAYMENT],
+          in: [
+            AccountingSourceType.PAYROLL_RUN,
+            AccountingSourceType.PAYROLL_PAYMENT,
+          ],
         },
         sourceLinks: { none: {} },
       },
@@ -850,7 +1258,11 @@ export async function getAccountantPortalData(
       where: {
         organizationId: scope.organizationId,
         status: {
-          in: [SupplierInvoiceStatus.POSTED, SupplierInvoiceStatus.PAYMENT_PENDING, SupplierInvoiceStatus.DISPUTED],
+          in: [
+            SupplierInvoiceStatus.POSTED,
+            SupplierInvoiceStatus.PAYMENT_PENDING,
+            SupplierInvoiceStatus.DISPUTED,
+          ],
         },
         ...createdAtFilter(scope),
       },
@@ -859,7 +1271,11 @@ export async function getAccountantPortalData(
       where: {
         organizationId: scope.organizationId,
         status: {
-          in: [SupplierPaymentStatus.APPROVED, SupplierPaymentStatus.RELEASED, SupplierPaymentStatus.POSTED],
+          in: [
+            SupplierPaymentStatus.APPROVED,
+            SupplierPaymentStatus.RELEASED,
+            SupplierPaymentStatus.POSTED,
+          ],
         },
         ledgerPostingBatchId: null,
         ...createdAtFilter(scope),
@@ -959,27 +1375,38 @@ export async function getAccountantPortalData(
         changes: true,
       },
     }),
-  ])
+  ]);
 
-  const blockers: DataTrustBlocker[] = []
-  const currency = settings?.baseCurrency || "XAF"
-  const periodStatus: PeriodStatus = period?.status ?? "UNAVAILABLE"
-  const debitTotal = decimal(ledgerAggregate._sum.debit)
-  const creditTotal = decimal(ledgerAggregate._sum.credit)
-  const ledgerBalanced = debitTotal.eq(creditTotal)
-  const linkedPostedEntryCount = Math.max(postedEntryCount - orphanPostedEntryCount, 0)
-  const sourceLinkCoveragePct = postedEntryCount === 0 ? null : Number(((linkedPostedEntryCount / postedEntryCount) * 100).toFixed(2))
+  const blockers: DataTrustBlocker[] = [];
+  const currency = settings?.baseCurrency || "XAF";
+  const periodStatus: PeriodStatus = period?.status ?? "UNAVAILABLE";
+  const debitTotal = decimal(ledgerAggregate._sum.debit);
+  const creditTotal = decimal(ledgerAggregate._sum.credit);
+  const ledgerBalanced = debitTotal.eq(creditTotal);
+  const linkedPostedEntryCount = Math.max(
+    postedEntryCount - orphanPostedEntryCount,
+    0,
+  );
+  const sourceLinkCoveragePct =
+    postedEntryCount === 0
+      ? null
+      : Number(((linkedPostedEntryCount / postedEntryCount) * 100).toFixed(2));
   const providerStatementEvidenceMissing =
-    activeProviderAccountCount > 0 && (providerStatementFileCount === 0 || providerStatementLineCount === 0)
+    activeProviderAccountCount > 0 &&
+    (providerStatementFileCount === 0 || providerStatementLineCount === 0);
   const staleStatementAccounts = providerStatementEvidenceMissing
     ? []
-    : staleProviderStatementAccounts(activeProviderStatementFreshnessRows, statementFreshnessAnchor(scope, period, now))
-  const providerStatementCadenceStale = activeProviderAccountCount > 0 && staleStatementAccounts.length > 0
+    : staleProviderStatementAccounts(
+        activeProviderStatementFreshnessRows,
+        statementFreshnessAnchor(scope, period, now),
+      );
+  const providerStatementCadenceStale =
+    activeProviderAccountCount > 0 && staleStatementAccounts.length > 0;
   const providerReconciliationSignoffMissing =
     activeProviderAccountCount > 0 &&
     !providerStatementEvidenceMissing &&
     !providerStatementCadenceStale &&
-    signedReconciliationRunCount === 0
+    signedReconciliationRunCount === 0;
 
   if (!settings?.accountingEnabled) {
     addBlocker(blockers, {
@@ -987,9 +1414,10 @@ export async function getAccountantPortalData(
       severity: "high",
       gate: "accounting.setup.ready",
       title: "Accounting setup is not locked",
-      detail: "Accountant trust packs require the accounting setup to be marked ready before certification.",
+      detail:
+        "Accountant trust packs require the accounting setup to be marked ready before certification.",
       sourceTables: ["organization_accounting_settings"],
-    })
+    });
   }
 
   if (!period) {
@@ -998,9 +1426,10 @@ export async function getAccountantPortalData(
       severity: "high",
       gate: "accounting.period.scope",
       title: "No accounting period resolved",
-      detail: "The portal could not resolve an accounting period for the selected scope.",
+      detail:
+        "The portal could not resolve an accounting period for the selected scope.",
       sourceTables: ["accounting_periods"],
-    })
+    });
   }
 
   if (period?.status === AccountingPeriodStatus.LOCKED) {
@@ -1009,9 +1438,10 @@ export async function getAccountantPortalData(
       severity: "medium",
       gate: "accounting.period.scope",
       title: "Period is locked",
-      detail: "Figures are readable but changes and recertification require a new approved close workflow.",
+      detail:
+        "Figures are readable but changes and recertification require a new approved close workflow.",
       sourceTables: ["accounting_periods"],
-    })
+    });
   }
 
   if (!ledgerBalanced) {
@@ -1020,9 +1450,10 @@ export async function getAccountantPortalData(
       severity: "critical",
       gate: "ledger.balance",
       title: "Posted ledger activity is not balanced",
-      detail: "Debit and credit totals from posted/reversed journal lines diverge for this scope.",
+      detail:
+        "Debit and credit totals from posted/reversed journal lines diverge for this scope.",
       sourceTables: ["journal_entry_lines"],
-    })
+    });
   }
 
   if (orphanPostedEntryCount > 0) {
@@ -1033,7 +1464,7 @@ export async function getAccountantPortalData(
       title: "Posted journals lack source links",
       detail: `${orphanPostedEntryCount} posted journal entry or reversal has no accounting source link.`,
       sourceTables: ["journal_entries", "accounting_source_links"],
-    })
+    });
   }
 
   if (postedWithoutBatchCount > 0) {
@@ -1044,7 +1475,7 @@ export async function getAccountantPortalData(
       title: "Posted journals lack posting batches",
       detail: `${postedWithoutBatchCount} posted journal entry or reversal is not tied to a posting batch.`,
       sourceTables: ["journal_entries", "ledger_posting_batches"],
-    })
+    });
   }
 
   if (postedBatchWithoutJournalCount > 0) {
@@ -1055,7 +1486,7 @@ export async function getAccountantPortalData(
       title: "Posted posting batches lack journals",
       detail: `${postedBatchWithoutJournalCount} posted posting batch has no journal entry.`,
       sourceTables: ["ledger_posting_batches", "journal_entries"],
-    })
+    });
   }
 
   if (failedBatchCount > 0) {
@@ -1066,7 +1497,7 @@ export async function getAccountantPortalData(
       title: "Failed posting batches remain open",
       detail: `${failedBatchCount} posting batch failed and must be corrected before certification.`,
       sourceTables: ["ledger_posting_batches"],
-    })
+    });
   }
 
   if (failedBusinessEventCount > 0) {
@@ -1077,7 +1508,7 @@ export async function getAccountantPortalData(
       title: "Business events failed or were rejected",
       detail: `${failedBusinessEventCount} business event is failed or rejected in the selected scope.`,
       sourceTables: ["business_events"],
-    })
+    });
   }
 
   if (criticalPaymentExceptionCount > 0) {
@@ -1088,7 +1519,7 @@ export async function getAccountantPortalData(
       title: "Critical payment exceptions are open",
       detail: `${criticalPaymentExceptionCount} high or critical payment reconciliation exception remains open.`,
       sourceTables: ["payment_exceptions"],
-    })
+    });
   } else if (openPaymentExceptionCount > 0) {
     addBlocker(blockers, {
       id: "open-payment-exceptions",
@@ -1097,7 +1528,7 @@ export async function getAccountantPortalData(
       title: "Payment reconciliation exceptions are open",
       detail: `${openPaymentExceptionCount} payment reconciliation exception remains open.`,
       sourceTables: ["payment_exceptions"],
-    })
+    });
   }
 
   if (providerStatementEvidenceMissing) {
@@ -1108,7 +1539,7 @@ export async function getAccountantPortalData(
       title: "Provider statement evidence is missing",
       detail: `${activeProviderAccountCount} active provider account is configured, but processed/imported statement file and line evidence is missing for the selected scope.`,
       sourceTables: ["provider_accounts", "statement_files", "statement_lines"],
-    })
+    });
   } else if (providerStatementCadenceStale) {
     addBlocker(blockers, {
       id: "provider-statement-cadence-stale",
@@ -1117,7 +1548,7 @@ export async function getAccountantPortalData(
       title: "Provider statement cadence is stale",
       detail: `${staleStatementAccounts.length} active provider account has statement evidence, but its latest statement is older than the configured cadence for the selected scope.`,
       sourceTables: ["provider_accounts", "statement_files", "statement_lines"],
-    })
+    });
   } else if (providerReconciliationSignoffMissing) {
     addBlocker(blockers, {
       id: "provider-reconciliation-signoff-missing",
@@ -1125,8 +1556,13 @@ export async function getAccountantPortalData(
       gate: "payments.reconciliation.signoff",
       title: "Provider reconciliation signoff is missing",
       detail: `${activeProviderAccountCount} active provider account has statement evidence, but no signed reconciliation run is available for the selected scope.`,
-      sourceTables: ["provider_accounts", "statement_files", "statement_lines", "reconciliation_runs"],
-    })
+      sourceTables: [
+        "provider_accounts",
+        "statement_files",
+        "statement_lines",
+        "reconciliation_runs",
+      ],
+    });
   }
 
   if (supplierPaymentMissingLedgerCount > 0) {
@@ -1137,7 +1573,7 @@ export async function getAccountantPortalData(
       title: "Supplier payments lack ledger posting",
       detail: `${supplierPaymentMissingLedgerCount} approved, released, or posted supplier payment is missing a ledger posting batch.`,
       sourceTables: ["supplier_payments", "ledger_posting_batches"],
-    })
+    });
   }
 
   if (supplierInvoiceOpenCount > 0) {
@@ -1148,7 +1584,7 @@ export async function getAccountantPortalData(
       title: "Supplier invoice open items need review",
       detail: `${supplierInvoiceOpenCount} posted/payment-pending/disputed supplier invoice remains open.`,
       sourceTables: ["supplier_invoices"],
-    })
+    });
   }
 
   if (payrollDeclarationRejectedCount > 0) {
@@ -1159,7 +1595,7 @@ export async function getAccountantPortalData(
       title: "Payroll declarations were rejected",
       detail: `${payrollDeclarationRejectedCount} payroll declaration requires correction evidence.`,
       sourceTables: ["payroll_declarations"],
-    })
+    });
   } else if (payrollDeclarationPreparedCount > 0) {
     addBlocker(blockers, {
       id: "payroll-declarations-prepared",
@@ -1168,7 +1604,7 @@ export async function getAccountantPortalData(
       title: "Payroll declarations await authority evidence",
       detail: `${payrollDeclarationPreparedCount} payroll declaration is prepared but not yet accepted, paid, or reconciled.`,
       sourceTables: ["payroll_declarations"],
-    })
+    });
   }
 
   if (payrollDeclarationLifecycleEvidenceMissingCount > 0) {
@@ -1179,7 +1615,40 @@ export async function getAccountantPortalData(
       title: "Payroll declaration lifecycle evidence is incomplete",
       detail: `${payrollDeclarationLifecycleEvidenceMissingCount} advanced payroll declaration lacks append-only authority evidence.`,
       sourceTables: ["payroll_declarations", "payroll_declaration_evidence"],
-    })
+    });
+  }
+
+  if (payrollDeclarationRegisterProofMissingCount > 0) {
+    addBlocker(blockers, {
+      id: "payroll-declaration-register-proof-missing",
+      severity: "high",
+      gate: "payroll.declarations.register-proof",
+      title: "Payroll declaration evidence lacks register proof",
+      detail: `${payrollDeclarationRegisterProofMissingCount} close-impacting payroll declaration evidence record is missing source payroll register proof.`,
+      sourceTables: ["payroll_declaration_evidence", "payroll_runs"],
+    });
+  }
+
+  if (payrollDeclarationAuthorityAdapterProofMissingCount > 0) {
+    addBlocker(blockers, {
+      id: "payroll-declaration-authority-adapter-proof-missing",
+      severity: "high",
+      gate: "payroll.declarations.adapter-proof",
+      title: "Payroll declaration evidence lacks authority adapter proof",
+      detail: `${payrollDeclarationAuthorityAdapterProofMissingCount} close-impacting payroll declaration evidence record is missing authority adapter proof or adapter contract hash.`,
+      sourceTables: ["payroll_declaration_evidence", "payroll_declarations"],
+    });
+  }
+
+  if (payrollDeclarationAuthorityLifecycleProofMissingCount > 0) {
+    addBlocker(blockers, {
+      id: "payroll-declaration-authority-lifecycle-proof-missing",
+      severity: "high",
+      gate: "payroll.declarations.lifecycle-proof",
+      title: "Payroll declaration evidence lacks authority lifecycle proof",
+      detail: `${payrollDeclarationAuthorityLifecycleProofMissingCount} close-impacting payroll declaration evidence record is missing authority lifecycle contract hash, status, or close-impact proof.`,
+      sourceTables: ["payroll_declaration_evidence", "payroll_declarations"],
+    });
   }
 
   if (payrollDeclarationInProgressCount > 0) {
@@ -1190,7 +1659,7 @@ export async function getAccountantPortalData(
       title: "Payroll declarations are still in lifecycle processing",
       detail: `${payrollDeclarationInProgressCount} payroll declaration is submitted, accepted, payment-due, or paid but not yet reconciled or archived.`,
       sourceTables: ["payroll_declarations", "payroll_declaration_evidence"],
-    })
+    });
   }
 
   if (payrollPaymentUnsettledCount > 0) {
@@ -1201,7 +1670,7 @@ export async function getAccountantPortalData(
       title: "Payroll payments are not settled",
       detail: `${payrollPaymentUnsettledCount} released or partially settled payroll payment batch still needs reconciliation evidence.`,
       sourceTables: ["payroll_payment_batches"],
-    })
+    });
   }
 
   if (payrollPaymentReconciliationEvidenceMissingCount > 0) {
@@ -1212,7 +1681,44 @@ export async function getAccountantPortalData(
       title: "Payroll payments lack reconciliation evidence",
       detail: `${payrollPaymentReconciliationEvidenceMissingCount} released, partially settled, or settled payroll payment batch is missing batch evidence, a linked payment transaction, or reconciliation status.`,
       sourceTables: ["payroll_payment_batches", "payment_transactions"],
-    })
+    });
+  }
+
+  if (payrollPaymentSettlementRegisterProofMissingCount > 0) {
+    addBlocker(blockers, {
+      id: "payroll-payment-settlement-register-proof-missing",
+      severity: "high",
+      gate: "payroll.payment.register-proof",
+      title: "Payroll settlement evidence lacks register proof",
+      detail: `${payrollPaymentSettlementRegisterProofMissingCount} settled or partially settled payroll payment batch is missing source payroll register proof.`,
+      sourceTables: ["payroll_payment_batches", "payroll_runs"],
+    });
+  }
+
+  if (payrollPaymentSettlementComponentProofMissingCount > 0) {
+    addBlocker(blockers, {
+      id: "payroll-payment-settlement-component-proof-missing",
+      severity: "high",
+      gate: "payroll.payment.component-proof",
+      title: "Payroll settlement evidence lacks component proof",
+      detail: `${payrollPaymentSettlementComponentProofMissingCount} settled or partially settled payroll payment batch is missing statutory component register proof or payroll component mapping proof.`,
+      sourceTables: [
+        "payroll_payment_batches",
+        "payroll_runs",
+        "payroll_run_lines",
+      ],
+    });
+  }
+
+  if (payrollPaymentProviderAdapterProofMissingCount > 0) {
+    addBlocker(blockers, {
+      id: "payroll-payment-provider-adapter-proof-missing",
+      severity: "high",
+      gate: "payroll.payment.adapter-proof",
+      title: "Payroll payment evidence lacks provider adapter proof",
+      detail: `${payrollPaymentProviderAdapterProofMissingCount} released, partially settled, or settled payroll payment batch is missing provider adapter proof or adapter contract hash.`,
+      sourceTables: ["payroll_payment_batches", "payment_transactions"],
+    });
   }
 
   if (payrollPaymentAllocationMissingCount > 0) {
@@ -1222,8 +1728,12 @@ export async function getAccountantPortalData(
       gate: "payroll.register.payment-allocations",
       title: "Payroll payment allocations are missing",
       detail: `${payrollPaymentAllocationMissingCount} released, partially settled, or settled payroll payment batch has no payslip allocations for register tie-out.`,
-      sourceTables: ["payroll_payment_batches", "payroll_payment_allocations", "payroll_payslips"],
-    })
+      sourceTables: [
+        "payroll_payment_batches",
+        "payroll_payment_allocations",
+        "payroll_payslips",
+      ],
+    });
   }
 
   if (payrollPostedRunMissingLedgerCount > 0) {
@@ -1234,7 +1744,33 @@ export async function getAccountantPortalData(
       title: "Posted payroll runs lack ledger posting",
       detail: `${payrollPostedRunMissingLedgerCount} posted or paid payroll run is missing a ledger posting batch.`,
       sourceTables: ["payroll_runs", "ledger_posting_batches"],
-    })
+    });
+  }
+
+  if (payrollPostedRunComponentProofMissingCount > 0) {
+    addBlocker(blockers, {
+      id: "payroll-posted-runs-component-proof-missing",
+      severity: "critical",
+      gate: "payroll.accounting.component-proof",
+      title: "Posted payroll runs lack component register proof",
+      detail: `${payrollPostedRunComponentProofMissingCount} posted or paid payroll run is missing statutory component register proof in accounting evidence.`,
+      sourceTables: [
+        "payroll_runs",
+        "payroll_run_lines",
+        "ledger_posting_batches",
+      ],
+    });
+  }
+
+  if (payrollEffectiveComponentProofMissingCount > 0) {
+    addBlocker(blockers, {
+      id: "payroll-effective-component-proof-missing",
+      severity: "critical",
+      gate: "payroll.accounting.effective-component-proof",
+      title: "Payroll run lines lack effective component proof",
+      detail: `${payrollEffectiveComponentProofMissingCount} posted or paid payroll run line lacks effective-dated allowance, benefit, leave, or overtime proof needed for certified close evidence.`,
+      sourceTables: ["payroll_runs", "payroll_run_lines"],
+    });
   }
 
   if (payrollPostedRunLineMissingPayslipCount > 0) {
@@ -1245,7 +1781,7 @@ export async function getAccountantPortalData(
       title: "Payroll run lines lack emitted payslips",
       detail: `${payrollPostedRunLineMissingPayslipCount} posted or paid payroll run line has no emitted payslip evidence for register tie-out.`,
       sourceTables: ["payroll_runs", "payroll_run_lines", "payroll_payslips"],
-    })
+    });
   }
 
   if (payrollEmittedPayslipMissingProofCount > 0) {
@@ -1256,7 +1792,7 @@ export async function getAccountantPortalData(
       title: "Emitted payroll payslips lack proof hashes",
       detail: `${payrollEmittedPayslipMissingProofCount} emitted payroll payslip has an empty document hash and cannot support certified close evidence.`,
       sourceTables: ["payroll_payslips"],
-    })
+    });
   }
 
   if (payrollPaidRunMissingSettledPaymentCount > 0) {
@@ -1266,8 +1802,12 @@ export async function getAccountantPortalData(
       gate: "payroll.register.payment-tieout",
       title: "Paid payroll runs lack settled payment evidence",
       detail: `${payrollPaidRunMissingSettledPaymentCount} paid payroll run has no settled payment batch for register tie-out.`,
-      sourceTables: ["payroll_runs", "payroll_payment_batches", "payroll_payment_allocations"],
-    })
+      sourceTables: [
+        "payroll_runs",
+        "payroll_payment_batches",
+        "payroll_payment_allocations",
+      ],
+    });
   }
 
   if (payrollPaymentMissingLedgerCount > 0) {
@@ -1278,7 +1818,7 @@ export async function getAccountantPortalData(
       title: "Released payroll payments lack ledger posting",
       detail: `${payrollPaymentMissingLedgerCount} released or partially settled payroll payment batch is missing a ledger posting batch.`,
       sourceTables: ["payroll_payment_batches", "ledger_posting_batches"],
-    })
+    });
   }
 
   if (payrollPostedLedgerMissingSourceLinkCount > 0) {
@@ -1289,7 +1829,7 @@ export async function getAccountantPortalData(
       title: "Payroll ledger postings lack source links",
       detail: `${payrollPostedLedgerMissingSourceLinkCount} posted payroll ledger batch is missing accounting source-link evidence.`,
       sourceTables: ["ledger_posting_batches", "accounting_source_links"],
-    })
+    });
   }
 
   if (fiscalRejectedCount > 0) {
@@ -1300,7 +1840,7 @@ export async function getAccountantPortalData(
       title: "Fiscal documents were rejected",
       detail: `${fiscalRejectedCount} fiscal document rejection needs correction or authority follow-up evidence.`,
       sourceTables: ["fiscal_documents"],
-    })
+    });
   } else if (fiscalQueuedCount > 0) {
     addBlocker(blockers, {
       id: "fiscal-documents-pending",
@@ -1309,7 +1849,7 @@ export async function getAccountantPortalData(
       title: "Fiscal documents await certification evidence",
       detail: `${fiscalQueuedCount} fiscal document is queued or submitted but not certified yet.`,
       sourceTables: ["fiscal_documents"],
-    })
+    });
   }
 
   if (offlineOpenConflictCount > 0) {
@@ -1320,7 +1860,7 @@ export async function getAccountantPortalData(
       title: "Offline POS sync conflicts remain open",
       detail: `${offlineOpenConflictCount} offline POS conflict requires manager review before certification or close.`,
       sourceTables: ["pos_offline_sync_conflicts", "pos_offline_events"],
-    })
+    });
   }
 
   if (offlineCloseBlockerCount > 0) {
@@ -1331,7 +1871,7 @@ export async function getAccountantPortalData(
       title: "Offline POS certification blockers are open",
       detail: `${offlineCloseBlockerCount} offline POS sync certificate is blocking close readiness.`,
       sourceTables: ["pos_offline_sync_certificates"],
-    })
+    });
   }
 
   if (offlinePendingEventCount > 0) {
@@ -1342,7 +1882,7 @@ export async function getAccountantPortalData(
       title: "Offline POS events await server replay",
       detail: `${offlinePendingEventCount} accepted offline POS event is still provisional and pending replay/certification.`,
       sourceTables: ["pos_offline_events", "business_events"],
-    })
+    });
   }
 
   if (postedEntryCount === 0) {
@@ -1351,37 +1891,56 @@ export async function getAccountantPortalData(
       severity: "medium",
       gate: "ledger.activity",
       title: "No posted ledger activity in scope",
-      detail: "The portal can open, but certified accountant export requires posted ledger evidence.",
+      detail:
+        "The portal can open, but certified accountant export requires posted ledger evidence.",
       sourceTables: ["journal_entries", "journal_entry_lines"],
-    })
+    });
   }
 
-  const criticalBlockers = blockers.filter((blocker) => blocker.severity === "critical").length
-  const highBlockers = blockers.filter((blocker) => blocker.severity === "high").length
-  const mediumBlockers = blockers.filter((blocker) => blocker.severity === "medium").length
-  const trustLevel = levelFromBlockers(blockers, sourceLinkCoveragePct, ledgerBalanced)
-  const verdict = verdictFor(trustLevel)
-  const canExportCertifiedPack = trustLevel === "T4" && verdict === "CERTIFIED"
+  const criticalBlockers = blockers.filter(
+    (blocker) => blocker.severity === "critical",
+  ).length;
+  const highBlockers = blockers.filter(
+    (blocker) => blocker.severity === "high",
+  ).length;
+  const mediumBlockers = blockers.filter(
+    (blocker) => blocker.severity === "medium",
+  ).length;
+  const trustLevel = levelFromBlockers(
+    blockers,
+    sourceLinkCoveragePct,
+    ledgerBalanced,
+  );
+  const verdict = verdictFor(trustLevel);
+  const canExportCertifiedPack = trustLevel === "T4" && verdict === "CERTIFIED";
   const disabledReason = canExportCertifiedPack
     ? null
-    : "Certified accountant trust-pack export requires T4: balanced ledger, source-link coverage, no failed events, no open high-risk exceptions, and no unresolved statutory blockers."
+    : "Certified accountant trust-pack export requires T4: balanced ledger, source-link coverage, no failed events, no open high-risk exceptions, and no unresolved statutory blockers.";
 
   const moduleEvidence: AccountantPortalData["moduleEvidence"] = [
     {
       module: "ledger",
       status: statusFor(
-        !ledgerBalanced || orphanPostedEntryCount > 0 || postedWithoutBatchCount > 0 || postedBatchWithoutJournalCount > 0,
+        !ledgerBalanced ||
+          orphanPostedEntryCount > 0 ||
+          postedWithoutBatchCount > 0 ||
+          postedBatchWithoutJournalCount > 0,
         failedBatchCount > 0 || !settings?.accountingEnabled || !period,
-        postedEntryCount === 0 || period?.status === AccountingPeriodStatus.LOCKED,
+        postedEntryCount === 0 ||
+          period?.status === AccountingPeriodStatus.LOCKED,
       ),
       label: "Ledger source of truth",
-      detail: "Posted journal entries, journal lines, posting batches, and source links.",
+      detail:
+        "Posted journal entries, journal lines, posting batches, and source links.",
       facts: [
         { label: "Posted entries", value: postedEntryCount },
         { label: "Journal lines", value: ledgerAggregate._count._all },
         {
           label: "Source-link coverage",
-          value: sourceLinkCoveragePct === null ? "n/a" : `${sourceLinkCoveragePct}%`,
+          value:
+            sourceLinkCoveragePct === null
+              ? "n/a"
+              : `${sourceLinkCoveragePct}%`,
         },
       ],
     },
@@ -1390,7 +1949,9 @@ export async function getAccountantPortalData(
       status: statusFor(false, failedBusinessEventCount > 0, false),
       label: "Business event gateway",
       detail: "Failed/rejected business events block accountant certification.",
-      facts: [{ label: "Failed/rejected events", value: failedBusinessEventCount }],
+      facts: [
+        { label: "Failed/rejected events", value: failedBusinessEventCount },
+      ],
     },
     {
       module: "payments",
@@ -1403,7 +1964,8 @@ export async function getAccountantPortalData(
         false,
       ),
       label: "Payment reconciliation",
-      detail: "Open payment exceptions, provider statement cadence, and signed reconciliation runs gate certification.",
+      detail:
+        "Open payment exceptions, provider statement cadence, and signed reconciliation runs gate certification.",
       facts: [
         {
           label: "Active provider accounts",
@@ -1425,9 +1987,14 @@ export async function getAccountantPortalData(
     },
     {
       module: "purchasing",
-      status: statusFor(supplierPaymentMissingLedgerCount > 0, false, supplierInvoiceOpenCount > 0),
+      status: statusFor(
+        supplierPaymentMissingLedgerCount > 0,
+        false,
+        supplierInvoiceOpenCount > 0,
+      ),
       label: "Purchasing and AP",
-      detail: "Supplier invoices and payments must reconcile to ledger evidence.",
+      detail:
+        "Supplier invoices and payments must reconcile to ledger evidence.",
       facts: [
         { label: "Open AP invoices", value: supplierInvoiceOpenCount },
         {
@@ -1440,21 +2007,30 @@ export async function getAccountantPortalData(
       module: "payroll",
       status: statusFor(
         payrollPostedRunMissingLedgerCount > 0 ||
+          payrollPostedRunComponentProofMissingCount > 0 ||
+          payrollEffectiveComponentProofMissingCount > 0 ||
           payrollPostedRunLineMissingPayslipCount > 0 ||
           payrollPaymentMissingLedgerCount > 0 ||
           payrollPostedLedgerMissingSourceLinkCount > 0,
         payrollDeclarationRejectedCount > 0 ||
           payrollDeclarationLifecycleEvidenceMissingCount > 0 ||
+          payrollDeclarationRegisterProofMissingCount > 0 ||
+          payrollDeclarationAuthorityAdapterProofMissingCount > 0 ||
+          payrollDeclarationAuthorityLifecycleProofMissingCount > 0 ||
           payrollPaymentUnsettledCount > 0 ||
           payrollPaymentReconciliationEvidenceMissingCount > 0 ||
+          payrollPaymentSettlementRegisterProofMissingCount > 0 ||
+          payrollPaymentSettlementComponentProofMissingCount > 0 ||
+          payrollPaymentProviderAdapterProofMissingCount > 0 ||
           payrollPaymentAllocationMissingCount > 0 ||
           payrollEmittedPayslipMissingProofCount > 0 ||
           payrollPaidRunMissingSettledPaymentCount > 0,
-        payrollDeclarationPreparedCount > 0 || payrollDeclarationInProgressCount > 0,
+        payrollDeclarationPreparedCount > 0 ||
+          payrollDeclarationInProgressCount > 0,
       ),
       label: "Payroll and declarations",
       detail:
-        "Payroll register tie-out, payslip proof, payment reconciliation, ledger source-link, and declaration lifecycle evidence is consumed from payroll services.",
+        "Payroll register tie-out, payslip proof, payment reconciliation/component proof, ledger source-link, and declaration lifecycle evidence is consumed from payroll services.",
       facts: [
         {
           label: "Prepared declarations",
@@ -1473,6 +2049,18 @@ export async function getAccountantPortalData(
           value: payrollDeclarationLifecycleEvidenceMissingCount,
         },
         {
+          label: "Declaration register proof gaps",
+          value: payrollDeclarationRegisterProofMissingCount,
+        },
+        {
+          label: "Declaration adapter proof gaps",
+          value: payrollDeclarationAuthorityAdapterProofMissingCount,
+        },
+        {
+          label: "Declaration lifecycle proof gaps",
+          value: payrollDeclarationAuthorityLifecycleProofMissingCount,
+        },
+        {
           label: "Declaration amendments",
           value: payrollDeclarationAmendmentEvidenceCount,
         },
@@ -1482,12 +2070,32 @@ export async function getAccountantPortalData(
           value: payrollPaymentReconciliationEvidenceMissingCount,
         },
         {
+          label: "Payment register proof gaps",
+          value: payrollPaymentSettlementRegisterProofMissingCount,
+        },
+        {
+          label: "Payment component proof gaps",
+          value: payrollPaymentSettlementComponentProofMissingCount,
+        },
+        {
+          label: "Payment adapter proof gaps",
+          value: payrollPaymentProviderAdapterProofMissingCount,
+        },
+        {
           label: "Payment allocation gaps",
           value: payrollPaymentAllocationMissingCount,
         },
         {
           label: "Runs missing ledger",
           value: payrollPostedRunMissingLedgerCount,
+        },
+        {
+          label: "Posted run component proof gaps",
+          value: payrollPostedRunComponentProofMissingCount,
+        },
+        {
+          label: "Effective component proof gaps",
+          value: payrollEffectiveComponentProofMissingCount,
         },
         {
           label: "Run lines missing payslips",
@@ -1515,7 +2123,8 @@ export async function getAccountantPortalData(
       module: "compliance",
       status: statusFor(false, fiscalRejectedCount > 0, fiscalQueuedCount > 0),
       label: "Compliance documents",
-      detail: "Fiscal document certification/rejection evidence is included in trust gates.",
+      detail:
+        "Fiscal document certification/rejection evidence is included in trust gates.",
       facts: [
         { label: "Pending fiscal docs", value: fiscalQueuedCount },
         { label: "Rejected fiscal docs", value: fiscalRejectedCount },
@@ -1523,9 +2132,14 @@ export async function getAccountantPortalData(
     },
     {
       module: "offline_pos",
-      status: statusFor(offlineOpenConflictCount > 0, offlineCloseBlockerCount > 0, offlinePendingEventCount > 0),
+      status: statusFor(
+        offlineOpenConflictCount > 0,
+        offlineCloseBlockerCount > 0,
+        offlinePendingEventCount > 0,
+      ),
       label: "Offline POS sync",
-      detail: "Device sync evidence, conflicts, provisional receipts, and close blockers from the 014 offline POS kernel.",
+      detail:
+        "Device sync evidence, conflicts, provisional receipts, and close blockers from the 014 offline POS kernel.",
       facts: [
         { label: "Pending replay", value: offlinePendingEventCount },
         { label: "Open conflicts", value: offlineOpenConflictCount },
@@ -1534,22 +2148,30 @@ export async function getAccountantPortalData(
     },
     {
       module: "audit",
-      status: statusFor(false, false, ledgerAuditEventCount + controlAuditEventCount === 0),
+      status: statusFor(
+        false,
+        false,
+        ledgerAuditEventCount + controlAuditEventCount === 0,
+      ),
       label: "Audit and controls",
-      detail: "Ledger audit events and sensitive-action control decisions are exposed to accountants.",
+      detail:
+        "Ledger audit events and sensitive-action control decisions are exposed to accountants.",
       facts: [
         { label: "Ledger audit events", value: ledgerAuditEventCount },
         { label: "Control audit events", value: controlAuditEventCount },
       ],
     },
-  ]
+  ];
 
   const requiredForNextLevel =
     trustLevel === "T4"
       ? []
       : blockers
-          .filter((blocker) => blocker.severity === "critical" || blocker.severity === "high")
-          .map((blocker) => `${blocker.gate}: ${blocker.title}`)
+          .filter(
+            (blocker) =>
+              blocker.severity === "critical" || blocker.severity === "high",
+          )
+          .map((blocker) => `${blocker.gate}: ${blocker.title}`);
 
   return {
     source: {
@@ -1581,7 +2203,8 @@ export async function getAccountantPortalData(
         "business-event failure scan",
         "provider statement and reconciliation sign-off evidence scan",
         "payment/AP/payroll/compliance blocker scan",
-        "payroll register tie-out, payslip proof, payment settlement, and declaration lifecycle evidence scan",
+        "payroll register tie-out, payslip proof, payment settlement register/component/provider-adapter proof, declaration lifecycle register/lifecycle-contract proof, and authority-adapter proof scan",
+        "payroll effective-dated allowance, benefit, leave, and overtime proof gap scan",
         "audit/control-event visibility",
       ],
       requiredForNextLevel,
@@ -1638,9 +2261,11 @@ export async function getAccountantPortalData(
       })),
       ...latestControlAuditEvents.map((event) => {
         const changes =
-          event.changes && typeof event.changes === "object" && !Array.isArray(event.changes)
+          event.changes &&
+          typeof event.changes === "object" &&
+          !Array.isArray(event.changes)
             ? (event.changes as Record<string, unknown>)
-            : {}
+            : {};
 
         return {
           id: event.id,
@@ -1650,8 +2275,13 @@ export async function getAccountantPortalData(
           resourceId: event.entityId,
           actorId: event.userId,
           createdAt: event.createdAt.toISOString(),
-          status: changes.allowed === false ? "denied" : changes.allowed === true ? "allowed" : "recorded",
-        }
+          status:
+            changes.allowed === false
+              ? "denied"
+              : changes.allowed === true
+                ? "allowed"
+                : "recorded",
+        };
       }),
     ]
       .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
@@ -1662,22 +2292,29 @@ export async function getAccountantPortalData(
       requiredPermission: "accounting.exports.create",
       sensitivity: "statutory",
     },
-  }
+  };
 }
 
-export async function exportAccountantTrustPack(input: ExportAccountantTrustPackServiceInput): Promise<AccountantTrustPackExport> {
-  const now = input.now ? new Date(input.now) : new Date()
-  const exportId = randomUUID()
-  const fileType = input.fileType ?? "json"
+export async function exportAccountantTrustPack(
+  input: ExportAccountantTrustPackServiceInput,
+): Promise<AccountantTrustPackExport> {
+  const now = input.now ? new Date(input.now) : new Date();
+  const exportId = randomUUID();
+  const fileType = input.fileType ?? "json";
 
   if (fileType !== "json") {
-    throw new BusinessRuleError("Only JSON accountant trust-pack exports are enabled.")
+    throw new BusinessRuleError(
+      "Only JSON accountant trust-pack exports are enabled.",
+    );
   }
 
   return db.$transaction(async (tx) => {
-    const portal = await getAccountantPortalData(input, tx, now)
-    const rowCount = portal.summary.journalLines + portal.summary.sourceLinks + portal.latestAuditEvents.length
-    const watermarkId = `acct-trust-${portal.scope.organizationId}-${exportId}`
+    const portal = await getAccountantPortalData(input, tx, now);
+    const rowCount =
+      portal.summary.journalLines +
+      portal.summary.sourceLinks +
+      portal.latestAuditEvents.length;
+    const watermarkId = `acct-trust-${portal.scope.organizationId}-${exportId}`;
 
     const decision = await evaluateAndAuditSensitiveAction(tx, {
       action: "accounting.export",
@@ -1701,14 +2338,19 @@ export async function exportAccountantTrustPack(input: ExportAccountantTrustPack
         verdict: portal.certificate.verdict,
         periodId: portal.scope.periodId,
       },
-    })
-    assertSensitiveActionAllowed(decision)
+    });
+    assertSensitiveActionAllowed(decision);
 
     if (!portal.exportReadiness.canExportCertifiedPack) {
-      throw new BusinessRuleError(portal.exportReadiness.disabledReason ?? "Accountant trust pack is not certified for export.")
+      throw new BusinessRuleError(
+        portal.exportReadiness.disabledReason ??
+          "Accountant trust pack is not certified for export.",
+      );
     }
 
-    const ledgerRows = input.includeLedgerRows ? await loadOptionalLedgerRows(tx, normalizedScope(input, now)) : []
+    const ledgerRows = input.includeLedgerRows
+      ? await loadOptionalLedgerRows(tx, normalizedScope(input, now))
+      : [];
     const payload = {
       kind: "AQSTOQFLOW_ACCOUNTANT_TRUST_PACK",
       version: 1,
@@ -1718,7 +2360,8 @@ export async function exportAccountantTrustPack(input: ExportAccountantTrustPack
         generatedById: input.exportedById,
         watermarkId,
         fileType,
-        redaction: "Secrets, raw provider payloads, and tenant internals excluded.",
+        redaction:
+          "Secrets, raw provider payloads, and tenant internals excluded.",
       },
       certificate: portal.certificate,
       source: portal.source,
@@ -1730,10 +2373,14 @@ export async function exportAccountantTrustPack(input: ExportAccountantTrustPack
       latestSourceLinks: portal.latestSourceLinks,
       latestAuditEvents: portal.latestAuditEvents,
       ledgerRows,
-    }
-    const contentHash = sha256(stableStringify(payload))
-    const content = JSON.stringify({ ...payload, export: { ...payload.export, contentHash } }, null, 2)
-    const fileName = `${watermarkId}.json`
+    };
+    const contentHash = sha256(stableStringify(payload));
+    const content = JSON.stringify(
+      { ...payload, export: { ...payload.export, contentHash } },
+      null,
+      2,
+    );
+    const fileName = `${watermarkId}.json`;
 
     await tx.ledgerAuditEvent.create({
       data: {
@@ -1752,7 +2399,7 @@ export async function exportAccountantTrustPack(input: ExportAccountantTrustPack
           scopeHash: portal.source.scopeHash,
         },
       },
-    })
+    });
 
     return {
       exportId,
@@ -1765,6 +2412,6 @@ export async function exportAccountantTrustPack(input: ExportAccountantTrustPack
       trustLevel: portal.certificate.level,
       verdict: portal.certificate.verdict,
       generatedAt: now.toISOString(),
-    }
-  })
+    };
+  });
 }

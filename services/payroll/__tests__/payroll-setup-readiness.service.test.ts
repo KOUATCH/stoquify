@@ -13,16 +13,118 @@ jest.mock("../../regulatory/country-packs/resolve", () => ({
   resolveRegulatoryParameter: jest.fn(),
 }));
 
+jest.mock("../../regulatory/country-packs/registry", () => ({
+  getCountryPack: jest.fn(),
+}));
+
+jest.mock("../payroll-country-pack-fixture-runner", () => ({
+  validatePayrollCountryPackCalculationFixtures: jest.fn(),
+}));
+
 import { DEFAULT_PAYROLL_POSTING_RULES } from "../../accounting/default-posting-rules";
+import { getCountryPack } from "../../regulatory/country-packs/registry";
 import { resolveRegulatoryParameter } from "../../regulatory/country-packs/resolve";
+import { validatePayrollCountryPackCalculationFixtures } from "../payroll-country-pack-fixture-runner";
 import {
   getPayrollSetupReadiness,
   REQUIRED_PAYROLL_ACCOUNT_MAPPING_KEYS,
+  REQUIRED_PAYROLL_COUNTRY_PACK_PARAMETER_PATHS,
 } from "../payroll-setup-readiness.service";
 
 const mockedResolveRegulatoryParameter =
   resolveRegulatoryParameter as jest.Mock;
+const mockedGetCountryPack = getCountryPack as jest.Mock;
+const mockedValidatePayrollCountryPackCalculationFixtures =
+  validatePayrollCountryPackCalculationFixtures as jest.Mock;
 
+function passedCalculationFixtures() {
+  const passedRun = (
+    fixtureId: string,
+    parameterPath: string,
+    purpose: string,
+  ) => ({
+    fixtureId,
+    parameterPath,
+    purpose,
+    status: "PASSED",
+    reviewStatus: "EXPERT_REVIEWED",
+    reviewEvidence: {
+      reviewedBy: "Qualified Cameroon payroll tax reviewer",
+      reviewedOn: "2026-06-28",
+      legalRef: "CM_DGI_CGI_2025",
+      sourceEvidenceHash: `sha256:${fixtureId}-review-evidence`,
+    },
+    expectedOutput: { status: "CALCULATED" },
+    actualOutput: { status: "CALCULATED" },
+  });
+
+  return {
+    valid: true,
+    runs: [
+      passedRun(
+        "cm-cnps-pension-reviewed",
+        "payroll.cnps.pensionRatesBps",
+        "PAYROLL",
+      ),
+      passedRun(
+        "cm-cnps-family-reviewed",
+        "payroll.cnps.familyAllowanceRatesBps",
+        "PAYROLL_CNPS_FAMILY_ALLOWANCE",
+      ),
+      passedRun(
+        "cm-cnps-risk-reviewed",
+        "payroll.cnps.occupationalRiskRatesBps",
+        "PAYROLL_CNPS_OCCUPATIONAL_RISK",
+      ),
+      passedRun(
+        "cm-irpp-period-reviewed",
+        "payroll.irpp.incomeTaxRules",
+        "PAYROLL_IRPP_PERIOD_CALCULATION",
+      ),
+      passedRun(
+        "cm-irpp-ytd-reviewed",
+        "payroll.irpp.incomeTaxRules",
+        "PAYROLL_IRPP_YTD_REGULARIZATION",
+      ),
+      passedRun(
+        "cm-irpp-adjustments-reviewed",
+        "payroll.irpp.incomeTaxRules",
+        "PAYROLL_IRPP_PERIOD_ADJUSTMENTS",
+      ),
+      passedRun(
+        "cm-irpp-corrections-reviewed",
+        "payroll.irpp.incomeTaxRules",
+        "PAYROLL_IRPP_YTD_CORRECTION_REPLAY",
+      ),
+      passedRun(
+        "cm-allowances-reviewed",
+        "payroll.compensation.allowances",
+        "PAYROLL_ALLOWANCE_TAXABLE",
+      ),
+      passedRun(
+        "cm-benefits-reviewed",
+        "payroll.compensation.benefits",
+        "PAYROLL_BENEFIT_IN_KIND",
+      ),
+      passedRun(
+        "cm-leave-paid-reviewed",
+        "payroll.attendance.leave",
+        "PAYROLL_LEAVE_PAID",
+      ),
+      passedRun(
+        "cm-leave-unpaid-reviewed",
+        "payroll.attendance.leave",
+        "PAYROLL_LEAVE_UNPAID",
+      ),
+      passedRun(
+        "cm-overtime-reviewed",
+        "payroll.attendance.overtime",
+        "PAYROLL_OVERTIME_PREMIUM",
+      ),
+    ],
+    issues: [],
+  };
+}
 function supportedCountryPack(path: string) {
   return {
     countryCode: "CM",
@@ -76,6 +178,11 @@ function payrollMappingAccounts() {
       ChartAccountNormalBalance.CREDIT,
     ),
     account(
+      "EMPLOYEE_RECEIVABLES",
+      ChartAccountType.ASSET,
+      ChartAccountNormalBalance.DEBIT,
+    ),
+    account(
       "PAYROLL_WITHHOLDING_PAYABLE",
       ChartAccountType.LIABILITY,
       ChartAccountNormalBalance.CREDIT,
@@ -124,29 +231,25 @@ function buildClient(overrides: Record<string, unknown> = {}) {
       }),
     },
     organizationAccountingSettings: {
-      findUnique: jest
-        .fn()
-        .mockResolvedValue({
-          accountingEnabled: true,
-          setupStatus: "READY",
-          payrollCnpsFamilyAllowanceSector: "GENERAL",
-          payrollCnpsOccupationalRiskGroup: "A",
-        }),
+      findUnique: jest.fn().mockResolvedValue({
+        accountingEnabled: true,
+        setupStatus: "READY",
+        payrollCnpsFamilyAllowanceSector: "GENERAL",
+        payrollCnpsOccupationalRiskGroup: "A",
+      }),
     },
     chartOfAccount: {
       findMany: jest.fn().mockResolvedValue(payrollMappingAccounts()),
     },
     journal: {
-      findMany: jest
-        .fn()
-        .mockResolvedValue([
-          {
-            id: "journal-payroll",
-            code: "PAY",
-            isActive: true,
-            isDefault: true,
-          },
-        ]),
+      findMany: jest.fn().mockResolvedValue([
+        {
+          id: "journal-payroll",
+          code: "PAY",
+          isActive: true,
+          isDefault: true,
+        },
+      ]),
     },
     postingRule: {
       findMany: jest.fn().mockResolvedValue(payrollPostingRules()),
@@ -205,6 +308,21 @@ describe("payroll setup readiness service", () => {
     mockedResolveRegulatoryParameter.mockImplementation((path: string) =>
       supportedCountryPack(path),
     );
+    mockedGetCountryPack.mockReturnValue({
+      header: {
+        countryCode: "CM",
+        packVersion: "CM-2026.1",
+        capabilityMatrix: {
+          "payroll.cnps": "SUPPORTED",
+          "payroll.irpp": "SUPPORTED",
+          "payroll.compensation": "SUPPORTED",
+          "payroll.attendance": "SUPPORTED",
+        },
+      },
+    });
+    mockedValidatePayrollCountryPackCalculationFixtures.mockReturnValue(
+      passedCalculationFixtures(),
+    );
   });
 
   it("returns ready when payroll entitlement, accounting, posting, period, country pack, and user mapping are ready", async () => {
@@ -229,20 +347,191 @@ describe("payroll setup readiness service", () => {
     expect(result.checks.accounting.requiredPayrollMappingKeys).toEqual(
       REQUIRED_PAYROLL_ACCOUNT_MAPPING_KEYS,
     );
-    expect(result.checks.accounting.payrollMappingCount).toBe(5);
+    expect(result.checks.accounting.payrollMappingCount).toBe(6);
     expect(result.checks.accounting.payrollJournalReady).toBe(true);
     expect(result.checks.accounting.payrollPostingRuleCodes).toEqual([
       "PAYROLL-RUN",
       "PAYROLL-PAYMENT",
+      "PAYROLL-EMPLOYEE-RECEIVABLE",
+      "PAYROLL-EMPLOYEE-BALANCE-SETTLEMENT",
     ]);
     expect(result.checks.accounting.openAccountingPeriodId).toBe(
       "period-accounting-1",
     );
+    expect(result.checks.countryPack.requiredParameterPaths).toEqual([
+      ...REQUIRED_PAYROLL_COUNTRY_PACK_PARAMETER_PATHS,
+    ]);
+    expect(result.checks.countryPack.calculationFixtures).toEqual(
+      expect.objectContaining({
+        status: "READY",
+        packVersion: "CM-2026.1",
+        executableScenarioCount: 12,
+        passedScenarioCount: 12,
+        failedScenarioCount: 0,
+        issueCount: 0,
+        reviewEvidence: expect.objectContaining({
+          presentCount: 12,
+          missingCount: 0,
+          sourceEvidenceHashes: expect.arrayContaining([
+            "sha256:cm-irpp-period-reviewed-review-evidence",
+          ]),
+        }),
+        scenarioCoverage: expect.objectContaining({
+          status: "READY",
+          readyFamilyCount: 9,
+          requiredFamilyCount: 9,
+          reviewEvidence: expect.objectContaining({
+            presentCount: 12,
+            missingCount: 0,
+          }),
+        }),
+      }),
+    );
+    expect(mockedResolveRegulatoryParameter).toHaveBeenCalledWith(
+      "payroll.irpp.incomeTaxRules",
+      expect.objectContaining({
+        countryCode: "CM",
+        purpose: "PAYROLL_SETUP_READINESS",
+      }),
+    );
+    expect(mockedResolveRegulatoryParameter).toHaveBeenCalledWith(
+      "payroll.compensation.allowances",
+      expect.objectContaining({ countryCode: "CM" }),
+    );
+    expect(mockedResolveRegulatoryParameter).toHaveBeenCalledWith(
+      "payroll.compensation.benefits",
+      expect.objectContaining({ countryCode: "CM" }),
+    );
+    expect(mockedResolveRegulatoryParameter).toHaveBeenCalledWith(
+      "payroll.attendance.leave",
+      expect.objectContaining({ countryCode: "CM" }),
+    );
+    expect(mockedResolveRegulatoryParameter).toHaveBeenCalledWith(
+      "payroll.attendance.overtime",
+      expect.objectContaining({ countryCode: "CM" }),
+    );
     expect(result.checks.employeeUserMapping.plannedEmployeeCreateCount).toBe(
       1,
     );
+    expect(mockedGetCountryPack).toHaveBeenCalledWith("CM", "CM-2026.1");
+    expect(
+      mockedValidatePayrollCountryPackCalculationFixtures,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({
+        header: expect.objectContaining({
+          countryCode: "CM",
+          packVersion: "CM-2026.1",
+        }),
+      }),
+    );
   });
 
+  it("blocks production-supported country packs when executable calculation scenarios are missing", async () => {
+    mockedValidatePayrollCountryPackCalculationFixtures.mockReturnValue({
+      valid: true,
+      runs: [],
+      issues: [],
+    });
+    const client = buildClient();
+
+    const result = await getPayrollSetupReadiness(
+      {
+        organizationId: "org-1",
+        actorId: "payroll-admin-1",
+        actorPermissions: ["PAYROLL_PROCESS"],
+        countryCode: "CM",
+        periodStart: "2026-06-01",
+        periodEnd: "2026-06-30",
+        payDate: "2026-06-30",
+        employeeSourceMode: "users",
+      },
+      client as any,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.checks.countryPack.calculationFixtures).toEqual(
+      expect.objectContaining({
+        status: "NO_EXECUTABLE_SCENARIOS",
+        packVersion: "CM-2026.1",
+        executableScenarioCount: 0,
+      }),
+    );
+    expect(result.blockers).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          code: "PAYROLL_COUNTRY_PACK_CALCULATION_FIXTURES_MISSING",
+          evidence: expect.objectContaining({
+            packVersion: "CM-2026.1",
+          }),
+        }),
+      ]),
+    );
+  });
+
+  it("blocks setup readiness when executable country-pack calculation fixtures fail", async () => {
+    mockedValidatePayrollCountryPackCalculationFixtures.mockReturnValue({
+      valid: false,
+      runs: [
+        {
+          fixtureId: "cm-irpp-period-reviewed",
+          parameterPath: "payroll.irpp.incomeTaxRules",
+          purpose: "PAYROLL_IRPP_PERIOD_CALCULATION",
+          status: "FAILED",
+          reviewStatus: "EXPERT_REVIEWED",
+          expectedOutput: { taxAmount: "1000.00" },
+          actualOutput: { taxAmount: "900.00" },
+        },
+      ],
+      issues: [
+        {
+          code: "SCENARIO_OUTPUT_MISMATCH",
+          fixtureId: "cm-irpp-period-reviewed",
+          parameterPath: "payroll.irpp.incomeTaxRules",
+          path: "goldenFixtures.cm-irpp-period-reviewed.calculationScenario.expectedOutput.taxAmount",
+          message:
+            "Expected taxAmount to be 1000.00, but evaluator returned 900.00.",
+        },
+      ],
+    });
+    const client = buildClient();
+
+    const result = await getPayrollSetupReadiness(
+      {
+        organizationId: "org-1",
+        actorId: "payroll-admin-1",
+        actorPermissions: ["PAYROLL_PROCESS"],
+        countryCode: "CM",
+        periodStart: "2026-06-01",
+        periodEnd: "2026-06-30",
+        payDate: "2026-06-30",
+        employeeSourceMode: "users",
+      },
+      client as any,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.checks.countryPack.calculationFixtures).toEqual(
+      expect.objectContaining({
+        status: "FAILED",
+        executableScenarioCount: 1,
+        passedScenarioCount: 0,
+        failedScenarioCount: 1,
+        issueCount: 1,
+        issueCodes: ["SCENARIO_OUTPUT_MISMATCH"],
+        fixtureIds: ["cm-irpp-period-reviewed"],
+      }),
+    );
+    expect(result.blockers).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          code: "PAYROLL_COUNTRY_PACK_CALCULATION_FIXTURES_FAILED",
+          evidence: expect.objectContaining({
+            issueCodes: "SCENARIO_OUTPUT_MISMATCH",
+          }),
+        }),
+      ]),
+    );
+  });
   it("blocks Cameroon setup readiness when CNPS classification settings are missing", async () => {
     const client = buildClient({
       organizationAccountingSettings: {
@@ -278,6 +567,72 @@ describe("payroll setup readiness service", () => {
     );
   });
 
+  it("blocks full payroll readiness when IRPP rules still require expert review", async () => {
+    mockedResolveRegulatoryParameter.mockImplementation((path: string) => {
+      const resolution = supportedCountryPack(path);
+      if (path !== "payroll.irpp.incomeTaxRules") return resolution;
+      return {
+        ...resolution,
+        legalRef: "CM_DGI_CGI_2025",
+        verificationStatus: "REQUIRES_EXPERT_REVIEW",
+        capabilityStatus: "REQUIRES_EXPERT_REVIEW",
+      };
+    });
+    const client = buildClient();
+
+    const result = await getPayrollSetupReadiness(
+      {
+        organizationId: "org-1",
+        actorId: "payroll-admin-1",
+        actorPermissions: ["PAYROLL_PROCESS"],
+        countryCode: "CM",
+        periodStart: "2026-06-01",
+        periodEnd: "2026-06-30",
+        payDate: "2026-06-30",
+        employeeSourceMode: "users",
+      },
+      client as any,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.blockers).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          code: "PAYROLL_COUNTRY_PACK_REQUIRES_REVIEW",
+          evidence: expect.objectContaining({
+            parameterPath: "payroll.irpp.incomeTaxRules",
+            capabilityStatus: "REQUIRES_EXPERT_REVIEW",
+          }),
+        }),
+      ]),
+    );
+  });
+
+  it("blocks setup readiness when country-pack resolution is unavailable", async () => {
+    mockedResolveRegulatoryParameter.mockImplementation(() => {
+      throw new Error("country pack missing");
+    });
+    const client = buildClient();
+
+    const result = await getPayrollSetupReadiness(
+      {
+        organizationId: "org-1",
+        actorId: "payroll-admin-1",
+        actorPermissions: ["PAYROLL_PROCESS"],
+        countryCode: "CM",
+        periodStart: "2026-06-01",
+        periodEnd: "2026-06-30",
+        payDate: "2026-06-30",
+        employeeSourceMode: "users",
+      },
+      client as any,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.blockers.map((issue) => issue.code)).toContain(
+      "PAYROLL_COUNTRY_PACK_UNAVAILABLE",
+    );
+  });
   it("reports setup blockers without attempting writes when payroll setup prerequisites are missing", async () => {
     const client = buildClient({
       organization: {

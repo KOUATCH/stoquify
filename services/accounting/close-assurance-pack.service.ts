@@ -1,4 +1,4 @@
-import "server-only"
+import "server-only";
 
 import {
   CloseChecklistStatus,
@@ -7,45 +7,48 @@ import {
   CloseFindingStatus,
   CloseRunStatus,
   Prisma,
-} from "@prisma/client"
-import { createHash, randomUUID } from "node:crypto"
+} from "@prisma/client";
+import { createHash, randomUUID } from "node:crypto";
 
-import { hasRbacPermission } from "@/lib/security/rbac-permissions"
-import { db } from "@/prisma/db"
-import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
-import { recordBusinessEventInTx } from "@/services/events/business-event.service"
+import { hasRbacPermission } from "@/lib/security/rbac-permissions";
+import { db } from "@/prisma/db";
+import {
+  BusinessRuleError,
+  NotFoundError,
+} from "@/services/_shared/action-errors";
+import { recordBusinessEventInTx } from "@/services/events/business-event.service";
 import {
   reconcileInventoryClass3,
   type InventoryClass3ReconciliationResult,
-} from "@/services/inventory/inventory-valuation.service"
-import type { ExportClosePackInput } from "./close-assurance.schemas"
+} from "@/services/inventory/inventory-valuation.service";
+import type { ExportClosePackInput } from "./close-assurance.schemas";
 
-export type ClosePackExportMode = "DRAFT_NOT_CERTIFIED" | "CERTIFIED"
+export type ClosePackExportMode = "DRAFT_NOT_CERTIFIED" | "CERTIFIED";
 
 export type ExportClosePackControl = {
-  actorId?: string | null
-  actorPermissions?: readonly string[]
-  lastAuthAt?: Date | number | string | null
-  now?: Date | number | string | null
-}
+  actorId?: string | null;
+  actorPermissions?: readonly string[];
+  lastAuthAt?: Date | number | string | null;
+  now?: Date | number | string | null;
+};
 
 export type ClosePackExportResult = {
-  exportId: string
-  closeRunId: string
-  periodId: string
-  fileName: string
-  mimeType: "application/json"
-  content: string
-  contentHash: string
-  watermarkId: string
-  mode: ClosePackExportMode
-  isCertified: boolean
-  rowCount: number
-  generatedAt: string
-  correlationId: string
-  redactionNote: string
-  certificationLimitations: string[]
-}
+  exportId: string;
+  closeRunId: string;
+  periodId: string;
+  fileName: string;
+  mimeType: "application/json";
+  content: string;
+  contentHash: string;
+  watermarkId: string;
+  mode: ClosePackExportMode;
+  isCertified: boolean;
+  rowCount: number;
+  generatedAt: string;
+  correlationId: string;
+  redactionNote: string;
+  certificationLimitations: string[];
+};
 
 export type CloseCertificationInvalidationSourceCode =
   | "INVENTORY_VALUATION_ANNEX"
@@ -55,6 +58,8 @@ export type CloseCertificationInvalidationSourceCode =
   | "PAYROLL_RUN_POSTED"
   | "PAYROLL_PAYMENT_RELEASED"
   | "PAYROLL_PAYMENT_RECONCILED"
+  | "PAYROLL_EMPLOYEE_BALANCE_OPENED"
+  | "PAYROLL_EMPLOYEE_BALANCE_SETTLED"
   | "PAYROLL_DECLARATION_PREPARED"
   | "PAYROLL_DECLARATION_SUBMITTED"
   | "PAYROLL_DECLARATION_ACCEPTED"
@@ -69,17 +74,17 @@ export type CloseCertificationInvalidationSourceCode =
   | "PAYMENT_RECONCILIATION_CERTIFICATE_EXPORTED"
   | "PAYMENT_RECONCILIATION_CERTIFICATE_HASH_DRIFT"
   | "PAYMENT_SUSPENSE_POSTING"
-  | "CUSTOM"
+  | "CUSTOM";
 
 export type CloseCertificationInvalidationSourceMetadata = {
-  sourceCode: CloseCertificationInvalidationSourceCode
-  ring: "FIRST_RING" | "DOMAIN_RECHECK" | "CUSTOM"
-  domain: "inventory" | "ledger" | "payments" | "payroll" | "custom"
-  sourceModel: string
-  sourceTable: string | null
-  sourceEventName: string
-  closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE"
-}
+  sourceCode: CloseCertificationInvalidationSourceCode;
+  ring: "FIRST_RING" | "DOMAIN_RECHECK" | "CUSTOM";
+  domain: "inventory" | "ledger" | "payments" | "payroll" | "custom";
+  sourceModel: string;
+  sourceTable: string | null;
+  sourceEventName: string;
+  closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE";
+};
 
 export const CLOSE_CERTIFICATION_INVALIDATION_SOURCES = {
   INVENTORY_VALUATION_ANNEX: {
@@ -143,6 +148,24 @@ export const CLOSE_CERTIFICATION_INVALIDATION_SOURCES = {
     sourceModel: "PayrollPaymentBatch",
     sourceTable: "payroll_payment_batches",
     sourceEventName: "payroll.payment_batch.reconciled",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
+  PAYROLL_EMPLOYEE_BALANCE_OPENED: {
+    sourceCode: "PAYROLL_EMPLOYEE_BALANCE_OPENED",
+    ring: "FIRST_RING",
+    domain: "payroll",
+    sourceModel: "PayrollEmployeeBalanceCase",
+    sourceTable: "payroll_employee_balance_cases",
+    sourceEventName: "payroll.employee_balance.opened",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
+  PAYROLL_EMPLOYEE_BALANCE_SETTLED: {
+    sourceCode: "PAYROLL_EMPLOYEE_BALANCE_SETTLED",
+    ring: "FIRST_RING",
+    domain: "payroll",
+    sourceModel: "PayrollEmployeeBalanceEvent",
+    sourceTable: "payroll_employee_balance_events",
+    sourceEventName: "payroll.employee_balance.settled",
     closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
   },
   PAYROLL_DECLARATION_PREPARED: {
@@ -274,123 +297,135 @@ export const CLOSE_CERTIFICATION_INVALIDATION_SOURCES = {
 } as const satisfies Record<
   Exclude<CloseCertificationInvalidationSourceCode, "CUSTOM">,
   CloseCertificationInvalidationSourceMetadata
->
+>;
 export type CloseCertificationInvalidationInput = {
-  closeRunId: string
-  closePackExportId?: string | null
-  sourceCode?: CloseCertificationInvalidationSourceCode
-  sourceModel: string
-  sourceId?: string | null
-  sourceEventName: string
-  staleReason: string
-  previousEvidenceHash?: string | null
-  newEvidenceHash?: string | null
-  correlationId?: string | null
-}
+  closeRunId: string;
+  closePackExportId?: string | null;
+  sourceCode?: CloseCertificationInvalidationSourceCode;
+  sourceModel: string;
+  sourceId?: string | null;
+  sourceEventName: string;
+  staleReason: string;
+  previousEvidenceHash?: string | null;
+  newEvidenceHash?: string | null;
+  correlationId?: string | null;
+};
 
 export type CloseCertificationInvalidationResult = {
-  closeRunId: string
-  closePackExportId: string | null
-  businessEventId: string
-  staleReason: string
-}
+  closeRunId: string;
+  closePackExportId: string | null;
+  businessEventId: string;
+  staleReason: string;
+};
 
 export type RecordCloseCertificationInvalidationsForSourceInput = {
-  sourceCode: Exclude<CloseCertificationInvalidationSourceCode, "CUSTOM">
-  sourceId?: string | null
-  closeRunId?: string | null
-  closePackExportId?: string | null
-  periodId?: string | null
-  periodStart?: Date | string | null
-  periodEnd?: Date | string | null
-  staleReason: string
-  previousEvidenceHash?: string | null
-  newEvidenceHash?: string | null
-  correlationId?: string | null
-}
+  sourceCode: Exclude<CloseCertificationInvalidationSourceCode, "CUSTOM">;
+  sourceId?: string | null;
+  closeRunId?: string | null;
+  closePackExportId?: string | null;
+  periodId?: string | null;
+  periodStart?: Date | string | null;
+  periodEnd?: Date | string | null;
+  staleReason: string;
+  previousEvidenceHash?: string | null;
+  newEvidenceHash?: string | null;
+  correlationId?: string | null;
+};
 
 export type RecordCloseCertificationInvalidationsForSourceResult = {
-  invalidatedCount: number
-  results: CloseCertificationInvalidationResult[]
-}
+  invalidatedCount: number;
+  results: CloseCertificationInvalidationResult[];
+};
 type InventoryAnnexFreshness = {
-  status: "FRESH" | "MISSING" | "STALE" | "BLOCKED" | "UNAVAILABLE"
-  sourceModel: "InventoryValuationAnnex"
-  sourceId: string
-  sourceEventName: "inventory.valuation.annex.checked"
-  staleReason: string | null
-  previousEvidenceHash: string | null
-  newEvidenceHash: string | null
-  savedAnnex: Record<string, unknown> | null
-  currentAnnex: Record<string, unknown> | null
-  certificationBlocker: string | null
-  detectedAt: string
-}
+  status: "FRESH" | "MISSING" | "STALE" | "BLOCKED" | "UNAVAILABLE";
+  sourceModel: "InventoryValuationAnnex";
+  sourceId: string;
+  sourceEventName: "inventory.valuation.annex.checked";
+  staleReason: string | null;
+  previousEvidenceHash: string | null;
+  newEvidenceHash: string | null;
+  savedAnnex: Record<string, unknown> | null;
+  currentAnnex: Record<string, unknown> | null;
+  certificationBlocker: string | null;
+  detectedAt: string;
+};
 
 const OPEN_FINDING_STATUSES = [
   CloseFindingStatus.OPEN,
   CloseFindingStatus.ASSIGNED,
   CloseFindingStatus.IN_REVIEW,
   CloseFindingStatus.REOPENED,
-] as const
+] as const;
 
 const HIGH_RISK_CHECKLIST_STATUSES = [
   CloseChecklistStatus.FAILED,
   CloseChecklistStatus.UNAVAILABLE,
-] as const
+] as const;
 
 const CRITICAL_EVIDENCE_TYPES: readonly CloseEvidenceType[] = [
   CloseEvidenceType.REPORT_EXPORT,
   CloseEvidenceType.RECONCILIATION_CERTIFICATE,
   CloseEvidenceType.DATA_TRUST_CERTIFICATE,
-]
+];
 
 function stableStringify(value: unknown): string {
-  if (value === null || typeof value !== "object") return JSON.stringify(value)
-  if (Array.isArray(value)) return `[${value.map(stableStringify).join(",")}]`
+  if (value === null || typeof value !== "object") return JSON.stringify(value);
+  if (Array.isArray(value)) return `[${value.map(stableStringify).join(",")}]`;
 
   return `{${Object.keys(value as Record<string, unknown>)
     .sort()
-    .map((key) => `${JSON.stringify(key)}:${stableStringify((value as Record<string, unknown>)[key])}`)
-    .join(",")}}`
+    .map(
+      (key) =>
+        `${JSON.stringify(key)}:${stableStringify((value as Record<string, unknown>)[key])}`,
+    )
+    .join(",")}}`;
 }
 
 function sha256(value: string) {
-  return `sha256:${createHash("sha256").update(value).digest("hex")}`
+  return `sha256:${createHash("sha256").update(value).digest("hex")}`;
 }
 
 function jsonObject(value: Record<string, unknown>): Prisma.InputJsonObject {
-  return value as Prisma.InputJsonObject
+  return value as Prisma.InputJsonObject;
 }
 
 function iso(value: Date | string | null | undefined) {
-  return value ? new Date(value).toISOString() : null
+  return value ? new Date(value).toISOString() : null;
 }
 
-function decimalNumber(value: Prisma.Decimal | number | string | null | undefined) {
-  if (value === null || value === undefined) return null
-  if (typeof value === "number") return value
-  return Number(value)
+function decimalNumber(
+  value: Prisma.Decimal | number | string | null | undefined,
+) {
+  if (value === null || value === undefined) return null;
+  if (typeof value === "number") return value;
+  return Number(value);
 }
 
 function metadataRecord(value: unknown): Record<string, unknown> {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return {}
-  return value as Record<string, unknown>
+  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+  return value as Record<string, unknown>;
 }
 
 function dateOrNull(value: Date | string | null | undefined) {
-  if (!value) return null
-  const date = value instanceof Date ? value : new Date(value)
-  return Number.isNaN(date.getTime()) ? null : date
+  if (!value) return null;
+  const date = value instanceof Date ? value : new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
 }
 
-function sourceMetadataForInput(input: CloseCertificationInvalidationInput): CloseCertificationInvalidationSourceMetadata {
-  if (input.sourceCode && input.sourceCode !== "CUSTOM") return CLOSE_CERTIFICATION_INVALIDATION_SOURCES[input.sourceCode]
+function sourceMetadataForInput(
+  input: CloseCertificationInvalidationInput,
+): CloseCertificationInvalidationSourceMetadata {
+  if (input.sourceCode && input.sourceCode !== "CUSTOM")
+    return CLOSE_CERTIFICATION_INVALIDATION_SOURCES[input.sourceCode];
 
-  const matchedSource = Object.values(CLOSE_CERTIFICATION_INVALIDATION_SOURCES).find(
-    (source) => source.sourceModel === input.sourceModel && source.sourceEventName === input.sourceEventName,
-  )
-  if (matchedSource) return matchedSource
+  const matchedSource = Object.values(
+    CLOSE_CERTIFICATION_INVALIDATION_SOURCES,
+  ).find(
+    (source) =>
+      source.sourceModel === input.sourceModel &&
+      source.sourceEventName === input.sourceEventName,
+  );
+  if (matchedSource) return matchedSource;
 
   return {
     sourceCode: input.sourceCode ?? "CUSTOM",
@@ -400,7 +435,7 @@ function sourceMetadataForInput(input: CloseCertificationInvalidationInput): Clo
     sourceTable: null,
     sourceEventName: input.sourceEventName,
     closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
-  }
+  };
 }
 
 function sourcePayload(source: CloseCertificationInvalidationSourceMetadata) {
@@ -412,12 +447,12 @@ function sourcePayload(source: CloseCertificationInvalidationSourceMetadata) {
     sourceTable: source.sourceTable,
     sourceEventName: source.sourceEventName,
     closeImpact: source.closeImpact,
-  }
+  };
 }
 
 function stringField(value: Record<string, unknown> | null, key: string) {
-  const raw = value?.[key]
-  return typeof raw === "string" && raw.trim() ? raw : null
+  const raw = value?.[key];
+  return typeof raw === "string" && raw.trim() ? raw : null;
 }
 
 function statutoryCertificationBlockerMetadata() {
@@ -431,7 +466,7 @@ function statutoryCertificationBlockerMetadata() {
       "COUNTRY_PACK_UNVERIFIED",
       "ADAPTER_SANDBOX_ONLY",
     ],
-  }
+  };
 }
 
 function inventoryAnnexFromResult(
@@ -449,24 +484,51 @@ function inventoryAnnexFromResult(
     inventorySubledgerValueTotal: result.inventoryValue,
     mismatchAmount: result.driftAmount,
     sourceHash: result.reportHash,
-    blockerStatus: result.status === "PASSED" ? "PASSED" : "INVENTORY_VALUATION_MISMATCH",
+    blockerStatus:
+      result.status === "PASSED" ? "PASSED" : "INVENTORY_VALUATION_MISMATCH",
     failures: result.failures.map((failure) => ({
       type: failure.type,
       severity: failure.severity,
       message: failure.message,
       metadata: failure.metadata,
     })),
+  };
+}
+
+function savedInventoryAnnex(
+  run: NonNullable<Awaited<ReturnType<typeof loadCloseRunForPack>>>,
+) {
+  const raw = metadataRecord(run.metadata).inventoryValuationAnnex;
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+  return raw as Record<string, unknown>;
+}
+
+function savedInventoryEvidence(
+  run: NonNullable<Awaited<ReturnType<typeof loadCloseRunForPack>>>,
+) {
+  return (
+    run.evidenceItems.find(
+      (item) => item.sourceType === "InventoryValuationAnnex",
+    ) ?? null
+  );
+}
+
+function savedPayrollFinanceForecastProof(
+  run: NonNullable<Awaited<ReturnType<typeof loadCloseRunForPack>>>,
+) {
+  const raw = metadataRecord(run.metadata).payrollFinanceForecastProof;
+  if (raw && typeof raw === "object" && !Array.isArray(raw)) {
+    return raw as Record<string, unknown>;
   }
-}
 
-function savedInventoryAnnex(run: NonNullable<Awaited<ReturnType<typeof loadCloseRunForPack>>>) {
-  const raw = metadataRecord(run.metadata).inventoryValuationAnnex
-  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null
-  return raw as Record<string, unknown>
-}
+  const evidenceMetadata = run.evidenceItems.find(
+    (item) => item.sourceType === "PayrollFinanceForecastProof",
+  )?.metadata;
+  if (evidenceMetadata && typeof evidenceMetadata === "object" && !Array.isArray(evidenceMetadata)) {
+    return evidenceMetadata as Record<string, unknown>;
+  }
 
-function savedInventoryEvidence(run: NonNullable<Awaited<ReturnType<typeof loadCloseRunForPack>>>) {
-  return run.evidenceItems.find((item) => item.sourceType === "InventoryValuationAnnex") ?? null
+  return null;
 }
 
 async function evaluateInventoryAnnexFreshness(
@@ -474,10 +536,13 @@ async function evaluateInventoryAnnexFreshness(
   tx: Prisma.TransactionClient | typeof db,
   detectedAt: string,
 ): Promise<InventoryAnnexFreshness> {
-  const savedAnnex = savedInventoryAnnex(run)
-  const inventoryEvidence = savedInventoryEvidence(run)
-  const previousEvidenceHash = stringField(savedAnnex, "sourceHash") ?? inventoryEvidence?.sourceHash ?? null
-  const sourceId = run.periodId
+  const savedAnnex = savedInventoryAnnex(run);
+  const inventoryEvidence = savedInventoryEvidence(run);
+  const previousEvidenceHash =
+    stringField(savedAnnex, "sourceHash") ??
+    inventoryEvidence?.sourceHash ??
+    null;
+  const sourceId = run.periodId;
 
   if (!savedAnnex || !inventoryEvidence || !previousEvidenceHash) {
     return {
@@ -485,14 +550,15 @@ async function evaluateInventoryAnnexFreshness(
       sourceModel: "InventoryValuationAnnex",
       sourceId,
       sourceEventName: "inventory.valuation.annex.checked",
-      staleReason: "Inventory valuation annex evidence is missing from the persisted close run.",
+      staleReason:
+        "Inventory valuation annex evidence is missing from the persisted close run.",
       previousEvidenceHash,
       newEvidenceHash: null,
       savedAnnex,
       currentAnnex: null,
       certificationBlocker: "Inventory valuation annex evidence is missing.",
       detectedAt,
-    }
+    };
   }
 
   if (stringField(savedAnnex, "blockerStatus") !== "PASSED") {
@@ -508,20 +574,24 @@ async function evaluateInventoryAnnexFreshness(
       currentAnnex: null,
       certificationBlocker: "Inventory valuation annex is blocked.",
       detectedAt,
-    }
+    };
   }
 
-  let current: InventoryClass3ReconciliationResult
+  let current: InventoryClass3ReconciliationResult;
   try {
-    current = await reconcileInventoryClass3({
-      organizationId: run.organizationId,
-      periodId: run.periodId,
-      currency: run.organization.currency ?? "XAF",
-    }, tx)
+    current = await reconcileInventoryClass3(
+      {
+        organizationId: run.organizationId,
+        periodId: run.periodId,
+        currency: run.organization.currency ?? "XAF",
+      },
+      tx,
+    );
   } catch (error) {
-    const message = error instanceof Error && error.message.trim()
-      ? error.message
-      : "Inventory valuation annex could not be refreshed."
+    const message =
+      error instanceof Error && error.message.trim()
+        ? error.message
+        : "Inventory valuation annex could not be refreshed.";
     return {
       status: "UNAVAILABLE",
       sourceModel: "InventoryValuationAnnex",
@@ -532,42 +602,50 @@ async function evaluateInventoryAnnexFreshness(
       newEvidenceHash: null,
       savedAnnex,
       currentAnnex: null,
-      certificationBlocker: "Inventory valuation annex freshness could not be verified.",
+      certificationBlocker:
+        "Inventory valuation annex freshness could not be verified.",
       detectedAt,
-    }
+    };
   }
 
-  const currentAnnex = inventoryAnnexFromResult(run, current, detectedAt)
+  const currentAnnex = inventoryAnnexFromResult(run, current, detectedAt);
   if (current.status !== "PASSED") {
     return {
       status: "BLOCKED",
       sourceModel: "InventoryValuationAnnex",
       sourceId,
       sourceEventName: "inventory.valuation.annex.checked",
-      staleReason: current.failures[0]?.message ?? "Current inventory valuation reconciliation is blocked.",
+      staleReason:
+        current.failures[0]?.message ??
+        "Current inventory valuation reconciliation is blocked.",
       previousEvidenceHash,
       newEvidenceHash: current.reportHash,
       savedAnnex,
       currentAnnex,
-      certificationBlocker: "Current inventory valuation reconciliation is blocked.",
+      certificationBlocker:
+        "Current inventory valuation reconciliation is blocked.",
       detectedAt,
-    }
+    };
   }
 
-  if (previousEvidenceHash !== current.reportHash || inventoryEvidence.sourceHash !== current.reportHash) {
+  if (
+    previousEvidenceHash !== current.reportHash ||
+    inventoryEvidence.sourceHash !== current.reportHash
+  ) {
     return {
       status: "STALE",
       sourceModel: "InventoryValuationAnnex",
       sourceId,
       sourceEventName: "inventory.valuation.annex.checked",
-      staleReason: "Inventory valuation annex hash changed after close readiness was captured.",
+      staleReason:
+        "Inventory valuation annex hash changed after close readiness was captured.",
       previousEvidenceHash,
       newEvidenceHash: current.reportHash,
       savedAnnex,
       currentAnnex,
       certificationBlocker: "Inventory valuation annex evidence is stale.",
       detectedAt,
-    }
+    };
   }
 
   return {
@@ -582,82 +660,125 @@ async function evaluateInventoryAnnexFreshness(
     currentAnnex,
     certificationBlocker: null,
     detectedAt,
-  }
+  };
 }
 
 function requireFreshControl(control: ExportClosePackControl, now: Date) {
-  const lastAuthAt = control.lastAuthAt ? new Date(control.lastAuthAt).getTime() : 0
+  const lastAuthAt = control.lastAuthAt
+    ? new Date(control.lastAuthAt).getTime()
+    : 0;
   if (!lastAuthAt || now.getTime() - lastAuthAt > 5 * 60 * 1000) {
-    throw new BusinessRuleError("Fresh authentication is required to certify a close pack.", "FRESH_AUTH_REQUIRED")
+    throw new BusinessRuleError(
+      "Fresh authentication is required to certify a close pack.",
+      "FRESH_AUTH_REQUIRED",
+    );
   }
 }
 
-function assertExportPermission(mode: ClosePackExportMode, control: ExportClosePackControl) {
-  const permission = mode === "CERTIFIED" ? "accounting.close.certify" : "accounting.close.export"
+function assertExportPermission(
+  mode: ClosePackExportMode,
+  control: ExportClosePackControl,
+) {
+  const permission =
+    mode === "CERTIFIED"
+      ? "accounting.close.certify"
+      : "accounting.close.export";
   if (!hasRbacPermission(control.actorPermissions ?? [], permission)) {
-    throw new BusinessRuleError(`Missing ${permission} permission.`)
+    throw new BusinessRuleError(`Missing ${permission} permission.`);
   }
 }
 
 function exportMode(input: ExportClosePackInput): ClosePackExportMode {
-  return input.mode ?? "DRAFT_NOT_CERTIFIED"
+  return input.mode ?? "DRAFT_NOT_CERTIFIED";
 }
 
 function certificationLimitations(mode: ClosePackExportMode) {
   return mode === "CERTIFIED"
     ? [
-      "System-certified close pack only; statutory filings still require qualified expert validation.",
-      "Automatic recertification triggers are limited to the captured close-run snapshot in this slice.",
-    ]
+        "System-certified close pack only; statutory filings still require qualified expert validation.",
+        "Automatic recertification triggers are limited to the captured close-run snapshot in this slice.",
+      ]
     : [
-      "Draft close pack is not certified and may include unresolved blockers.",
-      "System evidence pack only; statutory filings still require qualified expert validation.",
-    ]
+        "Draft close pack is not certified and may include unresolved blockers.",
+        "System evidence pack only; statutory filings still require qualified expert validation.",
+      ];
 }
 
 function certificationBlockers(
   run: Awaited<ReturnType<typeof loadCloseRunForPack>>,
   inventoryFreshness?: InventoryAnnexFreshness,
 ) {
-  if (!run) return ["Close run not found."]
+  if (!run) return ["Close run not found."];
 
-  const blockers: string[] = []
+  const blockers: string[] = [];
   const openHighRiskFindings = run.findings.filter(
     (finding) =>
-      OPEN_FINDING_STATUSES.includes(finding.status as (typeof OPEN_FINDING_STATUSES)[number]) &&
-      (finding.severity === CloseFindingSeverity.CRITICAL || finding.severity === CloseFindingSeverity.HIGH),
-  )
+      OPEN_FINDING_STATUSES.includes(
+        finding.status as (typeof OPEN_FINDING_STATUSES)[number],
+      ) &&
+      (finding.severity === CloseFindingSeverity.CRITICAL ||
+        finding.severity === CloseFindingSeverity.HIGH),
+  );
   const failedHighRiskChecklist = run.checklistItems.filter(
     (item) =>
-      HIGH_RISK_CHECKLIST_STATUSES.includes(item.status as (typeof HIGH_RISK_CHECKLIST_STATUSES)[number]) &&
-      (item.severity === CloseFindingSeverity.CRITICAL || item.severity === CloseFindingSeverity.HIGH),
-  )
-  const availableEvidence = run.evidenceItems.filter((item) => item.available)
+      HIGH_RISK_CHECKLIST_STATUSES.includes(
+        item.status as (typeof HIGH_RISK_CHECKLIST_STATUSES)[number],
+      ) &&
+      (item.severity === CloseFindingSeverity.CRITICAL ||
+        item.severity === CloseFindingSeverity.HIGH),
+  );
+  const availableEvidence = run.evidenceItems.filter((item) => item.available);
   const unsignedReconciliationEvidence = run.evidenceItems.filter(
     (item) =>
       item.evidenceType === CloseEvidenceType.RECONCILIATION_CERTIFICATE &&
       (!item.sourceHash || item.provenance !== "POSTED"),
-  )
+  );
   const unavailableCriticalEvidence = run.evidenceItems.filter(
     (item) =>
-      !item.available &&
-      CRITICAL_EVIDENCE_TYPES.includes(item.evidenceType),
-  )
+      !item.available && CRITICAL_EVIDENCE_TYPES.includes(item.evidenceType),
+  );
 
-  if (run.status !== CloseRunStatus.READY) blockers.push(`Close run status is ${run.status}, not READY.`)
-  if (run.criticalBlockerCount > 0) blockers.push(`${run.criticalBlockerCount} critical blocker(s) remain open.`)
-  if (run.highBlockerCount > 0) blockers.push(`${run.highBlockerCount} high-severity blocker(s) remain open.`)
-  if (openHighRiskFindings.length > 0) blockers.push(`${openHighRiskFindings.length} open high-risk finding(s) block certification.`)
-  if (failedHighRiskChecklist.length > 0) blockers.push(`${failedHighRiskChecklist.length} high-risk checklist gate(s) failed or unavailable.`)
-  if (availableEvidence.length === 0) blockers.push("No available evidence items were captured for this close run.")
-  if (unsignedReconciliationEvidence.length > 0) blockers.push(`${unsignedReconciliationEvidence.length} reconciliation certificate reference(s) are unsigned or missing hashes.`)
-  if (unavailableCriticalEvidence.length > 0) blockers.push(`${unavailableCriticalEvidence.length} critical evidence reference(s) are unavailable.`)
-  if (inventoryFreshness?.certificationBlocker) blockers.push(inventoryFreshness.certificationBlocker)
+  if (run.status !== CloseRunStatus.READY)
+    blockers.push(`Close run status is ${run.status}, not READY.`);
+  if (run.criticalBlockerCount > 0)
+    blockers.push(
+      `${run.criticalBlockerCount} critical blocker(s) remain open.`,
+    );
+  if (run.highBlockerCount > 0)
+    blockers.push(
+      `${run.highBlockerCount} high-severity blocker(s) remain open.`,
+    );
+  if (openHighRiskFindings.length > 0)
+    blockers.push(
+      `${openHighRiskFindings.length} open high-risk finding(s) block certification.`,
+    );
+  if (failedHighRiskChecklist.length > 0)
+    blockers.push(
+      `${failedHighRiskChecklist.length} high-risk checklist gate(s) failed or unavailable.`,
+    );
+  if (availableEvidence.length === 0)
+    blockers.push(
+      "No available evidence items were captured for this close run.",
+    );
+  if (unsignedReconciliationEvidence.length > 0)
+    blockers.push(
+      `${unsignedReconciliationEvidence.length} reconciliation certificate reference(s) are unsigned or missing hashes.`,
+    );
+  if (unavailableCriticalEvidence.length > 0)
+    blockers.push(
+      `${unavailableCriticalEvidence.length} critical evidence reference(s) are unavailable.`,
+    );
+  if (inventoryFreshness?.certificationBlocker)
+    blockers.push(inventoryFreshness.certificationBlocker);
 
-  return blockers
+  return blockers;
 }
 
-async function loadCloseRunForPack(organizationId: string, closeRunId: string, tx: Prisma.TransactionClient | typeof db = db) {
+async function loadCloseRunForPack(
+  organizationId: string,
+  closeRunId: string,
+  tx: Prisma.TransactionClient | typeof db = db,
+) {
   return tx.closeRun.findFirst({
     where: { id: closeRunId, organizationId },
     include: {
@@ -682,26 +803,28 @@ async function loadCloseRunForPack(organizationId: string, closeRunId: string, t
       },
       checklistItems: { orderBy: [{ domain: "asc" }, { key: "asc" }] },
       findings: { orderBy: [{ severity: "desc" }, { createdAt: "asc" }] },
-      evidenceItems: { orderBy: [{ evidenceType: "asc" }, { createdAt: "asc" }] },
+      evidenceItems: {
+        orderBy: [{ evidenceType: "asc" }, { createdAt: "asc" }],
+      },
       comments: { orderBy: { createdAt: "asc" } },
       reviews: { orderBy: { createdAt: "asc" } },
     },
-  })
+  });
 }
 
 function buildClosePackPayload(
   run: NonNullable<Awaited<ReturnType<typeof loadCloseRunForPack>>>,
   params: {
-    exportId: string
-    mode: ClosePackExportMode
-    generatedAt: string
-    generatedById: string | null
-    watermarkId: string
-    correlationId: string
-    redactionNote: string
-    certificationLimitations: string[]
-    certificationBlockers: string[]
-    inventoryFreshness: InventoryAnnexFreshness
+    exportId: string;
+    mode: ClosePackExportMode;
+    generatedAt: string;
+    generatedById: string | null;
+    watermarkId: string;
+    correlationId: string;
+    redactionNote: string;
+    certificationLimitations: string[];
+    certificationBlockers: string[];
+    inventoryFreshness: InventoryAnnexFreshness;
   },
 ) {
   return {
@@ -755,6 +878,10 @@ function buildClosePackPayload(
           previousEvidenceHash: params.inventoryFreshness.previousEvidenceHash,
           newEvidenceHash: params.inventoryFreshness.newEvidenceHash,
         },
+      },
+      payrollFinanceForecast: {
+        saved: savedPayrollFinanceForecastProof(run),
+        redaction: "Aggregate close-pack payroll forecast proof only; person-level payroll amounts are redacted.",
       },
     },
     checklist: run.checklistItems.map((item) => ({
@@ -835,18 +962,30 @@ function buildClosePackPayload(
       createdAt: comment.createdAt.toISOString(),
     })),
     summaries: {
-      rowCount: run.checklistItems.length + run.findings.length + run.evidenceItems.length + run.reviews.length + run.comments.length,
-      availableEvidenceCount: run.evidenceItems.filter((item) => item.available).length,
-      openFindingCount: run.findings.filter((finding) => OPEN_FINDING_STATUSES.includes(finding.status as (typeof OPEN_FINDING_STATUSES)[number])).length,
+      rowCount:
+        run.checklistItems.length +
+        run.findings.length +
+        run.evidenceItems.length +
+        run.reviews.length +
+        run.comments.length,
+      availableEvidenceCount: run.evidenceItems.filter((item) => item.available)
+        .length,
+      openFindingCount: run.findings.filter((finding) =>
+        OPEN_FINDING_STATUSES.includes(
+          finding.status as (typeof OPEN_FINDING_STATUSES)[number],
+        ),
+      ).length,
       signedReconciliationEvidenceCount: run.evidenceItems.filter(
         (item) =>
           item.evidenceType === CloseEvidenceType.RECONCILIATION_CERTIFICATE &&
           item.sourceHash &&
           item.provenance === "POSTED",
       ).length,
-      suspenseEvidenceCount: run.evidenceItems.filter((item) => item.evidenceType === CloseEvidenceType.SUSPENSE_ITEM).length,
+      suspenseEvidenceCount: run.evidenceItems.filter(
+        (item) => item.evidenceType === CloseEvidenceType.SUSPENSE_ITEM,
+      ).length,
     },
-  }
+  };
 }
 
 async function recordInvalidationEvidenceInTx(
@@ -855,9 +994,11 @@ async function recordInvalidationEvidenceInTx(
   input: CloseCertificationInvalidationInput,
   control: ExportClosePackControl,
 ) {
-  const detectedAt = (control.now ? new Date(control.now) : new Date()).toISOString()
-  const sourceMetadata = sourceMetadataForInput(input)
-  const source = sourcePayload(sourceMetadata)
+  const detectedAt = (
+    control.now ? new Date(control.now) : new Date()
+  ).toISOString();
+  const sourceMetadata = sourceMetadataForInput(input);
+  const source = sourcePayload(sourceMetadata);
   const payload = {
     closeRunId: run.id,
     closePackExportId: input.closePackExportId ?? null,
@@ -875,52 +1016,60 @@ async function recordInvalidationEvidenceInTx(
     previousEvidenceHash: input.previousEvidenceHash ?? null,
     newEvidenceHash: input.newEvidenceHash ?? null,
     correlationId: input.correlationId ?? null,
-  }
-  const eventHashPart = sha256(stableStringify({
-    closeRunId: run.id,
-    closePackExportId: input.closePackExportId ?? null,
-    sourceCode: source.sourceCode,
-    sourceModel: source.sourceModel,
-    sourceId: input.sourceId ?? null,
-    sourceEventName: source.sourceEventName,
-    previousEvidenceHash: input.previousEvidenceHash ?? null,
-    newEvidenceHash: input.newEvidenceHash ?? null,
-  })).slice(7, 23)
-  const eventResult = await recordBusinessEventInTx(tx as Parameters<typeof recordBusinessEventInTx>[0], {
-    organizationId: run.organizationId,
-    eventType: "close.certification.invalidated",
-    eventSource: "SYSTEM",
-    idempotencyKey: `close-certification-invalidated:${run.id}:${input.closePackExportId ?? "run"}:${eventHashPart}`,
-    payload,
-    actorId: control.actorId ?? undefined,
-    sourceType: "MANUAL",
-    sourceId: run.id,
-    documentHash: input.newEvidenceHash ?? input.previousEvidenceHash ?? undefined,
-    metadata: {
+  };
+  const eventHashPart = sha256(
+    stableStringify({
       closeRunId: run.id,
       closePackExportId: input.closePackExportId ?? null,
       sourceCode: source.sourceCode,
-      sourceRing: source.ring,
-      sourceDomain: source.domain,
-      sourceTable: source.sourceTable,
-      staleReason: input.staleReason,
-      invalidationSource: source,
-      correlationId: input.correlationId ?? null,
-    },
-    outboxMessages: [{
-      channel: "REPORT_EXPORT",
-      eventName: "close.certification.invalidated",
-      idempotencyKey: `close-certification-invalidated:${run.id}:${input.closePackExportId ?? "run"}:${eventHashPart}:report-export`,
+      sourceModel: source.sourceModel,
+      sourceId: input.sourceId ?? null,
+      sourceEventName: source.sourceEventName,
+      previousEvidenceHash: input.previousEvidenceHash ?? null,
+      newEvidenceHash: input.newEvidenceHash ?? null,
+    }),
+  ).slice(7, 23);
+  const eventResult = await recordBusinessEventInTx(
+    tx as Parameters<typeof recordBusinessEventInTx>[0],
+    {
+      organizationId: run.organizationId,
+      eventType: "close.certification.invalidated",
+      eventSource: "SYSTEM",
+      idempotencyKey: `close-certification-invalidated:${run.id}:${input.closePackExportId ?? "run"}:${eventHashPart}`,
       payload,
+      actorId: control.actorId ?? undefined,
+      sourceType: "MANUAL",
+      sourceId: run.id,
+      documentHash:
+        input.newEvidenceHash ?? input.previousEvidenceHash ?? undefined,
       metadata: {
+        closeRunId: run.id,
+        closePackExportId: input.closePackExportId ?? null,
         sourceCode: source.sourceCode,
         sourceRing: source.ring,
         sourceDomain: source.domain,
-        sourceModel: source.sourceModel,
-        sourceEventName: source.sourceEventName,
+        sourceTable: source.sourceTable,
+        staleReason: input.staleReason,
+        invalidationSource: source,
+        correlationId: input.correlationId ?? null,
       },
-    }],
-  })
+      outboxMessages: [
+        {
+          channel: "REPORT_EXPORT",
+          eventName: "close.certification.invalidated",
+          idempotencyKey: `close-certification-invalidated:${run.id}:${input.closePackExportId ?? "run"}:${eventHashPart}:report-export`,
+          payload,
+          metadata: {
+            sourceCode: source.sourceCode,
+            sourceRing: source.ring,
+            sourceDomain: source.domain,
+            sourceModel: source.sourceModel,
+            sourceEventName: source.sourceEventName,
+          },
+        },
+      ],
+    },
+  );
 
   await tx.ledgerAuditEvent.create({
     data: {
@@ -935,9 +1084,9 @@ async function recordInvalidationEvidenceInTx(
         businessEventId: eventResult.event.id,
       }),
     },
-  })
+  });
 
-  return eventResult.event.id
+  return eventResult.event.id;
 }
 
 async function recordCloseCertificationInvalidationInTx(
@@ -946,21 +1095,26 @@ async function recordCloseCertificationInvalidationInTx(
   input: CloseCertificationInvalidationInput,
   control: ExportClosePackControl = {},
 ): Promise<CloseCertificationInvalidationResult> {
-  const run = await loadCloseRunForPack(organizationId, input.closeRunId, tx)
-  if (!run) throw new NotFoundError("Close run not found")
+  const run = await loadCloseRunForPack(organizationId, input.closeRunId, tx);
+  if (!run) throw new NotFoundError("Close run not found");
 
   const closePackExport = input.closePackExportId
     ? await tx.closePackExport.findFirst({
-      where: {
-        id: input.closePackExportId,
-        organizationId,
-        closeRunId: run.id,
-      },
-    })
-    : null
+        where: {
+          id: input.closePackExportId,
+          organizationId,
+          closeRunId: run.id,
+        },
+      })
+    : null;
 
-  const source = sourcePayload(sourceMetadataForInput(input))
-  const businessEventId = await recordInvalidationEvidenceInTx(tx, run, input, control)
+  const source = sourcePayload(sourceMetadataForInput(input));
+  const businessEventId = await recordInvalidationEvidenceInTx(
+    tx,
+    run,
+    input,
+    control,
+  );
   const staleState = {
     status: "EVIDENCE_STALE",
     sourceCode: source.sourceCode,
@@ -972,13 +1126,16 @@ async function recordCloseCertificationInvalidationInTx(
     sourceEventName: source.sourceEventName,
     invalidationSource: source,
     staleReason: input.staleReason,
-    detectedAt: (control.now ? new Date(control.now) : new Date()).toISOString(),
+    detectedAt: (control.now
+      ? new Date(control.now)
+      : new Date()
+    ).toISOString(),
     actorId: control.actorId ?? null,
     previousEvidenceHash: input.previousEvidenceHash ?? null,
     newEvidenceHash: input.newEvidenceHash ?? null,
     businessEventId,
     correlationId: input.correlationId ?? null,
-  }
+  };
 
   if (closePackExport) {
     await tx.closePackExport.update({
@@ -990,27 +1147,30 @@ async function recordCloseCertificationInvalidationInTx(
           statutoryCertification: statutoryCertificationBlockerMetadata(),
         }),
       },
-    })
+    });
   }
 
   await tx.closeRun.update({
     where: { id: run.id },
     data: {
-      status: run.status === CloseRunStatus.CERTIFIED ? CloseRunStatus.BLOCKED : run.status,
+      status:
+        run.status === CloseRunStatus.CERTIFIED
+          ? CloseRunStatus.BLOCKED
+          : run.status,
       metadata: jsonObject({
         ...metadataRecord(run.metadata),
         staleState,
         statutoryCertification: statutoryCertificationBlockerMetadata(),
       }),
     },
-  })
+  });
 
   return {
     closeRunId: run.id,
     closePackExportId: closePackExport?.id ?? null,
     businessEventId,
     staleReason: input.staleReason,
-  }
+  };
 }
 
 export async function recordCloseCertificationInvalidation(
@@ -1018,13 +1178,20 @@ export async function recordCloseCertificationInvalidation(
   input: CloseCertificationInvalidationInput,
   control: ExportClosePackControl = {},
 ): Promise<CloseCertificationInvalidationResult> {
-  return db.$transaction((tx) => recordCloseCertificationInvalidationInTx(tx, organizationId, input, control))
+  return db.$transaction((tx) =>
+    recordCloseCertificationInvalidationInTx(
+      tx,
+      organizationId,
+      input,
+      control,
+    ),
+  );
 }
 
 type CloseInvalidationTarget = {
-  closeRunId: string
-  closePackExportId: string | null
-}
+  closeRunId: string;
+  closePackExportId: string | null;
+};
 
 async function closeInvalidationTargetsInTx(
   tx: Prisma.TransactionClient,
@@ -1032,28 +1199,33 @@ async function closeInvalidationTargetsInTx(
   input: RecordCloseCertificationInvalidationsForSourceInput,
 ): Promise<CloseInvalidationTarget[]> {
   if (input.closeRunId) {
-    return [{ closeRunId: input.closeRunId, closePackExportId: input.closePackExportId ?? null }]
+    return [
+      {
+        closeRunId: input.closeRunId,
+        closePackExportId: input.closePackExportId ?? null,
+      },
+    ];
   }
 
-  const periodStart = dateOrNull(input.periodStart)
-  const periodEnd = dateOrNull(input.periodEnd)
-  const periodFilters: Prisma.CloseRunWhereInput[] = []
+  const periodStart = dateOrNull(input.periodStart);
+  const periodEnd = dateOrNull(input.periodEnd);
+  const periodFilters: Prisma.CloseRunWhereInput[] = [];
 
-  if (input.periodId) periodFilters.push({ periodId: input.periodId })
+  if (input.periodId) periodFilters.push({ periodId: input.periodId });
   if (periodStart && periodEnd) {
     periodFilters.push({
       period: {
         startDate: { lte: periodEnd },
         endDate: { gte: periodStart },
       },
-    })
+    });
   } else if (periodStart) {
-    periodFilters.push({ period: { endDate: { gte: periodStart } } })
+    periodFilters.push({ period: { endDate: { gte: periodStart } } });
   } else if (periodEnd) {
-    periodFilters.push({ period: { startDate: { lte: periodEnd } } })
+    periodFilters.push({ period: { startDate: { lte: periodEnd } } });
   }
 
-  if (periodFilters.length === 0) return []
+  if (periodFilters.length === 0) return [];
 
   const runs = await tx.closeRun.findMany({
     where: {
@@ -1077,12 +1249,13 @@ async function closeInvalidationTargetsInTx(
         select: { id: true },
       },
     },
-  })
+  });
 
   return runs.map((run) => ({
     closeRunId: run.id,
-    closePackExportId: input.closePackExportId ?? run.packExports[0]?.id ?? null,
-  }))
+    closePackExportId:
+      input.closePackExportId ?? run.packExports[0]?.id ?? null,
+  }));
 }
 
 export async function recordCloseCertificationInvalidationsForSourceInTx(
@@ -1091,29 +1264,36 @@ export async function recordCloseCertificationInvalidationsForSourceInTx(
   input: RecordCloseCertificationInvalidationsForSourceInput,
   control: ExportClosePackControl = {},
 ): Promise<RecordCloseCertificationInvalidationsForSourceResult> {
-  const source = CLOSE_CERTIFICATION_INVALIDATION_SOURCES[input.sourceCode]
-  const targets = await closeInvalidationTargetsInTx(tx, organizationId, input)
-  const results: CloseCertificationInvalidationResult[] = []
+  const source = CLOSE_CERTIFICATION_INVALIDATION_SOURCES[input.sourceCode];
+  const targets = await closeInvalidationTargetsInTx(tx, organizationId, input);
+  const results: CloseCertificationInvalidationResult[] = [];
 
   for (const target of targets) {
-    results.push(await recordCloseCertificationInvalidationInTx(tx, organizationId, {
-      closeRunId: target.closeRunId,
-      closePackExportId: target.closePackExportId,
-      sourceCode: source.sourceCode,
-      sourceModel: source.sourceModel,
-      sourceId: input.sourceId ?? null,
-      sourceEventName: source.sourceEventName,
-      staleReason: input.staleReason,
-      previousEvidenceHash: input.previousEvidenceHash ?? null,
-      newEvidenceHash: input.newEvidenceHash ?? null,
-      correlationId: input.correlationId ?? null,
-    }, control))
+    results.push(
+      await recordCloseCertificationInvalidationInTx(
+        tx,
+        organizationId,
+        {
+          closeRunId: target.closeRunId,
+          closePackExportId: target.closePackExportId,
+          sourceCode: source.sourceCode,
+          sourceModel: source.sourceModel,
+          sourceId: input.sourceId ?? null,
+          sourceEventName: source.sourceEventName,
+          staleReason: input.staleReason,
+          previousEvidenceHash: input.previousEvidenceHash ?? null,
+          newEvidenceHash: input.newEvidenceHash ?? null,
+          correlationId: input.correlationId ?? null,
+        },
+        control,
+      ),
+    );
   }
 
   return {
     invalidatedCount: results.length,
     results,
-  }
+  };
 }
 
 export async function recordCloseCertificationInvalidationsForSource(
@@ -1121,7 +1301,14 @@ export async function recordCloseCertificationInvalidationsForSource(
   input: RecordCloseCertificationInvalidationsForSourceInput,
   control: ExportClosePackControl = {},
 ): Promise<RecordCloseCertificationInvalidationsForSourceResult> {
-  return db.$transaction((tx) => recordCloseCertificationInvalidationsForSourceInTx(tx, organizationId, input, control))
+  return db.$transaction((tx) =>
+    recordCloseCertificationInvalidationsForSourceInTx(
+      tx,
+      organizationId,
+      input,
+      control,
+    ),
+  );
 }
 
 export async function exportClosePack(
@@ -1129,44 +1316,70 @@ export async function exportClosePack(
   input: ExportClosePackInput,
   control: ExportClosePackControl = {},
 ): Promise<ClosePackExportResult> {
-  const now = control.now ? new Date(control.now) : new Date()
-  const mode = exportMode(input)
-  const correlationId = input.correlationId ?? randomUUID()
-  const exportId = randomUUID()
+  const now = control.now ? new Date(control.now) : new Date();
+  const mode = exportMode(input);
+  const correlationId = input.correlationId ?? randomUUID();
+  const exportId = randomUUID();
 
-  assertExportPermission(mode, control)
-  if (mode === "CERTIFIED") requireFreshControl(control, now)
+  assertExportPermission(mode, control);
+  if (mode === "CERTIFIED") requireFreshControl(control, now);
 
   return db.$transaction(async (tx) => {
-    const run = await loadCloseRunForPack(organizationId, input.closeRunId, tx)
-    if (!run) throw new NotFoundError("Close run not found")
+    const run = await loadCloseRunForPack(organizationId, input.closeRunId, tx);
+    if (!run) throw new NotFoundError("Close run not found");
 
-    if (mode === "CERTIFIED" && control.actorId && run.runById === control.actorId) {
-      throw new BusinessRuleError("The close runner cannot certify the same close pack.")
+    if (
+      mode === "CERTIFIED" &&
+      control.actorId &&
+      run.runById === control.actorId
+    ) {
+      throw new BusinessRuleError(
+        "The close runner cannot certify the same close pack.",
+      );
     }
 
-    const generatedAt = now.toISOString()
-    const inventoryFreshness = await evaluateInventoryAnnexFreshness(run, tx, generatedAt)
-    const blockers = certificationBlockers(run, inventoryFreshness)
+    const generatedAt = now.toISOString();
+    const inventoryFreshness = await evaluateInventoryAnnexFreshness(
+      run,
+      tx,
+      generatedAt,
+    );
+    const blockers = certificationBlockers(run, inventoryFreshness);
     if (mode === "CERTIFIED" && blockers.length > 0) {
       if (inventoryFreshness.status !== "FRESH") {
-        await recordInvalidationEvidenceInTx(tx, run, {
-          closeRunId: run.id,
-          sourceModel: inventoryFreshness.sourceModel,
-          sourceId: inventoryFreshness.sourceId,
-          sourceEventName: inventoryFreshness.sourceEventName,
-          staleReason: inventoryFreshness.staleReason ?? inventoryFreshness.certificationBlocker ?? "Close certification evidence is stale.",
-          previousEvidenceHash: inventoryFreshness.previousEvidenceHash,
-          newEvidenceHash: inventoryFreshness.newEvidenceHash,
-          correlationId,
-        }, control)
+        await recordInvalidationEvidenceInTx(
+          tx,
+          run,
+          {
+            closeRunId: run.id,
+            sourceModel: inventoryFreshness.sourceModel,
+            sourceId: inventoryFreshness.sourceId,
+            sourceEventName: inventoryFreshness.sourceEventName,
+            staleReason:
+              inventoryFreshness.staleReason ??
+              inventoryFreshness.certificationBlocker ??
+              "Close certification evidence is stale.",
+            previousEvidenceHash: inventoryFreshness.previousEvidenceHash,
+            newEvidenceHash: inventoryFreshness.newEvidenceHash,
+            correlationId,
+          },
+          control,
+        );
       }
-      throw new BusinessRuleError(`Certified close pack is blocked: ${blockers[0]}`)
+      throw new BusinessRuleError(
+        `Certified close pack is blocked: ${blockers[0]}`,
+      );
     }
 
-    const rowCount = run.checklistItems.length + run.findings.length + run.evidenceItems.length + run.reviews.length + run.comments.length
-    const watermarkId = `close-pack-${mode.toLowerCase().replaceAll("_", "-")}-${run.id}-${exportId.slice(0, 12)}`
-    const redactionNote = "Secrets, raw provider payloads, credentials, and tenant internals are excluded from this close pack."
+    const rowCount =
+      run.checklistItems.length +
+      run.findings.length +
+      run.evidenceItems.length +
+      run.reviews.length +
+      run.comments.length;
+    const watermarkId = `close-pack-${mode.toLowerCase().replaceAll("_", "-")}-${run.id}-${exportId.slice(0, 12)}`;
+    const redactionNote =
+      "Secrets, raw provider payloads, credentials, and tenant internals are excluded from this close pack.";
     const payload = buildClosePackPayload(run, {
       exportId,
       mode,
@@ -1178,11 +1391,15 @@ export async function exportClosePack(
       certificationLimitations: certificationLimitations(mode),
       certificationBlockers: blockers,
       inventoryFreshness,
-    })
-    const contentHash = sha256(stableStringify(payload))
-    const content = JSON.stringify({ ...payload, export: { ...payload.export, contentHash } }, null, 2)
-    const fileName = `${watermarkId}.json`
-    const isCertified = mode === "CERTIFIED"
+    });
+    const contentHash = sha256(stableStringify(payload));
+    const content = JSON.stringify(
+      { ...payload, export: { ...payload.export, contentHash } },
+      null,
+      2,
+    );
+    const fileName = `${watermarkId}.json`;
+    const isCertified = mode === "CERTIFIED";
 
     const closePackExport = await tx.closePackExport.create({
       data: {
@@ -1199,9 +1416,12 @@ export async function exportClosePack(
         correlationId,
         metadata: jsonObject({
           mode,
-          trustLevel: typeof run.metadata === "object" && run.metadata && !Array.isArray(run.metadata)
-            ? (run.metadata as Record<string, unknown>).trustLevel
-            : null,
+          trustLevel:
+            typeof run.metadata === "object" &&
+            run.metadata &&
+            !Array.isArray(run.metadata)
+              ? (run.metadata as Record<string, unknown>).trustLevel
+              : null,
           certificationBlockers: blockers,
           inventoryValuationAnnex: inventoryFreshness.savedAnnex,
           inventoryAnnexFreshness: {
@@ -1215,24 +1435,32 @@ export async function exportClosePack(
           redactionNote,
         }),
       },
-    })
+    });
 
     if (inventoryFreshness.status !== "FRESH") {
-      await recordInvalidationEvidenceInTx(tx, run, {
-        closeRunId: run.id,
-        closePackExportId: closePackExport.id,
-        sourceModel: inventoryFreshness.sourceModel,
-        sourceId: inventoryFreshness.sourceId,
-        sourceEventName: inventoryFreshness.sourceEventName,
-        staleReason: inventoryFreshness.staleReason ?? inventoryFreshness.certificationBlocker ?? "Close certification evidence is stale.",
-        previousEvidenceHash: inventoryFreshness.previousEvidenceHash,
-        newEvidenceHash: inventoryFreshness.newEvidenceHash,
-        correlationId,
-      }, control)
+      await recordInvalidationEvidenceInTx(
+        tx,
+        run,
+        {
+          closeRunId: run.id,
+          closePackExportId: closePackExport.id,
+          sourceModel: inventoryFreshness.sourceModel,
+          sourceId: inventoryFreshness.sourceId,
+          sourceEventName: inventoryFreshness.sourceEventName,
+          staleReason:
+            inventoryFreshness.staleReason ??
+            inventoryFreshness.certificationBlocker ??
+            "Close certification evidence is stale.",
+          previousEvidenceHash: inventoryFreshness.previousEvidenceHash,
+          newEvidenceHash: inventoryFreshness.newEvidenceHash,
+          correlationId,
+        },
+        control,
+      );
     }
 
     if (isCertified) {
-      const existingMetadata = metadataRecord(run.metadata)
+      const existingMetadata = metadataRecord(run.metadata);
       await tx.closeRun.update({
         where: { id: run.id },
         data: {
@@ -1254,14 +1482,16 @@ export async function exportClosePack(
             statutoryCertification: statutoryCertificationBlockerMetadata(),
           }),
         },
-      })
+      });
     }
 
     await tx.ledgerAuditEvent.create({
       data: {
         organizationId,
         actorId: control.actorId ?? null,
-        action: isCertified ? "CLOSE_PACK_CERTIFIED_EXPORT" : "CLOSE_PACK_DRAFT_EXPORT",
+        action: isCertified
+          ? "CLOSE_PACK_CERTIFIED_EXPORT"
+          : "CLOSE_PACK_DRAFT_EXPORT",
         resourceType: "ClosePackExport",
         resourceId: closePackExport.id,
         message: `Close pack ${watermarkId} exported`,
@@ -1284,7 +1514,7 @@ export async function exportClosePack(
           statutoryCertification: statutoryCertificationBlockerMetadata(),
         }),
       },
-    })
+    });
 
     return {
       exportId: closePackExport.id,
@@ -1302,7 +1532,6 @@ export async function exportClosePack(
       correlationId,
       redactionNote,
       certificationLimitations: certificationLimitations(mode),
-    }
-  })
+    };
+  });
 }
-

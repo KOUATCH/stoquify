@@ -13,6 +13,20 @@ const VERIFIED_BY =
 const CNPS_REGULATOR_CONFIRMED_ON = "2026-06-26";
 const CNPS_REGULATOR_CONFIRMED_BY =
   "Official CNPS-published contribution decree and employer-rules source review; regulator source URLs recorded in legal references";
+const IRPP_EXPERT_REVIEW_REQUIRED_VALUE = {
+  productionCalculationSupported: false,
+  calculationMode: "OFFICIAL_IRPP_FORMULA_REVIEW_REQUIRED",
+  employeeWithholdingRequired: true,
+  declarationCode: "IRPP",
+  requiredReviewedCoverage: [
+    "taxableSalaryBase",
+    "familyQuotientOrDependentTreatment",
+    "bracketsAndRates",
+    "deductibleEmployeeContributions",
+    "withholdingRounding",
+    "monthlyAndAnnualRegularization",
+  ],
+} as const;
 
 const cameroonCountryPackUnsealed: CountryPack = {
   header: {
@@ -34,6 +48,7 @@ const cameroonCountryPackUnsealed: CountryPack = {
       "taxes.vat": "SUPPORTED",
       "taxes.filing": "SUPPORTED",
       "payroll.cnps": "SUPPORTED",
+      "payroll.irpp": "REQUIRES_EXPERT_REVIEW",
       "identifiers.niu": "SUPPORTED",
       "identifiers.rccm": "PARTIALLY_SUPPORTED",
       filings: "SUPPORTED",
@@ -375,6 +390,21 @@ const cameroonCountryPackUnsealed: CountryPack = {
           },
         ],
       },
+      irpp: {
+        incomeTaxRules: [
+          {
+            value: IRPP_EXPERT_REVIEW_REQUIRED_VALUE,
+            legalRef: "CM_DGI_CGI_2025",
+            effectiveFrom: "2026-01-01",
+            effectiveTo: null,
+            verifiedOn: VERIFIED_ON,
+            verifiedBy: VERIFIED_BY,
+            verificationStatus: "REQUIRES_EXPERT_REVIEW",
+            notes:
+              "Blocks production payroll income-tax withholding until reviewed IRPP formulas, bases, reliefs, caps, rounding, and YTD regularization fixtures are loaded.",
+          },
+        ],
+      },
     },
     holidays: {
       fixed: [
@@ -696,6 +726,32 @@ const cameroonCountryPackUnsealed: CountryPack = {
       },
       expectedLegalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
       expectedPackVersion: "CM-2026.1",
+      calculationScenario: {
+        input: {
+          grossAmount: "1000000.00",
+        },
+        expectedOutput: {
+          status: "CALCULATED",
+          applied: true,
+          grossAmount: "1000000.00",
+          socialBaseAmount: "750000.00",
+          employeePensionRateBps: "420",
+          employerPensionRateBps: "420",
+          employeePensionContributionAmount: "31500.00",
+          employerPensionContributionAmount: "31500.00",
+          totalPensionContributionAmount: "63000.00",
+          currency: "XAF",
+        },
+        reviewStatus: "REGULATOR_CONFIRMED",
+        reviewEvidence: {
+          reviewedBy: CNPS_REGULATOR_CONFIRMED_BY,
+          reviewedOn: CNPS_REGULATOR_CONFIRMED_ON,
+          legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
+          sourceEvidenceHash: "sha256:cm-cnps-regulator-confirmed-2026",
+        },
+        notes:
+          "Pins the CNPS pension ceiling plus employee and employer contribution rates from the regulator-confirmed country-pack envelope.",
+      },
     },
     {
       id: "cm-cnps-family-allowance-2026",
@@ -711,6 +767,108 @@ const cameroonCountryPackUnsealed: CountryPack = {
       },
       expectedLegalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
       expectedPackVersion: "CM-2026.1",
+      calculationScenario: {
+        input: {
+          contributionBaseAmount: "100000.00",
+          sector: "GENERAL",
+        },
+        expectedOutput: {
+          status: "CALCULATED",
+          applied: true,
+          contributionBaseAmount: "100000.00",
+          familyAllowanceSector: "GENERAL",
+          familyAllowanceRateBps: "700",
+          familyAllowanceContributionAmount: "7000.00",
+          currency: "XAF",
+        },
+        reviewStatus: "REGULATOR_CONFIRMED",
+        reviewEvidence: {
+          reviewedBy: CNPS_REGULATOR_CONFIRMED_BY,
+          reviewedOn: CNPS_REGULATOR_CONFIRMED_ON,
+          legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
+          sourceEvidenceHash: "sha256:cm-cnps-regulator-confirmed-2026",
+        },
+        notes:
+          "Pins the general-sector CNPS family allowance employer contribution from the regulator-confirmed country-pack envelope.",
+      },
+    },
+    {
+      id: "cm-cnps-family-allowance-agriculture-2026",
+      countryCode: CAMEROON_COUNTRY_CODE,
+      parameterPath: "payroll.cnps.familyAllowanceRatesBps",
+      date: "2026-06-11",
+      purpose: "PAYROLL_CNPS_FAMILY_ALLOWANCE_AGRICULTURE",
+      expectedValue: {
+        general: 700,
+        agriculture: 565,
+        privateEducation: 370,
+        paidBy: "EMPLOYER",
+      },
+      expectedLegalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
+      expectedPackVersion: "CM-2026.1",
+      calculationScenario: {
+        input: {
+          contributionBaseAmount: "100000.00",
+          sector: "AGRICULTURE",
+        },
+        expectedOutput: {
+          status: "CALCULATED",
+          applied: true,
+          contributionBaseAmount: "100000.00",
+          familyAllowanceSector: "AGRICULTURE",
+          familyAllowanceRateBps: "565",
+          familyAllowanceContributionAmount: "5650.00",
+          currency: "XAF",
+        },
+        reviewStatus: "REGULATOR_CONFIRMED",
+        reviewEvidence: {
+          reviewedBy: CNPS_REGULATOR_CONFIRMED_BY,
+          reviewedOn: CNPS_REGULATOR_CONFIRMED_ON,
+          legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
+          sourceEvidenceHash: "sha256:cm-cnps-regulator-confirmed-2026",
+        },
+        notes:
+          "Pins the agriculture-sector CNPS family allowance employer contribution from the regulator-confirmed country-pack envelope.",
+      },
+    },
+    {
+      id: "cm-cnps-family-allowance-private-education-2026",
+      countryCode: CAMEROON_COUNTRY_CODE,
+      parameterPath: "payroll.cnps.familyAllowanceRatesBps",
+      date: "2026-06-11",
+      purpose: "PAYROLL_CNPS_FAMILY_ALLOWANCE_PRIVATE_EDUCATION",
+      expectedValue: {
+        general: 700,
+        agriculture: 565,
+        privateEducation: 370,
+        paidBy: "EMPLOYER",
+      },
+      expectedLegalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
+      expectedPackVersion: "CM-2026.1",
+      calculationScenario: {
+        input: {
+          contributionBaseAmount: "100000.00",
+          sector: "PRIVATE_EDUCATION",
+        },
+        expectedOutput: {
+          status: "CALCULATED",
+          applied: true,
+          contributionBaseAmount: "100000.00",
+          familyAllowanceSector: "PRIVATE_EDUCATION",
+          familyAllowanceRateBps: "370",
+          familyAllowanceContributionAmount: "3700.00",
+          currency: "XAF",
+        },
+        reviewStatus: "REGULATOR_CONFIRMED",
+        reviewEvidence: {
+          reviewedBy: CNPS_REGULATOR_CONFIRMED_BY,
+          reviewedOn: CNPS_REGULATOR_CONFIRMED_ON,
+          legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
+          sourceEvidenceHash: "sha256:cm-cnps-regulator-confirmed-2026",
+        },
+        notes:
+          "Pins the private-education-sector CNPS family allowance employer contribution from the regulator-confirmed country-pack envelope.",
+      },
     },
     {
       id: "cm-cnps-occupational-risk-2026",
@@ -727,6 +885,110 @@ const cameroonCountryPackUnsealed: CountryPack = {
       },
       expectedLegalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
       expectedPackVersion: "CM-2026.1",
+      calculationScenario: {
+        input: {
+          contributionBaseAmount: "100000.00",
+          group: "A",
+        },
+        expectedOutput: {
+          status: "CALCULATED",
+          applied: true,
+          contributionBaseAmount: "100000.00",
+          occupationalRiskGroup: "A",
+          occupationalRiskRateBps: "175",
+          occupationalRiskContributionAmount: "1750.00",
+          currency: "XAF",
+        },
+        reviewStatus: "REGULATOR_CONFIRMED",
+        reviewEvidence: {
+          reviewedBy: CNPS_REGULATOR_CONFIRMED_BY,
+          reviewedOn: CNPS_REGULATOR_CONFIRMED_ON,
+          legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
+          sourceEvidenceHash: "sha256:cm-cnps-regulator-confirmed-2026",
+        },
+        notes:
+          "Pins the group A CNPS occupational-risk employer contribution from the regulator-confirmed country-pack envelope.",
+      },
+    },
+    {
+      id: "cm-cnps-occupational-risk-group-b-2026",
+      countryCode: CAMEROON_COUNTRY_CODE,
+      parameterPath: "payroll.cnps.occupationalRiskRatesBps",
+      date: "2026-06-11",
+      purpose: "PAYROLL_CNPS_OCCUPATIONAL_RISK_GROUP_B",
+      expectedValue: {
+        groupA: 175,
+        groupB: 250,
+        groupC: 500,
+        paidBy: "EMPLOYER",
+        classificationRequired: true,
+      },
+      expectedLegalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
+      expectedPackVersion: "CM-2026.1",
+      calculationScenario: {
+        input: {
+          contributionBaseAmount: "100000.00",
+          group: "B",
+        },
+        expectedOutput: {
+          status: "CALCULATED",
+          applied: true,
+          contributionBaseAmount: "100000.00",
+          occupationalRiskGroup: "B",
+          occupationalRiskRateBps: "250",
+          occupationalRiskContributionAmount: "2500.00",
+          currency: "XAF",
+        },
+        reviewStatus: "REGULATOR_CONFIRMED",
+        reviewEvidence: {
+          reviewedBy: CNPS_REGULATOR_CONFIRMED_BY,
+          reviewedOn: CNPS_REGULATOR_CONFIRMED_ON,
+          legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
+          sourceEvidenceHash: "sha256:cm-cnps-regulator-confirmed-2026",
+        },
+        notes:
+          "Pins the group B CNPS occupational-risk employer contribution from the regulator-confirmed country-pack envelope.",
+      },
+    },
+    {
+      id: "cm-cnps-occupational-risk-group-c-2026",
+      countryCode: CAMEROON_COUNTRY_CODE,
+      parameterPath: "payroll.cnps.occupationalRiskRatesBps",
+      date: "2026-06-11",
+      purpose: "PAYROLL_CNPS_OCCUPATIONAL_RISK_GROUP_C",
+      expectedValue: {
+        groupA: 175,
+        groupB: 250,
+        groupC: 500,
+        paidBy: "EMPLOYER",
+        classificationRequired: true,
+      },
+      expectedLegalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
+      expectedPackVersion: "CM-2026.1",
+      calculationScenario: {
+        input: {
+          contributionBaseAmount: "100000.00",
+          group: "C",
+        },
+        expectedOutput: {
+          status: "CALCULATED",
+          applied: true,
+          contributionBaseAmount: "100000.00",
+          occupationalRiskGroup: "C",
+          occupationalRiskRateBps: "500",
+          occupationalRiskContributionAmount: "5000.00",
+          currency: "XAF",
+        },
+        reviewStatus: "REGULATOR_CONFIRMED",
+        reviewEvidence: {
+          reviewedBy: CNPS_REGULATOR_CONFIRMED_BY,
+          reviewedOn: CNPS_REGULATOR_CONFIRMED_ON,
+          legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
+          sourceEvidenceHash: "sha256:cm-cnps-regulator-confirmed-2026",
+        },
+        notes:
+          "Pins the group C CNPS occupational-risk employer contribution from the regulator-confirmed country-pack envelope.",
+      },
     },
     {
       id: "cm-cnps-employer-rules-2026",
@@ -741,6 +1003,18 @@ const cameroonCountryPackUnsealed: CountryPack = {
       },
       expectedLegalRef: "CM_CNPS_EMPLOYER_RULES",
       expectedPackVersion: "CM-2026.1",
+    },
+    {
+      id: "cm-irpp-income-tax-rules-review-required-2026",
+      countryCode: CAMEROON_COUNTRY_CODE,
+      parameterPath: "payroll.irpp.incomeTaxRules",
+      date: "2026-06-11",
+      purpose: "PAYROLL_IRPP_INCOME_TAX",
+      expectedValue: IRPP_EXPERT_REVIEW_REQUIRED_VALUE,
+      expectedLegalRef: "CM_DGI_CGI_2025",
+      expectedPackVersion: "CM-2026.1",
+      notes:
+        "Explicit full-production blocker until reviewed IRPP calculation fixtures are loaded.",
     },
     {
       id: "cm-niu-required-2026",

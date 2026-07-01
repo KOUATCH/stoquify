@@ -124,7 +124,7 @@ function rbacContext(userId = "actor-1", permissions: string[] = []) {
 describe("payroll payment evidence actions", () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockRequireFreshAuth.mockResolvedValue({})
+    mockRequireFreshAuth.mockResolvedValue({ claims: { lastAuthAt: "2026-06-27T00:00:00.000Z" } })
     mockObserveModuleAccess.mockResolvedValue(moduleDecision())
   })
 
@@ -209,6 +209,9 @@ describe("payroll payment evidence actions", () => {
     expect(mockApprovePaymentDestinationChange).toHaveBeenCalledWith(expect.objectContaining({ organizationId: "org-1", actorId: "finance-1" }))
     expect(mockApplyApprovedPaymentDestinationChange).toHaveBeenCalledWith(expect.objectContaining({ organizationId: "org-1", actorId: "ops-1" }))
     expect(mockRevalidatePath).toHaveBeenCalledWith("/dashboard/payroll", "page")
+    expect(mockRevalidatePath).toHaveBeenCalledWith("/[locale]/dashboard/payroll", "page")
+    expect(mockRevalidatePath).toHaveBeenCalledWith("/dashboard/payroll/attendance", "page")
+    expect(mockRevalidatePath).toHaveBeenCalledWith("/[locale]/dashboard/payroll/attendance", "page")
   })
 
   it("returns client-safe RBAC denials before payment destination service calls", async () => {

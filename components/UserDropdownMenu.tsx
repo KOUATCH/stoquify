@@ -78,7 +78,7 @@ const UserDropdownMenu = ({
 
   // Get user role for display (fallback to default values since session is not available)
   const userRole = "User";
-  const organizationName = "StockFlow";
+  const organizationName = "Stoquify";
 
   // Generate initials from username
   const getInitials = (name: string) => {
@@ -346,7 +346,7 @@ const UserDropdownMenu = ({
         {/* Footer */}
         <div className="border-t border-white/10 bg-white/[0.035] p-3">
           <div className="text-center text-xs text-[#8fa4ab]">
-            StockFlow v2.1.0
+            Stoquify v2.1.0
           </div>
         </div>
       </DropdownMenuContent>

@@ -63,11 +63,12 @@ describe("manager action center service", () => {
       actionQueue: actionQueue(),
     })
 
-    expect(data.kpis).toHaveLength(4)
+    expect(data.kpis).toHaveLength(5)
     expect(data.kpis.map((card) => card.id)).toEqual([
       "manager-open-actions",
       "manager-critical-actions",
       "manager-stock-work",
+      "manager-payroll-forecast-proof",
       "manager-hidden-actions",
     ])
     expect(data.commandBrief).toMatchObject({
@@ -109,6 +110,72 @@ describe("manager action center service", () => {
       state: "permission_denied",
       requiredPermission: "users.read",
     })
+  })
+
+  it("surfaces payroll forecast proof as aggregate-only manager work", () => {
+    const tenant = tenantSnapshot({
+      payrollFinanceForecast: payrollForecastMetrics({
+        status: "NON_AUTHORITATIVE",
+        authoritative: false,
+        reasonCode: "PAYROLL_FORECAST_PROOF_INCOMPLETE",
+        message: "Upcoming payroll finance forecasts are withheld because payroll proof is incomplete.",
+        upcomingNetPayAmount: 0,
+        upcomingStatutoryLiabilityAmount: 0,
+        totalUpcomingAmount: 0,
+        blockerCodes: ["PAYROLL_FORECAST_PAYMENT_EVIDENCE_MISSING"],
+      }),
+    })
+    tenant.status = "blocked"
+    tenant.uiState = "blocked"
+    tenant.evidenceGrade = "blocked"
+    tenant.blockers = [
+      {
+        id: "tenant-payroll-finance-forecast-payment-evidence-missing",
+        severity: "high",
+        gate: "payroll_finance_forecast",
+        title: "Payroll payment proof is missing",
+        detail: "Upcoming net-pay forecast is withheld until released payment batches include immutable payment and ledger evidence.",
+        sourceTables: ["payroll_runs", "payroll_payment_batches"],
+        nextAction: "Open payroll payments and complete payment release evidence.",
+      },
+      {
+        id: "tenant-unrelated-close-blocker",
+        severity: "high",
+        gate: "close_readiness",
+        title: "Close blocker",
+        detail: "Close is blocked.",
+        sourceTables: ["close_runs"],
+      },
+    ]
+
+    const data = composeManagerActionCenterData({
+      organizationId: "org-1",
+      generatedAt,
+      snapshots: {
+        tenantOperating: tenant,
+        paymentTruth: paymentSnapshot(),
+        inventoryCash: inventorySnapshot(),
+        closeReadiness: closeSnapshot(),
+      },
+      actionQueue: actionQueue({ total: 0, filteredOutCount: 0 }),
+    })
+
+    const payroll = data.kpis.find((card) => card.id === "manager-payroll-forecast-proof")
+
+    expect(payroll).toMatchObject({
+      value: 0,
+      state: "blocked",
+      evidenceGrade: "blocked",
+      trustState: "blocked",
+      moduleSlug: "payroll",
+      requiredPermission: "payroll.payments.reconcile",
+      blockers: [expect.objectContaining({ gate: "payroll_finance_forecast" })],
+      redactions: [expect.objectContaining({ field: "payroll.personLevelAmounts" })],
+    })
+    expect(payroll?.detail).toContain("Open payroll payments")
+    expect(payroll?.blockers).toEqual(
+      expect.not.arrayContaining([expect.objectContaining({ gate: "close_readiness" })]),
+    )
   })
 
   it("keeps the center empty instead of inventing work when no visible actions exist", () => {
@@ -223,8 +290,15 @@ function tenantSnapshot(overrides: Partial<TenantOperatingMetrics> = {}): Snapsh
       cashCollected: 180000,
       pendingPurchaseOrderCount: 3,
       approvedOrPaidPayrollRunCount: 1,
+      activeEmployeeBalanceCaseCount: 0,
+      openEmployeeBalanceCaseCount: 0,
+      partiallySettledEmployeeBalanceCaseCount: 0,
+      employeeBalanceOutstandingAmount: 0,
+      periodEmployeeBalanceSettlementCount: 0,
+      periodEmployeeBalanceSettlementAmount: 0,
       postedJournalEntryCount: 1,
       sourceLinkCount: 1,
+      payrollFinanceForecast: payrollForecastMetrics(),
       paymentTruth: paymentMetrics(),
       inventoryCash: inventoryMetrics(),
       closeReadiness: closeMetrics(),
@@ -232,6 +306,33 @@ function tenantSnapshot(overrides: Partial<TenantOperatingMetrics> = {}): Snapsh
     },
     blockers: [],
     redactions: [],
+  }
+}
+
+function payrollForecastMetrics(
+  overrides: Partial<TenantOperatingMetrics["payrollFinanceForecast"]> = {},
+): TenantOperatingMetrics["payrollFinanceForecast"] {
+  return {
+    status: "AUTHORITATIVE",
+    authoritative: true,
+    reasonCode: "PAYROLL_FORECAST_SOURCE_LINKED",
+    message: "Forecast is source linked.",
+    horizonStart: "2026-06-20T00:00:00.000Z",
+    horizonEnd: "2026-07-20T23:59:59.999Z",
+    upcomingNetPayAmount: 350000,
+    upcomingStatutoryLiabilityAmount: 90000,
+    totalUpcomingAmount: 440000,
+    payrollPeriodCount: 1,
+    payrollRunCount: 1,
+    paymentBatchCount: 1,
+    declarationCount: 1,
+    sourceLinkCount: 2,
+    evidenceHashCount: 4,
+    nextPayDate: "2026-06-30T00:00:00.000Z",
+    nextDeclarationDueDate: "2026-07-15T00:00:00.000Z",
+    personLevelAmountsRedacted: true,
+    blockerCodes: [],
+    ...overrides,
   }
 }
 

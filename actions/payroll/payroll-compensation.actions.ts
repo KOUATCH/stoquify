@@ -37,6 +37,8 @@ function asRecord(input: unknown) {
 function revalidatePayrollCompensationPaths() {
   revalidatePath("/dashboard/payroll", "page")
   revalidatePath("/[locale]/dashboard/payroll", "page")
+  revalidatePath("/dashboard/payroll/compensation", "page")
+  revalidatePath("/[locale]/dashboard/payroll/compensation", "page")
 }
 
 const readCompensation = protect<unknown, CompensationWorkflowResult>(

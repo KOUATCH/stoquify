@@ -31,6 +31,8 @@ function asRecord(input: unknown) {
 function revalidatePayrollContractPaths() {
   revalidatePath("/dashboard/payroll", "page")
   revalidatePath("/[locale]/dashboard/payroll", "page")
+  revalidatePath("/dashboard/payroll/contracts", "page")
+  revalidatePath("/[locale]/dashboard/payroll/contracts", "page")
 }
 
 const getEmployeeContracts = protect<unknown, PayrollEmployeeContractWorkflowResult>(

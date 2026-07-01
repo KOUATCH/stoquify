@@ -22,7 +22,7 @@ import { revalidatePath } from "next/cache"
 import type { ReactNode } from "react"
 
 export const metadata = {
-  title: "Security Settings | StockFlow",
+  title: "Security Settings | Stoquify",
   description: "Review password, session, MFA readiness, and permission risk state.",
 }
 

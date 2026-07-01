@@ -31,6 +31,9 @@ jest.mock("@/prisma/db", () => ({
     providerEvent: {
       count: jest.fn(),
     },
+    paymentReconciliationInboxItem: {
+      count: jest.fn(),
+    },
     reconciliationRun: {
       count: jest.fn(),
       findMany: jest.fn(),
@@ -138,6 +141,9 @@ const mockDb = db as unknown as {
     count: jest.Mock
   }
   providerEvent: {
+    count: jest.Mock
+  }
+  paymentReconciliationInboxItem: {
     count: jest.Mock
   }
   reconciliationRun: {
@@ -1195,6 +1201,43 @@ describe("workflow assurance registry service", () => {
         }),
       }),
     )
+  })
+
+  it("flags payroll provider inbox worker SLA problems with redacted aggregate evidence", async () => {
+    mockSingleDefinition("payroll.provider_inbox_worker_sla.visible")
+    mockDb.paymentReconciliationInboxItem.count
+      .mockResolvedValueOnce(6)
+      .mockResolvedValueOnce(1)
+      .mockResolvedValueOnce(1)
+      .mockResolvedValueOnce(2)
+      .mockResolvedValueOnce(1)
+      .mockResolvedValueOnce(1)
+
+    const result = await runRegistryForCheck()
+
+    expect(result.runs[0]).toMatchObject({
+      checkKey: "payroll.provider_inbox_worker_sla.visible",
+      resultStatus: "warning",
+      severity: "high",
+      actionRoute: "/dashboard/payroll/payments",
+      counts: expect.objectContaining({
+        scanned: 6,
+        passed: 0,
+        warning: 6,
+      }),
+    })
+    expect(result.runs[0].evidenceLinks[0]).toMatchObject({
+      sourceTable: "payment_reconciliation_inbox_items",
+      metadata: expect.objectContaining({
+        staleReceivedCount: 1,
+        staleProcessingCount: 1,
+        retryDueCount: 2,
+        deadLetterCount: 1,
+        unownedProcessingLeaseCount: 1,
+        redactionPolicy: "payment-reconciliation-inbox-worker-redacted",
+      }),
+    })
+    expect(JSON.stringify(result.runs[0]).toLowerCase()).not.toMatch(/salary|bank|credential|rawpayload/)
   })
 
   it("flags payroll declaration lifecycle exceptions without authority payload exposure", async () => {

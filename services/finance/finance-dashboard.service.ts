@@ -2,6 +2,8 @@ import { Prisma } from "@prisma/client"
 
 import { db } from "@/prisma/db"
 import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
+import { getTenantOperatingSnapshot } from "@/services/snapshots/tenant-operating-snapshot.service"
+import type { SnapshotBlocker, SnapshotRedaction } from "@/services/snapshots/snapshot-contracts"
 import { moneyToNumber, type MoneyValue } from "@/services/pos/money"
 import {
   financeDashboardServiceSchema,
@@ -14,6 +16,23 @@ type Severity = "success" | "info" | "warning" | "critical"
 const dayMs = 24 * 60 * 60 * 1000
 const payableStatuses = ["SUBMITTED", "APPROVED", "PARTIALLY_RECEIVED", "RECEIVED"] as const
 const revenueStatuses = ["CONFIRMED", "PROCESSING", "SHIPPED", "DELIVERED", "COMPLETED"] as const
+const payrollForecastSourceTables = [
+  "payroll_periods",
+  "payroll_runs",
+  "payroll_payment_batches",
+  "payroll_declarations",
+  "payroll_declaration_evidence",
+  "payment_provider_accounts",
+  "accounting_source_links",
+  "ledger_posting_batches",
+]
+const payrollForecastSourceServices = [
+  "services/snapshots/tenant-operating-snapshot.service.ts",
+  "services/payroll/payroll-register.service.ts",
+  "services/payroll/payment-reconciliation.service.ts",
+  "services/payroll/declaration-lifecycle.service.ts",
+  "services/finance/finance-dashboard.service.ts",
+]
 
 function toNumber(value: MoneyValue) {
   return moneyToNumber(value)
@@ -110,6 +129,143 @@ function addAging(buckets: FinanceAgingSummary, bucket: keyof FinanceAgingSummar
   buckets[bucket] += amount
 }
 
+function uniqueById<T extends { id: string }>(items: T[]): T[] {
+  const seen = new Set<string>()
+  return items.filter((item) => {
+    if (seen.has(item.id)) return false
+    seen.add(item.id)
+    return true
+  })
+}
+
+function payrollForecastActionHref(blockerCodes: readonly string[]) {
+  if (blockerCodes.some((code) => code.includes("DECLARATION"))) return "/dashboard/payroll/declarations"
+  if (blockerCodes.some((code) => code.includes("PAYMENT") || code.includes("PROVIDER"))) return "/dashboard/payroll/payments"
+  return blockerCodes.length > 0 ? "/dashboard/payroll/runs" : "/dashboard/payroll/payments"
+}
+
+function payrollForecastRedactions(extra: SnapshotRedaction[] = []): SnapshotRedaction[] {
+  return uniqueById([
+    ...extra,
+    {
+      id: "finance-dashboard-payroll-forecast-person-level-redacted",
+      field: "payroll.personLevelAmounts",
+      reason: "Finance dashboard exposes aggregate payroll forecast obligations only; person-level payroll values stay inside payroll.",
+      policy: "KONTAVA_SENSITIVE_PAYROLL_EVIDENCE",
+    },
+  ])
+}
+
+function emptyPayrollForecastProof(input: {
+  status: FinancePayrollForecastProof["status"]
+  reasonCode: string
+  message: string
+  blockerCodes?: string[]
+  blockers?: SnapshotBlocker[]
+  redacted?: boolean
+}): FinancePayrollForecastProof {
+  return {
+    status: input.status,
+    authoritative: false,
+    redacted: input.redacted ?? input.status === "REDACTED",
+    reasonCode: input.reasonCode,
+    message: input.message,
+    scope: "TENANT_AGGREGATE",
+    locationAllocated: false,
+    horizonStart: null,
+    horizonEnd: null,
+    upcomingNetPayAmount: 0,
+    upcomingStatutoryLiabilityAmount: 0,
+    totalUpcomingAmount: 0,
+    payrollPeriodCount: 0,
+    payrollRunCount: 0,
+    paymentBatchCount: 0,
+    declarationCount: 0,
+    sourceLinkCount: 0,
+    evidenceHashCount: 0,
+    nextPayDate: null,
+    nextDeclarationDueDate: null,
+    blockerCodes: input.blockerCodes ?? [],
+    blockers: input.blockers ?? [],
+    redactions: payrollForecastRedactions(),
+    sourceHash: null,
+    generatedAt: null,
+    sourceModules: ["payroll", "finance"],
+    sourceTables: payrollForecastSourceTables,
+    sourceServices: payrollForecastSourceServices,
+    actionHref: payrollForecastActionHref(input.blockerCodes ?? []),
+    personLevelAmountsRedacted: true,
+  }
+}
+
+async function getFinancePayrollForecastProof(input: {
+  organizationId: string
+  startDate: Date
+  endDate: Date
+  payrollModuleDecision?: FinanceDashboardServiceInput["payrollModuleDecision"]
+}): Promise<FinancePayrollForecastProof> {
+  if (input.payrollModuleDecision?.wouldBlock) {
+    return emptyPayrollForecastProof({
+      status: "REDACTED",
+      reasonCode: "PAYROLL_MODULE_NOT_ENTITLED",
+      message: "Payroll forecast proof is withheld because the payroll module is not entitled for this tenant.",
+      blockerCodes: ["PAYROLL_FORECAST_MODULE_NOT_ENTITLED"],
+      redacted: true,
+    })
+  }
+
+  try {
+    const snapshot = await getTenantOperatingSnapshot({
+      organizationId: input.organizationId,
+      periodStart: input.startDate,
+      periodEnd: input.endDate,
+    })
+    const forecast = snapshot.metrics.payrollFinanceForecast
+    const blockers = snapshot.blockers.filter((blocker) => blocker.gate === "payroll_finance_forecast")
+    const blocked = !forecast.authoritative || forecast.blockerCodes.length > 0 || blockers.length > 0
+
+    return {
+      status: forecast.status,
+      authoritative: forecast.authoritative && !blocked,
+      redacted: false,
+      reasonCode: forecast.reasonCode,
+      message: forecast.message,
+      scope: "TENANT_AGGREGATE",
+      locationAllocated: false,
+      horizonStart: forecast.horizonStart,
+      horizonEnd: forecast.horizonEnd,
+      upcomingNetPayAmount: forecast.upcomingNetPayAmount,
+      upcomingStatutoryLiabilityAmount: forecast.upcomingStatutoryLiabilityAmount,
+      totalUpcomingAmount: forecast.totalUpcomingAmount,
+      payrollPeriodCount: forecast.payrollPeriodCount,
+      payrollRunCount: forecast.payrollRunCount,
+      paymentBatchCount: forecast.paymentBatchCount,
+      declarationCount: forecast.declarationCount,
+      sourceLinkCount: forecast.sourceLinkCount,
+      evidenceHashCount: forecast.evidenceHashCount,
+      nextPayDate: forecast.nextPayDate,
+      nextDeclarationDueDate: forecast.nextDeclarationDueDate,
+      blockerCodes: forecast.blockerCodes,
+      blockers,
+      redactions: payrollForecastRedactions(snapshot.redactions),
+      sourceHash: snapshot.sourceHash,
+      generatedAt: snapshot.generatedAt,
+      sourceModules: snapshot.sourceModules,
+      sourceTables: payrollForecastSourceTables,
+      sourceServices: payrollForecastSourceServices,
+      actionHref: payrollForecastActionHref(forecast.blockerCodes),
+      personLevelAmountsRedacted: true,
+    }
+  } catch {
+    return emptyPayrollForecastProof({
+      status: "UNAVAILABLE",
+      reasonCode: "PAYROLL_FORECAST_SNAPSHOT_UNAVAILABLE",
+      message: "Payroll forecast proof could not be loaded, so upcoming payroll obligations are withheld from the finance dashboard.",
+      blockerCodes: ["PAYROLL_FORECAST_SNAPSHOT_UNAVAILABLE"],
+    })
+  }
+}
+
 export type FinanceLocationOption = {
   id: string
   name: string
@@ -187,9 +343,46 @@ export type FinanceRecentPayment = {
 export type FinanceAlert = {
   id: string
   severity: Severity
-  code: "OVERDUE_AR" | "OVERDUE_AP" | "NEGATIVE_MARGIN" | "PENDING_PAYMENTS" | "CASH_GAP" | "READY"
+  code: "OVERDUE_AR" | "OVERDUE_AP" | "NEGATIVE_MARGIN" | "PENDING_PAYMENTS" | "CASH_GAP" | "PAYROLL_FORECAST_PROOF" | "READY"
   count: number
   amount?: number
+  message?: string
+  actionHref?: string
+  blockerCodes?: string[]
+  redactionCount?: number
+}
+
+export type FinancePayrollForecastProof = {
+  status: "AUTHORITATIVE" | "NON_AUTHORITATIVE" | "REDACTED" | "UNAVAILABLE"
+  authoritative: boolean
+  redacted: boolean
+  reasonCode: string
+  message: string
+  scope: "TENANT_AGGREGATE"
+  locationAllocated: false
+  horizonStart: string | null
+  horizonEnd: string | null
+  upcomingNetPayAmount: number
+  upcomingStatutoryLiabilityAmount: number
+  totalUpcomingAmount: number
+  payrollPeriodCount: number
+  payrollRunCount: number
+  paymentBatchCount: number
+  declarationCount: number
+  sourceLinkCount: number
+  evidenceHashCount: number
+  nextPayDate: string | null
+  nextDeclarationDueDate: string | null
+  blockerCodes: string[]
+  blockers: SnapshotBlocker[]
+  redactions: SnapshotRedaction[]
+  sourceHash: string | null
+  generatedAt: string | null
+  sourceModules: string[]
+  sourceTables: string[]
+  sourceServices: string[]
+  actionHref: string
+  personLevelAmountsRedacted: true
 }
 
 export type FinanceDashboardData = {
@@ -218,6 +411,7 @@ export type FinanceDashboardData = {
   topPayables: FinanceCounterparty[]
   recentPayments: FinanceRecentPayment[]
   alerts: FinanceAlert[]
+  payrollForecast: FinancePayrollForecastProof
 }
 
 export async function getFinanceDashboard(rawInput: FinanceDashboardServiceInput): Promise<FinanceDashboardData> {
@@ -252,6 +446,7 @@ export async function getFinanceDashboard(rawInput: FinanceDashboardServiceInput
     customers,
     suppliers,
     cashDrawers,
+    payrollForecast,
   ] = await Promise.all([
     db.organization.findFirst({
       where: { id: input.organizationId, isActive: true, deletedAt: null },
@@ -386,6 +581,12 @@ export async function getFinanceDashboard(rawInput: FinanceDashboardServiceInput
         },
       },
       select: { currentBalance: true, expectedBalance: true },
+    }),
+    getFinancePayrollForecastProof({
+      organizationId: input.organizationId,
+      startDate: range.startDate,
+      endDate: range.endDate,
+      payrollModuleDecision: input.payrollModuleDecision,
     }),
   ])
 
@@ -542,6 +743,20 @@ export async function getFinanceDashboard(rawInput: FinanceDashboardServiceInput
   if (netCashFlow < 0) {
     alerts.push({ id: "cash-gap", code: "CASH_GAP", severity: "warning", count: 1, amount: netCashFlow })
   }
+  const payrollForecastBlocked = !payrollForecast.authoritative || payrollForecast.blockerCodes.length > 0
+  if (payrollForecastBlocked || payrollForecast.totalUpcomingAmount > 0) {
+    alerts.push({
+      id: "payroll-forecast-proof",
+      code: "PAYROLL_FORECAST_PROOF",
+      severity: payrollForecastBlocked ? "warning" : "info",
+      count: payrollForecast.blockerCodes.length || payrollForecast.paymentBatchCount + payrollForecast.declarationCount,
+      amount: payrollForecast.totalUpcomingAmount,
+      message: payrollForecast.message,
+      actionHref: payrollForecast.actionHref,
+      blockerCodes: payrollForecast.blockerCodes,
+      redactionCount: payrollForecast.redactions.length,
+    })
+  }
   if (alerts.length === 0) {
     alerts.push({ id: "ready", code: "READY", severity: "success", count: 0 })
   }
@@ -552,6 +767,7 @@ export async function getFinanceDashboard(rawInput: FinanceDashboardServiceInput
     (paymentsPending > 0 ? 4 : 0) +
     (grossProfit < 0 ? 16 : 0) +
     (netCashFlow < 0 ? 8 : 0) +
+    (payrollForecastBlocked ? 8 : 0) +
     Math.min(12, Math.abs(drawerVariance) / 1000)
 
   return {
@@ -598,5 +814,6 @@ export async function getFinanceDashboard(rawInput: FinanceDashboardServiceInput
     topPayables,
     recentPayments: recentPaymentRows,
     alerts,
+    payrollForecast,
   }
 }

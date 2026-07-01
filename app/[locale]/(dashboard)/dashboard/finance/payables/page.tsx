@@ -3,7 +3,7 @@ import { FinancePayablesSurface } from "@/components/finance/FinanceSpecializedL
 import { FinanceRouteAccess, financeViewPermissions, type FinanceRouteParams } from "../FinanceRouteAccess"
 
 export const metadata = {
-  title: "Payables | AqStoqFlow",
+  title: "Payables | Stoquify",
   description: "Supplier payables, AP aging, disbursement, and ledger posting surface.",
 }
 

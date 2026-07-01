@@ -18,6 +18,7 @@ const actionLabels = {
   NEGATIVE_MARGIN: "Cash flow",
   PENDING_PAYMENTS: "Payments",
   CASH_GAP: "Cash flow",
+  PAYROLL_FORECAST_PROOF: "Payroll",
   READY: "Assurance",
 }
 
@@ -77,6 +78,46 @@ describe("finance command center normalization", () => {
     })
     expect(financeAlertTone(alerts[0])).toBe("danger")
     expect(financeAlertHref("CASH_GAP")).toBe("/dashboard/finance/cash-flow")
+  })
+
+  it("routes payroll forecast proof alerts to the payroll proof action", () => {
+    const alerts: FinanceAlert[] = [
+      {
+        id: "payroll-forecast-proof",
+        code: "PAYROLL_FORECAST_PROOF",
+        severity: "warning",
+        count: 1,
+        amount: 170000,
+        actionHref: "/dashboard/payroll/declarations",
+        message: "Payroll declaration proof is missing.",
+        blockerCodes: ["PAYROLL_FORECAST_DECLARATION_PROOF_MISSING"],
+        redactionCount: 1,
+      },
+    ]
+
+    const items = buildFinanceActionQueueItems(alerts, {
+      alertText: (alert) => alert.message ?? alert.code,
+      localizeHref,
+      actionLabels,
+      riskLabels,
+      ownerLabel: "Finance owner",
+      proofSource: "Finance read model",
+    })
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        id: "payroll-forecast-proof",
+        title: "Payroll declaration proof is missing.",
+        tone: "warning",
+        action: expect.objectContaining({
+          label: "Payroll",
+          href: "/en/dashboard/payroll/declarations",
+          variant: "secondary",
+        }),
+        proof: { state: "pending", source: "Finance read model" },
+      }),
+    ])
+    expect(financeAlertHref(alerts[0])).toBe("/dashboard/payroll/declarations")
   })
 
   it("builds status strip items that surface pending payments and drawer variance", () => {

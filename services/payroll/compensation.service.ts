@@ -177,9 +177,15 @@ export type PayrollRubriqueReadModel = {
   taxableBase: boolean
   socialBase: boolean
   employerCharge: boolean
+  payslipLabel: string | null
+  postingDebitAccountCode: string | null
+  postingCreditAccountCode: string | null
+  countryCode: string | null
   statutoryParameterPath: string | null
   countryPackVersion: string | null
+  countryPackSchemaVersion: string | null
   countryPackResolutionHash: string | null
+  countryPackLegalRef: string | null
   countryPackVerificationStatus: string | null
   countryPackCapabilityStatus: string | null
 }
@@ -446,9 +452,15 @@ function mapRubrique(rubrique: RubriqueRecord): PayrollRubriqueReadModel {
     taxableBase: rubrique.taxableBase,
     socialBase: rubrique.socialBase,
     employerCharge: rubrique.employerCharge,
+    payslipLabel: rubrique.payslipLabel,
+    postingDebitAccountCode: rubrique.postingDebitAccountCode,
+    postingCreditAccountCode: rubrique.postingCreditAccountCode,
+    countryCode: rubrique.countryCode,
     statutoryParameterPath: rubrique.statutoryParameterPath,
     countryPackVersion: rubrique.countryPackVersion,
+    countryPackSchemaVersion: rubrique.countryPackSchemaVersion,
     countryPackResolutionHash: rubrique.countryPackResolutionHash,
+    countryPackLegalRef: rubrique.countryPackLegalRef,
     countryPackVerificationStatus: rubrique.countryPackVerificationStatus,
     countryPackCapabilityStatus: rubrique.countryPackCapabilityStatus,
   }

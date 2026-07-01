@@ -8,7 +8,7 @@ interface CustomerAnalyticsPageProps {
 }
 
 export const metadata = {
-  title: "Customer Analytics | StockFlow",
+  title: "Customer Analytics | Stoquify",
   description: "Review customer sales activity, receivable ledger, payments, and exposure.",
 }
 

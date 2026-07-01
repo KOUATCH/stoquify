@@ -121,7 +121,7 @@ function rbacContext(userId = "employee-user-1", permissions: string[] = []) {
 describe("payroll payslip self-service actions", () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockRequireFreshAuth.mockResolvedValue({ claims: { lastAuthAt: Date.now() } })
+    mockRequireFreshAuth.mockResolvedValue({ claims: { lastAuthAt: new Date("2026-06-30T11:59:00.000Z").getTime() } })
     mockObserveModuleAccess.mockResolvedValue(moduleDecision())
   })
 
@@ -195,7 +195,7 @@ describe("payroll payslip self-service actions", () => {
     expect(mockPreparePayrollPayslipExport).not.toHaveBeenCalled()
   })
 
-  it("derives tenant, actor, fresh-auth evidence, and revalidates payslip routes for export", async () => {
+  it("derives tenant, actor, verified fresh-auth evidence, and revalidates payslip routes for export", async () => {
     mockRequirePermission.mockResolvedValue(rbacContext("employee-user-1", [
       "payroll.payslips.self.read",
       "payroll.payslips.self.export",
@@ -228,7 +228,7 @@ describe("payroll payslip self-service actions", () => {
       actorPermissions: ["payroll.payslips.self.read", "payroll.payslips.self.export"],
       payslipId: "payslip-1",
       purpose: "Download own payslip",
-      lastAuthAt: expect.any(Date),
+      lastAuthAt: new Date("2026-06-30T11:59:00.000Z"),
       now: expect.any(Date),
     }))
     expect(mockObserveModuleAccess).toHaveBeenCalledWith(expect.objectContaining({

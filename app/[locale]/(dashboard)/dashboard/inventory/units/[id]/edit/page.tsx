@@ -8,7 +8,7 @@ interface EditUnitPageProps {
 }
 
 export const metadata = {
-  title: "Edit Unit | StockFlow",
+  title: "Edit Unit | Stoquify",
   description: "Edit a measurement unit and its conversion settings.",
 }
 

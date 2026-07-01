@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Loader2, Plus, UserPlus } from "lucide-react";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 export type InviteData = {
   email: string;
   roleId: string;
@@ -29,8 +29,8 @@ const UserInvitationForm = ({
   roles,
   organizationId,
   organizationName,
-  name,
-  // email,
+  triggerClassName,
+  triggerIcon,
 }: {
   roles: {
     label: string;
@@ -41,6 +41,8 @@ const UserInvitationForm = ({
   name?: string;
   email: string;
   roleName?: string;
+  triggerClassName?: string;
+  triggerIcon?: ReactNode;
 }) => {
   const [email, setEmail] = useState("");
   const [err, setErr] = useState("");
@@ -60,6 +62,7 @@ const UserInvitationForm = ({
     setLoading(true);
     if (!email.trim()) {
       setErr("Email is required");
+      setLoading(false);
       return;
     }
 
@@ -72,6 +75,7 @@ const UserInvitationForm = ({
         return
       }
       setLoading(false)
+      setErr("")
       notify.success("Invitation sent to user", { description: "Invitation successfully sent" });
     } catch (error) {
       setLoading(false);
@@ -81,12 +85,11 @@ const UserInvitationForm = ({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size="sm" className="h-8 gap-1">
-          <UserPlus className="h-3.5 w-3.5" />
-          <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+        <Button size="sm" className={cn("gap-1", triggerClassName ?? "h-8")}>
+          {triggerIcon ?? <UserPlus className="h-3.5 w-3.5" />}
+          <span className="whitespace-nowrap">
             Invite user
           </span>
-          <span className="md:sr-only">Add</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[625px]">

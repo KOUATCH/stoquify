@@ -17,7 +17,7 @@ import { buildBusinessSignalsFromSnapshots } from "@/services/signals/business-s
 import { getCloseReadinessSnapshot } from "@/services/snapshots/close-readiness-snapshot.service"
 import { getInventoryCashSnapshot } from "@/services/snapshots/inventory-cash-snapshot.service"
 import { getPaymentTruthSnapshot } from "@/services/snapshots/payment-truth-snapshot.service"
-import type { SnapshotResult } from "@/services/snapshots/snapshot-contracts"
+import type { SnapshotResult, TenantOperatingMetrics } from "@/services/snapshots/snapshot-contracts"
 import { getTenantOperatingSnapshotFromRelated } from "@/services/snapshots/tenant-operating-snapshot.service"
 
 import type {
@@ -211,6 +211,7 @@ export function composeManagerActionCenterData(
         moduleSlug: "inventory",
         requiredPermission: "inventory.read",
       }),
+      managerPayrollForecastKpi(tenantOperating),
       managerKpi({
         id: "manager-hidden-actions",
         title: "Hidden by permission",
@@ -393,6 +394,65 @@ function managerKpi(input: {
     blockers: input.blockers ?? card.blockers,
     redactions: input.redactions ?? card.redactions,
   }
+}
+
+function managerPayrollForecastKpi(snapshot: SnapshotResult<TenantOperatingMetrics>): BIKpiCard {
+  const forecast = snapshot.metrics.payrollFinanceForecast
+  const blocked = !forecast.authoritative || forecast.blockerCodes.length > 0
+  const blockers = payrollForecastBlockers(snapshot)
+  const route = payrollForecastRouteFor(forecast.blockerCodes)
+  const nextAction = blockers.find((blocker) => blocker.nextAction)?.nextAction
+
+  return managerKpi({
+    id: "manager-payroll-forecast-proof",
+    title: "Payroll forecast proof",
+    detail: blocked
+      ? `${forecast.message}${nextAction ? ` ${nextAction}` : ""}`
+      : `Upcoming aggregate payroll obligations total ${forecast.totalUpcomingAmount}; person-level amounts stay inside payroll.`,
+    value: forecast.totalUpcomingAmount,
+    unit: "value",
+    snapshot,
+    href: route.href,
+    evidenceGrade: blocked ? "blocked" : "posted",
+    state: blocked ? "blocked" : snapshot.freshness.stale ? "stale" : "ready",
+    blockers,
+    redactions: uniqueById([
+      ...snapshot.redactions,
+      {
+        id: "manager-payroll-forecast-person-level-redacted",
+        field: "payroll.personLevelAmounts",
+        reason: "Manager action center exposes aggregate payroll forecast obligations only; person-level payroll values stay inside payroll.",
+        policy: "KONTAVA_SENSITIVE_PAYROLL_EVIDENCE",
+      },
+    ]),
+    moduleSlug: "payroll",
+    requiredPermission: route.requiredPermission,
+  })
+}
+
+function payrollForecastBlockers(snapshot: SnapshotResult<TenantOperatingMetrics>): BIKpiCard["blockers"] {
+  return snapshot.blockers.filter((blocker) => blocker.gate === "payroll_finance_forecast")
+}
+
+function payrollForecastRouteFor(blockerCodes: readonly string[]) {
+  if (blockerCodes.some((code) => code.includes("DECLARATION"))) {
+    return { href: "/dashboard/payroll/declarations", requiredPermission: "payroll.declarations.manage" }
+  }
+
+  if (blockerCodes.some((code) => code.includes("PAYMENT") || code.includes("PROVIDER"))) {
+    return { href: "/dashboard/payroll/payments", requiredPermission: "payroll.payments.reconcile" }
+  }
+
+  return { href: "/dashboard/payroll/register", requiredPermission: "payroll.runs.review" }
+}
+
+function uniqueById<T extends { id: string }>(items: T[]): T[] {
+  const seen = new Set<string>()
+  return items.filter((item) => {
+    if (seen.has(item.id)) return false
+    seen.add(item.id)
+    return true
+  })
 }
 
 function managerActionFromItem(

@@ -102,6 +102,23 @@ function HashLine({ label, value }: { label: string; value: string | null }) {
   )
 }
 
+function componentFamilyLabel(value: string) {
+  switch (value) {
+    case "TAXABLE_ALLOWANCE":
+      return "Taxable allowance"
+    case "BENEFIT_IN_KIND":
+      return "Benefit-in-kind"
+    case "PAID_LEAVE":
+      return "Paid leave"
+    case "UNPAID_LEAVE":
+      return "Unpaid leave"
+    case "OVERTIME":
+      return "Overtime"
+    default:
+      return value
+  }
+}
+
 export default function PayrollRegisterTieOut({ data, error, locale }: Props) {
   if (error) {
     return (
@@ -125,10 +142,10 @@ export default function PayrollRegisterTieOut({ data, error, locale }: Props) {
     <main className="flex min-w-0 flex-col gap-4 text-slate-100">
       <section className="flex flex-col gap-3 border-b border-white/10 pb-4 xl:flex-row xl:items-end xl:justify-between">
         <div className="min-w-0">
-          <p className="text-xs font-semibold uppercase tracking-normal text-cyan-200">Payroll register</p>
-          <h1 className="mt-1 text-2xl font-bold text-white sm:text-3xl">{data.payrollRun.runNumber}</h1>
+          <p className="text-xs font-semibold uppercase tracking-normal text-cyan-200">Register tie-out</p>
+          <h1 className="mt-1 text-2xl font-bold text-white sm:text-3xl">Payroll register</h1>
           <p className="mt-2 max-w-4xl text-sm text-slate-300">
-            {data.period.name} / Pay date {dateLabel(data.period.payDate)}
+            {data.payrollRun.runNumber} / {data.period.name} / Pay date {dateLabel(data.period.payDate)}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -228,7 +245,7 @@ export default function PayrollRegisterTieOut({ data, error, locale }: Props) {
           <h2 className="text-sm font-semibold text-white">Register rows</h2>
         </div>
         <div className="overflow-x-auto">
-          <table className="min-w-[1080px] w-full table-fixed border-collapse text-left text-sm">
+          <table className="min-w-[1240px] w-full table-fixed border-collapse text-left text-sm">
             <thead className="border-b border-white/10 text-xs uppercase tracking-normal text-slate-400">
               <tr>
                 <th className="w-[220px] px-4 py-3 font-semibold">Employee</th>
@@ -238,7 +255,7 @@ export default function PayrollRegisterTieOut({ data, error, locale }: Props) {
                 <th className="w-[140px] px-4 py-3 font-semibold">Payslip</th>
                 <th className="w-[140px] px-4 py-3 font-semibold">Payment</th>
                 <th className="w-[140px] px-4 py-3 font-semibold">Ledger</th>
-                <th className="w-[220px] px-4 py-3 font-semibold">Proof</th>
+                <th className="w-[360px] px-4 py-3 font-semibold">Proof</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
@@ -264,6 +281,16 @@ export default function PayrollRegisterTieOut({ data, error, locale }: Props) {
                         <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
                         {row.proof.sourceLinks.length} links
                       </span>
+                      <div className="mt-2 grid gap-1">
+                        {row.componentProof.effectiveComponents
+                          .filter((component) => component.status !== "PENDING" || component.componentCount > 0 || component.issues.length > 0)
+                          .map((component) => (
+                            <span key={`${row.runLineId}-${component.family}`} className="grid gap-2 rounded-md border border-white/10 bg-black/10 px-2 py-1 sm:grid-cols-[minmax(0,1fr)_auto]">
+                              <span className="min-w-0 truncate text-slate-300">{componentFamilyLabel(component.family)}</span>
+                              <span className="font-semibold text-slate-100">{money(component.amount, component.currency)}</span>
+                            </span>
+                          ))}
+                      </div>
                     </div>
                   </td>
                 </tr>

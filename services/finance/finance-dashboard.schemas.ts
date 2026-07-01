@@ -1,4 +1,5 @@
 import { z } from "zod"
+import type { ModuleEntitlementDecision } from "@/services/modules/module-control-contracts"
 
 export const financeDashboardViewSchema = z.enum([
   "overview",
@@ -25,6 +26,7 @@ export const financeDashboardInputSchema = z.object({
 
 export const financeDashboardServiceSchema = financeDashboardInputSchema.extend({
   organizationId: z.string().min(1, "Organization is required"),
+  payrollModuleDecision: z.custom<ModuleEntitlementDecision>().optional().nullable(),
 })
 
 export type FinanceDashboardView = z.infer<typeof financeDashboardViewSchema>

@@ -3,7 +3,7 @@ import { FinanceReceivablesSurface } from "@/components/finance/FinanceSpecializ
 import { FinanceRouteAccess, financeViewPermissions, type FinanceRouteParams } from "../FinanceRouteAccess"
 
 export const metadata = {
-  title: "Receivables | AqStoqFlow",
+  title: "Receivables | Stoquify",
   description: "Customer receivables, aging, collection, and ledger clearing surface.",
 }
 

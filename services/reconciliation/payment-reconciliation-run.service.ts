@@ -17,7 +17,7 @@ import { randomUUID } from "node:crypto"
 
 import { logger } from "@/lib/logger"
 import { db } from "@/prisma/db"
-import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
+import { BusinessRuleError, ConflictError, NotFoundError } from "@/services/_shared/action-errors"
 
 import { publishPaymentReconciliationNotification } from "./payment-reconciliation-notifications"
 
@@ -103,6 +103,29 @@ function addDays(date: Date, days: number) {
   const next = new Date(date)
   next.setUTCDate(next.getUTCDate() + days)
   return next
+}
+
+function reconciliationRunDedupeKey(input: {
+  organizationId: string
+  providerAccountId: string
+  periodStart: Date
+}) {
+  return [
+    input.organizationId,
+    input.providerAccountId,
+    input.periodStart.toISOString().slice(0, 10),
+  ].join(":")
+}
+
+function isUniqueConstraintError(error: unknown) {
+  return Boolean(error && typeof error === "object" && "code" in error && (error as { code?: string }).code === "P2002")
+}
+
+function duplicateRunMessage(status?: ReconciliationRunStatus | null) {
+  if (status === ReconciliationRunStatus.RUNNING) {
+    return "A payment reconciliation run is already in progress for this provider and business date."
+  }
+  return "A payment reconciliation run already exists for this provider and business date."
 }
 
 function suspenseTypeForException(type: PaymentExceptionType) {
@@ -222,6 +245,11 @@ export async function runPaymentReconciliation(
   const correlationId = input.correlationId ?? randomUUID()
   const periodStart = startOfDay(input.businessDate)
   const periodEnd = endOfDay(input.businessDate)
+  const runDedupeKey = reconciliationRunDedupeKey({
+    organizationId: input.organizationId,
+    providerAccountId: input.providerAccountId,
+    periodStart,
+  })
   const now = new Date()
 
   logger.info("payment-reconciliation.run.start", {
@@ -240,8 +268,28 @@ export async function runPaymentReconciliation(
 
       if (!providerAccount) throw new NotFoundError("Provider account not found")
 
-      const run = await tx.reconciliationRun.create({
-        data: {
+      const existingRun = await tx.reconciliationRun.findFirst({
+        where: {
+          organizationId: input.organizationId,
+          providerAccountId: providerAccount.id,
+          businessDate: periodStart,
+          voidedAt: null,
+        },
+        select: {
+          id: true,
+          status: true,
+          correlationId: true,
+        },
+      })
+
+      if (existingRun) {
+        throw new ConflictError(duplicateRunMessage(existingRun.status))
+      }
+
+      let run: { id: string }
+      try {
+        run = await tx.reconciliationRun.create({
+          data: {
           organizationId: input.organizationId,
           providerAccountId: providerAccount.id,
           paymentRailId: providerAccount.paymentRailId,
@@ -251,9 +299,19 @@ export async function runPaymentReconciliation(
           status: ReconciliationRunStatus.RUNNING,
           runById: input.runById,
           correlationId,
+          metadata: {
+            runDedupeKey,
+            concurrencyGuard: "same_provider_business_date",
+          },
         },
-        select: { id: true },
-      })
+          select: { id: true },
+        })
+      } catch (error) {
+        if (isUniqueConstraintError(error)) {
+          throw new ConflictError(duplicateRunMessage())
+        }
+        throw new ConflictError("Payment reconciliation run could not be started safely.")
+      }
 
       const [transactions, providerEvents, statementLines] = await Promise.all([
         tx.paymentTransaction.findMany({

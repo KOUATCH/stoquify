@@ -328,6 +328,14 @@ function serialSegment(value: string) {
   return value.replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 28).toUpperCase() || "ITEM"
 }
 
+function generateReceiptBatchNumber(params: {
+  receiptNumber: string
+  sku: string
+  lineId: string
+}) {
+  return `BATCH-${serialSegment(params.receiptNumber)}-${serialSegment(params.sku)}-${serialSegment(params.lineId.slice(-6))}`
+}
+
 function generateReceiptSerials(params: {
   receiptNumber: string
   sku: string
@@ -816,13 +824,29 @@ export async function receiveItems(input: ReceiveItemsInput) {
     const line = lineMap.get(item.lineId)
     if (!line) throw new NotFoundError(`Line ${item.lineId} not found on this purchase order`)
 
-    if (!line.item.trackSerialNumbers) return item
+    const sku = line.item.sku || line.item.nameEn || line.itemId
+    const normalizedItem = {
+      ...item,
+      batchNumber: item.batchNumber?.trim() || undefined,
+    }
+    const itemWithBatch = line.item.trackBatches && !normalizedItem.batchNumber
+      ? {
+          ...normalizedItem,
+          batchNumber: generateReceiptBatchNumber({
+            receiptNumber,
+            sku,
+            lineId: line.id,
+          }),
+        }
+      : normalizedItem
+
+    if (!line.item.trackSerialNumbers) return itemWithBatch
 
     return {
-      ...item,
+      ...itemWithBatch,
       serialNumbers: generateReceiptSerials({
         receiptNumber,
-        sku: line.item.sku || line.item.nameEn || line.itemId,
+        sku,
         lineId: line.id,
         receivedQuantity: item.receivedQuantity,
         provided: item.serialNumbers,

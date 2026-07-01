@@ -8,7 +8,7 @@ interface EditLocationPageProps {
 }
 
 export const metadata = {
-  title: "Edit Location | StockFlow",
+  title: "Edit Location | Stoquify",
   description: "Edit an organization location with operating policies and management settings.",
 }
 

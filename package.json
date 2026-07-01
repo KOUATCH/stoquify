@@ -13,6 +13,7 @@
     "typecheck": "tsc --noEmit --pretty false",
     "prisma:validate": "prisma validate",
     "prisma:generate": "prisma generate",
+    "prisma:migrate:deploy": "prisma migrate deploy",
     "service:boundary": "node scripts/service-boundary-gate.js --mode report",
     "service:boundary:ratchet": "node scripts/service-boundary-gate.js --mode fail --baseline what-next/service-boundary-ratchet-baseline-current.json",
     "service:boundary:fail": "node scripts/service-boundary-gate.js --mode fail",
@@ -37,7 +38,13 @@
     "reset": "npx prisma migrate reset && npm run seed",
     "payroll:immutability:runtime": "node scripts/with-payroll-immutability-test-db.js -- node scripts/payroll-immutability-runtime-check.js --mode fail --out what-next/payroll/payroll-immutability-runtime-check.md --json-out what-next/payroll/payroll-immutability-runtime-check.json",
     "regulatory:hardcode": "node scripts/regulatory-hardcode-gate.js --mode report",
-    "regulatory:hardcode:fail": "node scripts/regulatory-hardcode-gate.js --mode fail"
+    "regulatory:hardcode:fail": "node scripts/regulatory-hardcode-gate.js --mode fail",
+    "seed:e2e:payroll": "node scripts/seed-payroll-e2e-user.js",
+    "auth:payroll:bootstrap": "npm run prisma:migrate:deploy && npm run seed:e2e:payroll && npm run test:e2e -- --project=auth-setup",
+    "test:e2e:payroll": "npm run prisma:migrate:deploy && npm run seed:e2e:payroll && npm run test:e2e -- --project=payroll-authenticated-smoke",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "ui:smoke:payroll": "node scripts/ui-route-smoke-gate.js --mode fail --base-url http://127.0.0.1:3000 --timeout-ms 60000 --require-screenshots --route payroll --route payroll-attendance --route payroll-compensation --route payroll-contracts --route payroll-employees --route payroll-declarations --route payroll-payments --route payroll-runs --route payroll-payslips --route payroll-register --route payroll-setup --storage-state playwright/.auth/payroll.json --screenshots-dir what-next/payroll/screenshots/payroll-browser-smoke --out what-next/payroll/AQSTOQFLOW_PAYROLL_UI_ROUTE_SMOKE_BROWSER.json"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -143,6 +150,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^10.0.0",
+    "@playwright/test": "^1.61.1",
     "@tailwindcss/forms": "^0.5.10",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",

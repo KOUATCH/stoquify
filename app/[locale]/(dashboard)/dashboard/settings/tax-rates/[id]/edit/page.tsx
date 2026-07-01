@@ -8,7 +8,7 @@ interface EditTaxRatePageProps {
 }
 
 export const metadata = {
-  title: "Edit Tax Rate | StockFlow",
+  title: "Edit Tax Rate | Stoquify",
   description: "Edit an organization tax rate and active status.",
 }
 

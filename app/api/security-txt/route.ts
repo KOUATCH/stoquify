@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const securityTxt = `Contact: security@stockflow.com
+  const securityTxt = `Contact: security@stoquify.com
 Expires: 2025-12-31T23:59:59.000Z
-Encryption: https://stockflow.com/pgp-key.txt
+Encryption: https://stoquify.com/pgp-key.txt
 Preferred-Languages: en
-Canonical: https://stockflow.com/.well-known/security.txt
-Policy: https://stockflow.com/security-policy
-Hiring: https://stockflow.com/careers
+Canonical: https://stoquify.com/.well-known/security.txt
+Policy: https://stoquify.com/security-policy
+Hiring: https://stoquify.com/careers
 
 # Security Disclosure
 # Please report security vulnerabilities to our security team.

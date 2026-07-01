@@ -1,4 +1,5 @@
 import { Link } from "@/i18n/navigation"
+import StoquifyLogo from "@/components/global/kit-logo"
 import { useTranslations } from "next-intl"
 
 const footerLinks = [
@@ -17,11 +18,7 @@ export function LandingFooter() {
       <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-[1.1fr_0.9fr] md:items-end">
         <div>
           <Link href="/" className="inline-flex items-center gap-3" aria-label={footer("homeAria")}>
-            <span className="grid size-9 place-items-center rounded-lg bg-[var(--color-brand)] text-sm font-bold text-white">SF</span>
-            <span>
-              <span className="body-text block text-base font-semibold text-[var(--color-text-primary)]">StockFlow</span>
-              <span className="data-text mt-1 block text-[0.62rem] uppercase text-[var(--color-text-muted)]">{footer("subtitle")}</span>
-            </span>
+            <StoquifyLogo theme="dark" width={212} height={48} tagline={footer("subtitle")} />
           </Link>
           <p className="mt-5 max-w-xl body-text text-sm leading-6">
             {footer("copy")}

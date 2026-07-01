@@ -12,9 +12,9 @@ import {
   UsersRound,
 } from "lucide-react"
 
-import type { PayrollWorkbenchData } from "@/actions/payroll/payroll-control.actions"
-import { localizePath } from "@/i18n/routing"
-import type { Locale } from "@/types/bilingual"
+import type { PayrollWorkbenchData } from "../../actions/payroll/payroll-control.actions"
+import { localizePath } from "../../i18n/routing"
+import type { Locale } from "../../types/bilingual"
 
 type Props = {
   data: PayrollWorkbenchData | null
@@ -142,7 +142,7 @@ export default function PayrollControlWorkbench({ data, error, locale }: Props) 
           </div>
           <div className="divide-y divide-white/10">
             {data.queues.recentRuns.length ? (
-              data.queues.recentRuns.map((run) => (
+              data.queues.recentRuns.map((run: typeof data.queues.recentRuns[number]) => (
                 <div key={run.id} className="grid gap-3 px-4 py-3 md:grid-cols-[1.2fr_0.8fr_0.8fr] md:items-center">
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold text-white">{run.runNumber}</p>
@@ -172,7 +172,7 @@ export default function PayrollControlWorkbench({ data, error, locale }: Props) 
           </div>
           <div className="divide-y divide-white/10">
             {data.queues.ledgerBlockers.length ? (
-              data.queues.ledgerBlockers.map((blocker) => (
+              data.queues.ledgerBlockers.map((blocker: typeof data.queues.ledgerBlockers[number]) => (
                 <div key={blocker.id} className="px-4 py-3">
                   <div className="flex min-w-0 items-start justify-between gap-3">
                     <div className="min-w-0">
@@ -201,7 +201,7 @@ export default function PayrollControlWorkbench({ data, error, locale }: Props) 
           </div>
           <div className="divide-y divide-white/10">
             {data.queues.paymentBatches.length ? (
-              data.queues.paymentBatches.map((batch) => (
+              data.queues.paymentBatches.map((batch: typeof data.queues.paymentBatches[number]) => (
                 <div key={batch.id} className="px-4 py-3">
                   <div className="grid gap-3 md:grid-cols-[1fr_auto] md:items-start">
                     <div className="min-w-0">
@@ -230,7 +230,7 @@ export default function PayrollControlWorkbench({ data, error, locale }: Props) 
           </div>
           <div className="divide-y divide-white/10">
             {data.queues.declarations.length ? (
-              data.queues.declarations.map((declaration) => (
+              data.queues.declarations.map((declaration: typeof data.queues.declarations[number]) => (
                 <div key={declaration.id} className="px-4 py-3">
                   <div className="grid gap-3 md:grid-cols-[1fr_auto] md:items-start">
                     <div className="min-w-0">

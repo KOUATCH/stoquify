@@ -10,8 +10,11 @@ import { extractRouterConfig } from "uploadthing/server";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000"),
-  title: "StockFlow - Retail Management System",
-  description: "Comprehensive retail and inventory management solution",
+  title: "Stoquify - OHADA Operating System",
+  description: "OHADA-aware POS, inventory, finance, payroll, accounting, and evidence operations platform",
+  icons: {
+    icon: "/brand/stoquify-mark.svg",
+  },
 };
 
 export default async function RootLayout({

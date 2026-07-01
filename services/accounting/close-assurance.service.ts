@@ -32,6 +32,11 @@ import {
   type InventoryClass3Failure,
   type InventoryClass3ReconciliationResult,
 } from "@/services/inventory/inventory-valuation.service"
+import { getTenantOperatingSnapshot } from "@/services/snapshots/tenant-operating-snapshot.service"
+import type {
+  SnapshotResult,
+  TenantOperatingMetrics,
+} from "@/services/snapshots/snapshot-contracts"
 import {
   assertFindingCanReceiveComment,
   CloseAssuranceError,
@@ -230,6 +235,11 @@ type AssessmentDraft = Omit<CloseAssuranceDashboardData, "comments" | "reviews">
   }
 }
 
+type DraftChecklistItem = AssessmentDraft["raw"]["checklist"][number]
+type DraftFinding = AssessmentDraft["raw"]["findings"][number]
+type DraftEvidenceItem = AssessmentDraft["raw"]["evidenceItems"][number]
+type PayrollForecastSnapshot = SnapshotResult<TenantOperatingMetrics> | { error: unknown }
+
 type InventoryValuationAnnexMetadata = {
   organizationId: string
   accountingPeriodId: string
@@ -262,6 +272,11 @@ const CLOSE_SOURCE_TABLES = [
   "inventory_transactions",
   "stock_adjustments",
   "stock_count_sessions",
+  "payroll_periods",
+  "payroll_runs",
+  "payroll_payment_batches",
+  "payroll_declarations",
+  "payroll_declaration_evidence",
   "business_events",
   "ledger_audit_events",
   "audit_logs",
@@ -303,6 +318,249 @@ function severityFromStatus(status: CloseChecklistStatus, fallback: CloseFinding
   if (status === CloseChecklistStatus.WARNING) return CloseFindingSeverity.MEDIUM
   if (status === CloseChecklistStatus.UNAVAILABLE) return CloseFindingSeverity.MEDIUM
   return CloseFindingSeverity.INFO
+}
+
+const PAYROLL_FORECAST_CHECKLIST_KEY = "payroll-finance-forecast-proof"
+const PAYROLL_FORECAST_SOURCE_SERVICE = "services/snapshots/tenant-operating-snapshot.service.ts"
+const PAYROLL_FORECAST_SOURCE_TABLES = [
+  "payroll_periods",
+  "payroll_runs",
+  "payroll_payment_batches",
+  "payroll_declarations",
+  "payroll_declaration_evidence",
+  "payment_provider_accounts",
+  "accounting_source_links",
+  "ledger_posting_batches",
+] as const
+
+function payrollForecastUnavailable(snapshot: PayrollForecastSnapshot): snapshot is { error: unknown } {
+  return "error" in snapshot
+}
+
+function payrollForecastActionHref(blockerCodes: readonly string[]) {
+  if (blockerCodes.some((code) => code.includes("DECLARATION"))) return "/dashboard/payroll/declarations"
+  if (blockerCodes.some((code) => code.includes("PAYMENT") || code.includes("PROVIDER"))) return "/dashboard/payroll/payments"
+  return "/dashboard/payroll/runs"
+}
+
+function uniqueById<T extends { id: string }>(items: T[]): T[] {
+  const seen = new Set<string>()
+  return items.filter((item) => {
+    if (seen.has(item.id)) return false
+    seen.add(item.id)
+    return true
+  })
+}
+
+function payrollForecastRedactions(snapshot: PayrollForecastSnapshot) {
+  return uniqueById([
+    ...(payrollForecastUnavailable(snapshot) ? [] : snapshot.redactions),
+    {
+      id: "close-payroll-forecast-person-level-redacted",
+      field: "payroll.personLevelAmounts",
+      reason: "Close assurance exposes aggregate payroll cash and statutory obligations only; person-level payroll values stay inside payroll.",
+      policy: "KONTAVA_SENSITIVE_PAYROLL_EVIDENCE",
+    },
+  ])
+}
+
+function payrollForecastSeverity(snapshot: PayrollForecastSnapshot) {
+  if (payrollForecastUnavailable(snapshot)) return CloseFindingSeverity.HIGH
+  const blockers = snapshot.blockers.filter((blocker) => blocker.gate === "payroll_finance_forecast")
+  if (blockers.some((blocker) => blocker.severity === "critical")) return CloseFindingSeverity.CRITICAL
+  if (blockers.some((blocker) => blocker.severity === "high")) return CloseFindingSeverity.HIGH
+  if (!snapshot.metrics.payrollFinanceForecast.authoritative || snapshot.metrics.payrollFinanceForecast.blockerCodes.length > 0) {
+    return CloseFindingSeverity.HIGH
+  }
+  return CloseFindingSeverity.INFO
+}
+
+function payrollForecastBlocked(snapshot: PayrollForecastSnapshot) {
+  if (payrollForecastUnavailable(snapshot)) return true
+  const forecast = snapshot.metrics.payrollFinanceForecast
+  return !forecast.authoritative || forecast.blockerCodes.length > 0 || snapshot.blockers.some((blocker) => blocker.gate === "payroll_finance_forecast")
+}
+
+function payrollForecastMessage(snapshot: PayrollForecastSnapshot) {
+  if (payrollForecastUnavailable(snapshot)) {
+    return messageFromError(snapshot.error, "Payroll finance forecast proof could not be loaded.")
+  }
+  return snapshot.metrics.payrollFinanceForecast.message
+}
+
+function payrollForecastChecklist(snapshot: PayrollForecastSnapshot): DraftChecklistItem {
+  const unavailable = payrollForecastUnavailable(snapshot)
+  const blocked = payrollForecastBlocked(snapshot)
+  const forecast = unavailable ? null : snapshot.metrics.payrollFinanceForecast
+  return {
+    key: PAYROLL_FORECAST_CHECKLIST_KEY,
+    domain: CloseFindingDomain.PAYROLL,
+    status: unavailable
+      ? CloseChecklistStatus.UNAVAILABLE
+      : blocked
+        ? CloseChecklistStatus.FAILED
+        : CloseChecklistStatus.PASSED,
+    severity: payrollForecastSeverity(snapshot),
+    label: "Payroll finance forecast proof",
+    detail: unavailable
+      ? "Payroll forecast proof is unavailable, so close assurance cannot rely on payroll cash or statutory forecast amounts."
+      : forecast?.authoritative
+        ? `Aggregate payroll forecast is authoritative through ${forecast.horizonEnd}; net pay ${forecast.upcomingNetPayAmount}, statutory liabilities ${forecast.upcomingStatutoryLiabilityAmount}.`
+        : forecast?.message ?? "Payroll forecast proof is incomplete.",
+    sourceService: PAYROLL_FORECAST_SOURCE_SERVICE,
+    evidenceCount: unavailable ? 0 : 1,
+    blockerReason: blocked ? payrollForecastMessage(snapshot) : null,
+    nextActionHref: payrollForecastActionHref(forecast?.blockerCodes ?? []),
+    ownerId: null,
+    dueAt: null,
+  }
+}
+
+function payrollForecastFindings(snapshot: PayrollForecastSnapshot): DraftFinding[] {
+  if (!payrollForecastBlocked(snapshot)) return []
+  if (payrollForecastUnavailable(snapshot)) {
+    return [{
+      checklistKey: PAYROLL_FORECAST_CHECKLIST_KEY,
+      domain: CloseFindingDomain.PAYROLL,
+      severity: CloseFindingSeverity.HIGH,
+      status: CloseFindingStatus.OPEN,
+      title: "Payroll forecast proof is unavailable",
+      detail: payrollForecastMessage(snapshot),
+      sourceService: PAYROLL_FORECAST_SOURCE_SERVICE,
+      sourceType: "payroll_finance_forecast",
+      sourceId: null,
+      ownerId: null,
+      assignedById: null,
+      dueAt: null,
+      correlationId: null,
+    }]
+  }
+
+  const blockers = snapshot.blockers.filter((blocker) => blocker.gate === "payroll_finance_forecast")
+  if (blockers.length === 0) {
+    return [{
+      checklistKey: PAYROLL_FORECAST_CHECKLIST_KEY,
+      domain: CloseFindingDomain.PAYROLL,
+      severity: payrollForecastSeverity(snapshot),
+      status: CloseFindingStatus.OPEN,
+      title: "Payroll finance forecast proof is blocked",
+      detail: snapshot.metrics.payrollFinanceForecast.message,
+      sourceService: PAYROLL_FORECAST_SOURCE_SERVICE,
+      sourceType: "payroll_finance_forecast",
+      sourceId: snapshot.sourceHash,
+      ownerId: null,
+      assignedById: null,
+      dueAt: null,
+      correlationId: null,
+    }]
+  }
+
+  return blockers.map((blocker) => ({
+    checklistKey: PAYROLL_FORECAST_CHECKLIST_KEY,
+    domain: CloseFindingDomain.PAYROLL,
+    severity: blocker.severity === "critical" ? CloseFindingSeverity.CRITICAL : CloseFindingSeverity.HIGH,
+    status: CloseFindingStatus.OPEN,
+    title: blocker.title,
+    detail: blocker.detail,
+    sourceService: PAYROLL_FORECAST_SOURCE_SERVICE,
+    sourceType: blocker.gate,
+    sourceId: blocker.id,
+    ownerId: null,
+    assignedById: null,
+    dueAt: null,
+    correlationId: null,
+  }))
+}
+
+function payrollForecastEvidence(snapshot: PayrollForecastSnapshot, now: Date): DraftEvidenceItem {
+  if (payrollForecastUnavailable(snapshot)) {
+    const message = payrollForecastMessage(snapshot)
+    return {
+      checklistKey: PAYROLL_FORECAST_CHECKLIST_KEY,
+      evidenceType: CloseEvidenceType.REPORT_EXPORT,
+      sourceTable: "payroll_runs",
+      sourceType: "PayrollFinanceForecastProof",
+      sourceId: null,
+      sourceLabel: "Payroll finance forecast proof unavailable",
+      sourceDate: now.toISOString(),
+      sourceHash: null,
+      provenance: "UNAVAILABLE",
+      available: false,
+      unavailableReason: message,
+      correlationId: null,
+      metadata: {
+        status: "UNAVAILABLE",
+        authoritative: false,
+        message,
+        blockers: [],
+        redactions: payrollForecastRedactions(snapshot),
+        personLevelAmounts: "redacted",
+        personLevelAmountsRedacted: true,
+      } as Prisma.JsonValue,
+    }
+  }
+
+  const forecast = snapshot.metrics.payrollFinanceForecast
+  const blocked = payrollForecastBlocked(snapshot)
+  const metadata = {
+    status: forecast.status,
+    authoritative: forecast.authoritative,
+    reasonCode: forecast.reasonCode,
+    message: forecast.message,
+    horizonStart: forecast.horizonStart,
+    horizonEnd: forecast.horizonEnd,
+    upcomingNetPayAmount: forecast.upcomingNetPayAmount,
+    upcomingStatutoryLiabilityAmount: forecast.upcomingStatutoryLiabilityAmount,
+    totalUpcomingAmount: forecast.totalUpcomingAmount,
+    payrollPeriodCount: forecast.payrollPeriodCount,
+    payrollRunCount: forecast.payrollRunCount,
+    paymentBatchCount: forecast.paymentBatchCount,
+    declarationCount: forecast.declarationCount,
+    sourceLinkCount: forecast.sourceLinkCount,
+    evidenceHashCount: forecast.evidenceHashCount,
+    nextPayDate: forecast.nextPayDate,
+    nextDeclarationDueDate: forecast.nextDeclarationDueDate,
+    blockerCodes: forecast.blockerCodes,
+    blockers: snapshot.blockers.filter((blocker) => blocker.gate === "payroll_finance_forecast"),
+    redactions: payrollForecastRedactions(snapshot),
+    sourceHash: snapshot.sourceHash,
+    generatedAt: snapshot.generatedAt,
+    sourceModules: snapshot.sourceModules,
+    personLevelAmounts: "redacted",
+    personLevelAmountsRedacted: true,
+  }
+
+  return {
+    checklistKey: PAYROLL_FORECAST_CHECKLIST_KEY,
+    evidenceType: CloseEvidenceType.REPORT_EXPORT,
+    sourceTable: "payroll_runs",
+    sourceType: "PayrollFinanceForecastProof",
+    sourceId: snapshot.sourceHash,
+    sourceLabel: `${forecast.authoritative ? "Authoritative" : "Blocked"} payroll forecast proof: total upcoming ${forecast.totalUpcomingAmount}`,
+    sourceDate: snapshot.generatedAt,
+    sourceHash: snapshot.sourceHash,
+    provenance: blocked ? "UNAVAILABLE" : "POSTED",
+    available: !blocked,
+    unavailableReason: blocked ? payrollForecastMessage(snapshot) : null,
+    correlationId: null,
+    metadata: metadata as Prisma.JsonValue,
+  }
+}
+function payrollForecastProvenance(
+  snapshot: PayrollForecastSnapshot,
+  periodStatus: AccountingPeriodStatus,
+  now: Date,
+): CloseAssuranceDashboardData["provenance"][number] {
+  const unavailable = payrollForecastUnavailable(snapshot)
+  const blocked = payrollForecastBlocked(snapshot)
+  return {
+    label: "Payroll finance forecast proof",
+    provenance: unavailable || blocked ? "UNAVAILABLE" : "POSTED",
+    asOf: unavailable ? now.toISOString() : snapshot.generatedAt,
+    periodStatus,
+    sourceTables: [...PAYROLL_FORECAST_SOURCE_TABLES],
+    reason: blocked ? payrollForecastMessage(snapshot) : undefined,
+  }
 }
 
 function scoreFromChecklist(checklist: Array<{ status: CloseChecklistStatus }>) {
@@ -699,12 +957,18 @@ async function buildAssessment(
     }
   }
 
-  const [preflightResult, ledger, paymentDashboard, dataTrust, inventoryValuation] = await Promise.all([
+  const [preflightResult, ledger, paymentDashboard, dataTrust, inventoryValuation, payrollForecastSnapshot] = await Promise.all([
     getPreflightSafe(organizationId, period),
     reconcileLedger(organizationId, { periodId: period.id }),
     getPaymentReconciliationDashboardData(organizationId).catch((error) => ({ error })),
     getAccountantPortalData({ organizationId, periodId: period.id, limit: 12 }, db, now).catch((error) => ({ error })),
     reconcileInventoryClass3({ organizationId, periodId: period.id }).catch((error) => ({ error })),
+    getTenantOperatingSnapshot({
+      organizationId,
+      periodStart: period.startDate,
+      periodEnd: period.endDate,
+      now,
+    }).catch((error) => ({ error })),
   ])
 
   const preflight = preflightResult.preflight
@@ -883,6 +1147,7 @@ async function buildAssessment(
       ownerId: null,
       dueAt: null,
     },
+    payrollForecastChecklist(payrollForecastSnapshot),
     {
       key: "tax-payroll-ap-readiness",
       domain: CloseFindingDomain.TAX,
@@ -914,6 +1179,7 @@ async function buildAssessment(
     ...buildPreflightFindings(preflight, preflightResult.failures),
     ...buildLedgerFindings(ledger),
     ...buildInventoryValuationFindings(inventoryAnnex),
+    ...payrollForecastFindings(payrollForecastSnapshot),
     ...(!dataTrustUnavailable
       ? dataTrustBlockers
           .filter((blocker) => blocker.severity === "critical" || blocker.severity === "high")
@@ -1066,6 +1332,7 @@ async function buildAssessment(
       correlationId: null,
       metadata: inventoryAnnex as unknown as Prisma.JsonValue,
     },
+    payrollForecastEvidence(payrollForecastSnapshot, now),
   ]
 
   const checklistWithEvidence = checklist.map((item) => ({
@@ -1136,6 +1403,7 @@ async function buildAssessment(
         sourceTables: ["inventory_levels", "inventory_transactions", "stock_adjustments", "stock_count_sessions", "journal_entry_lines", "business_events"],
         reason: inventoryAnnex.blockerStatus === "PASSED" ? undefined : inventoryAnnex.failures[0]?.message,
       },
+      payrollForecastProvenance(payrollForecastSnapshot, period.status, now),
     ],
     checklist: checklistWithEvidence.map((item) => ({ id: null, ...item })),
     findings: findings.map((finding) => ({
@@ -1269,6 +1537,7 @@ export async function runCloseAssurance(
           trustLevel: draft.source.trustLevel,
           controlPermissions: control.actorPermissions ?? [],
           inventoryValuationAnnex: draft.raw.evidenceItems.find((item) => item.sourceType === "InventoryValuationAnnex")?.metadata ?? null,
+          payrollFinanceForecastProof: draft.raw.evidenceItems.find((item) => item.sourceType === "PayrollFinanceForecastProof")?.metadata ?? null,
           statutoryCertification: statutoryCertificationBlockerMetadata(),
         }),
       },

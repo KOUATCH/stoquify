@@ -1,0 +1,222 @@
+{
+  "checkedAt": "2026-06-30T20:21:56.465Z",
+  "auth": {
+    "storageState": "playwright/.auth/payroll.json",
+    "fixtureSource": "scripts/seed-payroll-e2e-user.js",
+    "fixturePurpose": "authenticated payroll browser accessibility and mobile validation"
+  },
+  "viewports": [
+    {
+      "name": "mobile",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "name": "desktop",
+      "width": 1440,
+      "height": 1100
+    }
+  ],
+  "routes": [
+    {
+      "id": "payroll",
+      "name": "command center",
+      "path": "/en/dashboard/payroll"
+    },
+    {
+      "id": "payroll-runs",
+      "name": "runs",
+      "path": "/en/dashboard/payroll/runs"
+    },
+    {
+      "id": "payroll-payments",
+      "name": "payments",
+      "path": "/en/dashboard/payroll/payments"
+    },
+    {
+      "id": "payroll-declarations",
+      "name": "declarations",
+      "path": "/en/dashboard/payroll/declarations"
+    },
+    {
+      "id": "payroll-attendance",
+      "name": "attendance",
+      "path": "/en/dashboard/payroll/attendance"
+    },
+    {
+      "id": "payroll-payslips",
+      "name": "payslips",
+      "path": "/en/dashboard/payroll/payslips"
+    }
+  ],
+  "results": [
+    {
+      "routeId": "payroll",
+      "routeName": "command center",
+      "path": "/en/dashboard/payroll",
+      "viewport": "mobile",
+      "screenshot": "what-next/payroll/screenshots/payroll-authenticated-accessibility-mobile/payroll-mobile.png",
+      "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll",
+      "renderState": "surface",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "mobileLayout": {
+        "viewportWidth": 390,
+        "documentWidth": 390,
+        "bodyWidth": 390,
+        "hasDocumentOverflow": false
+      }
+    },
+    {
+      "routeId": "payroll",
+      "routeName": "command center",
+      "path": "/en/dashboard/payroll",
+      "viewport": "desktop",
+      "screenshot": "what-next/payroll/screenshots/payroll-authenticated-accessibility-mobile/payroll-desktop.png",
+      "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll",
+      "renderState": "surface",
+      "seriousViolationCount": 0,
+      "seriousViolations": []
+    },
+    {
+      "routeId": "payroll-runs",
+      "routeName": "runs",
+      "path": "/en/dashboard/payroll/runs",
+      "viewport": "mobile",
+      "screenshot": "what-next/payroll/screenshots/payroll-authenticated-accessibility-mobile/payroll-runs-mobile.png",
+      "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/runs",
+      "renderState": "surface",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "mobileLayout": {
+        "viewportWidth": 390,
+        "documentWidth": 390,
+        "bodyWidth": 390,
+        "hasDocumentOverflow": false
+      }
+    },
+    {
+      "routeId": "payroll-runs",
+      "routeName": "runs",
+      "path": "/en/dashboard/payroll/runs",
+      "viewport": "desktop",
+      "screenshot": "what-next/payroll/screenshots/payroll-authenticated-accessibility-mobile/payroll-runs-desktop.png",
+      "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/runs",
+      "renderState": "surface",
+      "seriousViolationCount": 0,
+      "seriousViolations": []
+    },
+    {
+      "routeId": "payroll-payments",
+      "routeName": "payments",
+      "path": "/en/dashboard/payroll/payments",
+      "viewport": "mobile",
+      "screenshot": "what-next/payroll/screenshots/payroll-authenticated-accessibility-mobile/payroll-payments-mobile.png",
+      "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/payments",
+      "renderState": "surface",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "mobileLayout": {
+        "viewportWidth": 390,
+        "documentWidth": 390,
+        "bodyWidth": 390,
+        "hasDocumentOverflow": false
+      }
+    },
+    {
+      "routeId": "payroll-payments",
+      "routeName": "payments",
+      "path": "/en/dashboard/payroll/payments",
+      "viewport": "desktop",
+      "screenshot": "what-next/payroll/screenshots/payroll-authenticated-accessibility-mobile/payroll-payments-desktop.png",
+      "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/payments",
+      "renderState": "surface",
+      "seriousViolationCount": 0,
+      "seriousViolations": []
+    },
+    {
+      "routeId": "payroll-declarations",
+      "routeName": "declarations",
+      "path": "/en/dashboard/payroll/declarations",
+      "viewport": "mobile",
+      "screenshot": "what-next/payroll/screenshots/payroll-authenticated-accessibility-mobile/payroll-declarations-mobile.png",
+      "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/declarations",
+      "renderState": "surface",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "mobileLayout": {
+        "viewportWidth": 390,
+        "documentWidth": 390,
+        "bodyWidth": 390,
+        "hasDocumentOverflow": false
+      }
+    },
+    {
+      "routeId": "payroll-declarations",
+      "routeName": "declarations",
+      "path": "/en/dashboard/payroll/declarations",
+      "viewport": "desktop",
+      "screenshot": "what-next/payroll/screenshots/payroll-authenticated-accessibility-mobile/payroll-declarations-desktop.png",
+      "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/declarations",
+      "renderState": "surface",
+      "seriousViolationCount": 0,
+      "seriousViolations": []
+    },
+    {
+      "routeId": "payroll-attendance",
+      "routeName": "attendance",
+      "path": "/en/dashboard/payroll/attendance",
+      "viewport": "mobile",
+      "screenshot": "what-next/payroll/screenshots/payroll-authenticated-accessibility-mobile/payroll-attendance-mobile.png",
+      "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/attendance",
+      "renderState": "surface",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "mobileLayout": {
+        "viewportWidth": 390,
+        "documentWidth": 390,
+        "bodyWidth": 390,
+        "hasDocumentOverflow": false
+      }
+    },
+    {
+      "routeId": "payroll-attendance",
+      "routeName": "attendance",
+      "path": "/en/dashboard/payroll/attendance",
+      "viewport": "desktop",
+      "screenshot": "what-next/payroll/screenshots/payroll-authenticated-accessibility-mobile/payroll-attendance-desktop.png",
+      "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/attendance",
+      "renderState": "surface",
+      "seriousViolationCount": 0,
+      "seriousViolations": []
+    },
+    {
+      "routeId": "payroll-payslips",
+      "routeName": "payslips",
+      "path": "/en/dashboard/payroll/payslips",
+      "viewport": "mobile",
+      "screenshot": "what-next/payroll/screenshots/payroll-authenticated-accessibility-mobile/payroll-payslips-mobile.png",
+      "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/payslips",
+      "renderState": "surface",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "mobileLayout": {
+        "viewportWidth": 390,
+        "documentWidth": 390,
+        "bodyWidth": 390,
+        "hasDocumentOverflow": false
+      }
+    },
+    {
+      "routeId": "payroll-payslips",
+      "routeName": "payslips",
+      "path": "/en/dashboard/payroll/payslips",
+      "viewport": "desktop",
+      "screenshot": "what-next/payroll/screenshots/payroll-authenticated-accessibility-mobile/payroll-payslips-desktop.png",
+      "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/payslips",
+      "renderState": "surface",
+      "seriousViolationCount": 0,
+      "seriousViolations": []
+    }
+  ]
+}

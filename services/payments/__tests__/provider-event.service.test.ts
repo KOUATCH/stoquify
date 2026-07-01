@@ -334,6 +334,14 @@ describe("provider event ingestion", () => {
     })
 
     expect(result.status).toBe("REJECTED")
+    expect(mockedDb.providerEvent.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          status: ProviderEventStatus.REPLAYED,
+          signatureValid: false,
+        }),
+      }),
+    )
     expect(mockedDb.paymentException.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({

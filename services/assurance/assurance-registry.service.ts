@@ -19,6 +19,7 @@ import {
   LedgerPostingBatchStatus,
   PaymentExceptionStatus,
   PaymentMethod,
+  PaymentReconciliationInboxStatus,
   PaymentStatus,
   PayrollDeclarationStatus,
   PayrollPaymentBatchStatus,
@@ -172,6 +173,7 @@ const CHECK_RUNNERS: Record<string, WorkflowAssuranceRunner> = {
   "inventory.completed_adjustment_evidence.required": runCompletedAdjustmentEvidenceCheck,
   "payroll.released_payment_evidence.required": runReleasedPayrollPaymentEvidenceCheck,
   "payroll.payment_reconciliation_exception.visible": runPayrollPaymentReconciliationExceptionCheck,
+  "payroll.provider_inbox_worker_sla.visible": runPayrollProviderInboxWorkerSlaCheck,
   "payroll.declaration_lifecycle_exception.visible": runPayrollDeclarationLifecycleExceptionCheck,
   "payroll.close_evidence.stale.visible": runPayrollCloseEvidenceStaleCheck,
   "compliance.submission_sla.visible": runComplianceSubmissionSlaCheck,
@@ -1548,7 +1550,8 @@ async function runOfflinePosReplaySlaCheck(
   input: WorkflowAssuranceRunInput,
 ) {
   const staleAfterMinutes = Number(definition.metadata.staleAfterMinutes ?? 30)
-  const cutoff = new Date(Date.now() - staleAfterMinutes * 60 * 1000)
+  const now = new Date()
+  const cutoff = new Date(now.getTime() - staleAfterMinutes * 60 * 1000)
   const [offlineEventCount, staleReplayCount, openConflictCount] = await Promise.all([
     db.pOSOfflineEvent.count({ where: { organizationId: input.organizationId } }),
     db.pOSOfflineEvent.count({
@@ -3013,6 +3016,133 @@ async function runPayrollPaymentReconciliationExceptionCheck(
       monitoredBatchCount,
       exceptionBatchCount,
       redactionPolicy: "kontava-payroll-person-redaction-policy",
+    },
+  })
+}
+
+async function runPayrollProviderInboxWorkerSlaCheck(
+  definition: WorkflowAssuranceCheckDefinitionContract,
+  input: WorkflowAssuranceRunInput,
+) {
+  const staleAfterMinutes = Number(definition.metadata.staleAfterMinutes ?? 30)
+  const now = new Date()
+  const cutoff = new Date(now.getTime() - staleAfterMinutes * 60 * 1000)
+  const activeInboxWhere = {
+    organizationId: input.organizationId,
+    status: {
+      in: [
+        PaymentReconciliationInboxStatus.RECEIVED,
+        PaymentReconciliationInboxStatus.PROCESSING,
+        PaymentReconciliationInboxStatus.FAILED,
+        PaymentReconciliationInboxStatus.DEAD_LETTER,
+      ],
+    },
+  }
+  const staleReceivedWhere = {
+    organizationId: input.organizationId,
+    status: PaymentReconciliationInboxStatus.RECEIVED,
+    updatedAt: { lt: cutoff },
+  }
+  const staleProcessingWhere = {
+    organizationId: input.organizationId,
+    status: PaymentReconciliationInboxStatus.PROCESSING,
+    nextAttemptAt: { lte: now },
+  }
+  const retryDueWhere = {
+    organizationId: input.organizationId,
+    status: PaymentReconciliationInboxStatus.FAILED,
+    OR: [{ nextAttemptAt: null }, { nextAttemptAt: { lte: now } }],
+  }
+  const unownedProcessingLeaseWhere = {
+    organizationId: input.organizationId,
+    status: PaymentReconciliationInboxStatus.PROCESSING,
+    OR: [{ leasedBy: null }, { leaseToken: null }],
+  }
+  const deadLetterWhere = {
+    organizationId: input.organizationId,
+    status: PaymentReconciliationInboxStatus.DEAD_LETTER,
+  }
+  const [
+    activeInboxCount,
+    staleReceivedCount,
+    staleProcessingCount,
+    retryDueCount,
+    deadLetterCount,
+    unownedProcessingLeaseCount,
+  ] = await Promise.all([
+    db.paymentReconciliationInboxItem.count({ where: activeInboxWhere }),
+    db.paymentReconciliationInboxItem.count({ where: staleReceivedWhere }),
+    db.paymentReconciliationInboxItem.count({ where: staleProcessingWhere }),
+    db.paymentReconciliationInboxItem.count({ where: retryDueWhere }),
+    db.paymentReconciliationInboxItem.count({ where: deadLetterWhere }),
+    db.paymentReconciliationInboxItem.count({ where: unownedProcessingLeaseWhere }),
+  ])
+  const problemCount = Math.min(
+    activeInboxCount,
+    staleReceivedCount + staleProcessingCount + retryDueCount + deadLetterCount + unownedProcessingLeaseCount,
+  )
+  const status: WorkflowAssuranceResultStatus = problemCount > 0 ? "warning" : "passed"
+  const sourceHash = createAssuranceSourceHash({
+    checkKey: definition.checkKey,
+    activeInboxCount,
+    staleReceivedCount,
+    staleProcessingCount,
+    retryDueCount,
+    deadLetterCount,
+    unownedProcessingLeaseCount,
+    staleAfterMinutes,
+  })
+
+  return normalizeAssuranceResult({
+    organizationId: input.organizationId,
+    checkKey: definition.checkKey,
+    status,
+    severity: problemCount > 0 ? definition.defaultSeverity : "info",
+    sourceType: "payment_reconciliation_inbox_items",
+    sourceId: "provider_inbox_worker_sla",
+    sourceHash,
+    message:
+      problemCount > 0
+        ? "Payroll provider inbox items are stale, retry-due, processing without worker ownership, processing past lease, or dead-lettered."
+        : "Payroll provider inbox items are processed, retrying inside SLA, leased by a worker, or visibly resolved.",
+    recommendedAction:
+      problemCount > 0
+        ? "Open payroll payments, run the provider inbox worker, and triage dead-letter, unowned, or stale leases with hash-only evidence."
+        : undefined,
+    evidenceLinks: [
+      {
+        sourceTable: "payment_reconciliation_inbox_items",
+        sourceType: "provider_inbox_worker_sla",
+        sourceId: "aggregate",
+        sourceHash,
+        label: "Provider inbox worker SLA",
+        route: definition.actionRoute,
+        metadata: {
+          activeInboxCount,
+          staleReceivedCount,
+          staleProcessingCount,
+          retryDueCount,
+          deadLetterCount,
+          unownedProcessingLeaseCount,
+          staleAfterMinutes,
+          redactionPolicy: "payment-reconciliation-inbox-worker-redacted",
+        },
+      },
+    ],
+    counts: {
+      scanned: activeInboxCount,
+      passed: Math.max(activeInboxCount - problemCount, 0),
+      warning: problemCount,
+    },
+    metadata: {
+      activeInboxCount,
+      staleReceivedCount,
+      staleProcessingCount,
+      retryDueCount,
+      deadLetterCount,
+      unownedProcessingLeaseCount,
+      staleAfterMinutes,
+      redactionPolicy: "payment-reconciliation-inbox-worker-redacted",
     },
   })
 }

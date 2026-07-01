@@ -226,6 +226,7 @@ export const payrollPermissions = [
   "payroll.payslips.self.read",
   "payroll.payslips.self.export",
   "payroll.payslips.emit",
+  "payroll.payments.request",
   "payroll.payments.release",
   "payroll.payments.reconcile",
   "payroll.declarations.prepare",

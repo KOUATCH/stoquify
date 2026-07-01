@@ -5,7 +5,7 @@ import { localizePath, pickLocale } from "@/i18n/routing"
 import { redirect } from "next/navigation"
 
 export const metadata = {
-  title: "Locations | StockFlow",
+  title: "Locations | Stoquify",
   description: "Manage organization locations, stock policies, POS activity, and movement counters.",
 }
 

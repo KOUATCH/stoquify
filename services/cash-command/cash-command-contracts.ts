@@ -30,6 +30,9 @@ export type CashCommandCardId =
   | "open_suspense"
   | "drawer_risk"
   | "provider_risk"
+  | "employee_balance_recovery"
+  | "upcoming_payroll_net_pay"
+  | "upcoming_statutory_liability"
   | "stock_cash_buffer"
 
 export type CashCommandTrustSignalId =
@@ -79,6 +82,11 @@ export type CashCommandSummary = {
   drawerVariance: number
   drawerAlertCount: number
   providerRiskCount: number
+  activeEmployeeBalanceCaseCount: number
+  employeeBalanceOutstandingAmount: number
+  upcomingPayrollNetPayAmount: number
+  upcomingStatutoryLiabilityAmount: number
+  payrollForecastTotalAmount: number
   actionCountToday: number
   staleCount: number
   blockedCount: number

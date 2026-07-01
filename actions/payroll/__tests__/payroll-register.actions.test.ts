@@ -121,7 +121,7 @@ function rbacContext(userId = "controller-1", permissions: string[] = ["payroll.
 describe("payroll register actions", () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockRequireFreshAuth.mockResolvedValue({ claims: { lastAuthAt: Date.now() } })
+    mockRequireFreshAuth.mockResolvedValue({ claims: { lastAuthAt: new Date("2026-06-30T11:59:00.000Z").getTime() } })
     mockObserveModuleAccess.mockResolvedValue(moduleDecision())
     mockGetPayrollRegister.mockResolvedValue({
       organizationId: "org-1",
@@ -226,7 +226,7 @@ describe("payroll register actions", () => {
       actorPermissions: ["payroll.reports.read", "payroll.exports.create"],
       payrollRunId: "run-1",
       purpose: "Controller register review",
-      lastAuthAt: expect.any(Date),
+      lastAuthAt: new Date("2026-06-30T11:59:00.000Z"),
       now: expect.any(Date),
     }))
     expect(mockObserveModuleAccess).toHaveBeenCalledWith(expect.objectContaining({

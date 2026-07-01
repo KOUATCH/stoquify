@@ -3,7 +3,7 @@ import { FinancePaymentsSurface } from "@/components/finance/FinanceSpecializedL
 import { FinanceRouteAccess, financeViewPermissions, type FinanceRouteParams } from "../FinanceRouteAccess"
 
 export const metadata = {
-  title: "Payments | AqStoqFlow",
+  title: "Payments | Stoquify",
   description: "Payment ledger, tender mix, reconciliation, and cash clearing surface.",
 }
 

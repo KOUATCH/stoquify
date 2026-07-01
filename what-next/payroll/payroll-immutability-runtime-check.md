@@ -1,6 +1,6 @@
 # Payroll Immutability Runtime Check
 
-Generated: 2026-06-26T17:57:46.786Z
+Generated: 2026-07-01T17:04:34.073Z
 Mode: `fail`
 Status: `ready`
 
@@ -12,8 +12,8 @@ Status: `ready`
 
 ## Summary
 
-- Required triggers present: 8/8
-- Forbidden mutation checks blocked: 12/12
+- Required triggers present: 9/9
+- Forbidden mutation checks blocked: 14/14
 - Allowed lifecycle checks passed: 3/3
 - Blockers: 0
 
@@ -27,6 +27,7 @@ Status: `ready`
 - present: payroll_payment_allocations.payroll_payment_allocations_prevent_released_mutation_trigger
 - present: payroll_declarations.payroll_declarations_prevent_payload_mutation_trigger
 - present: payroll_declaration_evidence.payroll_declaration_evidence_prevent_mutation_trigger
+- present: payroll_employee_balance_events.payroll_employee_balance_events_prevent_mutation_trigger
 
 ## Forbidden Mutation Checks
 
@@ -42,6 +43,8 @@ Status: `ready`
 - blocked: block_declaration_delete - P2010: PrismaClientKnownRequestError
 - blocked: block_declaration_evidence_update - P2010: PrismaClientKnownRequestError
 - blocked: block_declaration_evidence_delete - P2010: PrismaClientKnownRequestError
+- blocked: block_employee_balance_event_update - P2010: PrismaClientKnownRequestError
+- blocked: block_employee_balance_event_delete - P2010: PrismaClientKnownRequestError
 
 ## Allowed Lifecycle Checks
 

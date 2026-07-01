@@ -1,4 +1,5 @@
 import { Link } from "@/i18n/navigation"
+import StoquifyLogo from "@/components/global/kit-logo"
 import { ArrowRight, LayoutDashboard, Menu } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
 
@@ -22,15 +23,7 @@ export function LandingHeader({ session }: LandingHeaderProps) {
     <header className="sticky top-0 z-50 border-b border-[var(--color-border-subtle)] bg-[var(--color-chrome)]/92 text-[var(--color-text-primary)] backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
         <Link href="/" className="group inline-flex items-center gap-3" aria-label={t("homeAria")}>
-          <span className="grid size-9 place-items-center rounded-lg bg-[var(--color-brand)] text-sm font-bold text-white shadow-lg shadow-[var(--color-brand-glow)]">
-            AQ
-          </span>
-          <span className="leading-none">
-            <span className="body-text block text-base font-semibold tracking-normal">AqStoqFlow</span>
-            <span className="data-text mt-1 block text-[0.62rem] uppercase text-[var(--color-text-muted)]">
-              {t("subtitle")}
-            </span>
-          </span>
+          <StoquifyLogo theme="dark" width={212} height={48} tagline={t("subtitle")} />
         </Link>
 
         <nav className="hidden items-center gap-1 rounded-lg border border-[var(--color-border-subtle)] bg-white/[0.035] p-1 md:flex" aria-label={t("navAria")}>

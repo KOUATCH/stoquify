@@ -8,7 +8,7 @@ interface EditSupplierSystemPageProps {
 }
 
 export const metadata = {
-  title: "Edit Supplier | StockFlow",
+  title: "Edit Supplier | Stoquify",
   description: "Edit supplier identity, contact, terms, language, and active state.",
 }
 

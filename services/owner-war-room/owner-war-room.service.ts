@@ -26,6 +26,7 @@ import { getCloseReadinessSnapshot } from "@/services/snapshots/close-readiness-
 import { getInventoryCashSnapshot } from "@/services/snapshots/inventory-cash-snapshot.service"
 import { getPaymentTruthSnapshot } from "@/services/snapshots/payment-truth-snapshot.service"
 import type {
+  SnapshotBlocker,
   SnapshotFreshness,
   SnapshotRedaction,
   SnapshotResult,
@@ -128,6 +129,22 @@ export async function getOwnerWarRoomData(input: OwnerWarRoomInput): Promise<Own
 
 export function composeOwnerWarRoomData(input: ComposeOwnerWarRoomInput): OwnerWarRoomData {
   const { tenantOperating, paymentTruth, inventoryCash, closeReadiness } = input.snapshots
+  const payrollForecast = tenantOperating.metrics.payrollFinanceForecast
+  const payrollBalanceCaseCount = tenantOperating.metrics.activeEmployeeBalanceCaseCount
+  const payrollForecastBlocked = payrollForecast.blockerCodes.length > 0
+  const payrollForecastBlockers = payrollForecastSnapshotBlockers(tenantOperating)
+  const payrollExposureValue = payrollBalanceCaseCount > 0 ? payrollBalanceCaseCount : payrollForecast.totalUpcomingAmount
+  const payrollExposureUnit = payrollBalanceCaseCount > 0 ? "cases" : "value"
+  const payrollExposureHref = "/dashboard/payroll/payments"
+  const payrollExposureDetail =
+    payrollBalanceCaseCount > 0
+      ? "Open employee balance recovery cases are counted without exposing person-level amounts."
+      : payrollForecast.authoritative
+        ? `Upcoming aggregate net pay and statutory liability total ${formatBriefAmount(payrollForecast.totalUpcomingAmount)}; person-level amounts stay inside payroll.`
+        : payrollForecast.message
+  const payrollExposureTone =
+    payrollBalanceCaseCount > 0 ? "danger" : payrollForecastBlocked ? "danger" : payrollForecast.totalUpcomingAmount > 0 ? "gold" : "muted"
+  const payrollExposureState = payrollForecastBlocked ? "blocked" : payrollExposureValue > 0 ? "redacted" : undefined
   const cards: OwnerWarRoomMetricCard[] = [
     card({
       id: "cash_at_risk",
@@ -183,23 +200,24 @@ export function composeOwnerWarRoomData(input: ComposeOwnerWarRoomInput): OwnerW
     card({
       id: "payroll_exposure",
       title: "Payroll exposure",
-      detail: "Approved or paid payroll runs are counted without exposing person-level amounts.",
-      value: tenantOperating.metrics.approvedOrPaidPayrollRunCount,
-      unit: "runs",
-      tone: tenantOperating.metrics.approvedOrPaidPayrollRunCount > 0 ? "gold" : "muted",
+      detail: payrollExposureDetail,
+      value: payrollExposureValue,
+      unit: payrollExposureUnit,
+      tone: payrollExposureTone,
       requiredPermission: "payroll.read",
-      href: "/dashboard/payroll",
+      href: payrollExposureHref,
       snapshot: tenantOperating,
       redactions: [
         ...tenantOperating.redactions,
         {
           id: "owner-war-room-payroll-person-values-redacted",
           field: "payroll.personLevelAmounts",
-          reason: "The Owner War Room shows payroll pressure counts only; employee-level values stay inside payroll.",
+          reason: "The Owner War Room shows aggregate payroll forecast and exposure only; employee-level values stay inside payroll.",
           policy: "KONTAVA_SENSITIVE_PAYROLL_EVIDENCE",
         },
       ],
-      state: tenantOperating.metrics.approvedOrPaidPayrollRunCount > 0 ? "redacted" : undefined,
+      state: payrollExposureState,
+      blockers: payrollForecastBlocked ? payrollForecastBlockers : [],
       sourceModules: ["payroll", "accounting", "finance"],
     }),
     card({
@@ -425,6 +443,7 @@ function buildOwnerMorningBrief({
   )
   const headlineMetrics = {
     cashAtRisk: paymentTruth.metrics.openSuspenseAmount,
+    payrollForecastTotal: tenantOperating.metrics.payrollFinanceForecast.totalUpcomingAmount,
     blockedCloseItems:
       closeReadiness.metrics.blockedCloseRunCount +
       closeReadiness.metrics.criticalOpenFindingCount +
@@ -600,6 +619,7 @@ function buildOwnerMorningBriefChanges(input: {
     })
   }
 
+
   if (input.headlineMetrics.staleEvidenceItems > 0) {
     changes.push({
       id: "owner-morning-brief-stale-evidence",
@@ -674,7 +694,9 @@ function buildOwnerMorningBriefRisks(input: {
   headlineMetrics: OwnerWarRoomData["morningBrief"]["headlineMetrics"]
   freshness: BIFreshness
 }): BIRiskRank[] {
-  const { paymentTruth, closeReadiness, inventoryCash } = input.input.snapshots
+  const { paymentTruth, closeReadiness, inventoryCash, tenantOperating } = input.input.snapshots
+  const payrollForecast = tenantOperating.metrics.payrollFinanceForecast
+  const payrollForecastBlockers = payrollForecastSnapshotBlockers(tenantOperating)
   const risks: Array<Omit<BIRiskRank, "rank">> = []
 
   if (input.headlineMetrics.cashAtRisk > 0) {
@@ -735,6 +757,39 @@ function buildOwnerMorningBriefRisks(input: {
         href: "/dashboard/accounting/close",
         requiredPermission: "accounting.close.read",
         moduleSlug: "close_assurance",
+        disabled: false,
+        disabledReason: null,
+      }),
+    })
+  }
+
+
+  if (payrollForecast.blockerCodes.length > 0) {
+    risks.push({
+      id: "owner-risk-payroll-forecast-proof",
+      organizationId: input.input.organizationId,
+      moduleSlug: "payroll",
+      title: "Payroll forecast proof",
+      detail: "Payroll cash obligations are withheld because payroll forecast proof is incomplete.",
+      businessImpact: "Owner cash planning and profitability should not use payroll estimates until register, ledger, payment, and declaration proof are repaired.",
+      severity: "high",
+      severityScore: 88,
+      moneyImpact: null,
+      urgency: "today",
+      state: "blocked",
+      evidenceGrade: "blocked",
+      trustState: "blocked",
+      freshness: freshnessFromSnapshot(tenantOperating),
+      sourceModules: ["payroll", "accounting", "finance"],
+      blockers: payrollForecastBlockers,
+      redactions: tenantOperating.redactions,
+      drillThrough: routeDrillThrough("Open payroll", "/dashboard/payroll/payments", "payroll.payments.reconcile"),
+      actionLink: actionLink({
+        id: "owner-risk-open-payroll-forecast-proof",
+        label: "Open payroll",
+        href: "/dashboard/payroll/payments",
+        requiredPermission: "payroll.payments.reconcile",
+        moduleSlug: "payroll",
         disabled: false,
         disabledReason: null,
       }),
@@ -811,7 +866,7 @@ function buildOwnerMorningBriefRisks(input: {
 }
 
 function buildOwnerMorningBriefZones(input: ComposeOwnerWarRoomInput): BICommandZone[] {
-  const { paymentTruth, inventoryCash, closeReadiness } = input.snapshots
+  const { tenantOperating, paymentTruth, inventoryCash, closeReadiness } = input.snapshots
   return [
     zoneFromSnapshot({
       id: "owner-zone-cash-truth",
@@ -838,6 +893,34 @@ function buildOwnerMorningBriefZones(input: ComposeOwnerWarRoomInput): BICommand
         href: "/dashboard/finance/reconciliation",
         requiredPermission: "payments.reconciliation.read",
         moduleSlug: "payment_reconciliation",
+        disabled: false,
+        disabledReason: null,
+      }),
+    }),
+    zoneFromSnapshot({
+      id: "owner-zone-payroll-finance-forecast",
+      organizationId: input.organizationId,
+      moduleSlug: "payroll",
+      title: "Payroll finance forecast",
+      businessQuestion: "What payroll and statutory cash obligations are coming next?",
+      summary: tenantOperating.metrics.payrollFinanceForecast.authoritative
+        ? `${formatBriefAmount(tenantOperating.metrics.payrollFinanceForecast.upcomingNetPayAmount)} net pay and ${formatBriefAmount(tenantOperating.metrics.payrollFinanceForecast.upcomingStatutoryLiabilityAmount)} statutory liability are forecast from payroll evidence.`
+        : tenantOperating.metrics.payrollFinanceForecast.message,
+      snapshot: tenantOperating,
+      metric: {
+        id: "owner-zone-payroll-forecast-total",
+        title: "Upcoming payroll obligations",
+        detail: "Aggregate net-pay plus statutory-liability forecast; person-level payroll amounts are redacted.",
+        value: tenantOperating.metrics.payrollFinanceForecast.totalUpcomingAmount,
+        unit: "XAF",
+        format: "currency",
+      },
+      action: actionLink({
+        id: "owner-zone-open-payroll-forecast",
+        label: "Open payroll",
+        href: "/dashboard/payroll/payments",
+        requiredPermission: "payroll.payments.reconcile",
+        moduleSlug: "payroll",
         disabled: false,
         disabledReason: null,
       }),
@@ -1108,7 +1191,7 @@ function morningBriefState(input: {
 }
 
 function buildMorningBriefSummary(input: OwnerWarRoomData["morningBrief"]["headlineMetrics"]) {
-  return `${formatBriefAmount(input.cashAtRisk)} cash at risk, ${input.blockedCloseItems} blocked close item${input.blockedCloseItems === 1 ? "" : "s"}, ${input.staleEvidenceItems} stale evidence item${input.staleEvidenceItems === 1 ? "" : "s"}, and ${input.proofLinkedActionCount} proof-linked action${input.proofLinkedActionCount === 1 ? "" : "s"} opened since yesterday.`
+  return `${formatBriefAmount(input.cashAtRisk)} cash at risk, ${formatBriefAmount(input.payrollForecastTotal)} upcoming payroll obligations, ${input.blockedCloseItems} blocked close item${input.blockedCloseItems === 1 ? "" : "s"}, ${input.staleEvidenceItems} stale evidence item${input.staleEvidenceItems === 1 ? "" : "s"}, and ${input.proofLinkedActionCount} proof-linked action${input.proofLinkedActionCount === 1 ? "" : "s"} opened since yesterday.`
 }
 
 function buildMorningBriefConclusion(input: OwnerWarRoomData["morningBrief"]["headlineMetrics"]) {
@@ -1117,6 +1200,9 @@ function buildMorningBriefConclusion(input: OwnerWarRoomData["morningBrief"]["he
   }
   if (input.blockedCloseItems > 0) {
     return "Close evidence is the first blocker: clear missing or critical close items before signoff."
+  }
+  if (input.payrollForecastTotal > 0) {
+    return "Payroll and statutory obligations are visible: confirm evidence before relying on the owner cash plan."
   }
   if (input.staleEvidenceItems > 0) {
     return "Refresh stale evidence before using this view as today's owner truth."
@@ -1246,6 +1332,7 @@ function card(input: {
   href: string
   snapshot: SnapshotResult<unknown>
   sourceModules?: SnapshotSourceModule[]
+  blockers?: SnapshotBlocker[]
   redactions?: SnapshotRedaction[]
   state?: OwnerWarRoomCardState
 }): OwnerWarRoomMetricCard {
@@ -1260,11 +1347,15 @@ function card(input: {
     evidenceGrade: input.snapshot.evidenceGrade,
     freshness: input.snapshot.freshness,
     sourceModules: input.sourceModules ?? input.snapshot.sourceModules,
-    blockers: input.snapshot.blockers,
+    blockers: input.blockers ?? input.snapshot.blockers,
     redactions: input.redactions ?? input.snapshot.redactions,
     requiredPermission: input.requiredPermission,
     href: input.href,
   }
+}
+
+function payrollForecastSnapshotBlockers(snapshot: SnapshotResult<unknown>) {
+  return snapshot.blockers.filter((blocker) => blocker.gate === "payroll_finance_forecast")
 }
 
 function stateFromSnapshot(snapshot: SnapshotResult<unknown>): OwnerWarRoomCardState {

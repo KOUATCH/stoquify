@@ -70,6 +70,26 @@ export type PayrollPayslipSourceLink = {
   evidenceHash?: string | null
 }
 
+export type PayrollPayslipCountryPackLineProof = {
+  status: "MATCHED" | "MISMATCH" | "MISSING"
+  issues: string[]
+  runLineId: string
+  countryCode: string | null
+  countryPackVersion: string | null
+  countryPackSchemaVersion: string | null
+  countryPackCapabilityStatus: string | null
+  countryPackResolutionHash: string | null
+  statutoryScenarioCoverageHash: string | null
+  statutoryScenarioCoverageStatus: string | null
+  reviewEvidenceSourceHashes: string[]
+  legalRefs: string[]
+  roundingPolicyHash: string | null
+  yearToDatePolicyHash: string | null
+  provenanceHash: string | null
+  computedHash: string | null
+  source: string
+}
+
 export type PayrollPayslipSelfServiceRecord = {
   id: string
   payslipNumber: string
@@ -104,6 +124,7 @@ export type PayrollPayslipSelfServiceRecord = {
     documentHash: string
     archiveUri: string | null
     archiveManifestHash: string
+    countryPackLineProof: PayrollPayslipCountryPackLineProof
     sourceLinks: PayrollPayslipSourceLink[]
   }
   tieOut: {
@@ -238,6 +259,7 @@ type PayslipRow = Prisma.PayrollPayslipGetPayload<{
       select: {
         id: true
         documentHash: true
+        calculationSnapshot: true
       }
     }
     lines: true
@@ -266,6 +288,31 @@ function toJson<T>(value: T): T {
 
 function sha256(value: unknown) {
   return `sha256:${hashBusinessPayload(value)}`
+}
+
+function unknownRecord(value: unknown): Record<string, unknown> | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null
+  return value as Record<string, unknown>
+}
+
+function jsonRecord(value: Prisma.JsonValue | null | undefined): Record<string, unknown> | null {
+  return unknownRecord(value)
+}
+
+function nestedRecord(value: unknown, key: string): Record<string, unknown> | null {
+  return unknownRecord(unknownRecord(value)?.[key])
+}
+
+function metadataString(value: unknown, key: string) {
+  const entry = unknownRecord(value)?.[key]
+  return typeof entry === "string" && entry.trim().length > 0 ? entry.trim() : null
+}
+
+function metadataStringArray(value: unknown, key: string) {
+  const entry = unknownRecord(value)?.[key]
+  return Array.isArray(entry)
+    ? entry.filter((item): item is string => typeof item === "string" && item.trim().length > 0).sort()
+    : []
 }
 
 function decimalString(value: Prisma.Decimal.Value | null | undefined) {

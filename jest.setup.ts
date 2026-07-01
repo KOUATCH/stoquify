@@ -1,4 +1,12 @@
 import '@testing-library/jest-dom'
+import { TextDecoder, TextEncoder } from 'util'
+
+if (!global.TextEncoder) {
+  global.TextEncoder = TextEncoder
+}
+if (!global.TextDecoder) {
+  global.TextDecoder = TextDecoder as typeof global.TextDecoder
+}
 
 // Mock Next.js router
 jest.mock('next/navigation', () => ({

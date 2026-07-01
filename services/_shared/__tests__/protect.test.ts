@@ -71,7 +71,7 @@ function moduleDecision(overrides: Record<string, unknown> = {}) {
 describe("protect", () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockRequireFreshAuth.mockResolvedValue({ claims: { lastAuthAt: Date.now() } })
+    mockRequireFreshAuth.mockResolvedValue({ claims: { lastAuthAt: new Date("2026-06-30T11:59:00.000Z").getTime() } })
     mockAssertCanUseOrganization.mockResolvedValue(true)
     mockObserveModuleAccess.mockResolvedValue(moduleDecision())
   })
@@ -217,6 +217,12 @@ describe("protect", () => {
     expect(result).toEqual({ success: true, data: { posted: true }, error: null, status: 200 })
     expect(mockRequireFreshAuth).toHaveBeenCalledWith(undefined)
     expect(mockRequirePermission).toHaveBeenCalledWith("accounting.journal.post", { resource: "JournalEntry" })
+    expect(handler).toHaveBeenCalledWith({ id: "je-1" }, expect.objectContaining({
+      ...ctx,
+      freshAuth: expect.objectContaining({
+        lastAuthAt: new Date("2026-06-30T11:59:00.000Z"),
+      }),
+    }))
   })
 
   it("returns a step-up response when fresh authentication is stale", async () => {

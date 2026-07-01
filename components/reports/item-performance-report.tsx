@@ -38,16 +38,21 @@ export function ItemPerformanceReportComponent({ reports, focusItemId }: ItemPer
     }).format(amount)
   }
 
-  const getStockStatusBadge = (status: string) => {
+  const getStockStatusBadge = (report: ItemPerformanceReport) => {
+    const status = report.stockStatus
     const className = analyticsToneClass(analyticsStockTone(status))
 
     switch (status) {
       case "in_stock":
-        return <Badge variant="outline" className={className}>In Stock</Badge>
+        return <Badge variant="outline" className={className}>Available</Badge>
       case "low_stock":
-        return <Badge variant="outline" className={className}>Low Stock</Badge>
+        return <Badge variant="outline" className={className}>Low Available</Badge>
       case "out_of_stock":
-        return <Badge variant="outline" className={className}>Out of Stock</Badge>
+        return (
+          <Badge variant="outline" className={className}>
+            {report.currentStock > 0 ? "No Available Stock" : "Out of Stock"}
+          </Badge>
+        )
       default:
         return <Badge variant="outline" className={className}>Unknown</Badge>
     }
@@ -185,7 +190,7 @@ export function ItemPerformanceReportComponent({ reports, focusItemId }: ItemPer
                 </div>
                 <div className="flex items-center gap-2">
                   {getTrendIcon(report.salesTrend)}
-                  {getStockStatusBadge(report.stockStatus)}
+                  {getStockStatusBadge(report)}
                 </div>
               </div>
             </CardHeader>
@@ -238,13 +243,37 @@ export function ItemPerformanceReportComponent({ reports, focusItemId }: ItemPer
               {/* Inventory Status */}
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className={`text-sm ${analyticsMutedTextClass}`}>Current Stock</span>
+                  <span className={`text-sm ${analyticsMutedTextClass}`}>Stock Scope</span>
+                  <Badge variant="outline" className={analyticsToneClass(report.stockScope === "organization" ? "info" : "success")}>
+                    {report.stockScopeLabel}
+                  </Badge>
+                </div>
+
+                <div className="flex justify-between items-center">
+                  <span className={`text-sm ${analyticsMutedTextClass}`}>On Hand</span>
                   <div className="flex items-center gap-2">
-                    {report.currentStock <= 5 && report.stockStatus !== "out_of_stock" && (
+                    {report.currentStock <= 5 && report.currentStock > 0 && (
                       <AlertTriangle className={`h-4 w-4 ${analyticsToneText("gold")}`} />
                     )}
                     <span className="font-medium">{report.currentStock}</span>
                   </div>
+                </div>
+
+                <div className="flex justify-between items-center">
+                  <span className={`text-sm ${analyticsMutedTextClass}`}>Available to Sell</span>
+                  <div className="flex items-center gap-2">
+                    {report.availableToSell <= 5 && report.availableToSell > 0 && (
+                      <AlertTriangle className={`h-4 w-4 ${analyticsToneText("gold")}`} />
+                    )}
+                    <span className={`font-medium ${report.availableToSell <= 0 ? analyticsToneText("danger") : ""}`}>
+                      {report.availableToSell}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex justify-between items-center">
+                  <span className={`text-sm ${analyticsMutedTextClass}`}>Reserved / Committed</span>
+                  <span className="font-medium">{report.reservedStock}</span>
                 </div>
 
                 <div className="flex justify-between items-center">
@@ -257,11 +286,11 @@ export function ItemPerformanceReportComponent({ reports, focusItemId }: ItemPer
                   <span className="font-medium">{report.turnoverRate.toFixed(1)}x</span>
                 </div>
 
-                {report.daysOfStock < 999 && (
+                {report.daysOfAvailableStock < 999 && (
                   <div className="flex justify-between items-center">
-                    <span className={`text-sm ${analyticsMutedTextClass}`}>Days of Stock</span>
-                    <span className={`font-medium ${report.daysOfStock < 30 ? analyticsToneText("gold") : ""}`}>
-                      {Math.round(report.daysOfStock)} days
+                    <span className={`text-sm ${analyticsMutedTextClass}`}>Days Sellable Stock</span>
+                    <span className={`font-medium ${report.daysOfAvailableStock < 30 ? analyticsToneText("gold") : ""}`}>
+                      {Math.round(report.daysOfAvailableStock)} days
                     </span>
                   </div>
                 )}

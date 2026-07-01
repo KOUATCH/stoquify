@@ -8,7 +8,7 @@ interface EditCustomerPageProps {
 }
 
 export const metadata = {
-  title: "Edit Customer | StockFlow",
+  title: "Edit Customer | Stoquify",
   description: "Edit customer identity, contact, receivable terms, language, and active state.",
 }
 

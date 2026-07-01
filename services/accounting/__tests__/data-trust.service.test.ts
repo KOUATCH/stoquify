@@ -20,7 +20,7 @@ jest.mock("@/prisma/db", () => {
     reconciliationRun: { count: jest.fn() },
     paymentException: { count: jest.fn() },
     payrollRun: { count: jest.fn() },
-    payrollRunLine: { count: jest.fn() },
+    payrollRunLine: { count: jest.fn(), findMany: jest.fn() },
     payrollPayslip: { count: jest.fn() },
     payrollDeclaration: { count: jest.fn() },
     payrollDeclarationEvidence: { count: jest.fn() },
@@ -41,108 +41,126 @@ jest.mock("@/prisma/db", () => {
       findMany: jest.fn(),
       create: jest.fn(),
     },
-  }
-  dbMock.$transaction = jest.fn((callback) => callback(dbMock))
-  return { db: dbMock }
-})
+  };
+  dbMock.$transaction = jest.fn((callback) => callback(dbMock));
+  return { db: dbMock };
+});
 
-import { AccountingPeriodStatus, AccountingSourceType, LedgerPostingBatchStatus, Prisma } from "@prisma/client"
+import {
+  AccountingPeriodStatus,
+  AccountingSourceType,
+  LedgerPostingBatchStatus,
+  Prisma,
+} from "@prisma/client";
 
-import { db } from "@/prisma/db"
-import { exportAccountantTrustPack, getAccountantPortalData } from "../data-trust.service"
+import { db } from "@/prisma/db";
+import {
+  exportAccountantTrustPack,
+  getAccountantPortalData,
+} from "../data-trust.service";
 
 const mockDb = db as unknown as {
-  $transaction: jest.Mock
-  organizationAccountingSettings: { findUnique: jest.Mock }
-  accountingPeriod: { findFirst: jest.Mock }
+  $transaction: jest.Mock;
+  organizationAccountingSettings: { findUnique: jest.Mock };
+  accountingPeriod: { findFirst: jest.Mock };
   journalEntryLine: {
-    aggregate: jest.Mock
-    findMany: jest.Mock
-  }
-  journalEntry: { count: jest.Mock }
+    aggregate: jest.Mock;
+    findMany: jest.Mock;
+  };
+  journalEntry: { count: jest.Mock };
   accountingSourceLink: {
-    count: jest.Mock
-    findMany: jest.Mock
-  }
-  ledgerPostingBatch: { count: jest.Mock }
-  businessEvent: { count: jest.Mock }
-  providerAccount: { count: jest.Mock; findMany: jest.Mock }
-  statementFile: { count: jest.Mock }
-  statementLine: { count: jest.Mock }
-  reconciliationRun: { count: jest.Mock }
-  paymentException: { count: jest.Mock }
-  payrollRun: { count: jest.Mock }
-  payrollRunLine: { count: jest.Mock }
-  payrollPayslip: { count: jest.Mock }
-  payrollDeclaration: { count: jest.Mock }
-  payrollDeclarationEvidence: { count: jest.Mock }
-  payrollPaymentBatch: { count: jest.Mock }
-  supplierInvoice: { count: jest.Mock }
-  supplierPayment: { count: jest.Mock }
-  fiscalDocument: { count: jest.Mock }
-  pOSOfflineEvent: { count: jest.Mock }
-  pOSOfflineSyncConflict: { count: jest.Mock }
-  pOSOfflineSyncCertificate: { count: jest.Mock }
+    count: jest.Mock;
+    findMany: jest.Mock;
+  };
+  ledgerPostingBatch: { count: jest.Mock };
+  businessEvent: { count: jest.Mock };
+  providerAccount: { count: jest.Mock; findMany: jest.Mock };
+  statementFile: { count: jest.Mock };
+  statementLine: { count: jest.Mock };
+  reconciliationRun: { count: jest.Mock };
+  paymentException: { count: jest.Mock };
+  payrollRun: { count: jest.Mock };
+  payrollRunLine: { count: jest.Mock; findMany: jest.Mock };
+  payrollPayslip: { count: jest.Mock };
+  payrollDeclaration: { count: jest.Mock };
+  payrollDeclarationEvidence: { count: jest.Mock };
+  payrollPaymentBatch: { count: jest.Mock };
+  supplierInvoice: { count: jest.Mock };
+  supplierPayment: { count: jest.Mock };
+  fiscalDocument: { count: jest.Mock };
+  pOSOfflineEvent: { count: jest.Mock };
+  pOSOfflineSyncConflict: { count: jest.Mock };
+  pOSOfflineSyncCertificate: { count: jest.Mock };
   ledgerAuditEvent: {
-    count: jest.Mock
-    findMany: jest.Mock
-    create: jest.Mock
-  }
+    count: jest.Mock;
+    findMany: jest.Mock;
+    create: jest.Mock;
+  };
   auditLog: {
-    count: jest.Mock
-    findMany: jest.Mock
-    create: jest.Mock
-  }
-}
+    count: jest.Mock;
+    findMany: jest.Mock;
+    create: jest.Mock;
+  };
+};
 
-const now = new Date("2026-06-15T12:00:00.000Z")
+const now = new Date("2026-06-15T12:00:00.000Z");
 
 function seedCleanTrustData() {
-  jest.clearAllMocks()
-  mockDb.$transaction.mockImplementation((callback) => callback(mockDb))
+  jest.clearAllMocks();
+  mockDb.$transaction.mockImplementation((callback) => callback(mockDb));
   mockDb.organizationAccountingSettings.findUnique.mockResolvedValue({
     accountingEnabled: true,
     setupStatus: "READY",
     baseCurrency: "XAF",
-  })
+  });
   mockDb.accountingPeriod.findFirst.mockResolvedValue({
     id: "period-1",
     name: "June 2026",
     status: AccountingPeriodStatus.OPEN,
     startDate: new Date("2026-06-01T00:00:00.000Z"),
     endDate: new Date("2026-06-30T23:59:59.999Z"),
-  })
+  });
   mockDb.journalEntryLine.aggregate.mockResolvedValue({
     _sum: {
       debit: new Prisma.Decimal(120000),
       credit: new Prisma.Decimal(120000),
     },
     _count: { _all: 4 },
-  })
-  mockDb.journalEntry.count.mockResolvedValueOnce(2).mockResolvedValueOnce(0).mockResolvedValueOnce(0)
-  mockDb.accountingSourceLink.count.mockResolvedValue(2)
-  mockDb.ledgerPostingBatch.count.mockResolvedValue(0).mockResolvedValueOnce(0).mockResolvedValueOnce(0).mockResolvedValueOnce(0)
-  mockDb.businessEvent.count.mockResolvedValue(0)
-  mockDb.paymentException.count.mockResolvedValueOnce(0).mockResolvedValueOnce(0)
-  mockDb.providerAccount.count.mockResolvedValue(0)
-  mockDb.providerAccount.findMany.mockResolvedValue([])
-  mockDb.statementFile.count.mockResolvedValue(0)
-  mockDb.statementLine.count.mockResolvedValue(0)
-  mockDb.reconciliationRun.count.mockResolvedValue(0)
-  mockDb.payrollDeclaration.count.mockResolvedValue(0)
-  mockDb.payrollDeclarationEvidence.count.mockResolvedValue(0)
-  mockDb.payrollPaymentBatch.count.mockResolvedValue(0)
-  mockDb.payrollRun.count.mockResolvedValue(0)
-  mockDb.payrollRunLine.count.mockResolvedValue(0)
-  mockDb.payrollPayslip.count.mockResolvedValue(0)
-  mockDb.supplierInvoice.count.mockResolvedValue(0)
-  mockDb.supplierPayment.count.mockResolvedValue(0)
-  mockDb.fiscalDocument.count.mockResolvedValueOnce(0).mockResolvedValueOnce(0)
-  mockDb.pOSOfflineEvent.count.mockResolvedValue(0)
-  mockDb.pOSOfflineSyncConflict.count.mockResolvedValue(0)
-  mockDb.pOSOfflineSyncCertificate.count.mockResolvedValue(0)
-  mockDb.ledgerAuditEvent.count.mockResolvedValue(3)
-  mockDb.auditLog.count.mockResolvedValue(2)
+  });
+  mockDb.journalEntry.count
+    .mockResolvedValueOnce(2)
+    .mockResolvedValueOnce(0)
+    .mockResolvedValueOnce(0);
+  mockDb.accountingSourceLink.count.mockResolvedValue(2);
+  mockDb.ledgerPostingBatch.count
+    .mockResolvedValue(0)
+    .mockResolvedValueOnce(0)
+    .mockResolvedValueOnce(0)
+    .mockResolvedValueOnce(0);
+  mockDb.businessEvent.count.mockResolvedValue(0);
+  mockDb.paymentException.count
+    .mockResolvedValueOnce(0)
+    .mockResolvedValueOnce(0);
+  mockDb.providerAccount.count.mockResolvedValue(0);
+  mockDb.providerAccount.findMany.mockResolvedValue([]);
+  mockDb.statementFile.count.mockResolvedValue(0);
+  mockDb.statementLine.count.mockResolvedValue(0);
+  mockDb.reconciliationRun.count.mockResolvedValue(0);
+  mockDb.payrollDeclaration.count.mockResolvedValue(0);
+  mockDb.payrollDeclarationEvidence.count.mockResolvedValue(0);
+  mockDb.payrollPaymentBatch.count.mockResolvedValue(0);
+  mockDb.payrollRun.count.mockResolvedValue(0);
+  mockDb.payrollRunLine.count.mockResolvedValue(0);
+  mockDb.payrollRunLine.findMany.mockResolvedValue([]);
+  mockDb.payrollPayslip.count.mockResolvedValue(0);
+  mockDb.supplierInvoice.count.mockResolvedValue(0);
+  mockDb.supplierPayment.count.mockResolvedValue(0);
+  mockDb.fiscalDocument.count.mockResolvedValueOnce(0).mockResolvedValueOnce(0);
+  mockDb.pOSOfflineEvent.count.mockResolvedValue(0);
+  mockDb.pOSOfflineSyncConflict.count.mockResolvedValue(0);
+  mockDb.pOSOfflineSyncCertificate.count.mockResolvedValue(0);
+  mockDb.ledgerAuditEvent.count.mockResolvedValue(3);
+  mockDb.auditLog.count.mockResolvedValue(2);
   mockDb.accountingSourceLink.findMany.mockResolvedValue([
     {
       id: "source-link-1",
@@ -154,7 +172,7 @@ function seedCleanTrustData() {
       journalEntry: { entryNumber: "JE-1" },
       createdAt: new Date("2026-06-15T10:00:00.000Z"),
     },
-  ])
+  ]);
   mockDb.ledgerAuditEvent.findMany.mockResolvedValue([
     {
       id: "ledger-audit-1",
@@ -164,7 +182,7 @@ function seedCleanTrustData() {
       resourceId: "batch-1",
       createdAt: new Date("2026-06-15T10:01:00.000Z"),
     },
-  ])
+  ]);
   mockDb.auditLog.findMany.mockResolvedValue([
     {
       id: "control-audit-1",
@@ -175,44 +193,56 @@ function seedCleanTrustData() {
       changes: { allowed: true },
       createdAt: new Date("2026-06-15T10:02:00.000Z"),
     },
-  ])
-  mockDb.ledgerAuditEvent.create.mockResolvedValue({ id: "export-audit-1" })
-  mockDb.auditLog.create.mockResolvedValue({ id: "control-audit-created" })
-  mockDb.journalEntryLine.findMany.mockResolvedValue([])
+  ]);
+  mockDb.ledgerAuditEvent.create.mockResolvedValue({ id: "export-audit-1" });
+  mockDb.auditLog.create.mockResolvedValue({ id: "control-audit-created" });
+  mockDb.journalEntryLine.findMany.mockResolvedValue([]);
 }
 
 describe("accountant data trust service", () => {
   beforeEach(() => {
-    seedCleanTrustData()
-  })
+    seedCleanTrustData();
+  });
 
   it("certifies clean ledger-backed evidence at T4", async () => {
-    const result = await getAccountantPortalData({ organizationId: "org-1" }, db, now)
+    const result = await getAccountantPortalData(
+      { organizationId: "org-1" },
+      db,
+      now,
+    );
 
-    expect(result.certificate.level).toBe("T4")
-    expect(result.certificate.verdict).toBe("CERTIFIED")
-    expect(result.exportReadiness.canExportCertifiedPack).toBe(true)
-    expect(result.summary.sourceLinkCoveragePct).toBe(100)
+    expect(result.certificate.level).toBe("T4");
+    expect(result.certificate.verdict).toBe("CERTIFIED");
+    expect(result.exportReadiness.canExportCertifiedPack).toBe(true);
+    expect(result.summary.sourceLinkCoveragePct).toBe(100);
     expect(result.figures.activityDebit).toMatchObject({
       available: true,
       amount: "120000.00",
       provenance: "POSTED",
-    })
-  })
+    });
+  });
 
   it("marks critical source-link failures as T0 and suppresses financial figures", async () => {
-    seedCleanTrustData()
-    mockDb.journalEntry.count.mockReset().mockResolvedValueOnce(2).mockResolvedValueOnce(1).mockResolvedValueOnce(0)
+    seedCleanTrustData();
+    mockDb.journalEntry.count
+      .mockReset()
+      .mockResolvedValueOnce(2)
+      .mockResolvedValueOnce(1)
+      .mockResolvedValueOnce(0);
 
-    const result = await getAccountantPortalData({ organizationId: "org-1" }, db, now)
+    const result = await getAccountantPortalData(
+      { organizationId: "org-1" },
+      db,
+      now,
+    );
 
-    expect(result.certificate.level).toBe("T0")
-    expect(result.certificate.verdict).toBe("NON_COMPLIANT")
-    expect(result.exportReadiness.canExportCertifiedPack).toBe(false)
+    expect(result.certificate.level).toBe("T0");
+    expect(result.certificate.verdict).toBe("NON_COMPLIANT");
+    expect(result.exportReadiness.canExportCertifiedPack).toBe(false);
     expect(result.figures.activityDebit).toMatchObject({
       available: false,
       provenance: "UNAVAILABLE",
-    })
+    });
     expect(result.blockers).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -220,8 +250,8 @@ describe("accountant data trust service", () => {
           severity: "critical",
         }),
       ]),
-    )
-  })
+    );
+  });
 
   it("exports a certified trust pack with sensitive-action audit and ledger audit evidence", async () => {
     const result = await exportAccountantTrustPack({
@@ -231,11 +261,11 @@ describe("accountant data trust service", () => {
       lastAuthAt: now,
       now,
       includeLedgerRows: true,
-    })
+    });
 
-    expect(result.verdict).toBe("CERTIFIED")
-    expect(result.contentHash).toMatch(/^sha256:/)
-    expect(result.content).toContain("AQSTOQFLOW_ACCOUNTANT_TRUST_PACK")
+    expect(result.verdict).toBe("CERTIFIED");
+    expect(result.contentHash).toMatch(/^sha256:/);
+    expect(result.content).toContain("AQSTOQFLOW_ACCOUNTANT_TRUST_PACK");
     expect(mockDb.auditLog.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
@@ -243,7 +273,7 @@ describe("accountant data trust service", () => {
           entityType: "AccountantTrustPack",
         }),
       }),
-    )
+    );
     expect(mockDb.ledgerAuditEvent.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
@@ -251,12 +281,16 @@ describe("accountant data trust service", () => {
           resourceType: "AccountantTrustPack",
         }),
       }),
-    )
-  })
+    );
+  });
 
   it("blocks trust-pack export when certification gates fail", async () => {
-    seedCleanTrustData()
-    mockDb.journalEntry.count.mockReset().mockResolvedValueOnce(2).mockResolvedValueOnce(1).mockResolvedValueOnce(0)
+    seedCleanTrustData();
+    mockDb.journalEntry.count
+      .mockReset()
+      .mockResolvedValueOnce(2)
+      .mockResolvedValueOnce(1)
+      .mockResolvedValueOnce(0);
 
     await expect(
       exportAccountantTrustPack({
@@ -266,20 +300,24 @@ describe("accountant data trust service", () => {
         lastAuthAt: now,
         now,
       }),
-    ).rejects.toThrow(/requires T4/i)
-  })
+    ).rejects.toThrow(/requires T4/i);
+  });
 
   it("blocks certified trust packs when active provider accounts lack statement evidence", async () => {
-    seedCleanTrustData()
-    mockDb.providerAccount.count.mockResolvedValue(1)
-    mockDb.statementFile.count.mockResolvedValue(0)
-    mockDb.statementLine.count.mockResolvedValue(0)
-    mockDb.reconciliationRun.count.mockResolvedValue(0)
+    seedCleanTrustData();
+    mockDb.providerAccount.count.mockResolvedValue(1);
+    mockDb.statementFile.count.mockResolvedValue(0);
+    mockDb.statementLine.count.mockResolvedValue(0);
+    mockDb.reconciliationRun.count.mockResolvedValue(0);
 
-    const result = await getAccountantPortalData({ organizationId: "org-1" }, db, now)
+    const result = await getAccountantPortalData(
+      { organizationId: "org-1" },
+      db,
+      now,
+    );
 
-    expect(result.certificate.level).toBe("T2")
-    expect(result.exportReadiness.canExportCertifiedPack).toBe(false)
+    expect(result.certificate.level).toBe("T2");
+    expect(result.exportReadiness.canExportCertifiedPack).toBe(false);
     expect(result.blockers).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -288,7 +326,7 @@ describe("accountant data trust service", () => {
           gate: "payments.provider-statement-evidence",
         }),
       ]),
-    )
+    );
     expect(result.moduleEvidence).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -302,24 +340,39 @@ describe("accountant data trust service", () => {
           ]),
         }),
       ]),
-    )
-  })
+    );
+  });
 
   it("blocks certified trust packs when payroll posting and source-link evidence is incomplete", async () => {
-    seedCleanTrustData()
-    mockDb.payrollRun.count.mockReset().mockResolvedValueOnce(1).mockResolvedValueOnce(0)
+    seedCleanTrustData();
+    mockDb.payrollRun.count
+      .mockReset()
+      .mockResolvedValueOnce(1)
+      .mockResolvedValueOnce(1)
+      .mockResolvedValueOnce(0);
     mockDb.payrollPaymentBatch.count
       .mockReset()
       .mockResolvedValueOnce(0)
       .mockResolvedValueOnce(0)
       .mockResolvedValueOnce(0)
-      .mockResolvedValueOnce(1)
-    mockDb.ledgerPostingBatch.count.mockReset().mockResolvedValueOnce(0).mockResolvedValueOnce(0).mockResolvedValueOnce(1)
+      .mockResolvedValueOnce(0)
+      .mockResolvedValueOnce(0)
+      .mockResolvedValueOnce(0)
+      .mockResolvedValueOnce(1);
+    mockDb.ledgerPostingBatch.count
+      .mockReset()
+      .mockResolvedValueOnce(0)
+      .mockResolvedValueOnce(0)
+      .mockResolvedValueOnce(1);
 
-    const result = await getAccountantPortalData({ organizationId: "org-1" }, db, now)
+    const result = await getAccountantPortalData(
+      { organizationId: "org-1" },
+      db,
+      now,
+    );
 
-    expect(result.certificate.level).toBe("T0")
-    expect(result.exportReadiness.canExportCertifiedPack).toBe(false)
+    expect(result.certificate.level).toBe("T0");
+    expect(result.exportReadiness.canExportCertifiedPack).toBe(false);
     expect(result.blockers).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -333,12 +386,17 @@ describe("accountant data trust service", () => {
           gate: "payroll.payment.posting",
         }),
         expect.objectContaining({
+          id: "payroll-posted-runs-component-proof-missing",
+          severity: "critical",
+          gate: "payroll.accounting.component-proof",
+        }),
+        expect.objectContaining({
           id: "payroll-ledger-source-link-missing",
           severity: "critical",
           gate: "payroll.accounting.source-link",
         }),
       ]),
-    )
+    );
     expect(result.moduleEvidence).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -346,47 +404,118 @@ describe("accountant data trust service", () => {
           status: "blocked",
           facts: expect.arrayContaining([
             { label: "Runs missing ledger", value: 1 },
+            { label: "Posted run component proof gaps", value: 1 },
             { label: "Payments missing ledger", value: 1 },
             { label: "Payroll batches missing source links", value: 1 },
           ]),
         }),
       ]),
-    )
-  })
+    );
+  });
+
+  it("blocks certified trust packs when payroll effective component proof is missing from run lines", async () => {
+    seedCleanTrustData();
+    mockDb.payrollRunLine.findMany.mockResolvedValue([
+      {
+        calculationSnapshot: {
+          payrollRubriqueGrossAmount: "25000.00",
+        },
+      },
+    ]);
+
+    const result = await getAccountantPortalData(
+      { organizationId: "org-1" },
+      db,
+      now,
+    );
+
+    expect(result.certificate.level).toBe("T0");
+    expect(result.exportReadiness.canExportCertifiedPack).toBe(false);
+    expect(result.blockers).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "payroll-effective-component-proof-missing",
+          severity: "critical",
+          gate: "payroll.accounting.effective-component-proof",
+        }),
+      ]),
+    );
+    expect(result.moduleEvidence).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          module: "payroll",
+          status: "blocked",
+          facts: expect.arrayContaining([
+            { label: "Effective component proof gaps", value: 1 },
+          ]),
+        }),
+      ]),
+    );
+  });
 
   it("expands payroll close data-trust gates to register, declaration, payslip, and payment evidence", async () => {
-    seedCleanTrustData()
+    seedCleanTrustData();
     mockDb.payrollDeclaration.count
       .mockReset()
       .mockResolvedValueOnce(0)
       .mockResolvedValueOnce(0)
       .mockResolvedValueOnce(1)
-      .mockResolvedValueOnce(1)
-    mockDb.payrollDeclarationEvidence.count.mockResolvedValue(1)
+      .mockResolvedValueOnce(1);
+    mockDb.payrollDeclarationEvidence.count.mockResolvedValue(1);
     mockDb.payrollPaymentBatch.count
       .mockReset()
       .mockResolvedValueOnce(1)
       .mockResolvedValueOnce(1)
       .mockResolvedValueOnce(1)
+      .mockResolvedValueOnce(1)
+      .mockResolvedValueOnce(1)
+      .mockResolvedValueOnce(1)
+      .mockResolvedValueOnce(0);
+    mockDb.payrollRun.count
+      .mockReset()
       .mockResolvedValueOnce(0)
-    mockDb.payrollRun.count.mockReset().mockResolvedValueOnce(0).mockResolvedValueOnce(1)
-    mockDb.payrollRunLine.count.mockResolvedValue(2)
-    mockDb.payrollPayslip.count.mockResolvedValue(1)
+      .mockResolvedValueOnce(1)
+      .mockResolvedValueOnce(1);
+    mockDb.payrollRunLine.count.mockResolvedValue(2);
+    mockDb.payrollPayslip.count.mockResolvedValue(1);
 
-    const result = await getAccountantPortalData({ organizationId: "org-1" }, db, now)
+    const result = await getAccountantPortalData(
+      { organizationId: "org-1" },
+      db,
+      now,
+    );
 
-    expect(result.certificate.level).toBe("T0")
-    expect(result.exportReadiness.canExportCertifiedPack).toBe(false)
+    expect(result.certificate.level).toBe("T0");
+    expect(result.exportReadiness.canExportCertifiedPack).toBe(false);
     expect(result.source.sourceTables).toEqual(
-      expect.arrayContaining(["payroll_run_lines", "payroll_payslips", "payroll_declaration_evidence", "payroll_payment_allocations"]),
-    )
+      expect.arrayContaining([
+        "payroll_run_lines",
+        "payroll_payslips",
+        "payroll_declaration_evidence",
+        "payroll_payment_allocations",
+      ]),
+    );
     expect(result.certificate.evidence).toEqual(
-      expect.arrayContaining(["payroll register tie-out, payslip proof, payment settlement, and declaration lifecycle evidence scan"]),
-    )
+      expect.arrayContaining([
+        "payroll register tie-out, payslip proof, payment settlement register/component/provider-adapter proof, declaration lifecycle register/lifecycle-contract proof, and authority-adapter proof scan",
+      ]),
+    );
     expect(result.blockers).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
           id: "payroll-declaration-lifecycle-evidence-missing",
+          severity: "high",
+        }),
+        expect.objectContaining({
+          id: "payroll-declaration-register-proof-missing",
+          severity: "high",
+        }),
+        expect.objectContaining({
+          id: "payroll-declaration-authority-adapter-proof-missing",
+          severity: "high",
+        }),
+        expect.objectContaining({
+          id: "payroll-declaration-authority-lifecycle-proof-missing",
           severity: "high",
         }),
         expect.objectContaining({
@@ -402,8 +531,24 @@ describe("accountant data trust service", () => {
           severity: "high",
         }),
         expect.objectContaining({
+          id: "payroll-payment-settlement-register-proof-missing",
+          severity: "high",
+        }),
+        expect.objectContaining({
+          id: "payroll-payment-settlement-component-proof-missing",
+          severity: "high",
+        }),
+        expect.objectContaining({
+          id: "payroll-payment-provider-adapter-proof-missing",
+          severity: "high",
+        }),
+        expect.objectContaining({
           id: "payroll-payment-allocations-missing",
           severity: "high",
+        }),
+        expect.objectContaining({
+          id: "payroll-posted-runs-component-proof-missing",
+          severity: "critical",
         }),
         expect.objectContaining({
           id: "payroll-run-lines-without-payslips",
@@ -418,7 +563,7 @@ describe("accountant data trust service", () => {
           severity: "high",
         }),
       ]),
-    )
+    );
     expect(result.moduleEvidence).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -427,21 +572,28 @@ describe("accountant data trust service", () => {
           facts: expect.arrayContaining([
             { label: "In-progress declarations", value: 1 },
             { label: "Declaration evidence gaps", value: 1 },
+            { label: "Declaration register proof gaps", value: 1 },
+            { label: "Declaration adapter proof gaps", value: 1 },
+            { label: "Declaration lifecycle proof gaps", value: 1 },
             { label: "Declaration amendments", value: 1 },
             { label: "Payment reconciliation evidence gaps", value: 1 },
+            { label: "Payment register proof gaps", value: 1 },
+            { label: "Payment component proof gaps", value: 1 },
+            { label: "Payment adapter proof gaps", value: 1 },
             { label: "Payment allocation gaps", value: 1 },
+            { label: "Posted run component proof gaps", value: 1 },
             { label: "Run lines missing payslips", value: 2 },
             { label: "Payslips missing proof hashes", value: 1 },
             { label: "Paid runs missing settled payments", value: 1 },
           ]),
         }),
       ]),
-    )
-  })
+    );
+  });
 
   it("blocks certified trust packs when provider statement cadence is stale", async () => {
-    seedCleanTrustData()
-    mockDb.providerAccount.count.mockResolvedValue(1)
+    seedCleanTrustData();
+    mockDb.providerAccount.count.mockResolvedValue(1);
     mockDb.providerAccount.findMany.mockResolvedValue([
       {
         id: "provider-account-1",
@@ -456,15 +608,19 @@ describe("accountant data trust service", () => {
           },
         ],
       },
-    ])
-    mockDb.statementFile.count.mockResolvedValue(1)
-    mockDb.statementLine.count.mockResolvedValue(4)
-    mockDb.reconciliationRun.count.mockResolvedValue(1)
+    ]);
+    mockDb.statementFile.count.mockResolvedValue(1);
+    mockDb.statementLine.count.mockResolvedValue(4);
+    mockDb.reconciliationRun.count.mockResolvedValue(1);
 
-    const result = await getAccountantPortalData({ organizationId: "org-1" }, db, now)
+    const result = await getAccountantPortalData(
+      { organizationId: "org-1" },
+      db,
+      now,
+    );
 
-    expect(result.certificate.level).toBe("T2")
-    expect(result.exportReadiness.canExportCertifiedPack).toBe(false)
+    expect(result.certificate.level).toBe("T2");
+    expect(result.exportReadiness.canExportCertifiedPack).toBe(false);
     expect(result.blockers).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -473,7 +629,7 @@ describe("accountant data trust service", () => {
           gate: "payments.provider-statement-cadence",
         }),
       ]),
-    )
+    );
     expect(result.blockers).toEqual(
       expect.not.arrayContaining([
         expect.objectContaining({ id: "provider-statement-evidence-missing" }),
@@ -481,21 +637,23 @@ describe("accountant data trust service", () => {
           id: "provider-reconciliation-signoff-missing",
         }),
       ]),
-    )
+    );
     expect(result.moduleEvidence).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
           module: "payments",
           status: "blocked",
-          facts: expect.arrayContaining([{ label: "Stale statement accounts", value: 1 }]),
+          facts: expect.arrayContaining([
+            { label: "Stale statement accounts", value: 1 },
+          ]),
         }),
       ]),
-    )
-  })
+    );
+  });
 
   it("clears payment trust-pack blockers when statement evidence and signed reconciliation are current", async () => {
-    seedCleanTrustData()
-    mockDb.providerAccount.count.mockResolvedValue(1)
+    seedCleanTrustData();
+    mockDb.providerAccount.count.mockResolvedValue(1);
     mockDb.providerAccount.findMany.mockResolvedValue([
       {
         id: "provider-account-1",
@@ -510,15 +668,19 @@ describe("accountant data trust service", () => {
           },
         ],
       },
-    ])
-    mockDb.statementFile.count.mockResolvedValue(1)
-    mockDb.statementLine.count.mockResolvedValue(4)
-    mockDb.reconciliationRun.count.mockResolvedValue(1)
+    ]);
+    mockDb.statementFile.count.mockResolvedValue(1);
+    mockDb.statementLine.count.mockResolvedValue(4);
+    mockDb.reconciliationRun.count.mockResolvedValue(1);
 
-    const result = await getAccountantPortalData({ organizationId: "org-1" }, db, now)
+    const result = await getAccountantPortalData(
+      { organizationId: "org-1" },
+      db,
+      now,
+    );
 
-    expect(result.certificate.level).toBe("T4")
-    expect(result.exportReadiness.canExportCertifiedPack).toBe(true)
+    expect(result.certificate.level).toBe("T4");
+    expect(result.exportReadiness.canExportCertifiedPack).toBe(true);
     expect(result.blockers).toEqual(
       expect.not.arrayContaining([
         expect.objectContaining({ id: "provider-statement-evidence-missing" }),
@@ -527,7 +689,7 @@ describe("accountant data trust service", () => {
           id: "provider-reconciliation-signoff-missing",
         }),
       ]),
-    )
+    );
     expect(result.moduleEvidence).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -541,18 +703,22 @@ describe("accountant data trust service", () => {
           ]),
         }),
       ]),
-    )
-  })
+    );
+  });
 
   it("surfaces offline POS sync blockers in accountant trust evidence", async () => {
-    seedCleanTrustData()
-    mockDb.pOSOfflineEvent.count.mockResolvedValue(2)
-    mockDb.pOSOfflineSyncConflict.count.mockResolvedValue(1)
-    mockDb.pOSOfflineSyncCertificate.count.mockResolvedValue(1)
+    seedCleanTrustData();
+    mockDb.pOSOfflineEvent.count.mockResolvedValue(2);
+    mockDb.pOSOfflineSyncConflict.count.mockResolvedValue(1);
+    mockDb.pOSOfflineSyncCertificate.count.mockResolvedValue(1);
 
-    const result = await getAccountantPortalData({ organizationId: "org-1" }, db, now)
+    const result = await getAccountantPortalData(
+      { organizationId: "org-1" },
+      db,
+      now,
+    );
 
-    expect(result.exportReadiness.canExportCertifiedPack).toBe(false)
+    expect(result.exportReadiness.canExportCertifiedPack).toBe(false);
     expect(result.blockers).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -568,7 +734,7 @@ describe("accountant data trust service", () => {
           severity: "medium",
         }),
       ]),
-    )
+    );
     expect(result.moduleEvidence).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -580,6 +746,6 @@ describe("accountant data trust service", () => {
           ]),
         }),
       ]),
-    )
-  })
-})
+    );
+  });
+});

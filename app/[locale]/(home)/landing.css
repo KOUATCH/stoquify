@@ -98,6 +98,7 @@
     linear-gradient(145deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.018)),
     rgba(23, 37, 43, 0.84);
   box-shadow: 0 24px 70px rgba(2, 8, 23, 0.24);
+  -webkit-backdrop-filter: blur(14px);
   backdrop-filter: blur(14px);
 }
 
@@ -261,6 +262,9 @@
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
+          mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
           mask-composite: exclude;
   pointer-events: none;
 }

@@ -36,6 +36,7 @@ import { getInventoryCashSnapshot } from "@/services/snapshots/inventory-cash-sn
 import { getPaymentTruthSnapshot } from "@/services/snapshots/payment-truth-snapshot.service"
 import type {
   PaymentTruthMetrics,
+  PayrollFinanceForecastMetrics,
   SnapshotBlocker,
   SnapshotRedaction,
   SnapshotResult,
@@ -149,6 +150,7 @@ export async function getCashCommandData(input: CashCommandInput): Promise<CashC
 
 export function composeCashCommandData(input: ComposeCashCommandInput): CashCommandData {
   const { tenantOperating, paymentTruth, inventoryCash, closeReadiness } = input.snapshots
+  const payrollForecast = tenantOperating.metrics.payrollFinanceForecast
   const drawerState = buildDrawerState(input.drawerDashboard)
   const proofSubjects = buildProofSubjects(input)
   const paymentTransactionProofSubject = proofSubject(proofSubjects, "payment.transaction")
@@ -182,6 +184,13 @@ export function composeCashCommandData(input: ComposeCashCommandInput): CashComm
     href: "/dashboard/inventory/stock",
     requiredPermission: "inventory.read",
     moduleSlug: "inventory",
+  })
+  const payrollAction = actionLink({
+    id: "cash-command-open-payroll-balances",
+    label: "Open payroll payments",
+    href: "/dashboard/payroll/payments",
+    requiredPermission: "payroll.payments.reconcile",
+    moduleSlug: "payroll",
   })
 
   const cards: BIKpiCard[] = [
@@ -252,6 +261,64 @@ export function composeCashCommandData(input: ComposeCashCommandInput): CashComm
       drillThroughLabel: "Open provider proof",
     }),
     createSnapshotKpi({
+      id: "employee_balance_recovery",
+      title: "Employee balance recovery",
+      detail: "Open payroll recovery or refund cases that affect net-pay clearing and cash planning.",
+      value: tenantOperating.metrics.employeeBalanceOutstandingAmount,
+      unit: input.currency,
+      format: "currency",
+      moduleSlug: "payroll",
+      requiredPermission: "payroll.payments.reconcile",
+      snapshot: tenantOperating,
+      href: "/dashboard/payroll/payments",
+      actionLink: payrollAction,
+      drillThroughLabel: "Open employee balance proof",
+    }),
+    payrollForecastCard(
+      createSnapshotKpi({
+        id: "upcoming_payroll_net_pay",
+        title: "Upcoming net pay",
+        detail: payrollForecast.nextPayDate
+          ? `Aggregate payroll payment batch value due ${dateLabel(payrollForecast.nextPayDate)}; person-level amounts stay redacted.`
+          : payrollForecast.message,
+        value: payrollForecast.upcomingNetPayAmount,
+        unit: input.currency,
+        format: "currency",
+        moduleSlug: "payroll",
+        requiredPermission: "payroll.payments.reconcile",
+        snapshot: tenantOperating,
+        href: "/dashboard/payroll/payments",
+        actionLink: payrollAction,
+        drillThroughLabel: "Open payroll payment forecast proof",
+      }),
+      payrollForecast,
+    ),
+    payrollForecastCard(
+      createSnapshotKpi({
+        id: "upcoming_statutory_liability",
+        title: "Upcoming statutory liability",
+        detail: payrollForecast.nextDeclarationDueDate
+          ? `Aggregate payroll declaration liability due ${dateLabel(payrollForecast.nextDeclarationDueDate)}; person-level amounts stay redacted.`
+          : payrollForecast.message,
+        value: payrollForecast.upcomingStatutoryLiabilityAmount,
+        unit: input.currency,
+        format: "currency",
+        moduleSlug: "payroll",
+        requiredPermission: "payroll.declarations.manage",
+        snapshot: tenantOperating,
+        href: "/dashboard/payroll/declarations",
+        actionLink: actionLink({
+          id: "cash-command-open-payroll-declarations",
+          label: "Open declarations",
+          href: "/dashboard/payroll/declarations",
+          requiredPermission: "payroll.declarations.manage",
+          moduleSlug: "payroll",
+        }),
+        drillThroughLabel: "Open payroll declaration forecast proof",
+      }),
+      payrollForecast,
+    ),
+    createSnapshotKpi({
       id: "stock_cash_buffer",
       title: "Stock cash buffer",
       detail: "Inventory value currently tying cash to stock, including zero or negative-stock pressure.",
@@ -271,10 +338,17 @@ export function composeCashCommandData(input: ComposeCashCommandInput): CashComm
   const freshness = aggregateFreshness(input.generatedAt, cards.map((card) => card.freshness))
   const evidenceGrade = strongestVisibleGrade(cards.map((card) => card.evidenceGrade))
   const state = commandState(cards, input.actionQueue.summary.total)
-  const primaryAction = summary.unreconciledCash > 0 || summary.openSuspenseCount > 0 ? reconciliationAction : drawerState.highRiskAlertCount > 0 ? drawerAction : cashAction
-  const changes = buildChanges({ input, cards, drawerState, reconciliationAction, drawerAction })
+  const primaryAction =
+    summary.unreconciledCash > 0 || summary.openSuspenseCount > 0
+      ? reconciliationAction
+      : drawerState.highRiskAlertCount > 0
+        ? drawerAction
+        : summary.employeeBalanceOutstandingAmount > 0
+          ? payrollAction
+          : cashAction
+  const changes = buildChanges({ input, cards, drawerState, reconciliationAction, drawerAction, payrollAction })
   const actionsToday = buildActionsToday(input.actionQueue, input.generatedAt)
-  const risks = buildRisks({ input, cards, drawerState, reconciliationAction, drawerAction })
+  const risks = buildRisks({ input, cards, drawerState, reconciliationAction, drawerAction, payrollAction })
   const blockers = uniqueById(cards.flatMap((card) => card.blockers))
   const redactions = uniqueById(cards.flatMap((card) => card.redactions))
 
@@ -347,6 +421,33 @@ export function composeCashCommandData(input: ComposeCashCommandInput): CashComm
   }
 }
 
+function payrollForecastCard(card: BIKpiCard, forecast: PayrollFinanceForecastMetrics): BIKpiCard {
+  const blockers = payrollForecastBlockers(card)
+  const blocked = !forecast.authoritative || forecast.blockerCodes.length > 0
+  const nextAction = blockers.find((blocker) => blocker.nextAction)?.nextAction
+
+  return {
+    ...card,
+    state: blocked ? "blocked" : card.freshness.stale ? "stale" : "ready",
+    evidenceGrade: blocked ? "blocked" : "posted",
+    trustState: blocked ? "blocked" : "posted",
+    detail: blocked ? `${forecast.message}${nextAction ? ` ${nextAction}` : ""}` : card.detail,
+    blockers,
+    redactions: uniqueById([
+      ...card.redactions,
+      {
+        id: `cash-command-${card.id}-person-values-redacted`,
+        field: "payroll.personLevelAmounts",
+        reason: "Cash Command exposes aggregate payroll forecast amounts only; person-level payroll values stay inside payroll.",
+        policy: "KONTAVA_SENSITIVE_PAYROLL_EVIDENCE",
+      },
+    ]),
+  }
+}
+
+function payrollForecastBlockers(card: BIKpiCard): BIBlocker[] {
+  return card.blockers.filter((blocker) => blocker.gate === "payroll_finance_forecast")
+}
 function buildCashDrawerSignals(input: {
   organizationId: string
   drawerDashboard: ComposeCashCommandInput["drawerDashboard"]
@@ -452,12 +553,16 @@ function buildChanges(input: {
   drawerState: CashCommandDrawerState
   reconciliationAction: BIActionLink
   drawerAction: BIActionLink
+  payrollAction: BIActionLink
 }): BIChangeEvent[] {
   const { paymentTruth, tenantOperating } = input.input.snapshots
   const cashCollected = cardById(input.cards, "cash_collected")
   const suspense = cardById(input.cards, "unreconciled_cash")
   const drawer = cardById(input.cards, "drawer_risk")
   const provider = cardById(input.cards, "provider_risk")
+  const payrollRecovery = cardById(input.cards, "employee_balance_recovery")
+  const payrollNetPay = cardById(input.cards, "upcoming_payroll_net_pay")
+  const payrollForecast = tenantOperating.metrics.payrollFinanceForecast
   const changes = [
     cashCollected
       ? changeFromCard({
@@ -506,6 +611,37 @@ function buildChanges(input: {
           actionLink: input.reconciliationAction,
         })
       : null,
+    payrollRecovery && tenantOperating.metrics.activeEmployeeBalanceCaseCount > 0
+      ? changeFromCard({
+          card: payrollRecovery,
+          title: "Employee balance recovery is open",
+          detail: `${formatAmount(
+            tenantOperating.metrics.employeeBalanceOutstandingAmount,
+            input.input.currency,
+          )} remains outstanding across ${tenantOperating.metrics.activeEmployeeBalanceCaseCount} case(s).`,
+          businessImpact: "Net-pay clearing and cash planning remain incomplete until recovery cases are settled or reviewed.",
+          direction: "new",
+          severity:
+            tenantOperating.metrics.employeeBalanceOutstandingAmount >= 500_000 ||
+            tenantOperating.metrics.activeEmployeeBalanceCaseCount >= 3
+              ? "high"
+              : "medium",
+          currentValue: tenantOperating.metrics.employeeBalanceOutstandingAmount,
+          actionLink: input.payrollAction,
+        })
+      : null,
+    payrollNetPay && payrollForecast.blockerCodes.length > 0
+      ? changeFromCard({
+          card: payrollNetPay,
+          title: "Payroll forecast proof is blocked",
+          detail: `${payrollForecast.blockerCodes.length} payroll forecast blocker(s) are withholding aggregate payroll cash obligations.`,
+          businessImpact: "Cash planning and profitability views must not rely on payroll obligations until payroll proof is complete.",
+          direction: "new",
+          severity: "high",
+          currentValue: payrollForecast.blockerCodes.length,
+          actionLink: input.payrollAction,
+        })
+      : null,
   ]
 
   return changes.filter(Boolean) as BIChangeEvent[]
@@ -541,8 +677,11 @@ function buildRisks(input: {
   drawerState: CashCommandDrawerState
   reconciliationAction: BIActionLink
   drawerAction: BIActionLink
+  payrollAction: BIActionLink
 }): BIRiskRank[] {
   const paymentTruth = input.input.snapshots.paymentTruth
+  const tenantOperating = input.input.snapshots.tenantOperating
+  const payrollForecast = tenantOperating.metrics.payrollFinanceForecast
   const risks = [
     riskFromCard({
       rank: 1,
@@ -580,6 +719,32 @@ function buildRisks(input: {
       urgency: providerRiskCount(paymentTruth) > 0 ? "today" : "watch",
       actionLink: input.reconciliationAction,
     }),
+    riskFromCard({
+      rank: 4,
+      card: cardById(input.cards, "employee_balance_recovery"),
+      title: "Employee balance recovery",
+      detail: "Open payroll recovery or refund balances affect net-pay clearing and cash planning.",
+      businessImpact: "Unsettled employee balances can leave payroll clearing, cash forecasts, and close readiness incomplete.",
+      severity: tenantOperating.metrics.activeEmployeeBalanceCaseCount > 0 ? "high" : "info",
+      severityScore: tenantOperating.metrics.activeEmployeeBalanceCaseCount > 0 ? 74 : 10,
+      moneyImpact: tenantOperating.metrics.employeeBalanceOutstandingAmount,
+      urgency: tenantOperating.metrics.activeEmployeeBalanceCaseCount > 0 ? "today" : "watch",
+      actionLink: input.payrollAction,
+    }),
+    payrollForecast.blockerCodes.length > 0
+      ? riskFromCard({
+          rank: 5,
+          card: cardById(input.cards, "upcoming_payroll_net_pay"),
+          title: "Payroll forecast proof",
+          detail: "Payroll net-pay or statutory obligation forecasts are withheld until payroll-owned proof is complete.",
+          businessImpact: "Cash planning, profitability, and owner decisions must not use payroll estimates when the register, ledger, payment, or declaration proof is incomplete.",
+          severity: "high",
+          severityScore: 80,
+          moneyImpact: null,
+          urgency: "today",
+          actionLink: input.payrollAction,
+        })
+      : null,
   ].filter((risk): risk is BIRiskRank => Boolean(risk))
 
   return risks.sort((left, right) => right.severityScore - left.severityScore).map((risk, index) => ({
@@ -699,6 +864,11 @@ function buildSummary(input: ComposeCashCommandInput, cards: BIKpiCard[], drawer
     drawerVariance: drawerState.liveVariance + drawerState.sessionVariance,
     drawerAlertCount: drawerState.alertCount,
     providerRiskCount: providerRiskCount(paymentTruth),
+    activeEmployeeBalanceCaseCount: input.snapshots.tenantOperating.metrics.activeEmployeeBalanceCaseCount,
+    employeeBalanceOutstandingAmount: input.snapshots.tenantOperating.metrics.employeeBalanceOutstandingAmount,
+    upcomingPayrollNetPayAmount: input.snapshots.tenantOperating.metrics.payrollFinanceForecast.upcomingNetPayAmount,
+    upcomingStatutoryLiabilityAmount: input.snapshots.tenantOperating.metrics.payrollFinanceForecast.upcomingStatutoryLiabilityAmount,
+    payrollForecastTotalAmount: input.snapshots.tenantOperating.metrics.payrollFinanceForecast.totalUpcomingAmount,
     actionCountToday: input.actionQueue.summary.total,
     staleCount: cards.filter((card) => card.freshness.stale || card.state === "stale").length,
     blockedCount: cards.filter((card) => card.state === "blocked" || card.blockers.length > 0).length,
@@ -1005,7 +1175,7 @@ function strongestVisibleGrade(grades: EvidenceGrade[]): EvidenceGrade {
 }
 
 function buildBriefSummary(summary: CashCommandSummary, currency: string) {
-  return `${formatAmount(summary.cashCollected, currency)} collected, ${formatAmount(summary.unreconciledCash, currency)} unreconciled, ${summary.openSuspenseCount} suspense item(s), ${summary.drawerAlertCount} drawer alert(s), and ${summary.providerRiskCount} provider issue(s).`
+  return `${formatAmount(summary.cashCollected, currency)} collected, ${formatAmount(summary.unreconciledCash, currency)} unreconciled, ${formatAmount(summary.payrollForecastTotalAmount, currency)} upcoming payroll obligations, ${formatAmount(summary.employeeBalanceOutstandingAmount, currency)} payroll balance outstanding, ${summary.openSuspenseCount} suspense item(s), ${summary.drawerAlertCount} drawer alert(s), and ${summary.providerRiskCount} provider issue(s).`
 }
 
 function buildBriefConclusion(summary: CashCommandSummary) {
@@ -1018,9 +1188,21 @@ function buildBriefConclusion(summary: CashCommandSummary) {
   if (summary.providerRiskCount > 0) {
     return "Review provider evidence before treating collected cash as settled."
   }
-  return "No suspense, drawer, or provider cash blocker is visible in the current command view."
+  if (summary.employeeBalanceOutstandingAmount > 0 || summary.activeEmployeeBalanceCaseCount > 0) {
+    return "Review employee balance recovery before treating payroll clearing and cash planning as complete."
+  }
+  if (summary.payrollForecastTotalAmount > 0) {
+    return "Review upcoming payroll and statutory obligations before finalizing the cash plan."
+  }
+  return "No suspense, drawer, provider, payroll recovery, or upcoming payroll cash blocker is visible in the current command view."
 }
 
+function dateLabel(value: string | null) {
+  if (!value) return "the forecast horizon"
+  const parsed = new Date(value)
+  if (Number.isNaN(parsed.getTime())) return "the forecast horizon"
+  return new Intl.DateTimeFormat("en", { month: "short", day: "numeric" }).format(parsed)
+}
 function formatAmount(value: number, currency: string) {
   return `${new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(value)} ${currency}`
 }

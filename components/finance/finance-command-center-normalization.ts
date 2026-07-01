@@ -51,7 +51,9 @@ export function financeAlertTone(alert: FinanceAlert): DashboardTone {
   return "info"
 }
 
-export function financeAlertHref(code: FinanceAlert["code"]): string | undefined {
+export function financeAlertHref(alertOrCode: FinanceAlert | FinanceAlert["code"]): string | undefined {
+  const code = typeof alertOrCode === "string" ? alertOrCode : alertOrCode.code
+  if (typeof alertOrCode !== "string" && code === "PAYROLL_FORECAST_PROOF") return alertOrCode.actionHref
   if (code === "OVERDUE_AR") return "/dashboard/finance/receivables"
   if (code === "OVERDUE_AP") return "/dashboard/finance/payables"
   if (code === "PENDING_PAYMENTS") return "/dashboard/finance/payments"
@@ -86,7 +88,7 @@ export function buildFinanceActionQueueItems(
   return alerts
     .filter((alert) => alert.code !== "READY")
     .map((alert) => {
-      const href = financeAlertHref(alert.code)
+      const href = financeAlertHref(alert)
 
       return {
         id: alert.id,

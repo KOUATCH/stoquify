@@ -121,7 +121,7 @@ function rbacContext(userId = "controller-1", permissions: string[] = ["payments
 describe("payroll payment reconciliation actions", () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockRequireFreshAuth.mockResolvedValue({ claims: { lastAuthAt: Date.now() } })
+    mockRequireFreshAuth.mockResolvedValue({ claims: { lastAuthAt: new Date("2026-06-30T11:59:00.000Z").getTime() } })
     mockObserveModuleAccess.mockResolvedValue(moduleDecision())
     mockGetPayrollPaymentReconciliation.mockResolvedValue({
       organizationId: "org-1",
@@ -194,6 +194,7 @@ describe("payroll payment reconciliation actions", () => {
       payrollPaymentBatchId: "batch-1",
       settlementStatus: "settled",
       evidenceHash: "sha256:settlement",
+      sourceRegisterHash: "sha256:register",
       matchRecordId: "match-1",
       idempotencyKey: "settlement-key-1",
     })
@@ -206,8 +207,9 @@ describe("payroll payment reconciliation actions", () => {
       payrollPaymentBatchId: "batch-1",
       settlementStatus: "settled",
       evidenceHash: "sha256:settlement",
+      sourceRegisterHash: "sha256:register",
       matchRecordId: "match-1",
-      lastAuthAt: expect.any(Date),
+      lastAuthAt: new Date("2026-06-30T11:59:00.000Z"),
       now: expect.any(Date),
     }))
     expect(mockRecordPayrollPaymentSettlementEvidence.mock.calls[0][0]).not.toMatchObject({
@@ -217,9 +219,9 @@ describe("payroll payment reconciliation actions", () => {
     expect(mockRevalidatePath.mock.calls).toEqual([
       ["/dashboard/payroll", "page"],
       ["/[locale]/dashboard/payroll", "page"],
+      ["/dashboard/payroll/payments", "page"],
+      ["/[locale]/dashboard/payroll/payments", "page"],
     ])
-    expect(mockRevalidatePath).not.toHaveBeenCalledWith("/dashboard/payroll/payments", "page")
-    expect(mockRevalidatePath).not.toHaveBeenCalledWith("/[locale]/dashboard/payroll/payments", "page")
   })
 
   it("returns a client-safe RBAC denial for reconciliation reads", async () => {

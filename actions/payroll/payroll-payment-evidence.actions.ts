@@ -26,6 +26,8 @@ function asRecord(input: unknown) {
 function revalidatePayrollPaymentEvidencePaths() {
   revalidatePath("/dashboard/payroll", "page")
   revalidatePath("/[locale]/dashboard/payroll", "page")
+  revalidatePath("/dashboard/payroll/attendance", "page")
+  revalidatePath("/[locale]/dashboard/payroll/attendance", "page")
 }
 
 const readPaymentEvidence = protect<unknown, PaymentEvidenceReadinessResult>(

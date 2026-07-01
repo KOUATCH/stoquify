@@ -4,7 +4,7 @@ import { localizePath, pickLocale } from "@/i18n/routing"
 import { redirect } from "next/navigation"
 
 export const metadata = {
-  title: "Create Unit | StockFlow",
+  title: "Create Unit | Stoquify",
   description: "Create a measurement unit for item, purchasing, sales, and POS workflows.",
 }
 

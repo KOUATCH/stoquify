@@ -134,7 +134,7 @@ function rbacContext(userId = "actor-1", permissions: string[] = []) {
 describe("payroll contract actions", () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockRequireFreshAuth.mockResolvedValue({})
+    mockRequireFreshAuth.mockResolvedValue({ claims: { lastAuthAt: "2026-06-27T00:00:00.000Z" } })
     mockObserveModuleAccess.mockResolvedValue(moduleDecision())
   })
 
@@ -272,6 +272,8 @@ describe("payroll contract actions", () => {
     })
     expect(mockRevalidatePath).toHaveBeenCalledWith("/dashboard/payroll", "page")
     expect(mockRevalidatePath).toHaveBeenCalledWith("/[locale]/dashboard/payroll", "page")
+    expect(mockRevalidatePath).toHaveBeenCalledWith("/dashboard/payroll/contracts", "page")
+    expect(mockRevalidatePath).toHaveBeenCalledWith("/[locale]/dashboard/payroll/contracts", "page")
   })
 
   it("derives tenant and actor fields for contract update and termination", async () => {

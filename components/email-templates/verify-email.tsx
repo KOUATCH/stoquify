@@ -24,22 +24,22 @@ const VerifyEmail=async({verificationCode}: AWSVerifyEmailProps)=> {
     <>
       <Head />
       <Body style={main}>
-        <Preview>Posinvent Email Verification</Preview>
+        <Preview>Stoquify Email Verification</Preview>
         <Container style={container}>
           <Section style={coverSection}>
             <Section style={imageSection}>
               <Img
-                src={`${baseUrl}/static/aws-logo.png`}
-                // src={`${baseUrl}/static/aws-logo.png`}
+                src={`${baseUrl}/brand/stoquify-wordmark.svg`}
+                // src={`${baseUrl}/brand/stoquify-wordmark.svg`}
                 width="75"
                 height="45"
-                alt="PosInvent Logo"
+                alt="Stoquify Logo"
               />
             </Section>
             <Section style={upperSection}>
               <Heading style={h1}>Verify your email address</Heading>
               <Text style={mainText}>
-                Thanks for starting the new PosInvent account creation process. We
+                Thanks for starting the new Stoquify account creation process. We
                 want to make sure it's really you. Please enter the following
                 verification code when prompted. If you don&apos;t want to
                 create an account, you can ignore this message.
@@ -56,20 +56,20 @@ const VerifyEmail=async({verificationCode}: AWSVerifyEmailProps)=> {
             <Hr />
             <Section style={lowerSection}>
               <Text style={cautionText}>
-                PosInvent will never email you and ask you to disclose
+                Stoquify will never email you and ask you to disclose
                 or verify your password, credit card, or banking account number.
               </Text>
             </Section>
           </Section>
           <Text style={footerText}>
-            This message was produced and distributed by PosInvent,
-             Co Ltd Nkambe. All rights reserved. POSINV is a registered trademark
+            This message was produced and distributed by Stoquify,
+             Co Ltd Nkambe. All rights reserved. STOQUIFY is a registered trademark
             of{' '}
-            <Link href="https://posinvent.com" target="_blank" style={link}>
-              posinvent.com
+            <Link href="https://stoquify.com" target="_blank" style={link}>
+              stoquify.com
             </Link>
             , Inc. View our{' '}
-            <Link href="https://posinvent.com" target="_blank" style={link}>
+            <Link href="https://stoquify.com" target="_blank" style={link}>
               privacy policy
             </Link>
             .
