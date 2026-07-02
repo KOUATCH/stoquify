@@ -387,6 +387,22 @@ describe("payroll payment reconciliation service", () => {
       id: "match-1",
       statementFileHash: "sha256:statement-file",
     });
+    expect(result.batches[0].proof).toEqual(
+      expect.objectContaining({
+        componentRegisterProofHash: "sha256:component-proof",
+        componentRegisterProofStatus: "MATCHED",
+        payrollComponentMappingHash: "sha256:component-mapping",
+        payrollComponentMappingStatus: "BLOCKED_REQUIRES_EXPERT_REVIEW",
+        yearToDatePolicyHash: "sha256:ytd-policy",
+        yearToDateAccumulatorHashes: ["sha256:ytd-accumulator"],
+        paymentAdapterProofHash: "sha256:payment-adapter-proof",
+        paymentProviderAdapterContractHash: "sha256:payment-adapter-contract",
+        paymentAdapterStatus: "MANUAL_PROVIDER_SETTLEMENT_REQUIRED",
+        paymentProviderAdapterKey: "BANK_TRANSFER:MANUAL_DISBURSEMENT_FILE",
+        adapterChaosReleaseGateHash: null,
+        productionPaymentAutomationSupported: false,
+      }),
+    );
     expect(tx.auditLog.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
@@ -435,6 +451,17 @@ describe("payroll payment reconciliation service", () => {
       statementLineId: "[REDACTED:IDENTIFIER]",
       statementFileHash: "[REDACTED:IDENTIFIER]",
     });
+    expect(result.batches[0].proof).toEqual(
+      expect.objectContaining({
+        componentRegisterProofHash: "[REDACTED:IDENTIFIER]",
+        payrollComponentMappingHash: "[REDACTED:IDENTIFIER]",
+        yearToDatePolicyHash: "[REDACTED:IDENTIFIER]",
+        yearToDateAccumulatorHashes: ["[REDACTED:IDENTIFIER]"],
+        paymentAdapterProofHash: "[REDACTED:IDENTIFIER]",
+        paymentProviderAdapterContractHash: "[REDACTED:IDENTIFIER]",
+        adapterChaosReleaseGateHash: null,
+      }),
+    );
     expect(result.batches[0].proof.sourceLinks).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ evidenceHash: "[REDACTED:IDENTIFIER]" }),

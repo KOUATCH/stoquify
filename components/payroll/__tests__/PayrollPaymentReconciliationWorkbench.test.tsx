@@ -114,6 +114,25 @@ function reconciliationData(): PayrollPaymentReconciliationReadModel {
           payrollRegisterSource: "services/payroll/payroll-register.service.ts",
           providerEvidenceRequired: true,
           closeImpactSourceCode: "PAYROLL_PAYMENT_RECONCILED",
+          componentRegisterProofHash: "sha256:component-proof",
+          componentRegisterProofStatus: "MATCHED",
+          payrollComponentMappingHash: "sha256:component-mapping",
+          payrollComponentMappingStatus: "MAPPED",
+          yearToDatePolicyHash: "sha256:ytd-policy",
+          yearToDateAccumulatorHashes: ["sha256:ytd-accumulator"],
+          paymentAdapterProofHash: "sha256:payment-adapter-proof",
+          paymentProviderAdapterContractHash: "sha256:payment-adapter-contract",
+          paymentAdapterStatus: "SUPPORTED_CERTIFIED",
+          paymentProviderAdapterKey: "MOMO_PAYROLL_PROVIDER_API",
+          adapterChaosReleaseGateHash: "sha256:adapter-chaos-gate",
+          productionPaymentAutomationSupported: true,
+          latestSettlementEvidenceHash: "sha256:settlement-evidence",
+          latestSettlementSourceRegisterHash: "sha256:settlement-register",
+          latestSettlementLifecycleContractHash: "sha256:settlement-lifecycle",
+          latestSettlementLifecycleStatus: "SETTLED_WITH_PROVIDER_EVIDENCE",
+          latestSettlementLifecycleCloseImpact: "CLOSE_EVIDENCE_STALE_ON_CHANGE",
+          latestSettlementBusinessEventId: "event-settlement-1",
+          latestSettlementAt: "2026-06-30T12:10:00.000Z",
           sourceLinks: [
             {
               type: "PayrollPaymentBatch",
@@ -216,12 +235,27 @@ describe("PayrollPaymentReconciliationWorkbench", () => {
       screen.getAllByText("PAYROLL_PAYMENT_RECONCILED").length,
     ).toBeGreaterThan(0);
     expect(
+      screen.getAllByText("sha256:component-proof").length,
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText("sha256:payment-adapter-proof").length,
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText("sha256:settlement-lifecycle").length,
+    ).toBeGreaterThan(0);
+    expect(
       screen.getByRole("button", { name: "Record settlement proof" }),
     ).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Proof drawer" }));
     expect(screen.getByRole("dialog")).toBeInTheDocument();
     expect(screen.getByText("Provider evidence required")).toBeInTheDocument();
+    expect(screen.getByText("Provider adapter proof")).toBeInTheDocument();
+    expect(screen.getByText("sha256:adapter-chaos-gate")).toBeInTheDocument();
+    expect(screen.getByText("Settlement lifecycle status")).toBeInTheDocument();
+    expect(
+      screen.getAllByText("SETTLED_WITH_PROVIDER_EVIDENCE").length,
+    ).toBeGreaterThan(0);
     expect(screen.getByText("Source link 1")).toBeInTheDocument();
 
     const hrefs = Array.from(document.querySelectorAll("a")).map((link) =>
@@ -250,6 +284,16 @@ describe("PayrollPaymentReconciliationWorkbench", () => {
     batch.evidenceHash = "[REDACTED:IDENTIFIER]";
     batch.documentHash = "[REDACTED:IDENTIFIER]";
     batch.bankFileHash = "[REDACTED:IDENTIFIER]";
+    batch.proof.componentRegisterProofHash = "[REDACTED:IDENTIFIER]";
+    batch.proof.payrollComponentMappingHash = "[REDACTED:IDENTIFIER]";
+    batch.proof.yearToDatePolicyHash = "[REDACTED:IDENTIFIER]";
+    batch.proof.yearToDateAccumulatorHashes = ["[REDACTED:IDENTIFIER]"];
+    batch.proof.paymentAdapterProofHash = "[REDACTED:IDENTIFIER]";
+    batch.proof.paymentProviderAdapterContractHash = "[REDACTED:IDENTIFIER]";
+    batch.proof.adapterChaosReleaseGateHash = "[REDACTED:IDENTIFIER]";
+    batch.proof.latestSettlementEvidenceHash = "[REDACTED:IDENTIFIER]";
+    batch.proof.latestSettlementSourceRegisterHash = "[REDACTED:IDENTIFIER]";
+    batch.proof.latestSettlementLifecycleContractHash = "[REDACTED:IDENTIFIER]";
     batch.proof.sourceLinks = batch.proof.sourceLinks.map((link) => ({
       ...link,
       documentHash: link.documentHash
@@ -285,6 +329,12 @@ describe("PayrollPaymentReconciliationWorkbench", () => {
     ).not.toBeInTheDocument();
     expect(
       screen.queryByText("sha256:payment-payload"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("sha256:payment-adapter-proof"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("sha256:settlement-lifecycle"),
     ).not.toBeInTheDocument();
     expect(screen.getAllByText("[REDACTED:IDENTIFIER]").length).toBeGreaterThan(
       0,

@@ -1,0 +1,68 @@
+{
+  "checkedAt": "2026-07-02T03:57:26.908Z",
+  "baseUrl": "http://127.0.0.1:3000",
+  "mode": "fail",
+  "ok": true,
+  "routeCount": 1,
+  "screenshotTool": "playwright",
+  "auth": {
+    "storageState": "playwright/.auth/payroll.json",
+    "protectedRouteScreenshotMode": "saved-storage-state"
+  },
+  "routes": [
+    {
+      "route": {
+        "id": "payroll-declarations",
+        "path": "/en/dashboard/payroll/declarations",
+        "surface": "Payroll declaration evidence workbench",
+        "requiresAuth": true,
+        "viewports": [
+          "tablet",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": "browser-auth",
+        "finalUrl": "http://127.0.0.1:3000/en/dashboard/payroll/declarations",
+        "durationMs": 1,
+        "reason": "protected route validated with Playwright storage state"
+      }
+    }
+  ],
+  "warmup": {
+    "enabled": true,
+    "skipped": false,
+    "timeoutMs": 60000,
+    "routes": [
+      {
+        "routeId": "payroll-declarations",
+        "ok": true,
+        "finalUrl": "http://127.0.0.1:3000/en/dashboard/payroll/declarations",
+        "durationMs": 7585,
+        "authenticated": true
+      }
+    ]
+  },
+  "screenshots": {
+    "available": true,
+    "captures": [
+      {
+        "routeId": "payroll-declarations",
+        "viewport": "tablet",
+        "ok": true,
+        "file": "what-next/payroll/screenshots/payroll-declarations-enqueue-ui-2026-07-02/payroll-declarations-tablet.png",
+        "finalUrl": "http://127.0.0.1:3000/en/dashboard/payroll/declarations",
+        "authenticated": true
+      },
+      {
+        "routeId": "payroll-declarations",
+        "viewport": "desktop",
+        "ok": true,
+        "file": "what-next/payroll/screenshots/payroll-declarations-enqueue-ui-2026-07-02/payroll-declarations-desktop.png",
+        "finalUrl": "http://127.0.0.1:3000/en/dashboard/payroll/declarations",
+        "authenticated": true
+      }
+    ]
+  }
+}

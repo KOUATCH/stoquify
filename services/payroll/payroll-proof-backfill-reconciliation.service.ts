@@ -10,9 +10,12 @@ import {
   type PayrollSeedBackfillDryRunPlan,
 } from "./payroll-seed-backfill-plan.service";
 import { redactPayrollSetupRef } from "./payroll-setup-readiness.service";
-import type {
-  PayrollStatutoryScenarioCoverageSummary,
-  PayrollStatutoryScenarioReviewEvidenceSummary,
+import {
+  buildPayrollStatutoryReviewedProofChain,
+  buildPayrollStatutoryScenarioCoverageHash,
+  type PayrollStatutoryReviewedProofChain,
+  type PayrollStatutoryScenarioCoverageSummary,
+  type PayrollStatutoryScenarioReviewEvidenceSummary,
 } from "./payroll-statutory-scenario-coverage.service";
 
 type DbClient = typeof db | Prisma.TransactionClient;
@@ -47,6 +50,7 @@ export type PayrollProofBackfillStatutoryScenarioSetupGate = {
   blockerCodes: string[];
   requiredReviewTopics: string[];
   reviewEvidence: PayrollStatutoryScenarioReviewEvidenceSummary;
+  reviewedProofChain: PayrollStatutoryReviewedProofChain;
   families: Array<{
     family: string;
     status: string;
@@ -82,6 +86,7 @@ export type PayrollProofBackfillReconciliationCertificate = {
     dryRunEvidenceMatches: boolean;
     executionEnabled: boolean | null;
     mutationAttempted: boolean | null;
+    correctionIntentCount: number | null;
     recordedAt: string | null;
     validated: boolean;
     validationBlockers: string[];
@@ -191,9 +196,11 @@ function emptyStatutoryScenarioReviewEvidence(): PayrollStatutoryScenarioReviewE
 
 function statutoryScenarioSetupGate(
   plan: PayrollSeedBackfillDryRunPlan,
+  correctionIntentCount: number | null,
 ): PayrollProofBackfillStatutoryScenarioSetupGate {
   const coverage = plan.readiness.checks.countryPack.calculationFixtures.scenarioCoverage;
   if (!coverage) {
+    const reviewEvidence = emptyStatutoryScenarioReviewEvidence();
     return {
       status: null,
       countryCode: plan.readiness.checks.countryPack.countryCode,
@@ -204,7 +211,23 @@ function statutoryScenarioSetupGate(
       requiredFamilyCount: 0,
       blockerCodes: ["PAYROLL_STATUTORY_SCENARIO_COVERAGE_MISSING"],
       requiredReviewTopics: [],
-      reviewEvidence: emptyStatutoryScenarioReviewEvidence(),
+      reviewEvidence,
+      reviewedProofChain: buildPayrollStatutoryReviewedProofChain({
+        status: null,
+        coverageHash: null,
+        reviewEvidence,
+        readyFamilyCount: 0,
+        requiredFamilyCount: 0,
+        blockerCodes: ["PAYROLL_STATUTORY_SCENARIO_COVERAGE_MISSING"],
+        registerProofGapCount:
+          plan.proofBackfill.gapCounts.payrollRunMissingStatutoryScenarioCoverage,
+        declarationRegisterProofGapCount:
+          plan.proofBackfill.gapCounts.declarationEvidenceMissingSourceRegisterHash,
+        paymentSettlementRegisterProofGapCount:
+          plan.proofBackfill.gapCounts.paymentBatchMissingSettlementRegisterProof,
+        correctionIntentCount,
+        requireCorrectionLifecycleEvidence: true,
+      }),
       families: [],
     };
   }
@@ -236,9 +259,36 @@ function statutoryScenarioSetupGate(
       .sort((left, right) => left.family.localeCompare(right.family)),
   };
 
+  const coverageHash = buildPayrollStatutoryScenarioCoverageHash({
+    status: coverage.status,
+    countryCode: coverage.countryCode,
+    packVersion: coverage.packVersion,
+    executableScenarioCount: coverage.executableScenarioCount,
+    readyFamilyCount: coverage.readyFamilyCount,
+    requiredFamilyCount: coverage.requiredFamilyCount,
+    blockerCodes: coverage.blockers.map((blocker) => blocker.code),
+    reviewEvidence: coverage.reviewEvidence,
+  });
+
   return {
     ...payloadWithoutHash,
-    coverageHash: hashPayload(payloadWithoutHash),
+    coverageHash,
+    reviewedProofChain: buildPayrollStatutoryReviewedProofChain({
+      status: coverage.status,
+      coverageHash,
+      reviewEvidence: coverage.reviewEvidence,
+      readyFamilyCount: coverage.readyFamilyCount,
+      requiredFamilyCount: coverage.requiredFamilyCount,
+      blockerCodes: coverage.blockers.map((blocker) => blocker.code),
+      registerProofGapCount:
+        plan.proofBackfill.gapCounts.payrollRunMissingStatutoryScenarioCoverage,
+      declarationRegisterProofGapCount:
+        plan.proofBackfill.gapCounts.declarationEvidenceMissingSourceRegisterHash,
+      paymentSettlementRegisterProofGapCount:
+        plan.proofBackfill.gapCounts.paymentBatchMissingSettlementRegisterProof,
+      correctionIntentCount,
+      requireCorrectionLifecycleEvidence: true,
+    }),
   };
 }
 
@@ -260,6 +310,10 @@ function stringArray(value: unknown) {
   return Array.isArray(value)
     ? value.filter((item): item is string => typeof item === "string")
     : [];
+}
+
+function numberOrNull(value: unknown) {
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
 
 function normalizeDate(
@@ -336,6 +390,10 @@ function validateSourceCertificate(input: {
     input.source.adapterChaosReleaseGateHash,
   );
   const missingSignoffs = stringArray(input.source.missingSignoffs);
+  const correctionIntentCount = numberOrNull(input.source.correctionIntentCount) ??
+    (Array.isArray(input.source.correctionIntents)
+      ? input.source.correctionIntents.length
+      : null);
 
   if (
     input.source.kind !==
@@ -414,6 +472,7 @@ function validateSourceCertificate(input: {
       typeof input.source.mutationAttempted === "boolean"
         ? input.source.mutationAttempted
         : null,
+    correctionIntentCount,
     validated: blockers.length === 0,
     blockers,
   };
@@ -540,6 +599,7 @@ export async function reconcilePayrollProofBackfillCertificate(
       dryRunEvidenceMatches: sourceValidation.dryRunEvidenceMatches,
       executionEnabled: sourceValidation.executionEnabled,
       mutationAttempted: sourceValidation.mutationAttempted,
+      correctionIntentCount: sourceValidation.correctionIntentCount,
       recordedAt: sourceAudit.createdAt
         ? normalizeDate(sourceAudit.createdAt, now).toISOString()
         : null,
@@ -568,7 +628,10 @@ export async function reconcilePayrollProofBackfillCertificate(
     setupGate: {
       status: currentPlan.status,
       blockerCodes: currentPlan.blockers.map((blocker) => blocker.code),
-      statutoryScenarioCoverage: statutoryScenarioSetupGate(currentPlan),
+      statutoryScenarioCoverage: statutoryScenarioSetupGate(
+        currentPlan,
+        sourceValidation.correctionIntentCount,
+      ),
     },
     releaseGateRequirements: [
       {

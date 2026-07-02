@@ -349,6 +349,16 @@ function commandData(): PayrollCommandReadModel {
         status: "REJECTED",
         payloadHash: "sha256:decl-payload",
         countryPackResolutionHash: "sha256:country-pack",
+        countryPackRegisterProofHash: "sha256:country-pack-register-proof",
+        countryPackRegisterProofStatus: "MATCHED",
+        countryPackRegisterProofPresent: true,
+        countryPackRegisterProofLineCount: 2,
+        countryPackRegisterProofMissingLineCount: 0,
+        countryPackRegisterProofMismatchedLineCount: 0,
+        countryPackLineProofHashes: ["sha256:line-proof-1", "sha256:line-proof-2"],
+        statutoryScenarioCoverageHash: "sha256:statutory-scenario-coverage",
+        countryPackReviewEvidenceSourceHashes: ["sha256:review-source-1"],
+        countryPackLegalRefs: ["CNPS-2026"],
         dueDate: "2026-07-10T00:00:00.000Z",
         updatedAt: "2026-06-26T07:00:00.000Z",
       },
@@ -674,6 +684,20 @@ describe("PayrollCommandCenter", () => {
 
     expect(screen.getByText("Country pack hash")).toBeInTheDocument()
     expect(screen.getAllByText("sha256:country-pack").length).toBeGreaterThan(0)
+
+    fireEvent.click(screen.getByRole("button", { name: "Close" }))
+    fireEvent.click(proofButtons[4])
+
+    expect(screen.getByText("Country-pack register proof")).toBeInTheDocument()
+    expect(screen.getByText("sha256:country-pack-register-proof")).toBeInTheDocument()
+    expect(screen.getByText("Country-pack proof status")).toBeInTheDocument()
+    expect(screen.getByText("MATCHED")).toBeInTheDocument()
+    expect(screen.getByText("Line proof hashes")).toBeInTheDocument()
+    expect(screen.getByText("sha256:line-proof-1, sha256:line-proof-2")).toBeInTheDocument()
+    expect(screen.getByText("Statutory coverage hash")).toBeInTheDocument()
+    expect(screen.getAllByText("sha256:statutory-scenario-coverage").length).toBeGreaterThan(0)
+    expect(screen.getByText("Review evidence hashes")).toBeInTheDocument()
+    expect(screen.getByText("sha256:review-source-1")).toBeInTheDocument()
 
     fireEvent.click(screen.getByRole("button", { name: "Close" }))
     fireEvent.click(proofButtons[proofButtons.length - 2])

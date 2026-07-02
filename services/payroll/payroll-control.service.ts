@@ -143,6 +143,21 @@ type PayrollComponentPostingProof = {
   issues: string[];
 };
 
+type PayrollCountryPackRegisterProof = {
+  proofHash: string;
+  status: PayrollComponentPostingProofStatus;
+  lineCount: number;
+  matchedLineCount: number;
+  missingLineCount: number;
+  mismatchedLineCount: number;
+  lineProofHashes: string[];
+  issues: string[];
+  countryPackResolutionHash: string | null;
+  statutoryScenarioCoverageHash: string | null;
+  reviewEvidenceSourceHashes: string[];
+  legalRefs: string[];
+};
+
 type PayrollComponentReviewStatus =
   | "REVIEWED"
   | "BLOCKED_REQUIRES_EXPERT_REVIEW";
@@ -1843,6 +1858,213 @@ function buildPayrollComponentPostingProof(input: {
     ),
     lineProofHashes,
     issues,
+  };
+}
+
+function payrollRunStatutoryScenarioCoverageHash(metadata: unknown) {
+  const metadataRecord = asRecord(metadata);
+  const coverage = asRecord(metadataRecord.statutoryScenarioCoverage);
+  return (
+    metadataString(metadataRecord, "statutoryScenarioCoverageHash") ??
+    metadataString(coverage, "coverageHash")
+  );
+}
+
+function payrollRunStatutoryReviewEvidence(metadata: unknown) {
+  const coverage = asRecord(asRecord(metadata).statutoryScenarioCoverage);
+  const reviewEvidence = asRecord(coverage.reviewEvidence);
+  return {
+    sourceEvidenceHashes: metadataStringList(
+      reviewEvidence,
+      "sourceEvidenceHashes",
+    ).sort(),
+    legalRefs: metadataStringList(reviewEvidence, "legalRefs").sort(),
+  };
+}
+
+function buildPayrollCountryPackRegisterProof(input: {
+  payrollRunId: string;
+  runNumber: string;
+  countryCode: string;
+  countryPackVersion: string;
+  countryPackSchemaVersion: string;
+  countryPackResolutionHash: string;
+  countryPackCapabilityStatus: string;
+  metadata?: unknown;
+  lines: PayrollComponentPostingLine[];
+}): PayrollCountryPackRegisterProof {
+  const statutoryScenarioCoverageHash = payrollRunStatutoryScenarioCoverageHash(
+    input.metadata,
+  );
+  const reviewEvidence = payrollRunStatutoryReviewEvidence(input.metadata);
+  const lineProofs = input.lines.map((line) => {
+    const snapshot = componentSnapshotRecord(line.calculationSnapshot);
+    const provenance = componentSnapshotRecord(
+      snapshot?.countryPackProvenance,
+    );
+    const issues: string[] = [];
+
+    if (!snapshot) addPayrollComponentIssue(issues, "missing:calculationSnapshot");
+    if (!provenance)
+      addPayrollComponentIssue(issues, "missing:countryPackProvenance");
+
+    const countryCode =
+      componentSnapshotString(provenance, "countryCode") ??
+      componentSnapshotString(snapshot, "countryCode");
+    const countryPackVersion =
+      componentSnapshotString(provenance, "packVersion") ??
+      componentSnapshotString(snapshot, "countryPackVersion");
+    const countryPackSchemaVersion =
+      componentSnapshotString(provenance, "schemaVersion") ??
+      componentSnapshotString(snapshot, "countryPackSchemaVersion");
+    const countryPackCapabilityStatus =
+      componentSnapshotString(provenance, "capabilityStatus") ??
+      componentSnapshotString(snapshot, "countryPackCapabilityStatus");
+    const countryPackResolutionHash =
+      componentSnapshotString(provenance, "resolutionHash") ??
+      componentSnapshotString(snapshot, "countryPackResolutionHash");
+    const lineStatutoryScenarioCoverageHash = componentSnapshotString(
+      provenance,
+      "statutoryScenarioCoverageHash",
+    );
+    const lineStatutoryScenarioCoverageStatus = componentSnapshotString(
+      provenance,
+      "statutoryScenarioCoverageStatus",
+    );
+    const roundingPolicyHash =
+      componentSnapshotString(provenance, "roundingPolicyHash") ??
+      componentSnapshotString(snapshot, "roundingPolicyHash");
+    const yearToDatePolicyHash =
+      componentSnapshotString(provenance, "yearToDatePolicyHash") ??
+      componentSnapshotString(snapshot, "yearToDatePolicyHash");
+    const provenanceHash = componentSnapshotString(
+      snapshot,
+      "countryPackProvenanceHash",
+    );
+    const computedHash = provenance ? prefixedHash(provenance) : null;
+
+    const requireMatched = (
+      actual: string | null,
+      expected: string | null | undefined,
+      key: string,
+    ) => {
+      if (!actual) {
+        addPayrollComponentIssue(issues, `missing:${key}`);
+        return;
+      }
+      if (expected && actual !== expected) {
+        addPayrollComponentIssue(issues, `mismatch:${key}`);
+      }
+    };
+
+    requireMatched(countryCode, input.countryCode, "countryCode");
+    requireMatched(
+      countryPackVersion,
+      input.countryPackVersion,
+      "countryPackVersion",
+    );
+    requireMatched(
+      countryPackSchemaVersion,
+      input.countryPackSchemaVersion,
+      "countryPackSchemaVersion",
+    );
+    requireMatched(
+      countryPackCapabilityStatus,
+      input.countryPackCapabilityStatus,
+      "countryPackCapabilityStatus",
+    );
+    requireMatched(
+      countryPackResolutionHash,
+      input.countryPackResolutionHash,
+      "countryPackResolutionHash",
+    );
+    requireMatched(
+      lineStatutoryScenarioCoverageHash,
+      statutoryScenarioCoverageHash,
+      "statutoryScenarioCoverageHash",
+    );
+    if (!lineStatutoryScenarioCoverageStatus)
+      addPayrollComponentIssue(issues, "missing:statutoryScenarioCoverageStatus");
+    if (!roundingPolicyHash)
+      addPayrollComponentIssue(issues, "missing:roundingPolicyHash");
+    if (!yearToDatePolicyHash)
+      addPayrollComponentIssue(issues, "missing:yearToDatePolicyHash");
+    if (!provenanceHash)
+      addPayrollComponentIssue(issues, "missing:countryPackProvenanceHash");
+    if (provenanceHash && computedHash && provenanceHash !== computedHash) {
+      addPayrollComponentIssue(issues, "mismatch:countryPackProvenanceHash");
+    }
+
+    const status: PayrollComponentPostingProofStatus = issues.some((issue) =>
+      issue.startsWith("missing:"),
+    )
+      ? "MISSING"
+      : issues.length > 0
+        ? "MISMATCH"
+        : "MATCHED";
+    const lineProofHash = prefixedHash({
+      kind: "AQSTOQFLOW_PAYROLL_COUNTRY_PACK_LINE_PROOF",
+      version: 1,
+      runLineId: line.id,
+      status,
+      issues: [...issues].sort(),
+      countryCode,
+      countryPackVersion,
+      countryPackSchemaVersion,
+      countryPackCapabilityStatus,
+      countryPackResolutionHash,
+      statutoryScenarioCoverageHash: lineStatutoryScenarioCoverageHash,
+      statutoryScenarioCoverageStatus: lineStatutoryScenarioCoverageStatus,
+      roundingPolicyHash,
+      yearToDatePolicyHash,
+      provenanceHash,
+      computedHash,
+    });
+
+    return { lineId: line.id, status, issues, lineProofHash };
+  });
+
+  const missingLineCount = lineProofs.filter(
+    (proof) => proof.status === "MISSING",
+  ).length;
+  const mismatchedLineCount = lineProofs.filter(
+    (proof) => proof.status === "MISMATCH",
+  ).length;
+  const status: PayrollComponentPostingProofStatus =
+    missingLineCount > 0
+      ? "MISSING"
+      : mismatchedLineCount > 0
+        ? "MISMATCH"
+        : "MATCHED";
+  const lineProofHashes = lineProofs.map((proof) => proof.lineProofHash).sort();
+  const issues = lineProofs
+    .flatMap((proof) => proof.issues.map((issue) => `${proof.lineId}:${issue}`))
+    .sort();
+
+  return {
+    proofHash: prefixedHash({
+      kind: "AQSTOQFLOW_PAYROLL_COUNTRY_PACK_REGISTER_PROOF",
+      version: 1,
+      payrollRunId: input.payrollRunId,
+      runNumber: input.runNumber,
+      status,
+      countryPackResolutionHash: input.countryPackResolutionHash,
+      statutoryScenarioCoverageHash,
+      lineProofHashes,
+      issues,
+    }),
+    status,
+    lineCount: lineProofs.length,
+    matchedLineCount: lineProofs.filter((proof) => proof.status === "MATCHED")
+      .length,
+    missingLineCount,
+    mismatchedLineCount,
+    lineProofHashes,
+    issues,
+    countryPackResolutionHash: input.countryPackResolutionHash,
+    statutoryScenarioCoverageHash,
+    reviewEvidenceSourceHashes: reviewEvidence.sourceEvidenceHashes,
+    legalRefs: reviewEvidence.legalRefs,
   };
 }
 
@@ -5040,6 +5262,8 @@ export async function calculatePayrollRun(
           ruleSetHash,
           attendanceSnapshotHash,
           statutoryScenarioCoverageHash: statutoryScenarioCoverage.coverageHash,
+          statutoryScenarioReviewEvidenceSourceHashes:
+            statutoryScenarioCoverage.reviewEvidence.sourceEvidenceHashes,
           roundingPolicyHash: roundingPolicy.roundingPolicyHash,
           yearToDatePolicyHash: countryPack.yearToDatePolicyHash,
           yearToDateAccumulatorHashes,
@@ -5110,6 +5334,9 @@ export async function calculatePayrollRun(
                 originalRunDocumentHash: originalRun.documentHash ?? null,
                 originalRunEvidenceHash: originalRun.evidenceHash ?? null,
                 originalCalculationHash: originalRun.calculationHash,
+                statutoryScenarioCoverageHash: statutoryScenarioCoverage.coverageHash,
+                statutoryScenarioReviewEvidenceSourceHashes:
+                  statutoryScenarioCoverage.reviewEvidence.sourceEvidenceHashes,
                 correctionEvidenceHash,
               }
             : null,
@@ -6229,6 +6456,39 @@ export async function preparePayrollDeclarations(
         "Payroll declarations require matched statutory component register proof.",
       );
     }
+    const countryPackRegisterProof = buildPayrollCountryPackRegisterProof({
+      payrollRunId: run.id,
+      runNumber: run.runNumber,
+      countryCode: run.countryCode,
+      countryPackVersion: run.countryPackVersion,
+      countryPackSchemaVersion: run.countryPackSchemaVersion,
+      countryPackResolutionHash: run.countryPackResolutionHash,
+      countryPackCapabilityStatus: run.countryPackCapabilityStatus,
+      metadata: run.metadata,
+      lines: run.lines,
+    });
+    if (countryPackRegisterProof.status !== "MATCHED") {
+      throw new BusinessRuleError(
+        "Payroll declarations require matched country-pack register proof.",
+      );
+    }
+    const countryPackRegisterProofMetadata = {
+      countryPackRegisterProofHash: countryPackRegisterProof.proofHash,
+      countryPackRegisterProofStatus: countryPackRegisterProof.status,
+      countryPackRegisterProofLineCount: countryPackRegisterProof.lineCount,
+      countryPackRegisterProofMatchedLineCount:
+        countryPackRegisterProof.matchedLineCount,
+      countryPackRegisterProofMissingLineCount:
+        countryPackRegisterProof.missingLineCount,
+      countryPackRegisterProofMismatchedLineCount:
+        countryPackRegisterProof.mismatchedLineCount,
+      countryPackLineProofHashes: countryPackRegisterProof.lineProofHashes,
+      statutoryScenarioCoverageHash:
+        countryPackRegisterProof.statutoryScenarioCoverageHash,
+      countryPackReviewEvidenceSourceHashes:
+        countryPackRegisterProof.reviewEvidenceSourceHashes,
+      countryPackLegalRefs: countryPackRegisterProof.legalRefs,
+    };
     const payrollComponentMapping = buildPayrollComponentMapping({
       payrollRunId: run.id,
       runNumber: run.runNumber,
@@ -6358,6 +6618,7 @@ export async function preparePayrollDeclarations(
           payrollComponentMapping.declarationLiabilityAmount,
         ...declarationCorrectionWorkflow.metadata,
         componentRegisterProofHash: componentRegisterProof.proofHash,
+        ...countryPackRegisterProofMetadata,
         payrollComponentMappingHash:
           payrollComponentMapping.componentMappingHash,
         payrollComponentMappingStatus: payrollComponentMapping.reviewStatus,
@@ -6399,6 +6660,7 @@ export async function preparePayrollDeclarations(
             declarationResolutionHash: declaration.resolutionHash,
             declarationResolutionError,
             componentRegisterProofHash: componentRegisterProof.proofHash,
+          ...countryPackRegisterProofMetadata,
             payrollComponentMappingHash:
               payrollComponentMapping.componentMappingHash,
             payrollComponentMappingStatus: payrollComponentMapping.reviewStatus,
@@ -6445,6 +6707,7 @@ export async function preparePayrollDeclarations(
           ...yearToDateProofMetadata,
           ...correctionMetadata,
           componentRegisterProofHash: componentRegisterProof.proofHash,
+          ...countryPackRegisterProofMetadata,
           payrollComponentMappingHash:
             payrollComponentMapping.componentMappingHash,
           payrollComponentMappingStatus: payrollComponentMapping.reviewStatus,
@@ -6531,6 +6794,7 @@ export async function preparePayrollDeclarations(
           ...yearToDateProofMetadata,
           ...correctionMetadata,
           componentRegisterProofHash: componentRegisterProof.proofHash,
+          ...countryPackRegisterProofMetadata,
           payrollComponentMappingHash:
             payrollComponentMapping.componentMappingHash,
           payrollComponentMappingStatus: payrollComponentMapping.reviewStatus,

@@ -9,6 +9,9 @@ import { requirePermission, RbacError } from "@/lib/security/rbac";
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service";
 import { logger } from "@/lib/logger";
 import {
+  enqueuePayrollAuthorityAdapterExecution,
+} from "@/services/payroll/authority-adapter-execution.service";
+import {
   approveAndPostPayrollRun,
   getPayrollRunWorkbenchData,
   getPayrollWorkbenchData,
@@ -28,6 +31,7 @@ import {
 } from "@/services/payroll/payroll-employee-balance.service";
 
 import {
+  enqueuePayrollAuthorityAdapterExecutionAction,
   approveAndPostPayrollRunAction,
   getPayrollDeclarationWorkbenchAction,
   getPayrollEmployeeBalanceWorkbenchAction,
@@ -101,6 +105,13 @@ jest.mock("@/services/payroll/payroll-control.service", () => ({
   approveAndPostPayrollRun: jest.fn(),
 }));
 
+jest.mock("@/services/payroll/authority-adapter-execution.service", () => ({
+  enqueuePayrollAuthorityAdapterExecution: jest.fn(),
+  enqueuePayrollAuthorityAdapterExecutionInputSchema: {
+    parse: jest.fn((input) => input),
+  },
+}));
+
 jest.mock("@/services/payroll/declaration-lifecycle.service", () => ({
   getPayrollDeclarationWorkbenchData: jest.fn(),
   payrollDeclarationWorkbenchInputSchema: {
@@ -139,6 +150,8 @@ const mockRequirePermission = requirePermission as jest.Mock;
 const mockRequireFreshAuth = requireFreshAuth as jest.Mock;
 const mockObserveModuleAccess = observeModuleAccess as jest.Mock;
 const mockLoggerError = logger.error as jest.Mock;
+const mockEnqueuePayrollAuthorityAdapterExecution =
+  enqueuePayrollAuthorityAdapterExecution as jest.Mock;
 const mockApproveAndPostPayrollRun = approveAndPostPayrollRun as jest.Mock;
 const mockGetPayrollRunWorkbenchData = getPayrollRunWorkbenchData as jest.Mock;
 const mockGetPayrollWorkbenchData = getPayrollWorkbenchData as jest.Mock;
@@ -716,6 +729,86 @@ describe("payroll control actions", () => {
         payrollRunId: "run-1",
         preparedById: "payroll-1",
       }),
+    );
+  });
+  it("requires fresh auth before queueing certified authority adapter execution", async () => {
+    mockRequireFreshAuth.mockRejectedValue(new FreshAuthRequiredError());
+
+    const result = await enqueuePayrollAuthorityAdapterExecutionAction({
+      declarationEvidenceId: "evidence-1",
+      idempotencyKey: "queue-key-1",
+    });
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        success: false,
+        data: null,
+        error: "Fresh authentication required",
+        status: 403,
+        code: "FRESH_AUTH_REQUIRED",
+        retryable: false,
+      }),
+    );
+    expect(mockRequirePermission).not.toHaveBeenCalled();
+    expect(mockEnqueuePayrollAuthorityAdapterExecution).not.toHaveBeenCalled();
+  });
+
+  it("derives certified authority adapter enqueue tenant and actor from authenticated context", async () => {
+    mockRequirePermission.mockResolvedValue(
+      rbacContext("controller-1", ["payroll.declarations.manage"]),
+    );
+    mockEnqueuePayrollAuthorityAdapterExecution.mockResolvedValue({
+      declarationId: "declaration-1",
+      declarationEvidenceId: "evidence-1",
+      execution: { status: "PENDING" },
+      idempotent: false,
+    });
+
+    const result = await enqueuePayrollAuthorityAdapterExecutionAction({
+      organizationId: "client-org",
+      actorId: "client-actor",
+      declarationEvidenceId: "evidence-1",
+      idempotencyKey: "queue-key-1",
+      maxAttempts: 3,
+    });
+
+    expect(result.success).toBe(true);
+    expect(mockRequirePermission).toHaveBeenCalledWith(
+      "payroll.declarations.manage",
+      { resource: "PayrollDeclaration" },
+    );
+    expect(mockObserveModuleAccess).toHaveBeenCalledWith(
+      expect.objectContaining({
+        organizationId: "org-1",
+        userId: "controller-1",
+        moduleSlug: "payroll",
+        surface: "payroll.declarations.adapter_execution.enqueue",
+        accessIntent: "write",
+        mode: "enforce",
+      }),
+    );
+    expect(mockEnqueuePayrollAuthorityAdapterExecution).toHaveBeenCalledWith(
+      expect.objectContaining({
+        organizationId: "org-1",
+        actorId: "controller-1",
+        declarationEvidenceId: "evidence-1",
+        idempotencyKey: "queue-key-1",
+        maxAttempts: 3,
+      }),
+    );
+    expect(
+      mockEnqueuePayrollAuthorityAdapterExecution.mock.calls[0][0],
+    ).not.toMatchObject({
+      organizationId: "client-org",
+      actorId: "client-actor",
+    });
+    expect(mockRevalidatePath).toHaveBeenCalledWith(
+      "/dashboard/payroll",
+      "page",
+    );
+    expect(mockRevalidatePath).toHaveBeenCalledWith(
+      "/dashboard/payroll/declarations",
+      "page",
     );
   });
   it("derives declaration lifecycle tenant and actor fields from authenticated context", async () => {

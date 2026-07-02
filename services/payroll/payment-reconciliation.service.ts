@@ -155,6 +155,25 @@ export type PayrollPaymentReconciliationBatch = {
     payrollRegisterSource: string;
     providerEvidenceRequired: boolean;
     closeImpactSourceCode: "PAYROLL_PAYMENT_RECONCILED";
+    componentRegisterProofHash: string | null;
+    componentRegisterProofStatus: string | null;
+    payrollComponentMappingHash: string | null;
+    payrollComponentMappingStatus: string | null;
+    yearToDatePolicyHash: string | null;
+    yearToDateAccumulatorHashes: string[];
+    paymentAdapterProofHash: string | null;
+    paymentProviderAdapterContractHash: string | null;
+    paymentAdapterStatus: string | null;
+    paymentProviderAdapterKey: string | null;
+    adapterChaosReleaseGateHash: string | null;
+    productionPaymentAutomationSupported: boolean;
+    latestSettlementEvidenceHash: string | null;
+    latestSettlementSourceRegisterHash: string | null;
+    latestSettlementLifecycleContractHash: string | null;
+    latestSettlementLifecycleStatus: string | null;
+    latestSettlementLifecycleCloseImpact: string | null;
+    latestSettlementBusinessEventId: string | null;
+    latestSettlementAt: string | null;
     sourceLinks: Array<{
       type: string;
       id: string;
@@ -889,6 +908,7 @@ function buildReadModel(input: {
         0,
       );
       const latestRetry = batchInboxItems[0] ?? null;
+      const metadata = asRecord(batch.metadata);
 
       return {
         id: batch.id,
@@ -927,6 +947,78 @@ function buildReadModel(input: {
           payrollRegisterSource: "services/payroll/payroll-register.service.ts",
           providerEvidenceRequired: state !== "SETTLED",
           closeImpactSourceCode: "PAYROLL_PAYMENT_RECONCILED",
+          componentRegisterProofHash: proofIdentifier(
+            input.proofIdentifierDecision,
+            metadataString(metadata, "componentRegisterProofHash"),
+          ),
+          componentRegisterProofStatus: metadataString(
+            metadata,
+            "componentRegisterProofStatus",
+          ),
+          payrollComponentMappingHash: proofIdentifier(
+            input.proofIdentifierDecision,
+            metadataString(metadata, "payrollComponentMappingHash"),
+          ),
+          payrollComponentMappingStatus: metadataString(
+            metadata,
+            "payrollComponentMappingStatus",
+          ),
+          yearToDatePolicyHash: proofIdentifier(
+            input.proofIdentifierDecision,
+            metadataString(metadata, "yearToDatePolicyHash") ??
+              metadataString(asRecord(metadata.yearToDatePolicy), "ytdPolicyHash"),
+          ),
+          yearToDateAccumulatorHashes: metadataStringList(
+            metadata,
+            "yearToDateAccumulatorHashes",
+          )
+            .sort()
+            .map((hash) => proofIdentifier(input.proofIdentifierDecision, hash))
+            .filter((hash): hash is string => Boolean(hash)),
+          paymentAdapterProofHash: proofIdentifier(
+            input.proofIdentifierDecision,
+            metadataString(metadata, "paymentAdapterProofHash"),
+          ),
+          paymentProviderAdapterContractHash: proofIdentifier(
+            input.proofIdentifierDecision,
+            metadataString(metadata, "paymentProviderAdapterContractHash"),
+          ),
+          paymentAdapterStatus: metadataString(metadata, "paymentAdapterStatus"),
+          paymentProviderAdapterKey: metadataString(
+            metadata,
+            "paymentProviderAdapterKey",
+          ),
+          adapterChaosReleaseGateHash: proofIdentifier(
+            input.proofIdentifierDecision,
+            metadataString(metadata, "adapterChaosReleaseGateHash"),
+          ),
+          productionPaymentAutomationSupported:
+            metadata.productionPaymentAutomationSupported === true,
+          latestSettlementEvidenceHash: proofIdentifier(
+            input.proofIdentifierDecision,
+            metadataString(metadata, "latestSettlementEvidenceHash"),
+          ),
+          latestSettlementSourceRegisterHash: proofIdentifier(
+            input.proofIdentifierDecision,
+            metadataString(metadata, "latestSettlementSourceRegisterHash"),
+          ),
+          latestSettlementLifecycleContractHash: proofIdentifier(
+            input.proofIdentifierDecision,
+            metadataString(metadata, "latestSettlementLifecycleContractHash"),
+          ),
+          latestSettlementLifecycleStatus: metadataString(
+            metadata,
+            "latestSettlementLifecycleStatus",
+          ),
+          latestSettlementLifecycleCloseImpact: metadataString(
+            metadata,
+            "providerSettlementLifecycleCloseImpact",
+          ),
+          latestSettlementBusinessEventId: metadataString(
+            metadata,
+            "latestSettlementBusinessEventId",
+          ),
+          latestSettlementAt: metadataString(metadata, "latestSettlementAt"),
           sourceLinks: [
             {
               type: "PayrollPaymentBatch",

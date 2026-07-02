@@ -289,6 +289,16 @@ function metadataString(value: unknown, key: string) {
     : null;
 }
 
+function metadataStringArray(value: unknown, key: string) {
+  const entry = asRecord(value)[key];
+  return Array.isArray(entry)
+    ? entry.filter(
+        (item): item is string =>
+          typeof item === "string" && item.trim().length > 0,
+      )
+    : [];
+}
+
 function parseDate(value: Date | string | number | undefined, fallback: Date) {
   if (value instanceof Date && !Number.isNaN(value.getTime())) return value;
   if (typeof value === "string" || typeof value === "number") {
@@ -300,6 +310,47 @@ function parseDate(value: Date | string | number | undefined, fallback: Date) {
 
 function prefixedHash(value: unknown) {
   return `sha256:${hashBusinessPayload(value)}`;
+}
+
+function declarationCountryPackRegisterProofMetadata(metadata: unknown) {
+  const metadataRecord = asRecord(metadata);
+  const payload = asRecord(metadataRecord.payload);
+  const countryPackLineProofHashes = Array.from(
+    new Set([
+      ...metadataStringArray(metadataRecord, "countryPackLineProofHashes"),
+      ...metadataStringArray(payload, "countryPackLineProofHashes"),
+    ]),
+  ).sort();
+  const countryPackReviewEvidenceSourceHashes = Array.from(
+    new Set([
+      ...metadataStringArray(
+        metadataRecord,
+        "countryPackReviewEvidenceSourceHashes",
+      ),
+      ...metadataStringArray(payload, "countryPackReviewEvidenceSourceHashes"),
+    ]),
+  ).sort();
+  const countryPackLegalRefs = Array.from(
+    new Set([
+      ...metadataStringArray(metadataRecord, "countryPackLegalRefs"),
+      ...metadataStringArray(payload, "countryPackLegalRefs"),
+    ]),
+  ).sort();
+
+  return {
+    countryPackRegisterProofHash:
+      metadataString(metadataRecord, "countryPackRegisterProofHash") ??
+      metadataString(payload, "countryPackRegisterProofHash"),
+    countryPackRegisterProofStatus:
+      metadataString(metadataRecord, "countryPackRegisterProofStatus") ??
+      metadataString(payload, "countryPackRegisterProofStatus"),
+    countryPackLineProofHashes,
+    statutoryScenarioCoverageHash:
+      metadataString(metadataRecord, "statutoryScenarioCoverageHash") ??
+      metadataString(payload, "statutoryScenarioCoverageHash"),
+    countryPackReviewEvidenceSourceHashes,
+    countryPackLegalRefs,
+  };
 }
 
 function authorityAdapterProofForEvidence(
@@ -532,6 +583,7 @@ function evidencePayload(input: {
     currency: string;
     payloadHash: string | null;
     countryPackResolutionHash: string;
+    metadata?: unknown;
   };
   nextStatus: PayrollDeclarationStatus;
   transition: PayrollDeclarationEvidenceTransition;
@@ -553,6 +605,7 @@ function evidencePayload(input: {
     currency: input.declaration.currency,
     declarationPayloadHash: input.declaration.payloadHash,
     countryPackResolutionHash: input.declaration.countryPackResolutionHash,
+    ...declarationCountryPackRegisterProofMetadata(input.declaration.metadata),
     authorityChannel: input.parsed.authorityChannel,
     authorityEnvironment: input.parsed.authorityEnvironment,
     authorityReference: input.parsed.authorityReference ?? null,
@@ -677,6 +730,12 @@ function proofIdentifier(
   return decision.allowed ? value : decision.replacement;
 }
 
+function proofIdentifierArray(decision: RedactionDecision, values: string[]) {
+  return values
+    .map((value) => proofIdentifier(decision, value))
+    .filter((value): value is string => Boolean(value));
+}
+
 const ACTIVE_DECLARATION_STATUSES = [
   PayrollDeclarationStatus.PREPARED,
   PayrollDeclarationStatus.SUBMITTED,
@@ -734,6 +793,8 @@ function declarationTransitionLabel(
 function declarationBlockers(input: {
   status: PayrollDeclarationStatus;
   payloadHash: string | null;
+  countryPackRegisterProofHash: string | null;
+  countryPackRegisterProofStatus: string | null;
   latestEvidence: {
     sourceRegisterHash: string | null;
     productionSubmissionSupported: boolean;
@@ -772,6 +833,21 @@ function declarationBlockers(input: {
     });
   }
 
+  if (
+    !input.countryPackRegisterProofHash ||
+    input.countryPackRegisterProofStatus !== "MATCHED"
+  ) {
+    blockers.push({
+      id: "PAYROLL_DECLARATION_COUNTRY_PACK_REGISTER_PROOF_MISSING",
+      severity: "high",
+      title: "Country-pack register proof is missing",
+      detail:
+        "Prepared declaration evidence must carry matched country-pack register proof from the payroll register before close certification can trust statutory declarations.",
+      nextAction:
+        "Prepare declarations again from a payroll run with matched country-pack register proof.",
+    });
+  }
+
   if (input.status === PayrollDeclarationStatus.REJECTED) {
     blockers.push({
       id: "PAYROLL_DECLARATION_REJECTED_BY_AUTHORITY",
@@ -801,6 +877,94 @@ function declarationBlockers(input: {
   return blockers;
 }
 
+function declarationAdapterExecutionState(input: {
+  latestEvidence: {
+    id: string;
+    productionSubmissionSupported: boolean;
+    automationCapabilityStatus: string;
+  } | null;
+  declarationMetadata: Record<string, unknown>;
+  proofIdentifierDecision: RedactionDecision;
+  blockers: Array<{ severity: "info" | "medium" | "high" | "critical" }>;
+}) {
+  const execution = asRecord(
+    input.declarationMetadata.authorityAdapterExecution,
+  );
+  const executionStatus =
+    metadataString(
+      input.declarationMetadata,
+      "latestAuthorityAdapterExecutionStatus",
+    ) ?? metadataString(execution, "status");
+  const executionEvidenceId =
+    metadataString(
+      input.declarationMetadata,
+      "latestAuthorityAdapterExecutionEvidenceId",
+    ) ?? metadataString(execution, "declarationEvidenceId");
+  const executionCorrelationId =
+    metadataString(
+      input.declarationMetadata,
+      "latestAuthorityAdapterExecutionCorrelationId",
+    ) ?? metadataString(execution, "correlationId");
+  const evidenceId = proofIdentifier(
+    input.proofIdentifierDecision,
+    input.latestEvidence?.id ?? null,
+  );
+  const proofRedacted =
+    Boolean(input.latestEvidence?.id) &&
+    evidenceId !== input.latestEvidence?.id;
+  const hasHardBlocker = input.blockers.some(
+    (blocker) => blocker.severity === "high" || blocker.severity === "critical",
+  );
+  const productionSupported =
+    input.latestEvidence?.productionSubmissionSupported ?? false;
+  const canEnqueue = Boolean(
+    productionSupported &&
+    evidenceId &&
+    !proofRedacted &&
+    !hasHardBlocker &&
+    !executionStatus,
+  );
+
+  let reason =
+    "Certified declaration evidence is ready for fresh-auth authority adapter enqueue.";
+  if (!input.latestEvidence) {
+    reason =
+      "Record declaration lifecycle evidence before queueing authority adapter execution.";
+  } else if (proofRedacted) {
+    reason =
+      "Declaration evidence proof identifiers are redacted for this session; use an authorized proof role before queueing.";
+  } else if (!productionSupported) {
+    reason = `Latest evidence is ${input.latestEvidence.automationCapabilityStatus}; manual authority workflow remains required.`;
+  } else if (hasHardBlocker) {
+    reason =
+      "Clear high or critical declaration blockers before queueing authority adapter execution.";
+  } else if (executionStatus) {
+    reason = `Authority adapter execution is already ${executionStatus}.`;
+  }
+
+  return {
+    canEnqueue,
+    declarationEvidenceId: canEnqueue ? evidenceId : null,
+    status: executionStatus,
+    queuedEvidenceId: proofIdentifier(
+      input.proofIdentifierDecision,
+      executionEvidenceId,
+    ),
+    correlationId: proofIdentifier(
+      input.proofIdentifierDecision,
+      executionCorrelationId,
+    ),
+    authorityAdapterKey: metadataString(execution, "authorityAdapterKey"),
+    authorityAdapterProofHash: proofIdentifier(
+      input.proofIdentifierDecision,
+      metadataString(execution, "authorityAdapterProofHash"),
+    ),
+    requiredPermission: "payroll.declarations.manage",
+    requiresFreshAuth: true,
+    sourceService: "services/payroll/authority-adapter-execution.service.ts",
+    reason,
+  };
+}
 export async function getPayrollDeclarationWorkbenchData(
   input: PayrollDeclarationWorkbenchInput,
   client: Pick<
@@ -927,9 +1091,40 @@ export async function getPayrollDeclarationWorkbenchData(
 
   const rows = declarations.map((declaration) => {
     const latestEvidence = declaration.evidenceItems[0] ?? null;
+    const declarationMetadata = asRecord(declaration.metadata);
+    const payloadMetadata = asRecord(declarationMetadata.payload);
+    const countryPackRegisterProofHash =
+      metadataString(declarationMetadata, "countryPackRegisterProofHash") ??
+      metadataString(payloadMetadata, "countryPackRegisterProofHash");
+    const countryPackRegisterProofStatus =
+      metadataString(declarationMetadata, "countryPackRegisterProofStatus") ??
+      metadataString(payloadMetadata, "countryPackRegisterProofStatus");
+    const countryPackLineProofHashes = [
+      ...metadataStringArray(declarationMetadata, "countryPackLineProofHashes"),
+      ...metadataStringArray(payloadMetadata, "countryPackLineProofHashes"),
+    ].sort();
+    const statutoryScenarioCoverageHash =
+      metadataString(declarationMetadata, "statutoryScenarioCoverageHash") ??
+      metadataString(payloadMetadata, "statutoryScenarioCoverageHash");
+    const countryPackReviewEvidenceSourceHashes = [
+      ...metadataStringArray(
+        declarationMetadata,
+        "countryPackReviewEvidenceSourceHashes",
+      ),
+      ...metadataStringArray(
+        payloadMetadata,
+        "countryPackReviewEvidenceSourceHashes",
+      ),
+    ].sort();
+    const countryPackLegalRefs = [
+      ...metadataStringArray(declarationMetadata, "countryPackLegalRefs"),
+      ...metadataStringArray(payloadMetadata, "countryPackLegalRefs"),
+    ].sort();
     const blockers = declarationBlockers({
       status: declaration.status,
       payloadHash: declaration.payloadHash,
+      countryPackRegisterProofHash,
+      countryPackRegisterProofStatus,
       latestEvidence,
     });
 
@@ -991,6 +1186,27 @@ export async function getPayrollDeclarationWorkbenchData(
           proofIdentifierDecision,
           declaration.countryPackResolutionHash,
         ),
+        countryPackRegisterProofHash: proofIdentifier(
+          proofIdentifierDecision,
+          countryPackRegisterProofHash,
+        ),
+        countryPackRegisterProofStatus,
+        countryPackRegisterProofPresent:
+          Boolean(countryPackRegisterProofHash) &&
+          countryPackRegisterProofStatus === "MATCHED",
+        countryPackLineProofHashes: proofIdentifierArray(
+          proofIdentifierDecision,
+          countryPackLineProofHashes,
+        ),
+        statutoryScenarioCoverageHash: proofIdentifier(
+          proofIdentifierDecision,
+          statutoryScenarioCoverageHash,
+        ),
+        countryPackReviewEvidenceSourceHashes: proofIdentifierArray(
+          proofIdentifierDecision,
+          countryPackReviewEvidenceSourceHashes,
+        ),
+        countryPackLegalRefs,
         latestEvidenceId: proofIdentifier(
           proofIdentifierDecision,
           latestEvidence?.id ?? null,
@@ -1058,12 +1274,21 @@ export async function getPayrollDeclarationWorkbenchData(
         ),
       },
       nextActions: allowedDeclarationTransitions(declaration.status),
+      adapterExecution: declarationAdapterExecutionState({
+        latestEvidence,
+        declarationMetadata,
+        proofIdentifierDecision,
+        blockers,
+      }),
       blockers,
     };
   });
 
   const missingRegisterProofCount = rows.filter(
     (row) => !row.proof.sourceRegisterProofPresent,
+  ).length;
+  const missingCountryPackRegisterProofCount = rows.filter(
+    (row) => !row.proof.countryPackRegisterProofPresent,
   ).length;
   const blockedRows = rows.filter((row) =>
     row.blockers.some(
@@ -1089,6 +1314,7 @@ export async function getPayrollDeclarationWorkbenchData(
       automationBlockedEvidenceCount,
       productionSupportedEvidenceCount,
       missingRegisterProofCount,
+      missingCountryPackRegisterProofCount,
       amountInScope: decimalText(amountInScope._sum.amount),
       coverageComplete: rows.length >= totalDeclarations,
     },
@@ -1123,6 +1349,8 @@ export async function recordPayrollDeclarationEvidence(
 
     const nextStatus = config.nextStatus ?? declaration.status;
     assertAllowedTransition(declaration.status, config);
+    const countryPackRegisterProofMetadata =
+      declarationCountryPackRegisterProofMetadata(declaration.metadata);
     const authorityLifecycle = authorityLifecycleMetadata({
       parsed,
       previousStatus: declaration.status,
@@ -1186,6 +1414,7 @@ export async function recordPayrollDeclarationEvidence(
         authority: declaration.authority,
         declarationType: declaration.declarationType,
         sourceRegisterHash: parsed.sourceRegisterHash,
+        ...countryPackRegisterProofMetadata,
         automationCapabilityStatus:
           authorityAdapterProof.automationCapabilityStatus,
         authorityAdapterKey: authorityAdapterProof.authorityAdapterKey,
@@ -1235,6 +1464,7 @@ export async function recordPayrollDeclarationEvidence(
         metadata: safeJson({
           ...asRecord(parsed.metadata),
           evidence,
+          ...countryPackRegisterProofMetadata,
           authorityAdapterProof: authorityAdapterProof.proof,
           authorityAdapterProofHash:
             authorityAdapterProof.authorityAdapterProofHash,
@@ -1312,6 +1542,7 @@ export async function recordPayrollDeclarationEvidence(
           evidenceId: createdEvidence.id,
           evidenceHash,
           sourceRegisterHash: parsed.sourceRegisterHash,
+          ...countryPackRegisterProofMetadata,
           authority: declaration.authority,
           declarationType: declaration.declarationType,
           authorityChannel: parsed.authorityChannel,
@@ -1335,6 +1566,7 @@ export async function recordPayrollDeclarationEvidence(
         sourceId: declaration.id,
         documentHash: evidenceHash,
         metadata: {
+          ...countryPackRegisterProofMetadata,
           manualAuthorityWorkflowOnly:
             authorityAdapterProof.manualAuthorityWorkflowOnly,
           productionAdapterBlockedReason:
@@ -1417,6 +1649,7 @@ export async function recordPayrollDeclarationEvidence(
             evidenceId: createdEvidence.id,
             evidenceHash,
             sourceRegisterHash: parsed.sourceRegisterHash,
+            ...countryPackRegisterProofMetadata,
             businessEventId: eventResult.event.id,
             automationCapabilityStatus:
               authorityAdapterProof.automationCapabilityStatus,

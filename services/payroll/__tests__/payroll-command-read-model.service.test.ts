@@ -371,6 +371,17 @@ function buildClient(
           status: PayrollDeclarationStatus.REJECTED,
           payloadHash: "sha256:decl-payload",
           countryPackResolutionHash: "sha256:country-pack",
+          metadata: {
+            countryPackRegisterProofHash: "sha256:country-pack-register-proof",
+            countryPackRegisterProofStatus: "MATCHED",
+            countryPackRegisterProofLineCount: 2,
+            countryPackRegisterProofMissingLineCount: 0,
+            countryPackRegisterProofMismatchedLineCount: 0,
+            countryPackLineProofHashes: ["sha256:line-proof-1", "sha256:line-proof-2"],
+            statutoryScenarioCoverageHash: "sha256:statutory-scenario-coverage",
+            countryPackReviewEvidenceSourceHashes: ["sha256:review-source-1"],
+            countryPackLegalRefs: ["CNPS-2026"],
+          },
           dueDate: new Date("2026-07-10T00:00:00.000Z"),
           updatedAt,
         },
@@ -615,6 +626,20 @@ describe("payroll command read model service", () => {
       documentHash: "sha256:run-doc",
       lineCount: 2,
     }))
+    expect(result.evidence.latestDeclaration).toEqual(expect.objectContaining({
+      id: "decl-1",
+      countryPackRegisterProofHash: "sha256:country-pack-register-proof",
+      countryPackRegisterProofStatus: "MATCHED",
+      countryPackRegisterProofPresent: true,
+      countryPackRegisterProofLineCount: 2,
+      countryPackRegisterProofMissingLineCount: 0,
+      countryPackRegisterProofMismatchedLineCount: 0,
+      countryPackLineProofHashes: ["sha256:line-proof-1", "sha256:line-proof-2"],
+      statutoryScenarioCoverageHash: "sha256:statutory-scenario-coverage",
+      countryPackReviewEvidenceSourceHashes: ["sha256:review-source-1"],
+      countryPackLegalRefs: ["CNPS-2026"],
+    }))
+    expect(result.blockers.map((blocker) => blocker.code)).not.toContain("PAYROLL_DECLARATION_COUNTRY_PACK_REGISTER_PROOF_MISSING")
     expect(client.auditLog.create).toHaveBeenCalledWith(expect.objectContaining({
       data: expect.objectContaining({
         entityType: "PayrollCommandReadModel",
@@ -623,6 +648,57 @@ describe("payroll command read model service", () => {
       }),
     }))
     expect(JSON.stringify(result)).not.toContain("bankAccountNumber")
+  })
+
+  it("routes declaration country-pack proof gaps to the declaration workbench", async () => {
+    const client = buildClient()
+    client.payrollDeclaration.findMany.mockResolvedValueOnce([
+      {
+        id: "decl-1",
+        authority: "CNPS",
+        declarationType: "SOCIAL_SECURITY",
+        status: PayrollDeclarationStatus.ACCEPTED,
+        payloadHash: "sha256:decl-payload",
+        countryPackResolutionHash: "sha256:country-pack",
+        metadata: {
+          countryPackRegisterProofStatus: "MISSING",
+        },
+        dueDate: new Date("2026-07-10T00:00:00.000Z"),
+        updatedAt,
+      },
+    ])
+
+    const result = await getPayrollCommandReadModel({
+      organizationId: "org-1",
+      actorId: "declaration-manager-1",
+      actorPermissions: ["payroll.command.read", "payroll.declarations.manage"],
+      limit: 25,
+      asOf,
+    }, client as never)
+
+    expect(result.blockers).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        code: "PAYROLL_DECLARATION_COUNTRY_PACK_REGISTER_PROOF_MISSING",
+        domain: "declaration",
+        severity: "high",
+      }),
+    ]))
+    expect(result.readiness.declarations.blockerCodes).toEqual(expect.arrayContaining([
+      "PAYROLL_DECLARATION_COUNTRY_PACK_REGISTER_PROOF_MISSING",
+    ]))
+    expect(result.nextActions).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        id: "review-declaration-country-pack-register-proof",
+        href: "/dashboard/payroll/declarations",
+        allowed: true,
+        requiredPermission: "payroll.declarations.manage",
+      }),
+    ]))
+    expect(result.evidence.latestDeclaration).toEqual(expect.objectContaining({
+      countryPackRegisterProofHash: null,
+      countryPackRegisterProofStatus: "MISSING",
+      countryPackRegisterProofPresent: false,
+    }))
   })
 
   it("surfaces a persisted certified pilot-cycle certificate as release-review ready", async () => {

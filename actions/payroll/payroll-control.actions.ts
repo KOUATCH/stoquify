@@ -13,6 +13,10 @@ import {
   type PayrollWorkbenchData,
 } from "@/services/payroll/payroll-control.service";
 import {
+  enqueuePayrollAuthorityAdapterExecution,
+  enqueuePayrollAuthorityAdapterExecutionInputSchema,
+} from "@/services/payroll/authority-adapter-execution.service";
+import {
   getPayrollDeclarationWorkbenchData,
   payrollDeclarationWorkbenchInputSchema,
   recordPayrollDeclarationEvidence,
@@ -490,4 +494,38 @@ const recordDeclarationEvidence = protect<
 
 export async function recordPayrollDeclarationEvidenceAction(input: unknown) {
   return recordDeclarationEvidence(input);
+}
+
+const enqueueAuthorityAdapterExecution = protect<
+  unknown,
+  Awaited<ReturnType<typeof enqueuePayrollAuthorityAdapterExecution>>
+>(
+  {
+    permission: "payroll.declarations.manage",
+    auditResource: "PayrollDeclaration",
+    freshAuth: true,
+    tenantGuard: "handler-derived",
+    module: {
+      moduleSlug: "payroll",
+      surface: "payroll.declarations.adapter_execution.enqueue",
+      accessIntent: "write",
+      mode: "enforce",
+    },
+  },
+  async (input, ctx) => {
+    const parsed = enqueuePayrollAuthorityAdapterExecutionInputSchema.parse({
+      ...asRecord(input),
+      organizationId: ctx.orgId,
+      actorId: ctx.userId,
+    });
+    const result = await enqueuePayrollAuthorityAdapterExecution(parsed);
+    revalidatePayrollPaths();
+    return result;
+  },
+);
+
+export async function enqueuePayrollAuthorityAdapterExecutionAction(
+  input: unknown,
+) {
+  return enqueueAuthorityAdapterExecution(input);
 }

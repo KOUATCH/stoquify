@@ -431,6 +431,77 @@ async function loadLinkedEmployee(
   return matches[0]
 }
 
+function buildCountryPackLineProof(row: PayslipRow): PayrollPayslipCountryPackLineProof {
+  const snapshot = jsonRecord(row.runLine.calculationSnapshot)
+  const provenance = nestedRecord(snapshot, "countryPackProvenance")
+  const issues: string[] = []
+
+  if (!snapshot) {
+    issues.push("missing:calculationSnapshot")
+  }
+  if (!provenance) {
+    issues.push("missing:countryPackProvenance")
+  }
+
+  const countryCode = metadataString(provenance, "countryCode") ?? metadataString(snapshot, "countryCode")
+  const countryPackVersion = metadataString(provenance, "packVersion") ?? metadataString(snapshot, "countryPackVersion")
+  const countryPackSchemaVersion = metadataString(provenance, "schemaVersion") ?? metadataString(snapshot, "countryPackSchemaVersion")
+  const countryPackCapabilityStatus = metadataString(provenance, "capabilityStatus") ?? metadataString(snapshot, "countryPackCapabilityStatus")
+  const countryPackResolutionHash = metadataString(provenance, "resolutionHash") ?? metadataString(snapshot, "countryPackResolutionHash")
+  const statutoryScenarioCoverageHash = metadataString(provenance, "statutoryScenarioCoverageHash")
+  const statutoryScenarioCoverageStatus = metadataString(provenance, "statutoryScenarioCoverageStatus")
+  const roundingPolicyHash = metadataString(provenance, "roundingPolicyHash") ?? metadataString(snapshot, "roundingPolicyHash")
+  const yearToDatePolicyHash = metadataString(provenance, "yearToDatePolicyHash") ?? metadataString(snapshot, "yearToDatePolicyHash")
+  const provenanceHash = metadataString(snapshot, "countryPackProvenanceHash")
+  const computedHash = provenance ? sha256(provenance) : null
+
+  const requireMatched = (actual: string | null, expected: string | null | undefined, key: string) => {
+    if (!actual) {
+      issues.push(`missing:${key}`)
+      return
+    }
+    if (expected && actual !== expected) {
+      issues.push(`mismatch:${key}`)
+    }
+  }
+
+  requireMatched(countryCode, row.countryCode, "countryCode")
+  requireMatched(countryPackVersion, row.countryPackVersion, "countryPackVersion")
+  requireMatched(countryPackSchemaVersion, row.countryPackSchemaVersion, "countryPackSchemaVersion")
+  requireMatched(countryPackCapabilityStatus, row.payrollRun.countryPackCapabilityStatus, "countryPackCapabilityStatus")
+  requireMatched(countryPackResolutionHash, row.countryPackResolutionHash, "countryPackResolutionHash")
+  if (!statutoryScenarioCoverageHash) issues.push("missing:statutoryScenarioCoverageHash")
+  if (!statutoryScenarioCoverageStatus) issues.push("missing:statutoryScenarioCoverageStatus")
+  if (!roundingPolicyHash) issues.push("missing:roundingPolicyHash")
+  if (!yearToDatePolicyHash) issues.push("missing:yearToDatePolicyHash")
+  if (!provenanceHash) issues.push("missing:countryPackProvenanceHash")
+  if (provenanceHash && computedHash && provenanceHash !== computedHash) {
+    issues.push("mismatch:countryPackProvenanceHash")
+  }
+
+  const missingEvidence = issues.some((issue) => issue.startsWith("missing:"))
+
+  return {
+    status: missingEvidence ? "MISSING" : issues.length > 0 ? "MISMATCH" : "MATCHED",
+    issues,
+    runLineId: row.runLine.id,
+    countryCode,
+    countryPackVersion,
+    countryPackSchemaVersion,
+    countryPackCapabilityStatus,
+    countryPackResolutionHash,
+    statutoryScenarioCoverageHash,
+    statutoryScenarioCoverageStatus,
+    reviewEvidenceSourceHashes: metadataStringArray(provenance, "reviewEvidenceSourceHashes"),
+    legalRefs: metadataStringArray(provenance, "legalRefs"),
+    roundingPolicyHash,
+    yearToDatePolicyHash,
+    provenanceHash,
+    computedHash,
+    source: "payroll_run_lines.calculationSnapshot.countryPackProvenance",
+  }
+}
+
 function sourceLinks(row: PayslipRow): PayrollPayslipSourceLink[] {
   const links: PayrollPayslipSourceLink[] = [
     { type: "PayrollPayslip", id: row.id, documentHash: row.documentHash },
@@ -467,10 +538,11 @@ function sourceLinks(row: PayslipRow): PayrollPayslipSourceLink[] {
 function archiveManifestHash(row: PayslipRow) {
   return sha256({
     kind: "AQSTOQFLOW_PAYSLIP_ARCHIVE_MANIFEST",
-    version: 1,
+    version: 2,
     payslipId: row.id,
     payslipNumber: row.payslipNumber,
     documentHash: row.documentHash,
+    countryPackLineProof: buildCountryPackLineProof(row),
     sourceLinks: sourceLinks(row),
   })
 }
@@ -486,6 +558,7 @@ function nullableAmount(decision: RedactionDecision, value: Prisma.Decimal.Value
 
 function mapPayslip(row: PayslipRow, decision: RedactionDecision): PayrollPayslipSelfServiceRecord {
   const period = row.payrollRun.payrollPeriod
+  const countryPackLineProof = buildCountryPackLineProof(row)
   const paymentEvidenceHashes = row.paymentAllocations
     .map((allocation) => allocation.payrollPaymentBatch.evidenceHash)
     .filter((hash): hash is string => Boolean(hash))
@@ -551,6 +624,7 @@ function mapPayslip(row: PayslipRow, decision: RedactionDecision): PayrollPaysli
       documentHash: row.documentHash,
       archiveUri: row.archiveUri,
       archiveManifestHash: archiveManifestHash(row),
+      countryPackLineProof,
       sourceLinks: sourceLinks(row),
     },
     tieOut: {
@@ -669,6 +743,7 @@ async function loadSelfServiceReadModel(
         select: {
           id: true,
           documentHash: true,
+          calculationSnapshot: true,
         },
       },
       lines: true,

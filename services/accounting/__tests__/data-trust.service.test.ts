@@ -453,6 +453,46 @@ describe("accountant data trust service", () => {
     );
   });
 
+  it("blocks certified trust packs when declaration country-pack register proof is missing", async () => {
+    seedCleanTrustData();
+    mockDb.payrollDeclarationEvidence.count
+      .mockReset()
+      .mockResolvedValueOnce(0)
+      .mockResolvedValueOnce(1)
+      .mockResolvedValueOnce(0)
+      .mockResolvedValueOnce(0)
+      .mockResolvedValueOnce(0);
+
+    const result = await getAccountantPortalData(
+      { organizationId: "org-1" },
+      db,
+      now,
+    );
+
+    expect(result.certificate.level).toBe("T2");
+    expect(result.exportReadiness.canExportCertifiedPack).toBe(false);
+    expect(result.blockers).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "payroll-declaration-country-pack-register-proof-missing",
+          severity: "high",
+          gate: "payroll.declarations.country-pack-register-proof",
+        }),
+      ]),
+    );
+    expect(result.moduleEvidence).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          module: "payroll",
+          status: "blocked",
+          facts: expect.arrayContaining([
+            { label: "Declaration country-pack register proof gaps", value: 1 },
+          ]),
+        }),
+      ]),
+    );
+  });
+
   it("expands payroll close data-trust gates to register, declaration, payslip, and payment evidence", async () => {
     seedCleanTrustData();
     mockDb.payrollDeclaration.count
@@ -497,7 +537,7 @@ describe("accountant data trust service", () => {
     );
     expect(result.certificate.evidence).toEqual(
       expect.arrayContaining([
-        "payroll register tie-out, payslip proof, payment settlement register/component/provider-adapter proof, declaration lifecycle register/lifecycle-contract proof, and authority-adapter proof scan",
+        "payroll register tie-out, payslip proof, payment settlement register/component/provider-adapter proof, declaration lifecycle register/country-pack/lifecycle-contract proof, and authority-adapter proof scan",
       ]),
     );
     expect(result.blockers).toEqual(
@@ -508,6 +548,10 @@ describe("accountant data trust service", () => {
         }),
         expect.objectContaining({
           id: "payroll-declaration-register-proof-missing",
+          severity: "high",
+        }),
+        expect.objectContaining({
+          id: "payroll-declaration-country-pack-register-proof-missing",
           severity: "high",
         }),
         expect.objectContaining({
@@ -573,6 +617,7 @@ describe("accountant data trust service", () => {
             { label: "In-progress declarations", value: 1 },
             { label: "Declaration evidence gaps", value: 1 },
             { label: "Declaration register proof gaps", value: 1 },
+            { label: "Declaration country-pack register proof gaps", value: 1 },
             { label: "Declaration adapter proof gaps", value: 1 },
             { label: "Declaration lifecycle proof gaps", value: 1 },
             { label: "Declaration amendments", value: 1 },

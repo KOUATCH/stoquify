@@ -144,6 +144,14 @@ export type PayrollFinalReleaseReadinessPack = {
       setupStatutoryScenarioFamilies: string[];
       setupStatutoryScenarioReadyFamilies: string[];
       setupStatutoryScenarioMissingApprovedFamilies: string[];
+      reviewedProofChainStatus: string | null;
+      reviewedProofChainCoverageHash: string | null;
+      reviewedProofChainBlockerCodes: string[];
+      reviewedProofChainReviewEvidenceSourceHashes: string[];
+      reviewedProofChainRegisterProofGapCount: number | null;
+      reviewedProofChainDeclarationRegisterProofGapCount: number | null;
+      reviewedProofChainPaymentSettlementRegisterProofGapCount: number | null;
+      reviewedProofChainCorrectionIntentCount: number | null;
       sourceAdapterChaosReleaseGateHash: string | null;
       sourceAdapterChaosReleaseGateHashMatches: boolean | null;
       totalBlockingGaps: number | null;
@@ -365,6 +373,7 @@ function latestProofBackfillEvidence(row: AuditRow | null) {
   const setupGate = asRecord(payload.setupGate);
   const statutoryScenarioCoverage = asRecord(setupGate.statutoryScenarioCoverage);
   const statutoryReviewEvidence = asRecord(statutoryScenarioCoverage.reviewEvidence);
+  const reviewedProofChain = asRecord(statutoryScenarioCoverage.reviewedProofChain);
   const statutorySourceEvidenceHashes = stringArray(
     statutoryReviewEvidence.sourceEvidenceHashes,
   );
@@ -416,6 +425,24 @@ function latestProofBackfillEvidence(row: AuditRow | null) {
       statutoryRequiredReviewTopics.join(", ") || null,
     setupStatutoryScenarioFamilies,
     setupStatutoryScenarioReadyFamilies,
+    reviewedProofChainStatus: stringOrNull(reviewedProofChain.status),
+    reviewedProofChainCoverageHash: stringOrNull(reviewedProofChain.coverageHash),
+    reviewedProofChainBlockerCodes: stringArray(reviewedProofChain.blockerCodes),
+    reviewedProofChainReviewEvidenceSourceHashes: stringArray(
+      reviewedProofChain.reviewEvidenceSourceHashes,
+    ),
+    reviewedProofChainRegisterProofGapCount: numberOrNull(
+      reviewedProofChain.registerProofGapCount,
+    ),
+    reviewedProofChainDeclarationRegisterProofGapCount: numberOrNull(
+      reviewedProofChain.declarationRegisterProofGapCount,
+    ),
+    reviewedProofChainPaymentSettlementRegisterProofGapCount: numberOrNull(
+      reviewedProofChain.paymentSettlementRegisterProofGapCount,
+    ),
+    reviewedProofChainCorrectionIntentCount:
+      numberOrNull(reviewedProofChain.correctionIntentCount) ??
+      numberOrNull(sourceCertificate.correctionIntentCount),
     sourceAdapterChaosReleaseGateHash: stringOrNull(
       sourceCertificate.adapterChaosReleaseGateHash,
     ),
@@ -767,6 +794,16 @@ export async function buildPayrollFinalReleaseReadinessPack(
       ),
     );
   }
+  if (proofBackfill.reviewedProofChainStatus !== "READY") {
+    blockers.push(
+      blocker(
+        "statutory_setup",
+        "FINAL_STATUTORY_REVIEWED_PROOF_CHAIN_BLOCKED",
+        "Final release requires statutory review evidence to tie to payroll register proof, correction/recalculation lifecycle evidence, and accounting tie-out blockers.",
+        proofBackfill.reviewedProofChainStatus ? "high" : "critical",
+      ),
+    );
+  }
 
   if (countryPackReviewIntake.status !== "APPROVED") {
     blockers.push(
@@ -902,6 +939,26 @@ export async function buildPayrollFinalReleaseReadinessPack(
     );
   }
 
+  if (!pilot.certificateHash) {
+    blockers.push(
+      blocker(
+        "pilot_cycle",
+        "FINAL_PILOT_CERTIFICATE_HASH_MISSING",
+        "Persisted controlled pilot-cycle certification evidence is missing its certificate hash.",
+        "critical",
+      ),
+    );
+  }
+  if (pilot.blockerCount > 0) {
+    blockers.push(
+      blocker(
+        "pilot_cycle",
+        "FINAL_PILOT_CERTIFICATE_BLOCKERS_OPEN",
+        "Persisted controlled pilot-cycle certification evidence still carries pilot blockers.",
+        "high",
+      ),
+    );
+  }
   if (pilot.status !== "CERTIFIED_FOR_PRODUCTION_RELEASE_REVIEW") {
     blockers.push(
       blocker(
@@ -1037,6 +1094,13 @@ export async function buildPayrollFinalReleaseReadinessPack(
           missingApprovedTargetFamilies.join(", ") || null,
         readyFamiliesMissingCountryPackApproval:
           setupReadyFamiliesMissingApproval.join(", ") || null,
+        reviewedProofChainStatus: proofBackfill.reviewedProofChainStatus,
+        reviewedProofChainBlockerCount:
+          proofBackfill.reviewedProofChainBlockerCodes.length,
+        reviewedProofChainRegisterProofGapCount:
+          proofBackfill.reviewedProofChainRegisterProofGapCount,
+        reviewedProofChainCorrectionIntentCount:
+          proofBackfill.reviewedProofChainCorrectionIntentCount,
       },
       blockers,
     ),
@@ -1222,6 +1286,21 @@ export async function buildPayrollFinalReleaseReadinessPack(
           proofBackfill.setupStatutoryScenarioReadyFamilies,
         setupStatutoryScenarioMissingApprovedFamilies:
           missingApprovedTargetFamilies,
+        reviewedProofChainStatus: proofBackfill.reviewedProofChainStatus,
+        reviewedProofChainCoverageHash:
+          proofBackfill.reviewedProofChainCoverageHash,
+        reviewedProofChainBlockerCodes:
+          proofBackfill.reviewedProofChainBlockerCodes,
+        reviewedProofChainReviewEvidenceSourceHashes:
+          proofBackfill.reviewedProofChainReviewEvidenceSourceHashes,
+        reviewedProofChainRegisterProofGapCount:
+          proofBackfill.reviewedProofChainRegisterProofGapCount,
+        reviewedProofChainDeclarationRegisterProofGapCount:
+          proofBackfill.reviewedProofChainDeclarationRegisterProofGapCount,
+        reviewedProofChainPaymentSettlementRegisterProofGapCount:
+          proofBackfill.reviewedProofChainPaymentSettlementRegisterProofGapCount,
+        reviewedProofChainCorrectionIntentCount:
+          proofBackfill.reviewedProofChainCorrectionIntentCount,
         sourceAdapterChaosReleaseGateHash:
           proofBackfill.sourceAdapterChaosReleaseGateHash,
         sourceAdapterChaosReleaseGateHashMatches:

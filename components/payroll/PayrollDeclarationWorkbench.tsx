@@ -13,6 +13,7 @@ import {
 import type { PayrollDeclarationWorkbenchResult } from "@/actions/payroll/payroll-control.actions";
 import { localizePath } from "@/i18n/routing";
 import type { Locale } from "@/types/bilingual";
+import PayrollDeclarationAuthorityExecutionPanel from "./PayrollDeclarationAuthorityExecutionPanel";
 import PayrollProofDrawerButton, {
   type PayrollProofDrawerSubject,
 } from "./PayrollProofDrawerButton";
@@ -296,6 +297,22 @@ function declarationProofSubject(
         label: "Manual workflow",
         value: declaration.automation.manualAuthorityWorkflowOnly,
       },
+      {
+        label: "Adapter enqueue gate",
+        value: declaration.adapterExecution.canEnqueue ? "READY" : "BLOCKED",
+      },
+      {
+        label: "Adapter enqueue status",
+        value: declaration.adapterExecution.status,
+      },
+      {
+        label: "Adapter enqueue evidence",
+        value: declaration.adapterExecution.queuedEvidenceId,
+      },
+      {
+        label: "Adapter enqueue correlation",
+        value: declaration.adapterExecution.correlationId,
+      },
       ...historyRows,
       ...actionRows,
     ],
@@ -330,10 +347,7 @@ function Blockers({ declaration }: { declaration: DeclarationRow }) {
 }
 
 function NextActions({ declaration }: { declaration: DeclarationRow }) {
-  if (!declaration.nextActions.length)
-    return <Badge value="No manual action" />;
-
-  return (
+  const manualActions = declaration.nextActions.length ? (
     <div className="flex flex-col gap-2">
       {declaration.nextActions.map((action) => (
         <div
@@ -353,6 +367,15 @@ function NextActions({ declaration }: { declaration: DeclarationRow }) {
           </div>
         </div>
       ))}
+    </div>
+  ) : (
+    <Badge value="No manual action" />
+  );
+
+  return (
+    <div className="flex flex-col gap-2">
+      {manualActions}
+      <PayrollDeclarationAuthorityExecutionPanel declaration={declaration} />
     </div>
   );
 }

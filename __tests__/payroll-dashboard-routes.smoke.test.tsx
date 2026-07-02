@@ -1539,4 +1539,43 @@ describe("payroll dashboard route smoke", () => {
       expect(smokeScript).not.toContain(`path: "${unsupportedPath}"`);
     }
   });
+
+  it("keeps authenticated payroll browser smoke coverage aligned with implemented routes", () => {
+    const authenticatedSmokeSpec = readFileSync(
+      path.join(process.cwd(), "tests/e2e/payroll-authenticated-smoke.spec.ts"),
+      "utf8",
+    );
+    const implementedRoutes = [
+      { id: "payroll", path: "/en/dashboard/payroll" },
+      { id: "payroll-attendance", path: "/en/dashboard/payroll/attendance" },
+      { id: "payroll-compensation", path: "/en/dashboard/payroll/compensation" },
+      { id: "payroll-contracts", path: "/en/dashboard/payroll/contracts" },
+      { id: "payroll-employees", path: "/en/dashboard/payroll/employees" },
+      { id: "payroll-declarations", path: "/en/dashboard/payroll/declarations" },
+      { id: "payroll-payments", path: "/en/dashboard/payroll/payments" },
+      { id: "payroll-runs", path: "/en/dashboard/payroll/runs" },
+      { id: "payroll-payslips", path: "/en/dashboard/payroll/payslips" },
+      { id: "payroll-register", path: "/en/dashboard/payroll/register" },
+      { id: "payroll-setup", path: "/en/dashboard/payroll/setup" },
+    ];
+
+    for (const route of implementedRoutes) {
+      expect(authenticatedSmokeSpec).toContain(`path: "${route.path}"`);
+    }
+
+    const proofCriticalRouteIds = [
+      "payroll-declarations",
+      "payroll-payments",
+      "payroll-runs",
+    ];
+
+    for (const routeId of proofCriticalRouteIds) {
+      expect(authenticatedSmokeSpec).toContain(`id: "${routeId}"`);
+    }
+
+    expect(authenticatedSmokeSpec).not.toContain(`id: "payroll-presence"`);
+    expect(authenticatedSmokeSpec).not.toContain(
+      `path: "/en/dashboard/presence"`,
+    );
+  });
 });

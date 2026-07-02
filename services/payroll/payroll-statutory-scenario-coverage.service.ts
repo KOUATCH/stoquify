@@ -1,3 +1,5 @@
+import { createHash } from "crypto";
+
 import { isRecord, type CountryPack } from "../regulatory/country-packs/schemas";
 import { getParameterEnvelopeArray } from "../regulatory/country-packs/validation";
 import {
@@ -108,6 +110,22 @@ export type PayrollStatutoryScenarioCoverageSummary = {
   blockers: PayrollStatutoryScenarioCoverageBlocker[];
 };
 
+export type PayrollStatutoryReviewedProofChainStatus = "READY" | "BLOCKED";
+
+export type PayrollStatutoryReviewedProofChain = {
+  status: PayrollStatutoryReviewedProofChainStatus;
+  coverageHash: string | null;
+  reviewEvidenceSourceHashes: string[];
+  readyFamilyCount: number | null;
+  requiredFamilyCount: number | null;
+  registerProofGapCount: number | null;
+  declarationRegisterProofGapCount: number | null;
+  paymentSettlementRegisterProofGapCount: number | null;
+  correctionIntentCount: number | null;
+  requiredDownstreamProofs: string[];
+  blockerCodes: string[];
+};
+
 type FamilySpec = {
   family: PayrollStatutoryScenarioFamily;
   label: string;
@@ -206,6 +224,136 @@ function uniqueValues(values: Array<string | null | undefined>) {
   return Array.from(
     new Set(values.filter((value): value is string => Boolean(value))),
   );
+}
+
+function stablePayload(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(stablePayload);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>)
+        .sort(([left], [right]) => left.localeCompare(right))
+        .map(([key, entry]) => [key, stablePayload(entry)]),
+    );
+  }
+  return value;
+}
+
+function hashPayload(value: unknown) {
+  return `sha256:${createHash("sha256")
+    .update(JSON.stringify(stablePayload(value)))
+    .digest("hex")}`;
+}
+
+export function payrollStatutoryScenarioCoverageProofPayload(input: {
+  status: string | null;
+  countryCode: string | null;
+  packVersion: string | null;
+  executableScenarioCount: number;
+  readyFamilyCount: number;
+  requiredFamilyCount: number;
+  blockerCodes: string[];
+  reviewEvidence: PayrollStatutoryScenarioReviewEvidenceSummary;
+}) {
+  return {
+    status: input.status,
+    countryCode: input.countryCode,
+    packVersion: input.packVersion,
+    executableScenarioCount: input.executableScenarioCount,
+    readyFamilyCount: input.readyFamilyCount,
+    requiredFamilyCount: input.requiredFamilyCount,
+    blockerCodes: [...input.blockerCodes].sort(),
+    reviewEvidence: {
+      ...input.reviewEvidence,
+      reviewedBy: [...input.reviewEvidence.reviewedBy].sort(),
+      reviewedOn: [...input.reviewEvidence.reviewedOn].sort(),
+      legalRefs: [...input.reviewEvidence.legalRefs].sort(),
+      sourceEvidenceHashes: [...input.reviewEvidence.sourceEvidenceHashes].sort(),
+    },
+  };
+}
+
+export function buildPayrollStatutoryScenarioCoverageHash(input: {
+  status: string | null;
+  countryCode: string | null;
+  packVersion: string | null;
+  executableScenarioCount: number;
+  readyFamilyCount: number;
+  requiredFamilyCount: number;
+  blockerCodes: string[];
+  reviewEvidence: PayrollStatutoryScenarioReviewEvidenceSummary;
+}) {
+  return hashPayload(payrollStatutoryScenarioCoverageProofPayload(input));
+}
+
+export function buildPayrollStatutoryReviewedProofChain(input: {
+  status: string | null;
+  coverageHash: string | null;
+  reviewEvidence: PayrollStatutoryScenarioReviewEvidenceSummary | null;
+  readyFamilyCount?: number | null;
+  requiredFamilyCount?: number | null;
+  blockerCodes?: string[] | null;
+  registerProofGapCount?: number | null;
+  declarationRegisterProofGapCount?: number | null;
+  paymentSettlementRegisterProofGapCount?: number | null;
+  correctionIntentCount?: number | null;
+  requireCorrectionLifecycleEvidence?: boolean;
+}): PayrollStatutoryReviewedProofChain {
+  const reviewEvidence = input.reviewEvidence;
+  const reviewEvidenceSourceHashes = uniqueValues(
+    reviewEvidence?.sourceEvidenceHashes ?? [],
+  ).sort();
+  const blockerCodes = new Set(input.blockerCodes ?? []);
+
+  if (!input.coverageHash) {
+    blockerCodes.add("PAYROLL_REVIEWED_PROOF_CHAIN_COVERAGE_HASH_MISSING");
+  }
+  if (input.status !== "READY") {
+    blockerCodes.add("PAYROLL_REVIEWED_PROOF_CHAIN_STATUTORY_COVERAGE_BLOCKED");
+  }
+  if (
+    !reviewEvidence ||
+    reviewEvidence.missingCount > 0 ||
+    reviewEvidenceSourceHashes.length === 0
+  ) {
+    blockerCodes.add("PAYROLL_REVIEWED_PROOF_CHAIN_REVIEW_EVIDENCE_MISSING");
+  }
+  if ((input.registerProofGapCount ?? 0) > 0) {
+    blockerCodes.add("PAYROLL_REVIEWED_PROOF_CHAIN_REGISTER_PROOF_GAPS");
+  }
+  if ((input.declarationRegisterProofGapCount ?? 0) > 0) {
+    blockerCodes.add("PAYROLL_REVIEWED_PROOF_CHAIN_DECLARATION_REGISTER_GAPS");
+  }
+  if ((input.paymentSettlementRegisterProofGapCount ?? 0) > 0) {
+    blockerCodes.add("PAYROLL_REVIEWED_PROOF_CHAIN_PAYMENT_REGISTER_GAPS");
+  }
+  if (
+    input.requireCorrectionLifecycleEvidence &&
+    input.correctionIntentCount === null
+  ) {
+    blockerCodes.add(
+      "PAYROLL_REVIEWED_PROOF_CHAIN_CORRECTION_LIFECYCLE_EVIDENCE_MISSING",
+    );
+  }
+
+  return {
+    status: blockerCodes.size === 0 ? "READY" : "BLOCKED",
+    coverageHash: input.coverageHash,
+    reviewEvidenceSourceHashes,
+    readyFamilyCount: input.readyFamilyCount ?? null,
+    requiredFamilyCount: input.requiredFamilyCount ?? null,
+    registerProofGapCount: input.registerProofGapCount ?? null,
+    declarationRegisterProofGapCount:
+      input.declarationRegisterProofGapCount ?? null,
+    paymentSettlementRegisterProofGapCount:
+      input.paymentSettlementRegisterProofGapCount ?? null,
+    correctionIntentCount: input.correctionIntentCount ?? null,
+    requiredDownstreamProofs: [
+      "payroll-register-proof",
+      "correction-recalculation-lifecycle-evidence",
+      "accounting-tieout-proof",
+    ],
+    blockerCodes: [...blockerCodes].sort(),
+  };
 }
 
 function stringArray(value: unknown) {

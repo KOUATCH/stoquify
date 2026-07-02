@@ -723,6 +723,7 @@ export async function getAccountantPortalData(
     payrollDeclarationInProgressCount,
     payrollDeclarationLifecycleEvidenceMissingCount,
     payrollDeclarationRegisterProofMissingCount,
+    payrollDeclarationCountryPackRegisterProofMissingCount,
     payrollDeclarationAuthorityAdapterProofMissingCount,
     payrollDeclarationAuthorityLifecycleProofMissingCount,
     payrollDeclarationAmendmentEvidenceCount,
@@ -912,6 +913,58 @@ export async function getAccountantPortalData(
           ],
         },
         OR: [{ sourceRegisterHash: null }, { sourceRegisterHash: "" }],
+        ...createdAtFilter(scope),
+      },
+    }),
+    client.payrollDeclarationEvidence.count({
+      where: {
+        organizationId: scope.organizationId,
+        transition: {
+          in: [
+            PayrollDeclarationEvidenceTransition.SUBMIT,
+            PayrollDeclarationEvidenceTransition.ACCEPT,
+            PayrollDeclarationEvidenceTransition.REJECT,
+            PayrollDeclarationEvidenceTransition.MARK_PAYMENT_DUE,
+            PayrollDeclarationEvidenceTransition.MARK_PAID,
+            PayrollDeclarationEvidenceTransition.RECONCILE,
+            PayrollDeclarationEvidenceTransition.AMEND,
+          ],
+        },
+        OR: [
+          { metadata: { equals: Prisma.AnyNull } },
+          {
+            metadata: {
+              path: ["countryPackRegisterProofHash"],
+              equals: Prisma.AnyNull,
+            },
+          },
+          {
+            metadata: {
+              path: ["countryPackRegisterProofHash"],
+              equals: "",
+            },
+          },
+          {
+            metadata: {
+              path: ["countryPackRegisterProofStatus"],
+              equals: Prisma.AnyNull,
+            },
+          },
+          {
+            metadata: {
+              path: ["countryPackRegisterProofStatus"],
+              equals: "",
+            },
+          },
+          {
+            NOT: {
+              metadata: {
+                path: ["countryPackRegisterProofStatus"],
+                equals: "MATCHED",
+              },
+            },
+          },
+        ],
         ...createdAtFilter(scope),
       },
     }),
@@ -1629,6 +1682,21 @@ export async function getAccountantPortalData(
     });
   }
 
+  if (payrollDeclarationCountryPackRegisterProofMissingCount > 0) {
+    addBlocker(blockers, {
+      id: "payroll-declaration-country-pack-register-proof-missing",
+      severity: "high",
+      gate: "payroll.declarations.country-pack-register-proof",
+      title: "Payroll declaration evidence lacks country-pack register proof",
+      detail: `${payrollDeclarationCountryPackRegisterProofMissingCount} close-impacting payroll declaration evidence record is missing matched country-pack register proof.`,
+      sourceTables: [
+        "payroll_declaration_evidence",
+        "payroll_runs",
+        "payroll_run_lines",
+      ],
+    });
+  }
+
   if (payrollDeclarationAuthorityAdapterProofMissingCount > 0) {
     addBlocker(blockers, {
       id: "payroll-declaration-authority-adapter-proof-missing",
@@ -2015,6 +2083,7 @@ export async function getAccountantPortalData(
         payrollDeclarationRejectedCount > 0 ||
           payrollDeclarationLifecycleEvidenceMissingCount > 0 ||
           payrollDeclarationRegisterProofMissingCount > 0 ||
+          payrollDeclarationCountryPackRegisterProofMissingCount > 0 ||
           payrollDeclarationAuthorityAdapterProofMissingCount > 0 ||
           payrollDeclarationAuthorityLifecycleProofMissingCount > 0 ||
           payrollPaymentUnsettledCount > 0 ||
@@ -2051,6 +2120,10 @@ export async function getAccountantPortalData(
         {
           label: "Declaration register proof gaps",
           value: payrollDeclarationRegisterProofMissingCount,
+        },
+        {
+          label: "Declaration country-pack register proof gaps",
+          value: payrollDeclarationCountryPackRegisterProofMissingCount,
         },
         {
           label: "Declaration adapter proof gaps",
@@ -2203,7 +2276,7 @@ export async function getAccountantPortalData(
         "business-event failure scan",
         "provider statement and reconciliation sign-off evidence scan",
         "payment/AP/payroll/compliance blocker scan",
-        "payroll register tie-out, payslip proof, payment settlement register/component/provider-adapter proof, declaration lifecycle register/lifecycle-contract proof, and authority-adapter proof scan",
+        "payroll register tie-out, payslip proof, payment settlement register/component/provider-adapter proof, declaration lifecycle register/country-pack/lifecycle-contract proof, and authority-adapter proof scan",
         "payroll effective-dated allowance, benefit, leave, and overtime proof gap scan",
         "audit/control-event visibility",
       ],

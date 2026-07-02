@@ -23,12 +23,16 @@ jest.mock("@/prisma/db", () => {
     ledgerAuditEvent: {
       create: jest.fn(),
     },
+    payrollRun: {
+      findMany: jest.fn(),
+    },
     businessEvent: {
       findUnique: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
     },
     auditLog: {
+      findFirst: jest.fn(),
       create: jest.fn(),
     },
   }
@@ -61,12 +65,16 @@ const mockDb = db as unknown as {
   ledgerAuditEvent: {
     create: jest.Mock
   }
+  payrollRun: {
+    findMany: jest.Mock
+  }
   businessEvent: {
     findUnique: jest.Mock
     create: jest.Mock
     update: jest.Mock
   }
   auditLog: {
+    findFirst: jest.Mock
     create: jest.Mock
   }
 }
@@ -134,6 +142,26 @@ function payrollForecastProof() {
     sourceModules: ["payroll", "payments", "accounting", "close"],
     personLevelAmounts: "redacted",
     personLevelAmountsRedacted: true,
+  }
+}
+
+function pilotCertificationAudit(overrides: Record<string, unknown> = {}) {
+  return {
+    id: "pilot-certification-audit-1",
+    entityId: "payroll-run-1",
+    createdAt: new Date("2026-06-15T12:05:00.000Z"),
+    changes: {
+      status: "CERTIFIED_FOR_PRODUCTION_RELEASE_REVIEW",
+      generatedAt: "2026-06-15T12:04:00.000Z",
+      certificateHash: "sha256:pilot-cycle-certificate",
+      proofContinuity: {
+        expectedAdapterChaosReleaseGateHash: "sha256:adapter-chaos-release-gate",
+        proofBackfillAdapterChaosMatchesExpected: true,
+      },
+      signoff: { missingRoles: [] },
+      blockers: [],
+      ...overrides,
+    },
   }
 }
 
@@ -367,6 +395,7 @@ describe("close assurance pack service", () => {
       }),
     )
     mockDb.closeRun.update.mockResolvedValue({ id: "close-run-1" })
+    mockDb.payrollRun.findMany.mockResolvedValue([{ id: "payroll-run-1" }])
     mockDb.closePackExport.findFirst.mockResolvedValue({
       id: "close-pack-export-1",
       metadata: { mode: "CERTIFIED" },
@@ -384,6 +413,7 @@ describe("close assurance pack service", () => {
       }),
     )
     mockDb.businessEvent.update.mockResolvedValue({ id: "business-event-1" })
+    mockDb.auditLog.findFirst.mockResolvedValue(pilotCertificationAudit())
     mockDb.auditLog.create.mockResolvedValue({ id: "audit-log-1" })
     mockReconcileInventoryClass3.mockResolvedValue(cleanInventoryValuation())
   })
@@ -445,6 +475,16 @@ describe("close assurance pack service", () => {
           totalUpcomingAmount: 170000,
         }),
         redaction: expect.stringContaining("person-level payroll amounts are redacted"),
+      }),
+    )
+    expect(payload.annexes.pilotCycleCertification).toEqual(
+      expect.objectContaining({
+        saved: expect.objectContaining({
+          status: "CERTIFIED_FOR_PRODUCTION_RELEASE_REVIEW",
+          certificateHash: "sha256:pilot-cycle-certificate",
+          closePeriodPayrollRunCount: 1,
+        }),
+        redaction: expect.stringContaining("raw salary"),
       }),
     )
     expect(payload.evidenceItems).toEqual(
@@ -518,6 +558,25 @@ describe("close assurance pack service", () => {
     ).rejects.toThrow(/Certified close pack is blocked/i)
   })
 
+  it("blocks certified exports when persisted pilot-cycle certification is missing", async () => {
+    mockDb.auditLog.findFirst.mockResolvedValue(null)
+
+    await expect(
+      exportClosePack(
+        "org-1",
+        { closeRunId: "close-run-1", mode: "CERTIFIED" },
+        {
+          actorId: "certifier-1",
+          actorPermissions: ["accounting.close.certify"],
+          lastAuthAt: "2026-06-15T13:00:00.000Z",
+          now: "2026-06-15T13:01:00.000Z",
+        },
+      ),
+    ).rejects.toThrow(/pilot-cycle certification evidence is missing/i)
+
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+  })
+
   it("blocks same-actor certification for segregation of duties", async () => {
     await expect(
       exportClosePack(
@@ -557,6 +616,10 @@ describe("close assurance pack service", () => {
           watermarkId: result.watermarkId,
           metadata: expect.objectContaining({
             inventoryAnnexFreshness: expect.objectContaining({ status: "FRESH" }),
+            pilotCycleCertification: expect.objectContaining({
+              status: "CERTIFIED_FOR_PRODUCTION_RELEASE_REVIEW",
+              certificateHash: "sha256:pilot-cycle-certificate",
+            }),
             statutoryCertification: expect.objectContaining({
               statutoryAuthorityStatus: "AUTHORITY_NOT_CONFIGURED",
             }),

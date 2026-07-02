@@ -385,6 +385,16 @@ describe("payroll setup readiness service", () => {
             missingCount: 0,
           }),
         }),
+        reviewedProofChain: expect.objectContaining({
+          status: "READY",
+          coverageHash: expect.stringMatching(/^sha256:/),
+          reviewEvidenceSourceHashes: expect.arrayContaining([
+            "sha256:cm-irpp-period-reviewed-review-evidence",
+          ]),
+          registerProofGapCount: null,
+          correctionIntentCount: null,
+          blockerCodes: [],
+        }),
       }),
     );
     expect(mockedResolveRegulatoryParameter).toHaveBeenCalledWith(

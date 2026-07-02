@@ -656,6 +656,31 @@ function metadataStringArray(value: unknown, key: string) {
     : []
 }
 
+function sortedUniqueStrings(values: string[]) {
+  return Array.from(new Set(values.filter((value) => value.trim().length > 0))).sort()
+}
+
+function sameStringValues(left: string[], right: string[]) {
+  const normalizedLeft = sortedUniqueStrings(left)
+  const normalizedRight = sortedUniqueStrings(right)
+  return normalizedLeft.length === normalizedRight.length &&
+    normalizedLeft.every((value, index) => value === normalizedRight[index])
+}
+
+function payrollRegisterCorrectionProofFromRun(run: PayrollRegisterRunRecord) {
+  const metadata = jsonRecord(run.metadata)
+  const correction = nestedRecord(metadata, "correction")
+  return {
+    originalRunId: run.originalRunId ?? metadataString(correction, "originalRunId"),
+    originalRunDocumentHash: metadataString(correction, "originalRunDocumentHash"),
+    originalRunEvidenceHash: metadataString(correction, "originalRunEvidenceHash"),
+    originalCalculationHash: metadataString(correction, "originalCalculationHash"),
+    correctionEvidenceHash:
+      metadataString(metadata, "correctionEvidenceHash") ??
+      metadataString(correction, "correctionEvidenceHash"),
+  }
+}
+
 function statutoryScenarioCoverageFromRun(
   run: PayrollRegisterRunRecord,
 ): PayrollRegisterStatutoryScenarioCoverageProof {
@@ -707,6 +732,12 @@ function buildLineCountryPackProof(input: {
   const yearToDatePolicyHash = metadataString(provenance, "yearToDatePolicyHash") ?? metadataString(snapshot, "yearToDatePolicyHash")
   const provenanceHash = metadataString(snapshot, "countryPackProvenanceHash")
   const computedHash = provenance ? `sha256:${hashBusinessPayload(provenance)}` : null
+  const reviewEvidenceSourceHashes = sortedUniqueStrings(
+    metadataStringArray(provenance, "reviewEvidenceSourceHashes"),
+  )
+  const expectedReviewEvidenceSourceHashes = sortedUniqueStrings(
+    input.statutoryScenarioCoverage.sourceEvidenceHashes,
+  )
 
   const requireMatched = (actual: string | null, expected: string | null | undefined, key: string) => {
     if (!actual) {
@@ -725,6 +756,14 @@ function buildLineCountryPackProof(input: {
   requireMatched(countryPackResolutionHash, input.run.countryPackResolutionHash, "countryPackResolutionHash")
   requireMatched(statutoryScenarioCoverageHash, input.statutoryScenarioCoverage.coverageHash, "statutoryScenarioCoverageHash")
   requireMatched(statutoryScenarioCoverageStatus, input.statutoryScenarioCoverage.status, "statutoryScenarioCoverageStatus")
+  if (reviewEvidenceSourceHashes.length === 0) {
+    issues.push("missing:reviewEvidenceSourceHashes")
+  } else if (
+    expectedReviewEvidenceSourceHashes.length > 0 &&
+    !sameStringValues(reviewEvidenceSourceHashes, expectedReviewEvidenceSourceHashes)
+  ) {
+    issues.push("mismatch:reviewEvidenceSourceHashes")
+  }
   if (!roundingPolicyHash) issues.push("missing:roundingPolicyHash")
   if (!yearToDatePolicyHash) issues.push("missing:yearToDatePolicyHash")
   if (!provenanceHash) issues.push("missing:countryPackProvenanceHash")
@@ -746,7 +785,7 @@ function buildLineCountryPackProof(input: {
     countryPackResolutionHash,
     statutoryScenarioCoverageHash,
     statutoryScenarioCoverageStatus,
-    reviewEvidenceSourceHashes: metadataStringArray(provenance, "reviewEvidenceSourceHashes").sort(),
+    reviewEvidenceSourceHashes,
     legalRefs: metadataStringArray(provenance, "legalRefs").sort(),
     roundingPolicyHash,
     yearToDatePolicyHash,
@@ -1662,10 +1701,11 @@ function registerHash(input: {
   countryPackProofs: PayrollRegisterCountryPackProof[]
   componentMappingHash: string
   statutoryScenarioCoverageHash: string | null
+  statutoryScenarioReviewEvidenceSourceHashes: string[]
 }) {
   return `sha256:${hashBusinessPayload({
     kind: "AQSTOQFLOW_PAYROLL_REGISTER_TIE_OUT",
-    version: 7,
+    version: 8,
     payrollRunId: input.run.id,
     runNumber: input.run.runNumber,
     documentHash: input.run.documentHash,
@@ -1684,6 +1724,8 @@ function registerHash(input: {
       .sort(),
     componentMappingHash: input.componentMappingHash,
     statutoryScenarioCoverageHash: input.statutoryScenarioCoverageHash,
+    statutoryScenarioReviewEvidenceSourceHashes: sortedUniqueStrings(input.statutoryScenarioReviewEvidenceSourceHashes),
+    correctionProof: payrollRegisterCorrectionProofFromRun(input.run),
     componentProofStatuses: input.componentProofs.map((proof) => ({
       runLineId: proof.runLineId,
       status: proof.status,
@@ -1975,6 +2017,14 @@ function buildBlockers(input: {
       source: "payroll_runs.metadata.statutoryScenarioCoverage",
       sourceId: input.run.id,
     })
+  } else if (input.statutoryScenarioCoverage.sourceEvidenceHashes.length === 0) {
+    blockers.push({
+      code: "PAYROLL_REGISTER_STATUTORY_REVIEW_EVIDENCE_MISSING",
+      severity: "high",
+      message: "Payroll register is missing statutory scenario review evidence source hashes from the calculated run.",
+      source: "payroll_runs.metadata.statutoryScenarioCoverage.reviewEvidence.sourceEvidenceHashes",
+      sourceId: input.run.id,
+    })
   } else if (
     input.statutoryScenarioCoverage.status !== "READY" ||
     input.statutoryScenarioCoverage.missingCount > 0
@@ -2027,6 +2077,40 @@ function buildBlockers(input: {
         message: `Payroll line ${row.runLineId} does not have matched country-pack provenance proof.`,
         source: row.proof.countryPack.source,
         sourceId: row.runLineId,
+      })
+    }
+    if (
+      row.proof.countryPack.issues.includes("missing:reviewEvidenceSourceHashes") ||
+      row.proof.countryPack.issues.includes("mismatch:reviewEvidenceSourceHashes")
+    ) {
+      blockers.push({
+        code: row.proof.countryPack.issues.includes("missing:reviewEvidenceSourceHashes")
+          ? "PAYROLL_REGISTER_STATUTORY_REVIEW_EVIDENCE_CHAIN_MISSING"
+          : "PAYROLL_REGISTER_STATUTORY_REVIEW_EVIDENCE_CHAIN_MISMATCH",
+        severity: "high",
+        message: `Payroll line ${row.runLineId} country-pack proof does not carry the same statutory review evidence source hashes as the register coverage proof.`,
+        source: row.proof.countryPack.source,
+        sourceId: row.runLineId,
+      })
+    }
+  }
+
+  const correctionProof = payrollRegisterCorrectionProofFromRun(input.run)
+  if (String(input.run.runType) === "CORRECTION") {
+    const missingCorrectionProof = [
+      ["originalRunId", correctionProof.originalRunId],
+      ["originalRunDocumentHash", correctionProof.originalRunDocumentHash],
+      ["originalRunEvidenceHash", correctionProof.originalRunEvidenceHash],
+      ["originalCalculationHash", correctionProof.originalCalculationHash],
+      ["correctionEvidenceHash", correctionProof.correctionEvidenceHash],
+    ].filter(([, value]) => !value).map(([key]) => key)
+    if (missingCorrectionProof.length > 0) {
+      blockers.push({
+        code: "PAYROLL_REGISTER_CORRECTION_RECALCULATION_PROOF_MISSING",
+        severity: "critical",
+        message: `Payroll correction register is missing correction/recalculation lifecycle evidence: ${missingCorrectionProof.join(", ")}.`,
+        source: "payroll_runs.metadata.correction",
+        sourceId: input.run.id,
       })
     }
   }
@@ -2173,6 +2257,7 @@ async function buildReadModel(
     countryPackProofs,
     componentMappingHash: componentMappingTieOut.componentMappingHash,
     statutoryScenarioCoverageHash: statutoryScenarioCoverage.coverageHash,
+    statutoryScenarioReviewEvidenceSourceHashes: statutoryScenarioCoverage.sourceEvidenceHashes,
   })
   const blockers = buildBlockers({
     run,

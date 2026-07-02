@@ -8,6 +8,7 @@ import {
 } from "@prisma/client"
 
 import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
+import { hashBusinessPayload } from "@/services/events/business-event.service"
 
 import {
   getPayrollPayslipSelfService,
@@ -28,6 +29,30 @@ function employeeRow(overrides: Record<string, unknown> = {}) {
     costCenter: "OPS",
     paymentDestinationHash: "sha256:payment-destination",
     ...overrides,
+  }
+}
+
+function countryPackProvenanceFixture(overrides: Record<string, unknown> = {}) {
+  const provenance = {
+    kind: "AQSTOQFLOW_PAYROLL_LINE_COUNTRY_PACK_PROVENANCE",
+    version: 1,
+    countryCode: "CM",
+    packVersion: "CM-2026.1",
+    schemaVersion: "2026-06",
+    capabilityStatus: "SUPPORTED",
+    resolutionHash: "sha256:country-pack",
+    statutoryScenarioCoverageHash: "sha256:statutory-scenario-coverage",
+    statutoryScenarioCoverageStatus: "READY",
+    reviewEvidenceSourceHashes: ["sha256:cm-irpp-period-reviewed-review-evidence"],
+    legalRefs: ["CM_DGI_CGI_2025"],
+    roundingPolicyHash: "sha256:rounding-policy",
+    yearToDatePolicyHash: "sha256:ytd-policy",
+    ...overrides,
+  }
+
+  return {
+    provenance,
+    provenanceHash: `sha256:${hashBusinessPayload(provenance)}`,
   }
 }
 
@@ -89,6 +114,17 @@ function payslipRow(overrides: Record<string, unknown> = {}) {
     runLine: {
       id: "run-line-1",
       documentHash: "sha256:run-line-doc",
+      calculationSnapshot: {
+        countryCode: "CM",
+        countryPackVersion: "CM-2026.1",
+        countryPackSchemaVersion: "2026-06",
+        countryPackResolutionHash: "sha256:country-pack",
+        countryPackCapabilityStatus: "SUPPORTED",
+        countryPackProvenance: countryPackProvenanceFixture().provenance,
+        countryPackProvenanceHash: countryPackProvenanceFixture().provenanceHash,
+        roundingPolicyHash: "sha256:rounding-policy",
+        yearToDatePolicyHash: "sha256:ytd-policy",
+      },
     },
     lines: [
       {
@@ -209,6 +245,19 @@ describe("payroll payslip self-service service", () => {
     )
     expect(result.payslips[0].amounts.netPayableAmount).toBe("143700.00")
     expect(result.payslips[0].proof.archiveManifestHash).toMatch(/^sha256:/)
+    expect(result.payslips[0].proof.countryPackLineProof).toEqual(expect.objectContaining({
+      status: "MATCHED",
+      issues: [],
+      countryCode: "CM",
+      countryPackVersion: "CM-2026.1",
+      countryPackSchemaVersion: "2026-06",
+      countryPackCapabilityStatus: "SUPPORTED",
+      countryPackResolutionHash: "sha256:country-pack",
+      statutoryScenarioCoverageHash: "sha256:statutory-scenario-coverage",
+      statutoryScenarioCoverageStatus: "READY",
+      provenanceHash: expect.stringMatching(/^sha256:/),
+      computedHash: expect.stringMatching(/^sha256:/),
+    }))
     expect(result.payslips[0].tieOut).toMatchObject({
       payrollRunId: "run-1",
       ledgerPostingBatchId: "ledger-batch-1",
@@ -225,6 +274,31 @@ describe("payroll payslip self-service service", () => {
         }),
       }),
     )
+  })
+
+  it("surfaces missing line country-pack provenance without hiding the emitted payslip", async () => {
+    const row = payslipRow() as any
+    delete row.runLine.calculationSnapshot.countryPackProvenance
+    delete row.runLine.calculationSnapshot.countryPackProvenanceHash
+    const client = buildClient([row])
+
+    const result = await getPayrollPayslipSelfService(
+      {
+        organizationId: "org-1",
+        actorId: "employee-user-1",
+        actorPermissions: ["payroll.payslips.self.read"],
+      },
+      client as any,
+    )
+
+    expect(result.payslips[0].proof.countryPackLineProof).toEqual(expect.objectContaining({
+      status: "MISSING",
+      issues: expect.arrayContaining([
+        "missing:countryPackProvenance",
+        "missing:statutoryScenarioCoverageHash",
+        "missing:countryPackProvenanceHash",
+      ]),
+    }))
   })
 
   it("does not return a payslip outside the authenticated employee scope", async () => {
@@ -308,6 +382,8 @@ describe("payroll payslip self-service service", () => {
       businessEventId: "business-event-1",
     }))
     expect(result.content).toContain("AQSTOQFLOW_PAYSLIP_SELF_SERVICE_ARCHIVE_EXPORT")
+    expect(result.content).toContain("countryPackLineProof")
+    expect(result.content).toContain("sha256:statutory-scenario-coverage")
     expect(result.content).toContain("NOT_GENERATED_NO_APPROVED_PAYROLL_PDF_RENDERER")
     expect(client.auditLog.create).toHaveBeenCalledWith(
       expect.objectContaining({

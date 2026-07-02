@@ -234,6 +234,16 @@ export type PayrollCommandReadModel = {
       status: PayrollDeclarationStatus
       payloadHash: string | null
       countryPackResolutionHash: string
+      countryPackRegisterProofHash: string | null
+      countryPackRegisterProofStatus: string | null
+      countryPackRegisterProofPresent: boolean
+      countryPackRegisterProofLineCount: number | null
+      countryPackRegisterProofMissingLineCount: number | null
+      countryPackRegisterProofMismatchedLineCount: number | null
+      countryPackLineProofHashes: string[]
+      statutoryScenarioCoverageHash: string | null
+      countryPackReviewEvidenceSourceHashes: string[]
+      countryPackLegalRefs: string[]
       dueDate: string | null
       updatedAt: string
     } | null
@@ -328,6 +338,38 @@ function metadataString(value: unknown, key: string) {
 
 function stringArray(value: unknown) {
   return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string" && item.trim().length > 0).map((item) => item.trim()) : []
+}
+
+function metadataNumber(value: unknown, key: string) {
+  const entry = asRecord(value)[key]
+  if (typeof entry === "number" && Number.isFinite(entry)) return entry
+  if (typeof entry === "string" && entry.trim().length > 0) {
+    const parsed = Number(entry)
+    return Number.isFinite(parsed) ? parsed : null
+  }
+  return null
+}
+
+function declarationCountryPackProof(metadata: unknown) {
+  const countryPackRegisterProofHash = metadataString(metadata, "countryPackRegisterProofHash")
+  const countryPackRegisterProofStatus = metadataString(metadata, "countryPackRegisterProofStatus")
+
+  return {
+    countryPackRegisterProofHash,
+    countryPackRegisterProofStatus,
+    countryPackRegisterProofPresent:
+      Boolean(countryPackRegisterProofHash) &&
+      countryPackRegisterProofStatus === "MATCHED",
+    countryPackRegisterProofLineCount: metadataNumber(metadata, "countryPackRegisterProofLineCount"),
+    countryPackRegisterProofMissingLineCount: metadataNumber(metadata, "countryPackRegisterProofMissingLineCount"),
+    countryPackRegisterProofMismatchedLineCount: metadataNumber(metadata, "countryPackRegisterProofMismatchedLineCount"),
+    countryPackLineProofHashes: stringArray(asRecord(metadata).countryPackLineProofHashes),
+    statutoryScenarioCoverageHash: metadataString(metadata, "statutoryScenarioCoverageHash"),
+    countryPackReviewEvidenceSourceHashes: stringArray(
+      asRecord(metadata).countryPackReviewEvidenceSourceHashes,
+    ),
+    countryPackLegalRefs: stringArray(asRecord(metadata).countryPackLegalRefs),
+  }
 }
 
 function pilotStatus(value: string | null): PilotCertificationStatus {
@@ -577,6 +619,7 @@ function routeForNextAction(source: string) {
     "payroll.adapter_operations": "/dashboard/payroll/payments",
     "payroll.payment_reconciliation": "/dashboard/finance/reconciliation",
     "payroll.payments": "/dashboard/finance/payments",
+    "payroll.declarations": "/dashboard/payroll/declarations",
     "payroll.periods": "/dashboard/payroll/setup",
   }
 
@@ -782,6 +825,9 @@ export async function getPayrollCommandReadModel(
   const latestRun = currentRuns[0] ?? null
   const latestPaymentBatch = currentPaymentBatches[0] ?? null
   const latestDeclaration = currentDeclarations[0] ?? null
+  const latestDeclarationCountryPackProof = latestDeclaration
+    ? declarationCountryPackProof(latestDeclaration.metadata)
+    : null
   const [latestPilotCertificationAudit, latestProofBackfillAudit] = await Promise.all([
     latestRun
       ? client.auditLog.findFirst({
@@ -904,6 +950,10 @@ export async function getPayrollCommandReadModel(
   }
   if (latestRun && latestRun._count.declarations === 0) {
     addAction(nextActions, parsed.actorPermissions, { id: "prepare-payroll-declarations", label: "Prepare payroll declarations from the posted run", priority: "normal", requiredPermission: "payroll.declarations.prepare", source: "payroll.declarations", blockedBy: latestRun.status === PayrollRunStatus.POSTED ? [] : ["PAYROLL_RUN_NOT_POSTED"] })
+  }
+  if (latestDeclaration && !latestDeclarationCountryPackProof?.countryPackRegisterProofPresent) {
+    addBlocker(blockers, { code: "PAYROLL_DECLARATION_COUNTRY_PACK_REGISTER_PROOF_MISSING", domain: "declaration", severity: "high", message: "Latest declaration metadata is missing matched country-pack register proof for close certification.", source: "services/payroll/declaration-lifecycle.service.ts", count: 1 })
+    addAction(nextActions, parsed.actorPermissions, { id: "review-declaration-country-pack-register-proof", label: "Review declaration country-pack register proof", priority: "high", requiredPermission: "payroll.declarations.manage", source: "payroll.declarations", blockedBy: ["PAYROLL_DECLARATION_COUNTRY_PACK_REGISTER_PROOF_MISSING"] })
   }
   if (latestDeclaration?.status === PayrollDeclarationStatus.REJECTED || latestDeclaration?.status === PayrollDeclarationStatus.PAYMENT_DUE) {
     addBlocker(blockers, { code: "PAYROLL_DECLARATION_ACTION_REQUIRED", domain: "declaration", severity: "high", message: "The latest current-period declaration still requires statutory follow-up.", source: "services/payroll/payroll-control.service.ts", count: 1 })
@@ -1095,6 +1145,26 @@ export async function getPayrollCommandReadModel(
             status: latestDeclaration.status,
             payloadHash: latestDeclaration.payloadHash,
             countryPackResolutionHash: latestDeclaration.countryPackResolutionHash,
+            countryPackRegisterProofHash:
+              latestDeclarationCountryPackProof?.countryPackRegisterProofHash ?? null,
+            countryPackRegisterProofStatus:
+              latestDeclarationCountryPackProof?.countryPackRegisterProofStatus ?? null,
+            countryPackRegisterProofPresent:
+              latestDeclarationCountryPackProof?.countryPackRegisterProofPresent ?? false,
+            countryPackRegisterProofLineCount:
+              latestDeclarationCountryPackProof?.countryPackRegisterProofLineCount ?? null,
+            countryPackRegisterProofMissingLineCount:
+              latestDeclarationCountryPackProof?.countryPackRegisterProofMissingLineCount ?? null,
+            countryPackRegisterProofMismatchedLineCount:
+              latestDeclarationCountryPackProof?.countryPackRegisterProofMismatchedLineCount ?? null,
+            countryPackLineProofHashes:
+              latestDeclarationCountryPackProof?.countryPackLineProofHashes ?? [],
+            statutoryScenarioCoverageHash:
+              latestDeclarationCountryPackProof?.statutoryScenarioCoverageHash ?? null,
+            countryPackReviewEvidenceSourceHashes:
+              latestDeclarationCountryPackProof?.countryPackReviewEvidenceSourceHashes ?? [],
+            countryPackLegalRefs:
+              latestDeclarationCountryPackProof?.countryPackLegalRefs ?? [],
             dueDate: iso(latestDeclaration.dueDate),
             updatedAt: latestDeclaration.updatedAt.toISOString(),
           }

@@ -48,7 +48,7 @@ type Props = {
 
 type ProofRow = {
   label: string
-  value: string | null
+  value: string | number | boolean | null
 }
 
 type ProofSubject = {
@@ -182,7 +182,7 @@ function pilotStatusLabel(value: string) {
 
 function stateTone(value: string | null | undefined) {
   const normalized = (value ?? "").toUpperCase()
-  if (["READY", "POSTED", "PAID", "SETTLED", "ACCEPTED", "RELEASED", "FRESH", "CERTIFIED", "CERTIFIED_FOR_PRODUCTION_RELEASE_REVIEW", "READY_FOR_FULL_PRODUCTION_APPROVAL", "PASS"].includes(normalized)) {
+  if (["READY", "POSTED", "PAID", "SETTLED", "ACCEPTED", "RELEASED", "RECONCILED", "FRESH", "CERTIFIED", "CERTIFIED_FOR_PRODUCTION_RELEASE_REVIEW", "READY_FOR_FULL_PRODUCTION_APPROVAL", "PASS", "MATCHED"].includes(normalized)) {
     return "border-emerald-400/30 bg-emerald-400/10 text-emerald-100"
   }
   if (["BLOCKED", "FAILED", "REJECTED", "CANCELLED", "CRITICAL", "STALE", "REDACT"].includes(normalized)) {
@@ -290,9 +290,20 @@ function buildProofSubjects(data: PayrollCommandReadModel, locale: Locale): Proo
       label: `${data.evidence.latestDeclaration.authority} ${data.evidence.latestDeclaration.declarationType}`,
       status: data.evidence.latestDeclaration.status,
       source: "payroll.declaration",
+      href: localizePath("/dashboard/payroll/declarations", locale),
       rows: [
         { label: "Payload hash", value: data.evidence.latestDeclaration.payloadHash },
         { label: "Country pack hash", value: data.evidence.latestDeclaration.countryPackResolutionHash },
+        { label: "Country-pack register proof", value: data.evidence.latestDeclaration.countryPackRegisterProofHash },
+        { label: "Country-pack proof status", value: data.evidence.latestDeclaration.countryPackRegisterProofStatus },
+        { label: "Country-pack proof present", value: data.evidence.latestDeclaration.countryPackRegisterProofPresent },
+        { label: "Country-pack proof lines", value: data.evidence.latestDeclaration.countryPackRegisterProofLineCount },
+        { label: "Missing country-pack lines", value: data.evidence.latestDeclaration.countryPackRegisterProofMissingLineCount },
+        { label: "Mismatched country-pack lines", value: data.evidence.latestDeclaration.countryPackRegisterProofMismatchedLineCount },
+        { label: "Line proof hashes", value: data.evidence.latestDeclaration.countryPackLineProofHashes.join(", ") || null },
+        { label: "Statutory coverage hash", value: data.evidence.latestDeclaration.statutoryScenarioCoverageHash },
+        { label: "Review evidence hashes", value: data.evidence.latestDeclaration.countryPackReviewEvidenceSourceHashes.join(", ") || null },
+        { label: "Legal refs", value: data.evidence.latestDeclaration.countryPackLegalRefs.join(", ") || null },
         { label: "Due date", value: data.evidence.latestDeclaration.dueDate },
         { label: "Updated", value: data.evidence.latestDeclaration.updatedAt },
       ],

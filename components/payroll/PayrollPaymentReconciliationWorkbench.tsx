@@ -30,7 +30,7 @@ type Props = {
 type Batch = PayrollPaymentReconciliationReadModel["batches"][number];
 type WorkbenchRedaction = PayrollPaymentReconciliationReadModel["redaction"];
 
-type ProofRow = [label: string, value: string | null | undefined];
+type ProofRow = [label: string, value: string | number | null | undefined];
 
 function statusTone(value: string | null | undefined) {
   const normalized = (value ?? "").toUpperCase();
@@ -178,6 +178,12 @@ function proofRows(batch: Batch): ProofRow[] {
     ["Ledger batch", batch.ledgerPostingBatchId],
     ["Posted event", batch.postedBusinessEventId],
     ["Payment tx", batch.paymentTransactionId],
+    ["Component proof", batch.proof.componentRegisterProofHash],
+    ["Component status", batch.proof.componentRegisterProofStatus],
+    ["Provider proof", batch.proof.paymentAdapterProofHash],
+    ["Adapter contract", batch.proof.paymentProviderAdapterContractHash],
+    ["Lifecycle proof", batch.proof.latestSettlementLifecycleContractHash],
+    ["Lifecycle status", batch.proof.latestSettlementLifecycleStatus],
     ["Close impact", batch.proof.closeImpactSourceCode],
   ];
 }
@@ -244,6 +250,82 @@ function paymentProofSubject(
       {
         label: "Provider evidence required",
         value: batch.proof.providerEvidenceRequired,
+      },
+      {
+        label: "Component register proof",
+        value: batch.proof.componentRegisterProofHash,
+      },
+      {
+        label: "Component register status",
+        value: batch.proof.componentRegisterProofStatus,
+      },
+      {
+        label: "Component mapping proof",
+        value: batch.proof.payrollComponentMappingHash,
+      },
+      {
+        label: "Component mapping status",
+        value: batch.proof.payrollComponentMappingStatus,
+      },
+      {
+        label: "YTD policy proof",
+        value: batch.proof.yearToDatePolicyHash,
+      },
+      {
+        label: "YTD accumulator proofs",
+        value: batch.proof.yearToDateAccumulatorHashes.join(", ") || null,
+      },
+      {
+        label: "Provider adapter proof",
+        value: batch.proof.paymentAdapterProofHash,
+      },
+      {
+        label: "Provider adapter contract",
+        value: batch.proof.paymentProviderAdapterContractHash,
+      },
+      {
+        label: "Provider adapter status",
+        value: batch.proof.paymentAdapterStatus,
+      },
+      {
+        label: "Provider adapter key",
+        value: batch.proof.paymentProviderAdapterKey,
+      },
+      {
+        label: "Adapter chaos proof",
+        value: batch.proof.adapterChaosReleaseGateHash,
+      },
+      {
+        label: "Production automation",
+        value: batch.proof.productionPaymentAutomationSupported,
+      },
+      {
+        label: "Latest settlement proof",
+        value: batch.proof.latestSettlementEvidenceHash,
+      },
+      {
+        label: "Latest register proof",
+        value: batch.proof.latestSettlementSourceRegisterHash,
+      },
+      {
+        label: "Settlement lifecycle proof",
+        value: batch.proof.latestSettlementLifecycleContractHash,
+      },
+      {
+        label: "Settlement lifecycle status",
+        value: batch.proof.latestSettlementLifecycleStatus,
+      },
+      {
+        label: "Settlement lifecycle close impact",
+        value: batch.proof.latestSettlementLifecycleCloseImpact,
+      },
+      {
+        label: "Settlement business event",
+        value: batch.proof.latestSettlementBusinessEventId,
+      },
+      {
+        label: "Settlement updated",
+        value: batch.proof.latestSettlementAt,
       },
       { label: "Close impact", value: batch.proof.closeImpactSourceCode },
       { label: "Matches", value: batch.matches.length },

@@ -1,0 +1,397 @@
+{
+  "checkedAt": "2026-07-02T03:27:34.816Z",
+  "baseUrl": "http://127.0.0.1:3001",
+  "mode": "fail",
+  "ok": false,
+  "routeCount": 11,
+  "screenshotTool": "playwright",
+  "auth": {
+    "storageState": "playwright/.auth/payroll.json",
+    "protectedRouteScreenshotMode": "saved-storage-state"
+  },
+  "routes": [
+    {
+      "route": {
+        "id": "payroll",
+        "path": "/en/dashboard/payroll",
+        "surface": "Payroll command center",
+        "requiresAuth": true,
+        "viewports": [
+          "tablet",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": "browser-auth",
+        "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll",
+        "durationMs": 0,
+        "reason": "protected route validated with Playwright storage state"
+      }
+    },
+    {
+      "route": {
+        "id": "payroll-attendance",
+        "path": "/en/dashboard/payroll/attendance",
+        "surface": "Payroll payment and attendance readiness",
+        "requiresAuth": true,
+        "viewports": [
+          "tablet",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": "browser-auth",
+        "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/attendance",
+        "durationMs": 0,
+        "reason": "protected route validated with Playwright storage state"
+      }
+    },
+    {
+      "route": {
+        "id": "payroll-compensation",
+        "path": "/en/dashboard/payroll/compensation",
+        "surface": "Payroll compensation readiness",
+        "requiresAuth": true,
+        "viewports": [
+          "tablet",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": "browser-auth",
+        "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/compensation",
+        "durationMs": 0,
+        "reason": "protected route validated with Playwright storage state"
+      }
+    },
+    {
+      "route": {
+        "id": "payroll-contracts",
+        "path": "/en/dashboard/payroll/contracts",
+        "surface": "Payroll contract lifecycle",
+        "requiresAuth": true,
+        "viewports": [
+          "tablet",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": "browser-auth",
+        "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/contracts",
+        "durationMs": 0,
+        "reason": "protected route validated with Playwright storage state"
+      }
+    },
+    {
+      "route": {
+        "id": "payroll-employees",
+        "path": "/en/dashboard/payroll/employees",
+        "surface": "Payroll employee source data",
+        "requiresAuth": true,
+        "viewports": [
+          "tablet",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": "browser-auth",
+        "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/employees",
+        "durationMs": 0,
+        "reason": "protected route validated with Playwright storage state"
+      }
+    },
+    {
+      "route": {
+        "id": "payroll-declarations",
+        "path": "/en/dashboard/payroll/declarations",
+        "surface": "Payroll declaration evidence workbench",
+        "requiresAuth": true,
+        "viewports": [
+          "tablet",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": "browser-auth",
+        "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/declarations",
+        "durationMs": 0,
+        "reason": "protected route validated with Playwright storage state"
+      }
+    },
+    {
+      "route": {
+        "id": "payroll-payments",
+        "path": "/en/dashboard/payroll/payments",
+        "surface": "Payroll payment reconciliation",
+        "requiresAuth": true,
+        "viewports": [
+          "tablet",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": "browser-auth",
+        "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/payments",
+        "durationMs": 0,
+        "reason": "protected route validated with Playwright storage state"
+      }
+    },
+    {
+      "route": {
+        "id": "payroll-runs",
+        "path": "/en/dashboard/payroll/runs",
+        "surface": "Payroll run lifecycle workbench",
+        "requiresAuth": true,
+        "viewports": [
+          "tablet",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": "browser-auth",
+        "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/runs",
+        "durationMs": 0,
+        "reason": "protected route validated with Playwright storage state"
+      }
+    },
+    {
+      "route": {
+        "id": "payroll-payslips",
+        "path": "/en/dashboard/payroll/payslips",
+        "surface": "Payroll payslip self-service",
+        "requiresAuth": true,
+        "viewports": [
+          "tablet",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": "browser-auth",
+        "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/payslips",
+        "durationMs": 0,
+        "reason": "protected route validated with Playwright storage state"
+      }
+    },
+    {
+      "route": {
+        "id": "payroll-register",
+        "path": "/en/dashboard/payroll/register",
+        "surface": "Payroll register tie-out",
+        "requiresAuth": true,
+        "viewports": [
+          "tablet",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": "browser-auth",
+        "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/register",
+        "durationMs": 0,
+        "reason": "protected route validated with Playwright storage state"
+      }
+    },
+    {
+      "route": {
+        "id": "payroll-setup",
+        "path": "/en/dashboard/payroll/setup",
+        "surface": "Payroll setup control plane",
+        "requiresAuth": true,
+        "viewports": [
+          "tablet",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": "browser-auth",
+        "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/setup",
+        "durationMs": 0,
+        "reason": "protected route validated with Playwright storage state"
+      }
+    }
+  ],
+  "screenshots": {
+    "available": true,
+    "captures": [
+      {
+        "routeId": "payroll",
+        "viewport": "tablet",
+        "ok": false,
+        "file": "what-next/payroll/screenshots/payroll-prompt19-browser-smoke-2026-07-01/payroll-tablet.png",
+        "error": "page.goto: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:3001/en/dashboard/payroll\", waiting until \"domcontentloaded\"\u001b[22m\n"
+      },
+      {
+        "routeId": "payroll",
+        "viewport": "desktop",
+        "ok": true,
+        "file": "what-next/payroll/screenshots/payroll-prompt19-browser-smoke-2026-07-01/payroll-desktop.png",
+        "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll",
+        "authenticated": true
+      },
+      {
+        "routeId": "payroll-attendance",
+        "viewport": "tablet",
+        "ok": true,
+        "file": "what-next/payroll/screenshots/payroll-prompt19-browser-smoke-2026-07-01/payroll-attendance-tablet.png",
+        "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/attendance",
+        "authenticated": true
+      },
+      {
+        "routeId": "payroll-attendance",
+        "viewport": "desktop",
+        "ok": true,
+        "file": "what-next/payroll/screenshots/payroll-prompt19-browser-smoke-2026-07-01/payroll-attendance-desktop.png",
+        "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/attendance",
+        "authenticated": true
+      },
+      {
+        "routeId": "payroll-compensation",
+        "viewport": "tablet",
+        "ok": true,
+        "file": "what-next/payroll/screenshots/payroll-prompt19-browser-smoke-2026-07-01/payroll-compensation-tablet.png",
+        "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/compensation",
+        "authenticated": true
+      },
+      {
+        "routeId": "payroll-compensation",
+        "viewport": "desktop",
+        "ok": true,
+        "file": "what-next/payroll/screenshots/payroll-prompt19-browser-smoke-2026-07-01/payroll-compensation-desktop.png",
+        "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/compensation",
+        "authenticated": true
+      },
+      {
+        "routeId": "payroll-contracts",
+        "viewport": "tablet",
+        "ok": true,
+        "file": "what-next/payroll/screenshots/payroll-prompt19-browser-smoke-2026-07-01/payroll-contracts-tablet.png",
+        "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/contracts",
+        "authenticated": true
+      },
+      {
+        "routeId": "payroll-contracts",
+        "viewport": "desktop",
+        "ok": true,
+        "file": "what-next/payroll/screenshots/payroll-prompt19-browser-smoke-2026-07-01/payroll-contracts-desktop.png",
+        "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/contracts",
+        "authenticated": true
+      },
+      {
+        "routeId": "payroll-employees",
+        "viewport": "tablet",
+        "ok": true,
+        "file": "what-next/payroll/screenshots/payroll-prompt19-browser-smoke-2026-07-01/payroll-employees-tablet.png",
+        "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/employees",
+        "authenticated": true
+      },
+      {
+        "routeId": "payroll-employees",
+        "viewport": "desktop",
+        "ok": true,
+        "file": "what-next/payroll/screenshots/payroll-prompt19-browser-smoke-2026-07-01/payroll-employees-desktop.png",
+        "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/employees",
+        "authenticated": true
+      },
+      {
+        "routeId": "payroll-declarations",
+        "viewport": "tablet",
+        "ok": true,
+        "file": "what-next/payroll/screenshots/payroll-prompt19-browser-smoke-2026-07-01/payroll-declarations-tablet.png",
+        "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/declarations",
+        "authenticated": true
+      },
+      {
+        "routeId": "payroll-declarations",
+        "viewport": "desktop",
+        "ok": true,
+        "file": "what-next/payroll/screenshots/payroll-prompt19-browser-smoke-2026-07-01/payroll-declarations-desktop.png",
+        "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/declarations",
+        "authenticated": true
+      },
+      {
+        "routeId": "payroll-payments",
+        "viewport": "tablet",
+        "ok": true,
+        "file": "what-next/payroll/screenshots/payroll-prompt19-browser-smoke-2026-07-01/payroll-payments-tablet.png",
+        "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/payments",
+        "authenticated": true
+      },
+      {
+        "routeId": "payroll-payments",
+        "viewport": "desktop",
+        "ok": true,
+        "file": "what-next/payroll/screenshots/payroll-prompt19-browser-smoke-2026-07-01/payroll-payments-desktop.png",
+        "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/payments",
+        "authenticated": true
+      },
+      {
+        "routeId": "payroll-runs",
+        "viewport": "tablet",
+        "ok": true,
+        "file": "what-next/payroll/screenshots/payroll-prompt19-browser-smoke-2026-07-01/payroll-runs-tablet.png",
+        "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/runs",
+        "authenticated": true
+      },
+      {
+        "routeId": "payroll-runs",
+        "viewport": "desktop",
+        "ok": true,
+        "file": "what-next/payroll/screenshots/payroll-prompt19-browser-smoke-2026-07-01/payroll-runs-desktop.png",
+        "finalUrl": "http://127.0.0.1:3001/en/dashboard/payroll/runs",
+        "authenticated": true
+      },
+      {
+        "routeId": "payroll-payslips",
+        "viewport": "tablet",
+        "ok": false,
+        "file": "what-next/payroll/screenshots/payroll-prompt19-browser-smoke-2026-07-01/payroll-payslips-tablet.png",
+        "error": "page.goto: net::ERR_NETWORK_IO_SUSPENDED at http://127.0.0.1:3001/en/dashboard/payroll/payslips\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:3001/en/dashboard/payroll/payslips\", waiting until \"domcontentloaded\"\u001b[22m\n"
+      },
+      {
+        "routeId": "payroll-payslips",
+        "viewport": "desktop",
+        "ok": false,
+        "file": "what-next/payroll/screenshots/payroll-prompt19-browser-smoke-2026-07-01/payroll-payslips-desktop.png",
+        "error": "page.goto: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:3001/en/dashboard/payroll/payslips\", waiting until \"domcontentloaded\"\u001b[22m\n"
+      },
+      {
+        "routeId": "payroll-register",
+        "viewport": "tablet",
+        "ok": false,
+        "file": "what-next/payroll/screenshots/payroll-prompt19-browser-smoke-2026-07-01/payroll-register-tablet.png",
+        "error": "page.goto: net::ERR_NETWORK_CHANGED at http://127.0.0.1:3001/en/dashboard/payroll/register\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:3001/en/dashboard/payroll/register\", waiting until \"domcontentloaded\"\u001b[22m\n"
+      },
+      {
+        "routeId": "payroll-register",
+        "viewport": "desktop",
+        "ok": false,
+        "file": "what-next/payroll/screenshots/payroll-prompt19-browser-smoke-2026-07-01/payroll-register-desktop.png",
+        "error": "page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:3001/en/dashboard/payroll/register\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:3001/en/dashboard/payroll/register\", waiting until \"domcontentloaded\"\u001b[22m\n"
+      },
+      {
+        "routeId": "payroll-setup",
+        "viewport": "tablet",
+        "ok": false,
+        "file": "what-next/payroll/screenshots/payroll-prompt19-browser-smoke-2026-07-01/payroll-setup-tablet.png",
+        "error": "page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:3001/en/dashboard/payroll/setup\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:3001/en/dashboard/payroll/setup\", waiting until \"domcontentloaded\"\u001b[22m\n"
+      },
+      {
+        "routeId": "payroll-setup",
+        "viewport": "desktop",
+        "ok": false,
+        "file": "what-next/payroll/screenshots/payroll-prompt19-browser-smoke-2026-07-01/payroll-setup-desktop.png",
+        "error": "page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:3001/en/dashboard/payroll/setup\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:3001/en/dashboard/payroll/setup\", waiting until \"domcontentloaded\"\u001b[22m\n"
+      }
+    ]
+  }
+}

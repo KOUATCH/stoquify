@@ -451,6 +451,18 @@ describe("payroll proof backfill reconciliation service", () => {
             "sha256:cm-irpp-period-reviewed-review-evidence",
           ]),
         }),
+        reviewedProofChain: expect.objectContaining({
+          status: "READY",
+          coverageHash: expect.stringMatching(/^sha256:/),
+          reviewEvidenceSourceHashes: expect.arrayContaining([
+            "sha256:cm-irpp-period-reviewed-review-evidence",
+          ]),
+          registerProofGapCount: 0,
+          declarationRegisterProofGapCount: 0,
+          paymentSettlementRegisterProofGapCount: 0,
+          correctionIntentCount: 2,
+          blockerCodes: [],
+        }),
       }),
     );
     expect(certificate.persistence).toEqual({

@@ -37,6 +37,23 @@ function statutoryScenarioCoverage(overrides: Record<string, unknown> = {}) {
       legalRefs: ["CM_PAYROLL_REVIEWED_SOURCE"],
       sourceEvidenceHashes: ["sha256:statutory-review-evidence"],
     },
+    reviewedProofChain: {
+      status: "READY",
+      coverageHash: STATUTORY_SCENARIO_COVERAGE_HASH,
+      reviewEvidenceSourceHashes: ["sha256:statutory-review-evidence"],
+      readyFamilyCount: 9,
+      requiredFamilyCount: 9,
+      registerProofGapCount: 0,
+      declarationRegisterProofGapCount: 0,
+      paymentSettlementRegisterProofGapCount: 0,
+      correctionIntentCount: 2,
+      requiredDownstreamProofs: [
+        "payroll-register-proof",
+        "correction-recalculation-lifecycle-evidence",
+        "accounting-tieout-proof",
+      ],
+      blockerCodes: [],
+    },
     families: [
       {
         family: "IRPP_PERIOD",
@@ -97,6 +114,7 @@ function proofBackfillAudit(afterOverrides: Record<string, unknown> = {}) {
         sourceCertificate: {
           adapterChaosReleaseGateHash: ADAPTER_CHAOS_HASH,
           adapterChaosReleaseGateHashMatches: true,
+          correctionIntentCount: 2,
         },
         currentProofBackfill: {
           totalBlockingGaps: 0,
@@ -296,6 +314,10 @@ describe("buildPayrollFinalReleaseReadinessPack", () => {
           sourceEvidenceHashCount: 1,
           requiredReviewTopicCount: 2,
           requiredReviewTopics: "taxableSalaryBase, bracketsAndRates",
+          reviewedProofChainStatus: "READY",
+          reviewedProofChainBlockerCount: 0,
+          reviewedProofChainRegisterProofGapCount: 0,
+          reviewedProofChainCorrectionIntentCount: 2,
         }),
       }),
     );
@@ -307,6 +329,16 @@ describe("buildPayrollFinalReleaseReadinessPack", () => {
         setupStatutoryScenarioRequiredReviewTopicCount: 2,
         setupStatutoryScenarioRequiredReviewTopics:
           "taxableSalaryBase, bracketsAndRates",
+        reviewedProofChainStatus: "READY",
+        reviewedProofChainCoverageHash: STATUTORY_SCENARIO_COVERAGE_HASH,
+        reviewedProofChainBlockerCodes: [],
+        reviewedProofChainReviewEvidenceSourceHashes: [
+          "sha256:statutory-review-evidence",
+        ],
+        reviewedProofChainRegisterProofGapCount: 0,
+        reviewedProofChainDeclarationRegisterProofGapCount: 0,
+        reviewedProofChainPaymentSettlementRegisterProofGapCount: 0,
+        reviewedProofChainCorrectionIntentCount: 2,
       }),
     );
     expect(
@@ -644,6 +676,41 @@ describe("buildPayrollFinalReleaseReadinessPack", () => {
           "FINAL_STATUTORY_SCENARIO_COVERAGE_HASH_MISSING",
           "FINAL_STATUTORY_SCENARIO_REVIEW_EVIDENCE_MISSING",
         ],
+      }),
+    );
+  });
+
+  it("blocks final approval when persisted pilot certification lacks hash or carries blockers", async () => {
+    const result = await buildPayrollFinalReleaseReadinessPack(
+      baseInput(),
+      buildClient({
+        pilot: pilotAudit({
+          certificateHash: null,
+          blockers: [
+            {
+              code: "PILOT_PAYMENT_BATCH_NOT_SETTLED",
+              severity: "critical",
+              domain: "payment",
+            },
+          ],
+        }),
+      }) as never,
+    );
+
+    expect(result.decision).toBe("NOT_READY");
+    expect(result.gates.find((gate) => gate.key === "pilot_cycle")).toEqual(
+      expect.objectContaining({
+        status: "BLOCKED",
+        blockerCodes: expect.arrayContaining([
+          "FINAL_PILOT_CERTIFICATE_HASH_MISSING",
+          "FINAL_PILOT_CERTIFICATE_BLOCKERS_OPEN",
+        ]),
+      }),
+    );
+    expect(result.evidence.pilotCycle).toEqual(
+      expect.objectContaining({
+        certificateHash: null,
+        blockerCount: 1,
       }),
     );
   });

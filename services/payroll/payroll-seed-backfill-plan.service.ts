@@ -691,6 +691,8 @@ export async function generatePayrollSeedBackfillDryRunPlan(
 
   plannedWrites.push(...proofBackfill.plannedJobs)
 
+  const reviewedProofChain =
+    readiness.checks.countryPack.calculationFixtures.reviewedProofChain
   const proofBackfillBlockers: PayrollSetupReadinessIssue[] =
     proofBackfill.totalBlockingGaps > 0
       ? [
@@ -710,6 +712,11 @@ export async function generatePayrollSeedBackfillDryRunPlan(
               paymentSettlementLifecycleProofGaps:
                 proofBackfill.gapCounts
                   .paymentBatchMissingSettlementLifecycleProof,
+              reviewedProofChainStatus: reviewedProofChain?.status ?? null,
+              reviewedProofChainCoverageHash:
+                reviewedProofChain?.coverageHash ?? null,
+              reviewedProofChainBlockerCodes:
+                reviewedProofChain?.blockerCodes.join(", ") || null,
             },
           },
         ]

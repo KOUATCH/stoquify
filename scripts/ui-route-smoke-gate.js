@@ -150,6 +150,8 @@ function parseArgs(argv) {
     screenshotsDir: path.join(process.cwd(), "what-next", "ui-ux", "screenshots", today),
     storageState: process.env.PLAYWRIGHT_STORAGE_STATE ? path.resolve(process.env.PLAYWRIGHT_STORAGE_STATE) : null,
     timeoutMs: 15000,
+    warmup: true,
+    warmupTimeoutMs: null,
     requireScreenshots: false,
     routeIds: null,
   }
@@ -163,6 +165,8 @@ function parseArgs(argv) {
     else if (arg === "--screenshots-dir") args.screenshotsDir = path.resolve(argv[++index])
     else if (arg === "--storage-state") args.storageState = path.resolve(argv[++index])
     else if (arg === "--timeout-ms") args.timeoutMs = Number.parseInt(argv[++index], 10)
+    else if (arg === "--warmup-timeout-ms") args.warmupTimeoutMs = Number.parseInt(argv[++index], 10)
+    else if (arg === "--skip-warmup") args.warmup = false
     else if (arg === "--require-screenshots") args.requireScreenshots = true
     else if (arg === "--route") {
       args.routeIds = args.routeIds || new Set()
@@ -181,6 +185,12 @@ function parseArgs(argv) {
   if (!Number.isFinite(args.timeoutMs) || args.timeoutMs < 1000) {
     throw new Error("--timeout-ms must be a number greater than or equal to 1000")
   }
+  if (args.warmupTimeoutMs !== null && (!Number.isFinite(args.warmupTimeoutMs) || args.warmupTimeoutMs < 1000)) {
+    throw new Error("--warmup-timeout-ms must be a number greater than or equal to 1000")
+  }
+  if (args.warmupTimeoutMs === null) {
+    args.warmupTimeoutMs = Math.max(args.timeoutMs, 60000)
+  }
 
   return args
 }
@@ -196,6 +206,8 @@ Options:
   --require-screenshots    Fail when Playwright is unavailable or screenshot capture fails.
   --screenshots-dir dir    Directory for screenshots when Playwright is installed.
   --storage-state file     Playwright storage state for authenticated route screenshots.
+  --skip-warmup            Disable authenticated browser warmup before screenshots.
+  --warmup-timeout-ms ms   Per-route warmup timeout. Defaults to max(timeout, 60000).
 
 The gate checks HTTP reachability for public and unauthenticated routes. If the
 optional playwright package is installed, it also captures desktop/tablet/mobile
@@ -316,47 +328,55 @@ async function captureScreenshots(args, routes, playwright) {
   const captures = []
 
   try {
-    for (const route of routes) {
-      for (const viewportName of route.viewports) {
-        const viewport = VIEWPORTS[viewportName]
-        const context = await browser.newContext({
-          viewport,
-          ...(args.storageState ? { storageState: args.storageState } : {}),
-        })
-        const page = await context.newPage()
-        const fileName = `${route.id}-${viewportName}.png`
-        const filePath = path.join(args.screenshotsDir, fileName)
+    const viewportNames = Array.from(new Set(routes.flatMap((route) => route.viewports)))
 
-        try {
-          await page.goto(routeUrl(args.baseUrl, route.path), {
-            waitUntil: "domcontentloaded",
-            timeout: args.timeoutMs,
-          })
-          const finalUrl = page.url()
-          const authRedirected = route.requiresAuth && isAuthRedirect(finalUrl)
-          if (args.storageState && authRedirected) {
-            throw new Error(`authenticated route redirected to ${finalUrl}`)
+    for (const viewportName of viewportNames) {
+      const viewport = VIEWPORTS[viewportName]
+      const context = await browser.newContext({
+        viewport,
+        ...(args.storageState ? { storageState: args.storageState } : {}),
+      })
+
+      try {
+        for (const route of routes.filter((candidate) => candidate.viewports.includes(viewportName))) {
+          const page = await context.newPage()
+          const fileName = `${route.id}-${viewportName}.png`
+          const filePath = path.join(args.screenshotsDir, fileName)
+
+          try {
+            await page.goto(routeUrl(args.baseUrl, route.path), {
+              waitUntil: "domcontentloaded",
+              timeout: args.timeoutMs,
+            })
+            await page.waitForLoadState("networkidle", { timeout: Math.min(args.timeoutMs, 5000) }).catch(() => {})
+            const finalUrl = page.url()
+            const authRedirected = route.requiresAuth && isAuthRedirect(finalUrl)
+            if (args.storageState && authRedirected) {
+              throw new Error(`authenticated route redirected to ${finalUrl}`)
+            }
+            await page.screenshot({ path: filePath, fullPage: true })
+            captures.push({
+              routeId: route.id,
+              viewport: viewportName,
+              ok: true,
+              file: path.relative(args.root, filePath).replace(/\\/g, "/"),
+              finalUrl,
+              authenticated: route.requiresAuth ? !authRedirected : null,
+            })
+          } catch (error) {
+            captures.push({
+              routeId: route.id,
+              viewport: viewportName,
+              ok: false,
+              file: path.relative(args.root, filePath).replace(/\\/g, "/"),
+              error: error instanceof Error ? error.message : String(error),
+            })
+          } finally {
+            await page.close().catch(() => {})
           }
-          await page.screenshot({ path: filePath, fullPage: true })
-          captures.push({
-            routeId: route.id,
-            viewport: viewportName,
-            ok: true,
-            file: path.relative(args.root, filePath).replace(/\\/g, "/"),
-            finalUrl,
-            authenticated: route.requiresAuth ? !authRedirected : null,
-          })
-        } catch (error) {
-          captures.push({
-            routeId: route.id,
-            viewport: viewportName,
-            ok: false,
-            file: path.relative(args.root, filePath).replace(/\\/g, "/"),
-            error: error instanceof Error ? error.message : String(error),
-          })
-        } finally {
-          await context.close().catch(() => {})
         }
+      } finally {
+        await context.close().catch(() => {})
       }
     }
   } finally {
@@ -369,6 +389,84 @@ async function captureScreenshots(args, routes, playwright) {
   }
 }
 
+async function warmupRoutes(args, routes, playwright) {
+  if (!args.warmup) {
+    return {
+      enabled: false,
+      skipped: true,
+      reason: "warmup disabled",
+      routes: [],
+    }
+  }
+
+  if (!playwright) {
+    return {
+      enabled: true,
+      skipped: true,
+      reason: "playwright package is not installed",
+      routes: [],
+    }
+  }
+
+  const browser = await playwright.chromium.launch({ headless: true })
+  const warmed = []
+
+  try {
+    const context = await browser.newContext({
+      viewport: VIEWPORTS.desktop,
+      ...(args.storageState ? { storageState: args.storageState } : {}),
+    })
+
+    try {
+      const page = await context.newPage()
+
+      for (const route of routes) {
+        const startedAt = Date.now()
+
+        try {
+          await page.goto(routeUrl(args.baseUrl, route.path), {
+            waitUntil: "domcontentloaded",
+            timeout: args.warmupTimeoutMs,
+          })
+          await page.waitForLoadState("networkidle", { timeout: Math.min(args.warmupTimeoutMs, 5000) }).catch(() => {})
+          const finalUrl = page.url()
+          const authRedirected = route.requiresAuth && isAuthRedirect(finalUrl)
+          if (args.storageState && authRedirected) {
+            throw new Error(`authenticated route redirected to ${finalUrl}`)
+          }
+          warmed.push({
+            routeId: route.id,
+            ok: true,
+            finalUrl,
+            durationMs: Date.now() - startedAt,
+            authenticated: route.requiresAuth ? !authRedirected : null,
+          })
+        } catch (error) {
+          warmed.push({
+            routeId: route.id,
+            ok: false,
+            finalUrl: page.url(),
+            durationMs: Date.now() - startedAt,
+            error: error instanceof Error ? error.message : String(error),
+          })
+        }
+      }
+
+      await page.close().catch(() => {})
+    } finally {
+      await context.close().catch(() => {})
+    }
+  } finally {
+    await browser.close().catch(() => {})
+  }
+
+  return {
+    enabled: true,
+    skipped: false,
+    timeoutMs: args.warmupTimeoutMs,
+    routes: warmed,
+  }
+}
 function writeJson(filePath, payload) {
   fs.mkdirSync(path.dirname(filePath), { recursive: true })
   fs.writeFileSync(filePath, `${JSON.stringify(payload, null, 2)}\n`, "utf8")
@@ -394,11 +492,13 @@ async function main() {
   }
 
   const playwright = loadPlaywright(args.root)
+  const warmup = await warmupRoutes(args, routes, playwright)
   const screenshots = await captureScreenshots(args, routes, playwright)
   const routeFailures = httpResults.filter((result) => !result.http.ok)
+  const warmupFailures = warmup.routes.filter((route) => !route.ok)
   const screenshotFailures = screenshots.captures.filter((capture) => !capture.ok && !capture.skipped)
   const screenshotBlocked = args.requireScreenshots && screenshots.captures.some((capture) => !capture.ok)
-  const ok = routeFailures.length === 0 && screenshotFailures.length === 0 && !screenshotBlocked
+  const ok = routeFailures.length === 0 && warmupFailures.length === 0 && screenshotFailures.length === 0 && !screenshotBlocked
   const report = {
     checkedAt: new Date().toISOString(),
     baseUrl: args.baseUrl,
@@ -411,6 +511,7 @@ async function main() {
       protectedRouteScreenshotMode: args.storageState ? "saved-storage-state" : "unauthenticated-or-redirect-safe",
     },
     routes: httpResults,
+    warmup,
     screenshots,
   }
 
@@ -420,6 +521,12 @@ async function main() {
   console.log(`Report: ${path.relative(args.root, args.out).replace(/\\/g, "/")}`)
   if (!screenshots.available) {
     console.log("Screenshots skipped: playwright package is not installed.")
+  }
+  if (warmup.enabled && !warmup.skipped) {
+    for (const result of warmup.routes) {
+      const marker = result.ok ? "WARM" : "WARM-FAIL"
+      console.log(`${marker} ${result.routeId} durationMs=${result.durationMs}`)
+    }
   }
   for (const result of httpResults) {
     const marker = result.http.ok ? "OK" : "FAIL"
@@ -431,7 +538,17 @@ async function main() {
   }
 }
 
-main().catch((error) => {
-  console.error(error instanceof Error ? error.message : String(error))
-  process.exitCode = 1
-})
+if (require.main === module) {
+  main().catch((error) => {
+    console.error(error instanceof Error ? error.message : String(error))
+    process.exitCode = 1
+  })
+}
+module.exports = {
+  captureScreenshots,
+  checkHttp,
+  parseArgs,
+  routeUrl,
+  selectedRoutes,
+  warmupRoutes,
+}

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import {
   PayrollDeclarationEvidenceTransition,
   PayrollDeclarationStatus,
@@ -7,7 +7,10 @@ import {
   PayrollRunType,
 } from "@prisma/client";
 
-import type { PayrollDeclarationWorkbenchResult } from "@/actions/payroll/payroll-control.actions";
+import {
+  enqueuePayrollAuthorityAdapterExecutionAction,
+  type PayrollDeclarationWorkbenchResult,
+} from "@/actions/payroll/payroll-control.actions";
 import PayrollDeclarationWorkbench from "../PayrollDeclarationWorkbench";
 
 jest.mock("next/link", () => {
@@ -25,6 +28,16 @@ jest.mock("next/link", () => {
     }) => React.createElement("a", { href, ...props }, children),
   };
 });
+
+const mockRouterRefresh = jest.fn();
+
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({ refresh: mockRouterRefresh }),
+}));
+
+jest.mock("@/actions/payroll/payroll-control.actions", () => ({
+  enqueuePayrollAuthorityAdapterExecutionAction: jest.fn(),
+}));
 
 jest.mock("@/i18n/routing", () => ({
   localizePath: (href: string, locale: string) => `/${locale}${href}`,
@@ -153,6 +166,21 @@ function workbenchData(): PayrollDeclarationWorkbenchResult {
           productionSubmissionSupported: false,
           manualAuthorityWorkflowOnly: true,
         },
+        adapterExecution: {
+          canEnqueue: false,
+          declarationEvidenceId: null,
+          status: null,
+          queuedEvidenceId: null,
+          correlationId: null,
+          authorityAdapterKey: null,
+          authorityAdapterProofHash: null,
+          requiredPermission: "payroll.declarations.manage",
+          requiresFreshAuth: true,
+          sourceService:
+            "services/payroll/authority-adapter-execution.service.ts",
+          reason:
+            "Latest evidence is AUTOMATION_BLOCKED; manual authority workflow remains required.",
+        },
         nextActions: [
           {
             id: "submit",
@@ -188,7 +216,13 @@ function workbenchData(): PayrollDeclarationWorkbenchResult {
   };
 }
 
+const mockEnqueueAuthorityExecution =
+  enqueuePayrollAuthorityAdapterExecutionAction as jest.Mock;
+
 describe("PayrollDeclarationWorkbench", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
   it("renders declaration proof, blockers, next actions, and localized links", () => {
     render(<PayrollDeclarationWorkbench data={workbenchData()} locale="en" />);
 
@@ -203,7 +237,7 @@ describe("PayrollDeclarationWorkbench", () => {
     expect(screen.getByText("sha256:receipt")).toBeInTheDocument();
     expect(screen.getByText("Automation is not certified")).toBeInTheDocument();
     expect(screen.getByText("Record submission evidence")).toBeInTheDocument();
-    expect(screen.getByText("Fresh auth")).toBeInTheDocument();
+    expect(screen.getAllByText("Fresh auth").length).toBeGreaterThan(0);
     expect(screen.getByText("Maker-checker")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Proof drawer" }));
@@ -269,6 +303,123 @@ describe("PayrollDeclarationWorkbench", () => {
     ).toBeInTheDocument();
   });
 
+  it("queues certified authority adapter execution through the protected action", async () => {
+    const data = workbenchData();
+    const declaration = data.declarations[0];
+    declaration.blockers = [];
+    declaration.automation = {
+      automationCapabilityStatus: "SUPPORTED_CERTIFIED",
+      productionSubmissionSupported: true,
+      manualAuthorityWorkflowOnly: false,
+    };
+    declaration.adapterExecution = {
+      canEnqueue: true,
+      declarationEvidenceId: "evidence-1",
+      status: null,
+      queuedEvidenceId: null,
+      correlationId: null,
+      authorityAdapterKey: null,
+      authorityAdapterProofHash: null,
+      requiredPermission: "payroll.declarations.manage",
+      requiresFreshAuth: true,
+      sourceService: "services/payroll/authority-adapter-execution.service.ts",
+      reason:
+        "Certified declaration evidence is ready for fresh-auth authority adapter enqueue.",
+    };
+    mockEnqueueAuthorityExecution.mockResolvedValue({
+      success: true,
+      data: {
+        idempotent: false,
+        execution: {
+          status: "PENDING",
+          correlationId: "sha256:correlation",
+          authorityAdapterKey: "cm-cnps-v1",
+          authorityAdapterProofHash: "sha256:authority-proof",
+        },
+      },
+    });
+
+    render(<PayrollDeclarationWorkbench data={data} locale="en" />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Queue adapter execution" }),
+    );
+
+    await waitFor(() => {
+      expect(mockEnqueueAuthorityExecution).toHaveBeenCalledWith({
+        declarationEvidenceId: "evidence-1",
+        idempotencyKey: expect.stringMatching(
+          /^payroll-declaration:authority-adapter:declaration-1:/,
+        ),
+      });
+    });
+    expect(
+      await screen.findByText("Authority adapter execution queued."),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Status: PENDING")).toBeInTheDocument();
+    expect(screen.getByText("Adapter: cm-cnps-v1")).toBeInTheDocument();
+    expect(
+      screen.getByText("Proof: sha256:authority-proof"),
+    ).toBeInTheDocument();
+    expect(mockRouterRefresh).toHaveBeenCalled();
+  });
+
+  it("keeps enqueue blocked when service gate does not expose certified evidence", () => {
+    render(<PayrollDeclarationWorkbench data={workbenchData()} locale="en" />);
+
+    expect(
+      screen.queryByRole("button", { name: "Queue adapter execution" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Latest evidence is AUTOMATION_BLOCKED; manual authority workflow remains required.",
+      ),
+    ).toBeInTheDocument();
+    expect(mockEnqueueAuthorityExecution).not.toHaveBeenCalled();
+  });
+
+  it("surfaces fresh-auth failures without leaking authority payloads", async () => {
+    const data = workbenchData();
+    const declaration = data.declarations[0];
+    declaration.blockers = [];
+    declaration.automation = {
+      automationCapabilityStatus: "SUPPORTED_CERTIFIED",
+      productionSubmissionSupported: true,
+      manualAuthorityWorkflowOnly: false,
+    };
+    declaration.adapterExecution = {
+      canEnqueue: true,
+      declarationEvidenceId: "evidence-1",
+      status: null,
+      queuedEvidenceId: null,
+      correlationId: null,
+      authorityAdapterKey: null,
+      authorityAdapterProofHash: null,
+      requiredPermission: "payroll.declarations.manage",
+      requiresFreshAuth: true,
+      sourceService: "services/payroll/authority-adapter-execution.service.ts",
+      reason:
+        "Certified declaration evidence is ready for fresh-auth authority adapter enqueue.",
+    };
+    mockEnqueueAuthorityExecution.mockResolvedValue({
+      success: false,
+      data: null,
+      error: "Fresh authentication required",
+      code: "FRESH_AUTH_REQUIRED",
+    });
+
+    render(<PayrollDeclarationWorkbench data={data} locale="en" />);
+    fireEvent.click(
+      screen.getByRole("button", { name: "Queue adapter execution" }),
+    );
+
+    expect(
+      await screen.findByText("Fresh authentication required"),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText(/raw authority payload/i),
+    ).not.toBeInTheDocument();
+  });
   it("renders a client-safe error state", () => {
     render(
       <PayrollDeclarationWorkbench data={null} error="Forbidden" locale="en" />,

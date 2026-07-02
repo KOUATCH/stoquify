@@ -501,12 +501,58 @@ const payrollYearToDateMetadata = {
   yearToDateAccumulatorHashes: ["sha256:ytd-accumulator"],
 };
 
+const payrollStatutoryScenarioCoverageMetadata = {
+  status: "READY",
+  countryCode: "CM",
+  packVersion: "CM-2026.1",
+  coverageHash: "sha256:statutory-scenario-coverage",
+  executableScenarioCount: 12,
+  readyFamilyCount: 9,
+  requiredFamilyCount: 9,
+  blockerCodes: [],
+  reviewEvidence: {
+    presentCount: 12,
+    missingCount: 0,
+    reviewedBy: ["Qualified Cameroon payroll tax reviewer"],
+    reviewedOn: ["2026-06-28"],
+    legalRefs: ["CM_DGI_CGI_2025"],
+    sourceEvidenceHashes: ["sha256:cm-irpp-period-reviewed-review-evidence"],
+  },
+};
+
+function countryPackProvenanceFixture(overrides: Record<string, unknown> = {}) {
+  const provenance = {
+    kind: "AQSTOQFLOW_PAYROLL_LINE_COUNTRY_PACK_PROVENANCE",
+    version: 1,
+    countryCode: "CM",
+    packVersion: "CM-2026.1",
+    schemaVersion: "country-pack.v1",
+    capabilityStatus: "SUPPORTED",
+    resolutionHash: "sha256:country-pack",
+    statutoryScenarioCoverageHash: "sha256:statutory-scenario-coverage",
+    statutoryScenarioCoverageStatus: "READY",
+    reviewEvidenceSourceHashes: ["sha256:cm-irpp-period-reviewed-review-evidence"],
+    legalRefs: ["CM_DGI_CGI_2025"],
+    roundingPolicyHash: payrollRoundingPolicy.roundingPolicyHash,
+    yearToDatePolicyHash: payrollYearToDatePolicy.ytdPolicyHash,
+    ...overrides,
+  };
+
+  return {
+    provenance,
+    provenanceHash: `sha256:${hashBusinessPayload(provenance)}`,
+  };
+}
+
 function payrollRunFixture(
   status = PayrollRunStatus.CALCULATED,
   metadata: Record<string, unknown> = {
     countryPackStatus: { legalProvenance: cnpsLegalProvenance },
     roundingPolicy: payrollRoundingPolicy,
     roundingPolicyHash: payrollRoundingPolicy.roundingPolicyHash,
+    statutoryScenarioCoverage: payrollStatutoryScenarioCoverageMetadata,
+    statutoryScenarioCoverageHash:
+      payrollStatutoryScenarioCoverageMetadata.coverageHash,
     ...payrollYearToDateMetadata,
   },
 ) {
@@ -557,6 +603,14 @@ function payrollRunFixture(
         calculationSnapshot: {
           roundingPolicy: payrollRoundingPolicy,
           roundingPolicyHash: payrollRoundingPolicy.roundingPolicyHash,
+          countryCode: "CM",
+          countryPackVersion: "CM-2026.1",
+          countryPackSchemaVersion: "country-pack.v1",
+          countryPackResolutionHash: "sha256:country-pack",
+          countryPackCapabilityStatus: "SUPPORTED",
+          countryPackProvenance: countryPackProvenanceFixture().provenance,
+          countryPackProvenanceHash: countryPackProvenanceFixture().provenanceHash,
+          yearToDatePolicyHash: payrollYearToDatePolicy.ytdPolicyHash,
           grossAmount: "100000.00",
           taxableBaseAmount: "100000.00",
           socialBaseAmount: "100000.00",
@@ -583,6 +637,9 @@ function payrollCorrectionRunFixture() {
     countryPackStatus: { legalProvenance: cnpsLegalProvenance },
     roundingPolicy: payrollRoundingPolicy,
     roundingPolicyHash: payrollRoundingPolicy.roundingPolicyHash,
+    statutoryScenarioCoverage: payrollStatutoryScenarioCoverageMetadata,
+    statutoryScenarioCoverageHash:
+      payrollStatutoryScenarioCoverageMetadata.coverageHash,
     ...payrollYearToDateMetadata,
     correction: {
       originalRunId: "original-run-1",
@@ -627,6 +684,14 @@ function payrollCorrectionRunFixture() {
         calculationSnapshot: {
           roundingPolicy: payrollRoundingPolicy,
           roundingPolicyHash: payrollRoundingPolicy.roundingPolicyHash,
+          countryCode: "CM",
+          countryPackVersion: "CM-2026.1",
+          countryPackSchemaVersion: "country-pack.v1",
+          countryPackResolutionHash: "sha256:country-pack",
+          countryPackCapabilityStatus: "SUPPORTED",
+          countryPackProvenance: countryPackProvenanceFixture().provenance,
+          countryPackProvenanceHash: countryPackProvenanceFixture().provenanceHash,
+          yearToDatePolicyHash: payrollYearToDatePolicy.ytdPolicyHash,
           grossAmount: "-10000.00",
           taxableBaseAmount: "-10000.00",
           socialBaseAmount: "-10000.00",
@@ -2560,6 +2625,14 @@ describe("payroll control service", () => {
           payloadHash: expect.stringMatching(/^sha256:/),
           metadata: expect.objectContaining({
             componentRegisterProofHash: expect.stringMatching(/^sha256:/),
+            countryPackRegisterProofHash: expect.stringMatching(/^sha256:/),
+            countryPackRegisterProofStatus: "MATCHED",
+            countryPackRegisterProofLineCount: 1,
+            countryPackLineProofHashes: [expect.stringMatching(/^sha256:/)],
+            statutoryScenarioCoverageHash: "sha256:statutory-scenario-coverage",
+            countryPackReviewEvidenceSourceHashes: [
+              "sha256:cm-irpp-period-reviewed-review-evidence",
+            ],
             payrollComponentMappingHash: expect.stringMatching(/^sha256:/),
             payrollComponentMappingStatus: "BLOCKED_REQUIRES_EXPERT_REVIEW",
             yearToDatePolicy: expect.objectContaining({
@@ -2585,6 +2658,9 @@ describe("payroll control service", () => {
               statutoryPayableAmount: "17150.00",
               declarationLiabilityAmount: "17150.00",
               declarationAmount: "17150.00",
+              countryPackRegisterProofHash: expect.stringMatching(/^sha256:/),
+              countryPackRegisterProofStatus: "MATCHED",
+              statutoryScenarioCoverageHash: "sha256:statutory-scenario-coverage",
               payrollComponentMappingStatus: "BLOCKED_REQUIRES_EXPERT_REVIEW",
               yearToDatePolicyHash: "sha256:ytd-policy",
               yearToDateAccumulatorHashes: ["sha256:ytd-accumulator"],
@@ -2600,6 +2676,9 @@ describe("payroll control service", () => {
         payload: expect.objectContaining({
           payrollComponentMappingHash: expect.stringMatching(/^sha256:/),
           payrollComponentMappingStatus: "BLOCKED_REQUIRES_EXPERT_REVIEW",
+          countryPackRegisterProofHash: expect.stringMatching(/^sha256:/),
+          countryPackRegisterProofStatus: "MATCHED",
+          statutoryScenarioCoverageHash: "sha256:statutory-scenario-coverage",
           declarationLiabilityAmount: "17150.00",
           incomeTaxWithholdingEnabled: false,
           yearToDatePolicyHash: "sha256:ytd-policy",
@@ -2608,6 +2687,30 @@ describe("payroll control service", () => {
       }),
     );
   });
+  it("blocks declaration preparation when country-pack register proof is missing", async () => {
+    const tx = buildTx();
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
+    const run = {
+      ...payrollRunFixture(PayrollRunStatus.POSTED),
+      declarations: [],
+    } as any;
+    delete run.lines[0].calculationSnapshot.countryPackProvenance;
+    delete run.lines[0].calculationSnapshot.countryPackProvenanceHash;
+    tx.payrollRun.findFirst.mockResolvedValue(run);
+
+    await expect(
+      preparePayrollDeclarations({
+        organizationId: "org-1",
+        payrollRunId: "run-1",
+        preparedById: "payroll-controller-1",
+        idempotencyKey: "declaration-key-missing-country-pack-proof",
+      }),
+    ).rejects.toThrow("matched country-pack register proof");
+
+    expect(tx.payrollDeclaration.create).not.toHaveBeenCalled();
+    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
+  });
+
   it("prepares correction declarations as statutory-credit amendments with signed liability proof", async () => {
     const tx = buildTx();
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx));

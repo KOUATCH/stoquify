@@ -21,7 +21,10 @@ import { getCountryPack } from "../regulatory/country-packs/registry";
 import { resolveRegulatoryParameter } from "../regulatory/country-packs/resolve";
 import { validatePayrollCountryPackCalculationFixtures } from "./payroll-country-pack-fixture-runner";
 import {
+  buildPayrollStatutoryReviewedProofChain,
+  buildPayrollStatutoryScenarioCoverageHash,
   buildPayrollStatutoryScenarioCoverageSummary,
+  type PayrollStatutoryReviewedProofChain,
   type PayrollStatutoryScenarioCoverageSummary,
   type PayrollStatutoryScenarioReviewEvidenceSummary,
 } from "./payroll-statutory-scenario-coverage.service";
@@ -61,6 +64,7 @@ export type PayrollSetupCalculationFixtureEvidence = {
   fixtureIds: string[];
   reviewEvidence: PayrollStatutoryScenarioReviewEvidenceSummary | null;
   scenarioCoverage: PayrollStatutoryScenarioCoverageSummary | null;
+  reviewedProofChain: PayrollStatutoryReviewedProofChain | null;
 };
 
 export type PayrollSetupReadinessInput = {
@@ -258,6 +262,7 @@ function emptyCalculationFixtureEvidence(
     fixtureIds: [],
     reviewEvidence: null,
     scenarioCoverage: null,
+    reviewedProofChain: null,
   };
 }
 
@@ -901,6 +906,25 @@ export async function getPayrollSetupReadiness(
         fixtureStatus = "BLOCKED_BY_COUNTRY_PACK_REVIEW";
       }
 
+      const scenarioCoverageHash = buildPayrollStatutoryScenarioCoverageHash({
+        status: scenarioCoverage.status,
+        countryCode: scenarioCoverage.countryCode,
+        packVersion: scenarioCoverage.packVersion,
+        executableScenarioCount: scenarioCoverage.executableScenarioCount,
+        readyFamilyCount: scenarioCoverage.readyFamilyCount,
+        requiredFamilyCount: scenarioCoverage.requiredFamilyCount,
+        blockerCodes: scenarioCoverage.blockers.map((blocker) => blocker.code),
+        reviewEvidence: scenarioCoverage.reviewEvidence,
+      });
+      const reviewedProofChain = buildPayrollStatutoryReviewedProofChain({
+        status: scenarioCoverage.status,
+        coverageHash: scenarioCoverageHash,
+        reviewEvidence: scenarioCoverage.reviewEvidence,
+        readyFamilyCount: scenarioCoverage.readyFamilyCount,
+        requiredFamilyCount: scenarioCoverage.requiredFamilyCount,
+        blockerCodes: scenarioCoverage.blockers.map((blocker) => blocker.code),
+      });
+
       if (scenarioCoverage.status === "BLOCKED") {
         addIssue(blockers, {
           code: "PAYROLL_STATUTORY_SCENARIO_COVERAGE_INCOMPLETE",
@@ -916,6 +940,8 @@ export async function getPayrollSetupReadiness(
             reviewEvidenceSourceHashes:
               scenarioCoverage.reviewEvidence.sourceEvidenceHashes.join(", ") ||
               null,
+            reviewedProofChainStatus: reviewedProofChain.status,
+            reviewedProofChainCoverageHash: reviewedProofChain.coverageHash,
             blockerCodes:
               uniqueValues(
                 scenarioCoverage.blockers.map((item) => item.code),
@@ -935,6 +961,7 @@ export async function getPayrollSetupReadiness(
         fixtureIds,
         reviewEvidence: scenarioCoverage.reviewEvidence,
         scenarioCoverage,
+        reviewedProofChain,
       };
     }
   }

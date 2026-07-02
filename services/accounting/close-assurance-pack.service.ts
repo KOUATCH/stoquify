@@ -25,6 +25,10 @@ import type { ExportClosePackInput } from "./close-assurance.schemas";
 
 export type ClosePackExportMode = "DRAFT_NOT_CERTIFIED" | "CERTIFIED";
 
+const PILOT_ENTITY_TYPE = "PayrollPilotCycleCertification";
+const PILOT_AUDIT_ACTION = "PAYROLL_PILOT_CYCLE_CERTIFICATION_EVALUATED";
+const PILOT_CERTIFIED_STATUS = "CERTIFIED_FOR_PRODUCTION_RELEASE_REVIEW";
+
 export type ExportClosePackControl = {
   actorId?: string | null;
   actorPermissions?: readonly string[];
@@ -350,6 +354,32 @@ type InventoryAnnexFreshness = {
   detectedAt: string;
 };
 
+type PilotCertificationAnnex = {
+  status: string | null;
+  auditLogRef: string | null;
+  payrollRunRef: string | null;
+  certificateHash: string | null;
+  generatedAt: string | null;
+  blockerCount: number;
+  blockerCodes: string[];
+  missingSignoffRoles: string[];
+  expectedAdapterChaosReleaseGateHash: string | null;
+  proofBackfillAdapterChaosMatchesExpected: boolean | null;
+  closePeriodPayrollRunCount: number;
+};
+
+type PilotCertificationEvidence = {
+  annex: PilotCertificationAnnex;
+  certificationBlockers: string[];
+};
+
+type PilotAuditRow = {
+  id: string;
+  entityId: string;
+  changes: Prisma.JsonValue | null;
+  createdAt: Date;
+};
+
 const OPEN_FINDING_STATUSES = [
   CloseFindingStatus.OPEN,
   CloseFindingStatus.ASSIGNED,
@@ -404,6 +434,34 @@ function decimalNumber(
 function metadataRecord(value: unknown): Record<string, unknown> {
   if (!value || typeof value !== "object" || Array.isArray(value)) return {};
   return value as Record<string, unknown>;
+}
+
+function stringOrNull(value: unknown) {
+  return typeof value === "string" && value.trim() ? value.trim() : null;
+}
+
+function booleanOrNull(value: unknown) {
+  return typeof value === "boolean" ? value : null;
+}
+
+function stringArray(value: unknown) {
+  return Array.isArray(value)
+    ? value
+        .filter((entry): entry is string => typeof entry === "string")
+        .map((entry) => entry.trim())
+        .filter(Boolean)
+    : [];
+}
+
+function redactClosePackEvidenceRef(value?: string | null) {
+  if (!value) return null;
+  return `redacted:${createHash("sha256").update(value).digest("hex").slice(0, 12)}`;
+}
+
+function auditPayloadAfter(row: PilotAuditRow | null) {
+  const changes = metadataRecord(row?.changes);
+  const after = metadataRecord(changes.after);
+  return Object.keys(after).length > 0 ? after : changes;
 }
 
 function dateOrNull(value: Date | string | null | undefined) {
@@ -529,6 +587,117 @@ function savedPayrollFinanceForecastProof(
   }
 
   return null;
+}
+
+function pilotCertificationEvidenceFromAudit(
+  row: PilotAuditRow | null,
+  closePeriodPayrollRunCount: number,
+): PilotCertificationEvidence {
+  const payload = auditPayloadAfter(row);
+  const proofContinuity = metadataRecord(payload.proofContinuity);
+  const signoff = metadataRecord(payload.signoff);
+  const blockers = Array.isArray(payload.blockers) ? payload.blockers : [];
+  const blockerCodes = blockers
+    .map((blocker) => stringOrNull(metadataRecord(blocker).code))
+    .filter((code): code is string => Boolean(code));
+  const missingSignoffRoles = stringArray(signoff.missingRoles);
+  const annex: PilotCertificationAnnex = {
+    status: stringOrNull(payload.status),
+    auditLogRef: redactClosePackEvidenceRef(row?.id),
+    payrollRunRef: redactClosePackEvidenceRef(row?.entityId),
+    certificateHash: stringOrNull(payload.certificateHash),
+    generatedAt: stringOrNull(payload.generatedAt),
+    blockerCount: blockers.length,
+    blockerCodes,
+    missingSignoffRoles,
+    expectedAdapterChaosReleaseGateHash: stringOrNull(
+      proofContinuity.expectedAdapterChaosReleaseGateHash,
+    ),
+    proofBackfillAdapterChaosMatchesExpected: booleanOrNull(
+      proofContinuity.proofBackfillAdapterChaosMatchesExpected,
+    ),
+    closePeriodPayrollRunCount,
+  };
+  const certificationBlockers: string[] = [];
+
+  if (closePeriodPayrollRunCount === 0) {
+    certificationBlockers.push(
+      "No payroll run belongs to this close period for pilot-cycle certification.",
+    );
+  } else if (!row) {
+    certificationBlockers.push(
+      "Persisted payroll pilot-cycle certification evidence is missing for this close period.",
+    );
+  }
+
+  if (row) {
+    if (annex.status !== PILOT_CERTIFIED_STATUS) {
+      certificationBlockers.push(
+        "Persisted payroll pilot-cycle certification is not certified for production release review.",
+      );
+    }
+    if (!annex.certificateHash) {
+      certificationBlockers.push(
+        "Persisted payroll pilot-cycle certification is missing a certificate hash.",
+      );
+    }
+    if (annex.blockerCount > 0) {
+      certificationBlockers.push(
+        `${annex.blockerCount} payroll pilot-cycle certification blocker(s) remain open.`,
+      );
+    }
+    if (annex.missingSignoffRoles.length > 0) {
+      certificationBlockers.push(
+        `Payroll pilot-cycle certification is missing signoff from ${annex.missingSignoffRoles.join(", ")}.`,
+      );
+    }
+    if (!annex.expectedAdapterChaosReleaseGateHash) {
+      certificationBlockers.push(
+        "Payroll pilot-cycle certification is missing adapter chaos release-gate proof.",
+      );
+    }
+    if (annex.proofBackfillAdapterChaosMatchesExpected !== true) {
+      certificationBlockers.push(
+        "Payroll pilot-cycle proof-backfill adapter chaos continuity is not proven.",
+      );
+    }
+  }
+
+  return { annex, certificationBlockers };
+}
+
+async function loadPilotCertificationEvidenceForCloseRun(
+  run: NonNullable<Awaited<ReturnType<typeof loadCloseRunForPack>>>,
+  tx: Prisma.TransactionClient | typeof db,
+): Promise<PilotCertificationEvidence> {
+  const payrollRuns = await tx.payrollRun.findMany({
+    where: {
+      organizationId: run.organizationId,
+      deletedAt: null,
+      payrollPeriod: {
+        accountingPeriodId: run.periodId,
+      },
+    },
+    select: { id: true },
+  });
+  const payrollRunIds = payrollRuns.map((payrollRun) => payrollRun.id);
+  const latestPilotAudit = payrollRunIds.length
+    ? await tx.auditLog.findFirst({
+        where: {
+          organizationId: run.organizationId,
+          entityType: PILOT_ENTITY_TYPE,
+          action: PILOT_AUDIT_ACTION,
+          entityId: { in: payrollRunIds },
+        },
+        orderBy: { createdAt: "desc" },
+        select: { id: true, entityId: true, changes: true, createdAt: true },
+      })
+    : null;
+
+  return pilotCertificationEvidenceFromAudit(
+    latestPilotAudit as PilotAuditRow | null,
+    payrollRunIds.length,
+  );
 }
 
 async function evaluateInventoryAnnexFreshness(
@@ -707,6 +876,7 @@ function certificationLimitations(mode: ClosePackExportMode) {
 function certificationBlockers(
   run: Awaited<ReturnType<typeof loadCloseRunForPack>>,
   inventoryFreshness?: InventoryAnnexFreshness,
+  pilotCertification?: PilotCertificationEvidence,
 ) {
   if (!run) return ["Close run not found."];
 
@@ -770,6 +940,8 @@ function certificationBlockers(
     );
   if (inventoryFreshness?.certificationBlocker)
     blockers.push(inventoryFreshness.certificationBlocker);
+  if (pilotCertification?.certificationBlockers.length)
+    blockers.push(...pilotCertification.certificationBlockers);
 
   return blockers;
 }
@@ -825,6 +997,7 @@ function buildClosePackPayload(
     certificationLimitations: string[];
     certificationBlockers: string[];
     inventoryFreshness: InventoryAnnexFreshness;
+    pilotCertification: PilotCertificationEvidence;
   },
 ) {
   return {
@@ -882,6 +1055,10 @@ function buildClosePackPayload(
       payrollFinanceForecast: {
         saved: savedPayrollFinanceForecastProof(run),
         redaction: "Aggregate close-pack payroll forecast proof only; person-level payroll amounts are redacted.",
+      },
+      pilotCycleCertification: {
+        saved: params.pilotCertification.annex,
+        redaction: "Persisted pilot-cycle certificate summary only; raw salary, person, provider, authority, and audit payloads are excluded.",
       },
     },
     checklist: run.checklistItems.map((item) => ({
@@ -1344,7 +1521,15 @@ export async function exportClosePack(
       tx,
       generatedAt,
     );
-    const blockers = certificationBlockers(run, inventoryFreshness);
+    const pilotCertification = await loadPilotCertificationEvidenceForCloseRun(
+      run,
+      tx,
+    );
+    const blockers = certificationBlockers(
+      run,
+      inventoryFreshness,
+      pilotCertification,
+    );
     if (mode === "CERTIFIED" && blockers.length > 0) {
       if (inventoryFreshness.status !== "FRESH") {
         await recordInvalidationEvidenceInTx(
@@ -1391,6 +1576,7 @@ export async function exportClosePack(
       certificationLimitations: certificationLimitations(mode),
       certificationBlockers: blockers,
       inventoryFreshness,
+      pilotCertification,
     });
     const contentHash = sha256(stableStringify(payload));
     const content = JSON.stringify(
@@ -1431,6 +1617,7 @@ export async function exportClosePack(
             newEvidenceHash: inventoryFreshness.newEvidenceHash,
             detectedAt: inventoryFreshness.detectedAt,
           },
+          pilotCycleCertification: pilotCertification.annex,
           statutoryCertification: statutoryCertificationBlockerMetadata(),
           redactionNote,
         }),
@@ -1479,6 +1666,7 @@ export async function exportClosePack(
               previousEvidenceHash: inventoryFreshness.previousEvidenceHash,
               newEvidenceHash: inventoryFreshness.newEvidenceHash,
             },
+            pilotCycleCertification: pilotCertification.annex,
             statutoryCertification: statutoryCertificationBlockerMetadata(),
           }),
         },
@@ -1511,6 +1699,7 @@ export async function exportClosePack(
             newEvidenceHash: inventoryFreshness.newEvidenceHash,
             detectedAt: inventoryFreshness.detectedAt,
           },
+          pilotCycleCertification: pilotCertification.annex,
           statutoryCertification: statutoryCertificationBlockerMetadata(),
         }),
       },

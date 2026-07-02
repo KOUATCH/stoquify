@@ -665,6 +665,7 @@ describe("payroll register service", () => {
           countryPackResolutionHash: "sha256:country-pack",
           statutoryScenarioCoverageHash: "sha256:statutory-scenario-coverage",
           statutoryScenarioCoverageStatus: "READY",
+          reviewEvidenceSourceHashes: ["sha256:cm-irpp-period-reviewed-review-evidence"],
           provenanceHash: expect.stringMatching(/^sha256:/),
           computedHash: expect.stringMatching(/^sha256:/),
         }),
@@ -700,6 +701,33 @@ describe("payroll register service", () => {
         entityId: "run-1",
       }),
     }))
+  })
+
+  it("blocks register readiness when line country-pack proof drops statutory review evidence hashes", async () => {
+    const row = runRow() as any
+    const provenance = countryPackProvenanceFixture({ reviewEvidenceSourceHashes: [] })
+    row.lines[0].calculationSnapshot.countryPackProvenance = provenance.provenance
+    row.lines[0].calculationSnapshot.countryPackProvenanceHash = provenance.provenanceHash
+    const client = buildClient(row)
+
+    const result = await getPayrollRegister(
+      {
+        organizationId: "org-1",
+        actorId: "controller-1",
+        actorPermissions: ["payroll.reports.read", "payroll.payslips.read"],
+        payrollRunId: "run-1",
+      },
+      client as any,
+    )
+
+    expect(result.rows[0].proof.countryPack.issues).toContain(
+      "missing:reviewEvidenceSourceHashes",
+    )
+    expect(result.blockers.map((blocker) => blocker.code)).toEqual(
+      expect.arrayContaining([
+        "PAYROLL_REGISTER_STATUTORY_REVIEW_EVIDENCE_CHAIN_MISSING",
+      ]),
+    )
   })
 
   it("blocks register readiness when effective-dated component detail is missing", async () => {

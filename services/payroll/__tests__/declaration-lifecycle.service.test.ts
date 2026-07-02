@@ -79,6 +79,21 @@ const mockRecordBusinessEventInTx = recordBusinessEventInTx as jest.Mock;
 const mockMarkBusinessEventAppliedInTx =
   markBusinessEventAppliedInTx as jest.Mock;
 
+const countryPackRegisterProofMetadata = {
+  countryPackRegisterProofHash: "sha256:country-pack-register-proof",
+  countryPackRegisterProofStatus: "MATCHED",
+  countryPackRegisterProofLineCount: 1,
+  countryPackRegisterProofMatchedLineCount: 1,
+  countryPackRegisterProofMissingLineCount: 0,
+  countryPackRegisterProofMismatchedLineCount: 0,
+  countryPackLineProofHashes: ["sha256:country-pack-line-proof"],
+  statutoryScenarioCoverageHash: "sha256:statutory-scenario-coverage",
+  countryPackReviewEvidenceSourceHashes: [
+    "sha256:cm-irpp-period-reviewed-review-evidence",
+  ],
+  countryPackLegalRefs: ["CM_DGI_CGI_2025"],
+};
+
 const authorityCertificationProofEnvelope = {
   authorityStatusCodeMapHash: "sha256:authority-status-code-map",
   rejectionMappingHash: "sha256:rejection-mapping",
@@ -117,7 +132,7 @@ function declarationFixture(status = PayrollDeclarationStatus.PREPARED) {
     amount: new Prisma.Decimal("17150.00"),
     currency: "XAF",
     payloadHash: "sha256:declaration-payload",
-    metadata: { existing: true },
+    metadata: { existing: true, ...countryPackRegisterProofMetadata },
     payrollRun: {
       id: "run-1",
       payrollPeriod: {
@@ -152,6 +167,110 @@ function buildTx(status = PayrollDeclarationStatus.PREPARED) {
       create: jest.fn().mockResolvedValue({ id: "audit-1" }),
     },
   };
+}
+
+function workbenchEvidenceFixture(
+  overrides: Partial<{
+    id: string;
+    automationCapabilityStatus: string;
+    productionSubmissionSupported: boolean;
+  }> = {},
+) {
+  return {
+    id: overrides.id ?? "evidence-1",
+    transition: PayrollDeclarationEvidenceTransition.SUBMIT,
+    previousStatus: PayrollDeclarationStatus.PREPARED,
+    nextStatus: PayrollDeclarationStatus.SUBMITTED,
+    authorityChannel: "CNPS_CERTIFIED_ADAPTER",
+    authorityEnvironment: "SANDBOX_CERTIFIED",
+    authorityReference: "CNPS-REF-1",
+    authorityStatus: "SUBMITTED",
+    evidenceHash: "sha256:evidence",
+    submittedPayloadHash: "sha256:submitted",
+    authorityResponseHash: null,
+    portalReceiptHash: "sha256:receipt",
+    supportingFileHash: null,
+    sourceRegisterHash: "sha256:register",
+    countryPackResolutionHash: "sha256:country-pack",
+    automationCapabilityStatus:
+      overrides.automationCapabilityStatus ?? "SUPPORTED_CERTIFIED",
+    productionSubmissionSupported:
+      overrides.productionSubmissionSupported ?? true,
+    createdAt: new Date("2026-06-30T10:00:00.000Z"),
+  };
+}
+
+function workbenchDeclarationFixture(
+  overrides: Partial<{
+    metadata: Record<string, unknown>;
+    evidenceItems: ReturnType<typeof workbenchEvidenceFixture>[];
+  }> = {},
+) {
+  return {
+    id: "declaration-1",
+    organizationId: "org-1",
+    payrollRunId: "run-1",
+    authority: "CM_CNPS",
+    declarationType: "CNPS_EMPLOYER_SOCIAL_CONTRIBUTION",
+    status: PayrollDeclarationStatus.SUBMITTED,
+    periodStart: new Date("2026-06-01T00:00:00.000Z"),
+    periodEnd: new Date("2026-06-30T23:59:59.999Z"),
+    dueDate: new Date("2026-07-15T00:00:00.000Z"),
+    countryCode: "CM",
+    countryPackVersion: "CM-2026.1",
+    countryPackSchemaVersion: "country-pack.v1",
+    countryPackResolutionHash: "sha256:country-pack",
+    amount: new Prisma.Decimal("17150.00"),
+    currency: "XAF",
+    payloadHash: "sha256:payload",
+    metadata: overrides.metadata ?? countryPackRegisterProofMetadata,
+    payrollRun: {
+      id: "run-1",
+      runNumber: "RUN-2026-06",
+      runType: "ORDINARY",
+      status: "POSTED",
+      currency: "XAF",
+      netPayableAmount: new Prisma.Decimal("100000.00"),
+      grossAmount: new Prisma.Decimal("120000.00"),
+      ledgerPostingBatchId: "ledger-1",
+      journalEntryId: "journal-1",
+      accountingSourceLinkId: "source-link-1",
+      evidenceHash: "sha256:run-evidence",
+      documentHash: "sha256:run-doc",
+      payrollPeriod: {
+        id: "period-1",
+        name: "June 2026",
+        periodStart: new Date("2026-06-01T00:00:00.000Z"),
+        periodEnd: new Date("2026-06-30T23:59:59.999Z"),
+        payDate: new Date("2026-07-05T00:00:00.000Z"),
+        status: "OPEN",
+      },
+    },
+    evidenceItems: overrides.evidenceItems ?? [workbenchEvidenceFixture()],
+  };
+}
+
+function mockWorkbenchCounts(
+  input: {
+    total?: number;
+    active?: number;
+    rejected?: number;
+    evidence?: number;
+    automationBlocked?: number;
+    productionSupported?: number;
+  } = {},
+) {
+  mockDb.payrollDeclaration.count
+    .mockResolvedValueOnce(input.total ?? 1)
+    .mockResolvedValueOnce(input.active ?? 1)
+    .mockResolvedValueOnce(input.rejected ?? 0);
+  mockDb.payrollDeclarationEvidence.count
+    .mockResolvedValueOnce(input.evidence ?? 1)
+    .mockResolvedValueOnce(input.automationBlocked ?? 0)
+    .mockResolvedValueOnce(input.productionSupported ?? 1);
+  mockDb.payrollDeclaration.aggregate.mockResolvedValue({
+    _sum: { amount: new Prisma.Decimal("17150.00") },
+  });
 }
 
 describe("payroll declaration lifecycle service", () => {
@@ -200,6 +319,7 @@ describe("payroll declaration lifecycle service", () => {
         amount: new Prisma.Decimal("17150.00"),
         currency: "XAF",
         payloadHash: "sha256:payload",
+        metadata: countryPackRegisterProofMetadata,
         payrollRun: {
           id: "run-1",
           runNumber: "RUN-2026-06",
@@ -278,6 +398,7 @@ describe("payroll declaration lifecycle service", () => {
         activeDeclarations: 1,
         rejectedDeclarations: 0,
         missingRegisterProofCount: 0,
+        missingCountryPackRegisterProofCount: 0,
         amountInScope: "17150.00",
         coverageComplete: true,
       }),
@@ -290,6 +411,14 @@ describe("payroll declaration lifecycle service", () => {
           payloadHash: "sha256:payload",
           sourceRegisterHash: "sha256:register",
           sourceRegisterProofPresent: true,
+          countryPackRegisterProofHash: "sha256:country-pack-register-proof",
+          countryPackRegisterProofStatus: "MATCHED",
+          countryPackRegisterProofPresent: true,
+          countryPackLineProofHashes: ["sha256:country-pack-line-proof"],
+          statutoryScenarioCoverageHash: "sha256:statutory-scenario-coverage",
+          countryPackReviewEvidenceSourceHashes: [
+            "sha256:cm-irpp-period-reviewed-review-evidence",
+          ],
           portalReceiptHash: "sha256:receipt",
         }),
         automation: expect.objectContaining({
@@ -333,6 +462,7 @@ describe("payroll declaration lifecycle service", () => {
         countryPackSchemaVersion: "country-pack.v1",
         countryPackResolutionHash: "sha256:country-pack",
         payloadHash: "sha256:payload",
+        metadata: countryPackRegisterProofMetadata,
         payrollRun: {
           id: "run-1",
           runNumber: "RUN-2026-06",
@@ -413,6 +543,12 @@ describe("payroll declaration lifecycle service", () => {
         latestAuthorityReference: "[REDACTED:IDENTIFIER]",
         sourceRegisterHash: "[REDACTED:IDENTIFIER]",
         sourceRegisterProofPresent: true,
+        countryPackRegisterProofHash: "[REDACTED:IDENTIFIER]",
+        countryPackRegisterProofStatus: "MATCHED",
+        countryPackRegisterProofPresent: true,
+        countryPackLineProofHashes: ["[REDACTED:IDENTIFIER]"],
+        statutoryScenarioCoverageHash: "[REDACTED:IDENTIFIER]",
+        countryPackReviewEvidenceSourceHashes: ["[REDACTED:IDENTIFIER]"],
         portalReceiptHash: "[REDACTED:IDENTIFIER]",
       }),
     );
@@ -428,8 +564,59 @@ describe("payroll declaration lifecycle service", () => {
     expect(JSON.stringify(result.declarations[0])).not.toContain(
       "sha256:receipt",
     );
+    expect(JSON.stringify(result.declarations[0])).not.toContain(
+      "sha256:country-pack-register-proof",
+    );
   });
 
+  it("exposes a service-backed enqueue gate for certified declaration evidence", async () => {
+    mockDb.payrollDeclaration.findMany.mockResolvedValue([
+      workbenchDeclarationFixture(),
+    ]);
+    mockWorkbenchCounts({ productionSupported: 1 });
+
+    const result = await getPayrollDeclarationWorkbenchData({
+      organizationId: "org-1",
+      actorPermissions: ["accounting.close.read"],
+      now: "2026-06-30T10:00:00.000Z",
+    });
+
+    expect(result.declarations[0].adapterExecution).toEqual(
+      expect.objectContaining({
+        canEnqueue: true,
+        declarationEvidenceId: "evidence-1",
+        status: null,
+        requiredPermission: "payroll.declarations.manage",
+        requiresFreshAuth: true,
+        sourceService:
+          "services/payroll/authority-adapter-execution.service.ts",
+        reason:
+          "Certified declaration evidence is ready for fresh-auth authority adapter enqueue.",
+      }),
+    );
+  });
+
+  it("keeps certified enqueue disabled when proof identifiers are redacted", async () => {
+    mockDb.payrollDeclaration.findMany.mockResolvedValue([
+      workbenchDeclarationFixture(),
+    ]);
+    mockWorkbenchCounts({ productionSupported: 1 });
+
+    const result = await getPayrollDeclarationWorkbenchData({
+      organizationId: "org-1",
+      actorPermissions: ["payroll.command.read"],
+      now: "2026-06-30T10:00:00.000Z",
+    });
+
+    expect(result.declarations[0].adapterExecution).toEqual(
+      expect.objectContaining({
+        canEnqueue: false,
+        declarationEvidenceId: null,
+        reason:
+          "Declaration evidence proof identifiers are redacted for this session; use an authorized proof role before queueing.",
+      }),
+    );
+  });
   it("records manual submission evidence, updates status, and stales close evidence", async () => {
     const tx = buildTx();
     mockDb.$transaction.mockImplementation((callback) => callback(tx));
@@ -465,6 +652,10 @@ describe("payroll declaration lifecycle service", () => {
           automationCapabilityStatus: "AUTOMATION_BLOCKED",
           productionSubmissionSupported: false,
           metadata: expect.objectContaining({
+            countryPackRegisterProofHash: "sha256:country-pack-register-proof",
+            countryPackRegisterProofStatus: "MATCHED",
+            countryPackLineProofHashes: ["sha256:country-pack-line-proof"],
+            statutoryScenarioCoverageHash: "sha256:statutory-scenario-coverage",
             authorityAdapterKey: "CNPS_MANUAL_PORTAL:MANUAL_CAPTURE",
             authorityAdapterReadiness: "MANUAL_EVIDENCE",
             authorityAdapterProofHash: expect.stringMatching(/^sha256:/),
@@ -480,6 +671,11 @@ describe("payroll declaration lifecycle service", () => {
               sourceRegisterHash: "sha256:register",
             }),
             evidence: expect.objectContaining({
+              countryPackRegisterProofHash:
+                "sha256:country-pack-register-proof",
+              countryPackRegisterProofStatus: "MATCHED",
+              statutoryScenarioCoverageHash:
+                "sha256:statutory-scenario-coverage",
               authorityLifecycleContractHash: expect.stringMatching(/^sha256:/),
               authorityLifecycleStatus: "SUBMISSION_EVIDENCE_RECORDED",
               authorityLifecycleCloseImpact: "CLOSE_EVIDENCE_STALE_ON_CHANGE",
@@ -518,6 +714,9 @@ describe("payroll declaration lifecycle service", () => {
         sourceType: "PAYROLL_DECLARATION",
         documentHash: expect.stringMatching(/^sha256:/),
         payload: expect.objectContaining({
+          countryPackRegisterProofHash: "sha256:country-pack-register-proof",
+          countryPackRegisterProofStatus: "MATCHED",
+          statutoryScenarioCoverageHash: "sha256:statutory-scenario-coverage",
           authorityAdapterKey: "CNPS_MANUAL_PORTAL:MANUAL_CAPTURE",
           authorityAdapterReadiness: "MANUAL_EVIDENCE",
           authorityAdapterProofHash: expect.stringMatching(/^sha256:/),
@@ -528,6 +727,9 @@ describe("payroll declaration lifecycle service", () => {
           authorityLifecycleCloseImpact: "CLOSE_EVIDENCE_STALE_ON_CHANGE",
         }),
         metadata: expect.objectContaining({
+          countryPackRegisterProofHash: "sha256:country-pack-register-proof",
+          countryPackRegisterProofStatus: "MATCHED",
+          statutoryScenarioCoverageHash: "sha256:statutory-scenario-coverage",
           authorityAdapterProofHash: expect.stringMatching(/^sha256:/),
           authorityAdapterRegistryVersion: 1,
           authorityAdapterContractHash: expect.stringMatching(/^sha256:/),
