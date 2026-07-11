@@ -20,17 +20,28 @@ describe("rbac permission compatibility", () => {
     expect(hasRbacPermission(["customers.read"], "READ_CUSTOMERS")).toBe(true)
   })
 
+  it("keeps customer order read permission compatible with legacy sales order grants", () => {
+    expect(isKnownPermission("customers.orders.read")).toBe(true)
+    expect(permissionCandidates("customers.orders.read")).toEqual(
+      expect.arrayContaining(["customers.orders.read", "READ_SALES_ORDERS"]),
+    )
+    expect(hasRbacPermission(["READ_SALES_ORDERS"], "customers.orders.read")).toBe(true)
+    expect(hasRbacPermission(["customers.read"], "customers.orders.read")).toBe(false)
+  })
   it("does not let wildcard grants bypass high-risk or critical permissions", () => {
     expect(hasRbacPermission(["*"], "dashboard.read")).toBe(true)
     expect(hasRbacPermission(["*"], "roles.permissions.assign")).toBe(false)
     expect(hasRbacPermission(["*"], "accounting.period.close")).toBe(false)
+    expect(hasRbacPermission(["*"], "pos.receipts.revoke")).toBe(false)
     expect(hasAnyRbacPermission(["*"], ["users.delete", "roles.delete"])).toBe(false)
     expect(hasAllRbacPermissions(["*"], ["users.delete", "roles.delete"])).toBe(false)
     expect(hasRbacPermission(["*", "roles.permissions.assign"], "roles.permissions.assign")).toBe(true)
+    expect(hasRbacPermission(["*", "pos.receipts.revoke"], "pos.receipts.revoke")).toBe(true)
   })
 
   it("fails closed for unknown permission keys", () => {
     expect(isKnownPermission("purchases.orders.receive")).toBe(true)
+    expect(isKnownPermission("pos.receipts.revoke")).toBe(true)
     expect(isKnownPermission("unknown.module.action")).toBe(false)
     expect(hasRbacPermission(["unknown.module.action"], "unknown.module.action")).toBe(false)
     expect(hasRbacPermission(["*"], "unknown.module.action")).toBe(false)
@@ -139,5 +150,12 @@ describe("rbac permission compatibility", () => {
     expect(permissionRisk("payroll.payments.release")).toBe("crit")
     expect(permissionRisk("payroll.payments.reconcile")).toBe("crit")
     expect(permissionRisk("payroll.declarations.manage")).toBe("crit")
+    expect(permissionRisk("pos.receipts.revoke")).toBe("high")
+  })
+  it("requires explicit organization management authority for cross-org resolver permission", () => {
+    expect(permissionRisk("system.organization.update")).toBe("high")
+    expect(hasRbacPermission(["*"], "system.organization.update")).toBe(false)
+    expect(hasRbacPermission(["MANAGE_ORGANIZATION"], "system.organization.update")).toBe(true)
+    expect(hasRbacPermission(["system.organization.update"], "system.organization.update")).toBe(true)
   })
 })

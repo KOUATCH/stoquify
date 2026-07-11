@@ -7,14 +7,13 @@ import CategoriesPageClient from "@/components/dashboard/categories/CategoriesPa
 import { Button } from "@/components/ui/button"
 import { getAuthenticatedUser, checkPermission } from "@/config/useAuth"
 import { pickLocale } from "@/i18n/routing"
-import { PERMISSIONS } from "@/lib/permissions"
 
 type CategoriesPageProps = {
   params: Promise<{ locale: string }>
 }
 
 export default async function CategoriesPage({ params }: CategoriesPageProps) {
-  await checkPermission(PERMISSIONS.READ_CATEGORIES)
+  await checkPermission("inventory.categories.read")
 
   const { locale: rawLocale } = await params
   const locale = pickLocale(rawLocale)

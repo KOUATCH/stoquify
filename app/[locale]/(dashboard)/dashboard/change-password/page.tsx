@@ -1,8 +1,10 @@
 import { getUserById } from "@/actions/users/getUserById";
 import ChangePasswordForm from "@/components/Forms/ChangePasswordForm";
-import { getAuthenticatedUser } from "@/config/useAuth";
+import { checkPermission, getAuthenticatedUser } from "@/config/useAuth";
 
 export default async function ChangePass() {
+  await checkPermission("PASSWORD_READ");
+
   const user = await getAuthenticatedUser();
   const userDetails = await getUserById(user?.id ?? "");
   return (

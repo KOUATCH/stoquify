@@ -4,14 +4,13 @@ import { getBrandById } from "@/actions/brands/getBrandsAction"
 import { ModernBrandForm } from "@/components/brands/ModernBrandForm"
 import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
 import { pickLocale } from "@/i18n/routing"
-import { PERMISSIONS } from "@/lib/permissions"
 
 interface BrandEditPageProps {
   params: Promise<{ locale: string; id: string }>
 }
 
 export default async function BrandEditPage({ params }: BrandEditPageProps) {
-  await checkPermission(PERMISSIONS.UPDATE_BRANDS)
+  await checkPermission("inventory.brands.update")
 
   const { locale: rawLocale, id } = await params
   const locale = pickLocale(rawLocale)

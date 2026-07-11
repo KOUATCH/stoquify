@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   const securityTxt = `Contact: security@stoquify.com
-Expires: 2025-12-31T23:59:59.000Z
+Expires: 2027-07-02T23:59:59.000Z
 Encryption: https://stoquify.com/pgp-key.txt
 Preferred-Languages: en
 Canonical: https://stoquify.com/.well-known/security.txt

@@ -5,13 +5,15 @@ import getOrgTaxRates from "@/actions/taxRate/getOrgTaxRates"
 import getOrgUnits from "@/actions/units/getOrgUnits"
 import { ModernCreateItemForm } from "@/components/inventory/ModernCreateItemForm"
 import { Button } from "@/components/ui/button"
-import { getAuthenticatedUser } from "@/config/useAuth"
+import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
 import { localizedRedirect } from "@/i18n/server-routing"
 import { ArrowLeft, Package } from "lucide-react"
 import { revalidatePath } from "next/cache"
 
 async function handleCreateItem(formData: FormData) {
   "use server"
+
+  await checkPermission("inventory.items.create")
 
   const user = await getAuthenticatedUser()
   if (!user?.organizationId) {
@@ -66,6 +68,8 @@ async function handleCreateItem(formData: FormData) {
 }
 
 export default async function CreateItemPage() {
+  await checkPermission("inventory.items.create")
+
   const user = await getAuthenticatedUser()
 
   if (!user?.organizationId) {

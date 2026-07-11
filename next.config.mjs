@@ -1,9 +1,12 @@
 import createNextIntlPlugin from 'next-intl/plugin';
 
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
+const configuredDistDir = process.env.NEXT_DIST_DIR?.trim();
+const nextDistDir = configuredDistDir || (process.env.NODE_ENV === 'development' ? '.next-dev' : '.next');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  distDir: nextDistDir,
   serverExternalPackages: [
     'argon2',
     'better-auth',

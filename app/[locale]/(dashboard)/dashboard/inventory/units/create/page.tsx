@@ -1,5 +1,5 @@
 import UnitsManagementDashboard from "@/components/units/UnitsManagementDashboard"
-import { getAuthenticatedUser } from "@/config/useAuth"
+import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
 import { localizePath, pickLocale } from "@/i18n/routing"
 import { redirect } from "next/navigation"
 
@@ -15,6 +15,7 @@ export default async function CreateUnitPage({
 }) {
   const { locale: rawLocale } = await params
   const locale = pickLocale(rawLocale)
+  await checkPermission("inventory.units.create")
   const user = await getAuthenticatedUser()
 
   if (!user.organizationId) {

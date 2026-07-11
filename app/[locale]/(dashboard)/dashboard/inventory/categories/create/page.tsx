@@ -2,14 +2,13 @@ import getOrgCategories from "@/actions/categories/getOrgCategories"
 import { ModernCategoryForm } from "@/components/categories/ModernCategoryForm"
 import { getAuthenticatedUser, checkPermission } from "@/config/useAuth"
 import { pickLocale } from "@/i18n/routing"
-import { PERMISSIONS } from "@/lib/permissions"
 
 type CreateCategoryPageProps = {
   params: Promise<{ locale: string }>
 }
 
 export default async function CreateCategoryPage({ params }: CreateCategoryPageProps) {
-  await checkPermission(PERMISSIONS.CREATE_CATEGORIES)
+  await checkPermission("inventory.categories.create")
 
   const { locale: rawLocale } = await params
   const locale = pickLocale(rawLocale)

@@ -1,19 +1,39 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
-import { getSession } from "@/lib/auth-server";
-import { AuthRequiredError } from "@/services/_shared/action-errors";
+import { requireApiModuleAccess, requireApiSessionForCurrentOrg, requireAppPermission } from "@/lib/security/server-authz";
+import { AuthRequiredError, ForbiddenError } from "@/services/_shared/action-errors";
 
 const f = createUploadthing();
+const UPLOADTHING_SURFACE = "POST /api/uploadthing";
 
-async function requireUploadAuth() {
-  const session = await getSession();
-  const organizationId = (session?.user as any)?.organizationId as string | undefined
-  if (!session?.user?.id || !organizationId) {
+export async function requireUploadAuth() {
+  const authz = await requireApiSessionForCurrentOrg();
+  if (authz.error || !authz.session?.user || !authz.organizationId) {
     throw new AuthRequiredError("Unauthorized");
   }
 
+  const user = authz.session.user;
+  const moduleAccess = await requireApiModuleAccess({
+    organizationId: authz.organizationId,
+    user,
+    moduleSlug: "dashboard",
+    surface: UPLOADTHING_SURFACE,
+    surfaceType: "api",
+    accessIntent: "write",
+    audit: true,
+  });
+  if (!moduleAccess.allowed) {
+    throw new ForbiddenError("Forbidden");
+  }
+
+  try {
+    requireAppPermission(user, "dashboard.read");
+  } catch {
+    throw new ForbiddenError("Forbidden");
+  }
+
   return {
-    userId: session.user.id,
-    organizationId,
+    userId: user.id,
+    organizationId: authz.organizationId,
   };
 }
 

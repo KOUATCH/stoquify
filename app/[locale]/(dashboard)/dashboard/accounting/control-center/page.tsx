@@ -5,6 +5,7 @@ import {
   type AccountingControlCenterData,
 } from "@/actions/accounting/settings.actions"
 import { AccountingControlCenter } from "@/components/accounting/AccountingControlCenter"
+import { checkPermission } from "@/config/useAuth"
 import type { Locale } from "@/types/bilingual"
 import {
   AccountingLinkButton,
@@ -20,6 +21,8 @@ function normalizeLocale(locale: string): Locale {
 }
 
 export default async function AccountingControlCenterPage({ params }: PageProps) {
+  await checkPermission("accounting.setup.manage")
+
   const { locale } = await params
   const normalizedLocale = normalizeLocale(locale)
   const response = await getAccountingControlCenterAction({})

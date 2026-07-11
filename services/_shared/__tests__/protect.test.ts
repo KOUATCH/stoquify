@@ -203,6 +203,49 @@ describe("protect", () => {
     expect(handler).not.toHaveBeenCalled()
   })
 
+  it("does not call the handler when module observation fails", async () => {
+    const ctx = { userId: "user-1", orgId: "org-session", permissions: ["dashboard.read"] }
+    mockRequirePermission.mockResolvedValue(ctx)
+    mockObserveModuleAccess.mockRejectedValueOnce(new Error("module backend timeout"))
+    const handler = jest.fn().mockResolvedValue({ ok: true })
+
+    const action = protect<Record<string, never>, { ok: boolean }>(
+      {
+        permission: "dashboard.read",
+        auditResource: "KontavaManagerActionCenter",
+        module: {
+          moduleSlug: "dashboard",
+          surface: "actions/manager-action-center/manager-action-center.actions.ts",
+          accessIntent: "read",
+          mode: "observe",
+        },
+      },
+      handler,
+    )
+    const result = await action({})
+
+    expect(result).toEqual(expect.objectContaining({
+      success: false,
+      data: null,
+      error: "The operation could not be completed. Please try again or contact support.",
+      status: 500,
+      code: "INTERNAL_ERROR",
+      retryable: false,
+    }))
+    expect(result).toHaveProperty("correlationId")
+    expect(mockObserveModuleAccess).toHaveBeenCalledWith(expect.objectContaining({
+      organizationId: "org-session",
+      userId: "user-1",
+      actorPermissions: ["dashboard.read"],
+      moduleSlug: "dashboard",
+      surfaceType: "action",
+      surface: "actions/manager-action-center/manager-action-center.actions.ts",
+      accessIntent: "read",
+      mode: "observe",
+    }))
+    expect(handler).not.toHaveBeenCalled()
+  })
+
   it("requires fresh authentication when configured", async () => {
     const ctx = { userId: "user-1", orgId: "org-1", permissions: ["accounting.journal.post"] }
     mockRequirePermission.mockResolvedValue(ctx)

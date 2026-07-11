@@ -5,6 +5,7 @@ import {
   getAllDashboardData as getAllDashboardDataFromService,
   getDashboardMetrics as getDashboardMetricsFromService,
 } from '@/services/dashboard/dashboard-read-model.service'
+import { observeModuleAccess } from '@/services/modules/module-entitlement.service'
 import type {
   DashboardActivity,
   DashboardAlert,
@@ -46,6 +47,16 @@ async function requireDashboardReadContext(requestedOrganizationId?: string | nu
   const organizationId = requestedOrgId || ctx.orgId
 
   await assertCanUseOrganization(ctx, organizationId)
+  await observeModuleAccess({
+    organizationId,
+    userId: ctx.userId,
+    actorPermissions: ctx.permissions,
+    moduleSlug: 'dashboard',
+    surfaceType: 'action',
+    surface: 'actions/dashboard/getDashboardData.ts',
+    accessIntent: 'read',
+    mode: 'observe',
+  })
 
   return {
     organizationId,

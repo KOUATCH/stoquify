@@ -65,6 +65,12 @@ describe("manager action center actions", () => {
           permission: "dashboard.read",
           auditResource: "KontavaManagerActionCenter",
           auditAllowed: true,
+          module: {
+            moduleSlug: "dashboard",
+            surface: "actions/manager-action-center/manager-action-center.actions.ts",
+            accessIntent: "read",
+            mode: "observe",
+          },
         }),
       ]),
     )

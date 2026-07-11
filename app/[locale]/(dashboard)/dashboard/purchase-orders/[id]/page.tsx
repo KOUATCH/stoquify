@@ -1,5 +1,8 @@
+import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
 import ModernPurchaseOrderDetailPage from "@/components/purchase-orders/ModernPurchaseOrderDetailPage"
-import { getAuthenticatedUser } from "@/config/useAuth"
+import { localizePath, pickLocale } from "@/i18n/routing"
+import { RbacError, requirePermission } from "@/lib/security/rbac"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import { notFound } from "next/navigation"
 
 interface PurchaseOrderDetailPageProps {
@@ -13,28 +16,52 @@ interface PurchaseOrderDetailPageProps {
   }>
 }
 
-export default async function PurchaseOrderDetailPage({ params, searchParams }: PurchaseOrderDetailPageProps) {
-  const { id } = await params
-  const resolvedSearchParams = searchParams ? await searchParams : {}
-
-  // Get organizationId from authenticated user session first, fallback to searchParams
-  const user = await getAuthenticatedUser()
-  const organizationId = user?.organizationId || resolvedSearchParams.organizationId
+export default async function PurchaseOrderDetailPage({ params }: PurchaseOrderDetailPageProps) {
+  const { id, locale: requestedLocale } = await params
+  const locale = pickLocale(requestedLocale)
 
   if (!id) {
     notFound()
   }
 
-  if (!organizationId) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
-        <div className="text-center space-y-2">
-          <h2 className="text-lg font-semibold text-slate-950 dark:text-slate-100">Authentication required</h2>
-          <p className="text-slate-600 dark:text-slate-400">Please sign in to view this purchase order.</p>
-        </div>
-      </div>
-    )
+  let ctx: Awaited<ReturnType<typeof requirePermission>>
+
+  try {
+    ctx = await requirePermission("purchases.orders.read", {
+      resource: "PurchaseOrder",
+      resourceId: id,
+      auditAllowed: true,
+    })
+    await observeModuleAccess({
+      organizationId: ctx.orgId,
+      userId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      moduleSlug: "purchasing",
+      surfaceType: "page",
+      surface: "/dashboard/purchase-orders/[id]",
+      accessIntent: "read",
+      mode: "observe",
+    })
+  } catch (error) {
+    if (error instanceof RbacError) {
+      const noActiveOrg = error.code === "NO_ACTIVE_ORG"
+
+      return (
+        <DashboardRouteState
+          kind={noActiveOrg ? "no_active_org" : "permission_denied"}
+          title={noActiveOrg ? "Purchase order details need an active organization" : "Purchase order details are not available for this role"}
+          message={
+            noActiveOrg
+              ? "Refresh your session from the dashboard so purchasing can load tenant-scoped purchase order details."
+              : "Viewing purchase order details requires purchasing read access. The denial was recorded by the RBAC guard."
+          }
+          primaryHref={localizePath("/dashboard/purchase-orders", locale)}
+        />
+      )
+    }
+
+    throw error
   }
 
-  return <ModernPurchaseOrderDetailPage id={id} organizationId={organizationId} />
+  return <ModernPurchaseOrderDetailPage id={id} organizationId={ctx.orgId} />
 }

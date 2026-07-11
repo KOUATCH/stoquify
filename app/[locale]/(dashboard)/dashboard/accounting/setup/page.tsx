@@ -9,6 +9,7 @@ import {
   markAccountingSetupReadyAction,
   updateAccountingSettingsAction,
 } from "@/actions/accounting/settings.actions"
+import { checkPermission } from "@/config/useAuth"
 import {
   AccountingMessage,
   AccountingPageShell,
@@ -42,6 +43,8 @@ function resultPath(locale: string, ok: boolean, text: string) {
 }
 
 export default async function AccountingSetupPage({ params, searchParams }: PageProps) {
+  await checkPermission("accounting.setup.manage")
+
   const { locale } = await params
   const resolvedSearchParams = searchParams ? await searchParams : {}
   const setupResponse = await getAccountingSetupDataAction({})

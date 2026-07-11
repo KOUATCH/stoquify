@@ -1,7 +1,8 @@
+import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
 import SupplierManagementDashboard from "@/components/suppliers/SupplierManagementDashboard"
-import { getAuthenticatedUser } from "@/config/useAuth"
 import { localizePath, pickLocale } from "@/i18n/routing"
-import { redirect } from "next/navigation"
+import { RbacError, requirePermission } from "@/lib/security/rbac"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 
 export const metadata = {
   title: "Suppliers | Stoquify",
@@ -15,10 +16,42 @@ export default async function SuppliersSystemPage({
 }) {
   const { locale: rawLocale } = await params
   const locale = pickLocale(rawLocale)
-  const user = await getAuthenticatedUser()
+  let ctx: Awaited<ReturnType<typeof requirePermission>>
 
-  if (!user.organizationId) {
-    redirect(localizePath("/unauthorized", locale))
+  try {
+    ctx = await requirePermission("purchases.suppliers.read", {
+      resource: "SupplierManagement",
+      auditAllowed: true,
+    })
+    await observeModuleAccess({
+      organizationId: ctx.orgId,
+      userId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      moduleSlug: "purchasing",
+      surfaceType: "page",
+      surface: "/dashboard/suppliersSystem",
+      accessIntent: "read",
+      mode: "observe",
+    })
+  } catch (error) {
+    if (error instanceof RbacError) {
+      const noActiveOrg = error.code === "NO_ACTIVE_ORG"
+
+      return (
+        <DashboardRouteState
+          kind={noActiveOrg ? "no_active_org" : "permission_denied"}
+          title={noActiveOrg ? "Supplier system needs an active organization" : "Supplier system is not available for this role"}
+          message={
+            noActiveOrg
+              ? "Refresh your session from the dashboard so purchasing can load tenant-scoped supplier controls."
+              : "Viewing suppliers requires purchasing supplier read access. The denial was recorded by the RBAC guard."
+          }
+          primaryHref={localizePath("/dashboard/purchases", locale)}
+        />
+      )
+    }
+
+    throw error
   }
 
   const basePath = `/${locale}/dashboard/suppliersSystem`
@@ -27,7 +60,7 @@ export default async function SuppliersSystemPage({
     <div className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
       <div className="dashboard-landing-content mx-auto flex w-full max-w-[92rem] min-w-0 flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8">
         <SupplierManagementDashboard
-          organizationId={user.organizationId}
+          organizationId={ctx.orgId}
           locale={locale}
           basePath={basePath}
         />

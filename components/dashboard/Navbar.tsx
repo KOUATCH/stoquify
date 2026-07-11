@@ -234,13 +234,14 @@ const Navbar = ({ session }: { session: any }) => {
                           aria-current={isActive ? "page" : undefined}
                           title={link.dropdown ? `${link.title}: ${item.title}` : item.title}
                           className={cn(
-                            "flex items-center gap-3 rounded-xl px-3 py-2.5 text-[#b9c8c3] outline-none transition-all hover:bg-white/[0.075] hover:text-white focus-visible:ring-2 focus-visible:ring-[#5796ff]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b161b]",
-                            isActive && "bg-[rgba(47,125,246,0.16)] text-white",
+                            "dashboard-sidebar-module relative flex items-center gap-3 rounded-xl px-3 py-2.5 outline-none transition-all focus-visible:ring-2 focus-visible:ring-[#5796ff]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b161b]",
                           )}
                         >
-                          <Icon className="h-4 w-4 shrink-0 text-[#8fb7ff]" aria-hidden="true" />
+                          <span className="dashboard-sidebar-module-icon flex h-8 w-8 shrink-0 items-center justify-center rounded-lg">
+                            <Icon className="h-4 w-4" aria-hidden="true" />
+                          </span>
                           <span className="min-w-0 flex-1 truncate">{item.title}</span>
-                          <ChevronRight className="h-4 w-4 shrink-0 text-[#7f969f]" aria-hidden="true" />
+                          <ChevronRight className="dashboard-sidebar-module-chevron h-4 w-4 shrink-0" aria-hidden="true" />
                         </Link>
                       )
                     })

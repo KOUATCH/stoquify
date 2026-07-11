@@ -24,7 +24,6 @@ import {
   Clock,
   Copy,
   DollarSign,
-  Download,
   Edit,
   FileText,
   History,
@@ -32,6 +31,7 @@ import {
   Package,
   Phone,
   PlayCircle,
+  Printer,
   Receipt,
   RefreshCw,
   Send,
@@ -258,13 +258,13 @@ export default function ModernPurchaseOrderDetailPage({
 
   const handleDownloadPDF = useCallback(() => {
     if (!purchaseOrder) return
-    window.open(`/api/purchase-orders/${purchaseOrder.id}/pdf?organizationId=${organizationId}`, '_blank')
+    window.print()
     info(
-      "PDF Download",
-      "PDF download has been initiated",
+      "Print Purchase Order",
+      "Use your browser print dialog to save this purchase order as a PDF.",
       { duration: 3000, sound: false }
     )
-  }, [info, organizationId, purchaseOrder])
+  }, [info, purchaseOrder])
 
   const handleSubmit = useCallback(async () => {
     if (!purchaseOrder || !organizationId) return
@@ -459,8 +459,8 @@ export default function ModernPurchaseOrderDetailPage({
                 onClick={handleDownloadPDF}
                 className="dashboard-button-secondary rounded-lg"
               >
-                <Download className="w-4 h-4 mr-2" />
-                PDF
+                <Printer className="w-4 h-4 mr-2" />
+                Print
               </Button>
 
               <Button
@@ -1356,8 +1356,8 @@ export default function ModernPurchaseOrderDetailPage({
                             className="w-full justify-start"
                             onClick={handleDownloadPDF}
                           >
-                            <Download className="w-4 h-4 mr-2" />
-                            Download PDF
+                            <Printer className="w-4 h-4 mr-2" />
+                            Print Order
                           </Button>
                           <Button
                             variant="outline"

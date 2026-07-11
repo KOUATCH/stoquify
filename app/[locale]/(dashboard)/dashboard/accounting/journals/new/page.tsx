@@ -3,6 +3,7 @@ import { FilePlus2, Scale } from "lucide-react"
 
 import { listChartAccountsAction } from "@/actions/accounting/accounts.actions"
 import { createManualJournalEntryAction, listJournalsAction } from "@/actions/accounting/journals.actions"
+import { checkPermission } from "@/config/useAuth"
 import {
   AccountingLinkButton,
   AccountingMessage,
@@ -39,6 +40,9 @@ function resultPath(locale: string, ok: boolean, text: string) {
 }
 
 export default async function NewJournalEntryPage({ params, searchParams }: PageProps) {
+  await checkPermission("accounting.journal.create")
+  await checkPermission("accounting.journal.read")
+
   const { locale } = await params
   const resolvedSearchParams = searchParams ? await searchParams : {}
   const [accountsResponse, journalsResponse] = await Promise.all([

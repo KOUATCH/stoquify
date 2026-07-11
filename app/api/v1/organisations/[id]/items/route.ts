@@ -1,4 +1,4 @@
-import { requireApiSessionForOrg } from "@/lib/security/server-authz"
+import { requireApiModuleAccess, requireApiSessionForOrg, requireAppPermission } from "@/lib/security/server-authz"
 import { listItemApiDTOs } from "@/services/item/item.service"
 import { jsonAuthzError, jsonErrorResponse, jsonMethodNotAllowed } from "@/lib/error-handling/route-response"
 import { type NextRequest, NextResponse } from "next/server"
@@ -12,6 +12,30 @@ export const GET = async (
     const authz = await requireApiSessionForOrg(orgId)
     if (authz.error) {
       return jsonAuthzError(authz.error, authz.status, "GET /api/v1/organisations/[id]/items")
+    }
+
+    const user = authz.session?.user
+    if (!user) {
+      return jsonAuthzError("Unauthorized", 401, "GET /api/v1/organisations/[id]/items")
+    }
+
+    const moduleAccess = await requireApiModuleAccess({
+      organizationId: orgId,
+      user,
+      moduleSlug: "inventory",
+      surface: "GET /api/v1/organisations/[id]/items",
+      surfaceType: "api",
+      accessIntent: "read",
+      audit: true,
+    })
+    if (!moduleAccess.allowed) {
+      return jsonAuthzError(moduleAccess.error, moduleAccess.status, "GET /api/v1/organisations/[id]/items")
+    }
+
+    try {
+      requireAppPermission(user, "inventory.items.read")
+    } catch {
+      return jsonAuthzError("Forbidden", 403, "GET /api/v1/organisations/[id]/items")
     }
 
     const searchParams = request.nextUrl.searchParams

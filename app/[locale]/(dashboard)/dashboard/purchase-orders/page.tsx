@@ -1,7 +1,6 @@
 import { Suspense } from "react"
 import type { CSSProperties } from "react"
 import {
-  AlertTriangle,
   BarChart3,
   CheckCircle2,
   Clock,
@@ -17,16 +16,18 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { TableLoading } from "@/components/ui/data-table"
+import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
 import PurchaseOrderManagement from "@/components/ui/groups/purchase-orders/PurchaseOrderManagement"
-import { getAuthenticatedUser } from "@/config/useAuth"
 import { Link } from "@/i18n/navigation"
-import { pickLocale } from "@/i18n/routing"
+import { localizePath, pickLocale } from "@/i18n/routing"
 import { formatCurrency } from "@/lib/i18n/formatters"
+import { RbacError, requirePermission } from "@/lib/security/rbac"
 import {
   getPurchaseOrderFormOptions,
   getSummary,
   listPurchaseOrders,
 } from "@/services/purchase-order/purchase-order.service"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import type { Locale } from "@/types/bilingual"
 
 function MetricCard({
@@ -78,27 +79,47 @@ function MetricCard({
 }
 
 export default async function PurchaseOrdersPage() {
-  const user = await getAuthenticatedUser()
   const locale: Locale = pickLocale(await getLocale())
   const t = await getTranslations("purchaseOrders")
+  let ctx: Awaited<ReturnType<typeof requirePermission>>
 
-  if (!user?.organizationId) {
-    return (
-      <main className="dashboard-landing-theme dark min-h-screen overflow-x-hidden p-4">
-        <Card className="dashboard-glass-panel mx-auto max-w-md rounded-lg text-[var(--dash-text)]">
-          <CardContent className="flex items-start gap-3 p-6">
-            <AlertTriangle className="mt-0.5 h-5 w-5 text-[var(--dash-warning)]" />
-            <div>
-              <h1 className="text-base font-semibold">{t("orgRequired.title")}</h1>
-              <p className="mt-1 text-sm text-[var(--dash-text-soft)]">{t("orgRequired.subtitle")}</p>
-            </div>
-          </CardContent>
-        </Card>
-      </main>
-    )
+  try {
+    ctx = await requirePermission("purchases.orders.read", {
+      resource: "PurchaseOrder",
+      auditAllowed: true,
+    })
+    await observeModuleAccess({
+      organizationId: ctx.orgId,
+      userId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      moduleSlug: "purchasing",
+      surfaceType: "page",
+      surface: "/dashboard/purchase-orders",
+      accessIntent: "read",
+      mode: "observe",
+    })
+  } catch (error) {
+    if (error instanceof RbacError) {
+      const noActiveOrg = error.code === "NO_ACTIVE_ORG"
+
+      return (
+        <DashboardRouteState
+          kind={noActiveOrg ? "no_active_org" : "permission_denied"}
+          title={noActiveOrg ? "Purchase orders need an active organization" : "Purchase orders are not available for this role"}
+          message={
+            noActiveOrg
+              ? "Refresh your session from the dashboard so purchasing can load tenant-scoped purchase orders."
+              : "Purchase orders require purchasing read access. The denial was recorded by the RBAC guard."
+          }
+          primaryHref={localizePath("/dashboard", locale)}
+        />
+      )
+    }
+
+    throw error
   }
 
-  const organizationId = user.organizationId
+  const organizationId = ctx.orgId
   const [purchaseOrders, options, summary] = await Promise.all([
     listPurchaseOrders(organizationId),
     getPurchaseOrderFormOptions(organizationId),

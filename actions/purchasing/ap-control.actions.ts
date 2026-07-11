@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache"
 import { protect } from "@/services/_shared/protect"
 import {
   approveSupplierBankChangeWithControls,
+  approveSupplierPaymentWithControls,
   getAPWorkbenchData,
   postSupplierInvoice,
   releaseSupplierPaymentWithControls,
@@ -13,6 +14,7 @@ import {
 } from "@/services/purchasing/ap-control.service"
 import {
   approveSupplierBankChangeInputSchema,
+  approveSupplierPaymentInputSchema,
   postSupplierInvoiceInputSchema,
   releaseSupplierPaymentInputSchema,
   requestSupplierBankChangeInputSchema,
@@ -121,6 +123,34 @@ export async function approveSupplierBankChangeAction(input: unknown) {
   return approveBankChange(input)
 }
 
+const approvePayment = protect<unknown, Awaited<ReturnType<typeof approveSupplierPaymentWithControls>>>(
+  {
+    permission: "purchasing.ap.payment.approve",
+    auditResource: "SupplierPayment",
+    freshAuth: true,
+    tenantGuard: "handler-derived",
+  },
+  async (input, ctx) => {
+    const parsed = approveSupplierPaymentInputSchema.parse({
+      ...asRecord(input),
+      organizationId: ctx.orgId,
+      approvedById: ctx.userId,
+    })
+    const result = await approveSupplierPaymentWithControls(parsed, {
+      organizationId: ctx.orgId,
+      actorId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      lastAuthAt: Date.now(),
+    })
+    revalidateAPPaths()
+    return result
+  },
+)
+
+export async function approveSupplierPaymentAction(input: unknown) {
+  return approvePayment(input)
+}
+
 const releasePayment = protect<unknown, Awaited<ReturnType<typeof releaseSupplierPaymentWithControls>>>(
   {
     permission: "purchasing.ap.payment.release",
@@ -129,10 +159,22 @@ const releasePayment = protect<unknown, Awaited<ReturnType<typeof releaseSupplie
     tenantGuard: "handler-derived",
   },
   async (input, ctx) => {
+    const raw = asRecord(input) as {
+      supplierPaymentId?: unknown
+      paymentDate?: unknown
+      idempotencyKey?: unknown
+      documentHash?: unknown
+      evidenceHash?: unknown
+      notes?: unknown
+    }
     const parsed = releaseSupplierPaymentInputSchema.parse({
-      ...asRecord(input),
       organizationId: ctx.orgId,
-      approvedById: ctx.userId,
+      supplierPaymentId: raw.supplierPaymentId,
+      paymentDate: raw.paymentDate,
+      idempotencyKey: raw.idempotencyKey,
+      documentHash: raw.documentHash,
+      evidenceHash: raw.evidenceHash,
+      notes: raw.notes,
       releasedById: ctx.userId,
     })
     const result = await releaseSupplierPaymentWithControls(parsed, {

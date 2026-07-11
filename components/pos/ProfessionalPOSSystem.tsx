@@ -43,6 +43,8 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { useNotifications } from "@/components/notifications/NotificationProvider"
 import { OfflineSyncStatusStrip } from "@/components/pos/offline/OfflineSyncStatusStrip"
+import { ReceiptTokenHistoryPanel, type ReceiptTokenSaleSearchItem } from "@/components/pos/ReceiptTokenHistoryPanel"
+import { ReceiptTokenControlStrip, type ReceiptTokenControlItem } from "@/components/pos/ReceiptTokenControlStrip"
 import { cn } from "@/lib/utils"
 import {
   useActivePOSCart,
@@ -55,7 +57,11 @@ import {
   usePOSCustomers,
   usePOSLocations,
   usePOSTerminals,
+  usePublicReceiptAccessTokens,
+  usePublicReceiptSalesSearch,
+  usePublicReceiptTokenManagementCapability,
   useRemovePOSCartLine,
+  useRevokePublicReceiptAccessToken,
   useUpdatePOSCartLine,
 } from "@/hooks/posHooks/usePosOperations"
 
@@ -352,6 +358,9 @@ export default function ProfessionalPOSSystem() {
   const [receiptChannel, setReceiptChannel] = useState<ReceiptChannel>("NONE")
   const [receiptDestination, setReceiptDestination] = useState("")
   const [lastSale, setLastSale] = useState<CommitSaleResult | null>(null)
+  const [receiptHistorySearchDraft, setReceiptHistorySearchDraft] = useState("")
+  const [receiptHistorySearchQuery, setReceiptHistorySearchQuery] = useState<string | null>(null)
+  const [receiptHistorySaleId, setReceiptHistorySaleId] = useState("")
   const [favoriteItemIds, setFavoriteItemIds] = useState<string[]>([])
   const [recentItemIds, setRecentItemIds] = useState<string[]>([])
   const [isCustomerDialogOpen, setIsCustomerDialogOpen] = useState(false)
@@ -394,6 +403,25 @@ export default function ProfessionalPOSSystem() {
   const updateLine = useUpdatePOSCartLine()
   const removeLine = useRemovePOSCartLine()
   const commitSale = useCommitPOSSale()
+  const receiptTokenCapabilityQuery = usePublicReceiptTokenManagementCapability()
+  const receiptTokenCapabilityError = actionError(receiptTokenCapabilityQuery.data)
+  const receiptTokenCapabilityUnavailableError = receiptTokenCapabilityQuery.isError
+    ? toErrorMessage(receiptTokenCapabilityQuery.error, t("receipt.tokens.historyCapabilityUnavailable"))
+    : null
+  const canManageReceiptTokens =
+    receiptTokenCapabilityQuery.data?.success === true && receiptTokenCapabilityQuery.data.data.canManageReceiptTokens
+  const receiptTokensQuery = usePublicReceiptAccessTokens(canManageReceiptTokens ? lastSale?.saleId : undefined)
+  const receiptTokens = unwrap<ReceiptTokenControlItem[]>(receiptTokensQuery.data, [])
+  const receiptHistorySalesQuery = usePublicReceiptSalesSearch(canManageReceiptTokens ? receiptHistorySearchQuery : null)
+  const receiptHistorySales = unwrap<ReceiptTokenSaleSearchItem[]>(receiptHistorySalesQuery.data, [])
+  const receiptHistorySalesError = actionError(receiptHistorySalesQuery.data)
+  const receiptHistoryTokensQuery = usePublicReceiptAccessTokens(
+    canManageReceiptTokens ? receiptHistorySaleId || undefined : undefined,
+  )
+  const receiptHistoryTokens = unwrap<ReceiptTokenControlItem[]>(receiptHistoryTokensQuery.data, [])
+  const revokeReceiptToken = useRevokePublicReceiptAccessToken()
+  const revokePendingTokenId = (revokeReceiptToken.variables as { tokenId?: string } | undefined)?.tokenId ?? null
+  const receiptHistoryError = actionError(receiptHistoryTokensQuery.data)
 
   const selectedLocation = locations.find((location) => location.id === selectedLocationId)
   const selectedTerminal = terminals.find((terminal) => terminal.id === selectedTerminalId)
@@ -404,6 +432,35 @@ export default function ProfessionalPOSSystem() {
     () => new Intl.NumberFormat(locale, { style: "currency", currency }),
     [currency, locale],
   )
+  const receiptTokenLabels = useMemo(() => ({
+    title: t("receipt.tokens.title"),
+    loading: t("receipt.tokens.loading"),
+    empty: t("receipt.tokens.empty"),
+    active: t("receipt.tokens.active"),
+    revoked: t("receipt.tokens.revoked"),
+    expired: t("receipt.tokens.expired"),
+    accessed: (count: number) => t("receipt.tokens.accessed", { count }),
+    expires: (date: string) => t("receipt.tokens.expires", { date }),
+    revoke: t("receipt.tokens.revoke"),
+  }), [t])
+  const receiptTokenHistoryLabels = useMemo(() => ({
+    title: t("receipt.tokens.historyTitle"),
+    saleLabel: t("receipt.tokens.historySaleLabel"),
+    salePlaceholder: t("receipt.tokens.historySalePlaceholder"),
+    lookup: t("receipt.tokens.historyLookup"),
+    selectedSale: (salesOrderId: string) => t("receipt.tokens.historySelectedSale", { salesOrderId }),
+    noSale: t("receipt.tokens.historyNoSale"),
+    denied: t("receipt.tokens.historyDenied"),
+    capabilityLoading: t("receipt.tokens.historyCapabilityLoading"),
+    capabilityDenied: t("receipt.tokens.historyCapabilityDenied"),
+    capabilityUnavailable: t("receipt.tokens.historyCapabilityUnavailable"),
+    loadingSales: t("receipt.tokens.historyLoadingSales"),
+    emptySales: t("receipt.tokens.historyEmptySales"),
+    selectSale: t("receipt.tokens.historySelectSale"),
+    completed: (date: string) => t("receipt.tokens.historyCompleted", { date }),
+    total: (amount: string) => t("receipt.tokens.historyTotal", { amount }),
+    tokenSummary: (count: number, active: number) => t("receipt.tokens.historyTokenSummary", { count, active }),
+  }), [t])
 
   const cartQuantitiesByItemId = useMemo(() => {
     const quantities = new Map<string, number>()
@@ -874,6 +931,51 @@ export default function ProfessionalPOSSystem() {
         { category: "sales", priority: "high" },
       )
     }
+  }
+
+  async function revokeReceiptTokenForSale(tokenId: string, salesOrderId: string, reason: string) {
+    try {
+      const response = await revokeReceiptToken.mutateAsync({
+        tokenId,
+        salesOrderId,
+        reason,
+      })
+      const error = actionError(response)
+
+      if (error || !response.success) {
+        notifications.error(t("notifications.receiptRevokeErrorTitle"), error || t("notifications.genericError"), {
+          category: "receipt",
+          priority: "high",
+        })
+        return
+      }
+
+      notifications.success(
+        t("notifications.receiptRevokeSuccessTitle"),
+        t("notifications.receiptRevokeSuccessMessage"),
+        { category: "receipt", duration: 5000 },
+      )
+    } catch (error) {
+      notifications.error(
+        t("notifications.receiptRevokeErrorTitle"),
+        toErrorMessage(error, t("notifications.genericError")),
+        { category: "receipt", priority: "high" },
+      )
+    }
+  }
+
+  async function handleRevokeReceiptToken(tokenId: string) {
+    if (!lastSale) return
+    await revokeReceiptTokenForSale(tokenId, lastSale.saleId, "operator-revoked-from-pos")
+  }
+
+  function handleReceiptHistoryLookup() {
+    setReceiptHistorySearchQuery(receiptHistorySearchDraft.trim())
+    setReceiptHistorySaleId("")
+  }
+
+  async function handleRevokeHistoricalReceiptToken(tokenId: string, salesOrderId: string) {
+    await revokeReceiptTokenForSale(tokenId, salesOrderId, "operator-revoked-from-pos-history")
   }
 
   function toggleFavorite(itemId: string) {
@@ -1706,8 +1808,41 @@ export default function ProfessionalPOSSystem() {
                         {lastSale.receipt.digitalReceiptUrl}
                       </div>
                     ) : null}
+                    {canManageReceiptTokens ? (
+                      <ReceiptTokenControlStrip
+                        tokens={receiptTokens}
+                        isLoading={receiptTokensQuery.isFetching}
+                        revokePendingTokenId={revokePendingTokenId}
+                        labels={receiptTokenLabels}
+                        onRevoke={handleRevokeReceiptToken}
+                      />
+                    ) : null}
                   </div>
                   ) : null}
+
+                  <ReceiptTokenHistoryPanel
+                    searchDraft={receiptHistorySearchDraft}
+                    hasSearched={receiptHistorySearchQuery !== null}
+                    selectedSaleId={receiptHistorySaleId}
+                    saleResults={receiptHistorySales}
+                    tokens={receiptHistoryTokens}
+                    canManage={canManageReceiptTokens}
+                    capabilityLoading={receiptTokenCapabilityQuery.isLoading}
+                    capabilityUnavailable={receiptTokenCapabilityQuery.isError}
+                    capabilityErrorMessage={receiptTokenCapabilityError || receiptTokenCapabilityUnavailableError}
+                    salesLoading={receiptHistorySalesQuery.isFetching}
+                    isLoading={receiptHistoryTokensQuery.isFetching}
+                    salesErrorMessage={receiptHistorySalesError}
+                    errorMessage={receiptHistoryError}
+                    revokePendingTokenId={revokePendingTokenId}
+                    controlLabels={receiptTokenLabels}
+                    labels={receiptTokenHistoryLabels}
+                    formatTotal={(amount) => money.format(amount)}
+                    onSearchDraftChange={setReceiptHistorySearchDraft}
+                    onLookup={handleReceiptHistoryLookup}
+                    onSelectSale={setReceiptHistorySaleId}
+                    onRevoke={handleRevokeHistoricalReceiptToken}
+                  />
 
                   <div className={cn("space-y-3 p-3", posPanelClass)}>
                   <div className="flex items-center justify-between gap-2">

@@ -432,6 +432,7 @@ describe("workflow assurance incident service", () => {
     const open = incidentRecord({ id: "incident-1", status: "OPEN" })
     mockDb.workflowAssuranceIncident.findFirst.mockResolvedValue(open)
     mockDb.workflowAssuranceWaiver.create.mockImplementation(async ({ data }) => waiverRecord(data))
+    const waiverExpiresAt = futureWaiverExpiry()
 
     const waiver = await requestWorkflowAssuranceWaiver({
       organizationId: "org-1",
@@ -439,7 +440,7 @@ describe("workflow assurance incident service", () => {
       actorId: "user-1",
       reason: "Supplier evidence is delayed but accountant has external proof.",
       evidenceHash: "sha256-waiver-proof",
-      expiresAt: new Date("2026-07-01T00:00:00.000Z"),
+      expiresAt: waiverExpiresAt,
     })
 
     mockDb.workflowAssuranceWaiver.findFirst.mockResolvedValue({
@@ -447,7 +448,7 @@ describe("workflow assurance incident service", () => {
         id: waiver.id,
         incidentId: "incident-1",
         requesterId: "user-1",
-        expiresAt: new Date("2026-07-01T00:00:00.000Z"),
+        expiresAt: waiverExpiresAt,
       }),
       incident: open,
     })
@@ -461,6 +462,10 @@ describe("workflow assurance incident service", () => {
     ).rejects.toThrow(/requester cannot approve/i)
   })
 })
+
+function futureWaiverExpiry() {
+  return new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+}
 
 function failedResult(sourceHash: string, fingerprint = "fingerprint-1") {
   return normalizeAssuranceResult({

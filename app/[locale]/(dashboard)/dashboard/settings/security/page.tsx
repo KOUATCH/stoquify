@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { checkPermission } from "@/config/useAuth"
 import { localizePath, pickLocale } from "@/i18n/routing"
 import { requireSession, revokeAllSessionsForUser } from "@/lib/security/auth-session"
 import { permissionRisk, type PermissionRisk } from "@/lib/security/rbac-permissions"
@@ -211,6 +212,7 @@ async function revokeOtherSessionsAction(formData: FormData) {
 export default async function SecuritySettingsPage({ params, searchParams }: SecurityPageProps) {
   const { locale: rawLocale } = await params
   const locale = pickLocale(rawLocale)
+  await checkPermission("PASSWORD_READ")
   const labels = t(locale)
   const query = searchParams ? await searchParams : {}
   const revokedValue = Array.isArray(query.revoked) ? query.revoked[0] : query.revoked

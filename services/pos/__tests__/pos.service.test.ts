@@ -133,6 +133,9 @@ const mockTx = {
   auditLog: {
     create: jest.fn(),
   },
+  closeRun: {
+    findMany: jest.fn(),
+  },
 }
 
 function decimal(value: number | string) {
@@ -306,6 +309,7 @@ describe("commitPOSSale accounting wiring", () => {
         totalCost: decimal(60),
       },
     ])
+    mockTx.closeRun.findMany.mockResolvedValue([])
     mockTx.inventoryTransaction.create.mockResolvedValue({ id: "inventory-transaction-1" })
     mockTx.payment.findFirst.mockResolvedValue(null)
     mockTx.payment.create.mockResolvedValue({ id: "payment-1" })
@@ -428,6 +432,13 @@ describe("commitPOSSale accounting wiring", () => {
             { transactionId: "CARD-AUTH-1" },
             { authorizationCode: "CARD-AUTH-1" },
           ]),
+        }),
+      }),
+    )
+    expect(mockTx.closeRun.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          organizationId: "org-1",
         }),
       }),
     )

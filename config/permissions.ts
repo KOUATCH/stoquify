@@ -275,6 +275,10 @@ export const posPermissions = [
   "pos.receipts.reprint",
 ] as const;
 
+export const posReceiptControlPermissions = [
+  "pos.receipts.revoke",
+] as const;
+
 // Analytics and reporting permissions
 export const analyticsPermissions = [
   "analytics.read",
@@ -342,6 +346,7 @@ export const adminPermissions = [
   ...taxPermissions,
   ...customerPermissions,
   ...posPermissions,
+  ...posReceiptControlPermissions,
   ...analyticsPermissions,
   ...systemPermissions,
   ...communicationPermissions,
@@ -390,6 +395,7 @@ export const managerPermissions = [
   ...taxPermissions,
   ...customerPermissions,
   ...posPermissions,
+  ...posReceiptControlPermissions,
   ...analyticsPermissions,
   "reports.read",
   "reports.create",
@@ -486,6 +492,7 @@ export const permissionCategories = {
   "Tax Management": taxPermissions,
   "Customer Management": customerPermissions,
   "POS System": posPermissions,
+  "POS Receipt Controls": posReceiptControlPermissions,
   "Analytics & Reporting": analyticsPermissions,
   "System Administration": systemPermissions,
   "Communication": communicationPermissions,
@@ -531,6 +538,7 @@ export default {
   accountingPermissions,
   compliancePermissions,
   payrollPermissions,
+  posReceiptControlPermissions,
   managerPermissions,
   staffPermissions,
   cashierPermissions,

@@ -1,6 +1,7 @@
 import { Scale } from "lucide-react"
 
 import { getTrialBalanceAction } from "@/actions/accounting/reports.actions"
+import { checkPermission } from "@/config/useAuth"
 import {
   AccountingPageShell,
   AccountingPanel,
@@ -30,6 +31,8 @@ type TrialBalance = {
 }
 
 export default async function TrialBalancePage() {
+  await checkPermission("accounting.reports.read")
+
   const reportResponse = await getTrialBalanceAction({ includeZeroBalance: true })
   const report = reportResponse.success ? (reportResponse.data as TrialBalance) : null
 

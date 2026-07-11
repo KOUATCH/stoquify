@@ -1,6 +1,7 @@
 import { BookOpenCheck, ClipboardCheck, FilePlus2, FileSearch, Landmark, ListTree, Scale, Settings2, ShieldCheck } from "lucide-react"
 
 import { getAccountingDashboardSummaryAction } from "@/actions/accounting/reports.actions"
+import { checkPermission } from "@/config/useAuth"
 import { Link } from "@/i18n/navigation"
 import {
   AccountingLinkButton,
@@ -33,6 +34,8 @@ type AccountingSummary = {
 }
 
 export default async function AccountingDashboardPage() {
+  await checkPermission("accounting.reports.read")
+
   const summaryResponse = await getAccountingDashboardSummaryAction({})
   const summary = summaryResponse.success ? (summaryResponse.data as AccountingSummary) : null
   const currency = summary?.settings?.baseCurrency || "XAF"

@@ -1,5 +1,5 @@
 import LocationsManagementDashboard from "@/components/locations/LocationsManagementDashboard"
-import { getAuthenticatedUser } from "@/config/useAuth"
+import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
 import { localizePath, pickLocale } from "@/i18n/routing"
 import { redirect } from "next/navigation"
 
@@ -15,6 +15,7 @@ export default async function CreateLocationPage({
 }) {
   const { locale: rawLocale } = await params
   const locale = pickLocale(rawLocale)
+  await checkPermission("locations.create")
   const user = await getAuthenticatedUser()
 
   if (!user.organizationId) {

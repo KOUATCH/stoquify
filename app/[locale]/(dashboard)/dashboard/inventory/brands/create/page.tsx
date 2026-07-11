@@ -3,13 +3,15 @@ import Link from "next/link"
 
 import { ModernBrandForm } from "@/components/brands/ModernBrandForm"
 import { Button } from "@/components/ui/button"
-import { getAuthenticatedUser } from "@/config/useAuth"
+import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
 
 type CreateBrandPageProps = {
   params: Promise<{ locale: string }>
 }
 
 export default async function CreateBrandPage({ params }: CreateBrandPageProps) {
+  await checkPermission("inventory.brands.create")
+
   const { locale } = await params
   const user = await getAuthenticatedUser()
   const returnHref = `/${locale}/dashboard/inventory/brands`

@@ -44,10 +44,12 @@ import { resolveRegulatoryParameter, type RegulatoryResolutionResult } from "@/s
 
 import {
   approveSupplierBankChangeInputSchema,
+  approveSupplierPaymentInputSchema,
   postSupplierInvoiceInputSchema,
   releaseSupplierPaymentInputSchema,
   requestSupplierBankChangeInputSchema,
   type ApproveSupplierBankChangeInput,
+  type ApproveSupplierPaymentInput,
   type PostSupplierInvoiceInput,
   type ReleaseSupplierPaymentInput,
   type RequestSupplierBankChangeInput,
@@ -268,6 +270,28 @@ async function loadSupplierBankChangeApprovalSubject(
   })
 }
 
+async function loadSupplierPaymentControlSubject(
+  client: DbClient,
+  organizationId: string,
+  supplierPaymentId: string,
+) {
+  return client.supplierPayment.findFirst({
+    where: {
+      id: supplierPaymentId,
+      organizationId,
+      deletedAt: null,
+    },
+    select: {
+      id: true,
+      supplierId: true,
+      bankAccountId: true,
+      requestedById: true,
+      approvedById: true,
+      status: true,
+    },
+  })
+}
+
 function decimal2(value: Prisma.Decimal.Value | null | undefined) {
   return new Prisma.Decimal(value ?? 0).toDecimalPlaces(2)
 }
@@ -325,9 +349,10 @@ function assertIdempotencyPayloadMatches(
   metadata: unknown,
   requestPayloadHash: string | null,
   message: string,
+  metadataKey = "idempotencyPayloadHash",
 ) {
   if (!requestPayloadHash) return
-  const existingPayloadHash = metadataString(metadata, "idempotencyPayloadHash")
+  const existingPayloadHash = metadataString(metadata, metadataKey)
   if (existingPayloadHash && existingPayloadHash !== requestPayloadHash) {
     throw new ConflictError(message)
   }
@@ -2048,21 +2073,19 @@ export async function approveSupplierBankChangeWithControls(
   })
 }
 
-export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput, client: DbClient = db) {
-  const parsed = releaseSupplierPaymentInputSchema.parse(input)
+export async function approveSupplierPayment(input: ApproveSupplierPaymentInput, client: DbClient = db) {
+  const parsed = approveSupplierPaymentInputSchema.parse(input)
   const paymentDate = parseDate(parsed.paymentDate)
-  const releasedById = parsed.releasedById ?? parsed.approvedById
   const method = parsed.method as PaymentMethod
   const idempotencyPayloadHash = parsed.idempotencyKey
     ? prefixedHash({
-        operation: "releaseSupplierPayment",
+        operation: "approveSupplierPayment",
         supplierId: parsed.supplierId,
         bankAccountId: parsed.bankAccountId,
         method,
         paymentDate: paymentDate.toISOString(),
         requestedById: parsed.requestedById,
         approvedById: parsed.approvedById,
-        releasedById,
         allocations: [...parsed.allocations]
           .map((allocation) => ({
             supplierInvoiceId: allocation.supplierInvoiceId,
@@ -2076,10 +2099,7 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
     const supplier = await assertSupplier(tx, parsed.organizationId, parsed.supplierId)
 
     if (parsed.requestedById === parsed.approvedById) {
-      throw new BusinessRuleError("A separate approver is required before releasing supplier payments.")
-    }
-    if (parsed.requestedById === releasedById) {
-      throw new BusinessRuleError("A separate releaser is required before releasing supplier payments.")
+      throw new BusinessRuleError("A separate approver is required before approving supplier payments.")
     }
 
     if (parsed.idempotencyKey) {
@@ -2089,18 +2109,19 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
           idempotencyKey: parsed.idempotencyKey,
           deletedAt: null,
         },
+        include: { allocations: true },
       })
       if (existing) {
         assertIdempotencyPayloadMatches(
           existing.metadata,
           idempotencyPayloadHash,
-          "Supplier payment idempotency key was reused with a different payload.",
+          "Supplier payment approval idempotency key was reused with a different payload.",
+          "approvalIdempotencyPayloadHash",
         )
         return {
           supplierPayment: existing,
-          postingBatchId: existing.ledgerPostingBatchId,
           businessEventId: existing.postedBusinessEventId,
-          ledgerStatus: "IDEMPOTENT_REPLAY" as const,
+          approvalStatus: "IDEMPOTENT_REPLAY" as const,
         }
       }
     }
@@ -2115,7 +2136,7 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
       select: { id: true, status: true },
     })
     if (!bankAccount || bankAccount.status !== SupplierBankAccountStatus.APPROVED) {
-      throw new BusinessRuleError("Payment is blocked until the supplier bank destination is approved.")
+      throw new BusinessRuleError("Payment approval is blocked until the supplier bank destination is approved.")
     }
 
     const pendingBankChanges = await tx.supplierBankChangeRequest.count({
@@ -2126,7 +2147,7 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
       },
     })
     if (pendingBankChanges > 0) {
-      throw new BusinessRuleError("Payment is blocked while a supplier bank change is pending approval.")
+      throw new BusinessRuleError("Payment approval is blocked while a supplier bank change is pending approval.")
     }
 
     const allocationIds = parsed.allocations.map((allocation) => allocation.supplierInvoiceId)
@@ -2160,7 +2181,7 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
         throw new BusinessRuleError("Supplier payment allocation exceeds outstanding supplier invoice balance.")
       }
       totalPayment = totalPayment.plus(amount).toDecimalPlaces(2)
-      return { invoice, amount, outstanding }
+      return { invoice, amount }
     })
 
     if (totalPayment.lte(0)) throw new BusinessRuleError("Supplier payment amount must be greater than zero.")
@@ -2172,7 +2193,6 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
       purpose: "SUPPLIER_PAYMENT",
     })
 
-    const period = await getOpenPeriodForDate(parsed.organizationId, paymentDate, tx)
     const paymentNumber = await nextSupplierPaymentNumber(tx, parsed.organizationId, paymentDate)
     const evidencePayload = {
       supplierId: supplier.id,
@@ -2181,8 +2201,11 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
       amount: totalPayment.toFixed(2),
       method,
       allocationIds,
+      requestedById: parsed.requestedById,
+      approvedById: parsed.approvedById,
     }
     const documentHash = parsed.documentHash ?? prefixedHash(evidencePayload)
+    const evidenceHash = parsed.evidenceHash ?? prefixedHash({ ...evidencePayload, status: "APPROVED" })
 
     const payment = await tx.supplierPayment.create({
       data: {
@@ -2190,23 +2213,25 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
         supplierId: supplier.id,
         bankAccountId: bankAccount.id,
         paymentNumber,
-        status: SupplierPaymentStatus.RELEASED,
+        status: SupplierPaymentStatus.APPROVED,
         method,
         amount: totalPayment,
         currency: normalizeCurrency(invoices[0]?.currency),
         paymentDate,
         idempotencyKey: parsed.idempotencyKey ?? null,
         documentHash,
-        evidenceHash: parsed.evidenceHash ?? prefixedHash(evidencePayload),
+        evidenceHash,
         requestedById: parsed.requestedById,
         approvedById: parsed.approvedById,
-        releasedById,
         approvedAt: paymentDate,
-        releasedAt: paymentDate,
+        releasedById: null,
+        releasedAt: null,
         notes: parsed.notes ?? null,
         metadata: safeJson({
           gate: "011-purchasing-ap-controls",
+          approvalStatus: "APPROVED",
           bankDestinationEvidence: "approved",
+          approvalIdempotencyPayloadHash: idempotencyPayloadHash,
           idempotencyPayloadHash,
           countryPackStatus: countryPackStatus.countryPackStatus,
           countryCode: countryPackStatus.countryCode,
@@ -2225,6 +2250,314 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
             amount: allocation.amount,
           })),
         },
+      },
+      include: { allocations: true },
+    })
+
+    const eventResult = await recordBusinessEventInTx(tx, {
+      organizationId: parsed.organizationId,
+      eventType: "supplier.payment.approved",
+      eventSource: "INTERNAL",
+      schemaVersion: 1,
+      idempotencyKey: parsed.idempotencyKey ? `${parsed.idempotencyKey}:approved` : `supplier-payment-approved:${payment.id}`,
+      payload: {
+        supplierPaymentId: payment.id,
+        supplierId: supplier.id,
+        bankAccountId: bankAccount.id,
+        amount: totalPayment.toFixed(2),
+        method,
+        allocationIds,
+      },
+      occurredAt: paymentDate,
+      actorId: parsed.approvedById,
+      documentHash,
+      metadata: {
+        approvalStatus: "APPROVED",
+        countryPackStatus: countryPackStatus.countryPackStatus,
+        countryPackVersion: countryPackStatus.countryPackVersion,
+        countryPackResolutionHash: countryPackStatus.countryPackResolutionHash,
+        gate: "011-purchasing-ap-controls",
+      },
+      outboxMessages: [
+        {
+          channel: "NOTIFICATION",
+          eventName: "supplier_payment.approved",
+          destination: "accounting",
+          payload: {
+            severity: "warning",
+            supplierPaymentId: payment.id,
+            supplierId: supplier.id,
+            amount: totalPayment.toFixed(2),
+            approvalStatus: "APPROVED",
+          },
+        },
+      ],
+    })
+    await markBusinessEventAppliedInTx(tx, parsed.organizationId, eventResult.event.id)
+    await writeAudit(tx, {
+      organizationId: parsed.organizationId,
+      entityType: "SupplierPayment",
+      entityId: payment.id,
+      action: "SUPPLIER_PAYMENT_APPROVED",
+      actorId: parsed.approvedById,
+      changes: {
+        after: {
+          supplierId: supplier.id,
+          bankAccountId: bankAccount.id,
+          amount: totalPayment.toFixed(2),
+          paymentNumber,
+          requestedById: parsed.requestedById,
+          approvedById: parsed.approvedById,
+          businessEventId: eventResult.event.id,
+        },
+      },
+    })
+
+    return { supplierPayment: payment, businessEventId: eventResult.event.id, approvalStatus: "APPROVED" as const }
+  })
+}
+
+export async function approveSupplierPaymentWithControls(
+  input: ApproveSupplierPaymentInput,
+  control: APControlActorContext,
+  client: DbClient = db,
+) {
+  const parsed = approveSupplierPaymentInputSchema.parse(input)
+  assertControlActorMatches(control, parsed.organizationId, [parsed.approvedById])
+
+  const controlInput = sensitiveInput(control, {
+    action: "supplier.payment.approve",
+    resourceType: "SupplierPayment",
+    resourceId: parsed.idempotencyKey ?? parsed.supplierId,
+    subjectActorId: parsed.requestedById,
+    metadata: {
+      supplierId: parsed.supplierId,
+      bankAccountId: parsed.bankAccountId,
+      allocationCount: parsed.allocations.length,
+    },
+  })
+
+  await auditDeniedSensitiveAction(client, controlInput)
+  return inTransaction(client, async (tx) => {
+    await auditAllowedSensitiveAction(tx, controlInput)
+    return approveSupplierPayment(parsed, tx)
+  })
+}
+
+export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput, client: DbClient = db) {
+  const parsed = releaseSupplierPaymentInputSchema.parse(input)
+
+  return inTransaction(client, async (tx) => {
+    const approvedPayment = await tx.supplierPayment.findFirst({
+      where: {
+        id: parsed.supplierPaymentId,
+        organizationId: parsed.organizationId,
+        deletedAt: null,
+      },
+      include: { allocations: true },
+    })
+
+    if (!approvedPayment) throw new NotFoundError("Supplier payment approval evidence was not found.")
+
+    const paymentDate = parseDate(parsed.paymentDate, approvedPayment.paymentDate ?? new Date())
+    const releasedById = parsed.releasedById
+    const requestedById = approvedPayment.requestedById
+    const approvedById = approvedPayment.approvedById
+    const bankAccountId = approvedPayment.bankAccountId
+    const method = approvedPayment.method as PaymentMethod
+    const releaseIdempotencyPayloadHash = parsed.idempotencyKey
+      ? prefixedHash({
+          operation: "releaseSupplierPayment",
+          supplierPaymentId: approvedPayment.id,
+          paymentDate: paymentDate.toISOString(),
+          requestedById,
+          approvedById,
+          releasedById,
+        })
+      : null
+
+    if (approvedPayment.status === SupplierPaymentStatus.RELEASED || approvedPayment.status === SupplierPaymentStatus.POSTED) {
+      assertIdempotencyPayloadMatches(
+        approvedPayment.metadata,
+        releaseIdempotencyPayloadHash,
+        "Supplier payment release idempotency key was reused with a different payload.",
+        "releaseIdempotencyPayloadHash",
+      )
+      if (releaseIdempotencyPayloadHash && metadataString(approvedPayment.metadata, "releaseIdempotencyPayloadHash")) {
+        return {
+          supplierPayment: approvedPayment,
+          postingBatchId: approvedPayment.ledgerPostingBatchId,
+          businessEventId: approvedPayment.postedBusinessEventId,
+          ledgerStatus: "IDEMPOTENT_REPLAY" as const,
+        }
+      }
+      throw new BusinessRuleError("Supplier payment has already been released.")
+    }
+
+    if (approvedPayment.status !== SupplierPaymentStatus.APPROVED) {
+      throw new BusinessRuleError("Supplier payment must be approved before release.")
+    }
+    if (!approvedById) {
+      throw new BusinessRuleError("Supplier payment approval evidence is incomplete.")
+    }
+    if (!bankAccountId) {
+      throw new BusinessRuleError("Supplier payment approval evidence is missing the bank destination.")
+    }
+    if (requestedById === approvedById) {
+      throw new BusinessRuleError("A separate approver is required before releasing supplier payments.")
+    }
+    if (requestedById === releasedById) {
+      throw new BusinessRuleError("A separate releaser is required before releasing supplier payments.")
+    }
+    if (approvedById === releasedById) {
+      throw new BusinessRuleError("A separate releaser is required from the supplier payment approver before release.")
+    }
+
+    if (parsed.supplierId && parsed.supplierId !== approvedPayment.supplierId) {
+      throw new BusinessRuleError("Supplier payment release payload does not match the approved supplier.")
+    }
+    if (parsed.bankAccountId && parsed.bankAccountId !== bankAccountId) {
+      throw new BusinessRuleError("Supplier payment release payload does not match the approved bank destination.")
+    }
+    if (parsed.method && parsed.method !== method) {
+      throw new BusinessRuleError("Supplier payment release payload does not match the approved payment method.")
+    }
+    if (parsed.requestedById && parsed.requestedById !== requestedById) {
+      throw new BusinessRuleError("Supplier payment release payload does not match the original requester.")
+    }
+    if (parsed.approvedById && parsed.approvedById !== approvedById) {
+      throw new BusinessRuleError("Supplier payment release payload does not match the stored approver.")
+    }
+
+    const storedAllocationSignature = approvedPayment.allocations
+      .map((allocation) => `${allocation.supplierInvoiceId}:${decimal2(allocation.amount).toFixed(2)}`)
+      .sort()
+      .join("|")
+    if (parsed.allocations) {
+      const releaseAllocationSignature = parsed.allocations
+        .map((allocation) => `${allocation.supplierInvoiceId}:${decimal2(allocation.amount).toFixed(2)}`)
+        .sort()
+        .join("|")
+      if (releaseAllocationSignature !== storedAllocationSignature) {
+        throw new BusinessRuleError("Supplier payment release allocations do not match the approved payment.")
+      }
+    }
+
+    const supplier = await assertSupplier(tx, parsed.organizationId, approvedPayment.supplierId)
+
+    const bankAccount = await tx.supplierBankAccount.findFirst({
+      where: {
+        id: bankAccountId,
+        organizationId: parsed.organizationId,
+        supplierId: approvedPayment.supplierId,
+        deletedAt: null,
+      },
+      select: { id: true, status: true },
+    })
+    if (!bankAccount || bankAccount.status !== SupplierBankAccountStatus.APPROVED) {
+      throw new BusinessRuleError("Payment is blocked until the supplier bank destination is approved.")
+    }
+
+    const pendingBankChanges = await tx.supplierBankChangeRequest.count({
+      where: {
+        organizationId: parsed.organizationId,
+        supplierId: approvedPayment.supplierId,
+        status: SupplierBankChangeStatus.PENDING,
+      },
+    })
+    if (pendingBankChanges > 0) {
+      throw new BusinessRuleError("Payment is blocked while a supplier bank change is pending approval.")
+    }
+
+    const allocationIds = approvedPayment.allocations.map((allocation) => allocation.supplierInvoiceId)
+    if (allocationIds.length === 0) {
+      throw new BusinessRuleError("Supplier payment approval has no invoice allocations.")
+    }
+    if (allocationIds.length !== new Set(allocationIds).size) {
+      throw new BusinessRuleError("Supplier payment cannot contain duplicate invoice allocations.")
+    }
+
+    const invoices = await tx.supplierInvoice.findMany({
+      where: {
+        id: { in: allocationIds },
+        organizationId: parsed.organizationId,
+        supplierId: approvedPayment.supplierId,
+        deletedAt: null,
+        status: { in: [SupplierInvoiceStatus.POSTED, SupplierInvoiceStatus.PAYMENT_PENDING] },
+      },
+    })
+
+    if (invoices.length !== allocationIds.length) {
+      throw new BusinessRuleError("Supplier payment can only apply to posted unpaid supplier invoices.")
+    }
+
+    const invoiceById = new Map(invoices.map((invoice) => [invoice.id, invoice]))
+    let totalPayment = new Prisma.Decimal(0)
+    const allocationPlans = approvedPayment.allocations.map((allocation) => {
+      const invoice = invoiceById.get(allocation.supplierInvoiceId)
+      if (!invoice) throw new BusinessRuleError("Supplier payment allocation invoice is not payable.")
+      const amount = decimal2(allocation.amount)
+      if (amount.lte(0)) throw new BusinessRuleError("Supplier payment allocation amount must be greater than zero.")
+      const outstanding = decimal2(invoice.total).minus(decimal2(invoice.amountPaid)).toDecimalPlaces(2)
+      if (amount.gt(outstanding)) {
+        throw new BusinessRuleError("Supplier payment allocation exceeds outstanding supplier invoice balance.")
+      }
+      totalPayment = totalPayment.plus(amount).toDecimalPlaces(2)
+      return { invoice, amount, outstanding }
+    })
+
+    if (totalPayment.lte(0)) throw new BusinessRuleError("Supplier payment amount must be greater than zero.")
+    if (!totalPayment.eq(decimal2(approvedPayment.amount))) {
+      throw new BusinessRuleError("Supplier payment release total does not match the approved amount.")
+    }
+
+    const countryPackStatus = await resolveAPCountryPackStatus(tx, {
+      organizationId: parsed.organizationId,
+      documentDate: paymentDate,
+      taxAmount: new Prisma.Decimal(0),
+      purpose: "SUPPLIER_PAYMENT",
+    })
+
+    const period = await getOpenPeriodForDate(parsed.organizationId, paymentDate, tx)
+    const evidencePayload = {
+      supplierId: supplier.id,
+      bankAccountId: bankAccount.id,
+      paymentNumber: approvedPayment.paymentNumber,
+      amount: totalPayment.toFixed(2),
+      method,
+      allocationIds,
+    }
+    const documentHash = parsed.documentHash ?? approvedPayment.documentHash ?? prefixedHash(evidencePayload)
+    const evidenceHash = parsed.evidenceHash ?? approvedPayment.evidenceHash ?? prefixedHash(evidencePayload)
+
+    const payment = await tx.supplierPayment.update({
+      where: { id: approvedPayment.id },
+      data: {
+        status: SupplierPaymentStatus.RELEASED,
+        paymentDate,
+        releasedById,
+        releasedAt: paymentDate,
+        evidenceHash,
+        documentHash,
+        notes: parsed.notes ?? approvedPayment.notes,
+        metadata: safeJson({
+          ...asRecord(approvedPayment.metadata),
+          gate: "011-purchasing-ap-controls",
+          approvalStatus: "APPROVED",
+          releaseStatus: "RELEASED",
+          bankDestinationEvidence: "approved",
+          releaseIdempotencyPayloadHash,
+          idempotencyPayloadHash: releaseIdempotencyPayloadHash,
+          countryPackStatus: countryPackStatus.countryPackStatus,
+          countryCode: countryPackStatus.countryCode,
+          countryPackVersion: countryPackStatus.countryPackVersion,
+          countryPackResolutionHash: countryPackStatus.countryPackResolutionHash,
+          taxTreatmentStatus: countryPackStatus.taxTreatmentStatus,
+          withholdingTreatmentStatus: countryPackStatus.withholdingTreatmentStatus,
+          operatorActionRequired: countryPackStatus.operatorActionRequired,
+          countryPackErrorCode: countryPackStatus.errorCode ?? null,
+          countryPackErrorMessage: countryPackStatus.errorMessage ?? null,
+        }),
       },
       include: { allocations: true },
     })
@@ -2322,7 +2655,7 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
       eventType: "supplier.payment.released",
       eventSource: "INTERNAL",
       schemaVersion: 1,
-      idempotencyKey: parsed.idempotencyKey ?? `supplier-payment:${payment.id}`,
+      idempotencyKey: parsed.idempotencyKey ? `${parsed.idempotencyKey}:released` : `supplier-payment:${payment.id}`,
       payload: {
         supplierPaymentId: payment.id,
         supplierId: supplier.id,
@@ -2330,6 +2663,8 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
         amount: totalPayment.toFixed(2),
         method,
         allocationIds,
+        approvedById,
+        releasedById,
         ledgerPostingBatchId: ledgerBatch.id,
         journalEntryId: postingResult.journalEntryId ?? null,
         ledgerStatus: postingResult.ledgerStatus,
@@ -2393,9 +2728,13 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
         ledgerPostingBatchId: ledgerBatch.id,
         postedBusinessEventId: eventResult.event.id,
         metadata: safeJson({
+          ...asRecord(payment.metadata),
           gate: "011-purchasing-ap-controls",
+          approvalStatus: "APPROVED",
+          releaseStatus: "RELEASED",
           bankDestinationEvidence: "approved",
-          idempotencyPayloadHash,
+          releaseIdempotencyPayloadHash,
+          idempotencyPayloadHash: releaseIdempotencyPayloadHash,
           ledgerStatus: postingResult.ledgerStatus,
           ledgerBlockerCode: postingResult.blockerCode ?? null,
           ledgerBlockerMessage: postingResult.blockerMessage ?? null,
@@ -2430,6 +2769,8 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
           supplierId: supplier.id,
           amount: totalPayment.toFixed(2),
           paymentNumber: payment.paymentNumber,
+          approvedById,
+          releasedById,
           ledgerPostingBatchId: ledgerBatch.id,
           businessEventId: eventResult.event.id,
           ledgerStatus: postingResult.ledgerStatus,
@@ -2458,24 +2799,36 @@ export async function releaseSupplierPaymentWithControls(
   client: DbClient = db,
 ) {
   const parsed = releaseSupplierPaymentInputSchema.parse(input)
-  const releasedById = parsed.releasedById ?? parsed.approvedById
-  assertControlActorMatches(control, parsed.organizationId, [parsed.approvedById, releasedById])
+  const releasedById = parsed.releasedById
+  assertControlActorMatches(control, parsed.organizationId, [releasedById])
 
+  const subject = await loadSupplierPaymentControlSubject(client, parsed.organizationId, parsed.supplierPaymentId)
   const controlInput = sensitiveInput(control, {
     action: "supplier.payment.release",
     resourceType: "SupplierPayment",
-    resourceId: parsed.idempotencyKey ?? parsed.supplierId,
-    subjectActorId: parsed.requestedById,
+    resourceId: parsed.supplierPaymentId,
+    subjectActorId: subject?.requestedById ?? null,
     metadata: {
-      supplierId: parsed.supplierId,
-      bankAccountId: parsed.bankAccountId,
-      allocationCount: parsed.allocations.length,
+      supplierId: subject?.supplierId ?? parsed.supplierId,
+      bankAccountId: subject?.bankAccountId ?? parsed.bankAccountId,
+      approvedById: subject?.approvedById ?? parsed.approvedById,
+      status: subject?.status,
     },
   })
 
   await auditDeniedSensitiveAction(client, controlInput)
   return inTransaction(client, async (tx) => {
     await auditAllowedSensitiveAction(tx, controlInput)
-    return releaseSupplierPayment({ ...parsed, releasedById }, tx)
+    return releaseSupplierPayment(
+      {
+        ...parsed,
+        supplierId: subject?.supplierId ?? parsed.supplierId,
+        bankAccountId: subject?.bankAccountId ?? parsed.bankAccountId,
+        requestedById: subject?.requestedById ?? parsed.requestedById,
+        approvedById: subject?.approvedById ?? parsed.approvedById,
+        releasedById,
+      },
+      tx,
+    )
   })
 }

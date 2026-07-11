@@ -11,6 +11,7 @@ import {
   PostingRuleLineSide,
   SupplierBankAccountStatus,
   SupplierBankChangeStatus,
+  SupplierPaymentStatus,
 } from "@prisma/client"
 
 import { db } from "@/prisma/db"
@@ -26,6 +27,8 @@ import {
 import {
   approveSupplierBankChange,
   approveSupplierBankChangeWithControls,
+  approveSupplierPayment,
+  approveSupplierPaymentWithControls,
   postSupplierInvoice,
   releaseSupplierPayment,
   releaseSupplierPaymentWithControls,
@@ -182,6 +185,35 @@ const supplier = {
   name: "Sage Distribution",
   isActive: true,
   currentBalance: "0.00",
+}
+
+function approvedSupplierPayment(overrides: Record<string, unknown> = {}) {
+  return {
+    id: "payment-1",
+    organizationId: "org-1",
+    supplierId: "supplier-1",
+    bankAccountId: "bank-1",
+    paymentNumber: "SPAY-20260615-0001",
+    status: SupplierPaymentStatus.APPROVED,
+    method: "BANK_TRANSFER",
+    amount: "100.00",
+    currency: "XAF",
+    paymentDate: new Date("2026-06-15T00:00:00.000Z"),
+    idempotencyKey: "supplier-payment-approval-1",
+    documentHash: "sha256:payment-document",
+    evidenceHash: "sha256:payment-evidence",
+    requestedById: "requester-1",
+    approvedById: "approver-1",
+    releasedById: null,
+    approvedAt: new Date("2026-06-15T00:00:00.000Z"),
+    releasedAt: null,
+    ledgerPostingBatchId: null,
+    postedBusinessEventId: null,
+    notes: null,
+    metadata: { approvalIdempotencyPayloadHash: "sha256:approval-payload" },
+    allocations: [{ id: "alloc-1", supplierInvoiceId: "invoice-1", amount: "100.00" }],
+    ...overrides,
+  }
 }
 
 const apMappedAccounts = [
@@ -385,21 +417,129 @@ describe("ap-control.service", () => {
     expect(tx.supplierBankAccount.create).not.toHaveBeenCalled()
   })
 
-  it("audits and blocks supplier payment self-release in AP service controls", async () => {
+  it("audits and blocks supplier payment self-approval in AP service controls", async () => {
     const tx = buildTx()
 
     await expect(
-      releaseSupplierPaymentWithControls(
+      approveSupplierPaymentWithControls(
         {
           organizationId: "org-1",
           supplierId: "supplier-1",
           bankAccountId: "bank-1",
           method: "BANK_TRANSFER",
-          requestedById: "treasury-1",
-          approvedById: "treasury-1",
-          releasedById: "treasury-1",
+          requestedById: "approver-1",
+          approvedById: "approver-1",
           paymentDate: "2026-06-15",
           allocations: [{ supplierInvoiceId: "invoice-1", amount: "100.00" }],
+        },
+        {
+          organizationId: "org-1",
+          actorId: "approver-1",
+          actorPermissions: ["purchasing.ap.payment.approve"],
+          lastAuthAt: Date.now(),
+        },
+        tx as unknown as Parameters<typeof approveSupplierPaymentWithControls>[2],
+      ),
+    ).rejects.toBeInstanceOf(BusinessRuleError)
+
+    expect(tx.auditLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          action: "SUPPLIER_PAYMENT_APPROVE_CONTROL_DENIED",
+          organizationId: "org-1",
+          userId: "approver-1",
+          changes: expect.objectContaining({
+            reasonCode: "SELF_APPROVAL_BLOCKED",
+            allowed: false,
+          }),
+        }),
+      }),
+    )
+    expect(tx.supplier.findFirst).not.toHaveBeenCalled()
+    expect(tx.supplierPayment.create).not.toHaveBeenCalled()
+  })
+
+  it("creates approved supplier payment evidence without release side effects", async () => {
+    const tx = buildTx()
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
+    tx.supplier.findFirst.mockResolvedValue(supplier)
+    tx.supplierBankAccount.findFirst.mockResolvedValue({
+      id: "bank-1",
+      status: SupplierBankAccountStatus.APPROVED,
+    })
+    tx.supplierBankChangeRequest.count.mockResolvedValue(0)
+    tx.supplierInvoice.findMany.mockResolvedValue([
+      {
+        id: "invoice-1",
+        organizationId: "org-1",
+        supplierId: "supplier-1",
+        total: "100.00",
+        amountPaid: "0.00",
+        currency: "XAF",
+      },
+    ])
+    tx.supplierPayment.count.mockResolvedValue(0)
+    tx.supplierPayment.findFirst.mockResolvedValue(null)
+    tx.supplierPayment.create.mockResolvedValue(approvedSupplierPayment())
+
+    const result = await approveSupplierPayment({
+      organizationId: "org-1",
+      supplierId: "supplier-1",
+      bankAccountId: "bank-1",
+      method: "BANK_TRANSFER",
+      requestedById: "requester-1",
+      approvedById: "approver-1",
+      paymentDate: "2026-06-15",
+      allocations: [{ supplierInvoiceId: "invoice-1", amount: "100.00" }],
+      idempotencyKey: "supplier-payment-approval-1",
+    })
+
+    expect(result.approvalStatus).toBe("APPROVED")
+    expect(tx.supplierPayment.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          status: SupplierPaymentStatus.APPROVED,
+          requestedById: "requester-1",
+          approvedById: "approver-1",
+          releasedById: null,
+          allocations: expect.objectContaining({
+            create: [expect.objectContaining({ supplierInvoiceId: "invoice-1" })],
+          }),
+        }),
+      }),
+    )
+    expect(mockedRecordBusinessEventInTx).toHaveBeenCalledWith(
+      tx,
+      expect.objectContaining({
+        eventType: "supplier.payment.approved",
+        actorId: "approver-1",
+      }),
+    )
+    expect(tx.auditLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ action: "SUPPLIER_PAYMENT_APPROVED" }),
+      }),
+    )
+    expect(tx.supplierInvoice.update).not.toHaveBeenCalled()
+    expect(tx.supplierLedgerEntry.create).not.toHaveBeenCalled()
+    expect(tx.paymentTransaction.create).not.toHaveBeenCalled()
+  })
+  it("audits and blocks supplier payment self-release in AP service controls", async () => {
+    const tx = buildTx()
+    tx.supplierPayment.findFirst.mockResolvedValue(
+      approvedSupplierPayment({
+        requestedById: "treasury-1",
+        approvedById: "approver-1",
+      }),
+    )
+
+    await expect(
+      releaseSupplierPaymentWithControls(
+        {
+          organizationId: "org-1",
+          supplierPaymentId: "payment-1",
+          releasedById: "treasury-1",
+          paymentDate: "2026-06-15",
         },
         {
           organizationId: "org-1",
@@ -425,12 +565,29 @@ describe("ap-control.service", () => {
       }),
     )
     expect(tx.supplier.findFirst).not.toHaveBeenCalled()
-    expect(tx.supplierPayment.create).not.toHaveBeenCalled()
+    expect(tx.supplierPayment.update).not.toHaveBeenCalled()
   })
+  it("blocks supplier payment release by the stored approver", async () => {
+    const tx = buildTx()
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
+    tx.supplierPayment.findFirst.mockResolvedValue(approvedSupplierPayment())
 
+    await expect(
+      releaseSupplierPayment({
+        organizationId: "org-1",
+        supplierPaymentId: "payment-1",
+        releasedById: "approver-1",
+        paymentDate: "2026-06-15",
+      }),
+    ).rejects.toBeInstanceOf(BusinessRuleError)
+
+    expect(tx.supplier.findFirst).not.toHaveBeenCalled()
+    expect(tx.supplierPayment.update).not.toHaveBeenCalled()
+  })
   it("blocks supplier payment release when a bank change is pending", async () => {
     const tx = buildTx()
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
+    tx.supplierPayment.findFirst.mockResolvedValue(approvedSupplierPayment())
     tx.supplier.findFirst.mockResolvedValue(supplier)
     tx.supplierBankAccount.findFirst.mockResolvedValue({
       id: "bank-1",
@@ -441,23 +598,18 @@ describe("ap-control.service", () => {
     await expect(
       releaseSupplierPayment({
         organizationId: "org-1",
-        supplierId: "supplier-1",
-        bankAccountId: "bank-1",
-        method: "BANK_TRANSFER",
-        requestedById: "requester-1",
-        approvedById: "approver-1",
+        supplierPaymentId: "payment-1",
         releasedById: "releaser-1",
         paymentDate: "2026-06-15",
-        allocations: [{ supplierInvoiceId: "invoice-1", amount: "100.00" }],
       }),
     ).rejects.toBeInstanceOf(BusinessRuleError)
 
-    expect(tx.supplierPayment.create).not.toHaveBeenCalled()
+    expect(tx.supplierPayment.update).not.toHaveBeenCalled()
   })
-
   it("blocks supplier payment allocations above invoice outstanding balance", async () => {
     const tx = buildTx()
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
+    tx.supplierPayment.findFirst.mockResolvedValue(approvedSupplierPayment({ amount: "10.00", allocations: [{ id: "alloc-1", supplierInvoiceId: "invoice-1", amount: "10.00" }] }))
     tx.supplier.findFirst.mockResolvedValue(supplier)
     tx.supplierBankAccount.findFirst.mockResolvedValue({
       id: "bank-1",
@@ -478,20 +630,14 @@ describe("ap-control.service", () => {
     await expect(
       releaseSupplierPayment({
         organizationId: "org-1",
-        supplierId: "supplier-1",
-        bankAccountId: "bank-1",
-        method: "BANK_TRANSFER",
-        requestedById: "requester-1",
-        approvedById: "approver-1",
+        supplierPaymentId: "payment-1",
         releasedById: "releaser-1",
         paymentDate: "2026-06-15",
-        allocations: [{ supplierInvoiceId: "invoice-1", amount: "10.00" }],
       }),
     ).rejects.toBeInstanceOf(BusinessRuleError)
 
-    expect(tx.supplierPayment.create).not.toHaveBeenCalled()
+    expect(tx.supplierPayment.update).not.toHaveBeenCalled()
   })
-
   it("posts matched supplier invoices with event evidence and explicit ledger blocker", async () => {
     const tx = buildTx()
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
@@ -753,9 +899,10 @@ describe("ap-control.service", () => {
     expect(mockedMarkBusinessEventAppliedInTx).not.toHaveBeenCalled()
   })
 
-  it("releases supplier payments with approved bank evidence, allocations, event evidence, and ledger blocker", async () => {
+  it("releases approved supplier payments with bank evidence, allocations, event evidence, and ledger blocker", async () => {
     const tx = buildTx()
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
+    tx.supplierPayment.findFirst.mockResolvedValue(approvedSupplierPayment())
     tx.supplier.findFirst.mockResolvedValue({
       ...supplier,
       currentBalance: "100.00",
@@ -775,51 +922,46 @@ describe("ap-control.service", () => {
         currency: "XAF",
       },
     ])
-    tx.supplierPayment.count.mockResolvedValue(0)
-    tx.supplierPayment.findFirst.mockResolvedValue(null)
-    tx.supplierPayment.create.mockResolvedValue({
-      id: "payment-1",
-      paymentNumber: "SPAY-20260615-0001",
-      currency: "XAF",
-      evidenceHash: "sha256:evidence",
-      allocations: [{ id: "alloc-1", supplierInvoiceId: "invoice-1" }],
-    })
     tx.ledgerPostingBatch.update.mockResolvedValue({ id: "batch-1", status: LedgerPostingBatchStatus.FAILED })
-    tx.supplierPayment.update.mockResolvedValue({
-      id: "payment-1",
-      ledgerPostingBatchId: "batch-1",
-      postedBusinessEventId: "event-1",
-      allocations: [{ id: "alloc-1", supplierInvoiceId: "invoice-1" }],
-    })
+    tx.supplierPayment.update
+      .mockResolvedValueOnce({
+        ...approvedSupplierPayment({
+          status: SupplierPaymentStatus.RELEASED,
+          releasedById: "releaser-1",
+          releasedAt: new Date("2026-06-15T00:00:00.000Z"),
+        }),
+      })
+      .mockResolvedValueOnce({
+        id: "payment-1",
+        ledgerPostingBatchId: "batch-1",
+        postedBusinessEventId: "event-1",
+        allocations: [{ id: "alloc-1", supplierInvoiceId: "invoice-1" }],
+      })
 
     const result = await releaseSupplierPayment({
       organizationId: "org-1",
-      supplierId: "supplier-1",
-      bankAccountId: "bank-1",
-      method: "BANK_TRANSFER",
-      requestedById: "requester-1",
-      approvedById: "approver-1",
+      supplierPaymentId: "payment-1",
       releasedById: "releaser-1",
       paymentDate: "2026-06-15",
-      allocations: [{ supplierInvoiceId: "invoice-1", amount: "100.00" }],
+      idempotencyKey: "supplier-payment-release-1",
     })
 
     expect(result.ledgerStatus).toBe("BLOCKED_PENDING_RULES")
-    expect(tx.supplierPayment.create).toHaveBeenCalledWith(
+    expect(tx.supplierPayment.update).toHaveBeenNthCalledWith(
+      1,
       expect.objectContaining({
+        where: { id: "payment-1" },
         data: expect.objectContaining({
-          status: "RELEASED",
-          bankAccountId: "bank-1",
-          allocations: expect.objectContaining({
-            create: [
-              expect.objectContaining({
-                supplierInvoiceId: "invoice-1",
-              }),
-            ],
+          status: SupplierPaymentStatus.RELEASED,
+          releasedById: "releaser-1",
+          metadata: expect.objectContaining({
+            releaseStatus: "RELEASED",
+            releaseIdempotencyPayloadHash: expect.stringMatching(/^sha256:/),
           }),
         }),
       }),
     )
+    expect(tx.supplierPayment.create).not.toHaveBeenCalled()
     expect(tx.supplierInvoice.update).toHaveBeenCalledWith(
       expect.objectContaining({
         where: { id: "invoice-1" },
@@ -833,6 +975,8 @@ describe("ap-control.service", () => {
         sourceType: "SUPPLIER_PAYMENT",
         sourceId: "payment-1",
         payload: expect.objectContaining({
+          approvedById: "approver-1",
+          releasedById: "releaser-1",
           paymentTransactionId: "payment-tx-1",
           paymentExceptionId: "payment-exception-1",
           reconciliationStatus: "LEDGER_BLOCKED",
@@ -860,35 +1004,31 @@ describe("ap-control.service", () => {
       }),
     )
   })
-
   it("rejects mutated supplier payment idempotency replays before release side effects", async () => {
     const tx = buildTx()
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
-    tx.supplier.findFirst.mockResolvedValue(supplier)
-    tx.supplierPayment.findFirst.mockResolvedValue({
-      id: "payment-1",
-      ledgerPostingBatchId: "batch-1",
-      postedBusinessEventId: "event-1",
-      metadata: { idempotencyPayloadHash: "sha256:previous-payment" },
-    })
+    tx.supplierPayment.findFirst.mockResolvedValue(
+      approvedSupplierPayment({
+        status: SupplierPaymentStatus.RELEASED,
+        releasedById: "releaser-1",
+        ledgerPostingBatchId: "batch-1",
+        postedBusinessEventId: "event-1",
+        metadata: { releaseIdempotencyPayloadHash: "sha256:previous-payment" },
+      }),
+    )
 
     await expect(
       releaseSupplierPayment({
         organizationId: "org-1",
-        supplierId: "supplier-1",
-        bankAccountId: "bank-1",
-        method: "BANK_TRANSFER",
-        requestedById: "requester-1",
-        approvedById: "approver-1",
+        supplierPaymentId: "payment-1",
         releasedById: "releaser-1",
         paymentDate: "2026-06-15",
         idempotencyKey: "payment-key-1",
-        allocations: [{ supplierInvoiceId: "invoice-1", amount: "100.00" }],
       }),
     ).rejects.toBeInstanceOf(ConflictError)
 
     expect(tx.supplierBankAccount.findFirst).not.toHaveBeenCalled()
-    expect(tx.supplierPayment.create).not.toHaveBeenCalled()
+    expect(tx.supplierPayment.update).not.toHaveBeenCalled()
     expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled()
   })
 })

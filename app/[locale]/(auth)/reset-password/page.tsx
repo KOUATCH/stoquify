@@ -1,12 +1,16 @@
 import ResetPasswordForm from "@/components/Forms/ResetPasswordForm";
 import { GridBackground } from "@/components/reusable-ui/grid-background";
-import React from "react";
+import { Suspense } from "react";
 
-export default async function page() {
+export const dynamic = "force-dynamic";
+
+export default function Page() {
   return (
     <GridBackground>
       <div className="px-4">
-        <ResetPasswordForm />
+        <Suspense fallback={null}>
+          <ResetPasswordForm />
+        </Suspense>
       </div>
     </GridBackground>
   );

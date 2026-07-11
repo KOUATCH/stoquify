@@ -1045,6 +1045,33 @@
     "receipt": {
       "options": "Options recu",
       "destinationPlaceholder": "Destination recu : email, telephone ou numero WhatsApp",
+      "tokens": {
+        "title": "Acces public au recu",
+        "loading": "Verification des liens recu",
+        "empty": "Aucun lien public de recu enregistre",
+        "active": "Actif",
+        "revoked": "Revoque",
+        "expired": "Expire",
+        "accessed": "{count} acces",
+        "expires": "Expire le {date}",
+        "revoke": "Revoquer",
+        "historyTitle": "Historique acces recu",
+        "historySaleLabel": "Numero commande ou ventes recentes",
+        "historySalePlaceholder": "Numero commande, ou vide pour recent",
+        "historyLookup": "Rechercher",
+        "historySelectedSale": "Vente selectionnee {salesOrderId}",
+        "historyNoSale": "Selectionnez une vente terminee",
+        "historyDenied": "Acces indisponible",
+        "historyCapabilityLoading": "Verification de l'acces a la gestion des recus",
+        "historyCapabilityDenied": "La gestion des acces recu exige la permission de revocation des recus POS",
+        "historyCapabilityUnavailable": "La gestion des acces recu est temporairement indisponible",
+        "historyLoadingSales": "Recherche des ventes terminees",
+        "historyEmptySales": "Aucune vente terminee trouvee",
+        "historySelectSale": "Selectionner vente",
+        "historyCompleted": "Terminee le {date}",
+        "historyTotal": "Total {amount}",
+        "historyTokenSummary": "{count} liens / {active} actifs"
+      },
       "channels": {
         "NONE": "Aucun recu",
         "PRINT": "Imprimer",
@@ -1098,7 +1125,10 @@
       "customerPosted": "Compte client mis a jour",
       "walkInPosted": "Client comptoir enregistre",
       "receiptTitle": "Envoi recu",
-      "receiptMessage": "Statut du recu {channel} : {status}."
+      "receiptMessage": "Statut du recu {channel} : {status}.",
+      "receiptRevokeSuccessTitle": "Lien recu revoque",
+      "receiptRevokeSuccessMessage": "Le lien public du recu a ete ferme pour cette vente.",
+      "receiptRevokeErrorTitle": "Echec revocation lien recu"
     },
     "timeline": {
       "saleCreated": "Vente creee",

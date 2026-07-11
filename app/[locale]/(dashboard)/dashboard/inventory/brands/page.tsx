@@ -7,14 +7,13 @@ import EnhancedBrandsManagement from "@/components/inventory/EnhancedBrandsManag
 import { Button } from "@/components/ui/button"
 import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
 import { pickLocale } from "@/i18n/routing"
-import { PERMISSIONS } from "@/lib/permissions"
 
 type BrandsPageProps = {
   params: Promise<{ locale: string }>
 }
 
 export default async function BrandsPage({ params }: BrandsPageProps) {
-  await checkPermission(PERMISSIONS.BRANDS_READ)
+  await checkPermission("inventory.brands.read")
 
   const { locale: rawLocale } = await params
   const locale = pickLocale(rawLocale)

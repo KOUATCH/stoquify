@@ -36,6 +36,8 @@ describe("module entitlement service", () => {
     expect(normalizeModuleSlug("Payment reconciliation")).toBe("payment_reconciliation")
     expect(normalizeModuleSlug("POS")).toBe("pos")
     expect(normalizeModuleSlug("Stock")).toBe("inventory")
+    expect(normalizeModuleSlug("Purchasing/AP")).toBe("purchasing")
+    expect(normalizeModuleSlug("purchasing_ap")).toBe("purchasing")
     expect(normalizeModuleSlug("unknown module")).toBeNull()
   })
 

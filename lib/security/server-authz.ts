@@ -4,6 +4,12 @@ import {
   getOptionalRbacContext,
   hasRbacPermission,
 } from "@/lib/security/rbac"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
+import type {
+  CommercialModuleSlug,
+  ModuleAccessIntent,
+  ModuleSurfaceType,
+} from "@/services/modules/module-control-contracts"
 
 export const safeUserSelect = {
   id: true,
@@ -52,6 +58,21 @@ export async function requireApiSessionForOrg(organizationId: string) {
   return { error: null, status: 200 as const, session: { user: ctx.user } }
 }
 
+export async function requireApiSessionForCurrentOrg() {
+  const ctx = await getOptionalRbacContext()
+
+  if (!ctx) {
+    return { error: "Unauthorized", status: 401 as const, session: null, organizationId: null }
+  }
+
+  return {
+    error: null,
+    status: 200 as const,
+    session: { user: ctx.user },
+    organizationId: ctx.orgId,
+  }
+}
+
 type PermissionUser = {
   id: string
   email?: string | null
@@ -66,6 +87,47 @@ export function hasAppPermission(user: PermissionUser, permission: string) {
   )
 
   return hasRbacPermission([...(user.permissions ?? []), ...rolePermissions], permission)
+}
+
+function actorPermissionsFor(user: PermissionUser) {
+  const permissions = new Set(user.permissions ?? [])
+
+  for (const role of user.roles ?? []) {
+    if (typeof role === "string") continue
+    for (const permission of role.permissions ?? []) {
+      permissions.add(permission)
+    }
+  }
+
+  return [...permissions]
+}
+
+export async function requireApiModuleAccess(input: {
+  organizationId: string
+  user: PermissionUser & { id: string }
+  moduleSlug: CommercialModuleSlug
+  surface: string
+  surfaceType?: ModuleSurfaceType
+  accessIntent?: ModuleAccessIntent
+  audit?: boolean
+}) {
+  const decision = await observeModuleAccess({
+    organizationId: input.organizationId,
+    userId: input.user.id,
+    actorPermissions: actorPermissionsFor(input.user),
+    moduleSlug: input.moduleSlug,
+    surfaceType: input.surfaceType ?? "api",
+    surface: input.surface,
+    accessIntent: input.accessIntent ?? "read",
+    mode: "enforce",
+    audit: input.audit ?? true,
+  })
+
+  if (!decision.allowed) {
+    return { allowed: false as const, error: "Forbidden", status: 403 as const, decision }
+  }
+
+  return { allowed: true as const, error: null, status: 200 as const, decision }
 }
 
 export function requireAppPermission(user: PermissionUser, permission: string) {

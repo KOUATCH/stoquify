@@ -1,5 +1,8 @@
 
+import { checkPermission } from "@/config/useAuth"
+
 const page = async ({ params }: { params: Promise<{ id: string }> }) => {
+  await checkPermission("inventory.items.read")
 
 
   const id = (await params)?.id

@@ -22,7 +22,7 @@ export default async function PayrollWorkbenchPage({
     const ctx = await requireAnyPermission(["payroll.command.read"], {
       resource: "PayrollCommandReadModel",
     })
-    const moduleDecision = await observeModuleAccess({
+    await observeModuleAccess({
       organizationId: ctx.orgId,
       userId: ctx.userId,
       actorPermissions: ctx.permissions,
@@ -30,19 +30,8 @@ export default async function PayrollWorkbenchPage({
       surfaceType: "page",
       surface: "/dashboard/payroll",
       accessIntent: "read",
-      mode: "enforce",
+      mode: "observe",
     })
-
-    if (!moduleDecision.allowed) {
-      return (
-        <DashboardRouteState
-          kind="permission_denied"
-          title="HR and Payroll is not enabled for this organization"
-          message="Enable the Payroll module before opening tenant-scoped HR and payroll evidence. The module entitlement denial was audited."
-          primaryHref={localizePath("/dashboard", locale)}
-        />
-      )
-    }
   } catch (error) {
     if (error instanceof RbacError) {
       const noActiveOrg = error.code === "NO_ACTIVE_ORG"

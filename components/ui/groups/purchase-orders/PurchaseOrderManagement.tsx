@@ -66,10 +66,10 @@ import {
   Download,
   Edit,
   Eye,
-  FileText,
   MoreHorizontal,
   Package,
   Plus,
+  Printer,
   RefreshCw,
   Search,
   SlidersHorizontal,
@@ -395,8 +395,8 @@ const getColumns = (
 
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => handleDownloadPDF(po)}>
-                  <FileText className="mr-2 h-4 w-4" />
-                  Download PDF
+                  <Printer className="mr-2 h-4 w-4" />
+                  Print Order
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -841,12 +841,11 @@ const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
   }, [openConfirmationDialog])
 
   const handleDownloadPDF = useCallback((po: PurchaseOrderData) => {
-    // Navigate to PDF download or API endpoint
-    window.open(`/api/purchase-orders/${po.id}/pdf?organizationId=${organizationId}`, '_blank')
-    notify.success("PDF Download", {
-      description: `Download initiated for ${po.orderNumber}`
+    window.print()
+    notify.success("Print Purchase Order", {
+      description: `Use the browser print dialog to save ${po.orderNumber} as a PDF.`
     })
-  }, [organizationId])
+  }, [])
 
   const handleRefresh = useCallback(async () => {
     await refetch()

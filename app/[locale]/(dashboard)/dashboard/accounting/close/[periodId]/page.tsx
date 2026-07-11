@@ -2,6 +2,7 @@ import { ClipboardCheck, FileSearch, ShieldCheck } from "lucide-react"
 
 import { getCloseAssuranceDashboardAction } from "@/actions/accounting/close-assurance.actions"
 import { CloseAssuranceCenter } from "@/components/accounting/CloseAssuranceCenter"
+import { checkPermission } from "@/config/useAuth"
 import type { Locale } from "@/types/bilingual"
 import { AccountingLinkButton, AccountingPageShell } from "../../_components/accounting-ui"
 
@@ -16,6 +17,9 @@ function normalizeLocale(locale?: string): Locale {
 export default async function CloseAssurancePeriodPage({ params }: CloseAssurancePeriodPageProps) {
   const { locale, periodId } = await params
   const normalizedLocale = normalizeLocale(locale)
+
+  await checkPermission("accounting.close.read")
+
   const response = await getCloseAssuranceDashboardAction({ periodId })
   const initialData = response.success ? response.data : null
 

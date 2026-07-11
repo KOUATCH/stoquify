@@ -4,6 +4,7 @@ import { requireFreshAuth, FreshAuthRequiredError } from "@/lib/security/auth-se
 import { requirePermission, RbacError } from "@/lib/security/rbac"
 import {
   approveSupplierBankChangeWithControls,
+  approveSupplierPaymentWithControls,
   getAPWorkbenchData,
   postSupplierInvoice,
   releaseSupplierPaymentWithControls,
@@ -12,6 +13,7 @@ import {
 
 import {
   approveSupplierBankChangeAction,
+  approveSupplierPaymentAction,
   getAPWorkbenchAction,
   postSupplierInvoiceAction,
   releaseSupplierPaymentAction,
@@ -63,6 +65,7 @@ jest.mock("@/lib/logger", () => ({
 
 jest.mock("@/services/purchasing/ap-control.service", () => ({
   approveSupplierBankChangeWithControls: jest.fn(),
+  approveSupplierPaymentWithControls: jest.fn(),
   getAPWorkbenchData: jest.fn(),
   postSupplierInvoice: jest.fn(),
   releaseSupplierPaymentWithControls: jest.fn(),
@@ -74,6 +77,7 @@ const mockRequireFreshAuth = requireFreshAuth as jest.Mock
 const mockPostSupplierInvoice = postSupplierInvoice as jest.Mock
 const mockRequestSupplierBankChange = requestSupplierBankChange as jest.Mock
 const mockApproveSupplierBankChangeWithControls = approveSupplierBankChangeWithControls as jest.Mock
+const mockApproveSupplierPaymentWithControls = approveSupplierPaymentWithControls as jest.Mock
 const mockReleaseSupplierPaymentWithControls = releaseSupplierPaymentWithControls as jest.Mock
 const mockGetAPWorkbenchData = getAPWorkbenchData as jest.Mock
 const mockRevalidatePath = revalidatePath as jest.Mock
@@ -122,7 +126,7 @@ function invoiceInput() {
 describe("AP control actions", () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockRequireFreshAuth.mockResolvedValue({})
+    mockRequireFreshAuth.mockResolvedValue({ claims: { lastAuthAt: "2026-07-02T12:00:00.000Z" } })
   })
 
   it("derives supplier invoice tenant and actor fields from the authenticated context", async () => {
@@ -195,14 +199,17 @@ describe("AP control actions", () => {
       organizationId: "client-org",
       changeRequestId: "change-1",
       approvedById: "client-approver",
+      documentHash: "bank-change-proof-hash",
     })
 
     expect(result.success).toBe(true)
+    expect(mockRequireFreshAuth).toHaveBeenCalledTimes(1)
     expect(mockApproveSupplierBankChangeWithControls).toHaveBeenCalledWith(
       expect.objectContaining({
         organizationId: "org-1",
         changeRequestId: "change-1",
         approvedById: "approver-1",
+        documentHash: "bank-change-proof-hash",
       }),
       expect.objectContaining({
         organizationId: "org-1",
@@ -217,7 +224,52 @@ describe("AP control actions", () => {
     })
   })
 
-  it("injects approver and releaser IDs for supplier payment release", async () => {
+  it("injects the approver ID for supplier payment approval", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext("approver-1", ["purchasing.ap.payment.approve"]))
+    mockApproveSupplierPaymentWithControls.mockResolvedValue({
+      supplierPayment: { id: "payment-approval-1" },
+      approvalStatus: "APPROVED",
+    })
+
+    const result = await approveSupplierPaymentAction({
+      organizationId: "client-org",
+      supplierId: "supplier-1",
+      bankAccountId: "bank-1",
+      method: "BANK_TRANSFER",
+      requestedById: "requester-1",
+      approvedById: "client-approver",
+      paymentDate: "2026-07-02T12:30:00.000Z",
+      documentHash: "payment-document-hash",
+      evidenceHash: "payment-evidence-hash",
+      allocations: [{ supplierInvoiceId: "invoice-1", amount: "1500.00" }],
+      idempotencyKey: "supplier-payment-approval-1",
+    })
+
+    expect(result.success).toBe(true)
+    expect(mockRequireFreshAuth).toHaveBeenCalledTimes(1)
+    expect(mockApproveSupplierPaymentWithControls).toHaveBeenCalledWith(
+      expect.objectContaining({
+        organizationId: "org-1",
+        supplierId: "supplier-1",
+        bankAccountId: "bank-1",
+        requestedById: "requester-1",
+        approvedById: "approver-1",
+        paymentDate: "2026-07-02T12:30:00.000Z",
+      }),
+      expect.objectContaining({
+        organizationId: "org-1",
+        actorId: "approver-1",
+        actorPermissions: ["purchasing.ap.payment.approve"],
+        lastAuthAt: expect.any(Number),
+      }),
+    )
+    expect(mockApproveSupplierPaymentWithControls.mock.calls[0][0]).not.toMatchObject({
+      organizationId: "client-org",
+      approvedById: "client-approver",
+    })
+  })
+
+  it("injects only the releaser ID for supplier payment release", async () => {
     mockRequirePermission.mockResolvedValue(rbacContext("treasury-1", ["purchasing.ap.payment.release"]))
     mockReleaseSupplierPaymentWithControls.mockResolvedValue({
       supplierPayment: { id: "payment-1" },
@@ -226,24 +278,28 @@ describe("AP control actions", () => {
 
     const result = await releaseSupplierPaymentAction({
       organizationId: "client-org",
-      supplierId: "supplier-1",
-      bankAccountId: "bank-1",
-      method: "BANK_TRANSFER",
-      requestedById: "requester-1",
+      supplierPaymentId: "payment-approval-1",
+      supplierId: "client-supplier",
+      requestedById: "client-requester",
       approvedById: "client-approver",
       releasedById: "client-release",
+      paymentDate: "2026-07-02T12:30:00.000Z",
+      documentHash: "payment-document-hash",
+      evidenceHash: "payment-evidence-hash",
       allocations: [{ supplierInvoiceId: "invoice-1", amount: "1500.00" }],
       idempotencyKey: "supplier-payment-release-1",
     })
 
     expect(result.success).toBe(true)
+    expect(mockRequireFreshAuth).toHaveBeenCalledTimes(1)
     expect(mockReleaseSupplierPaymentWithControls).toHaveBeenCalledWith(
       expect.objectContaining({
         organizationId: "org-1",
-        supplierId: "supplier-1",
-        requestedById: "requester-1",
-        approvedById: "treasury-1",
+        supplierPaymentId: "payment-approval-1",
         releasedById: "treasury-1",
+        paymentDate: "2026-07-02T12:30:00.000Z",
+        documentHash: "payment-document-hash",
+        evidenceHash: "payment-evidence-hash",
       }),
       expect.objectContaining({
         organizationId: "org-1",
@@ -252,8 +308,13 @@ describe("AP control actions", () => {
         lastAuthAt: expect.any(Number),
       }),
     )
+    expect(mockReleaseSupplierPaymentWithControls.mock.calls[0][0]).not.toMatchObject({
+      supplierId: "client-supplier",
+      requestedById: "client-requester",
+      approvedById: "client-approver",
+      releasedById: "client-release",
+    })
   })
-
   it("injects the requester ID for supplier bank change requests", async () => {
     mockRequirePermission.mockResolvedValue(rbacContext("requester-1", ["purchasing.supplier.bank.request"]))
     mockRequestSupplierBankChange.mockResolvedValue({

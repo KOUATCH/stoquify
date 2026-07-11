@@ -64,6 +64,7 @@ import {
 import { getOpenPeriodForDate } from "@/services/accounting/periods.service";
 import { getActivePostingRule } from "@/services/accounting/posting-rules.service";
 import {
+  hashBusinessPayload,
   markBusinessEventAppliedInTx,
   recordBusinessEventInTx,
 } from "@/services/events/business-event.service";
@@ -146,11 +147,42 @@ function buildTx() {
   };
 }
 
-const PAYROLL_RUN_PROOF_METADATA = {
+const PAYROLL_STATUTORY_SCENARIO_COVERAGE_METADATA = {
+  status: "READY",
+  countryCode: "CM",
+  packVersion: "CM-2026.1",
+  coverageHash: "sha256:statutory-scenario-coverage",
+  executableScenarioCount: 12,
+  readyFamilyCount: 9,
+  requiredFamilyCount: 9,
+  blockerCodes: [],
+  reviewEvidence: {
+    presentCount: 12,
+    missingCount: 0,
+    reviewedBy: ["Qualified Cameroon payroll tax reviewer"],
+    reviewedOn: ["2026-06-28"],
+    legalRefs: ["CM_DGI_CGI_2025"],
+    sourceEvidenceHashes: ["sha256:cm-irpp-period-reviewed-review-evidence"],
+  },
+};
+
+const PAYROLL_ROUNDING_POLICY_HASH = "sha256:rounding-policy";
+const PAYROLL_YEAR_TO_DATE_POLICY_HASH = "sha256:ytd-policy";
+
+const PAYROLL_PAYMENT_RUN_PROOF_METADATA = {
   componentRegisterProofHash: "sha256:component-proof",
   componentRegisterProofStatus: "MATCHED",
   payrollComponentMappingHash: "sha256:component-mapping",
   payrollComponentMappingStatus: "BLOCKED_REQUIRES_EXPERT_REVIEW",
+};
+
+const PAYROLL_RUN_PROOF_METADATA = {
+  ...PAYROLL_PAYMENT_RUN_PROOF_METADATA,
+  statutoryScenarioCoverage: PAYROLL_STATUTORY_SCENARIO_COVERAGE_METADATA,
+  statutoryScenarioCoverageHash:
+    PAYROLL_STATUTORY_SCENARIO_COVERAGE_METADATA.coverageHash,
+  roundingPolicyHash: PAYROLL_ROUNDING_POLICY_HASH,
+  yearToDatePolicyHash: PAYROLL_YEAR_TO_DATE_POLICY_HASH,
 };
 
 const CERTIFIED_PAYMENT_ADAPTER_REQUEST_METADATA = {
@@ -185,6 +217,32 @@ const PAYMENT_ADAPTER_PROOF_METADATA = {
   providerSettlementProofRequired: true,
   productionPaymentAutomationSupported: true,
 };
+
+function countryPackProvenanceFixture() {
+  const provenance = {
+    kind: "AQSTOQFLOW_PAYROLL_LINE_COUNTRY_PACK_PROVENANCE",
+    version: 1,
+    countryCode: "CM",
+    packVersion: "CM-2026.1",
+    schemaVersion: "country-pack.v1",
+    capabilityStatus: "SUPPORTED",
+    resolutionHash: "sha256:country-pack",
+    statutoryScenarioCoverageHash:
+      PAYROLL_STATUTORY_SCENARIO_COVERAGE_METADATA.coverageHash,
+    statutoryScenarioCoverageStatus: "READY",
+    reviewEvidenceSourceHashes:
+      PAYROLL_STATUTORY_SCENARIO_COVERAGE_METADATA.reviewEvidence
+        .sourceEvidenceHashes,
+    legalRefs: PAYROLL_STATUTORY_SCENARIO_COVERAGE_METADATA.reviewEvidence.legalRefs,
+    roundingPolicyHash: PAYROLL_ROUNDING_POLICY_HASH,
+    yearToDatePolicyHash: PAYROLL_YEAR_TO_DATE_POLICY_HASH,
+  };
+
+  return {
+    provenance,
+    provenanceHash: `sha256:${hashBusinessPayload(provenance)}`,
+  };
+}
 
 function postedPayrollRun(
   paymentDestinationHash = "employee-destination-hash",
@@ -233,6 +291,15 @@ function postedPayrollRun(
         netPayableAmount: new Prisma.Decimal("95800.00"),
         currency: "XAF",
         calculationSnapshot: {
+          roundingPolicyHash: PAYROLL_ROUNDING_POLICY_HASH,
+          countryCode: "CM",
+          countryPackVersion: "CM-2026.1",
+          countryPackSchemaVersion: "country-pack.v1",
+          countryPackResolutionHash: "sha256:country-pack",
+          countryPackCapabilityStatus: "SUPPORTED",
+          countryPackProvenance: countryPackProvenanceFixture().provenance,
+          countryPackProvenanceHash: countryPackProvenanceFixture().provenanceHash,
+          yearToDatePolicyHash: PAYROLL_YEAR_TO_DATE_POLICY_HASH,
           grossAmount: "100000.00",
           taxableBaseAmount: "100000.00",
           socialBaseAmount: "100000.00",
@@ -301,6 +368,7 @@ function postedNegativeCorrectionPayrollRun() {
         originalRunDocumentHash: "sha256:original-run",
         originalRunEvidenceHash: "sha256:original-evidence",
         originalCalculationHash: "sha256:original-calc",
+        correctionEvidenceHash: "sha256:correction-evidence",
       },
     },
     lines: [
@@ -519,7 +587,7 @@ describe("payroll completion service", () => {
       expect.objectContaining({
         data: expect.objectContaining({
           metadata: expect.objectContaining({
-            ...PAYROLL_RUN_PROOF_METADATA,
+            ...PAYROLL_PAYMENT_RUN_PROOF_METADATA,
             ...PAYMENT_ADAPTER_PROOF_METADATA,
             paymentAdapterProofHash: expect.stringMatching(/^sha256:/),
             paymentAdapterRegistryVersion: 1,
@@ -533,7 +601,7 @@ describe("payroll completion service", () => {
       tx.payrollPaymentBatch.create.mock.calls[0][0].data;
     expect(createdBatchData.allocations.create[0].metadata).toEqual(
       expect.objectContaining({
-        ...PAYROLL_RUN_PROOF_METADATA,
+        ...PAYROLL_PAYMENT_RUN_PROOF_METADATA,
         ...PAYMENT_ADAPTER_PROOF_METADATA,
         paymentAdapterProofHash: expect.stringMatching(/^sha256:/),
         paymentAdapterRegistryVersion: 1,
@@ -551,7 +619,7 @@ describe("payroll completion service", () => {
     const journalEntryData = tx.journalEntry.create.mock.calls[0][0].data;
     expect(journalEntryData.lines.create[0].metadata).toEqual(
       expect.objectContaining({
-        ...PAYROLL_RUN_PROOF_METADATA,
+        ...PAYROLL_PAYMENT_RUN_PROOF_METADATA,
         paymentAdapterStatus: "SUPPORTED_CERTIFIED",
         paymentProviderAdapterKey: "BANK_TRANSFER_PROVIDER_API",
         paymentDisbursementFileHash: "sha256:bank-file",
@@ -572,7 +640,7 @@ describe("payroll completion service", () => {
           sourceType: "PAYROLL_PAYMENT",
           sourceId: "batch-1",
           metadata: expect.objectContaining({
-            ...PAYROLL_RUN_PROOF_METADATA,
+            ...PAYROLL_PAYMENT_RUN_PROOF_METADATA,
             ...PAYMENT_ADAPTER_PROOF_METADATA,
             paymentAdapterProofHash: expect.stringMatching(/^sha256:/),
             paymentAdapterRegistryVersion: 1,
@@ -597,14 +665,14 @@ describe("payroll completion service", () => {
         eventType: "payroll.payment_batch.released",
         sourceType: AccountingSourceType.PAYROLL_PAYMENT,
         payload: expect.objectContaining({
-          ...PAYROLL_RUN_PROOF_METADATA,
+          ...PAYROLL_PAYMENT_RUN_PROOF_METADATA,
           ...PAYMENT_ADAPTER_PROOF_METADATA,
           paymentAdapterProofHash: expect.stringMatching(/^sha256:/),
           paymentAdapterRegistryVersion: 1,
           paymentProviderAdapterContractHash: expect.stringMatching(/^sha256:/),
         }),
         metadata: expect.objectContaining({
-          ...PAYROLL_RUN_PROOF_METADATA,
+          ...PAYROLL_PAYMENT_RUN_PROOF_METADATA,
           ...PAYMENT_ADAPTER_PROOF_METADATA,
           paymentAdapterProofHash: expect.stringMatching(/^sha256:/),
           paymentAdapterRegistryVersion: 1,
@@ -621,7 +689,7 @@ describe("payroll completion service", () => {
       expect.objectContaining({
         data: expect.objectContaining({
           metadata: expect.objectContaining({
-            ...PAYROLL_RUN_PROOF_METADATA,
+            ...PAYROLL_PAYMENT_RUN_PROOF_METADATA,
             ...PAYMENT_ADAPTER_PROOF_METADATA,
             paymentAdapterProofHash: expect.stringMatching(/^sha256:/),
             paymentAdapterRegistryVersion: 1,
@@ -858,6 +926,15 @@ describe("payroll completion service", () => {
           metadata: expect.objectContaining({
             expertReviewRequired: true,
             declarationResolutionError: "declarations not configured",
+            countryPackRegisterProofHash: expect.stringMatching(/^sha256:/),
+            countryPackRegisterProofStatus: "MATCHED",
+            statutoryScenarioCoverageHash:
+              PAYROLL_STATUTORY_SCENARIO_COVERAGE_METADATA.coverageHash,
+            countryPackReviewEvidenceSourceHashes:
+              PAYROLL_STATUTORY_SCENARIO_COVERAGE_METADATA.reviewEvidence
+                .sourceEvidenceHashes,
+            countryPackLegalRefs:
+              PAYROLL_STATUTORY_SCENARIO_COVERAGE_METADATA.reviewEvidence.legalRefs,
           }),
         }),
       }),

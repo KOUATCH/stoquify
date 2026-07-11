@@ -12,6 +12,7 @@ import {
   AccountingPanel,
   AccountingStatCard,
 } from "../_components/accounting-ui"
+import { checkPermission } from "@/config/useAuth"
 
 type AccountRow = {
   id: string
@@ -49,6 +50,8 @@ function resultPath(locale: string, ok: boolean, text: string) {
 }
 
 export default async function AccountingAccountsPage({ params, searchParams }: PageProps) {
+  await checkPermission("accounting.accounts.read")
+
   const { locale } = await params
   const resolvedSearchParams = searchParams ? await searchParams : {}
   const accountsResponse = await listChartAccountsAction({ includeInactive: true })
@@ -227,4 +230,3 @@ export default async function AccountingAccountsPage({ params, searchParams }: P
     </AccountingPageShell>
   )
 }
-

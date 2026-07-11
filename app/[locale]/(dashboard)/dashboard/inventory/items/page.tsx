@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { TableLoading } from "@/components/ui/data-table"
 import ItemManagement from "@/components/ui/groups/inventory/ItemManagement"
-import { getAuthenticatedUser } from "@/config/useAuth"
+import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
 import { pickLocale } from "@/i18n/routing"
 import type { Locale } from "@/types/bilingual"
 import type { ItemWithInventoryLevelsPayload } from "@/types/itemTypes"
@@ -121,6 +121,8 @@ function matchesStockFilter(item: ItemWithInventoryLevelsPayload, filter: StockS
 export default async function ItemsPage(props: {
   searchParams?: Promise<SearchParams>
 }) {
+  await checkPermission("inventory.items.read")
+
   const resolvedSearchParams: SearchParams = props.searchParams ? await props.searchParams : {}
 
   const q = toStringParam(resolvedSearchParams.q)

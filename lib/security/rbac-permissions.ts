@@ -95,6 +95,7 @@ const EXPLICIT_PERMISSION_RISKS = {
   "pos.sale.void": "crit",
   "pos.transactions.refund": "crit",
   "pos.transactions.void": "crit",
+  "pos.receipts.revoke": "high",
   "reports.export": "crit",
   "data.export": "crit",
 } as const satisfies Partial<Record<string, PermissionRisk>>
@@ -195,6 +196,7 @@ export const PERMISSION_ALIASES = {
   "customers.create": ["CREATE_CUSTOMERS"],
   "customers.update": ["UPDATE_CUSTOMERS"],
   "customers.delete": ["DELETE_CUSTOMERS"],
+  "customers.orders.read": ["READ_SALES_ORDERS"],
 
   "finance.read": ["FINANCE_READ", "FINANCIAL_READ"],
   "finance.dashboard.read": ["FINANCIAL_DASHBOARD_ACCESS", "VIEW_FINANCIAL_DASHBOARD", "FINANCIAL_READ", "FINANCE_READ"],
@@ -320,6 +322,7 @@ export const PERMISSION_ALIASES = {
   "pos.discounts.apply": ["PROCESS_SALES"],
   "pos.receipts.print": ["OPERATE_POS"],
   "pos.receipts.reprint": ["OPERATE_POS"],
+  "pos.receipts.revoke": [],
 
   "analytics.read": ["ANALYTICS_READ", "VIEW_ANALYTICS"],
   "reports.read": ["VIEW_ANALYTICS", "FINANCIAL_REPORTS_READ"],

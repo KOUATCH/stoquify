@@ -1,12 +1,13 @@
-import { ArrowLeft, ShoppingCart } from "lucide-react"
+import { getLocale } from "next-intl/server"
 
 import { createPurchaseOrder } from "@/actions/purchaseOrderWorkflow/purchaseOrderSystemAction"
+import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
 import { ModernCreatePurchaseOrderForm } from "@/components/purchase-orders/ModernCreatePurchaseOrderForm"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import { getAuthenticatedUser } from "@/config/useAuth"
-import { Link } from "@/i18n/navigation"
+import { localizePath, pickLocale } from "@/i18n/routing"
 import { localizedRedirect } from "@/i18n/server-routing"
+import { RbacError, requirePermission } from "@/lib/security/rbac"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import { getPurchaseOrderFormOptions } from "@/services/purchase-order/purchase-order.service"
 
 async function handleCreatePurchaseOrder(formData: FormData) {
@@ -37,33 +38,46 @@ async function handleCreatePurchaseOrder(formData: FormData) {
 }
 
 export default async function CreatePurchaseOrderPage() {
-  const user = await getAuthenticatedUser()
+  const locale = pickLocale(await getLocale())
+  let ctx: Awaited<ReturnType<typeof requirePermission>>
 
-  if (!user?.organizationId) {
-    return (
-      <main className="mx-auto w-full max-w-[720px] p-4">
-        <Card className="rounded-md border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900/60 dark:bg-amber-950/35 dark:text-amber-100">
-          <CardContent className="space-y-4 p-6 text-center">
-            <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-md border border-current/15 bg-white/45 dark:bg-white/[0.06]">
-              <ShoppingCart className="h-6 w-6" />
-            </span>
-            <div>
-              <h1 className="text-lg font-semibold">Organization required</h1>
-              <p className="mt-1 text-sm opacity-80">No organization was found for the current user.</p>
-            </div>
-            <Button asChild variant="outline" className="rounded-md bg-white dark:bg-slate-950">
-              <Link href="/dashboard/purchase-orders">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to purchase orders
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-      </main>
-    )
+  try {
+    ctx = await requirePermission("purchases.orders.create", {
+      resource: "PurchaseOrder",
+      auditAllowed: true,
+    })
+    await observeModuleAccess({
+      organizationId: ctx.orgId,
+      userId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      moduleSlug: "purchasing",
+      surfaceType: "page",
+      surface: "/dashboard/purchase-orders/new",
+      accessIntent: "write",
+      mode: "observe",
+    })
+  } catch (error) {
+    if (error instanceof RbacError) {
+      const noActiveOrg = error.code === "NO_ACTIVE_ORG"
+
+      return (
+        <DashboardRouteState
+          kind={noActiveOrg ? "no_active_org" : "permission_denied"}
+          title={noActiveOrg ? "Purchase order creation needs an active organization" : "Purchase order creation is not available for this role"}
+          message={
+            noActiveOrg
+              ? "Refresh your session from the dashboard so purchasing can load tenant-scoped create options."
+              : "Creating purchase orders requires purchasing create access. The denial was recorded by the RBAC guard."
+          }
+          primaryHref={localizePath("/dashboard/purchase-orders", locale)}
+        />
+      )
+    }
+
+    throw error
   }
 
-  const options = await getPurchaseOrderFormOptions(user.organizationId)
+  const options = await getPurchaseOrderFormOptions(ctx.orgId)
 
   return (
     <ModernCreatePurchaseOrderForm
@@ -71,7 +85,7 @@ export default async function CreatePurchaseOrderPage() {
       suppliers={options.suppliers}
       locations={options.locations}
       items={options.items}
-      organizationId={user.organizationId}
+      organizationId={ctx.orgId}
     />
   )
 }

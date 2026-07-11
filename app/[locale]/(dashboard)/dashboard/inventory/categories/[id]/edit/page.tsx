@@ -4,14 +4,13 @@ import { getCategoryById, getOrgCategories } from "@/actions/categories/getCateg
 import { ModernCategoryForm } from "@/components/categories/ModernCategoryForm"
 import { getAuthenticatedUser, checkPermission } from "@/config/useAuth"
 import { pickLocale } from "@/i18n/routing"
-import { PERMISSIONS } from "@/lib/permissions"
 
 interface CategoryEditPageProps {
   params: Promise<{ locale: string; id: string }>
 }
 
 export default async function CategoryEditPage({ params }: CategoryEditPageProps) {
-  await checkPermission(PERMISSIONS.UPDATE_CATEGORIES)
+  await checkPermission("inventory.categories.update")
 
   const { locale: rawLocale, id } = await params
   const locale = pickLocale(rawLocale)

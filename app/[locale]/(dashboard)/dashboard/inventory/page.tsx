@@ -1,3 +1,4 @@
+import { checkPermission } from "@/config/useAuth"
 import { localizePath, pickLocale } from "@/i18n/routing"
 import { redirect } from "next/navigation"
 
@@ -9,6 +10,8 @@ export default async function InventoryPage({
 }: {
   params: Promise<{ locale: string }>
 }) {
+  await checkPermission("inventory.read")
+
   const { locale: rawLocale } = await params
   const locale = pickLocale(rawLocale)
 

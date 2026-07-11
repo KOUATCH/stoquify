@@ -160,7 +160,7 @@ const Sidebar = ({ session, notifications = [] }: SidebarProps) => {
           </label>
         </div>
 
-        <div className="min-h-0 flex-1 px-3 pb-3 lg:px-4">
+        <div className="min-h-0 flex-1 px-2.5 pb-3 lg:px-3">
           <div className="mb-3 flex items-center justify-between px-2">
             <span className="text-[0.66rem] font-bold uppercase tracking-[0.18em] text-[#7f969f]">
               {isSearching ? "Search" : "Modules"}
@@ -175,10 +175,10 @@ const Sidebar = ({ session, notifications = [] }: SidebarProps) => {
 
           <nav
             aria-label="Primary dashboard modules"
-            className="dashboard-sidebar-scroll grid max-h-full items-start gap-4 overflow-y-auto pr-1 text-sm font-medium"
+            className="dashboard-sidebar-scroll grid max-h-full min-w-0 max-w-full items-start gap-4 overflow-y-auto overflow-x-hidden pr-1 text-sm font-medium"
           >
             {visibleSections.map((section) => (
-              <section key={section.key} aria-labelledby={`sidebar-section-${section.key}`} className="grid gap-1">
+              <section key={section.key} aria-labelledby={`sidebar-section-${section.key}`} className="grid min-w-0 gap-1">
                 <div className="flex items-center justify-between px-2 pb-1">
                   <span
                     id={`sidebar-section-${section.key}`}
@@ -204,56 +204,48 @@ const Sidebar = ({ session, notifications = [] }: SidebarProps) => {
                   const isFinanceSection = item.title === "Finance"
 
                   return (
-                    <div key={itemKey}>
+                    <div key={itemKey} className="min-w-0">
                       {item.dropdown ? (
                         <Collapsible open={isOpen} onOpenChange={(open) => setOpenDropdownKey(open ? itemKey : null)}>
                           <CollapsibleTrigger
+                            data-active={isDirectActive ? "true" : "false"}
+                            data-child-active={isChildActive ? "true" : "false"}
                             aria-controls={submenuId}
                             aria-label={`${item.title} menu`}
                             className={cn(
-                              "group relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[#b9c8c3] outline-none transition-all duration-200 hover:bg-white/[0.075] hover:text-white focus-visible:ring-2 focus-visible:ring-[#5796ff]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b161b]",
-                              isDirectActive && "bg-[rgba(47,125,246,0.16)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]",
-                              isChildActive && !isDirectActive && "bg-white/[0.045] text-[#d3ddd8]",
+                              "dashboard-sidebar-module group relative flex w-full items-center gap-2 rounded-xl px-2.5 py-2.5 text-left outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#5796ff]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b161b]",
                             )}
                           >
-                            <span
-                              className={cn(
-                                "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/[0.055] text-[#8fb7ff] transition-colors",
-                                isDirectActive && "bg-[rgba(45,212,191,0.16)] text-[#6ee7db]",
-                                isChildActive && !isDirectActive && "bg-white/[0.08] text-[#8fb7ff]",
-                              )}
-                            >
+                            <span className="dashboard-sidebar-module-icon flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors">
                               <Icon className="h-4 w-4" aria-hidden="true" />
                             </span>
                             <span className="min-w-0 flex-1" title={item.title}>
                               <span className="block truncate">{item.title}</span>
                               {item.description ? (
-                                <span className="hidden truncate text-[0.66rem] font-medium text-[#7f969f] lg:block">
+                                <span className="dashboard-sidebar-module-description hidden truncate text-[0.66rem] font-medium lg:block">
                                   {item.description}
                                 </span>
                               ) : null}
                             </span>
                             {item.dropdownMenu?.length ? (
                               <span
-                                className="rounded-full bg-white/[0.06] px-1.5 py-0.5 text-[0.64rem] font-semibold text-[#8fa4ab]"
+                                className="dashboard-sidebar-module-count shrink-0 rounded-full px-1.5 py-0.5 text-[0.64rem] font-semibold"
                                 aria-label={`${item.dropdownMenu.length} links`}
                               >
                                 {item.dropdownMenu.length}
                               </span>
                             ) : null}
                             {isOpen ? (
-                              <ChevronDown className="h-4 w-4 shrink-0 text-[#9fb4bb]" aria-hidden="true" />
+                              <ChevronDown className="dashboard-sidebar-module-chevron h-4 w-4 shrink-0" aria-hidden="true" />
                             ) : (
-                              <ChevronRight className="h-4 w-4 shrink-0 text-[#7f969f]" aria-hidden="true" />
+                              <ChevronRight className="dashboard-sidebar-module-chevron h-4 w-4 shrink-0" aria-hidden="true" />
                             )}
                           </CollapsibleTrigger>
                           <CollapsibleContent
                             id={submenuId}
                             className={cn(
-                              "mt-1 rounded-xl border py-1",
-                              isFinanceSection
-                                ? "dashboard-finance-submenu"
-                                : "border-white/[0.06] bg-[#0e1a20]/60",
+                              "dashboard-sidebar-submenu mt-1 rounded-xl border py-1",
+                              isFinanceSection && "dashboard-finance-submenu",
                             )}
                           >
                             {item.dropdownMenu?.map((menuItem) => {
@@ -267,34 +259,24 @@ const Sidebar = ({ session, notifications = [] }: SidebarProps) => {
                                   aria-current={isMenuItemActive ? "page" : undefined}
                                   title={menuItem.title}
                                   className={cn(
-                                    "mx-2 flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-xs outline-none transition-all focus-visible:ring-2 focus-visible:ring-[#5796ff]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0e1a20]",
-                                    isFinanceSection
-                                      ? "dashboard-finance-submenu-item"
-                                      : "text-[#9fb4bb] hover:bg-white/[0.07] hover:text-white",
-                                    !isFinanceSection &&
-                                      isMenuItemActive &&
-                                      "bg-[rgba(45,212,191,0.14)] text-[#d9fffb]",
+                                    "dashboard-sidebar-submenu-item mx-1.5 flex items-center justify-between gap-2 rounded-lg px-2.5 py-2 text-xs outline-none transition-all focus-visible:ring-2 focus-visible:ring-[#5796ff]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0e1a20]",
+                                    isFinanceSection && "dashboard-finance-submenu-item",
                                   )}
                                 >
-                                  <span className="flex min-w-0 items-center gap-2">
+                                  <span className="flex min-w-0 flex-1 items-center gap-2">
                                     <span
                                       data-active={isMenuItemActive ? "true" : "false"}
                                       className={cn(
-                                        "h-1.5 w-1.5 shrink-0 rounded-full",
-                                        isFinanceSection
-                                          ? "dashboard-finance-submenu-dot"
-                                          : "bg-[#54707a]",
-                                        !isFinanceSection && isMenuItemActive && "bg-[#2dd4bf]",
+                                        "dashboard-sidebar-submenu-dot h-1.5 w-1.5 shrink-0 rounded-full",
+                                        isFinanceSection && "dashboard-finance-submenu-dot",
                                       )}
                                     />
-                                    <span className="truncate">{menuItem.title}</span>
+                                    <span className="block min-w-0 flex-1 truncate">{menuItem.title}</span>
                                   </span>
                                   <span
                                     className={cn(
-                                      "flex h-5 w-5 shrink-0 items-center justify-center rounded-full",
-                                      isFinanceSection
-                                        ? "dashboard-finance-submenu-action"
-                                        : "bg-white/[0.04]",
+                                      "dashboard-sidebar-submenu-action flex h-5 w-5 shrink-0 items-center justify-center rounded-full",
+                                      isFinanceSection && "dashboard-finance-submenu-action",
                                     )}
                                   >
                                     <ChevronRight className="h-3 w-3" aria-hidden="true" />
@@ -307,19 +289,14 @@ const Sidebar = ({ session, notifications = [] }: SidebarProps) => {
                       ) : (
                         <Link
                           href={localizedHref(item.href ?? "#")}
+                          data-active={isActive ? "true" : "false"}
                           aria-current={isActive ? "page" : undefined}
                           title={item.title}
                           className={cn(
-                            "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-[#b9c8c3] outline-none transition-all duration-200 hover:bg-white/[0.075] hover:text-white focus-visible:ring-2 focus-visible:ring-[#5796ff]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b161b]",
-                            isActive && "bg-[rgba(47,125,246,0.16)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]",
+                            "dashboard-sidebar-module group relative flex items-center gap-2 rounded-xl px-2.5 py-2.5 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#5796ff]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b161b]",
                           )}
                         >
-                          <span
-                            className={cn(
-                              "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/[0.055] text-[#8fb7ff]",
-                              isActive && "bg-[rgba(45,212,191,0.16)] text-[#6ee7db]",
-                            )}
-                          >
+                          <span className="dashboard-sidebar-module-icon flex h-8 w-8 shrink-0 items-center justify-center rounded-lg">
                             <Icon className="h-4 w-4" aria-hidden="true" />
                           </span>
                           <span className="min-w-0 flex-1">
@@ -345,7 +322,7 @@ const Sidebar = ({ session, notifications = [] }: SidebarProps) => {
           </nav>
         </div>
 
-        <div className="border-t border-white/10 p-4 lg:p-5">
+        <div className="border-t border-white/10 p-3 lg:p-4">
           <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-[#0e1a20]/70 p-3">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#2563eb] to-[#5796ff] text-sm font-black text-white shadow-lg">
               {userInitials}

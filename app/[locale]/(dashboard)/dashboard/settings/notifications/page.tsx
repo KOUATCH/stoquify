@@ -1,3 +1,4 @@
+import { checkPermission } from "@/config/useAuth"
 import { pickLocale } from "@/i18n/routing"
 import NotificationsSettingsClient from "./NotificationsSettingsClient"
 
@@ -13,6 +14,7 @@ export default async function NotificationSettingsPage({
 }) {
   const { locale: rawLocale } = await params
   const locale = pickLocale(rawLocale)
+  await checkPermission("communication.notifications.read")
 
   return (
     <div className="dashboard-landing-theme min-h-screen overflow-x-hidden">

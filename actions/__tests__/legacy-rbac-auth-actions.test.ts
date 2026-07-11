@@ -55,6 +55,10 @@ jest.mock("@/services/location/location.service", () => ({
   updateLocationForManagement: jest.fn(),
 }))
 
+jest.mock("@/services/modules/module-entitlement.service", () => ({
+  observeModuleAccess: jest.fn(),
+}))
+
 jest.mock("@/services/unit/unit.service", () => ({
   createUnitForManagement: jest.fn(),
   getUnitManagementDataForOrg: jest.fn(),

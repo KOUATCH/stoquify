@@ -7,11 +7,13 @@ import getOrgTaxRates from "@/actions/taxRate/getOrgTaxRates"
 import getOrgUnits from "@/actions/units/getOrgUnits"
 import { TableLoading } from "@/components/ui/data-table"
 import ItemManagement from "@/components/ui/groups/inventory/ItemManagement"
-import { getAuthenticatedUser } from "@/config/useAuth"
+import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
 import { getTranslations } from "next-intl/server"
 import { Suspense } from "react"
 
 export default async function ItemsPage() {
+  await checkPermission("inventory.items.read")
+
   const t = await getTranslations()
   const user = await getAuthenticatedUser()
   const userOrg = user?.organizationId

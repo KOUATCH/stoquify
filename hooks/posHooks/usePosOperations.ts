@@ -1,22 +1,28 @@
 "use client"
 
+import { getCustomersAction } from "@/actions/customers/customerActions"
 import {
   getPOSCatalogAction,
   getPOSLocationsAction,
   getPOSTerminalsAction,
 } from "@/actions/pos/catalog.actions"
 import {
-  closePOSShiftAction,
-  getActivePOSSessionAction,
-  openPOSShiftAction,
-} from "@/actions/pos/session.actions"
-import {
   addPOSCartLineAction,
   getActivePOSCartAction,
   removePOSCartLineAction,
   updatePOSCartLineAction,
 } from "@/actions/pos/cart.actions"
-import { getCustomersAction } from "@/actions/customers/customerActions"
+import {
+  getPublicReceiptAccessTokensAction,
+  getPublicReceiptTokenManagementCapabilityAction,
+  revokePublicReceiptAccessTokenAction,
+  searchPublicReceiptSalesAction,
+} from "@/actions/pos/receipt-token.actions"
+import {
+  closePOSShiftAction,
+  getActivePOSSessionAction,
+  openPOSShiftAction,
+} from "@/actions/pos/session.actions"
 import { commitPOSSaleAction, refundPOSSaleAction, voidPOSSaleAction } from "@/actions/pos/tender.actions"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
@@ -30,6 +36,9 @@ export const posOperationsKeys = {
   cart: (locationId?: string, terminalId?: string, sessionId?: string) =>
     [...posOperationsKeys.all, "cart", locationId, terminalId, sessionId] as const,
   customers: () => [...posOperationsKeys.all, "customers"] as const,
+  receiptTokens: (salesOrderId?: string) => [...posOperationsKeys.all, "receipt-tokens", salesOrderId] as const,
+  receiptSales: (query?: string) => [...posOperationsKeys.all, "receipt-sales", query] as const,
+  receiptTokenCapability: () => [...posOperationsKeys.all, "receipt-token-capability"] as const,
 }
 
 export function usePOSLocations() {
@@ -79,6 +88,31 @@ export function usePOSCustomers() {
   return useQuery({
     queryKey: posOperationsKeys.customers(),
     queryFn: () => getCustomersAction(),
+  })
+}
+
+export function usePublicReceiptAccessTokens(salesOrderId?: string) {
+  return useQuery({
+    queryKey: posOperationsKeys.receiptTokens(salesOrderId),
+    queryFn: () => getPublicReceiptAccessTokensAction({ salesOrderId }),
+    enabled: !!salesOrderId,
+  })
+}
+
+export function usePublicReceiptSalesSearch(query: string | null) {
+  const normalizedQuery = query?.trim() ?? ""
+
+  return useQuery({
+    queryKey: posOperationsKeys.receiptSales(normalizedQuery),
+    queryFn: () => searchPublicReceiptSalesAction({ query: normalizedQuery || undefined }),
+    enabled: query !== null,
+  })
+}
+
+export function usePublicReceiptTokenManagementCapability() {
+  return useQuery({
+    queryKey: posOperationsKeys.receiptTokenCapability(),
+    queryFn: () => getPublicReceiptTokenManagementCapabilityAction({}),
   })
 }
 
@@ -150,6 +184,19 @@ export function useCommitPOSSale() {
     mutationFn: commitPOSSaleAction,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: posOperationsKeys.all })
+    },
+  })
+}
+
+export function useRevokePublicReceiptAccessToken() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (input: unknown) => revokePublicReceiptAccessTokenAction(input),
+    onSuccess: (result, variables: any) => {
+      if (result.success && variables?.salesOrderId) {
+        queryClient.invalidateQueries({ queryKey: posOperationsKeys.receiptTokens(variables.salesOrderId) })
+      }
     },
   })
 }

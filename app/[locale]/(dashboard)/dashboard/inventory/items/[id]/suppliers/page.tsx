@@ -3,6 +3,7 @@ import getBriefItemById from "@/actions/itemsShow/getBriefItemById"
 import getOrgSuppliers from "@/actions/suppliers/getOrgSuppliers"
 import { Button } from "@/components/ui/button"
 import { TableLoading } from "@/components/ui/data-table"
+import { checkPermission } from "@/config/useAuth"
 import { ArrowLeft } from 'lucide-react'
 import { Link } from "@/i18n/navigation"
 import { Suspense } from "react"
@@ -17,6 +18,8 @@ interface ItemDetailspageProps {
 }
 
 const page = async ({ params }: ItemDetailspageProps) => {
+  await checkPermission("inventory.items.read")
+
   const { id } = await params
 
   const { data: item, success } = await getBriefItemById(id)

@@ -7,6 +7,7 @@ import {
   postJournalEntryAction,
   reverseJournalEntryAction,
 } from "@/actions/accounting/journals.actions"
+import { checkPermission } from "@/config/useAuth"
 import {
   AccountingLinkButton,
   AccountingMessage,
@@ -49,6 +50,8 @@ function resultPath(locale: string, ok: boolean, text: string) {
 }
 
 export default async function AccountingJournalsPage({ params, searchParams }: PageProps) {
+  await checkPermission("accounting.journal.read")
+
   const { locale } = await params
   const resolvedSearchParams = searchParams ? await searchParams : {}
   const [journalsResponse, entriesResponse] = await Promise.all([

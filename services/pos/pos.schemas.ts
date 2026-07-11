@@ -113,15 +113,19 @@ export const voidPOSSaleSchema = z.object({
   notes: z.string().trim().max(500).optional(),
 })
 
-export const salesReceiptLookupSchema = z.object({
+const salesReceiptBaseSchema = z.object({
   salesOrderId: z.string().min(1, "Sales order is required"),
 })
 
-export const getSalesReceiptSchema = salesReceiptLookupSchema.extend({
+export const salesReceiptLookupSchema = salesReceiptBaseSchema.extend({
+  receiptAccessToken: z.string().trim().min(1).max(2048).optional(),
+})
+
+export const getSalesReceiptSchema = salesReceiptBaseSchema.extend({
   organizationId: z.string().min(1, "Organization is required"),
 })
 
-export const sendReceiptSchema = salesReceiptLookupSchema.extend({
+export const sendReceiptSchema = salesReceiptBaseSchema.extend({
   channel: receiptChannelSchema,
   destination: z.string().trim().min(1).optional(),
   locale: receiptLocaleSchema.optional(),
@@ -132,12 +136,40 @@ export const sendReceiptServiceSchema = sendReceiptSchema.extend({
   userId: z.string().min(1, "User is required"),
 })
 
+export const listPublicReceiptAccessTokensActionSchema = z.object({
+  organizationId: z.string().trim().min(1).optional(),
+  salesOrderId: z.string().trim().min(1, "Sales order is required"),
+})
+
+export const searchPublicReceiptSalesActionSchema = z.object({
+  organizationId: z.string().trim().min(1).optional(),
+  query: z.string().trim().max(80).optional(),
+  limit: z.coerce.number().int().min(1).max(25).default(10),
+  recentDays: z.coerce.number().int().min(1).max(120).default(30),
+})
+
+export const revokePublicReceiptAccessTokenActionSchema = z.object({
+  organizationId: z.string().trim().min(1).optional(),
+  tokenId: z.string().trim().min(1, "Receipt access token is required"),
+  salesOrderId: z.string().trim().min(1).optional(),
+  reason: z.string().trim().min(3, "Revocation reason is required").max(500).optional(),
+})
+
 export type SalesReceiptLookupInput = z.infer<typeof salesReceiptLookupSchema>
 export type GetSalesReceiptInput = z.infer<typeof getSalesReceiptSchema>
 export type ReceiptChannel = z.infer<typeof receiptChannelSchema>
 export type ReceiptLocale = z.infer<typeof receiptLocaleSchema>
 export type SendReceiptInput = z.infer<typeof sendReceiptSchema>
 export type SendReceiptServiceInput = z.infer<typeof sendReceiptServiceSchema>
+export type ListPublicReceiptAccessTokensActionInput = z.infer<
+  typeof listPublicReceiptAccessTokensActionSchema
+>
+export type SearchPublicReceiptSalesActionInput = z.infer<
+  typeof searchPublicReceiptSalesActionSchema
+>
+export type RevokePublicReceiptAccessTokenActionInput = z.infer<
+  typeof revokePublicReceiptAccessTokenActionSchema
+>
 export type POSLocationListInput = z.infer<typeof posLocationListSchema>
 export type POSTerminalListInput = z.infer<typeof posTerminalListSchema>
 export type ActivePOSSessionInput = z.infer<typeof activePOSSessionSchema>

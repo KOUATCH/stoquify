@@ -1,3 +1,4 @@
+import { checkPermission } from "@/config/useAuth"
 import { getSession } from "@/lib/auth-server"
 import OrganizationManagementTable from "@/components/settings/OrganizationManagementTable"
 import OrganizationSettingsForm from "@/components/settings/OrganizationSettingsForm"
@@ -16,6 +17,7 @@ export default async function CompanySettingsPage({
 }) {
   const { locale: rawLocale } = await params
   const locale = pickLocale(rawLocale)
+  await checkPermission("COMPANY_READ")
   const session = await getSession()
 
   if (!session?.user) {

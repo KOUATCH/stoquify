@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { getAuthenticatedUser, checkPermission } from "@/config/useAuth"
 import { pickLocale } from "@/i18n/routing"
-import { PERMISSIONS } from "@/lib/permissions"
 
 interface CategoryDetailPageProps {
   params: Promise<{ locale: string; id: string }>
@@ -25,7 +24,7 @@ function formatDate(date: Date | string) {
 }
 
 export default async function CategoryDetailPage({ params }: CategoryDetailPageProps) {
-  await checkPermission(PERMISSIONS.READ_CATEGORIES)
+  await checkPermission("inventory.categories.read")
 
   const { locale: rawLocale, id } = await params
   const locale = pickLocale(rawLocale)

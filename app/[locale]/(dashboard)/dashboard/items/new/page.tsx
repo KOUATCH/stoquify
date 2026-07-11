@@ -1,3 +1,4 @@
+import { checkPermission } from "@/config/useAuth"
 import { localizePath, pickLocale } from "@/i18n/routing"
 import { redirect } from "next/navigation"
 
@@ -10,6 +11,8 @@ export default async function NewItemPage({
 }: {
   params: Promise<{ locale: string }>
 }) {
+  await checkPermission("inventory.items.create")
+
   const { locale: rawLocale } = await params
   const locale = pickLocale(rawLocale)
 

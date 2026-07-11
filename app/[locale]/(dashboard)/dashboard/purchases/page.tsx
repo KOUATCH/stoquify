@@ -2,6 +2,7 @@
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,8 +13,10 @@ import {
 
 import { getOrgPurchaseOrderById as getPurchaseOrder } from "@/actions/purchaseOrderWorkflow/newPOActions"
 import { Separator } from "@/components/ui/separator"
-import { pickLocale } from "@/i18n/routing"
+import { localizePath, pickLocale } from "@/i18n/routing"
 import { formatCurrency } from "@/lib/i18n/formatters"
+import { RbacError, requirePermission } from "@/lib/security/rbac"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import type { PurchaseOrderStatus } from "@/services/purchase-order/purchase-order.schemas"
 import type { Locale } from "@/types/bilingual"
 import { format } from "date-fns"
@@ -186,14 +189,53 @@ interface PurchaseOrderDetailsPageProps {
 
 export default async function PurchaseOrderPage({ params }: PurchaseOrderDetailsPageProps) {
   const { id: orderId } = await params
+  const locale: Locale = pickLocale(await getLocale())
+  let ctx: Awaited<ReturnType<typeof requirePermission>>
+
+  try {
+    ctx = await requirePermission("purchases.orders.read", {
+      resource: "PurchaseOrder",
+      ...(orderId ? { resourceId: orderId } : {}),
+      auditAllowed: true,
+    })
+    await observeModuleAccess({
+      organizationId: ctx.orgId,
+      userId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      moduleSlug: "purchasing",
+      surfaceType: "page",
+      surface: "/dashboard/purchases",
+      accessIntent: "read",
+      mode: "observe",
+    })
+  } catch (error) {
+    if (error instanceof RbacError) {
+      const noActiveOrg = error.code === "NO_ACTIVE_ORG"
+
+      return (
+        <DashboardRouteState
+          kind={noActiveOrg ? "no_active_org" : "permission_denied"}
+          title={noActiveOrg ? "Purchases need an active organization" : "Purchases are not available for this role"}
+          message={
+            noActiveOrg
+              ? "Refresh your session from the dashboard so purchasing can load tenant-scoped purchase order data."
+              : "Viewing purchases requires purchasing read access. The denial was recorded by the RBAC guard."
+          }
+          primaryHref={localizePath(noActiveOrg ? "/dashboard" : "/dashboard/purchase-orders", locale)}
+        />
+      )
+    }
+
+    throw error
+  }
+
   if (!orderId) {
     notFound()
   }
-  const locale: Locale = pickLocale(await getLocale())
 
   let po: PurchaseOrderDetails | null = null
   try {
-    const raw = await getPurchaseOrder(orderId)
+    const raw = await getPurchaseOrder(orderId, ctx.orgId)
     // Support either { data } or raw object shape
     po = ((raw as any)?.data ?? raw ?? null) as PurchaseOrderDetails | null
   } catch (e) {

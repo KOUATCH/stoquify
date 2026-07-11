@@ -1,6 +1,6 @@
 import ReportsClient from "./ReportsClient"
 
-import { getAuthenticatedUser } from "@/config/useAuth"
+import { requirePermission } from "@/lib/security/rbac"
 
 type SearchParams = Record<string, string | string[] | undefined>
 
@@ -14,12 +14,12 @@ export default async function ReportsPage({
 }: {
   searchParams?: Promise<SearchParams>
 }) {
-  const user = await getAuthenticatedUser()
+  const ctx = await requirePermission("reports.read", { resource: "AnalyticsReports" })
   const resolvedSearchParams = searchParams ? await searchParams : {}
 
   return (
     <ReportsClient
-      organizationId={user.organizationId}
+      organizationId={ctx.orgId}
       locationId={firstParam(resolvedSearchParams.locationId) || "all"}
       initialReport={firstParam(resolvedSearchParams.report)}
       initialPeriod={firstParam(resolvedSearchParams.period)}

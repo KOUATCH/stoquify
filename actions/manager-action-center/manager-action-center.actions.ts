@@ -24,7 +24,17 @@ function asManagerActionCenterInput(input: unknown) {
 }
 
 const getManagerActionCenter = protect<unknown, ManagerActionCenterData>(
-  { permission: "dashboard.read", auditResource: "KontavaManagerActionCenter", auditAllowed: true },
+  {
+    permission: "dashboard.read",
+    auditResource: "KontavaManagerActionCenter",
+    auditAllowed: true,
+    module: {
+      moduleSlug: "dashboard",
+      surface: "actions/manager-action-center/manager-action-center.actions.ts",
+      accessIntent: "read",
+      mode: "observe",
+    },
+  },
   async (input, ctx) => {
     const parsed = asManagerActionCenterInput(input)
     return getManagerActionCenterData({

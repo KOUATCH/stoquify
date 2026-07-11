@@ -1,7 +1,7 @@
 import getOrgRoles from "@/actions/roles/getOrgRoles";
 import DataTable from "@/components/DataTableComponents/DataTable";
 import TableHeader from "@/components/dashboard/Tables/TableHeader";
-import { getAuthenticatedUser } from "@/config/useAuth";
+import { checkPermission, getAuthenticatedUser } from "@/config/useAuth";
 import { localizePath, pickLocale } from "@/i18n/routing";
 import { columns } from "./columns";
 
@@ -12,6 +12,7 @@ const page = async ({
 }) => {
   const { locale: rawLocale } = await params;
   const locale = pickLocale(rawLocale);
+  await checkPermission("READ_ROLES");
 
   const user = await getAuthenticatedUser()
   const organizationId = user?.organizationId ?? ""

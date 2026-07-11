@@ -2,6 +2,7 @@ import { FileSearch } from "lucide-react"
 
 import { getAccountantPortalAction } from "@/actions/accounting/data-trust.actions"
 import { AccountantPortal } from "@/components/accounting/AccountantPortal"
+import { checkPermission } from "@/config/useAuth"
 import type { Locale } from "@/types/bilingual"
 import { AccountingPageShell } from "../_components/accounting-ui"
 
@@ -10,6 +11,8 @@ type AccountantPortalPageProps = {
 }
 
 export default async function AccountantPortalPage({ params }: AccountantPortalPageProps) {
+  await checkPermission("accounting.audit.read")
+
   const portalResponse = await getAccountantPortalAction({ limit: 12 })
   const portal = portalResponse.success ? portalResponse.data : null
   const { locale = "en" } = await params

@@ -6,7 +6,7 @@ import { getOrgInvites } from "@/actions/users/getOrgInvites"
 import getOrgUsers from "@/actions/users/getOrgUsers"
 import UserInvitationForm from "@/components/Forms/users/userInvitationForm"
 import { Button } from "@/components/ui/button"
-import { getAuthenticatedUser } from "@/config/useAuth"
+import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
 import { pickLocale } from "@/i18n/routing"
 import UsersPageClient from "./UsersPageClient"
 import type { UserTableRow } from "./columns"
@@ -18,6 +18,7 @@ type UsersPageProps = {
 export default async function UsersPage({ params }: UsersPageProps) {
   const { locale: rawLocale } = await params
   const locale = pickLocale(rawLocale)
+  await checkPermission("READ_USERS")
   const user = await getAuthenticatedUser()
   const organizationId = user?.organizationId ?? ""
 

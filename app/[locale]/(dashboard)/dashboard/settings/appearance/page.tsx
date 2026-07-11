@@ -1,3 +1,4 @@
+import { checkPermission } from "@/config/useAuth"
 import { pickLocale } from "@/i18n/routing"
 import AppearanceSettingsClient from "./AppearanceSettingsClient"
 
@@ -13,6 +14,7 @@ export default async function AppearanceSettingsPage({
 }) {
   const { locale: rawLocale } = await params
   const locale = pickLocale(rawLocale)
+  await checkPermission("DASHBOARD_READ")
 
   return (
     <div className="dashboard-landing-theme min-h-screen overflow-x-hidden">

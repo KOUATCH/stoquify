@@ -1045,6 +1045,33 @@
     "receipt": {
       "options": "Receipt options",
       "destinationPlaceholder": "Receipt destination: email, phone, or WhatsApp number",
+      "tokens": {
+        "title": "Public receipt access",
+        "loading": "Checking receipt links",
+        "empty": "No public receipt link recorded",
+        "active": "Active",
+        "revoked": "Revoked",
+        "expired": "Expired",
+        "accessed": "{count} accesses",
+        "expires": "Expires {date}",
+        "revoke": "Revoke",
+        "historyTitle": "Receipt access history",
+        "historySaleLabel": "Order number or recent sales",
+        "historySalePlaceholder": "Order number, or leave blank for recent",
+        "historyLookup": "Search",
+        "historySelectedSale": "Selected sale {salesOrderId}",
+        "historyNoSale": "Select a completed sale",
+        "historyDenied": "Access unavailable",
+        "historyCapabilityLoading": "Checking receipt management access",
+        "historyCapabilityDenied": "Receipt access management requires POS receipt revoke permission",
+        "historyCapabilityUnavailable": "Receipt access management is temporarily unavailable",
+        "historyLoadingSales": "Searching completed sales",
+        "historyEmptySales": "No completed sales found",
+        "historySelectSale": "Select sale",
+        "historyCompleted": "Completed {date}",
+        "historyTotal": "Total {amount}",
+        "historyTokenSummary": "{count} links / {active} active"
+      },
       "channels": {
         "NONE": "No receipt",
         "PRINT": "Print",
@@ -1098,7 +1125,10 @@
       "customerPosted": "Customer account was updated",
       "walkInPosted": "Walk-in customer was recorded",
       "receiptTitle": "Receipt delivery",
-      "receiptMessage": "{channel} receipt status: {status}."
+      "receiptMessage": "{channel} receipt status: {status}.",
+      "receiptRevokeSuccessTitle": "Receipt link revoked",
+      "receiptRevokeSuccessMessage": "The public receipt link was closed for this sale.",
+      "receiptRevokeErrorTitle": "Receipt link revoke failed"
     },
     "timeline": {
       "saleCreated": "Sale created",

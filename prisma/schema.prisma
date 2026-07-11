@@ -300,6 +300,7 @@ model Organization {
   businessEvents                          BusinessEvent[]
   businessEventOutbox                     BusinessEventOutbox[]
   auditLogs                               AuditLog[]
+  publicReceiptAccessTokens               PublicReceiptAccessToken[]
   posOfflineDevices                       POSOfflineDevice[]
   posOfflineSyncBatches                   POSOfflineSyncBatch[]
   posOfflineEvents                        POSOfflineEvent[]
@@ -2499,8 +2500,9 @@ model SalesOrder {
   sessionId String?
   session   POSSession? @relation(fields: [sessionId], references: [id])
 
-  lines    SalesOrderLine[]
-  payments Payment[]
+  lines                     SalesOrderLine[]
+  payments                  Payment[]
+  publicReceiptAccessTokens PublicReceiptAccessToken[]
 
   deletedAt DateTime?
   createdAt DateTime  @default(now())
@@ -2525,6 +2527,47 @@ enum SalesOrderStatus {
   COMPLETED
   CANCELLED
   RETURNED
+}
+
+model PublicReceiptAccessToken {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  salesOrderId String
+  salesOrder   SalesOrder @relation(fields: [salesOrderId], references: [id], onDelete: Cascade)
+
+  tokenHash String
+  jtiHash   String
+  status    PublicReceiptAccessTokenStatus @default(ACTIVE)
+
+  issuedById String?
+  issuedAt   DateTime @default(now())
+  expiresAt  DateTime
+
+  revokedById      String?
+  revokedAt        DateTime?
+  revocationReason String?
+
+  lastAccessedAt DateTime?
+  accessCount    Int      @default(0)
+  metadata       Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([organizationId, tokenHash])
+  @@unique([organizationId, jtiHash])
+  @@index([organizationId, salesOrderId, status])
+  @@index([organizationId, status, expiresAt])
+  @@map("public_receipt_access_tokens")
+}
+
+enum PublicReceiptAccessTokenStatus {
+  ACTIVE
+  REVOKED
+  EXPIRED
 }
 
 model SalesOrderLine {

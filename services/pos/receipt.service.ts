@@ -15,6 +15,10 @@ import {
   type ReceiptLocale,
   type SendReceiptServiceInput,
 } from "./pos.schemas"
+import {
+  assertPublicReceiptAccessToken,
+  issuePublicReceiptAccessToken,
+} from "./public-receipt-token-registry.service"
 
 export type ReceiptDeliveryStatus = "PENDING" | "SENT" | "FAILED" | "SKIPPED"
 
@@ -52,8 +56,8 @@ export type SalesReceiptPayload = {
     id: string
     orderNumber: string
     customerName: string
-    customerEmail: string
-    customerPhone: string
+    customerEmail?: string
+    customerPhone?: string
     total: number
     subtotal: number
     tax: number
@@ -169,9 +173,15 @@ function displayName(firstName?: string | null, lastName?: string | null, fallba
   return [firstName, lastName].filter(Boolean).join(" ") || fallback || "Cashier"
 }
 
-function digitalReceiptUrl(salesOrderId: string) {
+function digitalReceiptUrl(salesOrderId: string, receiptToken?: string | null) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "")
-  return baseUrl ? `${baseUrl}/digital-receipt/${salesOrderId}` : `/digital-receipt/${salesOrderId}`
+  const encodedSalesOrderId = encodeURIComponent(salesOrderId)
+  if (!receiptToken) return ""
+
+  const tokenQuery = `?token=${encodeURIComponent(receiptToken)}`
+  return baseUrl
+    ? `${baseUrl}/digital-receipt/${encodedSalesOrderId}${tokenQuery}`
+    : `/digital-receipt/${encodedSalesOrderId}${tokenQuery}`
 }
 
 function normalizePhoneNumber(raw?: string | null) {
@@ -319,7 +329,27 @@ function cleanJson(input: Record<string, unknown>): Prisma.JsonObject {
   return Object.fromEntries(Object.entries(input).filter(([, value]) => value !== undefined)) as Prisma.JsonObject
 }
 
-async function findSalesReceipt(salesOrderId: string, organizationId?: string): Promise<SalesReceiptPayload> {
+function optionalStringField(source: unknown, key: string) {
+  if (!isRecord(source)) return null
+  const value = source[key]
+  return typeof value === "string" ? value : null
+}
+
+type FindSalesReceiptOptions = {
+  includeCustomerContact?: boolean
+  receiptAccessToken?: string | null
+  issuePublicReceiptToken?: boolean
+}
+
+async function findSalesReceipt(
+  salesOrderId: string,
+  organizationId?: string,
+  options: FindSalesReceiptOptions = {},
+): Promise<SalesReceiptPayload> {
+  const includeCustomerContact = options.includeCustomerContact !== false
+  const privatePersonSelect = includeCustomerContact ? { email: true } : {}
+  const privateCustomerSelect = includeCustomerContact ? { email: true, phone: true, currentBalance: true } : {}
+
   const sale = await db.salesOrder.findFirst({
     where: {
       id: salesOrderId,
@@ -363,7 +393,7 @@ async function findSalesReceipt(salesOrderId: string, organizationId?: string): 
             select: {
               firstName: true,
               lastName: true,
-              email: true,
+              ...privatePersonSelect,
             },
           },
         },
@@ -372,17 +402,15 @@ async function findSalesReceipt(salesOrderId: string, organizationId?: string): 
         select: {
           firstName: true,
           lastName: true,
-          email: true,
+          ...privatePersonSelect,
         },
       },
       customer: {
         select: {
           id: true,
           name: true,
-          email: true,
-          phone: true,
           preferredLocale: true,
-          currentBalance: true,
+          ...privateCustomerSelect,
         },
       },
       lines: {
@@ -421,19 +449,40 @@ async function findSalesReceipt(salesOrderId: string, organizationId?: string): 
 
   const locale = (sale.customer?.preferredLocale || sale.organization.defaultLocale || "EN") as ReceiptLocale
   const cashier = sale.session?.user
-    ? displayName(sale.session.user.firstName, sale.session.user.lastName, sale.session.user.email)
-    : displayName(sale.createdBy?.firstName, sale.createdBy?.lastName, sale.createdBy?.email)
+    ? displayName(sale.session.user.firstName, sale.session.user.lastName, optionalStringField(sale.session.user, "email"))
+    : displayName(sale.createdBy?.firstName, sale.createdBy?.lastName, optionalStringField(sale.createdBy, "email"))
   const primaryPayment = sale.payments[0]
   const firstTaxRate = sale.lines.find((line) => moneyToNumber(line.taxRate) > 0)?.taxRate
   const certification = await getReceiptCertificationStatus(sale.organization.id, sale.id)
+  let receiptAccessToken = options.receiptAccessToken ?? null
+
+  if (!receiptAccessToken && options.issuePublicReceiptToken !== false) {
+    try {
+      const issuedToken = await issuePublicReceiptAccessToken({
+        organizationId: sale.organization.id,
+        salesOrderId: sale.id,
+      })
+      receiptAccessToken = issuedToken.token
+    } catch (error) {
+      if (error instanceof BusinessRuleError) {
+        receiptAccessToken = null
+      } else {
+        throw new BusinessRuleError("Receipt access token could not be issued safely.")
+      }
+    }
+  }
 
   return {
     receipt: {
       id: sale.id,
       orderNumber: sale.orderNumber,
       customerName: sale.customer.name,
-      customerEmail: sale.customer.email || "",
-      customerPhone: sale.customer.phone || "",
+      ...(includeCustomerContact
+        ? {
+            customerEmail: optionalStringField(sale.customer, "email") || "",
+            customerPhone: optionalStringField(sale.customer, "phone") || "",
+          }
+        : {}),
       total: moneyToNumber(sale.total),
       subtotal: moneyToNumber(sale.subtotal),
       tax: moneyToNumber(sale.taxAmount),
@@ -484,7 +533,7 @@ async function findSalesReceipt(salesOrderId: string, organizationId?: string): 
       phone: sale.location.phone || "",
     },
     generatedAt: new Date().toISOString(),
-    digitalReceiptUrl: digitalReceiptUrl(sale.id),
+    digitalReceiptUrl: digitalReceiptUrl(sale.id, receiptAccessToken),
   }
 }
 
@@ -521,16 +570,17 @@ export async function getSalesReceipt(rawInput: unknown): Promise<SalesReceiptPa
 
 export async function getPublicSalesReceipt(rawInput: unknown): Promise<SalesReceiptPayload> {
   const input = salesReceiptLookupSchema.parse(rawInput)
-  const receipt = await findSalesReceipt(input.salesOrderId)
 
-  return {
-    ...receipt,
-    receipt: {
-      ...receipt.receipt,
-      customerEmail: "",
-      customerPhone: "",
-    },
-  }
+  const access = await assertPublicReceiptAccessToken({
+    token: input.receiptAccessToken,
+    salesOrderId: input.salesOrderId,
+  })
+
+  return findSalesReceipt(input.salesOrderId, access.organizationId, {
+    includeCustomerContact: false,
+    receiptAccessToken: input.receiptAccessToken,
+    issuePublicReceiptToken: false,
+  })
 }
 
 export async function sendReceipt(
