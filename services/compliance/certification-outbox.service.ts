@@ -58,6 +58,12 @@ export async function enqueueComplianceSubmission(
 ) {
   const parsed = enqueueComplianceSubmissionSchema.parse(input)
 
+  if (parsed.environment === ComplianceAdapterEnvironment.PRODUCTION) {
+    throw new BusinessRuleError(
+      "Production compliance submissions are blocked until an official adapter is reviewed and registered.",
+    )
+  }
+
   const run = async (tx: Prisma.TransactionClient) => {
     const existing = await tx.complianceSubmission.findFirst({
       where: {

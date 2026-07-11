@@ -1,6 +1,10 @@
 import { AuthRequiredError, ForbiddenError } from "@/services/_shared/action-errors"
-import { requireApiModuleAccess, requireApiSessionForCurrentOrg, requireAppPermission } from "@/lib/security/server-authz"
-import { requireUploadAuth } from "../core"
+import {
+  requireAnyAppPermission,
+  requireApiModuleAccess,
+  requireApiSessionForCurrentOrg,
+} from "@/lib/security/server-authz"
+import { ourFileRouter, requireUploadAuth } from "../core"
 
 jest.mock("uploadthing/next", () => {
   const mockRouteBuilder: any = {}
@@ -13,20 +17,20 @@ jest.mock("uploadthing/next", () => {
 })
 
 jest.mock("@/lib/security/server-authz", () => ({
+  requireAnyAppPermission: jest.fn(),
   requireApiModuleAccess: jest.fn(),
   requireApiSessionForCurrentOrg: jest.fn(),
-  requireAppPermission: jest.fn(),
 }))
 
+const mockRequireAnyAppPermission = requireAnyAppPermission as jest.Mock
 const mockRequireApiModuleAccess = requireApiModuleAccess as jest.Mock
 const mockRequireApiSessionForCurrentOrg = requireApiSessionForCurrentOrg as jest.Mock
-const mockRequireAppPermission = requireAppPermission as jest.Mock
 
 describe("requireUploadAuth", () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockRequireApiModuleAccess.mockResolvedValue({ allowed: true, error: null, status: 200 })
-    mockRequireAppPermission.mockReturnValue(undefined)
+    mockRequireAnyAppPermission.mockReturnValue(undefined)
   })
 
   it("throws AuthRequiredError when RBAC context is missing", async () => {
@@ -39,11 +43,11 @@ describe("requireUploadAuth", () => {
 
     await expect(requireUploadAuth()).rejects.toBeInstanceOf(AuthRequiredError)
     expect(mockRequireApiModuleAccess).not.toHaveBeenCalled()
-    expect(mockRequireAppPermission).not.toHaveBeenCalled()
+    expect(mockRequireAnyAppPermission).not.toHaveBeenCalled()
   })
 
-  it("requires dashboard module access before returning upload metadata", async () => {
-    const user = { id: "user-1", permissions: ["dashboard.read"], roles: [] }
+  it("requires inventory module access before returning upload metadata", async () => {
+    const user = { id: "user-1", permissions: ["inventory.items.create"], roles: [] }
     mockRequireApiSessionForCurrentOrg.mockResolvedValue({
       error: null,
       status: 200,
@@ -56,33 +60,36 @@ describe("requireUploadAuth", () => {
     expect(mockRequireApiModuleAccess).toHaveBeenCalledWith({
       organizationId: "org-1",
       user,
-      moduleSlug: "dashboard",
+      moduleSlug: "inventory",
       surface: "POST /api/uploadthing",
       surfaceType: "api",
       accessIntent: "write",
       audit: true,
     })
-    expect(mockRequireAppPermission).not.toHaveBeenCalled()
+    expect(mockRequireAnyAppPermission).not.toHaveBeenCalled()
   })
 
-  it("requires dashboard.read before returning upload metadata", async () => {
-    const user = { id: "user-1", permissions: [], roles: [] }
+  it("requires inventory item create or update permission before returning upload metadata", async () => {
+    const user = { id: "user-1", permissions: ["dashboard.read"], roles: [] }
     mockRequireApiSessionForCurrentOrg.mockResolvedValue({
       error: null,
       status: 200,
       session: { user },
       organizationId: "org-1",
     })
-    mockRequireAppPermission.mockImplementation(() => {
+    mockRequireAnyAppPermission.mockImplementation(() => {
       throw new Error("Forbidden")
     })
 
     await expect(requireUploadAuth()).rejects.toBeInstanceOf(ForbiddenError)
-    expect(mockRequireAppPermission).toHaveBeenCalledWith(user, "dashboard.read")
+    expect(mockRequireAnyAppPermission).toHaveBeenCalledWith(user, [
+      "inventory.items.create",
+      "inventory.items.update",
+    ])
   })
 
   it("returns server-resolved tenant metadata after auth, module, and permission checks pass", async () => {
-    const user = { id: "user-1", permissions: ["dashboard.read"], roles: [] }
+    const user = { id: "user-1", permissions: ["inventory.items.update"], roles: [] }
     mockRequireApiSessionForCurrentOrg.mockResolvedValue({
       error: null,
       status: 200,
@@ -96,9 +103,16 @@ describe("requireUploadAuth", () => {
     })
     expect(mockRequireApiModuleAccess).toHaveBeenCalledWith(expect.objectContaining({
       organizationId: "org-1",
-      moduleSlug: "dashboard",
+      moduleSlug: "inventory",
       accessIntent: "write",
     }))
-    expect(mockRequireAppPermission).toHaveBeenCalledWith(user, "dashboard.read")
+    expect(mockRequireAnyAppPermission).toHaveBeenCalledWith(user, [
+      "inventory.items.create",
+      "inventory.items.update",
+    ])
+  })
+
+  it("exposes only the repository-used item image upload endpoint", () => {
+    expect(Object.keys(ourFileRouter)).toEqual(["itemImageUpload"])
   })
 })

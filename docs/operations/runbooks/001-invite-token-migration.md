@@ -86,11 +86,11 @@ For each PENDING invite, either:
 Code is already shipped via the merged commit. On Vercel:
 
 ```bash
-# vercel-build runs prisma migrate deploy automatically (ticket #022)
+# npm run build uses the guarded production migration runner
 git push origin main  # triggers Vercel production deploy
 ```
 
-Watch the deploy logs — `prisma migrate deploy` should report applying the new migration.
+Watch the deploy logs: the migration safety gate must pass before `prisma migrate deploy` applies the new migration.
 
 ## Step 5 — Verify in production
 

@@ -95,6 +95,8 @@ function inferModuleSlug(surface, source, catalog) {
   const matchedPrefix = routePrefixes.find((entry) => normalizedSurface.startsWith(entry.prefix))
   if (matchedPrefix) return matchedPrefix.slug
 
+  if (normalizedSurface === "modules/module-control.actions.ts") return "settings"
+
   const fallback = [
     ["inventory", "inventory"],
     ["pos", "pos"],
@@ -221,7 +223,33 @@ function detectGuard(source) {
   return "none"
 }
 
+function inferModuleApplicability(file, surface, source) {
+  const normalizedFile = (file || "").replace(/\\/g, "/")
+  const normalizedSurface = (surface || "").replace(/\\/g, "/")
+
+  if (normalizedFile === "actions/roles/role-utils.ts" || normalizedSurface === "roles/role-utils.ts") {
+    return "not applicable: internal display helper"
+  }
+
+  if (/^actions\/users\/(createInvitedUser|createUser|sendResetLink|verifyOtp)\.ts$/.test(normalizedFile)) {
+    if (source.includes("acceptInvitationWorkflow")) return "not applicable: token-bound invitation acceptance"
+    if (source.includes("createOrganizationOwner")) return "not applicable: public organization onboarding"
+    if (source.includes("requestPasswordResetLinkWorkflow")) return "not applicable: public password reset request"
+    if (source.includes("verifyEmailOtpWorkflow")) return "not applicable: public email verification"
+  }
+
+  if (normalizedFile === "services/modules/module-control-contracts.ts") {
+    return "not applicable: internal module governance contract"
+  }
+
+  return "required"
+}
+
 function classify(record, catalog) {
+  if (record.moduleApplicability && record.moduleApplicability !== "required") {
+    return record.moduleApplicability
+  }
+
   const classes = []
   if (!record.moduleSlug) classes.push("unmapped")
   else if (!catalog.has(record.moduleSlug)) classes.push("unknown slug")
@@ -244,6 +272,7 @@ function createRecord(input, catalog) {
     file: input.file,
     surface: input.surface,
     surfaceType: input.surfaceType,
+    moduleApplicability: input.moduleApplicability || inferModuleApplicability(input.file, input.surface, input.source || ""),
     moduleSlug,
     permission: input.permission || extractPermission(input.source || ""),
     guard: input.guard || detectGuard(input.source || ""),

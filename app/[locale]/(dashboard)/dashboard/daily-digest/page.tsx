@@ -25,7 +25,7 @@ export default async function DailyHabitDigestPage({
   let ctx: Awaited<ReturnType<typeof requireAnyPermission>>
 
   try {
-    ctx = await requireAnyPermission(["dashboard.read", "finance.read", "accounting.close.read", "inventory.read"], {
+    ctx = await requireAnyPermission(["dashboard.read", "finance.read", "accounting.close.read", "inventory.read", "analytics.read"], {
       resource: "KontavaDailyHabitDigest",
     })
   } catch (error) {
@@ -52,7 +52,7 @@ export default async function DailyHabitDigestPage({
   const data = await getDailyHabitDigestData({
     organizationId: ctx.orgId,
     actorPermissions: ctx.permissions,
-    currency: "XAF",
+    actorRoleCodes: ctx.roles.map((role) => role.code),
   })
 
   return <DailyHabitDigestDashboard data={data} locale={resolvedLocale} />

@@ -47,7 +47,7 @@ export function ReportTrustBanner({ provenance }: ReportTrustBannerProps) {
             {" "}from {provenance.rowCount.toLocaleString()} source rows. Generated {formatDateTime(provenance.generatedAt)}.
           </p>
           <p className={`text-xs ${analyticsMutedTextClass}`}>
-            Sources: {provenance.sourceTables.join(", ")}. Filter hash: {provenance.filterHash.slice(0, 12)}.
+            Currency: {provenance.currency}. Sources: {provenance.sourceTables.join(", ")}. Filter hash: {provenance.filterHash.slice(0, 12)}.
           </p>
         </div>
         {provenance.knownBlockers.length ? (

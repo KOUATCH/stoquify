@@ -135,3 +135,9 @@ export function requireAppPermission(user: PermissionUser, permission: string) {
     throw new Error("Forbidden")
   }
 }
+
+export function requireAnyAppPermission(user: PermissionUser, permissions: readonly string[]) {
+  if (!permissions.some((permission) => hasAppPermission(user, permission))) {
+    throw new Error("Forbidden")
+  }
+}

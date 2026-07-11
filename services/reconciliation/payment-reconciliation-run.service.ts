@@ -8,6 +8,7 @@ import {
   PaymentTransactionState,
   ProviderEventStatus,
   ReconciliationRunStatus,
+  SettlementAccountApprovalStatus,
   StatementLineStatus,
   SuspenseStatus,
   SuspenseType,
@@ -19,6 +20,7 @@ import { logger } from "@/lib/logger"
 import { db } from "@/prisma/db"
 import { BusinessRuleError, ConflictError, NotFoundError } from "@/services/_shared/action-errors"
 
+import { assertProviderAccountReconciliationReady } from "./payment-reconciliation-evidence.service"
 import { publishPaymentReconciliationNotification } from "./payment-reconciliation-notifications"
 
 export type RunPaymentReconciliationInput = {
@@ -263,10 +265,28 @@ export async function runPaymentReconciliation(
     async (tx) => {
       const providerAccount = await tx.providerAccount.findFirst({
         where: { id: input.providerAccountId, organizationId: input.organizationId },
-        select: { id: true, paymentRailId: true, currencyCode: true },
+        select: {
+          id: true,
+          paymentRailId: true,
+          currencyCode: true,
+          status: true,
+          settlementLedgerAccountId: true,
+          suspenseLedgerAccountId: true,
+          paymentRail: { select: { id: true, isActive: true } },
+          settlementAccounts: {
+            where: {
+              approvalStatus: SettlementAccountApprovalStatus.APPROVED,
+              effectiveFrom: { lte: now },
+              OR: [{ effectiveTo: null }, { effectiveTo: { gte: now } }],
+            },
+            select: { id: true },
+            take: 1,
+          },
+        },
       })
 
       if (!providerAccount) throw new NotFoundError("Provider account not found")
+      assertProviderAccountReconciliationReady(providerAccount)
 
       const existingRun = await tx.reconciliationRun.findFirst({
         where: {

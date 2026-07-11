@@ -1,13 +1,25 @@
 "use server";
 
+import { requirePermission } from "@/lib/security/rbac";
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service";
 import { getOrganizationRoleById } from "@/services/roles/role.service";
 import { safeSuccessActionErrorResult } from "../_shared/safe-action-responses";
-import { requireRoleAction, ROLE_ACTION_PERMISSIONS } from "./role-auth";
-
 
 export async function getRoleById(id: string) {
   try {
-    const ctx = await requireRoleAction(ROLE_ACTION_PERMISSIONS.read)
+    const ctx = await requirePermission("roles.read", { resource: "Role", resourceId: id });
+
+    await observeModuleAccess({
+      moduleSlug: "settings",
+      organizationId: ctx.orgId,
+      userId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      surfaceType: "action",
+      surface: "actions/roles/getRoleById.ts",
+      accessIntent: "read",
+      mode: "observe",
+    });
+
     const role = await getOrganizationRoleById({ ctx, id });
     return { success: true as const, data: role, error: null };
   } catch (error) {

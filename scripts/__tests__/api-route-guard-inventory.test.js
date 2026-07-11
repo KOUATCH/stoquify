@@ -80,6 +80,7 @@ describe("api route guard inventory", () => {
     expect(report.summary.byModuleApplicability.required).toBe(2)
     expect(receipt.issues).toContain("receipt_lookup_id_based_no_signed_expiry_token")
     expect(securityTxt.issues).toContain("stale_security_txt_expires")
+    expect(securityTxt.issues).not.toContain("security_txt_contact_not_uri")
     expect(markdown).toContain("Report mode")
     expect(markdown).toContain("Module Access")
     expect(markdown).toContain("Status: blocked")
@@ -415,7 +416,7 @@ describe("api route guard inventory", () => {
     expect(report.summary.byModuleApplicability.required).toBe(1)
   })
 
-  it("classifies tenant uploaded assets as dashboard-owned API surfaces", () => {
+  it("classifies tenant asset reads and inventory item media writes separately", () => {
     const root = makeTempRepo()
     writeFile(
       root,
@@ -444,18 +445,18 @@ describe("api route guard inventory", () => {
       root,
       "app/api/uploadthing/core.ts",
       `
-      import { requireApiModuleAccess, requireApiSessionForCurrentOrg, requireAppPermission } from "@/lib/security/server-authz"
+      import { requireAnyAppPermission, requireApiModuleAccess, requireApiSessionForCurrentOrg } from "@/lib/security/server-authz"
       export async function requireUploadAuth() {
         const authz = await requireApiSessionForCurrentOrg()
         await requireApiModuleAccess({
           organizationId: authz.organizationId,
           user: authz.session.user,
-          moduleSlug: "dashboard",
+          moduleSlug: "inventory",
           surfaceType: "api",
           accessIntent: "write",
           audit: true,
         })
-        requireAppPermission(authz.session.user, "dashboard.read")
+        requireAnyAppPermission(authz.session.user, ["inventory.items.create", "inventory.items.update"])
       }
       `,
     )
@@ -486,11 +487,11 @@ describe("api route guard inventory", () => {
     expect(uploadCore).toMatchObject({
       classification: "tenant-scoped",
       guard: "requireApiSessionForCurrentOrg",
-      permission: "dashboard.read",
+      permission: "inventory.items.create | inventory.items.update",
       moduleAccess: "enforced",
-      moduleSlug: "dashboard",
+      moduleSlug: "inventory",
       moduleAccessIntent: "write",
-      expectedModuleSlug: "dashboard",
+      expectedModuleSlug: "inventory",
       moduleApplicability: "required",
     })
     expect(uploadRoute).toMatchObject({
@@ -526,6 +527,46 @@ describe("api route guard inventory", () => {
     const report = buildApiRouteGuardInventory(root, { mode: "report", now: "2026-07-02T00:00:00.000Z" })
 
     expect(report.summary.issues).toEqual([])
+  })
+  it("includes canonical well-known security.txt as an intentional public route", () => {
+    const root = makeTempRepo()
+    writeFile(
+      root,
+      "app/api/security-txt/route.ts",
+      "export function GET() { return new Response(`Contact: mailto:security@example.test\nExpires: 2027-06-30T23:59:59.000Z`) }",
+    )
+    writeFile(
+      root,
+      "app/.well-known/security.txt/route.ts",
+      `import { GET as getSecurityTxt } from "../../api/security-txt/route"
+      export async function GET() { return getSecurityTxt() }`,
+    )
+
+    const report = buildApiRouteGuardInventory(root, { mode: "report", now: "2026-07-02T00:00:00.000Z" })
+    const canonical = report.records.find((record) => record.file === "app/.well-known/security.txt/route.ts")
+
+    expect(canonical).toMatchObject({
+      classification: "public-intentional",
+      methods: ["GET"],
+      moduleApplicability: "not_applicable_public",
+      returnedDataClass: "security contact policy",
+      issues: [],
+    })
+    expect(report.summary.issueCount).toBe(0)
+  })
+  it("flags security.txt contact fields that are not disclosure URIs", () => {
+    const root = makeTempRepo()
+    writeFile(
+      root,
+      "app/api/security-txt/route.ts",
+      "export function GET() { return new Response(`Contact: security@example.test\nExpires: 2027-06-30T23:59:59.000Z`) }",
+    )
+
+    const report = buildApiRouteGuardInventory(root, { mode: "report", now: "2026-07-02T00:00:00.000Z" })
+    const securityTxt = report.records.find((record) => record.file.includes("security-txt"))
+
+    expect(securityTxt.issues).toContain("security_txt_contact_not_uri")
+    expect(report.summary.issueCount).toBe(1)
   })
   it("parses report arguments", () => {
     expect(parseArgs(["node", "script", "--root", "tmp", "--mode", "fail", "--out", "api.md", "--json-out", "api.json"])).toEqual({

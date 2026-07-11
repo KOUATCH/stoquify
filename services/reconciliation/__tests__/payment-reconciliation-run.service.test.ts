@@ -4,6 +4,7 @@ import {
   PaymentDirection,
   PaymentExceptionType,
   PaymentTransactionState,
+  ProviderAccountStatus,
   ProviderEventStatus,
   ReconciliationRunStatus,
   StatementLineDirection,
@@ -59,6 +60,11 @@ describe("durable payment reconciliation run service", () => {
       id: "provider-account-1",
       paymentRailId: "rail-1",
       currencyCode: "XAF",
+      status: ProviderAccountStatus.ACTIVE,
+      settlementLedgerAccountId: "account-512",
+      suspenseLedgerAccountId: "account-471",
+      paymentRail: { id: "rail-1", isActive: true },
+      settlementAccounts: [{ id: "settlement-1" }],
     })
     mockedDb.reconciliationRun.findFirst.mockResolvedValue(null)
     mockedDb.reconciliationRun.create.mockResolvedValue({ id: "run-1" })
@@ -170,6 +176,27 @@ describe("durable payment reconciliation run service", () => {
     expect(mockedDb.matchRecord.create).not.toHaveBeenCalled()
   })
 
+  it("blocks reconciliation before row creation when the provider account is not ready", async () => {
+    mockedDb.providerAccount.findFirst.mockResolvedValue({
+      id: "provider-account-1",
+      paymentRailId: "rail-1",
+      currencyCode: "XAF",
+      status: ProviderAccountStatus.SUSPENDED,
+      settlementLedgerAccountId: "account-512",
+      suspenseLedgerAccountId: "account-471",
+      paymentRail: { id: "rail-1", isActive: true },
+      settlementAccounts: [{ id: "settlement-1" }],
+    })
+
+    await expect(runPaymentReconciliation({
+      organizationId: "org-1",
+      providerAccountId: "provider-account-1",
+      businessDate: new Date("2026-06-14T09:00:00Z"),
+    })).rejects.toThrow(/active provider account/i)
+
+    expect(mockedDb.reconciliationRun.findFirst).not.toHaveBeenCalled()
+    expect(mockedDb.reconciliationRun.create).not.toHaveBeenCalled()
+  })
   it("blocks concurrent same-day reconciliation when a run is already in progress", async () => {
     mockedDb.reconciliationRun.findFirst.mockResolvedValue({
       id: "running-run-1",

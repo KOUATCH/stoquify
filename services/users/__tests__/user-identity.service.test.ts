@@ -3,6 +3,7 @@ jest.mock("server-only", () => ({}))
 import { hashPolicyCompliantPassword, syncUserCredentialPassword, upsertCredentialAccount, verifyUserCredentialPassword } from "@/lib/security/auth-credentials"
 import { logSecurityEvent } from "@/lib/security/audit-log"
 import { db } from "@/prisma/db"
+import { enforcePublicIdentityAbuseLimits } from "@/services/security/public-identity-abuse.service"
 import {
   acceptInvitationWorkflow,
   changeUserPasswordWorkflow,
@@ -72,6 +73,10 @@ jest.mock("@/lib/security/audit-log", () => ({
   logSecurityEvent: jest.fn(),
 }))
 
+jest.mock("@/services/security/public-identity-abuse.service", () => ({
+  enforcePublicIdentityAbuseLimits: jest.fn(),
+}))
+
 jest.mock("@/lib/security/server-authz", () => ({
   safeUserSelect: {
     id: true,
@@ -100,6 +105,7 @@ const mockVerifyUserCredentialPassword = verifyUserCredentialPassword as jest.Mo
 const mockSyncUserCredentialPassword = syncUserCredentialPassword as jest.Mock
 const mockUpsertCredentialAccount = upsertCredentialAccount as jest.Mock
 const mockLogSecurityEvent = logSecurityEvent as jest.Mock
+const mockEnforcePublicIdentityAbuseLimits = enforcePublicIdentityAbuseLimits as jest.Mock
 
 beforeEach(() => {
   mockDb.$transaction.mockReset()
@@ -111,6 +117,12 @@ beforeEach(() => {
   mockSyncUserCredentialPassword.mockReset()
   mockUpsertCredentialAccount.mockReset()
   mockLogSecurityEvent.mockReset()
+  mockEnforcePublicIdentityAbuseLimits.mockReset()
+  mockEnforcePublicIdentityAbuseLimits.mockResolvedValue({
+    allowed: true,
+    operation: "registration",
+    retryAfterSeconds: 0,
+  })
   mockHashPolicyCompliantPassword.mockResolvedValue({ ok: true, hash: "hash-1" })
   mockVerifyUserCredentialPassword.mockResolvedValue(true)
 })
@@ -469,5 +481,101 @@ describe("user identity service password and auth edge cases", () => {
         resource: "user@example.com",
       }),
     )
+  })
+  it("blocks registration before password hashing or tenant creation when throttled", async () => {
+    mockEnforcePublicIdentityAbuseLimits.mockResolvedValue({
+      allowed: false,
+      operation: "registration",
+      retryAfterSeconds: 3600,
+    })
+
+    const result = await createOrganizationOwner(
+      {
+        email: "owner@example.com",
+        password: "Password123!",
+        firstName: "Owner",
+        lastName: "One",
+        name: "Owner One",
+        organizationName: "Demo Org",
+        phone: "+237600000001",
+      },
+      { name: "Demo Org" },
+      { ipAddress: "203.0.113.10" },
+    )
+
+    expect(result).toMatchObject({ status: 429, data: null })
+    expect(mockHashPolicyCompliantPassword).not.toHaveBeenCalled()
+    expect(mockDb.$transaction).not.toHaveBeenCalled()
+  })
+
+  it("blocks invitation redemption before token lookup when throttled", async () => {
+    mockEnforcePublicIdentityAbuseLimits.mockResolvedValue({
+      allowed: false,
+      operation: "invitation_redemption",
+      retryAfterSeconds: 1800,
+    })
+
+    const result = await acceptInvitationWorkflow(
+      { token: "invite-token", password: "Password123!" },
+      { ipAddress: "203.0.113.10" },
+    )
+
+    expect(result).toEqual({
+      error: "Too many invitation attempts. Please try again later.",
+      status: 429,
+      data: null,
+    })
+    expect(mockDb.$transaction).not.toHaveBeenCalled()
+  })
+
+  it("keeps throttled reset-link requests generic and skips account lookup", async () => {
+    mockEnforcePublicIdentityAbuseLimits.mockResolvedValue({
+      allowed: false,
+      operation: "password_reset_request",
+      retryAfterSeconds: 1800,
+    })
+
+    const result = await requestPasswordResetLinkWorkflow(
+      "user@example.com",
+      { ipAddress: "203.0.113.10" },
+    )
+
+    expect(result).toEqual({ status: 200, error: null, data: null })
+    expect(mockDb.user.findFirst).not.toHaveBeenCalled()
+  })
+
+  it("blocks reset completion before token lookup when throttled", async () => {
+    mockEnforcePublicIdentityAbuseLimits.mockResolvedValue({
+      allowed: false,
+      operation: "password_reset_completion",
+      retryAfterSeconds: 1800,
+    })
+
+    const result = await completePasswordResetWorkflow(
+      "user@example.com",
+      "reset-token",
+      "Password123!",
+      { ipAddress: "203.0.113.10" },
+    )
+
+    expect(result).toMatchObject({ status: 429, data: null })
+    expect(mockDb.user.findFirst).not.toHaveBeenCalled()
+  })
+
+  it("blocks OTP verification before user lookup when throttled", async () => {
+    mockEnforcePublicIdentityAbuseLimits.mockResolvedValue({
+      allowed: false,
+      operation: "email_otp_verification",
+      retryAfterSeconds: 1800,
+    })
+
+    const result = await verifyEmailOtpWorkflow(
+      "user-1",
+      "123456",
+      { ipAddress: "203.0.113.10" },
+    )
+
+    expect(result).toEqual({ status: 429 })
+    expect(mockDb.user.findUnique).not.toHaveBeenCalled()
   })
 })

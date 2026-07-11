@@ -5,6 +5,7 @@ import { endOfDay, format, startOfDay } from "date-fns"
 import { createHash } from "node:crypto"
 
 import { db } from "@/prisma/db"
+import { BusinessRuleError } from "@/services/_shared/action-errors"
 
 export type ReportFreshness = "CURRENT_AS_OF_GENERATION" | "HISTORICAL_PERIOD"
 export type ReportEvidenceStatus = "OPERATIONAL_READ_MODEL"
@@ -33,6 +34,7 @@ export interface ReportProvenance {
   knownBlockers: string[]
   rowCount: number
   filterHash: string
+  currency: string
 }
 
 export interface FinancialSummaryReport {
@@ -184,6 +186,17 @@ export function scopedLocationId(locationId: OptionalLocationId) {
   return locationId && locationId !== "all" ? locationId : undefined
 }
 
+async function getReportCurrency(organizationId: string) {
+  const organization = await db.organization.findUnique({
+    where: { id: organizationId },
+    select: { currency: true },
+  })
+  if (!organization?.currency) {
+    throw new BusinessRuleError("Organization currency is unavailable")
+  }
+  return organization.currency.trim().toUpperCase()
+}
+
 export function buildReportProvenance(input: {
   organizationId: string
   locationId: OptionalLocationId
@@ -191,6 +204,7 @@ export function buildReportProvenance(input: {
   end: Date
   sourceTables: string[]
   rowCount: number
+  currency: string
 }): ReportProvenance {
   const now = new Date()
   const locationScope = scopedLocationId(input.locationId)
@@ -200,12 +214,14 @@ export function buildReportProvenance(input: {
     periodStart: input.start.toISOString(),
     periodEnd: input.end.toISOString(),
     sourceTables: input.sourceTables.join(","),
+    currency: input.currency,
   })
 
   return {
     source: "PRISMA_OPERATIONAL_READ_MODEL",
     sourceLabel: "Service-backed operational database read model",
     sourceTables: input.sourceTables,
+    currency: input.currency,
     periodStart: input.start.toISOString(),
     periodEnd: input.end.toISOString(),
     generatedAt: now.toISOString(),
@@ -260,6 +276,7 @@ export async function getFinancialSummaryReportReadModel(
   const { organizationId, locationId, startDate, endDate } = input
   const start = startOfDay(startDate)
   const end = endOfDay(endDate)
+  const currency = await getReportCurrency(organizationId)
   const salesOrders = await getSalesOrders(organizationId, locationId, start, end)
 
   const totalRevenue = salesOrders.reduce((sum, order) => sum + toNumber(order.total), 0)
@@ -354,6 +371,7 @@ export async function getFinancialSummaryReportReadModel(
       locationId,
       start,
       end,
+      currency,
       sourceTables: ["salesOrder", "salesOrderLine", "payment", "item"],
       rowCount: salesOrders.length,
     }),
@@ -381,6 +399,7 @@ export async function getCashierPerformanceReportReadModel(
   const { organizationId, locationId, startDate, endDate } = input
   const start = startOfDay(startDate)
   const end = endOfDay(endDate)
+  const currency = await getReportCurrency(organizationId)
   const locationScope = scopedLocationId(locationId)
 
   const sessions = await db.pOSSession.findMany({
@@ -405,6 +424,7 @@ export async function getCashierPerformanceReportReadModel(
     locationId,
     start,
     end,
+    currency,
     sourceTables: ["pOSSession", "salesOrder", "user"],
     rowCount: sessions.length,
   })
@@ -481,6 +501,7 @@ export async function getItemPerformanceReportReadModel(
   const { organizationId, locationId, startDate, endDate } = input
   const start = startOfDay(startDate)
   const end = endOfDay(endDate)
+  const currency = await getReportCurrency(organizationId)
   const locationScope = scopedLocationId(locationId)
 
   const items = await db.item.findMany({
@@ -511,6 +532,7 @@ export async function getItemPerformanceReportReadModel(
     locationId,
     start,
     end,
+    currency,
     sourceTables: ["item", "inventoryLevel", "salesOrderLine", "salesOrder"],
     rowCount: items.length,
   })
@@ -569,6 +591,7 @@ export async function getCashFlowReportReadModel(
   const { organizationId, locationId, startDate, endDate } = input
   const start = startOfDay(startDate)
   const end = endOfDay(endDate)
+  const currency = await getReportCurrency(organizationId)
   const locationScope = scopedLocationId(locationId)
 
   const transactions = await db.cashDrawerTransaction.findMany({
@@ -647,6 +670,7 @@ export async function getCashFlowReportReadModel(
       locationId,
       start,
       end,
+      currency,
       sourceTables: ["cashDrawerTransaction", "pOSSession", "terminal", "user"],
       rowCount: transactions.length + sessions.length,
     }),

@@ -4,7 +4,12 @@ import type { ServerActionResult } from "@/lib/error-handling/types"
 import { logger } from "@/lib/logger"
 import { toCanonicalActionError, toSafeActionError } from "@/services/_shared/action-errors"
 
-function normalizeOptions(options: CanonicalErrorOptions, userMessage?: string): CanonicalErrorOptions {
+function isFreshAuthRequiredError(error: unknown) {
+  return error instanceof Error && error.name === "FreshAuthRequiredError"
+}
+
+function normalizeOptions(options: CanonicalErrorOptions, userMessage?: string, error?: unknown): CanonicalErrorOptions {
+  if (isFreshAuthRequiredError(error) && !options.userMessage) return options
   return userMessage && !options.userMessage ? { ...options, userMessage } : options
 }
 
@@ -24,7 +29,7 @@ export function safeSuccessActionErrorResult(
   options: CanonicalErrorOptions = {},
   userMessage?: string,
 ) {
-  const safeError = toSafeActionError(error, normalizeOptions(options, userMessage))
+  const safeError = toSafeActionError(error, normalizeOptions(options, userMessage, error))
   logSafeActionError("server action failed", safeError)
 
   return {
@@ -46,7 +51,7 @@ export function safeStatusActionErrorResult(
   options: CanonicalErrorOptions = {},
   userMessage?: string,
 ) {
-  const safeError = toSafeActionError(error, normalizeOptions(options, userMessage))
+  const safeError = toSafeActionError(error, normalizeOptions(options, userMessage, error))
   logSafeActionError("server action failed", safeError)
 
   return {
@@ -67,7 +72,7 @@ export function safeActionErrorMessage(
   options: CanonicalErrorOptions = {},
   userMessage?: string,
 ) {
-  return toSafeActionError(error, normalizeOptions(options, userMessage)).error
+  return toSafeActionError(error, normalizeOptions(options, userMessage, error)).error
 }
 
 export function safeLoggedActionErrorMessage(
@@ -76,7 +81,7 @@ export function safeLoggedActionErrorMessage(
   options: CanonicalErrorOptions = {},
   userMessage?: string,
 ) {
-  const safeError = toSafeActionError(error, normalizeOptions(options, userMessage))
+  const safeError = toSafeActionError(error, normalizeOptions(options, userMessage, error))
   logSafeActionError(message, safeError)
   return safeError.error
 }
@@ -86,7 +91,7 @@ export function safeServerActionErrorResult<T = unknown>(
   options: CanonicalErrorOptions = {},
   userMessage?: string,
 ): ServerActionResult<T> {
-  const normalizedOptions = normalizeOptions(options, userMessage)
+  const normalizedOptions = normalizeOptions(options, userMessage, error)
   const canonical = toCanonicalActionError(error, normalizedOptions)
   const safeError = toSafeActionError(error, normalizedOptions)
   logSafeActionError("server action failed", safeError)
@@ -102,7 +107,7 @@ export function logSafeActionWarning(
   error: unknown,
   options: CanonicalErrorOptions = {},
 ) {
-  const safeError = toSafeActionError(error, normalizeOptions(options, message))
+  const safeError = toSafeActionError(error, normalizeOptions(options, message, error))
 
   logger.warn(message, {
     code: safeError.code,

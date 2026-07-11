@@ -757,6 +757,7 @@ async function loadOfflineSaleReplayEvent(input: {
         select: {
           id: true,
           lastSequence: true,
+          status: true,
         },
       },
     },
@@ -955,6 +956,7 @@ async function blockOfflineSaleReplay(input: {
   blockerCode: string
   blockerMessage: string
   severity?: "HIGH" | "CRITICAL"
+  conflictType?: "UNPOSTED_ACCEPTED_EVENT" | "DEVICE_REVOKED"
 }) {
   const result = blockedReplayResult({
     offlineEventId: input.event.id,
@@ -968,7 +970,7 @@ async function blockOfflineSaleReplay(input: {
       deviceId: input.event.deviceId,
       eventId: input.event.id,
       syncBatchId: input.event.syncBatchId,
-      conflictType: "UNPOSTED_ACCEPTED_EVENT",
+      conflictType: input.conflictType ?? "UNPOSTED_ACCEPTED_EVENT",
       severity: input.severity ?? "HIGH",
       actualSequence: input.event.deviceSeq,
       incomingPayloadHash: input.event.payloadHash,
@@ -1087,6 +1089,17 @@ export async function replayPendingOfflineSaleEnvelope(input: UserScoped<ReplayO
 
   if (event.status !== "PENDING_REPLAY") {
     throw new BusinessRuleError("Only PENDING_REPLAY offline sale envelopes can be converted into POS finalization.")
+  }
+
+  if (event.device.status !== "ACTIVE") {
+    return blockOfflineSaleReplay({
+      context: { organizationId: input.organizationId, userId: input.userId },
+      event,
+      blockerCode: "OFFLINE_REPLAY_DEVICE_INACTIVE",
+      blockerMessage: "Offline sale replay is blocked because the enrolled device is not active.",
+      severity: "CRITICAL",
+      conflictType: "DEVICE_REVOKED",
+    })
   }
 
   const computedPayloadHash = hashBusinessPayload(event.payload)

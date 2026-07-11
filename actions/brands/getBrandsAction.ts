@@ -3,8 +3,7 @@
 import { revalidatePath } from "next/cache"
 
 import { safeActionErrorMessage } from "@/actions/_shared/safe-action-responses"
-import { getAuthenticatedUser } from "@/config/useAuth"
-import { AuthRequiredError, ForbiddenError } from "@/services/_shared/action-errors"
+import { assertCanUseOrganization, requirePermission } from "@/lib/security/rbac"
 import {
   BrandCreateSchema,
   BrandUpdateSchema,
@@ -18,6 +17,7 @@ import {
   listBrands,
   updateBrand as updateBrandService,
 } from "@/services/brand/brand.service"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import type { BrandCreateDTO, BrandDTO, BrandResponse, UpdateBrandPayload } from "@/types/brand"
 
 const BRAND_LIST_PATH = "/dashboard/inventory/brands"
@@ -30,18 +30,36 @@ function actionError<T>(error: unknown, fallback: string, data: T) {
   }
 }
 
-async function resolveOrgId(explicitOrgId?: string | null) {
-  const user = await getAuthenticatedUser()
-
-  if (!user?.organizationId) {
-    throw new AuthRequiredError("No organization found for the current user")
+async function requireBrandAction(
+  explicitOrgId: string | null | undefined,
+  permission: string,
+  options: {
+    surface: string
+    accessIntent: "read" | "write"
+    resourceId?: string
+    auditAllowed?: boolean
+  },
+) {
+  const ctx = await requirePermission(permission, {
+    resource: "Brand",
+    ...(options.resourceId ? { resourceId: options.resourceId } : {}),
+    ...(options.auditAllowed !== undefined ? { auditAllowed: options.auditAllowed } : {}),
+  })
+  const requestedOrganizationId = explicitOrgId?.trim()
+  if (requestedOrganizationId) {
+    await assertCanUseOrganization(ctx, requestedOrganizationId)
   }
-
-  if (explicitOrgId && explicitOrgId !== user.organizationId && !user.permissions?.includes("*")) {
-    throw new ForbiddenError("You cannot access brands for another organization")
-  }
-
-  return user.organizationId
+  await observeModuleAccess({
+    moduleSlug: "inventory",
+    organizationId: ctx.orgId,
+    userId: ctx.userId,
+    actorPermissions: ctx.permissions,
+    surfaceType: "action",
+    surface: options.surface,
+    accessIntent: options.accessIntent,
+    mode: "observe",
+  })
+  return ctx
 }
 
 function normalizeCreateInput(data: BrandCreateDTO | Record<string, unknown>): BrandCreateInput {
@@ -74,8 +92,11 @@ function normalizeUpdateInput(data: UpdateBrandPayload | Record<string, unknown>
 
 export async function getOrgBrands(organizationId?: string | null): Promise<BrandResponse> {
   try {
-    const orgId = await resolveOrgId(organizationId)
-    const result = await listBrands(orgId)
+    const ctx = await requireBrandAction(organizationId, "inventory.brands.read", {
+      surface: "actions/brands/getBrandsAction.ts#getOrgBrands",
+      accessIntent: "read",
+    })
+    const result = await listBrands(ctx.orgId)
 
     return {
       success: true,
@@ -94,8 +115,12 @@ export async function getBrandById(
   organizationId?: string | null,
 ): Promise<{ success: boolean; data: BrandDTO | null; error: string | null }> {
   try {
-    const orgId = await resolveOrgId(organizationId)
-    const brand = await getBrandByIdService(orgId, id)
+    const ctx = await requireBrandAction(organizationId, "inventory.brands.read", {
+      surface: "actions/brands/getBrandsAction.ts#getBrandById",
+      accessIntent: "read",
+      resourceId: id,
+    })
+    const brand = await getBrandByIdService(ctx.orgId, id)
 
     return {
       success: true,
@@ -111,7 +136,11 @@ export async function createBrand(
   data: BrandCreateDTO,
 ): Promise<{ success: boolean; data: BrandDTO | null; error: string | null }> {
   try {
-    const orgId = await resolveOrgId(data.organizationId)
+    const ctx = await requireBrandAction(data.organizationId, "inventory.brands.create", {
+      surface: "actions/brands/getBrandsAction.ts#createBrand",
+      accessIntent: "write",
+      auditAllowed: true,
+    })
     const parsed = BrandCreateSchema.safeParse(normalizeCreateInput(data))
 
     if (!parsed.success) {
@@ -122,7 +151,7 @@ export async function createBrand(
       }
     }
 
-    const brand = await createBrandService(orgId, parsed.data)
+    const brand = await createBrandService(ctx.orgId, parsed.data)
     revalidatePath(BRAND_LIST_PATH)
 
     return {
@@ -140,7 +169,12 @@ export async function updateBrand(
   data: UpdateBrandPayload,
 ): Promise<{ success: boolean; data: BrandDTO | null; error: string | null }> {
   try {
-    const orgId = await resolveOrgId(data.organizationId)
+    const ctx = await requireBrandAction(data.organizationId, "inventory.brands.update", {
+      surface: "actions/brands/getBrandsAction.ts#updateBrand",
+      accessIntent: "write",
+      resourceId: id,
+      auditAllowed: true,
+    })
     const parsed = BrandUpdateSchema.safeParse(normalizeUpdateInput(data))
 
     if (!parsed.success) {
@@ -151,7 +185,7 @@ export async function updateBrand(
       }
     }
 
-    const brand = await updateBrandService(orgId, id, parsed.data)
+    const brand = await updateBrandService(ctx.orgId, id, parsed.data)
     revalidatePath(BRAND_LIST_PATH)
     revalidatePath(`${BRAND_LIST_PATH}/${id}`)
 
@@ -169,8 +203,13 @@ export async function deleteBrand(
   id: string,
 ): Promise<{ success: boolean; data: BrandDTO | null; error: string | null }> {
   try {
-    const orgId = await resolveOrgId()
-    const brand = await deleteBrandService(orgId, id)
+    const ctx = await requireBrandAction(undefined, "inventory.brands.delete", {
+      surface: "actions/brands/getBrandsAction.ts#deleteBrand",
+      accessIntent: "write",
+      resourceId: id,
+      auditAllowed: true,
+    })
+    const brand = await deleteBrandService(ctx.orgId, id)
     revalidatePath(BRAND_LIST_PATH)
     revalidatePath(`${BRAND_LIST_PATH}/${id}`)
 

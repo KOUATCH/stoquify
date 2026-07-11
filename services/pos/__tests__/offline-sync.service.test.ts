@@ -153,6 +153,7 @@ function offlineReplayEvent(overrides: Record<string, unknown> = {}) {
     device: {
       id: "device-1",
       lastSequence: 1,
+      status: "ACTIVE",
     },
     ...overrides,
   }
@@ -577,6 +578,46 @@ describe("offline POS sync service", () => {
       }),
     )
     expect(mockTx.pOSOfflineSyncConflict.create).not.toHaveBeenCalled()
+  })
+
+  it("blocks pending replay after the enrolled device is revoked", async () => {
+    const event = offlineReplayEvent({
+      device: {
+        id: "device-1",
+        lastSequence: 1,
+        status: "REVOKED",
+      },
+    })
+    mockDb.pOSOfflineEvent.findFirst.mockResolvedValue(event)
+
+    const result = await replayPendingOfflineSaleEnvelope({
+      organizationId: "org-1",
+      userId: "user-1",
+      offlineEventId: event.id,
+    })
+
+    expect(result).toMatchObject({
+      status: "BLOCKED",
+      blockerCode: "OFFLINE_REPLAY_DEVICE_INACTIVE",
+    })
+    expect(mockCommitPOSSale).not.toHaveBeenCalled()
+    expect(mockTx.pOSOfflineSyncConflict.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          conflictType: "DEVICE_REVOKED",
+          severity: "CRITICAL",
+          eventId: event.id,
+        }),
+      }),
+    )
+    expect(mockTx.pOSOfflineEvent.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          status: "BLOCKED",
+          blockerCode: "OFFLINE_REPLAY_DEVICE_INACTIVE",
+        }),
+      }),
+    )
   })
 
   it("does not finalize a duplicate replay that already has replay evidence", async () => {

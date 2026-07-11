@@ -1,9 +1,14 @@
 import { registerUser, signInWithCredentials } from "@/actions/auth"
 import { auth } from "@/lib/auth"
+import { getPublicIdentityRequestContext } from "@/lib/security/public-request-context"
 import { registerOrganizationAccount } from "@/services/users/user-identity.service"
 
 jest.mock("@/services/users/user-identity.service", () => ({
   registerOrganizationAccount: jest.fn(),
+}))
+
+jest.mock("@/lib/security/public-request-context", () => ({
+  getPublicIdentityRequestContext: jest.fn(),
 }))
 
 jest.mock("@/lib/auth", () => ({
@@ -22,6 +27,7 @@ jest.mock("next/headers", () => ({
 
 const mockRegisterOrganizationAccount = registerOrganizationAccount as jest.Mock
 const mockSignInEmail = auth.api.signInEmail as jest.Mock
+const mockGetPublicIdentityRequestContext = getPublicIdentityRequestContext as jest.Mock
 
 const validRegistration = {
   firstName: "Alice",
@@ -38,6 +44,8 @@ const validRegistration = {
 beforeEach(() => {
   mockRegisterOrganizationAccount.mockReset()
   mockSignInEmail.mockReset()
+  mockGetPublicIdentityRequestContext.mockReset()
+  mockGetPublicIdentityRequestContext.mockResolvedValue({ ipAddress: "203.0.113.10" })
 })
 
 describe("auth action edge cases", () => {
@@ -82,7 +90,10 @@ describe("auth action edge cases", () => {
     const result = await registerUser(validRegistration)
 
     expect(result).toEqual(serviceResult)
-    expect(mockRegisterOrganizationAccount).toHaveBeenCalledWith(validRegistration)
+    expect(mockRegisterOrganizationAccount).toHaveBeenCalledWith(
+      validRegistration,
+      { ipAddress: "203.0.113.10" },
+    )
   })
 
   it("keeps missing credential responses local to the action boundary", async () => {

@@ -14,10 +14,12 @@ import {
   verifyUserCredentialPassword,
 } from "@/lib/security/auth-credentials"
 import { logSecurityEvent, SecurityEventType } from "@/lib/security/audit-log"
+import type { PublicIdentityRequestContext } from "@/lib/security/public-request-context"
 import { safeUserSelect } from "@/lib/security/server-authz"
 import { generateToken } from "@/lib/token"
 import { db } from "@/prisma/db"
 import { BusinessRuleError } from "@/services/_shared/action-errors"
+import { enforcePublicIdentityAbuseLimits } from "@/services/security/public-identity-abuse.service"
 import type { OrgDataProps, RegisterUserProps, RegisterWorkflowData, UserProps } from "@/types/types"
 import { InviteStatus, Locale as PrismaLocale, LocationType, type Prisma } from "@prisma/client"
 import { randomBytes, randomUUID } from "crypto"
@@ -232,10 +234,23 @@ async function sendVerificationEmail(input: {
 export async function createOrganizationOwner(
   data: UserProps,
   orgData: OrgDataProps,
+  requestContext?: PublicIdentityRequestContext | null,
 ): Promise<StatusResult<{ id: string; email: string; organizationId: string }>> {
   const { email, password, firstName, lastName, phone, image } = data
   const normalizedEmail = email.trim().toLowerCase()
   const normalizedPhone = phone.trim()
+  const abuseDecision = await enforcePublicIdentityAbuseLimits({
+    operation: "registration",
+    subject: normalizedEmail,
+    requestContext,
+  })
+  if (!abuseDecision.allowed) {
+    return {
+      error: AUTH_MESSAGES.registrationUnavailable,
+      status: 429,
+      data: null,
+    }
+  }
   const passwordPolicy = await hashPolicyCompliantPassword({
     password,
     email: normalizedEmail,
@@ -404,7 +419,10 @@ export async function createOrganizationOwner(
   }
 }
 
-export async function registerOrganizationAccount(data: RegisterUserProps) {
+export async function registerOrganizationAccount(
+  data: RegisterUserProps,
+  requestContext?: PublicIdentityRequestContext | null,
+) {
   const validationError = validateRegistrationInput(data)
   if (validationError) {
     return {
@@ -414,6 +432,17 @@ export async function registerOrganizationAccount(data: RegisterUserProps) {
   }
 
   const email = data.email.trim().toLowerCase()
+  const abuseDecision = await enforcePublicIdentityAbuseLimits({
+    operation: "registration",
+    subject: email,
+    requestContext,
+  })
+  if (!abuseDecision.allowed) {
+    return {
+      success: false,
+      error: AUTH_MESSAGES.registrationUnavailable,
+    }
+  }
   const phone = data.phone.trim()
   const companyName = data.companyName.trim()
   const firstName = data.firstName.trim()
@@ -718,7 +747,21 @@ export async function sendInviteWorkflow(input: InviteWorkflowInput): Promise<St
 
 export async function acceptInvitationWorkflow(
   data: InvitedUserInput,
+  requestContext?: PublicIdentityRequestContext | null,
 ): Promise<StatusResult<{ id: string; email: string; organizationId: string; inviteId: string; roleId: string }>> {
+  const abuseDecision = await enforcePublicIdentityAbuseLimits({
+    operation: "invitation_redemption",
+    subject: data.token,
+    requestContext,
+  })
+  if (!abuseDecision.allowed) {
+    return {
+      error: "Too many invitation attempts. Please try again later.",
+      status: 429,
+      data: null,
+    }
+  }
+
   return db.$transaction(async (tx) => {
     const invite = await tx.invite.findUnique({
       where: { token: data.token },
@@ -972,13 +1015,23 @@ export async function changeUserPasswordWorkflow(input: PasswordChangeInput) {
   return { error: null, status: 200 }
 }
 
-export async function requestPasswordResetLinkWorkflow(email: string): Promise<StatusResult> {
+export async function requestPasswordResetLinkWorkflow(
+  email: string,
+  requestContext?: PublicIdentityRequestContext | null,
+): Promise<StatusResult> {
   const normalizedEmail = email.trim().toLowerCase()
   const genericResponse = {
     status: 200,
     error: null,
     data: null,
   }
+  const abuseDecision = await enforcePublicIdentityAbuseLimits({
+    operation: "password_reset_request",
+    subject: normalizedEmail,
+    requestContext,
+  })
+  if (!abuseDecision.allowed) return genericResponse
+
   const user = await db.user.findFirst({
     where: { email: { equals: normalizedEmail, mode: "insensitive" } },
   })
@@ -1031,10 +1084,25 @@ export async function completePasswordResetWorkflow(
   email: string,
   token: string,
   newPassword: string,
+  requestContext?: PublicIdentityRequestContext | null,
 ): Promise<StatusResult> {
+  const normalizedEmail = email.trim().toLowerCase()
+  const abuseDecision = await enforcePublicIdentityAbuseLimits({
+    operation: "password_reset_completion",
+    subject: normalizedEmail,
+    requestContext,
+  })
+  if (!abuseDecision.allowed) {
+    return {
+      status: 429,
+      error: "Too many password reset attempts. Please try again later.",
+      data: null,
+    }
+  }
+
   const user = await db.user.findFirst({
     where: {
-      email: { equals: email.trim().toLowerCase(), mode: "insensitive" },
+      email: { equals: normalizedEmail, mode: "insensitive" },
       verificationToken: token,
       verificationTokenExpires: { gt: new Date() },
     },
@@ -1095,7 +1163,18 @@ export async function completePasswordResetWorkflow(
   }
 }
 
-export async function verifyEmailOtpWorkflow(userId: string, otp: string) {
+export async function verifyEmailOtpWorkflow(
+  userId: string,
+  otp: string,
+  requestContext?: PublicIdentityRequestContext | null,
+) {
+  const abuseDecision = await enforcePublicIdentityAbuseLimits({
+    operation: "email_otp_verification",
+    subject: userId,
+    requestContext,
+  })
+  if (!abuseDecision.allowed) return { status: 429 }
+
   const user = await db.user.findUnique({
     where: {
       id: userId,

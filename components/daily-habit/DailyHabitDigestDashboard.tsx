@@ -29,21 +29,33 @@ type DailyHabitDigestDashboardProps = {
 const copy = {
   en: {
     title: "Daily Habit Digest",
-    subtitle: "Read-only owner, manager, finance, accountant, stockkeeper, end-of-day, and weekly review surfaces from existing signals.",
+    subtitle: "Your permission-aware daily and weekly workspaces, built from existing operating signals.",
     hidden: "Some signal actions are hidden because this user lacks their required permission.",
     actions: "Digest actions",
     noActions: "No visible action is due for this digest.",
     generated: "Generated",
     period: "Period",
+    currency: "Currency",
+    workspaces: "Visible workspaces",
+    hiddenWorkspaces: "role workspace(s) are hidden because they are outside this user's role or permissions.",
+    noWorkspaceTitle: "No Daily Digest workspace is available",
+    noWorkspaceMessage: "This role can enter Daily Digest, but no role-specific workspace matches its current permissions. Return to the dashboard or ask an administrator to review the role assignment.",
+    back: "Back to dashboard",
   },
   fr: {
     title: "Digest quotidien",
-    subtitle: "Surfaces de revue en lecture seule pour proprietaire, manager, finance, comptable, stock, fin de jour et semaine.",
+    subtitle: "Vos espaces quotidiens et hebdomadaires selon vos permissions, issus des signaux operationnels existants.",
     hidden: "Certaines actions sont masquees car l'utilisateur n'a pas la permission requise.",
     actions: "Actions du digest",
     noActions: "Aucune action visible pour ce digest.",
     generated: "Genere",
     period: "Periode",
+    currency: "Devise",
+    workspaces: "Espaces visibles",
+    hiddenWorkspaces: "espace(s) de role sont masques car ils depassent le role ou les permissions de cet utilisateur.",
+    noWorkspaceTitle: "Aucun espace Daily Digest disponible",
+    noWorkspaceMessage: "Ce role peut ouvrir Daily Digest, mais aucun espace specifique ne correspond a ses permissions actuelles. Revenez au tableau de bord ou demandez a un administrateur de verifier le role.",
+    back: "Retour au tableau de bord",
   },
 } as const
 
@@ -81,7 +93,8 @@ export function DailyHabitDigestDashboard({ data, locale }: DailyHabitDigestDash
               <dl className="mt-3 grid gap-2 text-xs text-[var(--dash-text-soft)]">
                 <MetaLine label={t.generated} value={formatDateTime(data.generatedAt, formatterLocale)} />
                 <MetaLine label={t.period} value={`${formatDate(data.periodStart, formatterLocale)} - ${formatDate(data.periodEnd, formatterLocale)}`} />
-              </dl>
+                <MetaLine label={t.currency} value={data.currency} />
+                <MetaLine label={t.workspaces} value={data.summary.digestCount.toLocaleString(formatterLocale)} />              </dl>
             </div>
           </div>
         </section>
@@ -148,13 +161,31 @@ export function DailyHabitDigestDashboard({ data, locale }: DailyHabitDigestDash
               ) : null}
             </section>
           </>
-        ) : null}
+        ) : (
+          <section className={cn(dashboardPanelClass, "p-6")} role="status">
+            <div className="flex max-w-3xl items-start gap-3">
+              <LockKeyhole className="mt-0.5 h-5 w-5 shrink-0 text-[var(--dash-gold)]" aria-hidden="true" />
+              <div>
+                <h2 className="text-base font-semibold text-[var(--dash-text)]">{t.noWorkspaceTitle}</h2>
+                <p className={cn("mt-2 text-sm leading-6", dashboardMutedTextClass)}>{t.noWorkspaceMessage}</p>
+                <Button asChild size="sm" variant="outline" className="mt-4 rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]">
+                  <a href={"/" + locale + "/dashboard"}>{t.back}</a>
+                </Button>
+              </div>
+            </div>
+          </section>
+        )}
 
-        {data.actionQueue.filteredOutCount > 0 ? (
+        {data.actionQueue.filteredOutCount > 0 || data.summary.hiddenDigestCount > 0 ? (
           <section className={cn(dashboardPanelClass, "border-[var(--dash-gold)] p-3")}>
             <div className="flex gap-2 text-sm text-[var(--dash-text)]">
               <LockKeyhole className="mt-0.5 h-4 w-4 text-[var(--dash-gold)]" aria-hidden="true" />
-              <p>{t.hidden}</p>
+              <div className="space-y-1">
+                {data.actionQueue.filteredOutCount > 0 ? <p>{t.hidden}</p> : null}
+                {data.summary.hiddenDigestCount > 0 ? (
+                  <p>{data.summary.hiddenDigestCount.toLocaleString(formatterLocale)} {t.hiddenWorkspaces}</p>
+                ) : null}
+              </div>
             </div>
           </section>
         ) : null}

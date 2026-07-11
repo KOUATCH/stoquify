@@ -2,12 +2,14 @@ jest.mock("server-only", () => ({}))
 
 import {
   AccountingPeriodStatus,
+  ProviderAccountStatus,
   ReconciliationRunStatus,
   Prisma,
 } from "@prisma/client"
 import { createHash } from "node:crypto"
 
 import { db } from "@/prisma/db"
+import { buildReconciliationEvidenceManifestInTx } from "../payment-reconciliation-evidence.service"
 
 import {
   exportReconciliationCertificate,
@@ -68,6 +70,12 @@ jest.mock("@/prisma/db", () => ({
   },
 }))
 
+jest.mock("../payment-reconciliation-evidence.service", () => ({
+  ...jest.requireActual("../payment-reconciliation-evidence.service"),
+  buildReconciliationEvidenceManifestInTx: jest.fn(),
+}))
+
+const mockBuildEvidenceManifest = buildReconciliationEvidenceManifestInTx as jest.Mock
 const mockedDb = db as unknown as {
   $transaction: jest.Mock
   reconciliationRun: { findFirst: jest.Mock; update: jest.Mock }
@@ -136,12 +144,17 @@ function readyRun(overrides: Record<string, unknown> = {}) {
       id: "rail-1",
       name: "Mobile money",
       type: "MOBILE_MONEY",
+      isActive: true,
     },
     providerAccount: {
       id: "provider-account-1",
       displayName: "MTN settlement",
       providerCode: "MTN",
       currencyCode: "XAF",
+      status: ProviderAccountStatus.ACTIVE,
+      settlementLedgerAccountId: "account-512",
+      suspenseLedgerAccountId: "account-471",
+      settlementAccounts: [{ id: "settlement-1" }],
     },
     ...overrides,
   }
@@ -161,6 +174,19 @@ describe("payment reconciliation certification service", () => {
     mockedDb.accountingPeriod.findFirst.mockResolvedValue(readyRun().accountingPeriod)
     mockedDb.providerEvent.count.mockResolvedValue(1)
     mockedDb.statementLine.count.mockResolvedValue(1)
+    mockBuildEvidenceManifest.mockResolvedValue({
+      version: 1,
+      sourceHash: "source-evidence-hash-1",
+      counts: {
+        paymentTransactionCount: 1,
+        providerEventCount: 1,
+        statementFileCount: 1,
+        statementLineCount: 1,
+        matchRecordCount: 1,
+        exceptionCount: 0,
+        suspenseCount: 0,
+      },
+    })
     mockedDb.matchRecord.count.mockResolvedValue(1)
     mockedDb.paymentException.count.mockResolvedValue(0)
     mockedDb.suspenseItem.count.mockResolvedValue(0)
@@ -265,7 +291,7 @@ describe("payment reconciliation certification service", () => {
   })
 
   it("exports signed certificates with watermark, audit trail, and inbox record", async () => {
-    const certificatePayload = { version: 1, runId: "run-1" }
+    const certificatePayload = { version: 1, runId: "run-1", evidence: { sourceHash: "source-evidence-hash-1" } }
     const certificateHash = stableTestCertificateHash(certificatePayload)
     mockedDb.reconciliationRun.findFirst.mockResolvedValue(
       readyRun({
@@ -319,7 +345,7 @@ describe("payment reconciliation certification service", () => {
   })
 
   it("blocks certificate export and invalidates close evidence when the certificate hash drifts", async () => {
-    const certificatePayload = { version: 1, runId: "run-1" }
+    const certificatePayload = { version: 1, runId: "run-1", evidence: { sourceHash: "source-evidence-hash-1" } }
     const currentHash = stableTestCertificateHash(certificatePayload)
     mockedDb.reconciliationRun.findFirst.mockResolvedValue(
       readyRun({
@@ -382,5 +408,79 @@ describe("payment reconciliation certification service", () => {
         }),
       }),
     )
+  })
+  it("blocks sign-off when the provider account is no longer ready", async () => {
+    mockedDb.reconciliationRun.findFirst.mockResolvedValue(readyRun({
+      providerAccount: {
+        ...readyRun().providerAccount,
+        status: ProviderAccountStatus.SUSPENDED,
+      },
+    }))
+
+    await expect(signReconciliationRun({
+      organizationId: "org-1",
+      runId: "run-1",
+      signedById: "signer-1",
+      control: {
+        actorPermissions: ["payments.reconciliation.sign"],
+        lastAuthAt: new Date("2026-06-14T12:00:00Z"),
+        now: new Date("2026-06-14T12:00:00Z"),
+      },
+    })).rejects.toThrow(/active provider account/i)
+
+    expect(mockBuildEvidenceManifest).not.toHaveBeenCalled()
+    expect(mockedDb.reconciliationRun.update).not.toHaveBeenCalled()
+  })
+
+  it("commits close invalidation before reporting live source-evidence drift", async () => {
+    const certificatePayload = {
+      version: 1,
+      runId: "run-1",
+      evidence: { sourceHash: "signed-source-hash" },
+    }
+    const certificateHash = stableTestCertificateHash(certificatePayload)
+    mockedDb.reconciliationRun.findFirst.mockResolvedValue(readyRun({
+      status: ReconciliationRunStatus.SIGNED,
+      signedById: "signer-1",
+      signedAt: new Date("2026-06-14T12:00:00Z"),
+      certificateHash,
+      certificatePayload,
+    }))
+    mockBuildEvidenceManifest.mockResolvedValue({
+      version: 1,
+      sourceHash: "current-source-hash",
+      counts: {},
+    })
+    mockedDb.closeRun.findMany.mockResolvedValue([
+      { id: "close-run-1", packExports: [{ id: "close-pack-export-1" }] },
+    ])
+    mockedDb.closeRun.findFirst.mockResolvedValue({
+      id: "close-run-1",
+      organizationId: "org-1",
+      periodId: "period-1",
+      status: "CERTIFIED",
+      metadata: { certifiedExportId: "close-pack-export-1" },
+    })
+    let transactionCompleted = false
+    mockedDb.$transaction.mockImplementationOnce(async (callback) => {
+      const result = await callback(mockedDb)
+      transactionCompleted = true
+      return result
+    })
+
+    await expect(exportReconciliationCertificate({
+      organizationId: "org-1",
+      runId: "run-1",
+      exportedById: "exporter-1",
+      control: {
+        actorPermissions: ["payments.reconciliation.certificate.export"],
+        lastAuthAt: new Date("2026-06-14T13:00:00Z"),
+        now: new Date("2026-06-14T13:00:00Z"),
+      },
+    })).rejects.toThrow(/source evidence drift/i)
+
+    expect(transactionCompleted).toBe(true)
+    expect(mockedDb.closeRun.update).toHaveBeenCalled()
+    expect(mockedDb.paymentReconciliationInboxItem.upsert).not.toHaveBeenCalled()
   })
 })

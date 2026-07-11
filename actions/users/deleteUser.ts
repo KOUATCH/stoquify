@@ -1,26 +1,21 @@
-
-
 "use server";
+
 import { safeStatusActionErrorResult } from "@/actions/_shared/safe-action-responses";
-import { getAuthenticatedUser } from "@/config/useAuth";
-import { hasAppPermission } from "@/lib/security/server-authz";
+import { requireFreshAuth } from "@/lib/security/auth-session";
+import { requirePermission } from "@/lib/security/rbac";
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service";
 import { deactivateUserForOrganization } from "@/services/users/user-lifecycle.service";
 
-
 export async function deleteUser(id: string) {
-
   try {
-    const authUser = await getAuthenticatedUser();
+    await requireFreshAuth(300);
+    const ctx = await requirePermission("users.delete", {
+      resource: "User",
+      resourceId: id,
+      auditAllowed: true,
+    });
 
-    if (!hasAppPermission(authUser, "users.delete")) {
-      return {
-        error: "Forbidden",
-        status: 403,
-        data: null,
-      };
-    }
-
-    if (id === authUser.id) {
+    if (id === ctx.userId) {
       return {
         error: "You cannot delete your own account",
         status: 400,
@@ -28,19 +23,31 @@ export async function deleteUser(id: string) {
       };
     }
 
+    await observeModuleAccess({
+      moduleSlug: "settings",
+      organizationId: ctx.orgId,
+      userId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      surfaceType: "action",
+      surface: "actions/users/deleteUser.ts",
+      accessIntent: "write",
+      mode: "observe",
+    });
+
     const deactivatedUser = await deactivateUserForOrganization({
-      organizationId: authUser.organizationId,
+      organizationId: ctx.orgId,
       targetUserId: id,
-      actorId: authUser.id,
+      actorId: ctx.userId,
     });
 
     return {
       ok: true,
-      data: deactivatedUser
+      data: deactivatedUser,
     };
-} catch (error) {
+  } catch (error) {
     return safeStatusActionErrorResult(error, {
       action: "users.delete",
       component: "User",
     }, "Something went wrong, Please try again");
-}}
+  }
+}

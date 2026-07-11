@@ -2,22 +2,29 @@
 
 import { revalidatePath } from "next/cache"
 import { safeSuccessActionErrorResult } from "@/actions/_shared/safe-action-responses"
-import { getAuthenticatedUser } from "@/config/useAuth"
+import { requirePermission } from "@/lib/security/rbac"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import { removeUnitForManagement } from "@/services/unit/unit.service"
 
 export const deleteUnit = async (id: string) => {
   try {
-    const user = await getAuthenticatedUser()
+    const ctx = await requirePermission("inventory.units.delete", {
+      resource: "Unit",
+      resourceId: id,
+      auditAllowed: true,
+    })
+    await observeModuleAccess({
+      moduleSlug: "inventory",
+      organizationId: ctx.orgId,
+      userId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      surfaceType: "action",
+      surface: "actions/units/deleteUnit.ts",
+      accessIntent: "write",
+      mode: "observe",
+    })
 
-    if (!user?.organizationId) {
-      return {
-        error: "Organization is required",
-        success: false,
-        data: null,
-      }
-    }
-
-    const result = await removeUnitForManagement(user.organizationId, id)
+    const result = await removeUnitForManagement(ctx.orgId, id)
 
     revalidatePath("/dashboard/inventory/units")
     revalidatePath("/[locale]/dashboard/inventory/units", "page")

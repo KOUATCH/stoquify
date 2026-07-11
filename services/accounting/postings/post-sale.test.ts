@@ -15,9 +15,15 @@ jest.mock("@/prisma/db", () => ({
     $transaction: jest.fn(),
   },
 }))
+jest.mock("../journal-close-invalidation.service", () => ({
+  recordPostedJournalCloseInvalidationInTx: jest.fn(),
+}))
 
 import { db } from "@/prisma/db"
+import { recordPostedJournalCloseInvalidationInTx } from "../journal-close-invalidation.service"
 import { postSale } from "./post-sale"
+
+const mockRecordPostedCloseInvalidation = recordPostedJournalCloseInvalidationInTx as jest.Mock
 
 const mockTx = {
   salesOrder: {
@@ -257,6 +263,7 @@ function arrangeNewSalePosting() {
 describe("post sale accounting posting", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockRecordPostedCloseInvalidation.mockResolvedValue({ invalidatedCount: 0, results: [] })
     mockDb.$transaction.mockImplementation(async (handler: (tx: typeof mockTx) => Promise<unknown>) => handler(mockTx))
     arrangeNewSalePosting()
   })
@@ -318,6 +325,13 @@ describe("post sale accounting posting", () => {
         }),
       }),
     )
+    expect(mockRecordPostedCloseInvalidation).toHaveBeenCalledWith(mockTx, "org-1", {
+      journalEntryId: "je-1",
+      periodId: "period-1",
+      entryDate: saleDate,
+      correlationId: "batch-1",
+      staleReason: "POS sale posting changed certified close evidence.",
+    }, expect.objectContaining({ actorId: "controller-1" }))
   })
 
   it("returns the posted journal entry idempotently when the sale was already posted", async () => {
@@ -333,6 +347,7 @@ describe("post sale accounting posting", () => {
     expect(mockTx.postingRule.findFirst).not.toHaveBeenCalled()
     expect(mockTx.journalEntry.create).not.toHaveBeenCalled()
     expect(mockTx.accountingSourceLink.create).not.toHaveBeenCalled()
+    expect(mockRecordPostedCloseInvalidation).not.toHaveBeenCalled()
   })
 
   it("fails closed when no active sale completion posting rule exists", async () => {

@@ -355,4 +355,111 @@ describe("module surface inventory", () => {
       permission: "READ_SUPPLIERS",
     })
   })
+  it("classifies public identity and display-helper actions as not applicable to module enforcement", () => {
+    const root = makeTempRepo()
+    writeFile(
+      root,
+      "services/modules/module-catalog.service.ts",
+      `export const MODULE_CATALOG = [{ slug: "settings", routePrefixes: ["/dashboard/settings"], dependencies: [] }]`,
+    )
+    writeFile(root, "config/sidebar.ts", `export const sidebarLinks = []`)
+    writeFile(root, "actions/roles/role-utils.ts", `export const displayRoleName = (role) => role.nameEn || role.nameFr || ""`)
+    writeFile(
+      root,
+      "actions/users/createInvitedUser.ts",
+      `"use server"; import { acceptInvitationWorkflow } from "@/services/users/user-identity.service"; export async function createInvitedUser(data) { return acceptInvitationWorkflow(data) }`,
+    )
+    writeFile(
+      root,
+      "actions/users/createUser.ts",
+      `"use server"; import { createOrganizationOwner } from "@/services/users/user-identity.service"; export default async function createUser(data, orgData) { return createOrganizationOwner(data, orgData) }`,
+    )
+    writeFile(
+      root,
+      "actions/users/sendResetLink.ts",
+      `"use server"; import { requestPasswordResetLinkWorkflow } from "@/services/users/user-identity.service"; export async function sendResetLink(email) { return requestPasswordResetLinkWorkflow(email) }`,
+    )
+    writeFile(
+      root,
+      "actions/users/verifyOtp.ts",
+      `"use server"; import { verifyEmailOtpWorkflow } from "@/services/users/user-identity.service"; export default async function verifyOTP(userId, otp) { return verifyEmailOtpWorkflow(userId, otp) }`,
+    )
+
+    const report = buildModuleSurfaceInventory(root, { mode: "report" })
+    const byFile = (file) => report.records.find((record) => record.surfaceType === "action" && record.file === file)
+
+    expect(byFile("actions/roles/role-utils.ts")).toMatchObject({
+      moduleApplicability: "not applicable: internal display helper",
+      classification: "not applicable: internal display helper",
+    })
+    expect(byFile("actions/users/createInvitedUser.ts")).toMatchObject({
+      moduleApplicability: "not applicable: token-bound invitation acceptance",
+      classification: "not applicable: token-bound invitation acceptance",
+    })
+    expect(byFile("actions/users/createUser.ts")).toMatchObject({
+      moduleApplicability: "not applicable: public organization onboarding",
+      classification: "not applicable: public organization onboarding",
+    })
+    expect(byFile("actions/users/sendResetLink.ts")).toMatchObject({
+      moduleApplicability: "not applicable: public password reset request",
+      classification: "not applicable: public password reset request",
+    })
+    expect(byFile("actions/users/verifyOtp.ts")).toMatchObject({
+      moduleApplicability: "not applicable: public email verification",
+      classification: "not applicable: public email verification",
+    })
+
+    for (const file of [
+      "actions/roles/role-utils.ts",
+      "actions/users/createInvitedUser.ts",
+      "actions/users/createUser.ts",
+      "actions/users/sendResetLink.ts",
+      "actions/users/verifyOtp.ts",
+    ]) {
+      const record = byFile(file)
+      expect(record.classification).not.toContain("missing permission")
+      expect(record.classification).not.toContain("enforcement candidate")
+      expect(record.classification).not.toContain("unmapped")
+    }
+  })
+
+  it("maps the protected module-control action and excludes its internal contract from enforcement", () => {
+    const root = makeTempRepo()
+    writeFile(
+      root,
+      "services/modules/module-catalog.service.ts",
+      "export const MODULE_CATALOG = [{ slug: \"settings\", routePrefixes: [\"/dashboard/settings\"], dependencies: [] }]",
+    )
+    writeFile(root, "config/sidebar.ts", "export const sidebarLinks = []")
+    writeFile(
+      root,
+      "actions/modules/module-control.actions.ts",
+      "const getControlCenter = protect({ permission: \"MANAGE_SYSTEM_SETTINGS\" }, async () => null)",
+    )
+    writeFile(
+      root,
+      "services/modules/module-control-contracts.ts",
+      "export const MODULE_CONTROL_MODE = \"observe\"; export type ModuleSurfaceType = \"page\" | \"action\"",
+    )
+
+    const report = buildModuleSurfaceInventory(root, { mode: "report" })
+    const action = report.records.find((record) => record.file === "actions/modules/module-control.actions.ts")
+    const contract = report.records.find((record) => record.file === "services/modules/module-control-contracts.ts")
+
+    expect(action).toMatchObject({
+      surfaceType: "action",
+      moduleApplicability: "required",
+      moduleSlug: "settings",
+      permission: "MANAGE_SYSTEM_SETTINGS",
+      guard: "protect",
+      classification: "mapped, enforcement candidate",
+    })
+    expect(contract).toMatchObject({
+      surfaceType: "module_service",
+      moduleApplicability: "not applicable: internal module governance contract",
+      classification: "not applicable: internal module governance contract",
+    })
+    expect(contract.classification).not.toContain("unmapped")
+    expect(contract.classification).not.toContain("enforcement candidate")
+  })
 })

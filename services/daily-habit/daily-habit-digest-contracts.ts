@@ -8,6 +8,7 @@ export type DailyHabitDigestSummary = {
   staleSignalCount: number
   redactedSignalCount: number
   blockedDigestCount: number
+  hiddenDigestCount: number
 }
 
 export type DailyHabitDigestData = {

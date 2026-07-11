@@ -48,7 +48,10 @@ import {
 
 import { db } from "@/prisma/db"
 import { hasRbacPermission } from "@/lib/security/rbac-permissions"
-
+import {
+  buildReconciliationEvidenceManifestInTx,
+  reconciliationCertificateSourceEvidenceHash,
+} from "@/services/reconciliation/payment-reconciliation-evidence.service"
 import { upsertWorkflowAssuranceIncidentFromResult } from "./assurance-incident.service"
 import {
   INITIAL_WORKFLOW_ASSURANCE_CHECK_DEFINITIONS,
@@ -2207,15 +2210,39 @@ async function runReconciliationCertificateHashCheck(
     },
     select: {
       id: true,
+      providerAccountId: true,
+      periodStart: true,
+      periodEnd: true,
       certificateHash: true,
       certificatePayload: true,
     },
   })
   const missingCertificateProofCount = signedRuns.filter((run) => !run.certificateHash || !run.certificatePayload).length
-  const driftedRunIds = signedRuns
+  const payloadDriftedRunIds = signedRuns
     .filter((run) => run.certificateHash && run.certificatePayload)
     .filter((run) => reconciliationCertificateHash(run.certificatePayload) !== run.certificateHash)
     .map((run) => run.id)
+  const sourceDriftedRunIds: string[] = []
+  for (const run of signedRuns) {
+    if (!run.certificateHash || !run.certificatePayload || payloadDriftedRunIds.includes(run.id)) continue
+    const signedSourceHash = reconciliationCertificateSourceEvidenceHash(run.certificatePayload)
+    if (!signedSourceHash) {
+      sourceDriftedRunIds.push(run.id)
+      continue
+    }
+    const currentEvidence = await buildReconciliationEvidenceManifestInTx(
+      db as unknown as Prisma.TransactionClient,
+      {
+        organizationId: input.organizationId,
+        providerAccountId: run.providerAccountId,
+        reconciliationRunId: run.id,
+        periodStart: run.periodStart,
+        periodEnd: run.periodEnd,
+      },
+    )
+    if (currentEvidence.sourceHash !== signedSourceHash) sourceDriftedRunIds.push(run.id)
+  }
+  const driftedRunIds = [...new Set([...payloadDriftedRunIds, ...sourceDriftedRunIds])]
   const driftedCertificateCount = driftedRunIds.length
   const staleCertificateCount = missingCertificateProofCount + driftedCertificateCount
   const status: WorkflowAssuranceResultStatus = staleCertificateCount > 0 ? "failed" : "passed"
@@ -2224,6 +2251,8 @@ async function runReconciliationCertificateHashCheck(
     signedRunCount: signedRuns.length,
     missingCertificateProofCount,
     driftedCertificateCount,
+    payloadDriftedRunCount: payloadDriftedRunIds.length,
+    sourceDriftedRunCount: sourceDriftedRunIds.length,
     driftedRunIds,
   })
 
@@ -2255,6 +2284,8 @@ async function runReconciliationCertificateHashCheck(
           signedRunCount: signedRuns.length,
           missingCertificateProofCount,
           driftedCertificateCount,
+          payloadDriftedRunCount: payloadDriftedRunIds.length,
+          sourceDriftedRunCount: sourceDriftedRunIds.length,
           driftedRunIds: driftedRunIds.slice(0, 10),
         },
       },
@@ -2268,6 +2299,8 @@ async function runReconciliationCertificateHashCheck(
       signedRunCount: signedRuns.length,
       missingCertificateProofCount,
       driftedCertificateCount,
+      payloadDriftedRunCount: payloadDriftedRunIds.length,
+      sourceDriftedRunCount: sourceDriftedRunIds.length,
       driftedRunIds: driftedRunIds.slice(0, 10),
     },
   })

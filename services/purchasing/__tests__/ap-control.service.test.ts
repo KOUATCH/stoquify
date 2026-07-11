@@ -15,6 +15,7 @@ import {
 } from "@prisma/client"
 
 import { db } from "@/prisma/db"
+import { recordPostedJournalCloseInvalidationInTx } from "@/services/accounting/journal-close-invalidation.service"
 import { createLedgerPostingBatch, linkAccountingSource } from "@/services/accounting/posting.service"
 import { getOpenPeriodForDate } from "@/services/accounting/periods.service"
 import { getActivePostingRule } from "@/services/accounting/posting-rules.service"
@@ -45,6 +46,10 @@ jest.mock("@/services/accounting/posting.service", () => ({
   linkAccountingSource: jest.fn(),
 }))
 
+jest.mock("@/services/accounting/journal-close-invalidation.service", () => ({
+  recordPostedJournalCloseInvalidationInTx: jest.fn(),
+}))
+
 jest.mock("@/services/accounting/periods.service", () => ({
   getOpenPeriodForDate: jest.fn(),
 }))
@@ -60,6 +65,7 @@ jest.mock("@/services/events/business-event.service", () => ({
 }))
 
 const mockDb = db as unknown as { $transaction: jest.Mock }
+const mockedRecordPostedJournalCloseInvalidation = recordPostedJournalCloseInvalidationInTx as jest.Mock
 const mockedCreateLedgerPostingBatch = createLedgerPostingBatch as jest.Mock
 const mockedLinkAccountingSource = linkAccountingSource as jest.Mock
 const mockedGetOpenPeriodForDate = getOpenPeriodForDate as jest.Mock
@@ -275,6 +281,7 @@ function invoicePostingRule() {
 beforeEach(() => {
   jest.clearAllMocks()
   mockedCreateLedgerPostingBatch.mockResolvedValue({ id: "batch-1" })
+  mockedRecordPostedJournalCloseInvalidation.mockResolvedValue({ invalidatedCount: 0, results: [] })
   mockedLinkAccountingSource.mockResolvedValue({ id: "source-link-1" })
   mockedGetOpenPeriodForDate.mockResolvedValue({ id: "period-1" })
   mockedGetActivePostingRule.mockResolvedValue(null)
@@ -714,6 +721,7 @@ describe("ap-control.service", () => {
         sourceId: "invoice-1",
       }),
     )
+    expect(mockedRecordPostedJournalCloseInvalidation).not.toHaveBeenCalled()
   })
 
   it("posts matched supplier invoices to a balanced AP journal when rules resolve", async () => {
@@ -797,6 +805,27 @@ describe("ap-control.service", () => {
         sourceId: "invoice-1",
       }),
       tx,
+    )
+    expect(mockedRecordPostedJournalCloseInvalidation).toHaveBeenCalledWith(
+      tx,
+      "org-1",
+      {
+        journalEntryId: "journal-entry-1",
+        periodId: "period-1",
+        entryDate: new Date("2026-06-15"),
+        correlationId: "batch-1",
+        staleReason: "Purchasing/AP journal posting changed certified close evidence.",
+      },
+      {
+        actorId: "accountant-1",
+        now: expect.any(Date),
+      },
+    )
+    expect(tx.ledgerAuditEvent.create.mock.invocationCallOrder[0]).toBeLessThan(
+      mockedRecordPostedJournalCloseInvalidation.mock.invocationCallOrder[0],
+    )
+    expect(mockedRecordPostedJournalCloseInvalidation.mock.invocationCallOrder[0]).toBeLessThan(
+      mockedRecordBusinessEventInTx.mock.invocationCallOrder[0],
     )
     expect(tx.supplierInvoice.update).toHaveBeenCalledWith(
       expect.objectContaining({

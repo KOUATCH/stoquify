@@ -7,7 +7,7 @@ import {
   FiscalDocumentType,
 } from "@prisma/client"
 
-import { NotFoundError } from "@/services/_shared/action-errors"
+import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
 
 import { enqueueComplianceSubmission } from "../certification-outbox.service"
 import { createFiscalDocumentFromPostedSource } from "../fiscal-document.service"
@@ -284,6 +284,31 @@ describe("compliance fiscal document business events", () => {
 })
 
 describe("compliance submission outbox events", () => {
+  it("rejects production submissions before opening a transaction", async () => {
+    const dbLike = {
+      $transaction: jest.fn(),
+    }
+
+    await expect(
+      enqueueComplianceSubmission(
+        {
+          organizationId: "org-1",
+          actorId: "user-1",
+          fiscalDocumentId: "fiscal-doc-1",
+          operation: ComplianceSubmissionOperation.CERTIFY,
+          authorityChannel: "CM_DGI_PRODUCTION",
+          adapterKey: "CM_DGI_PRODUCTION",
+          environment: ComplianceAdapterEnvironment.PRODUCTION,
+          idempotencyKey: "production-submission-key",
+          payloadHash: "sha256:production-fiscal-doc",
+        },
+        dbLike as never,
+      ),
+    ).rejects.toBeInstanceOf(BusinessRuleError)
+
+    expect(dbLike.$transaction).not.toHaveBeenCalled()
+  })
+
   it("wraps standalone enqueue in a transaction with audit and business event evidence", async () => {
     const tx = createTx()
     const fiscalDocument = createFiscalDocumentFixture()

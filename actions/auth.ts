@@ -2,6 +2,7 @@
 
 import type { AuthResponse, LoginProps, RegisterUserProps } from "@/types/types"
 import { AUTH_MESSAGES } from "@/lib/security/auth-credentials"
+import { getPublicIdentityRequestContext } from "@/lib/security/public-request-context"
 import { safeSuccessActionErrorResult } from "@/actions/_shared/safe-action-responses"
 import { registerOrganizationAccount } from "@/services/users/user-identity.service"
 
@@ -26,7 +27,7 @@ export async function registerUser(data: RegisterUserProps): Promise<AuthRespons
       }
     }
 
-    return await registerOrganizationAccount(data)
+    return await registerOrganizationAccount(data, await getPublicIdentityRequestContext())
   } catch (error) {
     return safeSuccessActionErrorResult(error, {
       action: "auth.register",

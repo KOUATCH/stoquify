@@ -25,6 +25,7 @@ import {
 } from "@prisma/client"
 
 import { db } from "@/prisma/db"
+import { recordPostedJournalCloseInvalidationInTx } from "@/services/accounting/journal-close-invalidation.service"
 import { createLedgerPostingBatch, linkAccountingSource } from "@/services/accounting/posting.service"
 import { getOpenPeriodForDate } from "@/services/accounting/periods.service"
 import { getActivePostingRule } from "@/services/accounting/posting-rules.service"
@@ -876,6 +877,17 @@ async function createAPLedgerPosting(
         creditTotal: creditTotal.toFixed(2),
       }),
     },
+  })
+
+  await recordPostedJournalCloseInvalidationInTx(tx, input.organizationId, {
+    journalEntryId: journalEntry.id,
+    periodId: input.periodId,
+    entryDate: input.sourceDate,
+    correlationId: postedBatch.id,
+    staleReason: "Purchasing/AP journal posting changed certified close evidence.",
+  }, {
+    actorId: input.actorId,
+    now,
   })
 
   return {

@@ -101,9 +101,14 @@ jest.mock("../assurance-incident.service", () => ({
   ),
 }))
 
+jest.mock("@/services/reconciliation/payment-reconciliation-evidence.service", () => ({
+  ...jest.requireActual("@/services/reconciliation/payment-reconciliation-evidence.service"),
+  buildReconciliationEvidenceManifestInTx: jest.fn(),
+}))
 import { createHash } from "node:crypto"
 
 import { db } from "@/prisma/db"
+import { buildReconciliationEvidenceManifestInTx } from "@/services/reconciliation/payment-reconciliation-evidence.service"
 
 import { INITIAL_WORKFLOW_ASSURANCE_CHECK_DEFINITIONS } from "../assurance-registry-contracts"
 import { upsertWorkflowAssuranceIncidentFromResult } from "../assurance-incident.service"
@@ -113,6 +118,7 @@ import {
 } from "../assurance-registry.service"
 
 const mockUpsertIncident = upsertWorkflowAssuranceIncidentFromResult as jest.Mock
+const mockBuildReconciliationEvidence = buildReconciliationEvidenceManifestInTx as jest.Mock
 const mockDb = db as unknown as {
   workflowAssuranceCheckDefinition: {
     upsert: jest.Mock
@@ -209,6 +215,11 @@ const mockDb = db as unknown as {
 describe("workflow assurance registry service", () => {
   beforeEach(() => {
     jest.resetAllMocks()
+    mockBuildReconciliationEvidence.mockResolvedValue({
+      version: 1,
+      sourceHash: "source-clean",
+      counts: {},
+    })
     mockUpsertIncident.mockImplementation(async ({ result }) =>
       result.status === "passed" || result.status === "skipped" ? null : { id: `incident-${result.checkKey}` },
     )
@@ -941,20 +952,46 @@ describe("workflow assurance registry service", () => {
 
   it("flags signed reconciliation certificates whose persisted payload hash is stale", async () => {
     mockSingleDefinition("payment_reconciliation.certificate_source_hash.current")
-    const cleanPayload = { runId: "run-clean", signedAt: "2026-06-21T10:00:00.000Z" }
+    const cleanPayload = {
+      runId: "run-clean",
+      signedAt: "2026-06-21T10:00:00.000Z",
+      evidence: { sourceHash: "source-clean" },
+    }
+    const sourceDriftPayload = {
+      runId: "run-source-drift",
+      signedAt: "2026-06-21T10:10:00.000Z",
+      evidence: { sourceHash: "signed-source-hash" },
+    }
     mockDb.reconciliationRun.findMany.mockResolvedValue([
       {
         id: "run-clean",
+        providerAccountId: "provider-account-1",
+        periodStart: new Date("2026-06-21T00:00:00.000Z"),
+        periodEnd: new Date("2026-06-22T00:00:00.000Z"),
         certificateHash: stableTestCertificateHash(cleanPayload),
         certificatePayload: cleanPayload,
       },
       {
         id: "run-drifted",
+        providerAccountId: "provider-account-1",
+        periodStart: new Date("2026-06-21T00:00:00.000Z"),
+        periodEnd: new Date("2026-06-22T00:00:00.000Z"),
         certificateHash: "not-the-current-hash",
         certificatePayload: { runId: "run-drifted", signedAt: "2026-06-21T10:15:00.000Z" },
       },
       {
+        id: "run-source-drift",
+        providerAccountId: "provider-account-1",
+        periodStart: new Date("2026-06-21T00:00:00.000Z"),
+        periodEnd: new Date("2026-06-22T00:00:00.000Z"),
+        certificateHash: stableTestCertificateHash(sourceDriftPayload),
+        certificatePayload: sourceDriftPayload,
+      },
+      {
         id: "run-missing",
+        providerAccountId: "provider-account-1",
+        periodStart: new Date("2026-06-21T00:00:00.000Z"),
+        periodEnd: new Date("2026-06-22T00:00:00.000Z"),
         certificateHash: null,
         certificatePayload: null,
       },
@@ -967,9 +1004,9 @@ describe("workflow assurance registry service", () => {
       resultStatus: "failed",
       severity: "high",
       counts: expect.objectContaining({
-        scanned: 3,
+        scanned: 4,
         passed: 1,
-        failed: 2,
+        failed: 3,
       }),
     })
     expect(mockDb.workflowAssuranceCheckRun.create).toHaveBeenCalledWith(

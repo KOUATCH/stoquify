@@ -1,7 +1,11 @@
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import { getOptionalRbacContext } from "@/lib/security/rbac"
 
-import { requireApiModuleAccess, requireApiSessionForCurrentOrg } from "../server-authz"
+import {
+  requireAnyAppPermission,
+  requireApiModuleAccess,
+  requireApiSessionForCurrentOrg,
+} from "../server-authz"
 
 jest.mock("@/lib/security/rbac", () => ({
   assertCanUseOrganization: jest.fn(),
@@ -105,5 +109,30 @@ describe("server authz module access helpers", () => {
       mode: "enforce",
       moduleSlug: "inventory",
     }))
+  })
+  it("accepts any one of the approved API write permissions", () => {
+    const user = {
+      id: "user-1",
+      permissions: ["inventory.items.update"],
+      roles: [],
+    }
+
+    expect(() => requireAnyAppPermission(user, [
+      "inventory.items.create",
+      "inventory.items.update",
+    ])).not.toThrow()
+  })
+
+  it("fails closed when none of the approved API write permissions are present", () => {
+    const user = {
+      id: "user-1",
+      permissions: ["dashboard.read", "inventory.items.read"],
+      roles: [],
+    }
+
+    expect(() => requireAnyAppPermission(user, [
+      "inventory.items.create",
+      "inventory.items.update",
+    ])).toThrow("Forbidden")
   })
 })

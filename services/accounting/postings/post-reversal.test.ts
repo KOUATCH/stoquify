@@ -20,10 +20,16 @@ jest.mock("@/prisma/db", () => ({
     $transaction: jest.fn(),
   },
 }))
+jest.mock("../journal-close-invalidation.service", () => ({
+  recordPostedJournalCloseInvalidationInTx: jest.fn(),
+}))
 
 import { db } from "@/prisma/db"
+import { recordPostedJournalCloseInvalidationInTx } from "../journal-close-invalidation.service"
 import { postRefund } from "./post-refund"
 import { postVoid } from "./post-void"
+
+const mockRecordPostedCloseInvalidation = recordPostedJournalCloseInvalidationInTx as jest.Mock
 
 const mockTx = {
   paymentRefund: {
@@ -296,6 +302,7 @@ function arrangePosting(rulePurpose: AccountingPostingPurpose, entryPrefix: stri
 describe("POS reversal accounting postings", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockRecordPostedCloseInvalidation.mockResolvedValue({ invalidatedCount: 0, results: [] })
     mockDb.$transaction.mockImplementation(async (handler: (tx: typeof mockTx) => Promise<unknown>) => handler(mockTx))
   })
 
@@ -337,6 +344,13 @@ describe("POS reversal accounting postings", () => {
     expect(lines[2].debit.toFixed(2)).toBe("60.00")
     expect(lines[3].credit.toFixed(2)).toBe("60.00")
     expect(lines[4].credit.toFixed(2)).toBe("118.00")
+    expect(mockRecordPostedCloseInvalidation).toHaveBeenCalledWith(mockTx, "org-1", {
+      journalEntryId: "reversal-je-1",
+      periodId: "period-1",
+      entryDate: postingDate,
+      correlationId: "batch-1",
+      staleReason: "POS refund posting changed certified close evidence.",
+    }, expect.objectContaining({ actorId: "controller-1" }))
   })
 
   it("posts a POS void after sale and payment traces exist", async () => {
@@ -367,6 +381,13 @@ describe("POS reversal accounting postings", () => {
       ["0.00", "60.00"],
       ["0.00", "118.00"],
     ])
+    expect(mockRecordPostedCloseInvalidation).toHaveBeenCalledWith(mockTx, "org-1", {
+      journalEntryId: "reversal-je-1",
+      periodId: "period-1",
+      entryDate: postingDate,
+      correlationId: "batch-1",
+      staleReason: "POS void posting changed certified close evidence.",
+    }, expect.objectContaining({ actorId: "controller-1" }))
   })
 
   it("requires source traces before posting a refund", async () => {

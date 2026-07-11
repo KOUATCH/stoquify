@@ -1,5 +1,6 @@
 "use server";
 import { safeStatusActionErrorResult } from "@/actions/_shared/safe-action-responses";
+import { getPublicIdentityRequestContext } from "@/lib/security/public-request-context";
 import { acceptInvitationWorkflow } from "@/services/users/user-identity.service";
 // import { Resend } from "resend";
 
@@ -21,7 +22,7 @@ type InvitedUserProps = {
 
 export async function createInvitedUser(data: InvitedUserProps) {
   try {
-    return await acceptInvitationWorkflow(data);
+    return await acceptInvitationWorkflow(data, await getPublicIdentityRequestContext());
   } catch (error) {
     return safeStatusActionErrorResult(error, {
       action: "users.invite.accept",
@@ -29,5 +30,3 @@ export async function createInvitedUser(data: InvitedUserProps) {
     }, "Something went wrong, Please try again");
   }
 }
-
-

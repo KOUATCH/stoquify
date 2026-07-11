@@ -1,16 +1,26 @@
-
-
 "use server";
 
+import { requirePermission } from "@/lib/security/rbac";
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service";
 import { listOrganizationRoles } from "@/services/roles/role.service";
 import { safeSuccessActionErrorResult } from "../_shared/safe-action-responses";
-import { requireRoleAction, ROLE_ACTION_PERMISSIONS } from "./role-auth";
 
-
-const getOrgRoles=async(orgId?: string | null)=> {
+const getOrgRoles = async (orgId?: string | null) => {
   try {
-    const ctx = await requireRoleAction(ROLE_ACTION_PERMISSIONS.read)
-    const orgRoles = await listOrganizationRoles({ ctx, organizationId: orgId })
+    const ctx = await requirePermission("roles.read", { resource: "Role" });
+
+    await observeModuleAccess({
+      moduleSlug: "settings",
+      organizationId: ctx.orgId,
+      userId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      surfaceType: "action",
+      surface: "actions/roles/getOrgRoles.ts",
+      accessIntent: "read",
+      mode: "observe",
+    });
+
+    const orgRoles = await listOrganizationRoles({ ctx, organizationId: orgId });
     return { success: true as const, data: orgRoles, error: null };
   } catch (error) {
     return safeSuccessActionErrorResult(error, {
@@ -18,5 +28,6 @@ const getOrgRoles=async(orgId?: string | null)=> {
       component: "Role",
     }, "Failed to fetch org roles");
   }
-}
-export default getOrgRoles 
+};
+
+export default getOrgRoles;

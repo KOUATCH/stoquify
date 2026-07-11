@@ -17,9 +17,15 @@ jest.mock("@/prisma/db", () => ({
     $transaction: jest.fn(),
   },
 }))
+jest.mock("../journal-close-invalidation.service", () => ({
+  recordPostedJournalCloseInvalidationInTx: jest.fn(),
+}))
 
 import { db } from "@/prisma/db"
+import { recordPostedJournalCloseInvalidationInTx } from "../journal-close-invalidation.service"
 import { postPayment } from "./post-payment"
+
+const mockRecordPostedCloseInvalidation = recordPostedJournalCloseInvalidationInTx as jest.Mock
 
 const mockTx = {
   payment: {
@@ -264,6 +270,7 @@ function arrangeNewPaymentPosting() {
 describe("post payment accounting posting", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockRecordPostedCloseInvalidation.mockResolvedValue({ invalidatedCount: 0, results: [] })
     mockDb.$transaction.mockImplementation(async (handler: (tx: typeof mockTx) => Promise<unknown>) => handler(mockTx))
     arrangeNewPaymentPosting()
   })
@@ -332,6 +339,13 @@ describe("post payment accounting posting", () => {
         }),
       }),
     )
+    expect(mockRecordPostedCloseInvalidation).toHaveBeenCalledWith(mockTx, "org-1", {
+      journalEntryId: "payment-je-1",
+      periodId: "period-1",
+      entryDate: paymentDate,
+      correlationId: "batch-payment-1",
+      staleReason: "POS payment posting changed certified close evidence.",
+    }, expect.objectContaining({ actorId: "controller-1" }))
   })
 
   it("returns the posted payment journal entry idempotently", async () => {
@@ -347,6 +361,7 @@ describe("post payment accounting posting", () => {
     expect(mockTx.postingRule.findFirst).not.toHaveBeenCalled()
     expect(mockTx.journalEntry.create).not.toHaveBeenCalled()
     expect(mockTx.accountingSourceLink.create).not.toHaveBeenCalled()
+    expect(mockRecordPostedCloseInvalidation).not.toHaveBeenCalled()
   })
 
   it("requires the linked sale to be posted before clearing receivables", async () => {

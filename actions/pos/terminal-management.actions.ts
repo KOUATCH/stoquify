@@ -2,9 +2,10 @@
 
 import { revalidatePath, revalidateTag } from "next/cache"
 import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses"
+import { requirePermission } from "@/lib/security/rbac"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import { err, ok } from "@/services/_shared/action-response"
 import { BusinessRuleError, ForbiddenError, getPrismaKnownRequest } from "@/services/_shared/action-errors"
-import { requireOrg } from "@/services/_shared/require-org"
 import {
   archiveTerminalForManagement,
   createTerminalForManagement,
@@ -77,19 +78,63 @@ function getValidationResult(input: unknown) {
   }
 }
 
-async function assertOrganizationAccess(requestedOrganizationId?: string | null) {
-  const { orgId, user } = await requireOrg()
-  const scopedOrganizationId = cleanText(requestedOrganizationId) ?? orgId
+type TerminalManagementPermission = "pos.read" | "pos.session.start"
+
+type TerminalManagementAccess = {
+  organizationId: string
+  userId: string
+  permissions: readonly string[]
+}
+
+async function assertOrganizationAccess(
+  requestedOrganizationId?: string | null,
+  options: {
+    permission?: TerminalManagementPermission
+    resourceId?: string | null
+    auditAllowed?: boolean
+  } = {},
+) {
+  const requestedOrgId = cleanText(requestedOrganizationId)
+  const ctx = await requirePermission(options.permission ?? "pos.read", {
+    resource: "POSTerminalManagement",
+    resourceId: cleanText(options.resourceId) ?? requestedOrgId ?? undefined,
+    auditAllowed: options.auditAllowed,
+  })
+  const scopedOrganizationId = requestedOrgId ?? ctx.orgId
 
   if (!scopedOrganizationId) {
     throw new BusinessRuleError("Organization is required")
   }
 
-  if (scopedOrganizationId !== orgId && !user.permissions.includes("*")) {
+  if (scopedOrganizationId !== ctx.orgId && !ctx.isSuperUser) {
     throw new ForbiddenError("You do not have access to this organization")
   }
 
-  return scopedOrganizationId
+  return {
+    organizationId: scopedOrganizationId,
+    userId: ctx.userId,
+    permissions: ctx.permissions,
+  } satisfies TerminalManagementAccess
+}
+
+async function observePOSTerminalModuleAccess(
+  access: TerminalManagementAccess,
+  input: {
+    surface: string
+    accessIntent: "read" | "write"
+  },
+) {
+  await observeModuleAccess({
+    organizationId: access.organizationId,
+    userId: access.userId,
+    actorPermissions: access.permissions,
+    moduleSlug: "pos",
+    surfaceType: "action",
+    surface: input.surface,
+    accessIntent: input.accessIntent,
+    mode: "observe",
+    audit: true,
+  })
 }
 
 function revalidateTerminalPaths(organizationId: string, terminalId?: string) {
@@ -107,8 +152,12 @@ function revalidateTerminalPaths(organizationId: string, terminalId?: string) {
 
 export async function getTerminalManagementData(organizationId: string) {
   try {
-    const scopedOrganizationId = await assertOrganizationAccess(organizationId)
-    const data = await getTerminalManagementDataForOrg(scopedOrganizationId)
+    const access = await assertOrganizationAccess(organizationId)
+    await observePOSTerminalModuleAccess(access, {
+      surface: "actions/pos/terminal-management.actions.ts:getTerminalManagementData",
+      accessIntent: "read",
+    })
+    const data = await getTerminalManagementDataForOrg(access.organizationId)
 
     return ok(data)
   } catch (error) {
@@ -123,15 +172,22 @@ export async function getTerminalManagementData(organizationId: string) {
 
 export async function createManagedTerminal(organizationId: string, input: TerminalManagementInput) {
   try {
-    const scopedOrganizationId = await assertOrganizationAccess(organizationId)
+    const access = await assertOrganizationAccess(organizationId, {
+      permission: "pos.session.start",
+      auditAllowed: true,
+    })
+    await observePOSTerminalModuleAccess(access, {
+      surface: "actions/pos/terminal-management.actions.ts:createManagedTerminal",
+      accessIntent: "write",
+    })
     const parsed = getValidationResult(input)
 
     if (!parsed.success) {
       return err<TerminalManagementRow>(parsed.error)
     }
 
-    const terminal = await createTerminalForManagement(scopedOrganizationId, parsed.data)
-    revalidateTerminalPaths(scopedOrganizationId, terminal.id)
+    const terminal = await createTerminalForManagement(access.organizationId, parsed.data)
+    revalidateTerminalPaths(access.organizationId, terminal.id)
 
     return ok(terminal)
   } catch (error) {
@@ -150,8 +206,16 @@ export async function updateManagedTerminal(
   input: TerminalManagementInput,
 ) {
   try {
-    const scopedOrganizationId = await assertOrganizationAccess(organizationId)
     const scopedTerminalId = cleanText(terminalId)
+    const access = await assertOrganizationAccess(organizationId, {
+      permission: "pos.session.start",
+      resourceId: scopedTerminalId,
+      auditAllowed: true,
+    })
+    await observePOSTerminalModuleAccess(access, {
+      surface: "actions/pos/terminal-management.actions.ts:updateManagedTerminal",
+      accessIntent: "write",
+    })
 
     if (!scopedTerminalId) {
       return err<TerminalManagementRow>("Terminal not found")
@@ -163,8 +227,8 @@ export async function updateManagedTerminal(
       return err<TerminalManagementRow>(parsed.error)
     }
 
-    const terminal = await updateTerminalForManagement(scopedOrganizationId, scopedTerminalId, parsed.data)
-    revalidateTerminalPaths(scopedOrganizationId, terminal.id)
+    const terminal = await updateTerminalForManagement(access.organizationId, scopedTerminalId, parsed.data)
+    revalidateTerminalPaths(access.organizationId, terminal.id)
 
     return ok(terminal)
   } catch (error) {
@@ -179,15 +243,23 @@ export async function updateManagedTerminal(
 
 export async function archiveManagedTerminal(organizationId: string, terminalId: string) {
   try {
-    const scopedOrganizationId = await assertOrganizationAccess(organizationId)
     const scopedTerminalId = cleanText(terminalId)
+    const access = await assertOrganizationAccess(organizationId, {
+      permission: "pos.session.start",
+      resourceId: scopedTerminalId,
+      auditAllowed: true,
+    })
+    await observePOSTerminalModuleAccess(access, {
+      surface: "actions/pos/terminal-management.actions.ts:archiveManagedTerminal",
+      accessIntent: "write",
+    })
 
     if (!scopedTerminalId) {
       return err<{ id: string }>("Terminal not found")
     }
 
-    const terminal = await archiveTerminalForManagement(scopedOrganizationId, scopedTerminalId)
-    revalidateTerminalPaths(scopedOrganizationId, terminal.id)
+    const terminal = await archiveTerminalForManagement(access.organizationId, scopedTerminalId)
+    revalidateTerminalPaths(access.organizationId, terminal.id)
 
     return ok(terminal)
   } catch (error) {

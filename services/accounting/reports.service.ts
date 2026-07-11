@@ -3,6 +3,7 @@ import { createHash, randomUUID } from "node:crypto"
 import { JournalEntryStatus, Prisma } from "@prisma/client"
 
 import { db } from "@/prisma/db"
+import { BusinessRuleError } from "@/services/_shared/action-errors"
 import {
   assertSensitiveActionAllowed,
   evaluateAndAuditSensitiveAction,
@@ -57,6 +58,10 @@ function entryDateFilter(input: TrialBalanceInput | GeneralLedgerInput) {
 
 function hashFilters(input: unknown) {
   return `sha256:${createHash("sha256").update(JSON.stringify(input)).digest("hex")}`
+}
+
+function hashContent(input: unknown) {
+  return "sha256:" + createHash("sha256").update(JSON.stringify(input)).digest("hex")
 }
 
 export async function getTrialBalance(input: TrialBalanceInput) {
@@ -272,26 +277,100 @@ export async function exportAccountingReport(input: ExportAccountingReportInput)
     includeZeroBalance: input.includeZeroBalance ?? true,
   }
 
-  const report =
+  if (input.reportType === "GENERAL_LEDGER" && !input.accountId) {
+    throw new BusinessRuleError("General ledger export requires an account")
+  }
+
+  const [report, accountingSettings, organization, period] = await Promise.all([
     input.reportType === "TRIAL_BALANCE"
-      ? await getTrialBalance({
+      ? getTrialBalance({
           organizationId: input.organizationId,
           periodId: input.periodId,
           startDate: input.startDate,
           endDate: input.endDate,
           includeZeroBalance: input.includeZeroBalance ?? true,
         })
-      : await getGeneralLedger({
+      : getGeneralLedger({
           organizationId: input.organizationId,
           accountId: input.accountId!,
           startDate: input.startDate,
           endDate: input.endDate,
+        }),
+    db.organizationAccountingSettings.findUnique({
+      where: { organizationId: input.organizationId },
+      select: { baseCurrency: true },
+    }),
+    db.organization.findUnique({
+      where: { id: input.organizationId },
+      select: { currency: true },
+    }),
+    input.periodId
+      ? db.accountingPeriod.findFirst({
+          where: { id: input.periodId, organizationId: input.organizationId },
+          select: { id: true, name: true, startDate: true, endDate: true, status: true },
         })
+      : Promise.resolve(null),
+  ])
 
+  if (input.periodId && !period) {
+    throw new BusinessRuleError("Accounting period is unavailable for this organization")
+  }
+
+  const currency = (accountingSettings?.baseCurrency || organization?.currency || "XAF").trim().toUpperCase()
   const rowCount = Array.isArray(report) ? report.length : report.rows.length
   const exportId = randomUUID()
-  const watermarkId = `acct-${input.organizationId}-${exportId}`
+  const watermarkId = "acct-" + input.organizationId + "-" + exportId
   const filtersHash = hashFilters(normalizedFilters)
+  const generatedAt = new Date().toISOString()
+  const balanceStatus = Array.isArray(report)
+    ? "NOT_APPLICABLE"
+    : report.totals.isBalanced
+      ? "BALANCED"
+      : "OUT_OF_BALANCE"
+  const provenance = {
+    source: "POSTED_LEDGER_READ_MODEL" as const,
+    sourceLabel: "Posted and reversed journal entry lines",
+    sourceTables:
+      input.reportType === "TRIAL_BALANCE"
+        ? ["chartOfAccount", "journalEntry", "journalEntryLine"]
+        : ["chartOfAccount", "journal", "accountingPeriod", "journalEntry", "journalEntryLine"],
+    currency,
+    period: period
+      ? {
+          id: period.id,
+          name: period.name,
+          startDate: period.startDate.toISOString(),
+          endDate: period.endDate.toISOString(),
+          status: period.status,
+        }
+      : null,
+    periodStatus: period?.status || "UNSCOPED_DATE_RANGE",
+    rowCount,
+    filtersHash,
+    balanceStatus,
+    redactionStatus: "NO_CONTACT_OR_AUTHENTICATION_FIELDS_INCLUDED" as const,
+    certification: {
+      status: "INTERNAL_ACCOUNTING_REPORT_ONLY" as const,
+      label: "Internal accounting report only",
+      limitations: [
+        "Not a certified OHADA statutory filing",
+        "Not signed by Close & Assurance pack controls",
+      ],
+    },
+  }
+  const payload = {
+    schemaVersion: "accounting-report-export.v1" as const,
+    organizationId: input.organizationId,
+    reportType: input.reportType,
+    fileType: input.fileType,
+    generatedAt,
+    exportId,
+    watermarkId,
+    provenance,
+    filters: normalizedFilters,
+    data: report,
+  }
+  const contentHash = hashContent(payload)
 
   const decision = await db.$transaction((tx) =>
     evaluateAndAuditSensitiveAction(tx, {
@@ -302,6 +381,7 @@ export async function exportAccountingReport(input: ExportAccountingReportInput)
       lastAuthAt: Date.now(),
       resourceType: "AccountingExport",
       resourceId: exportId,
+      currency,
       exportContext: {
         scope: input.reportType,
         filtersHash,
@@ -310,19 +390,22 @@ export async function exportAccountingReport(input: ExportAccountingReportInput)
         sensitivity: "statutory",
         watermarkId,
       },
-      metadata: normalizedFilters,
+      metadata: {
+        ...normalizedFilters,
+        contentHash,
+        periodStatus: provenance.periodStatus,
+        balanceStatus,
+        certificationStatus: provenance.certification.status,
+        redactionStatus: provenance.redactionStatus,
+      },
     }),
   )
   assertSensitiveActionAllowed(decision)
 
   return {
-    exportId,
-    reportType: input.reportType,
-    fileType: input.fileType,
+    ...payload,
     rowCount,
     filtersHash,
-    watermarkId,
-    generatedAt: new Date().toISOString(),
-    data: report,
+    contentHash,
   }
 }

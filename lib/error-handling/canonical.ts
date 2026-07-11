@@ -118,6 +118,10 @@ function isRbacErrorLike(error: unknown): error is RbacErrorLike {
       (error as RbacErrorLike).code === "FORBIDDEN")
 }
 
+function isFreshAuthRequiredError(error: unknown): error is Error {
+  return error instanceof Error && error.name === "FreshAuthRequiredError"
+}
+
 function isPrismaKnownRequestError(error: unknown): error is Prisma.PrismaClientKnownRequestError {
   return error instanceof Prisma.PrismaClientKnownRequestError ||
     (isRecord(error) &&
@@ -264,6 +268,17 @@ export function normalizeToCanonicalError(error: unknown, options: CanonicalErro
       userMessage: isAuth ? "Unauthenticated" : "Forbidden",
       operatorMessage: error.message,
       category: isAuth ? ErrorCategory.AUTHENTICATION : ErrorCategory.AUTHORIZATION,
+      severity: ErrorSeverity.MEDIUM,
+    }, options)
+  }
+
+  if (isFreshAuthRequiredError(error)) {
+    return createCanonicalError({
+      code: "FRESH_AUTH_REQUIRED",
+      status: 403,
+      userMessage: "Fresh authentication required",
+      operatorMessage: error.message,
+      category: ErrorCategory.AUTHENTICATION,
       severity: ErrorSeverity.MEDIUM,
     }, options)
   }

@@ -7,13 +7,16 @@
 - [HR/Payroll operations](hr-payroll-operations.md)
 - [Invite-token migration](001-invite-token-migration.md)
 - [MFA rollout](016-mfa-rollout.md)
+- [Release secret provisioning](release-secret-provisioning.md)
+- [Prisma production migrations](prisma-production-migrations.md)
 
 ## Deploy procedure
 
-1. Open a PR. CI (`.github/workflows/ci.yml`) runs quality → unit-test/build/audit/integration in parallel. **All must be green** before merging.
+1. Open a PR. CI (`.github/workflows/ci.yml`) runs `npm run verify:repo`. It must be green before merging.
 2. Merge to `main`. Vercel auto-deploys.
-3. Vercel runs `npm run vercel-build` → `prisma generate && prisma migrate deploy && next build`. Migrations apply automatically.
-4. Watch the deploy log for migration output. If a migration fails, the deploy fails — production stays on the previous build.
+3. Vercel runs `npm run build`. The release-secret preflight runs first and blocks a production build unless both dedicated public-boundary secrets satisfy the provisioning contract.
+4. The build then runs the Prisma migration safety/deployment gate. Production applies pending committed migrations before application compilation; local and ordinary Preview builds scan and skip database mutation.
+5. Watch the deploy log for the redacted secret preflight, migration result, and application build result. Any failure stops promotion and leaves the previous production deployment active.
 
 ## Rolling back
 
@@ -88,6 +91,8 @@ If a destructive migration just landed and is causing issues, prefer "fix forwar
   - Last drill: _none yet_
 
 ## Secret rotation
+
+- `PUBLIC_IDENTITY_ABUSE_HASH_SECRET`, `AQSTOQFLOW_RECEIPT_TOKEN_SECRET` — follow the [release-secret provisioning runbook](release-secret-provisioning.md); both have domain-specific rotation effects.
 
 - `NEXTAUTH_SECRET` — rotating invalidates every active session. Schedule during off-hours. Update Vercel env → redeploy.
 - `MFA_ENCRYPTION_KEY` — **never rotate** without a migration script that re-encrypts every `User.mfaSecret` with the new key. Otherwise every MFA-enabled user is locked out.

@@ -1,25 +1,33 @@
 "use server";
+
 import { logSafeActionWarning } from "@/actions/_shared/safe-action-responses";
-import { getAuthenticatedUser } from "@/config/useAuth";
-import { hasAppPermission } from "@/lib/security/server-authz";
+import { requirePermission, requireRbacContext } from "@/lib/security/rbac";
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service";
 import { getOrganizationUserById } from "@/services/users/user-identity.service";
-
-
 
 export async function getUserById(id: string) {
   try {
-    const authUser = await getAuthenticatedUser();
-    const canReadUsers = hasAppPermission(authUser, "users.read");
+    let ctx = await requireRbacContext();
 
-    if (id !== authUser.id && !canReadUsers) {
-      return null;
+    if (id !== ctx.userId) {
+      ctx = await requirePermission("users.read", { resource: "User", resourceId: id });
     }
 
-    const user = await getOrganizationUserById({
-      userId: id,
-      organizationId: authUser.organizationId,
+    await observeModuleAccess({
+      moduleSlug: "settings",
+      organizationId: ctx.orgId,
+      userId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      surfaceType: "action",
+      surface: "actions/users/getUserById.ts",
+      accessIntent: "read",
+      mode: "observe",
     });
-    return user;
+
+    return await getOrganizationUserById({
+      userId: id,
+      organizationId: ctx.orgId,
+    });
   } catch (error) {
     logSafeActionWarning("Error fetching user", error, {
       action: "users.read",
@@ -28,4 +36,3 @@ export async function getUserById(id: string) {
     return null;
   }
 }
- 

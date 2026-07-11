@@ -331,7 +331,7 @@ export const PERMISSION_ALIASES = {
   "system.read": ["ADMIN_READ"],
   "system.settings.read": ["VIEW_ORGANIZATION_SETTINGS"],
   "system.settings.update": ["MANAGE_SYSTEM_SETTINGS"],
-  "system.organization.read": ["VIEW_ORGANIZATION_SETTINGS"],
+  "system.organization.read": ["VIEW_ORGANIZATION_SETTINGS", "COMPANY_READ"],
   "system.organization.update": ["MANAGE_ORGANIZATION"],
   "data.export": ["EXPORT_DATA"],
   "controls.manage": ["MANAGE_FINANCIAL_CONTROLS"],

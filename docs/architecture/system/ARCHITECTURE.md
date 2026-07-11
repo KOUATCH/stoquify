@@ -96,9 +96,9 @@ The Inngest webhook lives at `/api/inngest` and is HMAC-verified by the SDK.
 
 ## Deployment
 
-- **Host** — Vercel. Production deploy runs `npm run vercel-build` which generates Prisma client, applies pending migrations (`prisma migrate deploy`), then `next build`.
-- **DB migrations** — Prisma migration files in `prisma/migrations/` (committed). `vercel-build` runs `prisma migrate deploy` automatically on every prod deploy.
-- **Secrets** — Vercel project env. Validated at boot by `lib/env.ts` (Zod); missing required vars (`DATABASE_URL`, `NEXTAUTH_SECRET`) crash startup loudly.
+- **Host** — Vercel. Production deploy uses `npm run build`; its first step is the fail-closed, value-redacting release-secret preflight.
+- **DB migrations** — Prisma migration files live in `prisma/migrations/` (committed). `npm run build` scans for unapproved destructive SQL and runs `prisma migrate deploy` only for a validated production target; local and ordinary Preview builds skip mutation.
+- **Secrets** — Vercel project env. Dedicated public-boundary secrets are validated before production compilation by `scripts/release-secret-preflight.js`; see the release-secret provisioning runbook for configuration and rotation.
 - **Backups** — provider-managed (Neon/Supabase point-in-time recovery). Off-host snapshot strategy in [`RUNBOOK.md`](RUNBOOK.md#backups).
 
 ## Testing

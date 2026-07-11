@@ -5,6 +5,7 @@ import {
   PaymentReconciliationInboxStatus,
   ProviderEventStatus,
   ReconciliationRunStatus,
+  SettlementAccountApprovalStatus,
   SuspenseStatus,
   Prisma,
 } from "@prisma/client"
@@ -20,7 +21,11 @@ import {
   type SensitiveActionDecision,
 } from "@/services/controls/sensitive-action.service"
 import { recordBusinessEventInTx } from "@/services/events/business-event.service"
-
+import {
+  assertProviderAccountReconciliationReady,
+  buildReconciliationEvidenceManifestInTx,
+  reconciliationCertificateSourceEvidenceHash,
+} from "./payment-reconciliation-evidence.service"
 type ControlContext = {
   actorPermissions: readonly string[]
   lastAuthAt?: Date | number | string | null
@@ -30,6 +35,9 @@ type ControlContext = {
 type ControlledResult<T> =
   | { denied: SensitiveActionDecision; value?: never }
   | { denied?: never; value: T }
+type CertificateExportTransactionResult =
+  | ControlledResult<ReconciliationCertificateExportResult>
+  | { driftError: string }
 
 export type SignReconciliationRunInput = {
   organizationId: string
@@ -217,13 +225,33 @@ async function loadRunForCertification(
   tx: Prisma.TransactionClient,
   organizationId: string,
   runId: string,
+  at: Date = new Date(),
 ) {
   const run = await tx.reconciliationRun.findFirst({
     where: { id: runId, organizationId },
     include: {
       accountingPeriod: { select: { id: true, status: true, startDate: true, endDate: true } },
-      paymentRail: { select: { id: true, name: true, type: true } },
-      providerAccount: { select: { id: true, displayName: true, providerCode: true, currencyCode: true } },
+      paymentRail: { select: { id: true, name: true, type: true, isActive: true } },
+      providerAccount: {
+        select: {
+          id: true,
+          displayName: true,
+          providerCode: true,
+          currencyCode: true,
+          status: true,
+          settlementLedgerAccountId: true,
+          suspenseLedgerAccountId: true,
+          settlementAccounts: {
+            where: {
+              approvalStatus: SettlementAccountApprovalStatus.APPROVED,
+              effectiveFrom: { lte: at },
+              OR: [{ effectiveTo: null }, { effectiveTo: { gte: at } }],
+            },
+            select: { id: true },
+            take: 1,
+          },
+        },
+      },
     },
   })
 
@@ -395,7 +423,7 @@ export async function signReconciliationRun(input: SignReconciliationRunInput): 
   const now = input.control.now ? new Date(input.control.now) : new Date()
 
   const result = await db.$transaction(async (tx): Promise<ControlledResult<SignReconciliationRunResult>> => {
-    const run = await loadRunForCertification(tx, input.organizationId, input.runId)
+    const run = await loadRunForCertification(tx, input.organizationId, input.runId, now)
 
     const decision = evaluateSensitiveAction({
       action: "payment.reconciliation.sign",
@@ -423,6 +451,10 @@ export async function signReconciliationRun(input: SignReconciliationRunInput): 
     if (run.signedAt || run.signedById || run.certificateHash) {
       throw new BusinessRuleError("Reconciliation run is already signed.")
     }
+    assertProviderAccountReconciliationReady({
+      ...run.providerAccount,
+      paymentRail: run.paymentRail,
+    })
 
     const period = run.accountingPeriod ?? (await resolveOpenAccountingPeriod(tx, input.organizationId, run.businessDate))
     if (!period || period.status !== AccountingPeriodStatus.OPEN) {
@@ -484,6 +516,19 @@ export async function signReconciliationRun(input: SignReconciliationRunInput): 
     if (suspenseWithoutLedgerCount > 0) {
       throw new BusinessRuleError("Posted suspense items must include a ledger posting batch before sign-off.")
     }
+    const sourceEvidence = await buildReconciliationEvidenceManifestInTx(tx, {
+      organizationId: input.organizationId,
+      providerAccountId: run.providerAccountId,
+      reconciliationRunId: run.id,
+      periodStart: run.periodStart,
+      periodEnd: run.periodEnd,
+    })
+    if (
+      sourceEvidence.counts.providerEventCount !== providerEventCount ||
+      sourceEvidence.counts.statementLineCount !== statementLineCount
+    ) {
+      throw new BusinessRuleError("Reconciliation source evidence changed during sign-off; rerun reconciliation.")
+    }
 
     const certificatePayload = {
       version: 1,
@@ -510,11 +555,15 @@ export async function signReconciliationRun(input: SignReconciliationRunInput): 
         statementLineCount,
         openExceptionCount,
         openSuspenseCount,
+        sourceManifestVersion: sourceEvidence.version,
+        sourceHash: sourceEvidence.sourceHash,
+        sourceCounts: sourceEvidence.counts,
       },
       controls: {
         makerCheckerEnforced: true,
         freshAuthEnforced: true,
         periodOpenVerified: true,
+        providerAccountReadyVerified: true,
         suspensePostingGatewayOnly: true,
       },
       signedById: input.signedById,
@@ -638,8 +687,8 @@ export async function exportReconciliationCertificate(
     throw new BusinessRuleError("Only JSON certificate export is enabled for this reconciliation build.")
   }
 
-  const result = await db.$transaction(async (tx): Promise<ControlledResult<ReconciliationCertificateExportResult>> => {
-    const run = await loadRunForCertification(tx, input.organizationId, input.runId)
+  const result = await db.$transaction(async (tx): Promise<CertificateExportTransactionResult> => {
+    const run = await loadRunForCertification(tx, input.organizationId, input.runId, now)
 
     if (run.status !== ReconciliationRunStatus.SIGNED || !run.certificateHash || !run.certificatePayload) {
       throw new BusinessRuleError("Only signed reconciliation runs can be exported as certificates.")
@@ -694,7 +743,33 @@ export async function exportReconciliationCertificate(
         actorId: input.exportedById,
         now,
       })
-      throw new BusinessRuleError("Reconciliation certificate hash drift detected; rerun sign-off before export.")
+      return { driftError: "Reconciliation certificate hash drift detected; rerun sign-off before export." }
+    }
+
+    const sourceEvidence = await buildReconciliationEvidenceManifestInTx(tx, {
+      organizationId: input.organizationId,
+      providerAccountId: run.providerAccountId,
+      reconciliationRunId: run.id,
+      periodStart: run.periodStart,
+      periodEnd: run.periodEnd,
+    })
+    const signedSourceHash = reconciliationCertificateSourceEvidenceHash(run.certificatePayload)
+    if (!signedSourceHash || signedSourceHash !== sourceEvidence.sourceHash) {
+      await recordCloseCertificationInvalidationsForSourceInTx(tx, input.organizationId, {
+        sourceCode: "PAYMENT_RECONCILIATION_CERTIFICATE_HASH_DRIFT",
+        sourceId: run.id,
+        periodId: run.accountingPeriodId ?? run.accountingPeriod?.id ?? null,
+        periodStart: run.periodStart,
+        periodEnd: run.periodEnd,
+        staleReason: "Payment reconciliation source evidence changed after sign-off.",
+        previousEvidenceHash: signedSourceHash,
+        newEvidenceHash: sourceEvidence.sourceHash,
+        correlationId,
+      }, {
+        actorId: input.exportedById,
+        now,
+      })
+      return { driftError: "Reconciliation source evidence drift detected; rerun reconciliation and sign-off before export." }
     }
 
     const payload = {
@@ -829,6 +904,10 @@ export async function exportReconciliationCertificate(
       },
     }
   })
+
+  if ("driftError" in result) {
+    throw new BusinessRuleError(result.driftError)
+  }
 
   if ("denied" in result && result.denied) {
     assertSensitiveActionAllowed(result.denied)

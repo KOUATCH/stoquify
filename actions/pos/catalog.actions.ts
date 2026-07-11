@@ -1,14 +1,48 @@
 "use server"
 
 import { err, ok } from "@/services/_shared/action-response"
-import { requireOrg } from "@/services/_shared/require-org"
+import { requirePermission } from "@/lib/security/rbac"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import { listPOSCatalogItems, listPOSLocations, listPOSTerminals } from "@/services/pos/pos.service"
 import { posCatalogSchema, posTerminalListSchema } from "@/services/pos/pos.schemas"
 
+function optionalStringField(input: unknown, field: string) {
+  if (!input || typeof input !== "object") return undefined
+  const value = (input as Record<string, unknown>)[field]
+  return typeof value === "string" && value.trim() ? value.trim() : undefined
+}
+
+async function observePOSCatalogModuleAccess(input: {
+  organizationId: string
+  userId: string
+  actorPermissions: readonly string[]
+  surface: string
+}) {
+  await observeModuleAccess({
+    organizationId: input.organizationId,
+    userId: input.userId,
+    actorPermissions: input.actorPermissions,
+    moduleSlug: "pos",
+    surfaceType: "action",
+    surface: input.surface,
+    accessIntent: "read",
+    mode: "observe",
+    audit: true,
+  })
+}
+
 export async function getPOSLocationsAction() {
   try {
-    const { orgId } = await requireOrg()
-    const locations = await listPOSLocations({ organizationId: orgId })
+    const ctx = await requirePermission("pos.use", {
+      resource: "POSCatalog",
+    })
+    await observePOSCatalogModuleAccess({
+      organizationId: ctx.orgId,
+      userId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      surface: "actions/pos/catalog.actions.ts:getPOSLocationsAction",
+    })
+    const locations = await listPOSLocations({ organizationId: ctx.orgId })
     return ok(locations)
   } catch (error) {
     return err(error)
@@ -17,9 +51,18 @@ export async function getPOSLocationsAction() {
 
 export async function getPOSTerminalsAction(input: unknown) {
   try {
-    const { orgId } = await requireOrg()
+    const ctx = await requirePermission("pos.use", {
+      resource: "POSTerminal",
+      resourceId: optionalStringField(input, "locationId"),
+    })
+    await observePOSCatalogModuleAccess({
+      organizationId: ctx.orgId,
+      userId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      surface: "actions/pos/catalog.actions.ts:getPOSTerminalsAction",
+    })
     const parsed = posTerminalListSchema.parse(input)
-    const terminals = await listPOSTerminals({ ...parsed, organizationId: orgId })
+    const terminals = await listPOSTerminals({ ...parsed, organizationId: ctx.orgId })
     return ok(terminals)
   } catch (error) {
     return err(error)
@@ -28,9 +71,18 @@ export async function getPOSTerminalsAction(input: unknown) {
 
 export async function getPOSCatalogAction(input: unknown) {
   try {
-    const { orgId } = await requireOrg()
+    const ctx = await requirePermission("pos.use", {
+      resource: "POSCatalog",
+      resourceId: optionalStringField(input, "locationId"),
+    })
+    await observePOSCatalogModuleAccess({
+      organizationId: ctx.orgId,
+      userId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      surface: "actions/pos/catalog.actions.ts:getPOSCatalogAction",
+    })
     const parsed = posCatalogSchema.parse(input)
-    const catalog = await listPOSCatalogItems({ ...parsed, organizationId: orgId })
+    const catalog = await listPOSCatalogItems({ ...parsed, organizationId: ctx.orgId })
     return ok(catalog)
   } catch (error) {
     return err(error)

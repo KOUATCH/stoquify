@@ -67,11 +67,35 @@ function methodsFor(file, source) {
   return surfaceKindFor(file) === "api_route" ? extractMethods(source) : []
 }
 
+function quotedValues(value) {
+  return Array.from(value.matchAll(/["']([^"']+)["']/g)).map((match) => match[1])
+}
+
 function extractPermission(source) {
-  const match = source.match(/(?:requireAppPermission|requirePermission|hasAppPermission)\([^,]+,\s*["']([^"']+)["']/)
-  if (match) return match[1]
-  const configMatch = source.match(/permission:\s*["']([^"']+)["']/)
-  return configMatch ? configMatch[1] : null
+  const anyPermissionStart = source.indexOf("requireAnyAppPermission(")
+  if (anyPermissionStart >= 0) {
+    const anyPermissionEnd = source.indexOf("]", anyPermissionStart)
+    if (anyPermissionEnd > anyPermissionStart) {
+      const permissions = quotedValues(source.slice(anyPermissionStart, anyPermissionEnd + 1))
+      if (permissions.length) return permissions.join(" | ")
+    }
+  }
+
+  for (const callName of ["requireAppPermission(", "requirePermission(", "hasAppPermission("]) {
+    const callStart = source.indexOf(callName)
+    if (callStart < 0) continue
+    const callEnd = source.indexOf(")", callStart)
+    if (callEnd < 0) continue
+    const permissions = quotedValues(source.slice(callStart, callEnd + 1))
+    if (permissions.length) return permissions[0]
+  }
+
+  const configStart = source.indexOf("permission:")
+  if (configStart >= 0) {
+    const permissions = quotedValues(source.slice(configStart, configStart + 200))
+    if (permissions.length) return permissions[0]
+  }
+  return null
 }
 
 function detectGuard(source) {
@@ -130,7 +154,7 @@ function expectedModuleAccessFor(file) {
   if (isReceiptServiceEvidence(file)) {
     return { applicability: "not_applicable_public_service", expectedModuleSlug: null, reason: "Public receipt service is token-gated and redacted rather than module-entitled." }
   }
-  if (file.includes("/api/auth/") || file.includes("/api/security-txt/") || file.includes("/api/receipts/")) {
+  if (file.includes("/api/auth/") || file.includes("/api/security-txt/") || file.includes("/.well-known/security.txt/") || file.includes("/api/receipts/")) {
     return { applicability: "not_applicable_public", expectedModuleSlug: null, reason: "Intentional public/provider/tokenized route." }
   }
   if (file.includes("/api/me/permissions/")) {
@@ -143,7 +167,7 @@ function expectedModuleAccessFor(file) {
     return { applicability: "required", expectedModuleSlug: "dashboard", reason: "Tenant-uploaded assets are core dashboard workspace assets, not public content." }
   }
   if (file.endsWith("/api/uploadthing/core.ts")) {
-    return { applicability: "required", expectedModuleSlug: "dashboard", reason: "UploadThing middleware owns tenant upload authentication and module access." }
+    return { applicability: "required", expectedModuleSlug: "inventory", reason: "The active UploadThing endpoint writes inventory item media." }
   }
   if (file.endsWith("/api/uploadthing/route.ts")) {
     return { applicability: "delegated_uploadthing_core", expectedModuleSlug: null, reason: "UploadThing route delegates auth and module access to app/api/uploadthing/core.ts middleware." }
@@ -156,7 +180,7 @@ function expectedModuleAccessFor(file) {
 
 function classifyRoute(file, source) {
   if (isReceiptServiceEvidence(file)) return "public-receipt-service-evidence"
-  if (file.includes("/api/security-txt/")) return "public-intentional"
+  if (file.includes("/api/security-txt/") || file.includes("/.well-known/security.txt/")) return "public-intentional"
   if (file.includes("/api/auth/")) return "public-auth-provider"
   if (file.includes("/api/receipts/")) return "public-receipt-lookup"
   if (source.includes("requireApiSessionForCurrentOrg")) return "tenant-scoped"
@@ -183,7 +207,7 @@ function detectReturnedDataClass(file, source) {
   if (file.includes("items")) return "inventory item DTO"
   if (file.includes("uploads")) return "uploaded asset"
   if (file.includes("uploadthing")) return "upload handler"
-  if (file.includes("security-txt")) return "security contact policy"
+  if (file.includes("security-txt") || file.includes("security.txt")) return "security contact policy"
   if (file.includes("auth")) return "auth provider response"
   if (file.includes("permissions")) return "permission claims"
   return source.includes("NextResponse.json") ? "json response" : "response"
@@ -230,7 +254,11 @@ function detectIssues(file, source, now, moduleAccess, expectedModuleAccess) {
       issues.push("receipt_service_contains_customer_contact_before_public_redaction")
     }
   }
-  if (file.includes("security-txt")) {
+  if (file.includes("security-txt") || file.includes("security.txt")) {
+    const contact = source.match(/Contact:\s*([^\n`]+)/)
+    if (contact && !/^(mailto|https):/i.test(contact[1].trim())) {
+      issues.push("security_txt_contact_not_uri")
+    }
     const expires = source.match(/Expires:\s*([^\n`]+)/)
     if (expires) {
       const expiresAt = new Date(expires[1].trim())
@@ -244,6 +272,16 @@ function detectIssues(file, source, now, moduleAccess, expectedModuleAccess) {
   }
   if (file.includes("/api/uploads/") && !source.includes("getSupportedUploadContentType")) {
     issues.push("upload_mime_allowlist_evidence_needed")
+  }
+  if (isUploadCoreEvidence(file)) {
+    if (!source.includes("inventory.items.create") || !source.includes("inventory.items.update")) {
+      issues.push("upload_write_permission_inventory_item_create_or_update_required")
+    }
+    for (const unusedEndpoint of ["categoryImage", "blogImage", "fileUploads", "mailAttachments"]) {
+      if (source.includes(unusedEndpoint)) {
+        issues.push("unused_upload_endpoint_exposed_" + unusedEndpoint)
+      }
+    }
   }
   return issues
 }
@@ -319,6 +357,8 @@ function buildApiRouteGuardInventory(root = process.cwd(), options = {}) {
   const now = options.now ? new Date(options.now) : new Date()
   const routeRoot = path.join(root, "app/api")
   const routeFiles = walk(routeRoot, (file) => file.endsWith(`${path.sep}route.ts`))
+  const wellKnownSecurityTxt = path.join(root, "app/.well-known/security.txt/route.ts")
+  if (fs.existsSync(wellKnownSecurityTxt)) routeFiles.push(wellKnownSecurityTxt)
   const uploadCore = path.join(root, "app/api/uploadthing/core.ts")
   if (fs.existsSync(uploadCore)) routeFiles.push(uploadCore)
   const receiptService = path.join(root, "services/pos/receipt.service.ts")

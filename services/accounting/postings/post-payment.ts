@@ -18,6 +18,7 @@ import {
   assertBalancedJournalEntry,
   type AccountingAmount,
 } from "../invariants"
+import { recordPostedJournalCloseInvalidationInTx } from "../journal-close-invalidation.service"
 import { getOpenPeriodForDate } from "../periods.service"
 import { createLedgerPostingBatch } from "../posting.service"
 import { requireActivePostingRule } from "../posting-rules.service"
@@ -676,6 +677,17 @@ async function postPaymentInTransaction(
     journalEntryId: entry.id,
     entryNumber: entry.entryNumber,
     metadata: postingMetadata,
+  })
+
+  await recordPostedJournalCloseInvalidationInTx(tx, organizationId, {
+    journalEntryId: entry.id,
+    periodId: period.id,
+    entryDate,
+    correlationId: postedBatch.id,
+    staleReason: "POS payment posting changed certified close evidence.",
+  }, {
+    actorId: input.actorId,
+    now,
   })
 
   return entry

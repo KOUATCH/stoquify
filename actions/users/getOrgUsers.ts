@@ -1,24 +1,28 @@
 "use server";
+
 import { logSafeActionWarning } from "@/actions/_shared/safe-action-responses";
-import { getAuthenticatedUser } from "@/config/useAuth";
-import { hasAppPermission } from "@/lib/security/server-authz";
+import { assertCanUseOrganization, requirePermission } from "@/lib/security/rbac";
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service";
 import { listOrganizationUsers } from "@/services/users/user-identity.service";
 
-
-const getOrgUsers=async(organizationId:string)=> {
-
+const getOrgUsers = async (organizationId?: string | null) => {
   try {
-    const authUser = await getAuthenticatedUser();
-    if (organizationId && organizationId !== authUser.organizationId) {
-      return [];
-    }
+    const ctx = await requirePermission("users.read", { resource: "User" });
+    const requestedOrganizationId = organizationId?.trim() || ctx.orgId;
 
-    if (!hasAppPermission(authUser, "users.read")) {
-      return [];
-    }
+    await assertCanUseOrganization(ctx, requestedOrganizationId);
+    await observeModuleAccess({
+      moduleSlug: "settings",
+      organizationId: ctx.orgId,
+      userId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      surfaceType: "action",
+      surface: "actions/users/getOrgUsers.ts",
+      accessIntent: "read",
+      mode: "observe",
+    });
 
-    const organizationUsers = await listOrganizationUsers(authUser.organizationId);
-    return organizationUsers
+    return await listOrganizationUsers(ctx.orgId);
   } catch (error) {
     logSafeActionWarning("Error fetching organization users", error, {
       action: "users.read",
@@ -26,5 +30,6 @@ const getOrgUsers=async(organizationId:string)=> {
     });
     return [];
   }
-}
-export default getOrgUsers
+};
+
+export default getOrgUsers;

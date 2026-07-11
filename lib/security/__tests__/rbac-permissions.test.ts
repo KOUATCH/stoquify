@@ -154,6 +154,7 @@ describe("rbac permission compatibility", () => {
   })
   it("requires explicit organization management authority for cross-org resolver permission", () => {
     expect(permissionRisk("system.organization.update")).toBe("high")
+    expect(hasRbacPermission(["COMPANY_READ"], "system.organization.read")).toBe(true)
     expect(hasRbacPermission(["*"], "system.organization.update")).toBe(false)
     expect(hasRbacPermission(["MANAGE_ORGANIZATION"], "system.organization.update")).toBe(true)
     expect(hasRbacPermission(["system.organization.update"], "system.organization.update")).toBe(true)

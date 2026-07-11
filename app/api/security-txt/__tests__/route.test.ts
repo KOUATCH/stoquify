@@ -25,7 +25,7 @@ describe("GET /api/security-txt", () => {
     expect(response.status).toBe(200)
     expect(response.headers.get("Content-Type")).toBe("text/plain")
     expect(response.headers.get("Cache-Control")).toBe("public, max-age=86400")
-    expect(body).toContain("Contact: security@stoquify.com")
+    expect(body).toContain("Contact: mailto:security@stoquify.com")
     expect(expires).toBe("2027-07-02T23:59:59.000Z")
     expect(new Date(expires!).getTime()).toBeGreaterThan(new Date("2026-07-03T00:00:00.000Z").getTime())
   })

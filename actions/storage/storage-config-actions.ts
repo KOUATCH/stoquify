@@ -1,7 +1,15 @@
 "use server"
 
-import { getSession } from "@/lib/auth-server"
+import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses"
+import { requireFreshAuth } from "@/lib/security/auth-session"
+import {
+  assertCanUseOrganization,
+  requireAnyPermission,
+  requirePermission,
+  type RbacContext,
+} from "@/lib/security/rbac"
 import { assertActiveOrganization } from "@/services/_shared/assert-active-organization"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import type { PhotoStorageSettings, StorageType } from "@/types/storage"
 import { promises as fs } from "fs"
 import { revalidatePath } from "next/cache"
@@ -16,22 +24,53 @@ function buildLocalStoragePath(organizationId: string) {
   return `/uploads/${organizationId}`
 }
 
-async function requireMatchingOrganization(organizationId: string) {
-  const session = await getSession()
-  if (!session?.user?.organizationId) {
-    return { ok: false as const, error: "Unauthorized" }
-  }
+async function observeStorageConfigurationAccess(
+  ctx: RbacContext,
+  surface: string,
+  accessIntent: "read" | "write",
+) {
+  await observeModuleAccess({
+    moduleSlug: "settings",
+    organizationId: ctx.orgId,
+    userId: ctx.userId,
+    actorPermissions: ctx.permissions,
+    surfaceType: "action",
+    surface,
+    accessIntent,
+    mode: "observe",
+  })
+}
 
-  if (session.user.organizationId !== organizationId) {
-    return { ok: false as const, error: "Forbidden" }
-  }
+async function requireStorageConfigurationRead(organizationId: string, surface: string) {
+  const ctx = await requireAnyPermission(
+    [
+      "inventory.items.create",
+      "inventory.items.update",
+      "system.settings.read",
+      "system.settings.update",
+    ],
+    { resource: "StorageConfiguration", resourceId: organizationId },
+  )
+  await assertCanUseOrganization(ctx, organizationId)
+  await observeStorageConfigurationAccess(ctx, surface, "read")
+  return ctx
+}
 
-  return { ok: true as const }
+async function requireStorageConfigurationWrite(organizationId: string, surface: string) {
+  await requireFreshAuth(300)
+  const ctx = await requirePermission("system.settings.update", {
+    resource: "StorageConfiguration",
+    resourceId: organizationId,
+    auditAllowed: true,
+  })
+  await assertCanUseOrganization(ctx, organizationId)
+  await observeStorageConfigurationAccess(ctx, surface, "write")
+  return ctx
 }
 
 function defaultStorageConfiguration(
   organizationId: string,
-  overrides: Partial<Pick<StorageSettings, "storageType" | "localStoragePath" | "maxFileSize" | "allowedFileTypes">> = {}
+  overrides: Partial<Pick<StorageSettings, "storageType" | "localStoragePath" | "maxFileSize" | "allowedFileTypes">> = {},
 ): StorageSettings {
   const now = new Date()
 
@@ -55,9 +94,9 @@ async function ensureLocalStorageDirectories(organizationId: string) {
 
 export async function getStorageConfiguration(organizationId: string) {
   try {
-    const trimmedOrgId = organizationId?.trim()
+    const requestedOrganizationId = organizationId?.trim()
 
-    if (!trimmedOrgId) {
+    if (!requestedOrganizationId) {
       return {
         success: false,
         error: "Organization ID is required",
@@ -65,26 +104,25 @@ export async function getStorageConfiguration(organizationId: string) {
       }
     }
 
-    const authz = await requireMatchingOrganization(trimmedOrgId)
-    if (!authz.ok) {
-      return {
-        success: false,
-        error: authz.error,
-        data: null,
-      }
-    }
-
-    await ensureLocalStorageDirectories(trimmedOrgId)
+    const ctx = await requireStorageConfigurationRead(
+      requestedOrganizationId,
+      "actions/storage/storage-config-actions.ts#getStorageConfiguration",
+    )
 
     return {
       success: true,
-      data: defaultStorageConfiguration(trimmedOrgId, { localStoragePath: buildLocalStoragePath(trimmedOrgId) }),
+      data: defaultStorageConfiguration(ctx.orgId, { localStoragePath: buildLocalStoragePath(ctx.orgId) }),
       error: null,
     }
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Failed to fetch storage configuration",
+      error: safeLoggedActionErrorMessage(
+        "Error fetching storage configuration",
+        error,
+        { action: "system.settings.read" },
+        "Failed to fetch storage configuration",
+      ),
       data: null,
     }
   }
@@ -95,12 +133,12 @@ export async function updateStorageConfiguration(
   storageType: StorageType,
   localStoragePath?: string,
   maxFileSize?: number,
-  allowedFileTypes?: string[]
+  allowedFileTypes?: string[],
 ) {
   try {
-    const trimmedOrgId = organizationId?.trim()
+    const requestedOrganizationId = organizationId?.trim()
 
-    if (!trimmedOrgId) {
+    if (!requestedOrganizationId) {
       return {
         success: false,
         error: "Organization ID is required",
@@ -108,14 +146,10 @@ export async function updateStorageConfiguration(
       }
     }
 
-    const authz = await requireMatchingOrganization(trimmedOrgId)
-    if (!authz.ok) {
-      return {
-        success: false,
-        error: authz.error,
-        data: null,
-      }
-    }
+    const ctx = await requireStorageConfigurationWrite(
+      requestedOrganizationId,
+      "actions/storage/storage-config-actions.ts#updateStorageConfiguration",
+    )
 
     if (storageType !== "local" && storageType !== "online") {
       return {
@@ -125,15 +159,15 @@ export async function updateStorageConfiguration(
       }
     }
 
-    const config = defaultStorageConfiguration(trimmedOrgId, {
+    const config = defaultStorageConfiguration(ctx.orgId, {
       storageType,
-      localStoragePath: localStoragePath || buildLocalStoragePath(trimmedOrgId),
+      localStoragePath: localStoragePath || buildLocalStoragePath(ctx.orgId),
       maxFileSize: maxFileSize || defaultMaxFileSize,
       allowedFileTypes: allowedFileTypes || defaultAllowedFileTypes,
     })
 
     if (config.storageType === "local") {
-      await ensureLocalStorageDirectories(trimmedOrgId)
+      await ensureLocalStorageDirectories(ctx.orgId)
     }
 
     revalidatePath("/dashboard/settings")
@@ -147,7 +181,12 @@ export async function updateStorageConfiguration(
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Failed to update storage configuration",
+      error: safeLoggedActionErrorMessage(
+        "Error updating storage configuration",
+        error,
+        { action: "system.settings.update" },
+        "Failed to update storage configuration",
+      ),
       data: null,
     }
   }
@@ -155,9 +194,9 @@ export async function updateStorageConfiguration(
 
 export async function initializeStorageForOrganization(organizationId: string) {
   try {
-    const trimmedOrgId = organizationId?.trim()
+    const requestedOrganizationId = organizationId?.trim()
 
-    if (!trimmedOrgId) {
+    if (!requestedOrganizationId) {
       return {
         success: false,
         error: "Organization ID is required",
@@ -165,23 +204,18 @@ export async function initializeStorageForOrganization(organizationId: string) {
       }
     }
 
-    const authz = await requireMatchingOrganization(trimmedOrgId)
-    if (!authz.ok) {
-      return {
-        success: false,
-        error: authz.error,
-        data: null,
-      }
-    }
+    const ctx = await requireStorageConfigurationWrite(
+      requestedOrganizationId,
+      "actions/storage/storage-config-actions.ts#initializeStorageForOrganization",
+    )
 
-    await assertActiveOrganization(trimmedOrgId)
-
-    await ensureLocalStorageDirectories(trimmedOrgId)
+    await assertActiveOrganization(ctx.orgId)
+    await ensureLocalStorageDirectories(ctx.orgId)
 
     return {
       success: true,
       data: {
-        ...defaultStorageConfiguration(trimmedOrgId),
+        ...defaultStorageConfiguration(ctx.orgId),
         alreadyExists: true,
       },
       error: null,
@@ -189,7 +223,12 @@ export async function initializeStorageForOrganization(organizationId: string) {
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Failed to initialize storage configuration",
+      error: safeLoggedActionErrorMessage(
+        "Error initializing storage configuration",
+        error,
+        { action: "system.settings.update" },
+        "Failed to initialize storage configuration",
+      ),
       data: null,
     }
   }

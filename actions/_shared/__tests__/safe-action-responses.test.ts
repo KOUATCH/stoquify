@@ -3,7 +3,7 @@ import {
   safeStatusActionErrorResult,
   safeSuccessActionErrorResult,
 } from "@/actions/_shared/safe-action-responses"
-import { ForbiddenError, NotFoundError } from "@/services/_shared/action-errors"
+import { ApplicationError, ForbiddenError, NotFoundError } from "@/services/_shared/action-errors"
 
 describe("safe action response compatibility helpers", () => {
   it("preserves success-style action envelopes with canonical metadata", () => {
@@ -42,6 +42,30 @@ describe("safe action response compatibility helpers", () => {
     expect(result.error).not.toContain("postgres")
   })
 
+  it("redacts non-exposing typed database failures", () => {
+    const result = safeStatusActionErrorResult(
+      new ApplicationError(
+        "DATABASE_CONFLICT",
+        "Sensitive Prisma transaction detail",
+        503,
+        false,
+      ),
+      {
+        correlationId: "act_database_conflict",
+        action: "users.create",
+      },
+    )
+
+    expect(result).toMatchObject({
+      data: null,
+      error: "The operation could not be completed. Please try again or contact support.",
+      status: 503,
+      code: "DATABASE_CONFLICT",
+      correlationId: "act_database_conflict",
+    })
+    expect(result.error).not.toContain("Prisma")
+  })
+
   it("maps typed not-found errors safely", () => {
     const result = safeStatusActionErrorResult(new NotFoundError("Role not found"), {
       correlationId: "act_not_found",
@@ -54,6 +78,25 @@ describe("safe action response compatibility helpers", () => {
       status: 404,
       code: "NOT_FOUND",
       correlationId: "act_not_found",
+    })
+  })
+
+  it("maps stale fresh-auth errors to step-up action responses", () => {
+    const error = new Error("Fresh authentication required")
+    error.name = "FreshAuthRequiredError"
+
+    const result = safeStatusActionErrorResult(error, {
+      correlationId: "act_fresh_auth",
+      action: "users.delete",
+    }, "Something went wrong")
+
+    expect(result).toMatchObject({
+      data: null,
+      error: "Fresh authentication required",
+      status: 403,
+      code: "FRESH_AUTH_REQUIRED",
+      correlationId: "act_fresh_auth",
+      retryable: false,
     })
   })
 

@@ -1,0 +1,378 @@
+{
+  "summary": {
+    "generatedAt": "2026-07-11T20:17:18.838Z",
+    "mode": "fail",
+    "routeCount": 10,
+    "supportEvidenceCount": 2,
+    "evidenceFileCount": 12,
+    "bySurfaceKind": {
+      "api_route": 10,
+      "guard_evidence": 2
+    },
+    "byClassification": {
+      "public-intentional": 2,
+      "public-auth-provider": 1,
+      "authenticated": 1,
+      "public-receipt-lookup": 1,
+      "tenant-scoped": 5,
+      "delegated-upload-handler": 1,
+      "public-receipt-service-evidence": 1
+    },
+    "byModuleAccess": {
+      "none": 7,
+      "enforced": 5
+    },
+    "byModuleApplicability": {
+      "not_applicable_public": 4,
+      "not_applicable_session_claims": 1,
+      "required": 5,
+      "delegated_uploadthing_core": 1,
+      "not_applicable_public_service": 1
+    },
+    "issueCount": 0,
+    "issues": [],
+    "status": "ready"
+  },
+  "records": [
+    {
+      "file": "app/.well-known/security.txt/route.ts",
+      "surfaceKind": "api_route",
+      "evidenceFor": null,
+      "methods": [
+        "GET"
+      ],
+      "classification": "public-intentional",
+      "guard": "none",
+      "orgSource": "none",
+      "permission": null,
+      "moduleAccess": "none",
+      "moduleSlug": null,
+      "moduleAccessIntent": null,
+      "moduleAccessMode": null,
+      "moduleAccessAudit": null,
+      "expectedModuleSlug": null,
+      "moduleApplicability": "not_applicable_public",
+      "moduleApplicabilityReason": "Intentional public/provider/tokenized route.",
+      "returnedDataClass": "security contact policy",
+      "negativeCases": [
+        "intentional public access",
+        "bounded response"
+      ],
+      "responseEnvelope": "unknown",
+      "issues": []
+    },
+    {
+      "file": "app/api/auth/[...all]/route.ts",
+      "surfaceKind": "api_route",
+      "evidenceFor": null,
+      "methods": [
+        "handler"
+      ],
+      "classification": "public-auth-provider",
+      "guard": "none",
+      "orgSource": "none",
+      "permission": null,
+      "moduleAccess": "none",
+      "moduleSlug": null,
+      "moduleAccessIntent": null,
+      "moduleAccessMode": null,
+      "moduleAccessAudit": null,
+      "expectedModuleSlug": null,
+      "moduleApplicability": "not_applicable_public",
+      "moduleApplicabilityReason": "Intentional public/provider/tokenized route.",
+      "returnedDataClass": "auth provider response",
+      "negativeCases": [
+        "intentional public access",
+        "bounded response"
+      ],
+      "responseEnvelope": "unknown",
+      "issues": []
+    },
+    {
+      "file": "app/api/me/permissions/route.ts",
+      "surfaceKind": "api_route",
+      "evidenceFor": null,
+      "methods": [
+        "GET"
+      ],
+      "classification": "authenticated",
+      "guard": "getOptionalRbacContext",
+      "orgSource": "rbac ctx",
+      "permission": null,
+      "moduleAccess": "none",
+      "moduleSlug": null,
+      "moduleAccessIntent": null,
+      "moduleAccessMode": null,
+      "moduleAccessAudit": null,
+      "expectedModuleSlug": null,
+      "moduleApplicability": "not_applicable_session_claims",
+      "moduleApplicabilityReason": "Returns current RBAC/session claims, not domain module data.",
+      "returnedDataClass": "permission claims",
+      "negativeCases": [
+        "unauthenticated",
+        "safe error response"
+      ],
+      "responseEnvelope": "NextResponse.json",
+      "issues": []
+    },
+    {
+      "file": "app/api/receipts/[receiptId]/route.ts",
+      "surfaceKind": "api_route",
+      "evidenceFor": null,
+      "methods": [
+        "GET"
+      ],
+      "classification": "public-receipt-lookup",
+      "guard": "none",
+      "orgSource": "none",
+      "permission": null,
+      "moduleAccess": "none",
+      "moduleSlug": null,
+      "moduleAccessIntent": null,
+      "moduleAccessMode": null,
+      "moduleAccessAudit": null,
+      "expectedModuleSlug": null,
+      "moduleApplicability": "not_applicable_public",
+      "moduleApplicabilityReason": "Intentional public/provider/tokenized route.",
+      "returnedDataClass": "public receipt payload",
+      "negativeCases": [
+        "missing token",
+        "blank token",
+        "service token validation failure",
+        "safe error envelope"
+      ],
+      "responseEnvelope": "success envelope with safe error envelope",
+      "issues": []
+    },
+    {
+      "file": "app/api/security-txt/route.ts",
+      "surfaceKind": "api_route",
+      "evidenceFor": null,
+      "methods": [
+        "GET"
+      ],
+      "classification": "public-intentional",
+      "guard": "none",
+      "orgSource": "none",
+      "permission": null,
+      "moduleAccess": "none",
+      "moduleSlug": null,
+      "moduleAccessIntent": null,
+      "moduleAccessMode": null,
+      "moduleAccessAudit": null,
+      "expectedModuleSlug": null,
+      "moduleApplicability": "not_applicable_public",
+      "moduleApplicabilityReason": "Intentional public/provider/tokenized route.",
+      "returnedDataClass": "security contact policy",
+      "negativeCases": [
+        "intentional public access",
+        "bounded response"
+      ],
+      "responseEnvelope": "unknown",
+      "issues": []
+    },
+    {
+      "file": "app/api/uploads/[...path]/route.ts",
+      "surfaceKind": "api_route",
+      "evidenceFor": null,
+      "methods": [
+        "GET"
+      ],
+      "classification": "tenant-scoped",
+      "guard": "requireApiSessionForCurrentOrg",
+      "orgSource": "rbac ctx",
+      "permission": "dashboard.read",
+      "moduleAccess": "enforced",
+      "moduleSlug": "dashboard",
+      "moduleAccessIntent": "read",
+      "moduleAccessMode": "enforce",
+      "moduleAccessAudit": true,
+      "expectedModuleSlug": "dashboard",
+      "moduleApplicability": "required",
+      "moduleApplicabilityReason": "Tenant-uploaded assets are core dashboard workspace assets, not public content.",
+      "returnedDataClass": "uploaded asset",
+      "negativeCases": [
+        "unauthenticated",
+        "cross-org",
+        "missing permission",
+        "safe error response"
+      ],
+      "responseEnvelope": "safe route error body",
+      "issues": []
+    },
+    {
+      "file": "app/api/uploadthing/core.ts",
+      "surfaceKind": "guard_evidence",
+      "evidenceFor": "app/api/uploadthing/route.ts",
+      "methods": [],
+      "classification": "tenant-scoped",
+      "guard": "requireApiSessionForCurrentOrg",
+      "orgSource": "rbac ctx",
+      "permission": "inventory.items.create | inventory.items.update",
+      "moduleAccess": "enforced",
+      "moduleSlug": "inventory",
+      "moduleAccessIntent": "write",
+      "moduleAccessMode": "enforce",
+      "moduleAccessAudit": true,
+      "expectedModuleSlug": "inventory",
+      "moduleApplicability": "required",
+      "moduleApplicabilityReason": "The active UploadThing endpoint writes inventory item media.",
+      "returnedDataClass": "upload handler",
+      "negativeCases": [
+        "unauthenticated",
+        "cross-org",
+        "missing permission",
+        "safe error response"
+      ],
+      "responseEnvelope": "not_api_response",
+      "issues": []
+    },
+    {
+      "file": "app/api/uploadthing/route.ts",
+      "surfaceKind": "api_route",
+      "evidenceFor": null,
+      "methods": [
+        "handler"
+      ],
+      "classification": "delegated-upload-handler",
+      "guard": "none",
+      "orgSource": "none",
+      "permission": null,
+      "moduleAccess": "none",
+      "moduleSlug": null,
+      "moduleAccessIntent": null,
+      "moduleAccessMode": null,
+      "moduleAccessAudit": null,
+      "expectedModuleSlug": null,
+      "moduleApplicability": "delegated_uploadthing_core",
+      "moduleApplicabilityReason": "UploadThing route delegates auth and module access to app/api/uploadthing/core.ts middleware.",
+      "returnedDataClass": "upload handler",
+      "negativeCases": [
+        "unauthenticated",
+        "cross-org",
+        "path traversal",
+        "unsafe mime"
+      ],
+      "responseEnvelope": "unknown",
+      "issues": []
+    },
+    {
+      "file": "app/api/v1/organisations/[id]/briefItems/route.ts",
+      "surfaceKind": "api_route",
+      "evidenceFor": null,
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "classification": "tenant-scoped",
+      "guard": "requireApiSessionForOrg",
+      "orgSource": "route params id",
+      "permission": "inventory.items.read",
+      "moduleAccess": "enforced",
+      "moduleSlug": "inventory",
+      "moduleAccessIntent": "read",
+      "moduleAccessMode": "enforce",
+      "moduleAccessAudit": true,
+      "expectedModuleSlug": "inventory",
+      "moduleApplicability": "required",
+      "moduleApplicabilityReason": "Inventory item APIs expose inventory DTOs.",
+      "returnedDataClass": "brief inventory item DTO",
+      "negativeCases": [
+        "unauthenticated",
+        "cross-org",
+        "missing permission",
+        "safe error response"
+      ],
+      "responseEnvelope": "safe route error body",
+      "issues": []
+    },
+    {
+      "file": "app/api/v1/organisations/[id]/items/route.ts",
+      "surfaceKind": "api_route",
+      "evidenceFor": null,
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "classification": "tenant-scoped",
+      "guard": "requireApiSessionForOrg",
+      "orgSource": "route params id",
+      "permission": "inventory.items.read",
+      "moduleAccess": "enforced",
+      "moduleSlug": "inventory",
+      "moduleAccessIntent": "read",
+      "moduleAccessMode": "enforce",
+      "moduleAccessAudit": true,
+      "expectedModuleSlug": "inventory",
+      "moduleApplicability": "required",
+      "moduleApplicabilityReason": "Inventory item APIs expose inventory DTOs.",
+      "returnedDataClass": "inventory item DTO",
+      "negativeCases": [
+        "unauthenticated",
+        "cross-org",
+        "missing permission",
+        "safe error response"
+      ],
+      "responseEnvelope": "safe route error body",
+      "issues": []
+    },
+    {
+      "file": "app/api/v1/organisations/route.ts",
+      "surfaceKind": "api_route",
+      "evidenceFor": null,
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "classification": "tenant-scoped",
+      "guard": "requireApiSessionForCurrentOrg",
+      "orgSource": "rbac ctx",
+      "permission": "MANAGE_SYSTEM_SETTINGS",
+      "moduleAccess": "enforced",
+      "moduleSlug": "settings",
+      "moduleAccessIntent": "read",
+      "moduleAccessMode": "enforce",
+      "moduleAccessAudit": true,
+      "expectedModuleSlug": "settings",
+      "moduleApplicability": "required",
+      "moduleApplicabilityReason": "Organization self-service data exposes tenant settings metadata.",
+      "returnedDataClass": "json response",
+      "negativeCases": [
+        "unauthenticated",
+        "cross-org",
+        "missing permission",
+        "safe error response"
+      ],
+      "responseEnvelope": "safe route error body",
+      "issues": []
+    },
+    {
+      "file": "services/pos/receipt.service.ts",
+      "surfaceKind": "guard_evidence",
+      "evidenceFor": "app/api/receipts/[receiptId]/route.ts",
+      "methods": [],
+      "classification": "public-receipt-service-evidence",
+      "guard": "assertPublicReceiptAccessToken",
+      "orgSource": "token-bound receipt access",
+      "permission": null,
+      "moduleAccess": "none",
+      "moduleSlug": null,
+      "moduleAccessIntent": null,
+      "moduleAccessMode": null,
+      "moduleAccessAudit": null,
+      "expectedModuleSlug": null,
+      "moduleApplicability": "not_applicable_public_service",
+      "moduleApplicabilityReason": "Public receipt service is token-gated and redacted rather than module-entitled.",
+      "returnedDataClass": "public receipt service payload",
+      "negativeCases": [
+        "raw receipt-id lookup",
+        "bound-to-other-sale token",
+        "expired/tampered token",
+        "revoked registry row",
+        "public contact redaction"
+      ],
+      "responseEnvelope": "not_api_response",
+      "issues": []
+    }
+  ]
+}
