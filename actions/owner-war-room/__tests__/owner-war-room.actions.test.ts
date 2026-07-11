@@ -35,6 +35,12 @@ describe("owner war room action", () => {
         permission: "dashboard.read",
         auditResource: "KontavaOwnerWarRoom",
         auditAllowed: true,
+        module: {
+          moduleSlug: "dashboard",
+          surface: "actions/owner-war-room/owner-war-room.actions.ts",
+          accessIntent: "read",
+          mode: "observe",
+        },
       }),
       expect.any(Function),
     )

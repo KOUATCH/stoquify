@@ -82,6 +82,11 @@ describe("module surface inventory", () => {
     )
     writeFile(
       root,
+      "actions/owner-war-room/owner-war-room.actions.ts",
+      `const action = protect<unknown, OwnerWarRoomData>({ permission: "dashboard.read", auditResource: "KontavaOwnerWarRoom", auditAllowed: true, module: { moduleSlug: "dashboard", surface: "actions/owner-war-room/owner-war-room.actions.ts", accessIntent: "read", mode: "observe" } }, async () => null)`,
+    )
+    writeFile(
+      root,
       "actions/locations/getOrgLocations.ts",
       `import { requirePermission } from "@/lib/security/rbac"; import { observeModuleAccess } from "@/services/modules/module-entitlement.service"; export async function getOrgLocations() { const ctx = await requirePermission("locations.read", { resource: "Location" }); await observeModuleAccess({ moduleSlug: "settings", organizationId: ctx.orgId, userId: ctx.userId, actorPermissions: ctx.permissions, surfaceType: "action", surface: "actions/locations/getOrgLocations.ts", accessIntent: "read", mode: "observe" }); return [] }`,
     )
@@ -177,6 +182,7 @@ describe("module surface inventory", () => {
     const action = report.records.find((record) => record.surfaceType === "action" && record.file === "actions/inventory/items.actions.ts")
     const dashboardAction = report.records.find((record) => record.surfaceType === "action" && record.file === "actions/dashboard/getDashboardData.ts")
     const managerActionCenterAction = report.records.find((record) => record.surfaceType === "action" && record.file === "actions/manager-action-center/manager-action-center.actions.ts")
+    const ownerWarRoomAction = report.records.find((record) => record.surfaceType === "action" && record.file === "actions/owner-war-room/owner-war-room.actions.ts")
     const locationsAction = report.records.find((record) => record.surfaceType === "action" && record.file === "actions/locations/getOrgLocations.ts")
     const createLocationAction = report.records.find((record) => record.surfaceType === "action" && record.file === "actions/locations/createLocation.ts")
     const updateLocationAction = report.records.find((record) => record.surfaceType === "action" && record.file === "actions/locations/updateLocationById.ts")
@@ -206,6 +212,9 @@ describe("module surface inventory", () => {
     expect(managerActionCenterAction).toMatchObject({ moduleSlug: "dashboard", permission: "dashboard.read", guard: "protect" })
     expect(managerActionCenterAction.classification).not.toContain("missing permission")
     expect(managerActionCenterAction.classification).not.toContain("unmapped")
+    expect(ownerWarRoomAction).toMatchObject({ moduleSlug: "dashboard", permission: "dashboard.read", guard: "protect" })
+    expect(ownerWarRoomAction.classification).not.toContain("missing permission")
+    expect(ownerWarRoomAction.classification).not.toContain("unmapped")
     expect(locationsAction).toMatchObject({ moduleSlug: "settings", permission: "locations.read", guard: "requirePermission" })
     expect(locationsAction.classification).not.toContain("missing permission")
     expect(locationsAction.classification).not.toContain("unmapped")
