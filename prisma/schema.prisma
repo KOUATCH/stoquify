@@ -72,15 +72,21 @@ model Account {
 }
 
 model Session {
-  id        String   @id @default(cuid())
-  token     String   @unique
-  userId    String
-  expiresAt DateTime
-  ipAddress String?
-  userAgent String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                              String    @id @default(cuid())
+  token                           String    @unique
+  userId                          String
+  expiresAt                       DateTime
+  ipAddress                       String?
+  userAgent                       String?
+  assuranceVerifiedAt             DateTime?
+  assuranceMethod                 String?
+  assuranceOrganizationId         String?
+  assuranceLevel                  Int       @default(0)
+  assuranceFailureCount           Int       @default(0)
+  assuranceLockedUntil            DateTime?
+  createdAt                       DateTime  @default(now())
+  updatedAt                       DateTime  @updatedAt
+  user                            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([expiresAt])
@@ -735,13 +741,16 @@ model InventoryLevel {
 }
 
 model InventoryTransaction {
-  id        String          @id @default(cuid())
-  type      TransactionType
-  quantity  Decimal         @db.Decimal(12, 3) // signed: + inbound, - outbound
-  unitCost  Decimal         @default(0) @db.Decimal(12, 2)
-  totalCost Decimal         @default(0) @db.Decimal(14, 2)
-  notes     String?
-  createdAt DateTime        @default(now())
+  id             String                             @id @default(cuid())
+  type           TransactionType
+  quantity       Decimal                            @db.Decimal(12, 3) // signed: + inbound, - outbound
+  unitCost       Decimal                            @default(0) @db.Decimal(12, 2)
+  totalCost      Decimal                            @default(0) @db.Decimal(14, 2)
+  notes          String?
+  effectiveAt    DateTime
+  recordedAt     DateTime
+  timeProvenance InventoryTransactionTimeProvenance
+  createdAt      DateTime                           @default(now())
 
   itemId     String
   item       Item     @relation(fields: [itemId], references: [id])
@@ -769,9 +778,16 @@ model InventoryTransaction {
   @@index([locationId])
   @@index([organizationId, createdAt]) // hot: org-scoped time-range
   @@index([itemId, createdAt]) // hot: item history
+  @@index([organizationId, effectiveAt, recordedAt, id])
+  @@index([organizationId, recordedAt, id])
   @@index([type])
   @@index([referenceType, referenceId])
   @@map("inventory_transactions")
+}
+
+enum InventoryTransactionTimeProvenance {
+  EXPLICIT_SOURCE_TIME
+  LEGACY_CREATED_AT_APPROXIMATION
 }
 
 enum TransactionType {
