@@ -352,7 +352,7 @@ export async function readCashPaymentHistory(
   if (dateEnd) createdAt.lt = dateEnd
   if (effectiveAsOf) createdAt.lte = effectiveAsOf
 
-  const cashWhere: Prisma.CashDrawerTransactionWhereInput = {
+  const cashBaseWhere: Prisma.CashDrawerTransactionWhereInput = {
     createdAt,
     ...(filters.cashType ? { type: filters.cashType } : {}),
     ...(accessCashierId ? { userId: accessCashierId } : {}),
@@ -362,23 +362,27 @@ export async function readCashPaymentHistory(
         ...(filters.locationId ? { id: filters.locationId } : {}),
       },
     },
-    ...(cursorPayload ? cursorPredicate(cursorPayload) : {}),
   }
+  const cashWhere: Prisma.CashDrawerTransactionWhereInput = cursorPayload
+    ? { AND: [cashBaseWhere, cursorPredicate(cursorPayload)] }
+    : cashBaseWhere
 
   const paymentCreatedAt: Prisma.DateTimeFilter = { lte: recordedThrough }
   if (dateStart) paymentCreatedAt.gte = dateStart
   if (dateEnd) paymentCreatedAt.lt = dateEnd
   if (effectiveAsOf) paymentCreatedAt.lte = effectiveAsOf
 
-  const paymentWhere: Prisma.PaymentWhereInput = {
+  const paymentBaseWhere: Prisma.PaymentWhereInput = {
     organizationId: organization.id,
     deletedAt: null,
     createdAt: paymentCreatedAt,
     ...(filters.paymentMethod ? { method: filters.paymentMethod } : {}),
     ...(filters.paymentStatus ? { status: filters.paymentStatus } : {}),
     ...(accessCashierId ? { processedById: accessCashierId } : {}),
-    ...(cursorPayload ? paymentCursorPredicate(cursorPayload) : {}),
   }
+  const paymentWhere: Prisma.PaymentWhereInput = cursorPayload
+    ? { AND: [paymentBaseWhere, paymentCursorPredicate(cursorPayload)] }
+    : paymentBaseWhere
 
   const readCash = (filters.lane ?? "all") !== "payment"
   const readPayments = (filters.lane ?? "all") !== "cash"
@@ -425,13 +429,13 @@ export async function readCashPaymentHistory(
       : Promise.resolve([]),
     readCash
       ? client.cashDrawerTransaction.findMany({
-          where: { ...cashWhere, ...(cursorPayload ? { AND: undefined } : {}) },
+          where: cashBaseWhere,
           select: { type: true, amount: true },
         })
       : Promise.resolve([]),
     readPayments
       ? client.payment.findMany({
-          where: { ...paymentWhere, ...(cursorPayload ? { OR: undefined } : {}) },
+          where: paymentBaseWhere,
           select: { method: true, status: true, amount: true },
         })
       : Promise.resolve([]),
