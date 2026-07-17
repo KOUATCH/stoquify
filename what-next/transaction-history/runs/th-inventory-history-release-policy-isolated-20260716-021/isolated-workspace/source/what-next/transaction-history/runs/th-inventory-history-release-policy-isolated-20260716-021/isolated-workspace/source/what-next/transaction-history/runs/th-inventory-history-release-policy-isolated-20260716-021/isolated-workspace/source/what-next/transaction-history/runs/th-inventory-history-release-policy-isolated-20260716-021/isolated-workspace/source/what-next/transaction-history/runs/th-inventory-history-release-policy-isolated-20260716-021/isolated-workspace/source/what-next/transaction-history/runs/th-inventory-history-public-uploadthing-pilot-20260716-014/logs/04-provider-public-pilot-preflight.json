@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "1.0",
+  "summary": {
+    "generatedAt": "2026-07-16T04:21:20.391Z",
+    "mode": "public-pilot",
+    "provider": "uploadthing",
+    "status": "ready",
+    "blockerCount": 0,
+    "warningCount": 2,
+    "secretValuePrinted": false,
+    "providerIdentifierPrinted": false
+  },
+  "token": {
+    "present": true,
+    "structurallyValid": true,
+    "regionCount": 1,
+    "ingestHostConfigured": false,
+    "legacyVariablesPresent": [
+      "UPLOADTHING_SECRET",
+      "UPLOADTHING_APP_ID"
+    ]
+  },
+  "checks": [
+    {
+      "id": "uploadthing_token_present",
+      "ready": true
+    },
+    {
+      "id": "uploadthing_token_runtime_shape",
+      "ready": true
+    },
+    {
+      "id": "public_pilot_canary_upload",
+      "ready": true
+    },
+    {
+      "id": "public_pilot_canary_read",
+      "ready": true
+    },
+    {
+      "id": "canary_content_integrity",
+      "ready": true
+    },
+    {
+      "id": "canary_cleanup",
+      "ready": true
+    }
+  ],
+  "canary": {
+    "attempted": true,
+    "storageAcl": "public-read",
+    "privateUploadRequested": false,
+    "publicUploadRequested": true,
+    "signedReadVerified": false,
+    "publicReadVerified": true,
+    "integrityVerified": true,
+    "deleted": true,
+    "cleanupVerified": true,
+    "cleanupRequired": false,
+    "byteLength": 4096,
+    "durationMs": 7722
+  },
+  "blockers": [],
+  "warnings": [
+    "LEGACY_UPLOADTHING_VARIABLES_PRESENT",
+    "PUBLIC_UPLOADTHING_STORAGE_PILOT"
+  ]
+}

@@ -14,8 +14,8 @@ Fail mode: this gate exits non-zero when any settings surface requires review. M
 
 ## Summary
 
-- Generated at: 2026-07-11T20:17:36.300Z
-- Source inventory generated at: 2026-07-11T20:17:36.270Z
+- Generated at: 2026-07-16T14:20:32.292Z
+- Source inventory generated at: 2026-07-16T14:20:32.271Z
 - Classified records: 37
 - Active review findings: 0
 - Status allowed-public: 4
@@ -90,3 +90,4 @@ Fail mode: this gate exits non-zero when any settings surface requires review. M
 | actions/users/sendResetLink.ts | server-action | public-reset-request | allowed-public | reviewed-public-exception | identity-outside-module-entitlement | not-detected | not-detected | not-detected |
 | actions/users/updateUserPassword.ts | server-action | mixed-protected-and-token-bound | protected-mixed | required-and-present | settings-protected-plus-identity-token | present | ctx.orgId | present |
 | actions/users/verifyOtp.ts | server-action | otp-bound-verification | allowed-public | reviewed-token-exception | identity-outside-module-entitlement | not-detected | not-detected | not-detected |
+

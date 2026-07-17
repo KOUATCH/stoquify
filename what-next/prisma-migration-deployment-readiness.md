@@ -1,13 +1,13 @@
 # Prisma Migration Deployment Readiness
 
-Generated: 2026-07-11T20:21:38.354Z
+Generated: 2026-07-16T20:58:36.312Z
 Mode: `fail`
 Status: `ready`
 
 ## Summary
 
 - Checks ready: 8/8
-- Migrations: 14
+- Migrations: 17
 - Risk findings: 0
 - Approved risks: 0
 - Blockers: 0

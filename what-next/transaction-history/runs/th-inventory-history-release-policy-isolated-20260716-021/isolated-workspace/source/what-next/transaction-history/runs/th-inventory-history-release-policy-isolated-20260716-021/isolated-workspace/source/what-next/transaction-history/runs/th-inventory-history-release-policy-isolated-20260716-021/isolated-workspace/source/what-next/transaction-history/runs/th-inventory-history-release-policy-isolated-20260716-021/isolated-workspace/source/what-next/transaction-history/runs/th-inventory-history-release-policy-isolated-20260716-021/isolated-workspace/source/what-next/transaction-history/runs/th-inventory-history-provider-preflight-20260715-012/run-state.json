@@ -1,0 +1,42 @@
+{
+  "runId": "th-inventory-history-provider-preflight-20260715-012",
+  "sliceId": "foundation-inventory",
+  "stages": {
+    "01": {
+      "status": "PASS",
+      "inputFingerprint": "sha256:187ef26deb3aaa44c383c21c810e2520725fee0a3bd0c32d25480c44f7f6fcbd"
+    },
+    "02": {
+      "status": "PASS",
+      "inputFingerprint": "sha256:0248fab5f6689bff6e9c7b53d3fcb36db6d9a0728331df359a1b9ba6ca4c4da9"
+    },
+    "03": {
+      "status": "PASS",
+      "inputFingerprint": "sha256:5b706bb82909b9d0994b49577eb53d2d19fd9df1d4ab368d7aa377f300e0bfc7"
+    },
+    "04": {
+      "status": "BLOCKED",
+      "inputFingerprint": "sha256:7331e0a4ae7ed79d3725ccdc69225c73e45c1280bd6d624a1bd12202204ce6cb"
+    },
+    "05": {
+      "status": "PENDING"
+    },
+    "06": {
+      "status": "PENDING"
+    },
+    "07": {
+      "status": "PENDING"
+    }
+  },
+  "workingTree": {
+    "dirtyFiles": [
+      ".env.example",
+      "package.json",
+      "services/inventory/inventory-history-export-artifact-store.ts",
+      "scripts/inventory-history-export-worker.ts",
+      "scripts/inventory-history-export-provider-preflight.js",
+      "scripts/__tests__/inventory-history-export-provider-preflight.test.js",
+      "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012"
+    ]
+  }
+}

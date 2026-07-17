@@ -1,0 +1,260 @@
+{
+  "schemaVersion": "1.0",
+  "traceId": "1d378358-cf80-4c8b-8652-f0f2c1433583",
+  "runId": "th-inventory-history-provider-preflight-20260715-012",
+  "sliceId": "foundation-inventory",
+  "stageId": "04",
+  "skillName": "stoquify-transaction-history-04-read-model-optimizer",
+  "agentType": "Database Optimizer",
+  "mode": "implement",
+  "status": "BLOCKED",
+  "activeLanes": [
+    "inventory"
+  ],
+  "blockedLanes": [
+    "workbench"
+  ],
+  "inputArtifacts": [
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/run-manifest.json",
+      "sha256": "sha256:40eb357750e33652688a6844050796585b574ad54e6eefe8bc3761b4ba132bd1"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-bounded-artifacts-20260715-011/slices/foundation-inventory/04-read-model-optimizer.json",
+      "sha256": "sha256:6ba3e6cb4f3a465ff609667503280b7b4762ac44893c9e1b9202467e4d96ac48"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-foundation-inventory-correction-verify-20260715-006/slices/foundation-inventory/02-security-proof-gate.json",
+      "sha256": "sha256:6bb0621ad7701c5f9cd096acb7be5d9f6803921d0bb179319a69e4c599414739"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-foundation-inventory-correction-verify-20260715-006/slices/foundation-inventory/03-accounting-control-gate.json",
+      "sha256": "sha256:db3e40670a12cb354359523bb832f371c12a998770facb4d458d1551cee7db93"
+    },
+    {
+      "path": "docs/new ideas/STOQUIFY_TRANSACTION_HISTORY_ANALYTICS_AND_SECURITY_PROPOSAL_2026-07-14.md",
+      "sha256": "sha256:0628f08178fe0441fe22ccbd1a6b429c2bb07b2ea5d278e6dcb799ab117c6979"
+    },
+    {
+      "path": "package.json",
+      "sha256": "sha256:c53fd192f565b81e683467ff5be7049393aaefac7d6283f2b61d146b89266665"
+    },
+    {
+      "path": ".env.example",
+      "sha256": "sha256:4ac970ce3e105efaf5e414c125b25f5a4dba4894890b56da2147d694f3da30c7"
+    },
+    {
+      "path": "services/inventory/inventory-history-export-artifact-store.ts",
+      "sha256": "sha256:8a9ceed17d69ec6ea2164862f8680b98631f1022e2b9612f822e21c194573812"
+    },
+    {
+      "path": "scripts/inventory-history-export-worker.ts",
+      "sha256": "sha256:2c70e00ede6aea86a1152c7c691afe2f09c74b51e4c8b529dc30157bd4187af2"
+    }
+  ],
+  "inputFingerprint": "sha256:7331e0a4ae7ed79d3725ccdc69225c73e45c1280bd6d624a1bd12202204ce6cb",
+  "allowedEdits": [
+    "scripts/inventory-history-export-provider-preflight.js",
+    "scripts/__tests__/inventory-history-export-provider-preflight.test.js",
+    "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/slices/foundation-inventory/04-read-model-optimizer.json",
+    "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/slices/foundation-inventory/04-read-model-optimizer.md",
+    "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/logs/04-provider-preflight.json"
+  ],
+  "observedEdits": [
+    "scripts/inventory-history-export-provider-preflight.js",
+    "scripts/__tests__/inventory-history-export-provider-preflight.test.js",
+    "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/slices/foundation-inventory/04-read-model-optimizer.json",
+    "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/slices/foundation-inventory/04-read-model-optimizer.md",
+    "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/logs/04-provider-preflight.json"
+  ],
+  "repository": {
+    "headBefore": "8a406e93b0e798ed6f476ca5d81df37a2aaa38be",
+    "headAfter": "8a406e93b0e798ed6f476ca5d81df37a2aaa38be",
+    "dirtyFilesBefore": [
+      ".env.example",
+      "package.json",
+      "services/inventory/inventory-history-export-artifact-store.ts",
+      "scripts/inventory-history-export-worker.ts"
+    ],
+    "dirtyFilesAfter": [
+      ".env.example",
+      "package.json",
+      "services/inventory/inventory-history-export-artifact-store.ts",
+      "scripts/inventory-history-export-worker.ts",
+      "scripts/inventory-history-export-provider-preflight.js",
+      "scripts/__tests__/inventory-history-export-provider-preflight.test.js",
+      "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012"
+    ]
+  },
+  "claims": [
+    {
+      "id": "TH04_PREREQUISITES",
+      "result": "PASS",
+      "evidence": [
+        "what-next/transaction-history/runs/th-foundation-inventory-correction-verify-20260715-006/slices/foundation-inventory/02-security-proof-gate.json",
+        "what-next/transaction-history/runs/th-foundation-inventory-correction-verify-20260715-006/slices/foundation-inventory/03-accounting-control-gate.json",
+        "what-next/transaction-history/runs/th-inventory-history-bounded-artifacts-20260715-011/slices/foundation-inventory/04-read-model-optimizer.json"
+      ]
+    },
+    {
+      "id": "TH04_CURSOR_SNAPSHOT",
+      "result": "PASS",
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-bounded-artifacts-20260715-011/slices/foundation-inventory/04-read-model-optimizer.json"
+      ]
+    },
+    {
+      "id": "TH04_FILTER_PARITY",
+      "result": "PASS",
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-bounded-artifacts-20260715-011/slices/foundation-inventory/04-read-model-optimizer.json"
+      ]
+    },
+    {
+      "id": "TH04_CAP_COMPLETENESS",
+      "result": "PASS",
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-bounded-artifacts-20260715-011/slices/foundation-inventory/04-read-model-optimizer.json"
+      ]
+    },
+    {
+      "id": "TH04_EXPORT",
+      "result": "GAP",
+      "evidence": [
+        "scripts/inventory-history-export-provider-preflight.js",
+        "scripts/__tests__/inventory-history-export-provider-preflight.test.js",
+        "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/logs/04-provider-preflight.json",
+        "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/slices/foundation-inventory/04-read-model-optimizer.md"
+      ]
+    },
+    {
+      "id": "TH04_INDEX_PLAN",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-bounded-artifacts-20260715-011/slices/foundation-inventory/04-read-model-optimizer.json"
+      ]
+    },
+    {
+      "id": "TH04_MIGRATION",
+      "result": "NA",
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/slices/foundation-inventory/04-read-model-optimizer.md"
+      ]
+    },
+    {
+      "id": "TH04_VERIFICATION",
+      "result": "GAP",
+      "evidence": [
+        "scripts/__tests__/inventory-history-export-provider-preflight.test.js",
+        "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/logs/04-provider-preflight.json",
+        "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/slices/foundation-inventory/04-read-model-optimizer.md"
+      ]
+    }
+  ],
+  "verification": [
+    {
+      "command": "node --check scripts/inventory-history-export-provider-preflight.js",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/slices/foundation-inventory/04-read-model-optimizer.md"
+    },
+    {
+      "command": "node_modules/.bin/jest.cmd scripts/__tests__/inventory-history-export-provider-preflight.test.js --runInBand",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/slices/foundation-inventory/04-read-model-optimizer.md"
+    },
+    {
+      "command": "node_modules/.bin/jest.cmd <eight inventory-history suites> --runInBand",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/slices/foundation-inventory/04-read-model-optimizer.md"
+    },
+    {
+      "command": "node_modules/.bin/eslint.cmd <two run012 files>",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/slices/foundation-inventory/04-read-model-optimizer.md"
+    },
+    {
+      "command": "npm run typecheck",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/slices/foundation-inventory/04-read-model-optimizer.md"
+    },
+    {
+      "command": "rg -n [trailing-whitespace] <two run012 files>",
+      "status": "PASS",
+      "exitCode": 1,
+      "logPath": "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/slices/foundation-inventory/04-read-model-optimizer.md"
+    },
+    {
+      "command": "node --env-file=.env scripts/inventory-history-export-provider-preflight.js --mode live --json-out <run012 log>",
+      "status": "FAIL",
+      "exitCode": 1,
+      "logPath": "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/logs/04-provider-preflight.json"
+    },
+    {
+      "command": "validate-run-artifacts.mjs --run-dir <run012>",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/slices/foundation-inventory/04-read-model-optimizer.md"
+    },
+    {
+      "command": "select-next-stage.mjs --manifest <run012 manifest> --state <run012 state>",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/slices/foundation-inventory/04-read-model-optimizer.md"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/slices/foundation-inventory/04-read-model-optimizer.md",
+      "sha256": "sha256:0806386a822148d66051d102030735f8bd82efdec0c9112995e42d3a53f3774a"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/logs/04-provider-preflight.json",
+      "sha256": "sha256:4158d0d70de6d3d0095080bab8e63a818ec674a9e0654b838d0ca837e0e17952"
+    }
+  ],
+  "blockers": [
+    {
+      "severity": "high",
+      "code": "PRIVATE_OBJECT_STORAGE_CAPABILITY_UNAVAILABLE",
+      "reason": "The configured UploadThing account rejects the private object capability required by the run011 artifact contract."
+    },
+    {
+      "severity": "high",
+      "code": "OBJECT_STORAGE_CAPACITY_AND_GOVERNANCE_UNCERTIFIED",
+      "reason": "Throughput, concurrency, lifecycle, cost, residency and contractual controls remain unproved after private capability is resolved."
+    },
+    {
+      "severity": "medium",
+      "code": "PRODUCTION_LIKE_PLAN_EVIDENCE_MISSING",
+      "reason": "Representative analyzed PostgreSQL plans remain unavailable."
+    },
+    {
+      "severity": "medium",
+      "code": "PRODUCTION_DELIVERY_BINDING_PENDING",
+      "reason": "Worker process-manager scheduler binding and later authenticated streaming delivery are not certified."
+    },
+    {
+      "severity": "medium",
+      "code": "LEGACY_PROVIDER_CONFIGURATION_PRESENT",
+      "reason": "Environment documentation still advertises legacy UploadThing variables and omits the v7 token and worker contract."
+    },
+    {
+      "severity": "medium",
+      "code": "HISTORICAL_BALANCE_AUTHORITY_UNPROVEN",
+      "reason": "Historical balanceAfter remains excluded until sequencing, concurrency and backdating invariants are proved."
+    },
+    {
+      "severity": "low",
+      "code": "V1_PILOT_JOB_DRAIN_REQUIRED",
+      "reason": "Run009 schema-v1 pilot jobs must be drained before production rollout."
+    }
+  ],
+  "nextEligibleStages": [],
+  "startedAt": "2026-07-15T14:59:49.009Z",
+  "completedAt": "2026-07-15T15:18:38.520Z"
+}

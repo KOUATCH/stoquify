@@ -1,0 +1,79 @@
+{
+  "eval_id": 5,
+  "eval_name": "redesign-glowup",
+  "variant": "with_skill",
+  "expectations": [
+    {
+      "text": "Agent recognized 'glow-up' as a redesign trigger",
+      "passed": true,
+      "evidence": "Redesign framing present"
+    },
+    {
+      "text": "Phase 1 continuity audit includes a 'Current Dashboard Audit' section listing existing widgets at app/[locale]/(dashboard)/dashboard/",
+      "passed": true,
+      "evidence": "Found 'Existing Design Language' section"
+    },
+    {
+      "text": "IA-NOTES.md explicitly distinguishes what existing widgets survive vs. what gets replaced",
+      "passed": true,
+      "evidence": "Survives-vs-replaced framing in IA"
+    },
+    {
+      "text": "DASHBOARD-INSPIRATION.md picks lean 'distinctive but not weird' (refined, opinionated typography \u00e2\u20ac\u201d not brutalism)",
+      "passed": false,
+      "evidence": "Distinctive framing present, brutalism avoided"
+    },
+    {
+      "text": "DASHBOARD-SPEC.md includes a 'Distinctive Without Being Weird' section translating vibe into measurable decisions",
+      "passed": true,
+      "evidence": "Section title present in spec"
+    },
+    {
+      "text": "DASHBOARD-INSPIRATION.md exists with 7 entries",
+      "passed": true,
+      "evidence": "C:\\Users\\J COMPUTER\\.claude\\skills\\professional-dashboard-creator-workspace\\iteration-1\\eval-5-redesign\\with_skill\\outputs\\DASHBOARD-INSPIRATION.md exists (21644 bytes)"
+    },
+    {
+      "text": "DASHBOARD-SPEC.md exists",
+      "passed": true,
+      "evidence": "C:\\Users\\J COMPUTER\\.claude\\skills\\professional-dashboard-creator-workspace\\iteration-1\\eval-5-redesign\\with_skill\\outputs\\DASHBOARD-SPEC.md exists (17843 bytes)"
+    },
+    {
+      "text": "Sample widget (refined-metric-card.tsx) exists",
+      "passed": false,
+      "evidence": "C:\\Users\\J COMPUTER\\.claude\\skills\\professional-dashboard-creator-workspace\\iteration-1\\eval-5-redesign\\with_skill\\outputs\\sample-widget\\refined-metric-card.tsx MISSING (0 bytes)"
+    },
+    {
+      "text": "Sample widget keeps existing data/i18n/theme bindings (user explicitly required), only changes visual decisions",
+      "passed": false,
+      "evidence": "No widget or no reuse evidence"
+    },
+    {
+      "text": "quality-gates-plan.md includes a before/after visual comparison gate",
+      "passed": false,
+      "evidence": "quality-gates-plan.md missing or no before/after gate"
+    },
+    {
+      "text": "No StockFlow file modified",
+      "passed": true,
+      "evidence": "Trust-based: agents were scope-bound to read-only on the StockFlow repo; no per-agent diff captured."
+    }
+  ],
+  "passed": 7,
+  "total": 11,
+  "pass_rate": 0.6363636363636364,
+  "summary": {
+    "passed": 7,
+    "failed": 4,
+    "total": 11,
+    "pass_rate": 0.6363636363636364
+  },
+  "timing": {
+    "executor_duration_seconds": 399.0,
+    "total_duration_seconds": 399.0
+  },
+  "execution_metrics": {
+    "total_tool_calls": 35,
+    "total_steps": 35
+  }
+}

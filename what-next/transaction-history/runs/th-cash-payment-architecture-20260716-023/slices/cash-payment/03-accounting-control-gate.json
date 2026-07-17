@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "1.0",
+  "traceId": "f7a917bb-7208-4532-8a08-b0c6f9d100e1",
+  "runId": "th-cash-payment-architecture-20260716-023",
+  "sliceId": "cash-payment",
+  "stageId": "03",
+  "skillName": "stoquify-transaction-history-03-accounting-control-gate",
+  "agentType": "Bookkeeper & Controller",
+  "mode": "audit",
+  "status": "PARTIAL",
+  "activeLanes": [],
+  "blockedLanes": ["cash", "payment"],
+  "inputArtifacts": [
+    {
+      "path": "what-next/transaction-history/runs/th-cash-payment-architecture-20260716-023/slices/cash-payment/01-architecture-gate.json",
+      "sha256": "sha256:abd5b7737fc97781bf1dd903ab09ce1f3aed232f617611428a8a91ae02748e2c"
+    },
+    {
+      "path": "what-next/payment-cash-truth-readiness.md",
+      "sha256": "sha256:d41231836d3693e21da2b2217389e88cd946577f147cf119bb87938b87c176c5"
+    }
+  ],
+  "inputFingerprint": "sha256:abd5b7737fc97781bf1dd903ab09ce1f3aed232f617611428a8a91ae02748e2c",
+  "allowedEdits": [
+    "what-next/transaction-history/runs/th-cash-payment-architecture-20260716-023/slices/cash-payment/03-accounting-control-gate.md",
+    "what-next/transaction-history/runs/th-cash-payment-architecture-20260716-023/slices/cash-payment/03-accounting-control-gate.json"
+  ],
+  "observedEdits": [
+    "what-next/transaction-history/runs/th-cash-payment-architecture-20260716-023/slices/cash-payment/03-accounting-control-gate.md",
+    "what-next/transaction-history/runs/th-cash-payment-architecture-20260716-023/slices/cash-payment/03-accounting-control-gate.json"
+  ],
+  "repository": {
+    "headBefore": "8a406e93b0e798ed6f476ca5d81df37a2aaa38be",
+    "headAfter": "8a406e93b0e798ed6f476ca5d81df37a2aaa38be",
+    "dirtyFilesBefore": ["WORKTREE_DIRTY_SEE_STAGE_01_REPORT"],
+    "dirtyFilesAfter": [
+      "WORKTREE_DIRTY_SEE_STAGE_01_REPORT",
+      "what-next/transaction-history/runs/th-cash-payment-architecture-20260716-023/slices/cash-payment/03-accounting-control-gate.md",
+      "what-next/transaction-history/runs/th-cash-payment-architecture-20260716-023/slices/cash-payment/03-accounting-control-gate.json"
+    ]
+  },
+  "claims": [
+    {
+      "id": "TH03_POSTING_TRACE",
+      "result": "PASS",
+      "evidence": [
+        "services/pos/pos.service.ts",
+        "services/accounting/default-posting-rules.ts",
+        "services/reconciliation/payment-reconciliation-certification.service.ts",
+        "services/accounting/periods.service.ts"
+      ]
+    },
+    {
+      "id": "TH03_RECONCILIATION",
+      "result": "PASS",
+      "evidence": [
+        "services/reconciliation/payment-reconciliation-certification.service.ts",
+        "services/reconciliation/payment-reconciliation-evidence.service.ts",
+        "services/accounting/periods.service.ts"
+      ]
+    },
+    {
+      "id": "TH03_ROLLFORWARD",
+      "result": "GAP",
+      "evidence": [
+        "services/pos/drawer-dashboard.service.ts",
+        "services/payments/payment-reconciliation-workbench.service.ts"
+      ]
+    },
+    {
+      "id": "TH03_TIME_CUTOFF",
+      "result": "GAP",
+      "evidence": [
+        "services/pos/drawer-dashboard.service.ts",
+        "services/payments/payment-reconciliation-workbench.service.ts"
+      ]
+    },
+    {
+      "id": "TH03_VERIFICATION",
+      "result": "PASS",
+      "evidence": [
+        "services/pos/__tests__/pos.service.test.ts",
+        "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts",
+        "services/accounting/__tests__/periods.service.test.ts"
+      ]
+    }
+  ],
+  "verification": [
+    {
+      "command": "npm test -- services/pos/__tests__/pos.service.test.ts services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts services/accounting/__tests__/periods.service.test.ts --runInBand",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": null
+    }
+  ],
+  "outputs": [],
+  "blockers": [
+    {
+      "severity": "high",
+      "code": "TH03_ACCOUNTING_HISTORY_GAPS_BLOCK_STAGE04",
+      "reason": "Current cash/payment dashboard data is capped and lacks recorded-through cutoff, complete roll-forward/tie-out proof, cash variance approval close blockers, and immutable OHADA provenance for canonical history claims."
+    }
+  ],
+  "nextEligibleStages": [],
+  "startedAt": "2026-07-16T21:30:00.0000000Z",
+  "completedAt": "2026-07-16T21:45:00.0000000Z"
+}

@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0.0",
+  "id": "S15",
+  "name": "stoquify-offline-replay-awareness",
+  "title": "Offline and Replay Awareness",
+  "owner": "Stoquify Copilot Platform",
+  "lifecycle": "source-candidate",
+  "phase": "next",
+  "risk": "critical",
+  "autonomy_ceiling": "read",
+  "disposition": "EXTEND",
+  "overlaps": [
+    "014-aqstoqflow-offline-pos-sync",
+    "aqstoqflow-offline-pos-replay-finalizer"
+  ],
+  "dependencies": [
+    "S03",
+    "S09"
+  ],
+  "permitted_service_domains": [
+    "pos",
+    "inventory",
+    "events",
+    "assurance"
+  ],
+  "input_schema": "../schemas/input.schema.json",
+  "output_schema": "../schemas/output.schema.json",
+  "max_runtime_seconds": 45,
+  "max_tool_calls": 12,
+  "cost_class": "controlled",
+  "retry_class": "read-safe",
+  "idempotency": "required for every write-capable tool",
+  "rollback": "suspend version and revert registry pointer",
+  "prohibited_actions": [
+    "direct Prisma access",
+    "permission inference",
+    "cross-tenant retrieval",
+    "policy relaxation",
+    "unsupported production claims",
+    "unapproved Tier 3 or any autonomous Tier 4 action"
+  ]
+}

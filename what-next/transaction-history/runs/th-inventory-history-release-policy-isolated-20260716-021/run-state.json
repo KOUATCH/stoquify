@@ -1,0 +1,42 @@
+{
+  "runId": "th-inventory-history-release-policy-isolated-20260716-021",
+  "sliceId": "foundation-inventory",
+  "stages": {
+    "01": {
+      "status": "PASS"
+    },
+    "02": {
+      "status": "PASS"
+    },
+    "03": {
+      "status": "PASS"
+    },
+    "04": {
+      "status": "PASS"
+    },
+    "05": {
+      "status": "PASS"
+    },
+    "06": {
+      "status": "PASS"
+    },
+    "07": {
+      "status": "PASS",
+      "inputFingerprint": "sha256:2c943c03c76022054e4057bc41b7a0dba5953578e04c920643c9eee5677f2c64",
+      "evidence": "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/slices/foundation-inventory/07-release-review.json"
+    }
+  },
+  "workingTree": {
+    "dirtyFiles": [
+      "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/run-manifest.json",
+      "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/run-state.json",
+      "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/trace.jsonl",
+      "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/slices/foundation-inventory/07-release-review.md",
+      "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/slices/foundation-inventory/07-release-review.json",
+      "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/logs/07-build-app-isolated-after-tracing-root-fix.log",
+      "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/logs/07-jest-isolated-final-after-fixture-sync.log",
+      "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/logs/07-release-evidence-release-mode-negative.log"
+    ],
+    "releaseReviewOf": "what-next/transaction-history/runs/th-inventory-history-browser-smoke-clean-20260716-020"
+  }
+}

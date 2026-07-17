@@ -1,0 +1,21 @@
+{
+  "eval_id": 1,
+  "eval_name": "explicit-dashboard-request",
+  "prompt": "build me the main dashboard for stockflow, the one that shows up after login. should show everything important at a glance — sales today, stock alerts, recent activity, that kind of thing. needs to work in french too and respect dark mode. use real data from the db not mocks.",
+  "assertions": [
+    {"text": "DASHBOARD-INSPIRATION.md exists in the output directory", "type": "file_exists", "path": "DASHBOARD-INSPIRATION.md"},
+    {"text": "DASHBOARD-INSPIRATION.md contains 7 distinct reference entries (numbered 1-7)", "type": "content_check"},
+    {"text": "DASHBOARD-INSPIRATION.md includes an 'Existing Design Language' section from the Phase 1 continuity audit", "type": "content_check"},
+    {"text": "IA-NOTES.md exists and answers the skill's 5 IA questions", "type": "file_exists", "path": "IA-NOTES.md"},
+    {"text": "DASHBOARD-SPEC.md exists and follows the skill's template structure (Persona, Promise, Layout, Type Scale, Color, Density, Motion, Widgets, i18n, Theme, A11y, Perf)", "type": "file_exists", "path": "DASHBOARD-SPEC.md"},
+    {"text": "Sample widget (today-sales-card.tsx) exists in sample-widget/ subdirectory", "type": "file_exists", "path": "sample-widget/today-sales-card.tsx"},
+    {"text": "Sample widget uses useTranslations or equivalent i18n hook — no bare English strings in JSX", "type": "code_check"},
+    {"text": "Sample widget uses Tailwind/theme tokens — zero hex color literals", "type": "code_check"},
+    {"text": "Sample widget references a real StockFlow data hook or server action by path (not a mock array)", "type": "code_check"},
+    {"text": "Sample widget includes Skeleton, Empty state, and Error state handling", "type": "code_check"},
+    {"text": "quality-gates-plan.md exists and addresses the skill's checklist items", "type": "file_exists", "path": "quality-gates-plan.md"},
+    {"text": "RUN-NOTES.md confirms both skill files were read", "type": "content_check"},
+    {"text": "RUN-NOTES.md confirms the StockFlow codebase was read (lists specific files)", "type": "content_check"},
+    {"text": "No file under E:/retail management systems/retailers/stockflow/ was modified", "type": "side_effect_check"}
+  ]
+}

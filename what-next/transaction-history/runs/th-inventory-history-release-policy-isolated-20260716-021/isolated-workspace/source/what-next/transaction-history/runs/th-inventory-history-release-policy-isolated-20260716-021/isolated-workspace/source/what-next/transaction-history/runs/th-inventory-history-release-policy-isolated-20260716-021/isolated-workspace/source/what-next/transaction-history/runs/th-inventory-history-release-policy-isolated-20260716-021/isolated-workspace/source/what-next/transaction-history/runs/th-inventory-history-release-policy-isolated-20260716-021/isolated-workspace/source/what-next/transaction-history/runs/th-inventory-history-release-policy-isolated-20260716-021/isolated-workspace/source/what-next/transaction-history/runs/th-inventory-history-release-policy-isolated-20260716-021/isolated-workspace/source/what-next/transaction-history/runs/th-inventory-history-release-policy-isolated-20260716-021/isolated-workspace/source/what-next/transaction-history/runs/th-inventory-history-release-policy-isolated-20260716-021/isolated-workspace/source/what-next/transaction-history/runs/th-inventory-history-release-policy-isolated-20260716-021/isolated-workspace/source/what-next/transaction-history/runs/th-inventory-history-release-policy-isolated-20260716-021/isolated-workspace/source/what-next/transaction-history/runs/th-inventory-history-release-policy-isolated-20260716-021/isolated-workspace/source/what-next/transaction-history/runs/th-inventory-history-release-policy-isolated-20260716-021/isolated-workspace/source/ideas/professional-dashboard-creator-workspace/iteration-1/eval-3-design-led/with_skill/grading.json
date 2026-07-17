@@ -1,0 +1,79 @@
+{
+  "eval_id": 3,
+  "eval_name": "design-led-with-named-refs",
+  "variant": "with_skill",
+  "expectations": [
+    {
+      "text": "Agent honored both user-named references (Linear, Vercel) as 2 of the 7",
+      "passed": true,
+      "evidence": "Linear and Vercel both present in inspiration"
+    },
+    {
+      "text": "Agent added 5 more references following skill diversity rules (\u00e2\u2030\u00a52 non-SaaS, \u00e2\u2030\u00a51 polarizing)",
+      "passed": true,
+      "evidence": "Distinctive cues found: ['polariz', 'non-saas', 'rauno', 'arc', 'intentionally']"
+    },
+    {
+      "text": "DASHBOARD-INSPIRATION.md exists with all 7 entries",
+      "passed": true,
+      "evidence": "C:\\Users\\J COMPUTER\\.claude\\skills\\professional-dashboard-creator-workspace\\iteration-1\\eval-3-design-led\\with_skill\\outputs\\DASHBOARD-INSPIRATION.md exists (17203 bytes)"
+    },
+    {
+      "text": "Continuity audit appended to inspiration doc",
+      "passed": true,
+      "evidence": "Found 'Existing Design Language' section"
+    },
+    {
+      "text": "IA-NOTES.md exists",
+      "passed": true,
+      "evidence": "C:\\Users\\J COMPUTER\\.claude\\skills\\professional-dashboard-creator-workspace\\iteration-1\\eval-3-design-led\\with_skill\\outputs\\IA-NOTES.md exists (8482 bytes)"
+    },
+    {
+      "text": "DASHBOARD-SPEC.md exists and treats theme + i18n as first-class concerns (since user emphasized them)",
+      "passed": true,
+      "evidence": "C:\\Users\\J COMPUTER\\.claude\\skills\\professional-dashboard-creator-workspace\\iteration-1\\eval-3-design-led\\with_skill\\outputs\\DASHBOARD-SPEC.md exists (14674 bytes)"
+    },
+    {
+      "text": "Sample widget (sales-trend-chart.tsx) exists and is trend/chart-focused (matches 'stats page')",
+      "passed": true,
+      "evidence": "C:\\Users\\J COMPUTER\\.claude\\skills\\professional-dashboard-creator-workspace\\iteration-1\\eval-3-design-led\\with_skill\\outputs\\sample-widget\\sales-trend-chart.tsx exists (14377 bytes)"
+    },
+    {
+      "text": "Sample widget i18n + theme tokens + real data + states",
+      "passed": true,
+      "evidence": "Heuristic fallback (assertion text not matched explicitly): 53296 chars total in outputs"
+    },
+    {
+      "text": "quality-gates-plan.md exists",
+      "passed": false,
+      "evidence": "C:\\Users\\J COMPUTER\\.claude\\skills\\professional-dashboard-creator-workspace\\iteration-1\\eval-3-design-led\\with_skill\\outputs\\quality-gates-plan.md MISSING (0 bytes)"
+    },
+    {
+      "text": "RUN-NOTES.md confirms both skill files read and StockFlow code read",
+      "passed": false,
+      "evidence": "RUN-NOTES.md missing or doesn't confirm skill files"
+    },
+    {
+      "text": "No StockFlow file modified",
+      "passed": true,
+      "evidence": "Trust-based: agents were scope-bound to read-only on the StockFlow repo; no per-agent diff captured."
+    }
+  ],
+  "passed": 9,
+  "total": 11,
+  "pass_rate": 0.8181818181818182,
+  "summary": {
+    "passed": 9,
+    "failed": 2,
+    "total": 11,
+    "pass_rate": 0.8181818181818182
+  },
+  "timing": {
+    "executor_duration_seconds": 391.3,
+    "total_duration_seconds": 391.3
+  },
+  "execution_metrics": {
+    "total_tool_calls": 28,
+    "total_steps": 28
+  }
+}

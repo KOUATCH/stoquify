@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "1.0",
+  "traceId": "51783d07-4481-4580-be21-7e9312f8d71a",
+  "runId": "th-foundation-inventory-correction-20260715-005",
+  "sliceId": "foundation-inventory",
+  "stageId": "02",
+  "skillName": "stoquify-transaction-history-02-security-proof-gate",
+  "agentType": "Security Architect",
+  "mode": "implement",
+  "status": "PASS",
+  "activeLanes": [
+    "workbench",
+    "inventory"
+  ],
+  "blockedLanes": [],
+  "inputArtifacts": [
+    {
+      "path": "what-next/transaction-history/runs/th-foundation-inventory-correction-20260715-005/run-manifest.json",
+      "sha256": "sha256:ff51d50c6a41027383e00ab47b56f8cd6cf6bf139461a0f329498e8b25c8ac63"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-foundation-inventory-correction-20260715-005/slices/foundation-inventory/01-architecture-gate.json",
+      "sha256": "sha256:73e28548ce69b8694a85020902adb5ca035f68dc7b13ce1d5f2a4a647a69c36d"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-foundation-inventory-correction-20260715-005/slices/foundation-inventory/01-architecture-gate.md",
+      "sha256": "sha256:3332eb9e599965864d0c0cb7cac59a8b64447b886174d82f011af9aba4263ce9"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-foundation-inventory-reconciliation-20260714-003/slices/foundation-inventory/02-security-proof-gate.json",
+      "sha256": "sha256:bc99bc4d71f9c2c6c1c59a8904525542a7d85fe8f89a725ce24594337e9b021b"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-foundation-inventory-reconciliation-20260714-003/slices/foundation-inventory/02-security-proof-gate.md",
+      "sha256": "sha256:edc47682e5bda5d6ec2363623d8f0342bc7ca53fb91a632bcac156eb58ee5571"
+    }
+  ],
+  "inputFingerprint": "sha256:ee857dbbf145fb4564f6f875579dd76473292c1c4e910ea6dc3ecddb04c0c7fe",
+  "allowedEdits": [
+    "what-next/transaction-history/runs/th-foundation-inventory-correction-20260715-005/slices/foundation-inventory/02-security-proof-gate.json",
+    "what-next/transaction-history/runs/th-foundation-inventory-correction-20260715-005/slices/foundation-inventory/02-security-proof-gate.md"
+  ],
+  "observedEdits": [
+    "what-next/transaction-history/runs/th-foundation-inventory-correction-20260715-005/slices/foundation-inventory/02-security-proof-gate.json",
+    "what-next/transaction-history/runs/th-foundation-inventory-correction-20260715-005/slices/foundation-inventory/02-security-proof-gate.md"
+  ],
+  "repository": {
+    "headBefore": "8a406e93b0e798ed6f476ca5d81df37a2aaa38be",
+    "headAfter": "8a406e93b0e798ed6f476ca5d81df37a2aaa38be",
+    "dirtyFilesBefore": [],
+    "dirtyFilesAfter": []
+  },
+  "claims": [
+    {
+      "id": "TH02_INTERNAL_ONLY_BOUNDARY",
+      "result": "PASS",
+      "evidence": [
+        "what-next/transaction-history/runs/th-foundation-inventory-correction-20260715-005/slices/foundation-inventory/02-security-proof-gate.md",
+        "what-next/transaction-history/runs/th-foundation-inventory-correction-20260715-005/run-manifest.json"
+      ]
+    },
+    {
+      "id": "TH02_TRUSTED_TENANT_MAKER_CHECKER",
+      "result": "PASS",
+      "evidence": [
+        "services/_shared/protect.ts",
+        "lib/security/rbac-permissions.ts",
+        "what-next/transaction-history/runs/th-foundation-inventory-correction-20260715-005/slices/foundation-inventory/02-security-proof-gate.md"
+      ]
+    },
+    {
+      "id": "TH02_FRESH_AUTH_CONTRACT",
+      "result": "PASS",
+      "evidence": [
+        "lib/security/auth-session.ts",
+        "services/security/step-up-auth.service.ts",
+        "what-next/transaction-history/runs/th-foundation-inventory-correction-20260715-005/slices/foundation-inventory/02-security-proof-gate.md"
+      ]
+    },
+    {
+      "id": "TH02_NO_EXTERNAL_EXPOSURE",
+      "result": "PASS",
+      "evidence": [
+        "what-next/transaction-history/runs/th-foundation-inventory-correction-20260715-005/run-manifest.json",
+        "what-next/transaction-history/runs/th-foundation-inventory-correction-20260715-005/slices/foundation-inventory/02-security-proof-gate.md"
+      ]
+    }
+  ],
+  "verification": [
+    {
+      "command": "jest --runInBand actions/inventory/__tests__/inventoryMovementActions.test.ts lib/security/__tests__/rbac-permissions.test.ts services/security/__tests__/step-up-auth.service.test.ts",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": null
+    },
+    {
+      "command": "static correction entrypoint inventory against run 005 include/exclude paths",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": null
+    }
+  ],
+  "outputs": [
+    {
+      "path": "what-next/transaction-history/runs/th-foundation-inventory-correction-20260715-005/slices/foundation-inventory/02-security-proof-gate.md",
+      "sha256": "sha256:5ef0d67db9098be136588ba147c3d5732c3f342eb55d4b6022fd15e000024eb3"
+    }
+  ],
+  "blockers": [],
+  "nextEligibleStages": [
+    "03"
+  ],
+  "startedAt": "2026-07-15T08:17:00.000Z",
+  "completedAt": "2026-07-15T08:22:52.290Z"
+}

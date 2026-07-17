@@ -1,0 +1,74 @@
+{
+  "eval_id": 2,
+  "eval_name": "implicit-dashboard-request",
+  "variant": "with_skill",
+  "expectations": [
+    {
+      "text": "Agent recognized 'admin home page' as a dashboard task even though the word 'dashboard' wasn't used",
+      "passed": true,
+      "evidence": "Skill triggered & produced design artifacts (proxy for recognition)"
+    },
+    {
+      "text": "DASHBOARD-INSPIRATION.md exists with 7 entries",
+      "passed": true,
+      "evidence": "C:\\Users\\J COMPUTER\\.claude\\skills\\professional-dashboard-creator-workspace\\iteration-1\\eval-2-implicit\\with_skill\\outputs\\DASHBOARD-INSPIRATION.md exists (14036 bytes)"
+    },
+    {
+      "text": "Inspiration picks lean distinctive/polarizing, not safe \u00e2\u20ac\u201d at least 2 non-SaaS, at least 1 deliberately polarizing per skill rule",
+      "passed": true,
+      "evidence": "Distinctive cues found: ['polariz', 'non-saas', 'rauno', 'arc', 'intentionally']"
+    },
+    {
+      "text": "Continuity audit (Phase 1) is given extra weight \u00e2\u20ac\u201d landing page is explicitly read and documented",
+      "passed": true,
+      "evidence": "Found 'Existing Design Language' section"
+    },
+    {
+      "text": "IA-NOTES.md cuts widgets that don't earn their place (NOT just 4 colored stat cards again)",
+      "passed": true,
+      "evidence": "Explicit cuts present in IA"
+    },
+    {
+      "text": "DASHBOARD-SPEC.md exists and is complete",
+      "passed": true,
+      "evidence": "C:\\Users\\J COMPUTER\\.claude\\skills\\professional-dashboard-creator-workspace\\iteration-1\\eval-2-implicit\\with_skill\\outputs\\DASHBOARD-SPEC.md exists (16190 bytes)"
+    },
+    {
+      "text": "Sample widget (hero-kpi-strip.tsx) exists and demonstrates a non-generic approach",
+      "passed": true,
+      "evidence": "C:\\Users\\J COMPUTER\\.claude\\skills\\professional-dashboard-creator-workspace\\iteration-1\\eval-2-implicit\\with_skill\\outputs\\sample-widget\\hero-kpi-strip.tsx exists (15784 bytes)"
+    },
+    {
+      "text": "Sample widget uses i18n hook, theme tokens, real data source",
+      "passed": true,
+      "evidence": "useTranslations/next-intl referenced in sample widget"
+    },
+    {
+      "text": "RUN-NOTES.md addresses how the skill handled 'redesign existing' vs 'build new'",
+      "passed": true,
+      "evidence": "Redesign framing present"
+    },
+    {
+      "text": "No file under StockFlow codebase modified",
+      "passed": true,
+      "evidence": "Trust-based: agents were scope-bound to read-only on the StockFlow repo; no per-agent diff captured."
+    }
+  ],
+  "passed": 10,
+  "total": 10,
+  "pass_rate": 1.0,
+  "summary": {
+    "passed": 10,
+    "failed": 0,
+    "total": 10,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "executor_duration_seconds": 388.9,
+    "total_duration_seconds": 388.9
+  },
+  "execution_metrics": {
+    "total_tool_calls": 33,
+    "total_steps": 33
+  }
+}

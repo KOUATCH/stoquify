@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:stoquify:stoquify-po-receipt-invoice-variance/input/v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "trace_id",
+    "tenant_context",
+    "mode",
+    "request"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "trace_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tenant_context": {
+      "type": "object",
+      "required": [
+        "tenant_id",
+        "organization_id",
+        "actor_id",
+        "roles",
+        "modules_enabled"
+      ],
+      "properties": {
+        "tenant_id": {
+          "type": "string"
+        },
+        "organization_id": {
+          "type": "string"
+        },
+        "actor_id": {
+          "type": "string"
+        },
+        "location_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "modules_enabled": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "audit",
+        "plan",
+        "execute",
+        "verify"
+      ]
+    },
+    "request": {
+      "type": "object"
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "idempotency_key": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "title": "stoquify-po-receipt-invoice-variance Input v1"
+}

@@ -1,0 +1,42 @@
+{
+  "runId": "th-inventory-history-stage06-lint-repair-20260716-022",
+  "sliceId": "foundation-inventory",
+  "stages": {
+    "01": {
+      "status": "PASS"
+    },
+    "02": {
+      "status": "PASS"
+    },
+    "03": {
+      "status": "PASS"
+    },
+    "04": {
+      "status": "PASS"
+    },
+    "05": {
+      "status": "PASS"
+    },
+    "06": {
+      "status": "PASS",
+      "inputFingerprint": "sha256:22751265195a735bf9e7126846431d6c056bf84c87bea393ef5ce523cb72644a",
+      "evidence": "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/slices/foundation-inventory/06-frontend-delivery.json"
+    },
+    "07": {
+      "status": "PENDING"
+    }
+  },
+  "workingTree": {
+    "dirtyFiles": [
+      "components/dashboard/__tests__/TransactionHistoryWorkbenchShell.test.tsx",
+      "components/inventory/movements/__tests__/InventoryMovementHistoryWorkbench.test.tsx",
+      "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/slices/foundation-inventory/06-frontend-delivery.json",
+      "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/slices/foundation-inventory/06-frontend-delivery.md",
+      "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/logs/06-focused-lint.log",
+      "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/logs/06-focused-tests.log",
+      "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/run-manifest.json",
+      "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/run-state.json"
+    ],
+    "releaseReviewOf": "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021"
+  }
+}

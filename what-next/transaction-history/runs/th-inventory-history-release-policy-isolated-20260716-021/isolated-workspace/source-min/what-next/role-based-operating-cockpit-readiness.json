@@ -1,0 +1,54 @@
+{
+  "summary": {
+    "generatedAt": "2026-07-16T15:39:59.085Z",
+    "mode": "fail",
+    "status": "ready",
+    "checkCount": 9,
+    "readyCount": 9,
+    "blockerCount": 0
+  },
+  "scope": {
+    "roleWorkspace": "Daily Digest",
+    "route": "/[locale]/dashboard/daily-digest",
+    "service": "services/daily-habit/daily-habit-digest.service.ts"
+  },
+  "checks": [
+    {
+      "id": "tenant_metadata_is_service_owned",
+      "ready": true
+    },
+    {
+      "id": "route_propagates_roles_without_currency_override",
+      "ready": true
+    },
+    {
+      "id": "digest_configs_are_permission_filtered",
+      "ready": true
+    },
+    {
+      "id": "owner_and_manager_dashboard_roles_are_separated",
+      "ready": true
+    },
+    {
+      "id": "hidden_workspace_evidence_is_explicit",
+      "ready": true
+    },
+    {
+      "id": "no_workspace_permission_and_session_states",
+      "ready": true
+    },
+    {
+      "id": "command_center_anatomy_is_present",
+      "ready": true
+    },
+    {
+      "id": "canonical_dashboard_tokens_and_accessibility",
+      "ready": true
+    },
+    {
+      "id": "cockpit_gate_is_in_policy_chain",
+      "ready": true
+    }
+  ],
+  "blockers": []
+}

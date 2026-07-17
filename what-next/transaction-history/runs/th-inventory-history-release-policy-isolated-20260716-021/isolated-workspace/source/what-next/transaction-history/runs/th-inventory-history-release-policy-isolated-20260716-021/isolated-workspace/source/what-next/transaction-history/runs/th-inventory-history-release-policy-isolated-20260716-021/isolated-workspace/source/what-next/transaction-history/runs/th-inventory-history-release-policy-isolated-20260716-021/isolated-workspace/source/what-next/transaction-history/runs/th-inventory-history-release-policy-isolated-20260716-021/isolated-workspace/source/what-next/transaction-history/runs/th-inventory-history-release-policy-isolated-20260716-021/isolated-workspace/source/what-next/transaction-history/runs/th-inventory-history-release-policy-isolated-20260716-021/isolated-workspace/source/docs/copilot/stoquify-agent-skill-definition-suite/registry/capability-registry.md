@@ -1,0 +1,41 @@
+# Capability Registry
+
+| ID | Capability | Type | Disposition | Phase | Risk | Autonomy |
+|---|---|---|---|---|---|---|
+| S01 | `stoquify-trusted-context-resolver` | skill | EXTEND | now | critical | read |
+| S02 | `stoquify-permission-entitlement-guard` | skill | COMPOSE | now | critical | read |
+| S03 | `stoquify-evidence-grounded-retrieval` | skill | COMPOSE | now | high | read |
+| S04 | `stoquify-safe-action-planner` | skill | COMPOSE | now | high | draft |
+| S05 | `stoquify-approval-step-up-coordinator` | skill | EXTEND | now | critical | draft |
+| S06 | `stoquify-idempotent-tool-executor` | skill | COMPOSE | now | critical | controlled-write |
+| S07 | `stoquify-agent-evidence-recorder` | skill | COMPOSE | now | critical | read |
+| S08 | `stoquify-redaction-disclosure-policy` | skill | COMPOSE | now | critical | read |
+| S09 | `stoquify-freshness-trust-evaluator` | skill | COMPOSE | now | high | read |
+| S10 | `stoquify-exception-prioritizer` | skill | EXTEND | now | medium | read |
+| S11 | `stoquify-notification-escalation-router` | skill | COMPOSE | now | medium | read |
+| S12 | `stoquify-agent-run-state-machine` | skill | COMPOSE | now | critical | read |
+| S13 | `stoquify-model-cost-router` | skill | NEW | next | high | read |
+| S14 | `stoquify-explicit-preference-memory` | skill | NEW | next | critical | read |
+| S15 | `stoquify-offline-replay-awareness` | skill | EXTEND | next | critical | read |
+| S16 | `stoquify-country-pack-provenance-resolver` | skill | COMPOSE | next | critical | read |
+| S17 | `stoquify-daily-operating-brief` | skill | COMPOSE | now | medium | read |
+| S18 | `stoquify-cross-domain-root-cause-trace` | skill | EXTEND | now | high | read |
+| S19 | `stoquify-cash-exception-triage` | skill | EXTEND | now | critical | read |
+| S20 | `stoquify-reconciliation-match-suggestion` | skill | EXTEND | now | critical | draft |
+| S21 | `stoquify-inventory-risk-replenishment` | skill | COMPOSE | now | high | draft |
+| S22 | `stoquify-inventory-variance-investigation` | skill | COMPOSE | now | high | read |
+| S23 | `stoquify-po-receipt-invoice-variance` | skill | EXTEND | next | critical | draft |
+| S24 | `stoquify-supplier-commitment-payment-risk` | skill | COMPOSE | next | critical | read |
+| S25 | `stoquify-close-blocker-navigator` | skill | COMPOSE | next | critical | read |
+| S26 | `stoquify-compliance-readiness-explanation` | skill | COMPOSE | next | critical | read |
+| S27 | `stoquify-payroll-readiness-variance` | skill | EXTEND | later | critical | read |
+| S28 | `stoquify-adoption-onboarding-coach` | skill | NEW | later | medium | read |
+| stoquify-command-agent | `stoquify-command-agent` | agent | COMPOSE | now | high | read-and-draft |
+| stoquify-exception-action-orchestrator | `stoquify-exception-action-orchestrator` | agent | COMPOSE | now | critical | policy-bounded-orchestration |
+| stoquify-cash-reconciliation-agent | `stoquify-cash-reconciliation-agent` | agent | COMPOSE | now | critical | read-and-propose |
+| stoquify-inventory-replenishment-agent | `stoquify-inventory-replenishment-agent` | agent | COMPOSE | now | high | read-and-draft |
+| stoquify-purchasing-accounts-payable-agent | `stoquify-purchasing-accounts-payable-agent` | agent | COMPOSE | next | critical | read-and-draft |
+| stoquify-close-compliance-agent | `stoquify-close-compliance-agent` | agent | COMPOSE | next | critical | read-and-prepare |
+| stoquify-platform-assurance-agent | `stoquify-platform-assurance-agent` | agent | COMPOSE | next | critical | observe-and-suspend |
+| stoquify-customer-success-adoption-agent | `stoquify-customer-success-adoption-agent` | agent | NEW | later | medium | read-and-recommend |
+| stoquify-payroll-workforce-agent | `stoquify-payroll-workforce-agent` | agent | COMPOSE | later | critical | read-only-readiness |

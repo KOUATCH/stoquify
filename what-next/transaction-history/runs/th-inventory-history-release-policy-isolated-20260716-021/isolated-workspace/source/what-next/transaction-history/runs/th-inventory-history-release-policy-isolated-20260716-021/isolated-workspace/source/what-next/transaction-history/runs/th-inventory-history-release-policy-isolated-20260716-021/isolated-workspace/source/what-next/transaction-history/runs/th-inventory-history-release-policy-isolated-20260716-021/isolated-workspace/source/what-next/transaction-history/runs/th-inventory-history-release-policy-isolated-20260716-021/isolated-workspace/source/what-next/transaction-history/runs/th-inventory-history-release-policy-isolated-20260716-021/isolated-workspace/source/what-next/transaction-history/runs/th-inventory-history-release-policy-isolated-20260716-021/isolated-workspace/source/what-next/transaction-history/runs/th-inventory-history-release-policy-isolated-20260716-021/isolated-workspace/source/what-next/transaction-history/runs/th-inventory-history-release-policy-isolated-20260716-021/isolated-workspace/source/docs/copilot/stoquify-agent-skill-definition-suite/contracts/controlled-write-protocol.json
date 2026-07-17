@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0.0",
+  "name": "controlled-write-protocol",
+  "pre_dispatch": [
+    "reject tools without registered input/output and idempotency contracts",
+    "persist checkpoint before dispatch",
+    "bind idempotency key to tenant, tool, canonical argument fingerprint, plan version, and expiry",
+    "verify permission, approval, maker-checker, fresh authentication, and evidence fingerprint",
+    "generate and persist a client operation key before network dispatch",
+    "reject execution when durable command journal, uniqueness, and settlement/status lookup guarantees are unsupported"
+  ],
+  "dispatch": [
+    "create one durable service-owned command journal entry before network dispatch",
+    "send the client operation key with the request",
+    "capture provider operation ID when returned",
+    "atomically record accepted/result state; reject the tool at registration time if this guarantee or an equivalent transactional outbox is unavailable"
+  ],
+  "timeout_or_ambiguity": [
+    "transition to unknown_outcome",
+    "never retry automatically",
+    "query status by client operation key and then provider operation ID when available",
+    "require human resolution when finality remains unknown",
+    "never claim completion"
+  ],
+  "idempotency": {
+    "scope": "tenant + tool + business operation",
+    "reuse": "same key and same fingerprint returns prior result; different fingerprint is denied",
+    "retention": "at least the service's maximum retry and settlement window",
+    "concurrency": "single winner enforced by service-owned uniqueness"
+  },
+  "request_schema": "contracts/controlled-write-request.schema.json",
+  "checkpoint_schema": "contracts/run-checkpoint.schema.json",
+  "approval_schema": "contracts/approval-request.schema.json",
+  "isolation_result_schema": "contracts/retrieved-content-isolation-result.schema.json"
+}

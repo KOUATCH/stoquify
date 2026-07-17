@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "1.0",
+  "runId": "th-inventory-history-stage06-lint-repair-20260716-022",
+  "traceId": "184ae1eb-87e3-4dba-b854-d4070b394fd8",
+  "mode": "implement",
+  "sliceId": "foundation-inventory",
+  "contractVersion": "1.0-stage06-lint-repair",
+  "proposal": {
+    "sha256": "sha256:0628f08178fe0441fe22ccbd1a6b429c2bb07b2ea5d278e6dcb799ab117c6979",
+    "path": "docs/new ideas/STOQUIFY_TRANSACTION_HISTORY_ANALYTICS_AND_SECURITY_PROPOSAL_2026-07-14.md"
+  },
+  "baseCommit": "8a406e93b0e798ed6f476ca5d81df37a2aaa38be",
+  "runtimeArtifactRoot": "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/",
+  "scope": {
+    "lanes": [
+      "workbench",
+      "inventory"
+    ],
+    "excludePaths": [
+      "prisma/schema.prisma",
+      "prisma/migrations/"
+    ],
+    "includePaths": [
+      "components/dashboard/__tests__/TransactionHistoryWorkbenchShell.test.tsx",
+      "components/inventory/movements/__tests__/InventoryMovementHistoryWorkbench.test.tsx"
+    ]
+  },
+  "stageAllowlists": {
+    "06": [
+      "components/dashboard/__tests__/TransactionHistoryWorkbenchShell.test.tsx",
+      "components/inventory/movements/__tests__/InventoryMovementHistoryWorkbench.test.tsx",
+      "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/slices/foundation-inventory/06-frontend-delivery.json",
+      "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/slices/foundation-inventory/06-frontend-delivery.md",
+      "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/logs/06-focused-lint.log",
+      "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/logs/06-focused-tests.log"
+    ],
+    "04": [
+      "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/slices/foundation-inventory/04-read-model-optimizer.json"
+    ],
+    "01": [
+      "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/slices/foundation-inventory/01-architecture-gate.json"
+    ],
+    "05": [
+      "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/slices/foundation-inventory/05-workbench-ux-contract.json"
+    ],
+    "03": [
+      "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/slices/foundation-inventory/03-accounting-control-gate.json"
+    ],
+    "02": [
+      "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/slices/foundation-inventory/02-security-proof-gate.json"
+    ],
+    "07": [
+      "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/slices/foundation-inventory/07-release-review.json"
+    ]
+  },
+  "orchestratorPolicy": {
+    "productCodeEdits": false,
+    "deployMigrations": false,
+    "installSkills": false
+  },
+  "gates": {
+    "foundationInventory": {
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/slices/foundation-inventory/07-release-review.json"
+      ],
+      "status": "PASS"
+    },
+    "arAccountingPrerequisites": {
+      "evidence": [],
+      "status": "NA"
+    }
+  },
+  "createdAt": "2026-07-16T13:16:16.9184034Z"
+}

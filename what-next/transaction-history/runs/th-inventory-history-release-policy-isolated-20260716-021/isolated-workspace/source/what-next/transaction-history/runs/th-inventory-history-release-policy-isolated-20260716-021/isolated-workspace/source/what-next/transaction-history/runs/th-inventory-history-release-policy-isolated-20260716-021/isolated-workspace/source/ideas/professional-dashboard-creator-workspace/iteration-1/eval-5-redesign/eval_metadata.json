@@ -1,0 +1,18 @@
+{
+  "eval_id": 5,
+  "eval_name": "redesign-glowup",
+  "prompt": "give the dashboard a glow-up. it's functional but looks like every other SaaS admin. needs to be more distinctive without being weird, has to keep working with our existing data + i18n + theme setup.",
+  "assertions": [
+    {"text": "Agent recognized 'glow-up' as a redesign trigger", "type": "content_check"},
+    {"text": "Phase 1 continuity audit includes a 'Current Dashboard Audit' section listing existing widgets at app/[locale]/(dashboard)/dashboard/", "type": "content_check"},
+    {"text": "IA-NOTES.md explicitly distinguishes what existing widgets survive vs. what gets replaced", "type": "content_check"},
+    {"text": "DASHBOARD-INSPIRATION.md picks lean 'distinctive but not weird' (refined, opinionated typography — not brutalism)", "type": "content_check"},
+    {"text": "DASHBOARD-SPEC.md includes a 'Distinctive Without Being Weird' section translating vibe into measurable decisions", "type": "content_check"},
+    {"text": "DASHBOARD-INSPIRATION.md exists with 7 entries", "type": "file_exists", "path": "DASHBOARD-INSPIRATION.md"},
+    {"text": "DASHBOARD-SPEC.md exists", "type": "file_exists", "path": "DASHBOARD-SPEC.md"},
+    {"text": "Sample widget (refined-metric-card.tsx) exists", "type": "file_exists", "path": "sample-widget/refined-metric-card.tsx"},
+    {"text": "Sample widget keeps existing data/i18n/theme bindings (user explicitly required), only changes visual decisions", "type": "code_check"},
+    {"text": "quality-gates-plan.md includes a before/after visual comparison gate", "type": "content_check"},
+    {"text": "No StockFlow file modified", "type": "side_effect_check"}
+  ]
+}

@@ -1,0 +1,217 @@
+{
+  "schemaVersion": "1.0",
+  "runId": "th-inventory-history-performance-capacity-20260715-010",
+  "traceId": "0834c37e-ac5b-44ca-90b4-fddee951ade4",
+  "stageId": "04",
+  "executedAt": "2026-07-15T12:09:15.387Z",
+  "mode": "read-only",
+  "redaction": {
+    "connectionStringRecorded": false,
+    "databaseNameRecorded": false,
+    "tenantIdentifiersRecorded": false,
+    "rowValuesRecorded": false,
+    "secretsRecorded": false
+  },
+  "environment": {
+    "provider": "postgresql",
+    "serverVersionNumber": 170005,
+    "classification": "development-nonrepresentative",
+    "productionLike": false,
+    "explainAnalyzeExecuted": false,
+    "reason": "The configured database has an estimated 408 inventory transactions and cannot certify production cardinality, cache, concurrency, or write-amplification behavior."
+  },
+  "tableStatistics": [
+    {
+      "table": "inventory_transactions",
+      "estimatedRows": 408,
+      "totalBytes": 901120,
+      "heapBytes": 303104,
+      "indexBytes": 557056
+    },
+    {
+      "table": "business_events",
+      "estimatedRows": 8,
+      "totalBytes": 188416,
+      "heapBytes": 57344,
+      "indexBytes": 98304
+    },
+    {
+      "table": "business_event_outbox",
+      "estimatedRows": 10,
+      "totalBytes": 122880,
+      "heapBytes": 24576,
+      "indexBytes": 65536
+    }
+  ],
+  "relevantIndexes": [
+    {
+      "table": "inventory_transactions",
+      "index": "inventory_transactions_org_effective_recorded_id_idx",
+      "columns": [
+        "organizationId",
+        "effectiveAt",
+        "recordedAt",
+        "id"
+      ]
+    },
+    {
+      "table": "inventory_transactions",
+      "index": "inventory_transactions_org_recorded_id_idx",
+      "columns": [
+        "organizationId",
+        "recordedAt",
+        "id"
+      ]
+    },
+    {
+      "table": "business_event_outbox",
+      "index": "business_event_outbox_organizationId_status_availableAt_idx",
+      "columns": [
+        "organizationId",
+        "status",
+        "availableAt"
+      ]
+    },
+    {
+      "table": "business_event_outbox",
+      "index": "business_event_outbox_organizationId_channel_idempotencyKey_key",
+      "columns": [
+        "organizationId",
+        "channel",
+        "idempotencyKey"
+      ]
+    },
+    {
+      "table": "business_events",
+      "index": "business_events_organizationId_eventType_occurredAt_idx",
+      "columns": [
+        "organizationId",
+        "eventType",
+        "occurredAt"
+      ]
+    }
+  ],
+  "nonExecutingPlans": [
+    {
+      "query": "inventory-history-first-page",
+      "root": "Limit",
+      "scan": "Seq Scan",
+      "sort": "explicit",
+      "chosenIndex": null,
+      "planRows": 80,
+      "totalCost": 45.85,
+      "certification": "unverified-small-table-plan"
+    },
+    {
+      "query": "inventory-history-next-page",
+      "root": "Limit",
+      "scan": "Bitmap Heap Scan",
+      "sort": "explicit",
+      "chosenIndex": "inventory_transactions_organizationId_createdAt_idx",
+      "planRows": 78,
+      "totalCost": 46.94,
+      "certification": "unverified-small-table-plan"
+    },
+    {
+      "query": "inventory-history-summary",
+      "root": "Hashed Aggregate",
+      "scan": "Seq Scan",
+      "sort": null,
+      "chosenIndex": null,
+      "planRows": 2,
+      "totalCost": 43.95,
+      "certification": "unverified-small-table-plan"
+    },
+    {
+      "query": "background-export-worker-candidate",
+      "root": "Limit",
+      "scan": "Index Scan plus filter",
+      "sort": "explicit",
+      "chosenIndex": "business_event_outbox_organizationId_channel_idempotencyKey_key",
+      "planRows": 1,
+      "totalCost": 13.46,
+      "certification": "index-not-aligned-to-global-worker-predicate"
+    },
+    {
+      "query": "background-export-expiry-scan",
+      "root": "Limit",
+      "scan": "Index Scan plus filter",
+      "sort": "explicit",
+      "chosenIndex": "business_event_outbox_organizationId_channel_idempotencyKey_key",
+      "planRows": 1,
+      "totalCost": 13.45,
+      "certification": "index-not-aligned-to-global-expiry-predicate"
+    }
+  ],
+  "rowSizeSample": {
+    "sampleRows": 100,
+    "ndjsonBytes": {
+      "minimum": 810,
+      "average": 866,
+      "p50": 865,
+      "p95": 888,
+      "maximum": 899
+    },
+    "estimatedChunkReferenceBytes": 182,
+    "estimatedBaseCheckpointMetadataBytes": 391
+  },
+  "capacityModel": [
+    {
+      "rows": 10000,
+      "chunksAt100Rows": 100,
+      "estimatedPlaintextMiB": 8.259,
+      "estimatedEncryptedChunkPayloadMiB": 11.046,
+      "finalCheckpointMetadataMiB": 0.018,
+      "cumulativeCheckpointJsonRewriteLowerBoundMiB": 0.914
+    },
+    {
+      "rows": 250000,
+      "chunksAt100Rows": 2500,
+      "estimatedPlaintextMiB": 206.463,
+      "estimatedEncryptedChunkPayloadMiB": 276.146,
+      "finalCheckpointMetadataMiB": 0.434,
+      "cumulativeCheckpointJsonRewriteLowerBoundMiB": 543.551
+    },
+    {
+      "rows": 1000000,
+      "chunksAt100Rows": 10000,
+      "estimatedPlaintextMiB": 825.853,
+      "estimatedEncryptedChunkPayloadMiB": 1104.584,
+      "finalCheckpointMetadataMiB": 1.736,
+      "cumulativeCheckpointJsonRewriteLowerBoundMiB": 8683.033
+    }
+  ],
+  "implementationObservations": [
+    {
+      "code": "CHECKPOINT_REFERENCE_ARRAY_REWRITE",
+      "severity": "high",
+      "evidence": "Every page appends a chunk reference to BusinessEventOutbox.metadata and replaces the complete JSON value, producing quadratic lower-bound checkpoint rewrite growth."
+    },
+    {
+      "code": "FINALIZATION_LOADS_ALL_CHUNKS",
+      "severity": "high",
+      "evidence": "finalizeJobInTx loads every referenced BusinessEvent chunk into one array before verification and hashing."
+    },
+    {
+      "code": "DOWNLOAD_PRELOADS_ALL_CHUNKS",
+      "severity": "high",
+      "evidence": "streamInventoryHistoryExportDownload resolves every encrypted chunk before returning its async generator, so the path is not memory-bounded streaming."
+    },
+    {
+      "code": "GLOBAL_WORKER_INDEX_MISMATCH",
+      "severity": "high",
+      "evidence": "Worker and expiry predicates are global by channel, eventName, status, and time; existing availability indexes lead with organizationId and neither plan avoids an explicit sort."
+    },
+    {
+      "code": "REPRESENTATIVE_PLAN_EVIDENCE_ABSENT",
+      "severity": "medium",
+      "evidence": "The development database is too small for production query-plan or throughput certification."
+    }
+  ],
+  "modelLimitations": [
+    "Encrypted payload estimates exclude PostgreSQL tuple, TOAST, WAL, index, audit, replication, backup, and vacuum overhead.",
+    "Checkpoint rewrite values are lower bounds derived from full JSON metadata replacement per page.",
+    "No throughput, lock-contention, heap-pressure, garbage-collection, or concurrent-worker measurements were executed.",
+    "No production or customer database was accessed."
+  ]
+}

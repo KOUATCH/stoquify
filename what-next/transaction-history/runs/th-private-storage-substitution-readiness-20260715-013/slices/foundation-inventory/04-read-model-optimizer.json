@@ -1,0 +1,222 @@
+{
+  "schemaVersion": "1.0",
+  "traceId": "4bb8d35a-0cff-4b5b-bd72-794ccad34d6c",
+  "runId": "th-private-storage-substitution-readiness-20260715-013",
+  "sliceId": "foundation-inventory",
+  "stageId": "04",
+  "skillName": "stoquify-transaction-history-04-read-model-optimizer",
+  "agentType": "Database Optimizer",
+  "mode": "audit",
+  "status": "BLOCKED",
+  "activeLanes": [
+    "inventory"
+  ],
+  "blockedLanes": [
+    "workbench"
+  ],
+  "inputArtifacts": [
+    {
+      "path": "what-next/transaction-history/runs/th-private-storage-substitution-readiness-20260715-013/run-manifest.json",
+      "sha256": "sha256:0840fd66df325dd45b3d0275774bbcbeb01c594397717a27df26eb2a1a3e5741"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/slices/foundation-inventory/04-read-model-optimizer.json",
+      "sha256": "sha256:667b4d7c16addfff8a171e90e157fa092eb651170a70825eb7cbe67ba41b44f2"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-foundation-inventory-correction-verify-20260715-006/slices/foundation-inventory/02-security-proof-gate.json",
+      "sha256": "sha256:6bb0621ad7701c5f9cd096acb7be5d9f6803921d0bb179319a69e4c599414739"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-foundation-inventory-correction-verify-20260715-006/slices/foundation-inventory/03-accounting-control-gate.json",
+      "sha256": "sha256:db3e40670a12cb354359523bb832f371c12a998770facb4d458d1551cee7db93"
+    },
+    {
+      "path": "docs/new ideas/STOQUIFY_TRANSACTION_HISTORY_ANALYTICS_AND_SECURITY_PROPOSAL_2026-07-14.md",
+      "sha256": "sha256:0628f08178fe0441fe22ccbd1a6b429c2bb07b2ea5d278e6dcb799ab117c6979"
+    },
+    {
+      "path": "package.json",
+      "sha256": "sha256:c53fd192f565b81e683467ff5be7049393aaefac7d6283f2b61d146b89266665"
+    },
+    {
+      "path": ".env.example",
+      "sha256": "sha256:4ac970ce3e105efaf5e414c125b25f5a4dba4894890b56da2147d694f3da30c7"
+    },
+    {
+      "path": "services/inventory/inventory-history-export-artifact-store.ts",
+      "sha256": "sha256:8a9ceed17d69ec6ea2164862f8680b98631f1022e2b9612f822e21c194573812"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/logs/04-provider-preflight.json",
+      "sha256": "sha256:4158d0d70de6d3d0095080bab8e63a818ec674a9e0654b838d0ca837e0e17952"
+    }
+  ],
+  "inputFingerprint": "sha256:65b3b347ffcc88bfce68d2159866943db21a88e192df60f05e4cab6df3f4680d",
+  "allowedEdits": [
+    "what-next/transaction-history/runs/th-private-storage-substitution-readiness-20260715-013/slices/foundation-inventory/04-read-model-optimizer.json",
+    "what-next/transaction-history/runs/th-private-storage-substitution-readiness-20260715-013/slices/foundation-inventory/04-read-model-optimizer.md",
+    "what-next/transaction-history/runs/th-private-storage-substitution-readiness-20260715-013/logs/04-provider-substitution-readiness.json"
+  ],
+  "observedEdits": [
+    "what-next/transaction-history/runs/th-private-storage-substitution-readiness-20260715-013/slices/foundation-inventory/04-read-model-optimizer.json",
+    "what-next/transaction-history/runs/th-private-storage-substitution-readiness-20260715-013/slices/foundation-inventory/04-read-model-optimizer.md",
+    "what-next/transaction-history/runs/th-private-storage-substitution-readiness-20260715-013/logs/04-provider-substitution-readiness.json"
+  ],
+  "repository": {
+    "headBefore": "8a406e93b0e798ed6f476ca5d81df37a2aaa38be",
+    "headAfter": "8a406e93b0e798ed6f476ca5d81df37a2aaa38be",
+    "dirtyFilesBefore": [
+      ".env.example",
+      "package.json",
+      "services/inventory/inventory-history-export-artifact-store.ts",
+      "scripts/inventory-history-export-worker.ts",
+      "scripts/inventory-history-export-provider-preflight.js",
+      "scripts/__tests__/inventory-history-export-provider-preflight.test.js",
+      "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012"
+    ],
+    "dirtyFilesAfter": [
+      ".env.example",
+      "package.json",
+      "services/inventory/inventory-history-export-artifact-store.ts",
+      "scripts/inventory-history-export-worker.ts",
+      "scripts/inventory-history-export-provider-preflight.js",
+      "scripts/__tests__/inventory-history-export-provider-preflight.test.js",
+      "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012",
+      "what-next/transaction-history/runs/th-private-storage-substitution-readiness-20260715-013"
+    ]
+  },
+  "claims": [
+    {
+      "id": "TH04_PREREQUISITES",
+      "result": "PASS",
+      "evidence": [
+        "what-next/transaction-history/runs/th-foundation-inventory-correction-verify-20260715-006/slices/foundation-inventory/02-security-proof-gate.json",
+        "what-next/transaction-history/runs/th-foundation-inventory-correction-verify-20260715-006/slices/foundation-inventory/03-accounting-control-gate.json",
+        "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/slices/foundation-inventory/04-read-model-optimizer.json"
+      ]
+    },
+    {
+      "id": "TH04_CURSOR_SNAPSHOT",
+      "result": "PASS",
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/slices/foundation-inventory/04-read-model-optimizer.json"
+      ]
+    },
+    {
+      "id": "TH04_FILTER_PARITY",
+      "result": "PASS",
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/slices/foundation-inventory/04-read-model-optimizer.json"
+      ]
+    },
+    {
+      "id": "TH04_CAP_COMPLETENESS",
+      "result": "PASS",
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/slices/foundation-inventory/04-read-model-optimizer.json"
+      ]
+    },
+    {
+      "id": "TH04_EXPORT",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-private-storage-substitution-readiness-20260715-013/logs/04-provider-substitution-readiness.json",
+        "what-next/transaction-history/runs/th-private-storage-substitution-readiness-20260715-013/slices/foundation-inventory/04-read-model-optimizer.md"
+      ]
+    },
+    {
+      "id": "TH04_INDEX_PLAN",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/slices/foundation-inventory/04-read-model-optimizer.json"
+      ]
+    },
+    {
+      "id": "TH04_MIGRATION",
+      "result": "NA",
+      "evidence": [
+        "what-next/transaction-history/runs/th-private-storage-substitution-readiness-20260715-013/slices/foundation-inventory/04-read-model-optimizer.md"
+      ]
+    },
+    {
+      "id": "TH04_VERIFICATION",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-private-storage-substitution-readiness-20260715-013/logs/04-provider-substitution-readiness.json",
+        "what-next/transaction-history/runs/th-private-storage-substitution-readiness-20260715-013/slices/foundation-inventory/04-read-model-optimizer.md"
+      ]
+    }
+  ],
+  "verification": [
+    {
+      "command": "names-only installed storage-client inventory",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": "what-next/transaction-history/runs/th-private-storage-substitution-readiness-20260715-013/logs/04-provider-substitution-readiness.json"
+    },
+    {
+      "command": "names-only alternate-provider credential inventory",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": "what-next/transaction-history/runs/th-private-storage-substitution-readiness-20260715-013/logs/04-provider-substitution-readiness.json"
+    },
+    {
+      "command": "official UploadThing, AWS S3, Cloudflare R2 and Azure Blob capability review",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": "what-next/transaction-history/runs/th-private-storage-substitution-readiness-20260715-013/logs/04-provider-substitution-readiness.json"
+    },
+    {
+      "command": "run012 live private provider canary",
+      "status": "FAIL",
+      "exitCode": 1,
+      "logPath": "what-next/transaction-history/runs/th-inventory-history-provider-preflight-20260715-012/logs/04-provider-preflight.json"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "what-next/transaction-history/runs/th-private-storage-substitution-readiness-20260715-013/slices/foundation-inventory/04-read-model-optimizer.md",
+      "sha256": "sha256:406fcb1084a2201c8941d004ae3e7848c9e9aa88074ea68ce22626dd7131c660"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-private-storage-substitution-readiness-20260715-013/logs/04-provider-substitution-readiness.json",
+      "sha256": "sha256:2772f27c04cc7790a41ece4e0e68a83882926698414aba3cf892af529e655966"
+    }
+  ],
+  "blockers": [
+    {
+      "severity": "high",
+      "code": "PRIVATE_STORAGE_PROVIDER_DECISION_REQUIRED",
+      "reason": "No approved private provider, paid UploadThing capability, cloud account or billing owner exists."
+    },
+    {
+      "severity": "high",
+      "code": "PRIVATE_OBJECT_STORAGE_CAPABILITY_UNAVAILABLE",
+      "reason": "The currently configured UploadThing account fails the live private canary."
+    },
+    {
+      "severity": "high",
+      "code": "OBJECT_STORAGE_GOVERNANCE_UNCERTIFIED",
+      "reason": "Residency, DPA, encryption-key ownership, retention, legal hold and deletion policy are undecided."
+    },
+    {
+      "severity": "medium",
+      "code": "PROVIDER_DEPENDENCY_AND_CREDENTIALS_MISSING",
+      "reason": "Every alternate provider requires a new SDK, credentials, bucket or container and live certification."
+    },
+    {
+      "severity": "medium",
+      "code": "PRODUCTION_LIKE_PLAN_EVIDENCE_MISSING",
+      "reason": "Database performance certification remains pending after storage is unblocked."
+    },
+    {
+      "severity": "medium",
+      "code": "PRODUCTION_DELIVERY_BINDING_PENDING",
+      "reason": "Worker scheduling and later authenticated delivery remain pending."
+    }
+  ],
+  "nextEligibleStages": [],
+  "startedAt": "2026-07-15T15:54:18.773Z",
+  "completedAt": "2026-07-15T15:56:33.864Z"
+}

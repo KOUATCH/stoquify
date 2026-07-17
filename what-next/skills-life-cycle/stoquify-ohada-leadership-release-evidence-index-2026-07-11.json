@@ -1,16 +1,16 @@
 {
   "summary": {
-    "generatedAt": "2026-07-11T20:21:39.713Z",
+    "generatedAt": "2026-07-16T15:21:18.646Z",
     "mode": "fail",
     "releaseEnforced": false,
     "status": "conditional",
-    "checkCount": 10,
-    "readyCount": 10,
+    "checkCount": 11,
+    "readyCount": 11,
     "blockerCount": 0,
     "releaseConditionCount": 3,
     "releaseBlockerCount": 3,
-    "runReportCount": 13,
-    "readinessArtifactCount": 9,
+    "runReportCount": 14,
+    "readinessArtifactCount": 10,
     "secretValuePrinted": false
   },
   "checks": [
@@ -51,6 +51,10 @@
       "ready": true
     },
     {
+      "id": "database_backed_ci_release_gate_is_wired",
+      "ready": true
+    },
+    {
       "id": "release_evidence_gate_is_wired",
       "ready": true
     }
@@ -83,7 +87,7 @@
       "skill": "stoquify-service-boundary-ratchet",
       "file": "what-next/skills-life-cycle/STOQUIFY_SERVICE_BOUNDARY_RATCHET_AUDIT_2026-07-11.md",
       "exists": true,
-      "bytes": 4396,
+      "bytes": 4395,
       "dated": true,
       "verificationRecorded": true,
       "nextStepRecorded": false
@@ -92,7 +96,7 @@
       "skill": "stoquify-rbac-tenant-freshauth-enforcer",
       "file": "what-next/skills-life-cycle/STOQUIFY_RBAC_POS_ACTION_PERMISSION_IMPLEMENTATION_2026-07-11.md",
       "exists": true,
-      "bytes": 3792,
+      "bytes": 3791,
       "dated": true,
       "verificationRecorded": true,
       "nextStepRecorded": true
@@ -192,6 +196,15 @@
       "file": "what-next/skills-life-cycle/STOQUIFY_PRISMA_PRODUCTION_MIGRATION_AUTOMATION_IMPLEMENTATION_2026-07-11.md",
       "exists": true,
       "bytes": 3450,
+      "dated": true,
+      "verificationRecorded": true,
+      "nextStepRecorded": true
+    },
+    {
+      "skill": "stoquify-ci-release-gate-modernizer",
+      "file": "what-next/skills-life-cycle/STOQUIFY_CI_RELEASE_GATE_MODERNIZER_IMPLEMENTATION_2026-07-11.md",
+      "exists": true,
+      "bytes": 3134,
       "dated": true,
       "verificationRecorded": true,
       "nextStepRecorded": true
@@ -312,6 +325,19 @@
       "status": "ready",
       "readyCount": 8,
       "checkCount": 8,
+      "blockerCount": 0,
+      "warningCount": 0
+    },
+    {
+      "id": "ci-release",
+      "json": "what-next/ci-release-readiness.json",
+      "markdown": "what-next/ci-release-readiness.md",
+      "jsonExists": true,
+      "markdownExists": true,
+      "parseable": true,
+      "status": "ready",
+      "readyCount": 10,
+      "checkCount": 10,
       "blockerCount": 0,
       "warningCount": 0
     }

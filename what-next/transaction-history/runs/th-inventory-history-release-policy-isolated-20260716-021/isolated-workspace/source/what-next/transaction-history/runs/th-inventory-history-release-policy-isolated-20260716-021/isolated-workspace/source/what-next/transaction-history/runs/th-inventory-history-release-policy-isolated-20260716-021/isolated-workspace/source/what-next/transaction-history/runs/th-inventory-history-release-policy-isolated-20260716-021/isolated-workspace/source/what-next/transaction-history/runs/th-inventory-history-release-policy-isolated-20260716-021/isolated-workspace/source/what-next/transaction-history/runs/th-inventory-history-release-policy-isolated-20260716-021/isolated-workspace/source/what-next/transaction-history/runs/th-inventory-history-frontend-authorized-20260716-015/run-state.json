@@ -1,0 +1,47 @@
+{
+  "runId": "th-inventory-history-frontend-authorized-20260716-015",
+  "sliceId": "foundation-inventory",
+  "stages": {
+    "01": {
+      "status": "PASS"
+    },
+    "02": {
+      "status": "PASS"
+    },
+    "03": {
+      "status": "PASS"
+    },
+    "04": {
+      "status": "PASS"
+    },
+    "05": {
+      "status": "PASS"
+    },
+    "06": {
+      "status": "PASS",
+      "inputFingerprint": "sha256:d191dfb91ed1a8c52bb0ffe77c1dedcec428d62fd648ba317ba49d3ae9b46bcc",
+      "evidence": "what-next/transaction-history/runs/th-inventory-history-frontend-authorized-20260716-015/slices/foundation-inventory/06-frontend-delivery.json"
+    },
+    "07": {
+      "status": "PENDING"
+    }
+  },
+  "workingTree": {
+    "dirtyFiles": [
+      "app/[locale]/(dashboard)/dashboard/inventory/movements/page.tsx",
+      "components/dashboard/history/TransactionHistoryWorkbenchShell.tsx",
+      "components/inventory/movements/InventoryMovementHistoryWorkbench.tsx",
+      "components/inventory/movements/inventoryMovementHistoryAdapter.ts",
+      "hooks/useInventoryMovementHistoryWorkbench.ts",
+      "messages/en.json",
+      "messages/fr.json",
+      "components/dashboard/__tests__/TransactionHistoryWorkbenchShell.test.tsx",
+      "components/inventory/movements/__tests__/InventoryMovementHistoryWorkbench.test.tsx",
+      "hooks/__tests__/useInventoryMovementHistoryWorkbench.test.ts",
+      "what-next/transaction-history/runs/th-inventory-history-frontend-authorized-20260716-015/slices/foundation-inventory/06-frontend-delivery.json",
+      "what-next/transaction-history/runs/th-inventory-history-frontend-authorized-20260716-015/slices/foundation-inventory/06-frontend-delivery.md"
+    ],
+    "continuationOf": "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014",
+    "authorizationSource": "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/06-frontend-delivery-authorization-request.md"
+  }
+}

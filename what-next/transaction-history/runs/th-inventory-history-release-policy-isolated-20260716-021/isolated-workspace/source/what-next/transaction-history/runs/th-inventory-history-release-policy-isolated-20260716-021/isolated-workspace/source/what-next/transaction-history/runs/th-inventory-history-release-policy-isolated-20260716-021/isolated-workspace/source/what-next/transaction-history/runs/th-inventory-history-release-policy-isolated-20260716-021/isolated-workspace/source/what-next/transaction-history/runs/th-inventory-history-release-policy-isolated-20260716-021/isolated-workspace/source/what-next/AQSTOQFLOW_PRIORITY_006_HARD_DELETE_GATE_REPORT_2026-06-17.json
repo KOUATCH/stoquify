@@ -1,0 +1,123 @@
+{
+  "root": "E:\\ohada saas\\newStockFlow\\aqstoqflow",
+  "scanDirs": [
+    "actions",
+    "services",
+    "app",
+    "hooks",
+    "components"
+  ],
+  "findings": [
+    {
+      "file": "services/accounting/posting-rules.service.ts",
+      "line": 332,
+      "snippet": "await tx.postingRuleLine.deleteMany({ where: { postingRuleId: ruleId, organizationId } })",
+      "client": "tx",
+      "delegate": "postingRuleLine",
+      "operation": "deleteMany",
+      "allowed": true,
+      "severity": "allowed",
+      "classification": "CONFIG_REPLACEMENT_CLEANUP",
+      "migrationOrder": 0,
+      "replacement": "Keep inside posting-rule service with posting-rule audit evidence.",
+      "reason": "Posting rule line replacement is configuration cleanup inside the accounting service and the workflow records posting rule audit evidence."
+    },
+    {
+      "file": "services/auth/password-policy.ts",
+      "line": 163,
+      "snippet": "await tx.passwordHistory.deleteMany({",
+      "client": "tx",
+      "delegate": "passwordHistory",
+      "operation": "deleteMany",
+      "allowed": true,
+      "severity": "allowed",
+      "classification": "CONFIG_RETENTION_CLEANUP",
+      "migrationOrder": 0,
+      "replacement": "Retain bounded password history depth.",
+      "reason": "Password history pruning is non-economic retention cleanup scoped to a single user after recording the new hash."
+    },
+    {
+      "file": "services/pos/pos.service.ts",
+      "line": 1092,
+      "snippet": "await tx.salesOrderLine.delete({ where: { id: line.id } })",
+      "client": "tx",
+      "delegate": "salesOrderLine",
+      "operation": "delete",
+      "allowed": true,
+      "severity": "allowed",
+      "classification": "DRAFT_CLEANUP",
+      "migrationOrder": 0,
+      "replacement": "Keep draft-cart cleanup before sale commit.",
+      "reason": "POS line cleanup is constrained to the current user's draft cart before fiscal, payment, inventory, or ledger evidence exists."
+    },
+    {
+      "file": "services/pos/pos.service.ts",
+      "line": 1107,
+      "snippet": "await tx.salesOrderLine.delete({ where: { id: line.id } })",
+      "client": "tx",
+      "delegate": "salesOrderLine",
+      "operation": "delete",
+      "allowed": true,
+      "severity": "allowed",
+      "classification": "DRAFT_CLEANUP",
+      "migrationOrder": 0,
+      "replacement": "Keep draft-cart cleanup before sale commit.",
+      "reason": "POS line cleanup is constrained to the current user's draft cart before fiscal, payment, inventory, or ledger evidence exists."
+    },
+    {
+      "file": "services/pos/pos.service.ts",
+      "line": 1152,
+      "snippet": "await tx.salesOrderLine.delete({ where: { id: line.id } })",
+      "client": "tx",
+      "delegate": "salesOrderLine",
+      "operation": "delete",
+      "allowed": true,
+      "severity": "allowed",
+      "classification": "DRAFT_CLEANUP",
+      "migrationOrder": 0,
+      "replacement": "Keep draft-cart cleanup before sale commit.",
+      "reason": "POS line cleanup is constrained to the current user's draft cart before fiscal, payment, inventory, or ledger evidence exists."
+    },
+    {
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 204,
+      "snippet": "await tx.purchaseOrderLine.delete({ where: { id: currentLine.id } })",
+      "client": "tx",
+      "delegate": "purchaseOrderLine",
+      "operation": "delete",
+      "allowed": true,
+      "severity": "allowed",
+      "classification": "DRAFT_CLEANUP",
+      "migrationOrder": 0,
+      "replacement": "Keep guarded draft-only reconciliation with audit evidence.",
+      "reason": "Purchase-order line cleanup is limited to draft/submitted orders and rejects receipt or invoice evidence before physical removal."
+    },
+    {
+      "file": "services/supplier/supplier.service.ts",
+      "line": 661,
+      "snippet": "return db.itemSupplier.delete({",
+      "client": "db",
+      "delegate": "itemSupplier",
+      "operation": "delete",
+      "allowed": true,
+      "severity": "allowed",
+      "classification": "CONFIG_RELATIONSHIP_CLEANUP",
+      "migrationOrder": 0,
+      "replacement": "Keep service-owned catalog relationship cleanup scoped through active item and supplier ownership.",
+      "reason": "Item-supplier removal deletes a catalog relationship row through the supplier service after tenant scoping, not a posted purchase, receipt, invoice, payment, ledger, or compliance evidence record."
+    }
+  ],
+  "summary": {
+    "activeViolationCount": 0,
+    "allowedFindingCount": 7,
+    "totalFindings": 7,
+    "byClassification": {},
+    "bySeverity": {},
+    "allowedByClassification": {
+      "CONFIG_REPLACEMENT_CLEANUP": 1,
+      "CONFIG_RETENTION_CLEANUP": 1,
+      "DRAFT_CLEANUP": 4,
+      "CONFIG_RELATIONSHIP_CLEANUP": 1
+    }
+  }
+}

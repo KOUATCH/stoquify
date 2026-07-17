@@ -1,0 +1,237 @@
+{
+  "schemaVersion": "1.0",
+  "traceId": "87883aec-71d4-4e00-96ee-6c3209d8fb9f",
+  "runId": "th-inventory-history-frontend-authorized-20260716-015",
+  "sliceId": "foundation-inventory",
+  "stageId": "06",
+  "skillName": "stoquify-transaction-history-06-frontend-delivery",
+  "agentType": "Frontend Developer",
+  "mode": "implement",
+  "status": "PASS",
+  "activeLanes": [
+    "workbench",
+    "inventory"
+  ],
+  "blockedLanes": [],
+  "inputArtifacts": [
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-frontend-authorized-20260716-015/run-manifest.json",
+      "sha256": "sha256:8756c2058f06a37103d9a3e6b937a6da2aac3303fd3dd606956e4085343b1c83"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/04-read-model-optimizer.json",
+      "sha256": "sha256:59f41b239e7d021652e719e69234d79c75e8051a278d3d8814e6eebc214e3443"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/05-workbench-ux-contract.json",
+      "sha256": "sha256:790ca9c28b2f2eb27b309195b4f8d8dec1e0028455c559978fc6366246947052"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/06-frontend-delivery-authorization-request.md",
+      "sha256": "sha256:9eadae125eb820b41c9a4c06133c212aee9db326bc3a30878f1c16864f94ed5e"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/06-frontend-delivery.json",
+      "sha256": "sha256:c9964384754a4ceedbc95ff1a1dde57f8beeafacd446306dde024e9f1664e86d"
+    },
+    {
+      "path": "docs/skills-life-cycle/stoquify-transaction-history-skill-suite-src/stoquify-transaction-history-06-frontend-delivery/SKILL.md",
+      "sha256": "sha256:b828b89f6e0bb679095661ca9891702b744d2eab12bbe6b19c79fbe77130e6cf"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/movements/page.tsx",
+      "sha256": "sha256:840bb46ae13303c72923fbca6e82ce13d945208cb13d6902db005b4245e95235"
+    },
+    {
+      "path": "components/dashboard/history/TransactionHistoryWorkbenchShell.tsx",
+      "sha256": "sha256:cf2223cf9dc67482e07e90cebb1df8210a24a5eb6fe682ee2032eaabe64719c9"
+    },
+    {
+      "path": "components/inventory/movements/InventoryMovementHistoryWorkbench.tsx",
+      "sha256": "sha256:a3c9b7164e0c0f5268cb7062de564a9ed0a7d78703a1a8ce455c305683218d21"
+    },
+    {
+      "path": "components/inventory/movements/inventoryMovementHistoryAdapter.ts",
+      "sha256": "sha256:12cc58dd6e36ed719109cb1fea98360f4014d803aff0d8656701d2711434354b"
+    },
+    {
+      "path": "hooks/useInventoryMovementHistoryWorkbench.ts",
+      "sha256": "sha256:1bf7cfa87fee3c68a4f08743b3a43d57b90e08e10e6661a8e828d035489356e9"
+    },
+    {
+      "path": "messages/en.json",
+      "sha256": "sha256:710235b66d2d2e0e4e4be34d582f54c6fe860286b78f5e7aea122a8332c727cd"
+    },
+    {
+      "path": "messages/fr.json",
+      "sha256": "sha256:421080741341888ef18f487394a3594d362b7487474f5900ad063b95e48ccdfb"
+    },
+    {
+      "path": "components/dashboard/__tests__/TransactionHistoryWorkbenchShell.test.tsx",
+      "sha256": "sha256:ec34f53023ed36a4321d435ade6360f441442cbda283087b51c3c4ed41347a23"
+    },
+    {
+      "path": "components/inventory/movements/__tests__/InventoryMovementHistoryWorkbench.test.tsx",
+      "sha256": "sha256:f88f6d76e7f5e424ae7f90821cfe356f98753595251a86c18a0b71a44af58114"
+    },
+    {
+      "path": "hooks/__tests__/useInventoryMovementHistoryWorkbench.test.ts",
+      "sha256": "sha256:63ecd1c33a0bf844b3f726131eabbf6bb7e26f4d896d2d1d67b4c8c337790f62"
+    }
+  ],
+  "inputFingerprint": "sha256:d191dfb91ed1a8c52bb0ffe77c1dedcec428d62fd648ba317ba49d3ae9b46bcc",
+  "allowedEdits": [
+    "app/[locale]/(dashboard)/dashboard/inventory/movements/page.tsx",
+    "components/dashboard/history/TransactionHistoryWorkbenchShell.tsx",
+    "components/inventory/movements/InventoryMovementHistoryWorkbench.tsx",
+    "components/inventory/movements/inventoryMovementHistoryAdapter.ts",
+    "hooks/useInventoryMovementHistoryWorkbench.ts",
+    "messages/en.json",
+    "messages/fr.json",
+    "components/dashboard/__tests__/TransactionHistoryWorkbenchShell.test.tsx",
+    "components/inventory/movements/__tests__/InventoryMovementHistoryWorkbench.test.tsx",
+    "hooks/__tests__/useInventoryMovementHistoryWorkbench.test.ts",
+    "what-next/transaction-history/runs/th-inventory-history-frontend-authorized-20260716-015/slices/foundation-inventory/06-frontend-delivery.json",
+    "what-next/transaction-history/runs/th-inventory-history-frontend-authorized-20260716-015/slices/foundation-inventory/06-frontend-delivery.md"
+  ],
+  "observedEdits": [
+    "app/[locale]/(dashboard)/dashboard/inventory/movements/page.tsx",
+    "components/dashboard/history/TransactionHistoryWorkbenchShell.tsx",
+    "components/inventory/movements/InventoryMovementHistoryWorkbench.tsx",
+    "components/inventory/movements/inventoryMovementHistoryAdapter.ts",
+    "hooks/useInventoryMovementHistoryWorkbench.ts",
+    "messages/en.json",
+    "messages/fr.json",
+    "components/dashboard/__tests__/TransactionHistoryWorkbenchShell.test.tsx",
+    "components/inventory/movements/__tests__/InventoryMovementHistoryWorkbench.test.tsx",
+    "hooks/__tests__/useInventoryMovementHistoryWorkbench.test.ts",
+    "what-next/transaction-history/runs/th-inventory-history-frontend-authorized-20260716-015/slices/foundation-inventory/06-frontend-delivery.json",
+    "what-next/transaction-history/runs/th-inventory-history-frontend-authorized-20260716-015/slices/foundation-inventory/06-frontend-delivery.md"
+  ],
+  "repository": {
+    "headBefore": "8a406e93b0e798ed6f476ca5d81df37a2aaa38be",
+    "headAfter": "8a406e93b0e798ed6f476ca5d81df37a2aaa38be",
+    "dirtyFilesBefore": [],
+    "dirtyFilesAfter": [
+      "app/[locale]/(dashboard)/dashboard/inventory/movements/page.tsx",
+      "components/dashboard/history/TransactionHistoryWorkbenchShell.tsx",
+      "components/inventory/movements/InventoryMovementHistoryWorkbench.tsx",
+      "components/inventory/movements/inventoryMovementHistoryAdapter.ts",
+      "hooks/useInventoryMovementHistoryWorkbench.ts",
+      "messages/en.json",
+      "messages/fr.json",
+      "components/dashboard/__tests__/TransactionHistoryWorkbenchShell.test.tsx",
+      "components/inventory/movements/__tests__/InventoryMovementHistoryWorkbench.test.tsx",
+      "hooks/__tests__/useInventoryMovementHistoryWorkbench.test.ts",
+      "what-next/transaction-history/runs/th-inventory-history-frontend-authorized-20260716-015/slices/foundation-inventory/06-frontend-delivery.json",
+      "what-next/transaction-history/runs/th-inventory-history-frontend-authorized-20260716-015/slices/foundation-inventory/06-frontend-delivery.md"
+    ]
+  },
+  "claims": [
+    {
+      "id": "TH06_AUTHORIZED_PRODUCT_WORKFLOW",
+      "result": "PASS",
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/06-frontend-delivery-authorization-request.md",
+        "what-next/transaction-history/runs/th-inventory-history-frontend-authorized-20260716-015/run-manifest.json"
+      ]
+    },
+    {
+      "id": "TH06_EXACT_PRODUCT_ALLOWLIST_ONLY",
+      "result": "PASS",
+      "evidence": [
+        "app/[locale]/(dashboard)/dashboard/inventory/movements/page.tsx",
+        "components/dashboard/history/TransactionHistoryWorkbenchShell.tsx",
+        "components/inventory/movements/InventoryMovementHistoryWorkbench.tsx",
+        "components/inventory/movements/inventoryMovementHistoryAdapter.ts",
+        "hooks/useInventoryMovementHistoryWorkbench.ts",
+        "messages/en.json",
+        "messages/fr.json",
+        "components/dashboard/__tests__/TransactionHistoryWorkbenchShell.test.tsx",
+        "components/inventory/movements/__tests__/InventoryMovementHistoryWorkbench.test.tsx",
+        "hooks/__tests__/useInventoryMovementHistoryWorkbench.test.ts"
+      ]
+    },
+    {
+      "id": "TH06_SERVER_TRUTH_EXPORT_BOUNDARY",
+      "result": "PASS",
+      "evidence": [
+        "hooks/useInventoryMovementHistoryWorkbench.ts",
+        "components/inventory/movements/inventoryMovementHistoryAdapter.ts",
+        "components/inventory/movements/InventoryMovementHistoryWorkbench.tsx"
+      ]
+    },
+    {
+      "id": "TH06_URL_STATE_AND_CURSOR_RESET",
+      "result": "PASS",
+      "evidence": [
+        "hooks/useInventoryMovementHistoryWorkbench.ts",
+        "hooks/__tests__/useInventoryMovementHistoryWorkbench.test.ts"
+      ]
+    },
+    {
+      "id": "TH06_I18N_EN_FR_COPY",
+      "result": "PASS",
+      "evidence": [
+        "messages/en.json",
+        "messages/fr.json"
+      ]
+    },
+    {
+      "id": "TH06_ACCESSIBILITY_MOBILE_STRUCTURE",
+      "result": "PASS",
+      "evidence": [
+        "components/dashboard/history/TransactionHistoryWorkbenchShell.tsx",
+        "components/dashboard/__tests__/TransactionHistoryWorkbenchShell.test.tsx"
+      ]
+    }
+  ],
+  "verification": [
+    {
+      "command": "npm test -- components/dashboard/__tests__/TransactionHistoryWorkbenchShell.test.tsx components/inventory/movements/__tests__/InventoryMovementHistoryWorkbench.test.tsx hooks/__tests__/useInventoryMovementHistoryWorkbench.test.ts --runInBand",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": null
+    },
+    {
+      "command": "npm run typecheck (previous Stage 06 execution, same product code state)",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": null
+    },
+    {
+      "command": "npm run typecheck (fresh continuation rerun)",
+      "status": "SKIPPED",
+      "exitCode": null,
+      "logPath": null
+    }
+  ],
+  "outputs": [
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-frontend-authorized-20260716-015/slices/foundation-inventory/06-frontend-delivery.md",
+      "sha256": "sha256:5c31c435c45fae698a6323fddd3aa38ae4b2cfacba84c52a73d38be58baab757"
+    }
+  ],
+  "blockers": [
+    {
+      "severity": "medium",
+      "code": "PUBLIC_UPLOADTHING_STORAGE_PILOT_CONDITION",
+      "reason": "Public UploadThing storage is accepted for the pilot only and must be replaced or reapproved before production go-live."
+    },
+    {
+      "severity": "medium",
+      "code": "AUTHENTICATED_BROWSER_SMOKE_PENDING",
+      "reason": "Authenticated browser/mobile/accessibility smoke remains required before production promotion."
+    },
+    {
+      "severity": "medium",
+      "code": "TYPECHECK_RERUN_TIMEOUT_IN_CONTINUATION",
+      "reason": "Focused tests passed freshly; full typecheck had a prior pass on the same product code state but two continuation reruns exceeded local command timeouts."
+    }
+  ],
+  "nextEligibleStages": [
+    "07"
+  ],
+  "startedAt": "2026-07-16T08:16:49.228Z",
+  "completedAt": "2026-07-16T08:16:49.228Z"
+}

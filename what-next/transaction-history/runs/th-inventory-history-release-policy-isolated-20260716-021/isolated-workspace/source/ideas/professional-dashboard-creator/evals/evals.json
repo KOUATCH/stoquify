@@ -1,0 +1,41 @@
+{
+  "skill_name": "professional-dashboard-creator",
+  "evals": [
+    {
+      "id": 1,
+      "name": "explicit-dashboard-request",
+      "prompt": "build me the main dashboard for stockflow, the one that shows up after login. should show everything important at a glance — sales today, stock alerts, recent activity, that kind of thing. needs to work in french too and respect dark mode. use real data from the db not mocks.",
+      "expected_output": "Skill triggers. Phase 0 inspiration research blocks implementation. DASHBOARD-INSPIRATION.md is produced with 7 distinct, design-led references. Continuity audit reads landing page + tokens + i18n + providers. DASHBOARD-SPEC.md is produced and reviewed before code. Implementation uses real server actions/hooks, every string i18n'd in en + fr, every color from tokens. Renders in both /dashboard and /fr/dashboard, light + dark, mobile + desktop. Quality-gate checklist walked through with checkmarks.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "implicit-dashboard-request",
+      "prompt": "the admin home page looks really generic — basically four colored stat cards and a chart. make it feel like it actually belongs to our product, not some bootstrap template.",
+      "expected_output": "Skill triggers despite the user never saying 'dashboard.' Recognizes 'admin home' + 'feel like our product' as a dashboard + continuity task. Phase 0 research executes. Phase 1 continuity audit is emphasized (landing page semantics are the user's pain point). Refuses to ship four-colored-cards-in-a-row unless they earn it via the 8am test.",
+      "expected_output_notes": "The 'looks generic' signal should push the skill harder on Phase 0 — pick references that are visually polarizing, not safe.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "design-led-cue",
+      "prompt": "I need a beautiful stats page for my retail app, take inspiration from linear and vercel. has to handle dark/light and english/french since my users are bilingual.",
+      "expected_output": "Skill triggers. Honors the user's named references (linear, vercel) as 2 of the 7 but pushes for 5 more in different categories — at least 2 non-SaaS, at least 1 polarizing. Theme + i18n treated as first-class, not afterthoughts.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "operator-control-center",
+      "prompt": "design a control center for branch managers when they log in. should help them see what's happening across their branch in one screen — open cash drawers, today's sales vs target, stock that's running low, any pending purchase approvals.",
+      "expected_output": "Skill triggers ('control center' = dashboard synonym). Persona is named (branch manager) — uses that to filter Phase 2 IA. Maps each named widget to existing StockFlow actions (cashDrawer, analytics, inventory, purchaseOrderWorkflow). Excluded domains (HR, AP/AR, ClientOrder) are not added even though 'across their branch' could tempt that.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "name": "redesign-existing-dashboard",
+      "prompt": "give the dashboard a glow-up. it's functional but looks like every other SaaS admin. needs to be more distinctive without being weird, has to keep working with our existing data + i18n + theme setup.",
+      "expected_output": "Skill triggers ('glow-up'). Treats this as a redesign — Phase 1 continuity audit also catalogs what's CURRENTLY there so the redesign respects existing data bindings while replacing visual decisions. Phase 0 emphasizes distinctive references. Phase 3 design contract makes the visual stance explicit so 'distinctive without being weird' is a measurable bar, not a vibe.",
+      "files": []
+    }
+  ]
+}

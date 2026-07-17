@@ -1,0 +1,281 @@
+{
+  "schemaVersion": "1.0",
+  "traceId": "c0e5e75a-2308-47a2-8b9e-833ec4a715bb",
+  "runId": "th-foundation-inventory-read-model-20260715-007",
+  "sliceId": "foundation-inventory",
+  "stageId": "04",
+  "skillName": "stoquify-transaction-history-04-read-model-optimizer",
+  "agentType": "Database Optimizer",
+  "mode": "implement",
+  "status": "PARTIAL",
+  "activeLanes": [
+    "inventory"
+  ],
+  "blockedLanes": [
+    "workbench"
+  ],
+  "inputArtifacts": [
+    {
+      "path": "what-next/transaction-history/runs/th-foundation-inventory-read-model-20260715-007/run-manifest.json",
+      "sha256": "sha256:84386f0ce2d2a8cbf4744c74f07862035d2e17442e52ba71c826780b5535dc03"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-foundation-inventory-correction-verify-20260715-006/slices/foundation-inventory/02-security-proof-gate.json",
+      "sha256": "sha256:6bb0621ad7701c5f9cd096acb7be5d9f6803921d0bb179319a69e4c599414739"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-foundation-inventory-correction-verify-20260715-006/slices/foundation-inventory/02-security-proof-gate.md",
+      "sha256": "sha256:5a12b72b1e8a1d2f2121553116bb95470981ae982e7df7f133edfd8067a072ce"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-foundation-inventory-correction-verify-20260715-006/slices/foundation-inventory/03-accounting-control-gate.json",
+      "sha256": "sha256:db3e40670a12cb354359523bb832f371c12a998770facb4d458d1551cee7db93"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-foundation-inventory-correction-verify-20260715-006/slices/foundation-inventory/03-accounting-control-gate.md",
+      "sha256": "sha256:cfc9a15e558c35c4e5eef23167ed5804d9005d8edc490fefd8ccbd5ec5f6d366"
+    },
+    {
+      "path": "docs/new ideas/STOQUIFY_TRANSACTION_HISTORY_ANALYTICS_AND_SECURITY_PROPOSAL_2026-07-14.md",
+      "sha256": "sha256:0628f08178fe0441fe22ccbd1a6b429c2bb07b2ea5d278e6dcb799ab117c6979"
+    },
+    {
+      "path": "docs/skills-life-cycle/stoquify-transaction-history-skill-suite-src/manifest.md",
+      "sha256": "sha256:2fcfa15c939ff2c524a7208d423abd1fbfac772454d4869381a41969557be404"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "sha256:4ab529c907a511c01694e160250e198bb6c07aa965a4f97c89fbdab990e97467"
+    },
+    {
+      "path": "prisma/migrations/20260714194500_inventory_history_accounting_time_controls/migration.sql",
+      "sha256": "sha256:bdff0414f9046d566dcb03bb3b59fbefa28f3570af51bd6b527cdcb1c881ab72"
+    },
+    {
+      "path": "services/history/transaction-history.types.ts",
+      "sha256": "sha256:450132557a01bfe9160f63d9d2dcc661373bf9c93c55e2e3a7fe31c390faf02d"
+    },
+    {
+      "path": "services/history/transaction-history-cursor.ts",
+      "sha256": "sha256:0576517deef5b0bdc3e4714b3e4572fc1189ccb1a8f9303b8c4a904a1b2a30c4"
+    },
+    {
+      "path": "services/history/__tests__/transaction-history-cursor.test.ts",
+      "sha256": "sha256:db863a772ec5921317ef9e55243f7414c05439a517cb80f33d689123f14f775b"
+    },
+    {
+      "path": "services/inventory/inventory-read.service.ts",
+      "sha256": "sha256:72cf45e5fa4695e8346bfbe16fb49a4d3a07d653df1c9c242933912c79eebf36"
+    },
+    {
+      "path": "services/inventory/__tests__/inventory-read.service.test.ts",
+      "sha256": "sha256:79680dc0db9225ad2bdfed09481452fc8838facc8fc0984b47e2fa76a60a45f7"
+    }
+  ],
+  "inputFingerprint": "sha256:ad74223a3d741205eeecb31147cd53f675e5f5b22e5ba558102b2a9fb6fd221b",
+  "allowedEdits": [
+    "services/history/transaction-history.types.ts",
+    "services/history/transaction-history-cursor.ts",
+    "services/history/__tests__/transaction-history-cursor.test.ts",
+    "services/inventory/inventory-read.service.ts",
+    "services/inventory/__tests__/inventory-read.service.test.ts",
+    "what-next/transaction-history/runs/th-foundation-inventory-read-model-20260715-007/slices/foundation-inventory/04-read-model-optimizer.json",
+    "what-next/transaction-history/runs/th-foundation-inventory-read-model-20260715-007/slices/foundation-inventory/04-read-model-optimizer.md"
+  ],
+  "observedEdits": [
+    "services/history/transaction-history.types.ts",
+    "services/history/transaction-history-cursor.ts",
+    "services/history/__tests__/transaction-history-cursor.test.ts",
+    "services/inventory/inventory-read.service.ts",
+    "services/inventory/__tests__/inventory-read.service.test.ts",
+    "what-next/transaction-history/runs/th-foundation-inventory-read-model-20260715-007/slices/foundation-inventory/04-read-model-optimizer.json",
+    "what-next/transaction-history/runs/th-foundation-inventory-read-model-20260715-007/slices/foundation-inventory/04-read-model-optimizer.md"
+  ],
+  "repository": {
+    "headBefore": "8a406e93b0e798ed6f476ca5d81df37a2aaa38be",
+    "headAfter": "8a406e93b0e798ed6f476ca5d81df37a2aaa38be",
+    "dirtyFilesBefore": [
+      "actions/inventory/__tests__/inventoryMovementActions.test.ts",
+      "actions/inventory/inventoryMovementActions.ts",
+      "prisma/schema.prisma"
+    ],
+    "dirtyFilesAfter": [
+      "actions/inventory/__tests__/inventoryMovementActions.test.ts",
+      "actions/inventory/inventoryMovementActions.ts",
+      "prisma/schema.prisma",
+      "services/history/transaction-history.types.ts",
+      "services/history/transaction-history-cursor.ts",
+      "services/history/__tests__/transaction-history-cursor.test.ts",
+      "services/inventory/inventory-read.service.ts",
+      "services/inventory/__tests__/inventory-read.service.test.ts",
+      "what-next/transaction-history/runs/th-foundation-inventory-read-model-20260715-007/slices/foundation-inventory/04-read-model-optimizer.json",
+      "what-next/transaction-history/runs/th-foundation-inventory-read-model-20260715-007/slices/foundation-inventory/04-read-model-optimizer.md"
+    ]
+  },
+  "claims": [
+    {
+      "id": "TH04_PREREQUISITES",
+      "result": "PASS",
+      "evidence": [
+        "what-next/transaction-history/runs/th-foundation-inventory-correction-verify-20260715-006/slices/foundation-inventory/02-security-proof-gate.json",
+        "what-next/transaction-history/runs/th-foundation-inventory-correction-verify-20260715-006/slices/foundation-inventory/03-accounting-control-gate.json",
+        "what-next/transaction-history/runs/th-foundation-inventory-correction-verify-20260715-006/migration-deployment-verification.json"
+      ]
+    },
+    {
+      "id": "TH04_CURSOR_SNAPSHOT",
+      "result": "PASS",
+      "evidence": [
+        "services/history/transaction-history-cursor.ts",
+        "services/inventory/inventory-read.service.ts",
+        "services/inventory/__tests__/inventory-read.service.test.ts"
+      ]
+    },
+    {
+      "id": "TH04_FILTER_PARITY",
+      "result": "PASS",
+      "evidence": [
+        "services/inventory/inventory-read.service.ts",
+        "services/inventory/__tests__/inventory-read.service.test.ts"
+      ]
+    },
+    {
+      "id": "TH04_CAP_COMPLETENESS",
+      "result": "PASS",
+      "evidence": [
+        "services/history/transaction-history.types.ts",
+        "services/inventory/inventory-read.service.ts",
+        "services/inventory/__tests__/inventory-read.service.test.ts"
+      ]
+    },
+    {
+      "id": "TH04_EXPORT",
+      "result": "GAP",
+      "evidence": [
+        "services/inventory/inventory-read.service.ts",
+        "services/inventory/__tests__/inventory-read.service.test.ts",
+        "what-next/transaction-history/runs/th-foundation-inventory-read-model-20260715-007/slices/foundation-inventory/04-read-model-optimizer.md"
+      ]
+    },
+    {
+      "id": "TH04_INDEX_PLAN",
+      "result": "GAP",
+      "evidence": [
+        "prisma/schema.prisma",
+        "prisma/migrations/20260714194500_inventory_history_accounting_time_controls/migration.sql",
+        "what-next/transaction-history/runs/th-foundation-inventory-read-model-20260715-007/slices/foundation-inventory/04-read-model-optimizer.md"
+      ]
+    },
+    {
+      "id": "TH04_MIGRATION",
+      "result": "PASS",
+      "evidence": [
+        "prisma/migrations/20260714194500_inventory_history_accounting_time_controls/migration.sql",
+        "what-next/transaction-history/runs/th-foundation-inventory-correction-verify-20260715-006/migration-deployment-verification.json",
+        "what-next/transaction-history/runs/th-foundation-inventory-read-model-20260715-007/slices/foundation-inventory/04-read-model-optimizer.md"
+      ]
+    },
+    {
+      "id": "TH04_VERIFICATION",
+      "result": "PASS",
+      "evidence": [
+        "services/history/__tests__/transaction-history-cursor.test.ts",
+        "services/inventory/__tests__/inventory-read.service.test.ts",
+        "actions/inventory/__tests__/inventoryMovementActions.test.ts",
+        "what-next/transaction-history/runs/th-foundation-inventory-read-model-20260715-007/slices/foundation-inventory/04-read-model-optimizer.md"
+      ]
+    }
+  ],
+  "verification": [
+    {
+      "command": "eslint <five Stage 04 product files>",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": "what-next/transaction-history/runs/th-foundation-inventory-read-model-20260715-007/slices/foundation-inventory/04-read-model-optimizer.md"
+    },
+    {
+      "command": "jest --runInBand transaction-history-cursor.test.ts inventory-read.service.test.ts",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": "what-next/transaction-history/runs/th-foundation-inventory-read-model-20260715-007/slices/foundation-inventory/04-read-model-optimizer.md"
+    },
+    {
+      "command": "jest --runInBand actions/inventory/__tests__/inventoryMovementActions.test.ts",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": "what-next/transaction-history/runs/th-foundation-inventory-read-model-20260715-007/slices/foundation-inventory/04-read-model-optimizer.md"
+    },
+    {
+      "command": "npm run typecheck -- --pretty false",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": "what-next/transaction-history/runs/th-foundation-inventory-read-model-20260715-007/slices/foundation-inventory/04-read-model-optimizer.md"
+    },
+    {
+      "command": "npm run prisma:validate",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": "what-next/transaction-history/runs/th-foundation-inventory-read-model-20260715-007/slices/foundation-inventory/04-read-model-optimizer.md"
+    },
+    {
+      "command": "npm run prisma:migrate:status",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": "what-next/transaction-history/runs/th-foundation-inventory-read-model-20260715-007/slices/foundation-inventory/04-read-model-optimizer.md"
+    },
+    {
+      "command": "git diff --check -- <five Stage 04 product files>",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": "what-next/transaction-history/runs/th-foundation-inventory-read-model-20260715-007/slices/foundation-inventory/04-read-model-optimizer.md"
+    },
+    {
+      "command": "local read-only EXPLAIN (COSTS, VERBOSE, FORMAT JSON)",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": "what-next/transaction-history/runs/th-foundation-inventory-read-model-20260715-007/slices/foundation-inventory/04-read-model-optimizer.md"
+    },
+    {
+      "command": "production-like EXPLAIN (ANALYZE, BUFFERS, SETTINGS)",
+      "status": "SKIPPED",
+      "exitCode": null,
+      "logPath": "what-next/transaction-history/runs/th-foundation-inventory-read-model-20260715-007/slices/foundation-inventory/04-read-model-optimizer.md"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "what-next/transaction-history/runs/th-foundation-inventory-read-model-20260715-007/slices/foundation-inventory/04-read-model-optimizer.md",
+      "sha256": "sha256:08e68e2e748c87b327881bded4ff0c81dcad97a6308c5c31249b7431322e5d88"
+    }
+  ],
+  "blockers": [
+    {
+      "severity": "high",
+      "code": "ACTION_BOUNDARY_DIRTY_OVERLAP",
+      "reason": "The inventory action and its test had pre-existing edits, so this run did not wire the new service contract into the live workbench API."
+    },
+    {
+      "severity": "high",
+      "code": "EXPORT_EXECUTION_BOUNDARY_PENDING",
+      "reason": "The bounded server iterator exists, but execution-time authorization, redaction, durable proof, and background export are not implemented."
+    },
+    {
+      "severity": "medium",
+      "code": "HISTORY_CURSOR_SECRET_REGISTRATION_PENDING",
+      "reason": "The signing codec fails closed, but deployment secret registration and release preflight are outside this run's allowlist."
+    },
+    {
+      "severity": "medium",
+      "code": "PRODUCTION_LIKE_PLAN_EVIDENCE_MISSING",
+      "reason": "Local EXPLAIN proves structural index support only; representative runtime performance is not certified."
+    },
+    {
+      "severity": "medium",
+      "code": "HISTORICAL_BALANCE_AUTHORITY_UNPROVEN",
+      "reason": "Stored balanceAfter is excluded until sequencing, concurrency, and backdating invariants are independently certified."
+    }
+  ],
+  "nextEligibleStages": [],
+  "startedAt": "2026-07-15T09:48:06.055Z",
+  "completedAt": "2026-07-15T10:21:01.092Z"
+}

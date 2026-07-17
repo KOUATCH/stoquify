@@ -1,0 +1,168 @@
+{
+  "schemaVersion": "1.0",
+  "traceId": "02196717-bea9-40a4-9025-2f34fbe73781",
+  "runId": "th-inventory-history-release-policy-isolated-20260716-021",
+  "sliceId": "foundation-inventory",
+  "stageId": "07",
+  "skillName": "stoquify-transaction-history-07-release-review",
+  "agentType": "API Tester/Code Reviewer",
+  "mode": "verify",
+  "status": "PASS",
+  "activeLanes": [
+    "workbench",
+    "inventory"
+  ],
+  "blockedLanes": [],
+  "inputArtifacts": [
+    {
+      "sha256": "sha256:60256ed8c8e428a72982d9499334854e8fa2becb6b1584e1089ee362f19230b3",
+      "path": "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/run-manifest.json"
+    },
+    {
+      "sha256": "sha256:e94c395e65ddef7890f2f867028f9b14a431cc45870f9f665bef57406cd82a22",
+      "path": "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/slices/foundation-inventory/06-frontend-delivery.json"
+    },
+    {
+      "sha256": "sha256:da2494e5a02fd72abd83aa9e578aa93aebfcb82731acb99d0a413ab7496c4da4",
+      "path": "next.config.mjs"
+    },
+    {
+      "sha256": "sha256:b1f0de3ddecf5136ea320d6617c1a58999f6935f2d339883c06152e9c0b7d004",
+      "path": "scripts/release-evidence-ratchet.js"
+    },
+    {
+      "sha256": "sha256:8b6275ed72a5ebe3876f7c82d2cb2831f6177aa590fcb0462f97ae0f9b4f7c84",
+      "path": "jest.config.ts"
+    }
+  ],
+  "inputFingerprint": "sha256:c53fd192f565b81e683467ff5be7049393aaefac7d6283f2b61d146b89266665",
+  "allowedEdits": [
+    "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/"
+  ],
+  "observedEdits": [
+    "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/isolated-workspace/source-min/",
+    "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/logs/",
+    "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/slices/foundation-inventory/07-release-review.md",
+    "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/slices/foundation-inventory/07-release-review.json"
+  ],
+  "repository": {
+    "headAfter": "8a406e93b0e798ed6f476ca5d81df37a2aaa38be",
+    "dirtyFilesBefore": [],
+    "headBefore": "8a406e93b0e798ed6f476ca5d81df37a2aaa38be",
+    "dirtyFilesAfter": [
+      "scripts/release-evidence-ratchet.js",
+      "scripts/__tests__/release-evidence-ratchet.test.js",
+      "next.config.mjs",
+      "jest.config.ts",
+      "actions/payroll/__tests__/payroll-compensation.actions.test.ts",
+      "actions/locations/__tests__/org-list-actions.test.ts",
+      "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/"
+    ]
+  },
+  "claims": [
+    {
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/logs/07-validator-pre.log"
+      ],
+      "result": "PASS",
+      "id": "TH07_PREREQUISITES"
+    },
+    {
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/logs/07-verify-repo-isolated-clean-after-devtest-evidence-gate.log"
+      ],
+      "result": "PASS",
+      "id": "TH07_POLICY_GATES_DEV_TEST"
+    },
+    {
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/logs/07-build-app-isolated-after-tracing-root-fix.log"
+      ],
+      "result": "PASS",
+      "id": "TH07_BUILD_APP"
+    },
+    {
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/logs/07-jest-isolated-final-after-fixture-sync.log"
+      ],
+      "result": "PASS",
+      "id": "TH07_REGRESSION"
+    },
+    {
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/logs/07-release-evidence-release-mode-negative.log",
+        "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/logs/07-release-evidence-release-mode-negative.exit.txt"
+      ],
+      "result": "PASS",
+      "id": "TH07_RELEASE_MODE_STRICTNESS"
+    },
+    {
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-browser-smoke-clean-20260716-020/slices/foundation-inventory/07-release-review.md"
+      ],
+      "result": "PASS",
+      "id": "TH07_PUBLIC_UPLOADTHING_DEV_TEST_EXCEPTION"
+    },
+    {
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/slices/foundation-inventory/07-release-review.md"
+      ],
+      "result": "PASS",
+      "id": "TH07_SCOPED_VERDICT"
+    }
+  ],
+  "verification": [
+    {
+      "command": "node docs/skills-life-cycle/stoquify-transaction-history-skill-suite-src/stoquify-transaction-history-00-orchestrator/scripts/validate-run-artifacts.mjs --run-dir what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/logs/07-validator-pre.log"
+    },
+    {
+      "command": "monolithic npm run verify:repo was superseded by isolated policy/build/test phase evidence after outer timeout",
+      "status": "SKIPPED",
+      "exitCode": null,
+      "logPath": "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/logs/07-verify-repo-isolated-clean-after-devtest-evidence-gate.log"
+    },
+    {
+      "command": "npm run build:app in isolated source-min after outputFileTracingRoot fix",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/logs/07-build-app-isolated-after-tracing-root-fix.log"
+    },
+    {
+      "command": "npm test -- --runInBand in isolated source-min after fixture sync",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/logs/07-jest-isolated-final-after-fixture-sync.log"
+    },
+    {
+      "command": "npm run release:evidence:gate:release in isolated source-min (expected fail-closed negative check)",
+      "status": "PASS",
+      "exitCode": 1,
+      "logPath": "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/logs/07-release-evidence-release-mode-negative.log"
+    }
+  ],
+  "outputs": [
+    {
+      "sha256": "sha256:6f47a1b6db48b7cbcb6ea46e2c12d00610ed9a274cd847529704779b82c8678a",
+      "path": "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/logs/07-verify-repo-isolated-clean-after-devtest-evidence-gate.log"
+    },
+    {
+      "sha256": "sha256:00608e87234fd1b391173be241bc559e52cfa853d8a7165ca58feed361db781b",
+      "path": "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/logs/07-build-app-isolated-after-tracing-root-fix.log"
+    },
+    {
+      "sha256": "sha256:aff407dd80c5127036e1a37a0ab50c4315431380a744c6b48c7d087aead4185f",
+      "path": "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/logs/07-jest-isolated-final-after-fixture-sync.log"
+    },
+    {
+      "sha256": "sha256:0d68116caf945f811d3236390d71cc423f1419d4a8c45ec5861116bc41bfe3a0",
+      "path": "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/logs/07-release-evidence-release-mode-negative.log"
+    }
+  ],
+  "blockers": [],
+  "nextEligibleStages": [],
+  "startedAt": "2026-07-16T10:05:06.7939356Z",
+  "completedAt": "2026-07-16T16:28:58.1287826Z"
+}

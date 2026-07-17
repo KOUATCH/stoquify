@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:stoquify:retrieved-content-isolation-result/v1",
+  "title": "Stoquify Retrieved Content Isolation Result v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "injection_suspected",
+    "isolation_status",
+    "quarantine_state",
+    "provenance_refs",
+    "argument_provenance",
+    "security_event_ref"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "injection_suspected": {
+      "type": "boolean"
+    },
+    "isolation_status": {
+      "type": "string",
+      "enum": [
+        "clean",
+        "isolated",
+        "blocked"
+      ]
+    },
+    "quarantine_state": {
+      "type": "string",
+      "enum": [
+        "not_required",
+        "redacted",
+        "quarantined"
+      ]
+    },
+    "provenance_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "argument_provenance": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source",
+          "mapping",
+          "authorized"
+        ],
+        "properties": {
+          "source": {
+            "type": "string",
+            "enum": [
+              "user_input",
+              "trusted_service_field",
+              "policy_constant",
+              "approved_plan"
+            ]
+          },
+          "mapping": {
+            "type": "string"
+          },
+          "authorized": {
+            "const": true
+          }
+        }
+      }
+    },
+    "security_event_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "validation_evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "injection_suspected": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "isolation_status": {
+            "enum": [
+              "isolated",
+              "blocked"
+            ]
+          },
+          "quarantine_state": {
+            "enum": [
+              "redacted",
+              "quarantined"
+            ]
+          },
+          "security_event_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "validation_evidence_refs": {
+            "type": "array",
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "injection_suspected": {
+            "const": false
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "isolation_status": {
+            "enum": [
+              "clean",
+              "isolated"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

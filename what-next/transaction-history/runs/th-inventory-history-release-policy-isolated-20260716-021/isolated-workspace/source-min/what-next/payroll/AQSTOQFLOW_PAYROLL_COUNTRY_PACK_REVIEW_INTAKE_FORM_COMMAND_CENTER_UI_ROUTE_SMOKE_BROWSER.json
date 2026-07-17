@@ -1,0 +1,54 @@
+{
+  "checkedAt": "2026-07-01T14:43:02.109Z",
+  "baseUrl": "http://127.0.0.1:3003",
+  "mode": "fail",
+  "ok": true,
+  "routeCount": 1,
+  "screenshotTool": "playwright",
+  "auth": {
+    "storageState": "playwright/.auth/payroll.json",
+    "protectedRouteScreenshotMode": "saved-storage-state"
+  },
+  "routes": [
+    {
+      "route": {
+        "id": "payroll",
+        "path": "/en/dashboard/payroll",
+        "surface": "Payroll command center",
+        "requiresAuth": true,
+        "viewports": [
+          "tablet",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": "browser-auth",
+        "finalUrl": "http://127.0.0.1:3003/en/dashboard/payroll",
+        "durationMs": 0,
+        "reason": "protected route validated with Playwright storage state"
+      }
+    }
+  ],
+  "screenshots": {
+    "available": true,
+    "captures": [
+      {
+        "routeId": "payroll",
+        "viewport": "tablet",
+        "ok": true,
+        "file": "what-next/payroll/screenshots/payroll-country-pack-review-intake-form-command-center/payroll-tablet.png",
+        "finalUrl": "http://127.0.0.1:3003/en/dashboard/payroll",
+        "authenticated": true
+      },
+      {
+        "routeId": "payroll",
+        "viewport": "desktop",
+        "ok": true,
+        "file": "what-next/payroll/screenshots/payroll-country-pack-review-intake-form-command-center/payroll-desktop.png",
+        "finalUrl": "http://127.0.0.1:3003/en/dashboard/payroll",
+        "authenticated": true
+      }
+    ]
+  }
+}

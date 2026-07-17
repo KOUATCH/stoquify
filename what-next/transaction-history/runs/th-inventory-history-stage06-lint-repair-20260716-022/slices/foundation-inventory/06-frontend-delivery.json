@@ -1,0 +1,130 @@
+{
+  "schemaVersion": "1.0",
+  "traceId": "184ae1eb-87e3-4dba-b854-d4070b394fd8",
+  "runId": "th-inventory-history-stage06-lint-repair-20260716-022",
+  "sliceId": "foundation-inventory",
+  "stageId": "06",
+  "skillName": "stoquify-transaction-history-06-frontend-delivery",
+  "agentType": "Frontend Developer",
+  "mode": "implement",
+  "status": "PASS",
+  "activeLanes": [
+    "workbench",
+    "inventory"
+  ],
+  "blockedLanes": [],
+  "inputArtifacts": [
+    {
+      "sha256": "sha256:8a6ac512fee1d953a0082a7767cfd4a06916e377294c9160980f15fc93cee8db",
+      "path": "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/run-manifest.json"
+    },
+    {
+      "sha256": "sha256:a1a39ed6f629eebb6272a8fe48baa003262789bcce1ba685b0818d4bf00bd1d5",
+      "path": "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/slices/foundation-inventory/07-release-review.json"
+    },
+    {
+      "sha256": "sha256:b828b89f6e0bb679095661ca9891702b744d2eab12bbe6b19c79fbe77130e6cf",
+      "path": "docs/skills-life-cycle/stoquify-transaction-history-skill-suite-src/stoquify-transaction-history-06-frontend-delivery/SKILL.md"
+    },
+    {
+      "sha256": "sha256:eb801b8d066e1a413ba432f64f9c4e9ba2d6864700c9fb14e04882e872c7bd9e",
+      "path": "components/dashboard/__tests__/TransactionHistoryWorkbenchShell.test.tsx"
+    },
+    {
+      "sha256": "sha256:46f92d39da71868eeaf7288beee9086fb8327f559c42906707c3e94892d33b8e",
+      "path": "components/inventory/movements/__tests__/InventoryMovementHistoryWorkbench.test.tsx"
+    }
+  ],
+  "inputFingerprint": "sha256:22751265195a735bf9e7126846431d6c056bf84c87bea393ef5ce523cb72644a",
+  "allowedEdits": [
+    "components/dashboard/__tests__/TransactionHistoryWorkbenchShell.test.tsx",
+    "components/inventory/movements/__tests__/InventoryMovementHistoryWorkbench.test.tsx",
+    "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/slices/foundation-inventory/06-frontend-delivery.json",
+    "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/slices/foundation-inventory/06-frontend-delivery.md",
+    "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/logs/06-focused-lint.log",
+    "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/logs/06-focused-tests.log"
+  ],
+  "observedEdits": [
+    "components/dashboard/__tests__/TransactionHistoryWorkbenchShell.test.tsx",
+    "components/inventory/movements/__tests__/InventoryMovementHistoryWorkbench.test.tsx",
+    "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/slices/foundation-inventory/06-frontend-delivery.json",
+    "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/slices/foundation-inventory/06-frontend-delivery.md",
+    "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/logs/06-focused-lint.log",
+    "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/logs/06-focused-tests.log",
+    "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/run-manifest.json",
+    "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/run-state.json"
+  ],
+  "repository": {
+    "headBefore": "8a406e93b0e798ed6f476ca5d81df37a2aaa38be",
+    "headAfter": "8a406e93b0e798ed6f476ca5d81df37a2aaa38be",
+    "dirtyFilesBefore": [],
+    "dirtyFilesAfter": [
+      "components/dashboard/__tests__/TransactionHistoryWorkbenchShell.test.tsx",
+      "components/inventory/movements/__tests__/InventoryMovementHistoryWorkbench.test.tsx",
+      "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/slices/foundation-inventory/06-frontend-delivery.json",
+      "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/slices/foundation-inventory/06-frontend-delivery.md",
+      "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/logs/06-focused-lint.log",
+      "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/logs/06-focused-tests.log",
+      "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/run-manifest.json",
+      "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/run-state.json"
+    ]
+  },
+  "claims": [
+    {
+      "id": "TH06_LINT_REPAIR_DISPLAY_NAMES",
+      "evidence": [
+        "components/dashboard/__tests__/TransactionHistoryWorkbenchShell.test.tsx",
+        "components/inventory/movements/__tests__/InventoryMovementHistoryWorkbench.test.tsx"
+      ],
+      "result": "PASS"
+    },
+    {
+      "id": "TH06_FOCUSED_LINT",
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/logs/06-focused-lint.log"
+      ],
+      "result": "PASS"
+    },
+    {
+      "id": "TH06_FOCUSED_TESTS",
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/logs/06-focused-tests.log"
+      ],
+      "result": "PASS"
+    }
+  ],
+  "verification": [
+    {
+      "status": "PASS",
+      "command": "npx eslint components/dashboard/__tests__/TransactionHistoryWorkbenchShell.test.tsx components/inventory/movements/__tests__/InventoryMovementHistoryWorkbench.test.tsx --ext .tsx",
+      "logPath": "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/logs/06-focused-lint.log",
+      "exitCode": 0
+    },
+    {
+      "status": "PASS",
+      "command": "npm test -- components/dashboard/__tests__/TransactionHistoryWorkbenchShell.test.tsx components/inventory/movements/__tests__/InventoryMovementHistoryWorkbench.test.tsx --runInBand",
+      "logPath": "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/logs/06-focused-tests.log",
+      "exitCode": 0
+    }
+  ],
+  "outputs": [
+    {
+      "sha256": "sha256:de2fa04ef0e105f3f13080c20df5f26ee17006d2bd4cec6d51f1e381be04343e",
+      "path": "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/slices/foundation-inventory/06-frontend-delivery.md"
+    },
+    {
+      "sha256": "sha256:b0fb6160170f9fae21026693733e2e559c74fc1277de212b382b7d4f40e18ddc",
+      "path": "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/logs/06-focused-lint.log"
+    },
+    {
+      "sha256": "sha256:76488cdd0fcc9c1ac131eea1ae5287ba72f5d28da4798111a72d5b0c366b30c0",
+      "path": "what-next/transaction-history/runs/th-inventory-history-stage06-lint-repair-20260716-022/logs/06-focused-tests.log"
+    }
+  ],
+  "blockers": [],
+  "nextEligibleStages": [
+    "07"
+  ],
+  "startedAt": "2026-07-16T13:16:16.9184034Z",
+  "completedAt": "2026-07-16T13:16:17.0841603Z"
+}

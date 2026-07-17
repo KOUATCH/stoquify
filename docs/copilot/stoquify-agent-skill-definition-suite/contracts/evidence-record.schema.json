@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:stoquify:evidence-record/v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "source_id",
+    "source_type",
+    "observed_at",
+    "freshness_status",
+    "classification",
+    "injection_suspected"
+  ],
+  "properties": {
+    "source_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_type": {
+      "type": "string",
+      "enum": [
+        "service",
+        "read_model",
+        "document",
+        "event",
+        "user_input"
+      ]
+    },
+    "observed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "freshness_status": {
+      "type": "string",
+      "enum": [
+        "current",
+        "stale",
+        "unknown",
+        "provisional"
+      ]
+    },
+    "classification": {
+      "type": "string",
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ]
+    },
+    "fingerprint": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "redactions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "grade": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "injection_suspected": {
+      "type": "boolean"
+    },
+    "security_event_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "title": "Evidence Record v1"
+}

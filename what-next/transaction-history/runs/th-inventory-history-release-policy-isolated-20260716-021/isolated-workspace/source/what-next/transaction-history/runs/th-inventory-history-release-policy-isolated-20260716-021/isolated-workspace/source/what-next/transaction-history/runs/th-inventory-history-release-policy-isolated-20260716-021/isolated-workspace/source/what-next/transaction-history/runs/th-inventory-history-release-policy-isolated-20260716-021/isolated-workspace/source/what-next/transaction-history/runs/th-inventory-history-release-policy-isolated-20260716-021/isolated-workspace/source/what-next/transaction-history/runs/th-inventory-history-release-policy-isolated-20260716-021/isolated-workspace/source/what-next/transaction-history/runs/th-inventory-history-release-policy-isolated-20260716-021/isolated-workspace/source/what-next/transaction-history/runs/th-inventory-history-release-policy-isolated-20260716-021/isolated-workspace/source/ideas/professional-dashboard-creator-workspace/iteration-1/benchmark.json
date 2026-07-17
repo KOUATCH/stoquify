@@ -1,0 +1,131 @@
+{
+  "metadata": {
+    "skill_name": "professional-dashboard-creator",
+    "skill_path": "C:\\Users\\J COMPUTER\\.claude\\skills\\professional-dashboard-creator",
+    "executor_model": "claude-sonnet (subagent)",
+    "timestamp": "2026-05-27T15:38:44.629013+00:00",
+    "evals_run": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "runs_per_configuration": 1,
+    "note": "All 5 with-skill agents hit a session limit before writing RUN-NOTES.md and quality-gates-plan.md, but produced full Phase 0-3 artifacts (DASHBOARD-INSPIRATION.md, IA-NOTES.md, DASHBOARD-SPEC.md) and 3 of 5 produced sample widget files. Baseline (no skill) completed all artifacts but did zero design research."
+  },
+  "runs": [
+    {
+      "eval_id": 1,
+      "eval_name": "explicit-dashboard-request",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.5,
+        "passed": 7,
+        "failed": 7,
+        "total": 14,
+        "time_seconds": 401.7,
+        "tokens": 1506,
+        "tool_calls": 54,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "explicit-dashboard-request",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.35714285714285715,
+        "passed": 5,
+        "failed": 9,
+        "total": 14,
+        "time_seconds": 306.4,
+        "tokens": 93681,
+        "tool_calls": 44,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "implicit-dashboard-request",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 10,
+        "failed": 0,
+        "total": 10,
+        "time_seconds": 388.9,
+        "tokens": 782,
+        "tool_calls": 33,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "design-led-with-named-refs",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8181818181818182,
+        "passed": 9,
+        "failed": 2,
+        "total": 11,
+        "time_seconds": 391.3,
+        "tokens": 923,
+        "tool_calls": 28,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "operator-control-center",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 10,
+        "failed": 0,
+        "total": 10,
+        "time_seconds": 396.7,
+        "tokens": 1556,
+        "tool_calls": 59,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "redesign-glowup",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.6363636363636364,
+        "passed": 7,
+        "failed": 4,
+        "total": 11,
+        "time_seconds": 399.0,
+        "tokens": 1150,
+        "tool_calls": 35,
+        "errors": 0
+      }
+    }
+  ],
+  "aggregates": [
+    {
+      "name": "with_skill",
+      "runs": 5,
+      "mean_pass_rate": 0.7909090909090909,
+      "mean_time_seconds": 395.52,
+      "mean_tokens": 1183.4
+    },
+    {
+      "name": "without_skill",
+      "runs": 1,
+      "mean_pass_rate": 0.35714285714285715,
+      "mean_time_seconds": 306.4,
+      "mean_tokens": 93681.0
+    }
+  ]
+}

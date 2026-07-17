@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0.0",
+  "id": "S03",
+  "name": "stoquify-evidence-grounded-retrieval",
+  "title": "Evidence-Grounded Retrieval",
+  "owner": "Stoquify Copilot Platform",
+  "lifecycle": "source-candidate",
+  "phase": "now",
+  "risk": "high",
+  "autonomy_ceiling": "read",
+  "disposition": "COMPOSE",
+  "overlaps": [
+    "ai-copilot-with-accounting-guardrails",
+    "013-aqstoqflow-data-trust-accountant-portal"
+  ],
+  "dependencies": [
+    "S01",
+    "S02"
+  ],
+  "permitted_service_domains": [
+    "evidence",
+    "snapshots",
+    "bi",
+    "assurance"
+  ],
+  "input_schema": "../schemas/input.schema.json",
+  "output_schema": "../schemas/output.schema.json",
+  "max_runtime_seconds": 45,
+  "max_tool_calls": 12,
+  "cost_class": "controlled",
+  "retry_class": "read-safe",
+  "idempotency": "required for every write-capable tool",
+  "rollback": "suspend version and revert registry pointer",
+  "prohibited_actions": [
+    "direct Prisma access",
+    "permission inference",
+    "cross-tenant retrieval",
+    "policy relaxation",
+    "unsupported production claims",
+    "unapproved Tier 3 or any autonomous Tier 4 action"
+  ]
+}

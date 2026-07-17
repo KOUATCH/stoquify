@@ -1,0 +1,2730 @@
+{
+  "schema_version": "1.0.0",
+  "generated_from": [
+    "STOQUIFY_FUTURE_READY_COPILOT_BACKBONE_ARCHITECTURE_PROMPT.md",
+    "STOQUIFY_ENTERPRISE_AGENT_AND_SKILL_SYSTEM_ASSESSMENT_2026-07-15.md",
+    "STOQUIFY_AGENT_SKILL_DEFINITION_SUITE_REFINED_MASTER_PROMPT_2026-07-15.pdf"
+  ],
+  "capabilities": [
+    {
+      "id": "S01",
+      "type": "skill",
+      "slug": "stoquify-trusted-context-resolver",
+      "title": "Trusted Context Resolver",
+      "disposition": "EXTEND",
+      "overlaps": [
+        "002-aqstoqflow-control-plane",
+        "better-auth-rbac-ohada"
+      ],
+      "phase": "now",
+      "risk": "critical",
+      "autonomy_ceiling": "read",
+      "dependencies": [],
+      "service_domains": [
+        "auth",
+        "organization",
+        "location",
+        "roles",
+        "modules"
+      ],
+      "canonical_source": "skills/stoquify-trusted-context-resolver/SKILL.md",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "authorized Stoquify role holders"
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "skills/stoquify-trusted-context-resolver/schemas/input.schema.json",
+      "output_contract": "skills/stoquify-trusted-context-resolver/schemas/output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [
+        "002-aqstoqflow-control-plane",
+        "better-auth-rbac-ohada"
+      ],
+      "source_paths": [
+        "skills/stoquify-trusted-context-resolver/SKILL.md"
+      ]
+    },
+    {
+      "id": "S02",
+      "type": "skill",
+      "slug": "stoquify-permission-entitlement-guard",
+      "title": "Permission and Entitlement Guard",
+      "disposition": "COMPOSE",
+      "overlaps": [
+        "aqstoqflow-access-boundary-hardener",
+        "better-auth-rbac-ohada",
+        "002-aqstoqflow-control-plane"
+      ],
+      "phase": "now",
+      "risk": "critical",
+      "autonomy_ceiling": "read",
+      "dependencies": [
+        "S01"
+      ],
+      "service_domains": [
+        "auth",
+        "roles",
+        "modules",
+        "security"
+      ],
+      "canonical_source": "skills/stoquify-permission-entitlement-guard/SKILL.md",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "authorized Stoquify role holders"
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "skills/stoquify-permission-entitlement-guard/schemas/input.schema.json",
+      "output_contract": "skills/stoquify-permission-entitlement-guard/schemas/output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [
+        "aqstoqflow-access-boundary-hardener",
+        "better-auth-rbac-ohada",
+        "002-aqstoqflow-control-plane"
+      ],
+      "source_paths": [
+        "skills/stoquify-permission-entitlement-guard/SKILL.md"
+      ]
+    },
+    {
+      "id": "S03",
+      "type": "skill",
+      "slug": "stoquify-evidence-grounded-retrieval",
+      "title": "Evidence-Grounded Retrieval",
+      "disposition": "COMPOSE",
+      "overlaps": [
+        "ai-copilot-with-accounting-guardrails",
+        "013-aqstoqflow-data-trust-accountant-portal"
+      ],
+      "phase": "now",
+      "risk": "high",
+      "autonomy_ceiling": "read",
+      "dependencies": [
+        "S01",
+        "S02"
+      ],
+      "service_domains": [
+        "evidence",
+        "snapshots",
+        "bi",
+        "assurance"
+      ],
+      "canonical_source": "skills/stoquify-evidence-grounded-retrieval/SKILL.md",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "authorized Stoquify role holders"
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "skills/stoquify-evidence-grounded-retrieval/schemas/input.schema.json",
+      "output_contract": "skills/stoquify-evidence-grounded-retrieval/schemas/output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [
+        "ai-copilot-with-accounting-guardrails",
+        "013-aqstoqflow-data-trust-accountant-portal"
+      ],
+      "source_paths": [
+        "skills/stoquify-evidence-grounded-retrieval/SKILL.md"
+      ]
+    },
+    {
+      "id": "S04",
+      "type": "skill",
+      "slug": "stoquify-safe-action-planner",
+      "title": "Safe Action Planner",
+      "disposition": "COMPOSE",
+      "overlaps": [
+        "016-aqstoqflow-ai-copilot-guardrails",
+        "ai-copilot-with-accounting-guardrails"
+      ],
+      "phase": "now",
+      "risk": "high",
+      "autonomy_ceiling": "draft",
+      "dependencies": [
+        "S01",
+        "S02",
+        "S03"
+      ],
+      "service_domains": [
+        "controls",
+        "assurance",
+        "events"
+      ],
+      "canonical_source": "skills/stoquify-safe-action-planner/SKILL.md",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "authorized Stoquify role holders"
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "skills/stoquify-safe-action-planner/schemas/input.schema.json",
+      "output_contract": "skills/stoquify-safe-action-planner/schemas/output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [
+        "016-aqstoqflow-ai-copilot-guardrails",
+        "ai-copilot-with-accounting-guardrails"
+      ],
+      "source_paths": [
+        "skills/stoquify-safe-action-planner/SKILL.md"
+      ]
+    },
+    {
+      "id": "S05",
+      "type": "skill",
+      "slug": "stoquify-approval-step-up-coordinator",
+      "title": "Approval and Step-Up Coordinator",
+      "disposition": "EXTEND",
+      "overlaps": [
+        "002-aqstoqflow-control-plane",
+        "aqstoqflow-module-audit-evidence-overrides"
+      ],
+      "phase": "now",
+      "risk": "critical",
+      "autonomy_ceiling": "draft",
+      "dependencies": [
+        "S01",
+        "S02",
+        "S04"
+      ],
+      "service_domains": [
+        "auth",
+        "controls",
+        "assurance",
+        "events"
+      ],
+      "canonical_source": "skills/stoquify-approval-step-up-coordinator/SKILL.md",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "authorized Stoquify role holders"
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "skills/stoquify-approval-step-up-coordinator/schemas/input.schema.json",
+      "output_contract": "skills/stoquify-approval-step-up-coordinator/schemas/output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [
+        "002-aqstoqflow-control-plane",
+        "aqstoqflow-module-audit-evidence-overrides"
+      ],
+      "source_paths": [
+        "skills/stoquify-approval-step-up-coordinator/SKILL.md"
+      ]
+    },
+    {
+      "id": "S06",
+      "type": "skill",
+      "slug": "stoquify-idempotent-tool-executor",
+      "title": "Idempotent Tool Executor",
+      "disposition": "COMPOSE",
+      "overlaps": [
+        "004-aqstoqflow-business-event-gateway",
+        "enterprise-error-handling"
+      ],
+      "phase": "now",
+      "risk": "critical",
+      "autonomy_ceiling": "controlled-write",
+      "dependencies": [
+        "S01",
+        "S02",
+        "S04",
+        "S05"
+      ],
+      "service_domains": [
+        "events",
+        "controls",
+        "assurance"
+      ],
+      "canonical_source": "skills/stoquify-idempotent-tool-executor/SKILL.md",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "authorized Stoquify role holders"
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify",
+        "execute"
+      ],
+      "input_contract": "skills/stoquify-idempotent-tool-executor/schemas/input.schema.json",
+      "output_contract": "skills/stoquify-idempotent-tool-executor/schemas/output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [
+        "004-aqstoqflow-business-event-gateway",
+        "enterprise-error-handling"
+      ],
+      "source_paths": [
+        "skills/stoquify-idempotent-tool-executor/SKILL.md"
+      ]
+    },
+    {
+      "id": "S07",
+      "type": "skill",
+      "slug": "stoquify-agent-evidence-recorder",
+      "title": "Agent Evidence Recorder",
+      "disposition": "COMPOSE",
+      "overlaps": [
+        "aqstoqflow-module-audit-evidence-overrides",
+        "013-aqstoqflow-data-trust-accountant-portal"
+      ],
+      "phase": "now",
+      "risk": "critical",
+      "autonomy_ceiling": "read",
+      "dependencies": [
+        "S01"
+      ],
+      "service_domains": [
+        "evidence",
+        "assurance",
+        "events"
+      ],
+      "canonical_source": "skills/stoquify-agent-evidence-recorder/SKILL.md",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "authorized Stoquify role holders"
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "skills/stoquify-agent-evidence-recorder/schemas/input.schema.json",
+      "output_contract": "skills/stoquify-agent-evidence-recorder/schemas/output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [
+        "aqstoqflow-module-audit-evidence-overrides",
+        "013-aqstoqflow-data-trust-accountant-portal"
+      ],
+      "source_paths": [
+        "skills/stoquify-agent-evidence-recorder/SKILL.md"
+      ]
+    },
+    {
+      "id": "S08",
+      "type": "skill",
+      "slug": "stoquify-redaction-disclosure-policy",
+      "title": "Redaction and Disclosure Policy",
+      "disposition": "COMPOSE",
+      "overlaps": [
+        "aqstoqflow-access-boundary-hardener",
+        "aqstoqflow-hris-payroll-07-document-evidence-redaction"
+      ],
+      "phase": "now",
+      "risk": "critical",
+      "autonomy_ceiling": "read",
+      "dependencies": [
+        "S01",
+        "S02"
+      ],
+      "service_domains": [
+        "security",
+        "evidence",
+        "hris",
+        "payroll"
+      ],
+      "canonical_source": "skills/stoquify-redaction-disclosure-policy/SKILL.md",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "authorized Stoquify role holders"
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "skills/stoquify-redaction-disclosure-policy/schemas/input.schema.json",
+      "output_contract": "skills/stoquify-redaction-disclosure-policy/schemas/output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [
+        "aqstoqflow-access-boundary-hardener",
+        "aqstoqflow-hris-payroll-07-document-evidence-redaction"
+      ],
+      "source_paths": [
+        "skills/stoquify-redaction-disclosure-policy/SKILL.md"
+      ]
+    },
+    {
+      "id": "S09",
+      "type": "skill",
+      "slug": "stoquify-freshness-trust-evaluator",
+      "title": "Freshness and Trust Evaluator",
+      "disposition": "COMPOSE",
+      "overlaps": [
+        "013-aqstoqflow-data-trust-accountant-portal",
+        "018-aqstoqflow-close-assurance-audit"
+      ],
+      "phase": "now",
+      "risk": "high",
+      "autonomy_ceiling": "read",
+      "dependencies": [
+        "S03",
+        "S07"
+      ],
+      "service_domains": [
+        "snapshots",
+        "evidence",
+        "assurance"
+      ],
+      "canonical_source": "skills/stoquify-freshness-trust-evaluator/SKILL.md",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "authorized Stoquify role holders"
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "skills/stoquify-freshness-trust-evaluator/schemas/input.schema.json",
+      "output_contract": "skills/stoquify-freshness-trust-evaluator/schemas/output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [
+        "013-aqstoqflow-data-trust-accountant-portal",
+        "018-aqstoqflow-close-assurance-audit"
+      ],
+      "source_paths": [
+        "skills/stoquify-freshness-trust-evaluator/SKILL.md"
+      ]
+    },
+    {
+      "id": "S10",
+      "type": "skill",
+      "slug": "stoquify-exception-prioritizer",
+      "title": "Exception Prioritizer",
+      "disposition": "EXTEND",
+      "overlaps": [
+        "services/signals",
+        "services/manager-action-center"
+      ],
+      "phase": "now",
+      "risk": "medium",
+      "autonomy_ceiling": "read",
+      "dependencies": [
+        "S01",
+        "S03",
+        "S09"
+      ],
+      "service_domains": [
+        "signals",
+        "manager-action-center",
+        "assurance"
+      ],
+      "canonical_source": "skills/stoquify-exception-prioritizer/SKILL.md",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "authorized Stoquify role holders"
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "skills/stoquify-exception-prioritizer/schemas/input.schema.json",
+      "output_contract": "skills/stoquify-exception-prioritizer/schemas/output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [
+        "services/signals",
+        "services/manager-action-center"
+      ],
+      "source_paths": [
+        "skills/stoquify-exception-prioritizer/SKILL.md"
+      ]
+    },
+    {
+      "id": "S11",
+      "type": "skill",
+      "slug": "stoquify-notification-escalation-router",
+      "title": "Notification and Escalation Router",
+      "disposition": "COMPOSE",
+      "overlaps": [
+        "003-aqstoqflow-error-notification-foundation",
+        "kontava-notification-interruption-policy"
+      ],
+      "phase": "now",
+      "risk": "medium",
+      "autonomy_ceiling": "read",
+      "dependencies": [
+        "S01",
+        "S02",
+        "S10"
+      ],
+      "service_domains": [
+        "events",
+        "signals",
+        "manager-action-center"
+      ],
+      "canonical_source": "skills/stoquify-notification-escalation-router/SKILL.md",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "authorized Stoquify role holders"
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "skills/stoquify-notification-escalation-router/schemas/input.schema.json",
+      "output_contract": "skills/stoquify-notification-escalation-router/schemas/output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [
+        "003-aqstoqflow-error-notification-foundation",
+        "kontava-notification-interruption-policy"
+      ],
+      "source_paths": [
+        "skills/stoquify-notification-escalation-router/SKILL.md"
+      ]
+    },
+    {
+      "id": "S12",
+      "type": "skill",
+      "slug": "stoquify-agent-run-state-machine",
+      "title": "Agent Run State Machine",
+      "disposition": "COMPOSE",
+      "overlaps": [
+        "001-aqstoqflow-program-orchestrator",
+        "002-aqstoqflow-control-plane"
+      ],
+      "phase": "now",
+      "risk": "critical",
+      "autonomy_ceiling": "read",
+      "dependencies": [
+        "S01"
+      ],
+      "service_domains": [
+        "events",
+        "assurance",
+        "controls"
+      ],
+      "canonical_source": "skills/stoquify-agent-run-state-machine/SKILL.md",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "authorized Stoquify role holders"
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "skills/stoquify-agent-run-state-machine/schemas/input.schema.json",
+      "output_contract": "skills/stoquify-agent-run-state-machine/schemas/output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [
+        "001-aqstoqflow-program-orchestrator",
+        "002-aqstoqflow-control-plane"
+      ],
+      "source_paths": [
+        "skills/stoquify-agent-run-state-machine/SKILL.md"
+      ]
+    },
+    {
+      "id": "S13",
+      "type": "skill",
+      "slug": "stoquify-model-cost-router",
+      "title": "Model and Cost Router",
+      "disposition": "NEW",
+      "overlaps": [
+        "016-aqstoqflow-ai-copilot-guardrails"
+      ],
+      "phase": "next",
+      "risk": "high",
+      "autonomy_ceiling": "read",
+      "dependencies": [
+        "S01",
+        "S02",
+        "S07",
+        "S09"
+      ],
+      "service_domains": [
+        "analytics",
+        "controls",
+        "assurance"
+      ],
+      "canonical_source": "skills/stoquify-model-cost-router/SKILL.md",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "authorized Stoquify role holders"
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "skills/stoquify-model-cost-router/schemas/input.schema.json",
+      "output_contract": "skills/stoquify-model-cost-router/schemas/output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [
+        "016-aqstoqflow-ai-copilot-guardrails"
+      ],
+      "source_paths": [
+        "skills/stoquify-model-cost-router/SKILL.md"
+      ],
+      "no_existing_owner_rationale": "No existing canonical asset owns provider/model selection by sensitivity, evaluation status, latency, and tenant budget.",
+      "search_evidence": [
+        "docs/agents and skills/STOQUIFY_ENTERPRISE_AGENT_AND_SKILL_SYSTEM_ASSESSMENT_2026-07-15.md",
+        "workspace capability and skill inventory audit"
+      ]
+    },
+    {
+      "id": "S14",
+      "type": "skill",
+      "slug": "stoquify-explicit-preference-memory",
+      "title": "Explicit Preference Memory",
+      "disposition": "NEW",
+      "overlaps": [
+        "kontava-daily-habit-digest"
+      ],
+      "phase": "next",
+      "risk": "critical",
+      "autonomy_ceiling": "read",
+      "dependencies": [
+        "S01",
+        "S02",
+        "S08"
+      ],
+      "service_domains": [
+        "users",
+        "organization",
+        "security"
+      ],
+      "canonical_source": "skills/stoquify-explicit-preference-memory/SKILL.md",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "authorized Stoquify role holders"
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "skills/stoquify-explicit-preference-memory/schemas/input.schema.json",
+      "output_contract": "skills/stoquify-explicit-preference-memory/schemas/output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [
+        "kontava-daily-habit-digest"
+      ],
+      "source_paths": [
+        "skills/stoquify-explicit-preference-memory/SKILL.md"
+      ],
+      "no_existing_owner_rationale": "No existing canonical asset owns consented, expiring, correctable, exportable Copilot preference memory.",
+      "search_evidence": [
+        "docs/agents and skills/STOQUIFY_ENTERPRISE_AGENT_AND_SKILL_SYSTEM_ASSESSMENT_2026-07-15.md",
+        "workspace capability and skill inventory audit"
+      ]
+    },
+    {
+      "id": "S15",
+      "type": "skill",
+      "slug": "stoquify-offline-replay-awareness",
+      "title": "Offline and Replay Awareness",
+      "disposition": "EXTEND",
+      "overlaps": [
+        "014-aqstoqflow-offline-pos-sync",
+        "aqstoqflow-offline-pos-replay-finalizer"
+      ],
+      "phase": "next",
+      "risk": "critical",
+      "autonomy_ceiling": "read",
+      "dependencies": [
+        "S03",
+        "S09"
+      ],
+      "service_domains": [
+        "pos",
+        "inventory",
+        "events",
+        "assurance"
+      ],
+      "canonical_source": "skills/stoquify-offline-replay-awareness/SKILL.md",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "authorized Stoquify role holders"
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "skills/stoquify-offline-replay-awareness/schemas/input.schema.json",
+      "output_contract": "skills/stoquify-offline-replay-awareness/schemas/output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [
+        "014-aqstoqflow-offline-pos-sync",
+        "aqstoqflow-offline-pos-replay-finalizer"
+      ],
+      "source_paths": [
+        "skills/stoquify-offline-replay-awareness/SKILL.md"
+      ]
+    },
+    {
+      "id": "S16",
+      "type": "skill",
+      "slug": "stoquify-country-pack-provenance-resolver",
+      "title": "Country-Pack Provenance Resolver",
+      "disposition": "COMPOSE",
+      "overlaps": [
+        "006-aqstoqflow-country-pack-factory",
+        "015-aqstoqflow-country-adapter-pilot"
+      ],
+      "phase": "next",
+      "risk": "critical",
+      "autonomy_ceiling": "read",
+      "dependencies": [
+        "S01",
+        "S03",
+        "S09"
+      ],
+      "service_domains": [
+        "regulatory",
+        "compliance",
+        "tax-rate",
+        "payroll"
+      ],
+      "canonical_source": "skills/stoquify-country-pack-provenance-resolver/SKILL.md",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "authorized Stoquify role holders"
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "skills/stoquify-country-pack-provenance-resolver/schemas/input.schema.json",
+      "output_contract": "skills/stoquify-country-pack-provenance-resolver/schemas/output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [
+        "006-aqstoqflow-country-pack-factory",
+        "015-aqstoqflow-country-adapter-pilot"
+      ],
+      "source_paths": [
+        "skills/stoquify-country-pack-provenance-resolver/SKILL.md"
+      ]
+    },
+    {
+      "id": "S17",
+      "type": "skill",
+      "slug": "stoquify-daily-operating-brief",
+      "title": "Daily Operating Brief",
+      "disposition": "COMPOSE",
+      "overlaps": [
+        "aqstoqflow-dashboard-daily-habit-completion",
+        "kontava-owner-morning-brief",
+        "stoquify-role-based-operating-cockpit-uiux"
+      ],
+      "phase": "now",
+      "risk": "medium",
+      "autonomy_ceiling": "read",
+      "dependencies": [
+        "S01",
+        "S02",
+        "S03",
+        "S07",
+        "S08",
+        "S09",
+        "S10"
+      ],
+      "service_domains": [
+        "daily-habit",
+        "owner-war-room",
+        "manager-action-center",
+        "snapshots",
+        "signals"
+      ],
+      "canonical_source": "skills/stoquify-daily-operating-brief/SKILL.md",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "authorized Stoquify role holders"
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "skills/stoquify-daily-operating-brief/schemas/input.schema.json",
+      "output_contract": "skills/stoquify-daily-operating-brief/schemas/output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [
+        "aqstoqflow-dashboard-daily-habit-completion",
+        "kontava-owner-morning-brief",
+        "stoquify-role-based-operating-cockpit-uiux"
+      ],
+      "source_paths": [
+        "skills/stoquify-daily-operating-brief/SKILL.md"
+      ]
+    },
+    {
+      "id": "S18",
+      "type": "skill",
+      "slug": "stoquify-cross-domain-root-cause-trace",
+      "title": "Cross-Domain Root-Cause Trace",
+      "disposition": "EXTEND",
+      "overlaps": [
+        "services/stock-to-cash",
+        "ledger-first-business-events",
+        "013-aqstoqflow-data-trust-accountant-portal"
+      ],
+      "phase": "now",
+      "risk": "high",
+      "autonomy_ceiling": "read",
+      "dependencies": [
+        "S01",
+        "S02",
+        "S03",
+        "S07",
+        "S09"
+      ],
+      "service_domains": [
+        "events",
+        "history",
+        "stock-to-cash",
+        "accounting",
+        "evidence"
+      ],
+      "canonical_source": "skills/stoquify-cross-domain-root-cause-trace/SKILL.md",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "authorized Stoquify role holders"
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "skills/stoquify-cross-domain-root-cause-trace/schemas/input.schema.json",
+      "output_contract": "skills/stoquify-cross-domain-root-cause-trace/schemas/output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [
+        "services/stock-to-cash",
+        "ledger-first-business-events",
+        "013-aqstoqflow-data-trust-accountant-portal"
+      ],
+      "source_paths": [
+        "skills/stoquify-cross-domain-root-cause-trace/SKILL.md"
+      ]
+    },
+    {
+      "id": "S19",
+      "type": "skill",
+      "slug": "stoquify-cash-exception-triage",
+      "title": "Cash Exception Triage",
+      "disposition": "EXTEND",
+      "overlaps": [
+        "009-aqstoqflow-payment-reconciliation-moat",
+        "stoquify-payment-recon-cash-truth-moat"
+      ],
+      "phase": "now",
+      "risk": "critical",
+      "autonomy_ceiling": "read",
+      "dependencies": [
+        "S01",
+        "S02",
+        "S03",
+        "S08",
+        "S09",
+        "S10",
+        "S18"
+      ],
+      "service_domains": [
+        "payments",
+        "reconciliation",
+        "cash-command",
+        "accounting"
+      ],
+      "canonical_source": "skills/stoquify-cash-exception-triage/SKILL.md",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "authorized Stoquify role holders"
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "skills/stoquify-cash-exception-triage/schemas/input.schema.json",
+      "output_contract": "skills/stoquify-cash-exception-triage/schemas/output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [
+        "009-aqstoqflow-payment-reconciliation-moat",
+        "stoquify-payment-recon-cash-truth-moat"
+      ],
+      "source_paths": [
+        "skills/stoquify-cash-exception-triage/SKILL.md"
+      ]
+    },
+    {
+      "id": "S20",
+      "type": "skill",
+      "slug": "stoquify-reconciliation-match-suggestion",
+      "title": "Reconciliation Match Suggestion",
+      "disposition": "EXTEND",
+      "overlaps": [
+        "04-payment-recon-matching-suspense",
+        "stoquify-payment-recon-cash-truth-moat"
+      ],
+      "phase": "now",
+      "risk": "critical",
+      "autonomy_ceiling": "draft",
+      "dependencies": [
+        "S01",
+        "S02",
+        "S03",
+        "S07",
+        "S09",
+        "S19"
+      ],
+      "service_domains": [
+        "payments",
+        "reconciliation",
+        "evidence"
+      ],
+      "canonical_source": "skills/stoquify-reconciliation-match-suggestion/SKILL.md",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "authorized Stoquify role holders"
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "skills/stoquify-reconciliation-match-suggestion/schemas/input.schema.json",
+      "output_contract": "skills/stoquify-reconciliation-match-suggestion/schemas/output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [
+        "04-payment-recon-matching-suspense",
+        "stoquify-payment-recon-cash-truth-moat"
+      ],
+      "source_paths": [
+        "skills/stoquify-reconciliation-match-suggestion/SKILL.md"
+      ]
+    },
+    {
+      "id": "S21",
+      "type": "skill",
+      "slug": "stoquify-inventory-risk-replenishment",
+      "title": "Inventory Risk and Replenishment",
+      "disposition": "COMPOSE",
+      "overlaps": [
+        "010-aqstoqflow-inventory-valuation-kernel",
+        "aqstoqflow-inventory-boundary-gate"
+      ],
+      "phase": "now",
+      "risk": "high",
+      "autonomy_ceiling": "draft",
+      "dependencies": [
+        "S01",
+        "S02",
+        "S03",
+        "S09",
+        "S15"
+      ],
+      "service_domains": [
+        "inventory",
+        "item",
+        "location",
+        "supplier",
+        "purchase-order",
+        "analytics"
+      ],
+      "canonical_source": "skills/stoquify-inventory-risk-replenishment/SKILL.md",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "authorized Stoquify role holders"
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "skills/stoquify-inventory-risk-replenishment/schemas/input.schema.json",
+      "output_contract": "skills/stoquify-inventory-risk-replenishment/schemas/output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [
+        "010-aqstoqflow-inventory-valuation-kernel",
+        "aqstoqflow-inventory-boundary-gate"
+      ],
+      "source_paths": [
+        "skills/stoquify-inventory-risk-replenishment/SKILL.md"
+      ]
+    },
+    {
+      "id": "S22",
+      "type": "skill",
+      "slug": "stoquify-inventory-variance-investigation",
+      "title": "Inventory Variance Investigation",
+      "disposition": "COMPOSE",
+      "overlaps": [
+        "010-aqstoqflow-inventory-boundary-gate",
+        "014-aqstoqflow-offline-pos-sync"
+      ],
+      "phase": "now",
+      "risk": "high",
+      "autonomy_ceiling": "read",
+      "dependencies": [
+        "S01",
+        "S02",
+        "S03",
+        "S09",
+        "S15",
+        "S18"
+      ],
+      "service_domains": [
+        "inventory",
+        "events",
+        "history",
+        "pos",
+        "assurance"
+      ],
+      "canonical_source": "skills/stoquify-inventory-variance-investigation/SKILL.md",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "authorized Stoquify role holders"
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "skills/stoquify-inventory-variance-investigation/schemas/input.schema.json",
+      "output_contract": "skills/stoquify-inventory-variance-investigation/schemas/output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [
+        "010-aqstoqflow-inventory-boundary-gate",
+        "014-aqstoqflow-offline-pos-sync"
+      ],
+      "source_paths": [
+        "skills/stoquify-inventory-variance-investigation/SKILL.md"
+      ]
+    },
+    {
+      "id": "S23",
+      "type": "skill",
+      "slug": "stoquify-po-receipt-invoice-variance",
+      "title": "PO Receipt Invoice Variance",
+      "disposition": "EXTEND",
+      "overlaps": [
+        "011-aqstoqflow-purchasing-ap-controls",
+        "aqstoqflow-purchasing-ap-controls"
+      ],
+      "phase": "next",
+      "risk": "critical",
+      "autonomy_ceiling": "draft",
+      "dependencies": [
+        "S01",
+        "S02",
+        "S03",
+        "S04",
+        "S09",
+        "S18"
+      ],
+      "service_domains": [
+        "purchasing",
+        "purchase-order",
+        "supplier",
+        "accounting",
+        "evidence"
+      ],
+      "canonical_source": "skills/stoquify-po-receipt-invoice-variance/SKILL.md",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "authorized Stoquify role holders"
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "skills/stoquify-po-receipt-invoice-variance/schemas/input.schema.json",
+      "output_contract": "skills/stoquify-po-receipt-invoice-variance/schemas/output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [
+        "011-aqstoqflow-purchasing-ap-controls",
+        "aqstoqflow-purchasing-ap-controls"
+      ],
+      "source_paths": [
+        "skills/stoquify-po-receipt-invoice-variance/SKILL.md"
+      ]
+    },
+    {
+      "id": "S24",
+      "type": "skill",
+      "slug": "stoquify-supplier-commitment-payment-risk",
+      "title": "Supplier Commitment and Payment Risk",
+      "disposition": "COMPOSE",
+      "overlaps": [
+        "011-aqstoqflow-purchasing-ap-controls",
+        "aqstoqflow-provider-health-recon-ops"
+      ],
+      "phase": "next",
+      "risk": "critical",
+      "autonomy_ceiling": "read",
+      "dependencies": [
+        "S01",
+        "S02",
+        "S03",
+        "S08",
+        "S09",
+        "S10",
+        "S23"
+      ],
+      "service_domains": [
+        "supplier",
+        "purchasing",
+        "payments",
+        "finance",
+        "controls"
+      ],
+      "canonical_source": "skills/stoquify-supplier-commitment-payment-risk/SKILL.md",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "authorized Stoquify role holders"
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "skills/stoquify-supplier-commitment-payment-risk/schemas/input.schema.json",
+      "output_contract": "skills/stoquify-supplier-commitment-payment-risk/schemas/output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [
+        "011-aqstoqflow-purchasing-ap-controls",
+        "aqstoqflow-provider-health-recon-ops"
+      ],
+      "source_paths": [
+        "skills/stoquify-supplier-commitment-payment-risk/SKILL.md"
+      ]
+    },
+    {
+      "id": "S25",
+      "type": "skill",
+      "slug": "stoquify-close-blocker-navigator",
+      "title": "Close Blocker Navigator",
+      "disposition": "COMPOSE",
+      "overlaps": [
+        "023-aqstoqflow-close-assurance-suite",
+        "aqstoqflow-close-assurance-center-builder"
+      ],
+      "phase": "next",
+      "risk": "critical",
+      "autonomy_ceiling": "read",
+      "dependencies": [
+        "S01",
+        "S02",
+        "S03",
+        "S07",
+        "S09",
+        "S10",
+        "S18"
+      ],
+      "service_domains": [
+        "accounting",
+        "assurance",
+        "evidence",
+        "reconciliation",
+        "compliance"
+      ],
+      "canonical_source": "skills/stoquify-close-blocker-navigator/SKILL.md",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "authorized Stoquify role holders"
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "skills/stoquify-close-blocker-navigator/schemas/input.schema.json",
+      "output_contract": "skills/stoquify-close-blocker-navigator/schemas/output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [
+        "023-aqstoqflow-close-assurance-suite",
+        "aqstoqflow-close-assurance-center-builder"
+      ],
+      "source_paths": [
+        "skills/stoquify-close-blocker-navigator/SKILL.md"
+      ]
+    },
+    {
+      "id": "S26",
+      "type": "skill",
+      "slug": "stoquify-compliance-readiness-explanation",
+      "title": "Compliance Readiness Explanation",
+      "disposition": "COMPOSE",
+      "overlaps": [
+        "008-aqstoqflow-compliance-center",
+        "006-aqstoqflow-country-pack-factory"
+      ],
+      "phase": "next",
+      "risk": "critical",
+      "autonomy_ceiling": "read",
+      "dependencies": [
+        "S01",
+        "S02",
+        "S03",
+        "S08",
+        "S09",
+        "S16",
+        "S25"
+      ],
+      "service_domains": [
+        "compliance",
+        "regulatory",
+        "evidence",
+        "assurance"
+      ],
+      "canonical_source": "skills/stoquify-compliance-readiness-explanation/SKILL.md",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "authorized Stoquify role holders"
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "skills/stoquify-compliance-readiness-explanation/schemas/input.schema.json",
+      "output_contract": "skills/stoquify-compliance-readiness-explanation/schemas/output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [
+        "008-aqstoqflow-compliance-center",
+        "006-aqstoqflow-country-pack-factory"
+      ],
+      "source_paths": [
+        "skills/stoquify-compliance-readiness-explanation/SKILL.md"
+      ]
+    },
+    {
+      "id": "S27",
+      "type": "skill",
+      "slug": "stoquify-payroll-readiness-variance",
+      "title": "Payroll Readiness and Variance",
+      "disposition": "EXTEND",
+      "overlaps": [
+        "012-aqstoqflow-payroll-presence-engine",
+        "aqstoqflow-payroll-smb-ops"
+      ],
+      "phase": "later",
+      "risk": "critical",
+      "autonomy_ceiling": "read",
+      "dependencies": [
+        "S01",
+        "S02",
+        "S03",
+        "S08",
+        "S09",
+        "S16",
+        "S18",
+        "S25",
+        "S26"
+      ],
+      "service_domains": [
+        "hris",
+        "payroll",
+        "accounting",
+        "evidence",
+        "regulatory"
+      ],
+      "canonical_source": "skills/stoquify-payroll-readiness-variance/SKILL.md",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "authorized Stoquify role holders"
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "skills/stoquify-payroll-readiness-variance/schemas/input.schema.json",
+      "output_contract": "skills/stoquify-payroll-readiness-variance/schemas/output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [
+        "012-aqstoqflow-payroll-presence-engine",
+        "aqstoqflow-payroll-smb-ops"
+      ],
+      "source_paths": [
+        "skills/stoquify-payroll-readiness-variance/SKILL.md"
+      ]
+    },
+    {
+      "id": "S28",
+      "type": "skill",
+      "slug": "stoquify-adoption-onboarding-coach",
+      "title": "Adoption and Onboarding Coach",
+      "disposition": "NEW",
+      "overlaps": [
+        "aqstoqflow-dashboard-daily-habit-completion",
+        "customer-success-manager"
+      ],
+      "phase": "later",
+      "risk": "medium",
+      "autonomy_ceiling": "read",
+      "dependencies": [
+        "S01",
+        "S02",
+        "S03",
+        "S07",
+        "S09",
+        "S13",
+        "S14",
+        "S17"
+      ],
+      "service_domains": [
+        "analytics",
+        "dashboard",
+        "users",
+        "organization"
+      ],
+      "canonical_source": "skills/stoquify-adoption-onboarding-coach/SKILL.md",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "authorized Stoquify role holders"
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "skills/stoquify-adoption-onboarding-coach/schemas/input.schema.json",
+      "output_contract": "skills/stoquify-adoption-onboarding-coach/schemas/output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [
+        "aqstoqflow-dashboard-daily-habit-completion",
+        "customer-success-manager"
+      ],
+      "source_paths": [
+        "skills/stoquify-adoption-onboarding-coach/SKILL.md"
+      ],
+      "no_existing_owner_rationale": "No existing canonical asset owns role-specific adoption coaching from consented product telemetry and versioned playbooks.",
+      "search_evidence": [
+        "docs/agents and skills/STOQUIFY_ENTERPRISE_AGENT_AND_SKILL_SYSTEM_ASSESSMENT_2026-07-15.md",
+        "workspace capability and skill inventory audit"
+      ]
+    },
+    {
+      "id": "stoquify-command-agent",
+      "type": "agent",
+      "slug": "stoquify-command-agent",
+      "title": "Stoquify Command Agent",
+      "disposition": "COMPOSE",
+      "phase": "now",
+      "risk": "high",
+      "autonomy_ceiling": "read-and-draft",
+      "dependencies": [
+        "S01",
+        "S02",
+        "S03",
+        "S04",
+        "S07",
+        "S08",
+        "S09",
+        "S10",
+        "S11",
+        "S12",
+        "S17",
+        "S18"
+      ],
+      "canonical_source": "agents/stoquify-command-agent.toml",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "Role-aware operating copilot that turns trusted Stoquify evidence into concise briefs, ranked actions, explanations, and safe workflow routing without owning business truth."
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "contracts/workflow-case.schema.json",
+      "output_contract": "contracts/agent-output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [],
+      "source_paths": [
+        "agents/stoquify-command-agent.toml"
+      ],
+      "service_domains": []
+    },
+    {
+      "id": "stoquify-exception-action-orchestrator",
+      "type": "agent",
+      "slug": "stoquify-exception-action-orchestrator",
+      "title": "Stoquify Exception and Action Orchestrator",
+      "disposition": "COMPOSE",
+      "phase": "now",
+      "risk": "critical",
+      "autonomy_ceiling": "policy-bounded-orchestration",
+      "dependencies": [
+        "S01",
+        "S02",
+        "S03",
+        "S04",
+        "S05",
+        "S06",
+        "S07",
+        "S08",
+        "S09",
+        "S10",
+        "S11",
+        "S12",
+        "S13",
+        "S15",
+        "S16"
+      ],
+      "canonical_source": "agents/stoquify-exception-action-orchestrator.toml",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "Shared control-plane orchestrator that converts trusted signals into deduplicated cases and manages skills, state, approvals, retries, deadlines, escalation, and terminal outcomes."
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "contracts/workflow-case.schema.json",
+      "output_contract": "contracts/agent-output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [],
+      "source_paths": [
+        "agents/stoquify-exception-action-orchestrator.toml"
+      ],
+      "service_domains": []
+    },
+    {
+      "id": "stoquify-cash-reconciliation-agent",
+      "type": "agent",
+      "slug": "stoquify-cash-reconciliation-agent",
+      "title": "Stoquify Cash and Reconciliation Agent",
+      "disposition": "COMPOSE",
+      "phase": "now",
+      "risk": "critical",
+      "autonomy_ceiling": "read-and-propose",
+      "dependencies": [
+        "S01",
+        "S02",
+        "S03",
+        "S04",
+        "S05",
+        "S07",
+        "S08",
+        "S09",
+        "S10",
+        "S11",
+        "S12",
+        "S18",
+        "S19",
+        "S20",
+        "S25"
+      ],
+      "canonical_source": "agents/stoquify-cash-reconciliation-agent.toml",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "Evidence-backed cash and reconciliation copilot that triages payment exceptions, suggests reviewable matches, exposes evidence gaps, and prepares close-safe resolution packets."
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "contracts/workflow-case.schema.json",
+      "output_contract": "contracts/agent-output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [],
+      "source_paths": [
+        "agents/stoquify-cash-reconciliation-agent.toml"
+      ],
+      "service_domains": []
+    },
+    {
+      "id": "stoquify-inventory-replenishment-agent",
+      "type": "agent",
+      "slug": "stoquify-inventory-replenishment-agent",
+      "title": "Stoquify Inventory and Replenishment Agent",
+      "disposition": "COMPOSE",
+      "phase": "now",
+      "risk": "high",
+      "autonomy_ceiling": "read-and-draft",
+      "dependencies": [
+        "S01",
+        "S02",
+        "S03",
+        "S04",
+        "S05",
+        "S07",
+        "S08",
+        "S09",
+        "S10",
+        "S11",
+        "S12",
+        "S15",
+        "S18",
+        "S21",
+        "S22",
+        "S23",
+        "S24"
+      ],
+      "canonical_source": "agents/stoquify-inventory-replenishment-agent.toml",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "Location-aware inventory copilot that detects stock risk, explains event-backed variance, and prepares replenishment or transfer proposals with cash impact and confidence."
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "contracts/workflow-case.schema.json",
+      "output_contract": "contracts/agent-output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [],
+      "source_paths": [
+        "agents/stoquify-inventory-replenishment-agent.toml"
+      ],
+      "service_domains": []
+    },
+    {
+      "id": "stoquify-purchasing-accounts-payable-agent",
+      "type": "agent",
+      "slug": "stoquify-purchasing-accounts-payable-agent",
+      "title": "Stoquify Purchasing and Accounts Payable Agent",
+      "disposition": "COMPOSE",
+      "phase": "next",
+      "risk": "critical",
+      "autonomy_ceiling": "read-and-draft",
+      "dependencies": [
+        "S01",
+        "S02",
+        "S03",
+        "S04",
+        "S05",
+        "S07",
+        "S08",
+        "S09",
+        "S10",
+        "S11",
+        "S12",
+        "S16",
+        "S18",
+        "S23",
+        "S24"
+      ],
+      "canonical_source": "agents/stoquify-purchasing-accounts-payable-agent.toml",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "Controlled purchasing and AP copilot that explains three-way-match variance, supplier commitments, and payment risk while preserving maker-checker separation."
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "contracts/workflow-case.schema.json",
+      "output_contract": "contracts/agent-output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [],
+      "source_paths": [
+        "agents/stoquify-purchasing-accounts-payable-agent.toml"
+      ],
+      "service_domains": []
+    },
+    {
+      "id": "stoquify-close-compliance-agent",
+      "type": "agent",
+      "slug": "stoquify-close-compliance-agent",
+      "title": "Stoquify Close and Compliance Agent",
+      "disposition": "COMPOSE",
+      "phase": "next",
+      "risk": "critical",
+      "autonomy_ceiling": "read-and-prepare",
+      "dependencies": [
+        "S01",
+        "S02",
+        "S03",
+        "S04",
+        "S05",
+        "S07",
+        "S08",
+        "S09",
+        "S10",
+        "S11",
+        "S12",
+        "S13",
+        "S16",
+        "S18",
+        "S19",
+        "S20",
+        "S23",
+        "S24",
+        "S25",
+        "S26"
+      ],
+      "canonical_source": "agents/stoquify-close-compliance-agent.toml",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "Evidence and country-pack aware close copilot that explains blockers, sequences remediation, assembles proof, and states exact compliance support without self-certifying."
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "contracts/workflow-case.schema.json",
+      "output_contract": "contracts/agent-output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [],
+      "source_paths": [
+        "agents/stoquify-close-compliance-agent.toml"
+      ],
+      "service_domains": []
+    },
+    {
+      "id": "stoquify-platform-assurance-agent",
+      "type": "agent",
+      "slug": "stoquify-platform-assurance-agent",
+      "title": "Stoquify Platform Assurance Agent",
+      "disposition": "COMPOSE",
+      "phase": "next",
+      "risk": "critical",
+      "autonomy_ceiling": "observe-and-suspend",
+      "dependencies": [
+        "S01",
+        "S02",
+        "S03",
+        "S07",
+        "S08",
+        "S09",
+        "S10",
+        "S11",
+        "S12",
+        "S13",
+        "S16"
+      ],
+      "canonical_source": "agents/stoquify-platform-assurance-agent.toml",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "Independent internal assurance agent that monitors evaluations, denials, drift, cost, latency, incidents, and evidence quality and can suspend unsafe versions without self-certifying them."
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "contracts/workflow-case.schema.json",
+      "output_contract": "contracts/agent-output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [],
+      "source_paths": [
+        "agents/stoquify-platform-assurance-agent.toml"
+      ],
+      "service_domains": []
+    },
+    {
+      "id": "stoquify-customer-success-adoption-agent",
+      "type": "agent",
+      "slug": "stoquify-customer-success-adoption-agent",
+      "title": "Stoquify Customer Success and Adoption Agent",
+      "disposition": "NEW",
+      "phase": "later",
+      "risk": "medium",
+      "autonomy_ceiling": "read-and-recommend",
+      "dependencies": [
+        "S01",
+        "S02",
+        "S03",
+        "S04",
+        "S07",
+        "S08",
+        "S09",
+        "S10",
+        "S11",
+        "S12",
+        "S13",
+        "S14",
+        "S17",
+        "S28"
+      ],
+      "canonical_source": "agents/stoquify-customer-success-adoption-agent.toml",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "Consent-aware adoption copilot that converts reliable product telemetry and versioned playbooks into role-specific onboarding, training, and workflow recommendations."
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "contracts/workflow-case.schema.json",
+      "output_contract": "contracts/agent-output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [],
+      "source_paths": [
+        "agents/stoquify-customer-success-adoption-agent.toml"
+      ],
+      "service_domains": [],
+      "no_existing_owner_rationale": "No existing agent definition owns customer adoption guidance with explicit telemetry consent and evidence boundaries.",
+      "search_evidence": [
+        "docs/agents and skills/STOQUIFY_ENTERPRISE_AGENT_AND_SKILL_SYSTEM_ASSESSMENT_2026-07-15.md",
+        "workspace capability and skill inventory audit"
+      ]
+    },
+    {
+      "id": "stoquify-payroll-workforce-agent",
+      "type": "agent",
+      "slug": "stoquify-payroll-workforce-agent",
+      "title": "Stoquify Payroll and Workforce Agent",
+      "disposition": "COMPOSE",
+      "phase": "later",
+      "risk": "critical",
+      "autonomy_ceiling": "read-only-readiness",
+      "dependencies": [
+        "S01",
+        "S02",
+        "S03",
+        "S04",
+        "S05",
+        "S07",
+        "S08",
+        "S09",
+        "S10",
+        "S11",
+        "S12",
+        "S13",
+        "S16",
+        "S18",
+        "S25",
+        "S26",
+        "S27"
+      ],
+      "canonical_source": "agents/stoquify-payroll-workforce-agent.toml",
+      "lifecycle": "source-candidate",
+      "version": "1.0.0",
+      "domain_owner": "Stoquify Copilot Platform",
+      "users": [
+        "Privacy-bounded payroll readiness copilot that identifies input gaps and explains aggregate variance within one expert-reviewed country pack and separate employee self-service scopes."
+      ],
+      "triggers": [
+        "user request",
+        "business event",
+        "workflow case",
+        "approved schedule"
+      ],
+      "modes": [
+        "audit",
+        "plan",
+        "verify"
+      ],
+      "input_contract": "contracts/workflow-case.schema.json",
+      "output_contract": "contracts/agent-output.schema.json",
+      "permissions": [
+        "server-derived tenant context",
+        "RBAC",
+        "module entitlement",
+        "location scope",
+        "feature flag"
+      ],
+      "data_classification": [
+        "internal",
+        "confidential",
+        "restricted when domain requires"
+      ],
+      "evidence_contract": "contracts/evidence-record.schema.json",
+      "verification": "evaluations/evaluation-catalog.json",
+      "rollback": "suspend version and revert registry pointer to last passing compatible release",
+      "deprecation": {
+        "status": "active-source-candidate",
+        "successor": null,
+        "compatibility_window": null
+      },
+      "aliases": [],
+      "source_paths": [
+        "agents/stoquify-payroll-workforce-agent.toml"
+      ],
+      "service_domains": []
+    }
+  ]
+}

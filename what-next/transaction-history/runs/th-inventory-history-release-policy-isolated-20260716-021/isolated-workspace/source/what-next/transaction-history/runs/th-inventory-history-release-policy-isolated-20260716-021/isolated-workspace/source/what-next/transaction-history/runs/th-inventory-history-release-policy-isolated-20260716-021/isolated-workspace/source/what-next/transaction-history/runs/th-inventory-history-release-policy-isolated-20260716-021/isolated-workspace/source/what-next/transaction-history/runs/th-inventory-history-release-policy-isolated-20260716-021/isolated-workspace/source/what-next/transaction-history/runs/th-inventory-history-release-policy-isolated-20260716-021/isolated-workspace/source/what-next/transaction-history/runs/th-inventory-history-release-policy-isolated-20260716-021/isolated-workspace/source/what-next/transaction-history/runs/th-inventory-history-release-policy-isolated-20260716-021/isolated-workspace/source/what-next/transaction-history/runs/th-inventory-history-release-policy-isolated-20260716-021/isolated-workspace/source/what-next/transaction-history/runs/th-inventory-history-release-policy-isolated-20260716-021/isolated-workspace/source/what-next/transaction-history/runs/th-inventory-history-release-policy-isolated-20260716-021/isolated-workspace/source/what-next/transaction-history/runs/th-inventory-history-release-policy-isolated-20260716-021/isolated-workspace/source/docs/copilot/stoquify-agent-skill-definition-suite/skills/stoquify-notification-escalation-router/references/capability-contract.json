@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0.0",
+  "id": "S11",
+  "name": "stoquify-notification-escalation-router",
+  "title": "Notification and Escalation Router",
+  "owner": "Stoquify Copilot Platform",
+  "lifecycle": "source-candidate",
+  "phase": "now",
+  "risk": "medium",
+  "autonomy_ceiling": "read",
+  "disposition": "COMPOSE",
+  "overlaps": [
+    "003-aqstoqflow-error-notification-foundation",
+    "kontava-notification-interruption-policy"
+  ],
+  "dependencies": [
+    "S01",
+    "S02",
+    "S10"
+  ],
+  "permitted_service_domains": [
+    "events",
+    "signals",
+    "manager-action-center"
+  ],
+  "input_schema": "../schemas/input.schema.json",
+  "output_schema": "../schemas/output.schema.json",
+  "max_runtime_seconds": 45,
+  "max_tool_calls": 12,
+  "cost_class": "low",
+  "retry_class": "read-safe",
+  "idempotency": "required for every write-capable tool",
+  "rollback": "suspend version and revert registry pointer",
+  "prohibited_actions": [
+    "direct Prisma access",
+    "permission inference",
+    "cross-tenant retrieval",
+    "policy relaxation",
+    "unsupported production claims",
+    "unapproved Tier 3 or any autonomous Tier 4 action"
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "1.0",
+  "runId": "th-inventory-history-release-policy-isolated-20260716-021",
+  "traceId": "02196717-bea9-40a4-9025-2f34fbe73781",
+  "mode": "verify",
+  "sliceId": "foundation-inventory",
+  "contractVersion": "1.0-release-policy-isolated-dev-test",
+  "proposal": {
+    "path": "docs/new ideas/STOQUIFY_TRANSACTION_HISTORY_ANALYTICS_AND_SECURITY_PROPOSAL_2026-07-14.md",
+    "sha256": "sha256:0628f08178fe0441fe22ccbd1a6b429c2bb07b2ea5d278e6dcb799ab117c6979"
+  },
+  "baseCommit": "8a406e93b0e798ed6f476ca5d81df37a2aaa38be",
+  "runtimeArtifactRoot": "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/",
+  "scope": {
+    "includePaths": [
+      "app/[locale]/(dashboard)/dashboard/inventory/movements/page.tsx",
+      "components/dashboard/history/TransactionHistoryWorkbenchShell.tsx",
+      "components/inventory/movements/InventoryMovementHistoryWorkbench.tsx",
+      "hooks/useInventoryMovementHistoryWorkbench.ts"
+    ],
+    "lanes": [
+      "workbench",
+      "inventory"
+    ],
+    "excludePaths": [
+      "prisma/schema.prisma",
+      "prisma/migrations/"
+    ]
+  },
+  "stageAllowlists": {
+    "04": [
+      "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/slices/foundation-inventory/04-read-model-optimizer.json"
+    ],
+    "06": [
+      "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/slices/foundation-inventory/06-frontend-delivery.json"
+    ],
+    "05": [
+      "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/slices/foundation-inventory/05-workbench-ux-contract.json"
+    ],
+    "02": [
+      "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/slices/foundation-inventory/02-security-proof-gate.json"
+    ],
+    "01": [
+      "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/slices/foundation-inventory/01-architecture-gate.json"
+    ],
+    "07": [
+      "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/"
+    ],
+    "03": [
+      "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/slices/foundation-inventory/03-accounting-control-gate.json"
+    ]
+  },
+  "orchestratorPolicy": {
+    "deployMigrations": false,
+    "installSkills": false,
+    "productCodeEdits": false
+  },
+  "gates": {
+    "foundationInventory": {
+      "status": "PASS",
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/slices/foundation-inventory/07-release-review.json"
+      ]
+    },
+    "arAccountingPrerequisites": {
+      "status": "NA",
+      "evidence": []
+    }
+  },
+  "createdAt": "2026-07-16T10:05:06.7939356Z"
+}

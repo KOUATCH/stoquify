@@ -1,8 +1,8 @@
 {
   "summary": {
-    "generatedAt": "2026-07-11T20:17:36.300Z",
+    "generatedAt": "2026-07-16T14:20:32.292Z",
     "mode": "report-only",
-    "sourceInventoryGeneratedAt": "2026-07-11T20:17:36.270Z",
+    "sourceInventoryGeneratedAt": "2026-07-16T14:20:32.271Z",
     "recordCount": 37,
     "activeFindingCount": 0,
     "byStatus": {
@@ -878,8 +878,8 @@
       "sourceExists": true,
       "sourceInventory": {
         "moduleSlug": "settings",
-        "permission": "users.invite",
-        "guard": "requirePermission",
+        "permission": "INVITATION_ROLE_GRANT_PERMISSIONS",
+        "guard": "requireAllPermissions",
         "classification": "mapped, enforcement candidate",
         "observeOrEnforce": "report-only"
       },
@@ -889,7 +889,7 @@
       "permissionDisposition": "required-and-present",
       "moduleDisposition": "module-observed",
       "guardMarkers": [
-        "requirePermission("
+        "requireAllPermissions("
       ],
       "tenantMarkers": [
         "ctx.orgId"

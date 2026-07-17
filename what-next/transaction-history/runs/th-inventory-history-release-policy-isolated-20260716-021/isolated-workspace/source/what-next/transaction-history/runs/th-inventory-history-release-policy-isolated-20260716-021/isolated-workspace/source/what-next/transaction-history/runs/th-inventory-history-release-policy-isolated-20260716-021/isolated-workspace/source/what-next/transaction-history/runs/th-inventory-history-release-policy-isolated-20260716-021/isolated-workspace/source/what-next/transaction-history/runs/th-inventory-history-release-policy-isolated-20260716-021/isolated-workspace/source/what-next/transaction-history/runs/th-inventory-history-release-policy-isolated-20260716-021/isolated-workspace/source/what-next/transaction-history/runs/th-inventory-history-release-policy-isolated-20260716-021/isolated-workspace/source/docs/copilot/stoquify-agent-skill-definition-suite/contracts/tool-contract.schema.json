@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:stoquify:tool-contract/v1",
+  "title": "Stoquify Deterministic Tool Contract v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "tool_id",
+    "service_owner",
+    "operation_class",
+    "input_schema",
+    "output_schema",
+    "idempotency",
+    "permission_policy"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "tool_id": {
+      "type": "string"
+    },
+    "service_owner": {
+      "type": "string"
+    },
+    "operation_class": {
+      "type": "string",
+      "enum": [
+        "read",
+        "draft",
+        "controlled_write",
+        "human_only"
+      ]
+    },
+    "input_schema": {
+      "type": "string"
+    },
+    "output_schema": {
+      "type": "string"
+    },
+    "idempotency": {
+      "type": "string",
+      "enum": [
+        "not_applicable",
+        "required",
+        "forbidden_retry_on_ambiguity"
+      ]
+    },
+    "permission_policy": {
+      "type": "string"
+    },
+    "approval_policy": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "rollback_or_compensation": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}
