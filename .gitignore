@@ -61,3 +61,6 @@ outputs/
 /test-results/
 /playwright-report/
 /playwright/.auth/
+
+# Prevent isolated evidence snapshots from recursively copying transaction history.
+what-next/transaction-history/runs/*/isolated-workspace/**/what-next/transaction-history/
