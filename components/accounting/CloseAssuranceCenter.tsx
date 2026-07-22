@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import {
   AlertTriangle,
   BadgeCheck,
@@ -32,6 +32,7 @@ import {
   useCommentOnCloseFinding,
   useExportClosePack,
   useRunCloseAssurance,
+  useUpdateAccountantReview,
 } from "@/hooks/accounting/useCloseAssurance"
 import { cn } from "@/lib/utils"
 import type { Locale } from "@/types/bilingual"
@@ -121,6 +122,21 @@ const copy = {
     sourceTables: "Source tables",
     nodes: "Nodes",
     edges: "Edges",
+    partialData: "Partial data",
+    partialDataDescription: "Some close evidence domains are unavailable. Certification remains gated until required evidence is posted, resolved, or waived through controls.",
+    unavailableGates: "unavailable checklist gates",
+    actionErrorTitle: "Close action needs attention",
+    accountantReview: "Accountant review",
+    accountantReviewDescription: "Record an accountant decision against this close run without changing source evidence or posted ledger entries.",
+    reviewStatus: "Review status",
+    reviewReady: "Ready to close",
+    reviewChangesRequested: "Changes requested",
+    reviewNotes: "Decision notes",
+    reviewPlaceholder: "Document reviewer decision, requested changes, or close-readiness rationale.",
+    saveReview: "Save review",
+    savingReview: "Saving review",
+    latestReview: "Latest review",
+    reviewUnavailable: "Run close readiness before recording an accountant review.",
   },
   fr: {
     loadingTitle: "Chargement de l'assurance de cloture",
@@ -189,8 +205,25 @@ const copy = {
     sourceTables: "Tables source",
     nodes: "Noeuds",
     edges: "Liens",
+    partialData: "Donnees partielles",
+    partialDataDescription: "Certains domaines de preuve de cloture sont indisponibles. La certification reste controlee jusqu'a publication, resolution ou derogation controlee.",
+    unavailableGates: "portes de checklist indisponibles",
+    actionErrorTitle: "Action de cloture a verifier",
+    accountantReview: "Revue comptable",
+    accountantReviewDescription: "Enregistrer une decision comptable sur cette evaluation sans modifier les preuves sources ni les ecritures postees.",
+    reviewStatus: "Statut de revue",
+    reviewReady: "Pret a cloturer",
+    reviewChangesRequested: "Changements demandes",
+    reviewNotes: "Notes de decision",
+    reviewPlaceholder: "Documenter la decision, les changements demandes ou la justification de readiness.",
+    saveReview: "Enregistrer la revue",
+    savingReview: "Enregistrement",
+    latestReview: "Derniere revue",
+    reviewUnavailable: "Lancez la readiness cloture avant d'enregistrer une revue comptable.",
   },
 } as const
+
+type PortalReviewStatus = "READY_TO_CLOSE" | "CHANGES_REQUESTED"
 
 function formatDate(value: string | null | undefined, locale: Locale) {
   if (!value) return copy[locale].notSet
@@ -303,6 +336,24 @@ function selectedOpenFinding(findings: CloseAssuranceFindingDto[]) {
   return findings.find((finding) => finding.id && !["RESOLVED", "WAIVED_WITH_APPROVAL"].includes(finding.status)) ?? null
 }
 
+const UNSAFE_ACTION_ERROR_PATTERN = /\b(prisma|sql|select|insert|update|delete|stack|secret|token|password|credential|provider payload|raw payload|authorization|bearer|connection string)\b/i
+
+function actionErrorMessage(error: unknown, fallback: string) {
+  if (!(error instanceof Error)) return fallback
+  const message = error.message.trim()
+  if (!message || message.length > 240 || UNSAFE_ACTION_ERROR_PATTERN.test(message)) return fallback
+  return message
+}
+
+function hasPartialData(data: CloseAssuranceDashboardData) {
+  return (
+    data.source.provenance !== "POSTED" ||
+    data.summary.unavailableCount > 0 ||
+    data.provenance.some((item) => item.provenance === "UNAVAILABLE") ||
+    data.evidenceItems.some((item) => !item.available)
+  )
+}
+
 function downloadClosePack(result: ClosePackExportResult) {
   const blob = new Blob([result.content], { type: result.mimeType })
   const url = URL.createObjectURL(blob)
@@ -327,7 +378,15 @@ export function CloseAssuranceCenter({
   const [commentBody, setCommentBody] = useState("")
   const [waiverReason, setWaiverReason] = useState("")
   const [lastExport, setLastExport] = useState<ClosePackExportResult | null>(null)
+  const [reviewStatus, setReviewStatus] = useState<PortalReviewStatus>("READY_TO_CLOSE")
+  const [reviewNotes, setReviewNotes] = useState("")
+  const [actionError, setActionError] = useState<string | null>(initialError)
+  const [isClientReady, setIsClientReady] = useState(false)
   const t = copy[locale]
+
+  useEffect(() => {
+    setIsClientReady(true)
+  }, [])
   const initialQueryData = selectedPeriodId === initialSelectedPeriodId ? initialData : null
 
   const query = useCloseAssurance({
@@ -341,6 +400,7 @@ export function CloseAssuranceCenter({
   const commentMutation = useCommentOnCloseFinding(locale)
   const waiverMutation = useCloseWaiver(locale)
   const exportMutation = useExportClosePack(locale)
+  const reviewMutation = useUpdateAccountantReview(locale)
   const graphQuery = useCloseEvidenceGraph({
     periodId: selectedPeriodId || data?.period?.id,
     closeRunId: data?.run.id ?? undefined,
@@ -356,52 +416,85 @@ export function CloseAssuranceCenter({
   const canRequestWaiver = Boolean(selectedFinding?.id && waiverReason.trim().length >= 10 && !waiverMutation.request.isPending)
   const canExportDraft = Boolean(data?.controls.packExportAvailable && data.run.id && !exportMutation.draft.isPending)
   const canExportCertified = Boolean(data?.controls.certificationAvailable && data.run.id && !exportMutation.certified.isPending)
+  const canUpdateReview = Boolean(data?.run.id && !reviewMutation.isPending)
+
+  async function withActionError(work: () => Promise<void>) {
+    setActionError(null)
+    try {
+      await work()
+    } catch (error) {
+      setActionError(actionErrorMessage(error, t.errorTitle))
+    }
+  }
 
   async function handleRun() {
-    const periodId = selectedPeriodId || data?.period?.id
-    if (!periodId) return
-    const result = await runMutation.mutateAsync({ periodId })
-    setSelectedPeriodId(result.period?.id ?? periodId)
-    setSelectedFindingId(selectedOpenFinding(result.findings)?.id ?? null)
+    await withActionError(async () => {
+      const periodId = selectedPeriodId || data?.period?.id
+      if (!periodId) return
+      const result = await runMutation.mutateAsync({ periodId })
+      setSelectedPeriodId(result.period?.id ?? periodId)
+      setSelectedFindingId(selectedOpenFinding(result.findings)?.id ?? null)
+    })
   }
 
   async function handleAssign(findingId: string) {
-    await assignMutation.mutateAsync({ findingId })
+    await withActionError(async () => {
+      await assignMutation.mutateAsync({ findingId })
+    })
   }
 
   async function handleComment() {
-    if (!selectedFinding?.id) return
-    await commentMutation.mutateAsync({
-      findingId: selectedFinding.id,
-      closeRunId: data?.run.id ?? undefined,
-      body: commentBody,
+    await withActionError(async () => {
+      if (!selectedFinding?.id) return
+      await commentMutation.mutateAsync({
+        findingId: selectedFinding.id,
+        closeRunId: data?.run.id ?? undefined,
+        body: commentBody,
+      })
+      setCommentBody("")
     })
-    setCommentBody("")
   }
 
   async function handleWaiverRequest() {
-    if (!selectedFinding?.id) return
-    await waiverMutation.request.mutateAsync({
-      findingId: selectedFinding.id,
-      reason: waiverReason,
+    await withActionError(async () => {
+      if (!selectedFinding?.id) return
+      await waiverMutation.request.mutateAsync({
+        findingId: selectedFinding.id,
+        reason: waiverReason,
+      })
+      setWaiverReason("")
     })
-    setWaiverReason("")
   }
 
   async function handleDraftExport() {
-    if (!data?.run.id) return
-    const result = await exportMutation.draft.mutateAsync({ closeRunId: data.run.id })
-    setLastExport(result)
-    downloadClosePack(result)
+    await withActionError(async () => {
+      if (!data?.run.id) return
+      const result = await exportMutation.draft.mutateAsync({ closeRunId: data.run.id })
+      setLastExport(result)
+      downloadClosePack(result)
+    })
   }
 
   async function handleCertifiedExport() {
-    if (!data?.run.id) return
-    const result = await exportMutation.certified.mutateAsync({ closeRunId: data.run.id })
-    setLastExport(result)
-    downloadClosePack(result)
+    await withActionError(async () => {
+      if (!data?.run.id) return
+      const result = await exportMutation.certified.mutateAsync({ closeRunId: data.run.id })
+      setLastExport(result)
+      downloadClosePack(result)
+    })
   }
 
+  async function handleReviewUpdate() {
+    await withActionError(async () => {
+      if (!data?.run.id) return
+      await reviewMutation.mutateAsync({
+        closeRunId: data.run.id,
+        status: reviewStatus,
+        decisionNotes: reviewNotes.trim() || undefined,
+      })
+      setReviewNotes("")
+    })
+  }
   if (query.isLoading && !data) {
     return (
       <Panel title={t.loadingTitle} description={t.loadingBody}>
@@ -553,10 +646,29 @@ export function CloseAssuranceCenter({
         </div>
       </section>
 
-      <div data-testid="close-readiness-workspace" className="grid min-w-0 gap-5">
+      {actionError ? <ActionErrorBanner message={actionError} locale={locale} /> : null}
+
+      {hasPartialData(data) ? <PartialDataBanner data={data} locale={locale} /> : null}
+
+      <div
+        data-testid="close-readiness-workspace"
+        data-client-ready={isClientReady ? "true" : "false"}
+        className="grid min-w-0 gap-5"
+      >
         <ChecklistPanel data={data} locale={locale} />
-        <div data-testid="close-certification-row" className="grid min-w-0 gap-5 xl:grid-cols-2">
+        <div data-testid="close-certification-row" className="grid min-w-0 gap-5 xl:grid-cols-3">
           <ControlsPanel data={data} locale={locale} />
+          <AccountantReviewPanel
+            data={data}
+            locale={locale}
+            status={reviewStatus}
+            notes={reviewNotes}
+            canUpdate={canUpdateReview}
+            isSaving={reviewMutation.isPending}
+            onStatusChange={setReviewStatus}
+            onNotesChange={setReviewNotes}
+            onSave={handleReviewUpdate}
+          />
           <ClosePackExportPanel
             data={data}
             locale={locale}
@@ -595,6 +707,57 @@ export function CloseAssuranceCenter({
         <ProvenancePanel data={data} locale={locale} graph={graph} graphLoading={graphQuery.isFetching} />
       </div>
     </div>
+  )
+}
+
+function ActionErrorBanner({ message, locale }: { message: string; locale: Locale }) {
+  const t = copy[locale]
+
+  return (
+    <section className="rounded-lg border border-[var(--dash-danger)] bg-[var(--dash-danger-soft)] px-4 py-3 text-[var(--dash-text)]">
+      <div className="flex min-w-0 items-start gap-3">
+        <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-[var(--dash-danger)]" aria-hidden="true" />
+        <div className="min-w-0">
+          <p className="font-semibold text-[var(--dash-danger)]">{t.actionErrorTitle}</p>
+          <p className="mt-1 break-words text-sm leading-5 text-[var(--dash-text-soft)]">{message}</p>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function PartialDataBanner({ data, locale }: { data: CloseAssuranceDashboardData; locale: Locale }) {
+  const t = copy[locale]
+  const unavailableSources = data.provenance
+    .filter((item) => item.provenance === "UNAVAILABLE")
+    .map((item) => item.label)
+    .slice(0, 4)
+
+  return (
+    <section data-testid="close-partial-data-state" className="rounded-lg border border-[var(--dash-warning)] bg-[var(--dash-warning-soft)] px-4 py-3 text-[var(--dash-text)]">
+      <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div className="flex min-w-0 items-start gap-3">
+          <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-[var(--dash-warning)]" aria-hidden="true" />
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="font-semibold text-[var(--dash-warning)]">{t.partialData}</p>
+              <Badge variant="outline" className={cn("rounded-md", statusClass(data.source.provenance))}>
+                {data.source.provenance}
+              </Badge>
+            </div>
+            <p className="mt-1 text-sm leading-5 text-[var(--dash-text-soft)]">{t.partialDataDescription}</p>
+            {unavailableSources.length ? (
+              <p className="mt-2 text-xs leading-5 text-[var(--dash-text-faint)]">
+                {unavailableSources.join(", ")}
+              </p>
+            ) : null}
+          </div>
+        </div>
+        <Badge variant="outline" className="w-fit rounded-md border-[var(--dash-warning)] bg-[rgba(12,20,24,0.18)] text-[var(--dash-warning)]">
+          {data.summary.unavailableCount} {t.unavailableGates}
+        </Badge>
+      </div>
+    </section>
   )
 }
 
@@ -917,6 +1080,86 @@ function ProvenancePanel({
         </div>
       </Panel>
     </div>
+  )
+}
+
+function AccountantReviewPanel({
+  data,
+  locale,
+  status,
+  notes,
+  canUpdate,
+  isSaving,
+  onStatusChange,
+  onNotesChange,
+  onSave,
+}: {
+  data: CloseAssuranceDashboardData
+  locale: Locale
+  status: PortalReviewStatus
+  notes: string
+  canUpdate: boolean
+  isSaving: boolean
+  onStatusChange: (status: PortalReviewStatus) => void
+  onNotesChange: (value: string) => void
+  onSave: () => Promise<void>
+}) {
+  const t = copy[locale]
+  const latestReview = data.reviews[0] ?? null
+
+  return (
+    <Panel title={t.accountantReview} description={t.accountantReviewDescription}>
+      <div className="grid gap-3 p-4">
+        <div className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.28)] p-3">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="text-xs font-semibold uppercase text-[var(--dash-text-faint)]">{t.latestReview}</p>
+            <Badge variant="outline" className={cn("rounded-md", statusClass(latestReview?.status ?? "OPEN"))}>
+              {latestReview?.status ?? "OPEN"}
+            </Badge>
+          </div>
+          <p className="mt-2 text-sm leading-5 text-[var(--dash-text-soft)]">
+            {latestReview?.decisionNotes || t.noComments}
+          </p>
+          <p className="mt-2 text-xs text-[var(--dash-text-faint)]">
+            {latestReview ? `${latestReview.reviewerId || t.notSet} - ${formatDate(latestReview.reviewedAt ?? latestReview.createdAt, locale)}` : t.reviewUnavailable}
+          </p>
+        </div>
+
+        <div className="grid gap-2">
+          <label className="text-xs font-semibold uppercase text-[var(--dash-text-faint)]" htmlFor="close-review-notes">
+            {t.reviewStatus}
+          </label>
+          <Select value={status} onValueChange={(value) => onStatusChange(value as PortalReviewStatus)} disabled={!data.run.id || isSaving}>
+            <SelectTrigger aria-label={t.reviewStatus} className="h-10 rounded-lg border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.38)] text-[var(--dash-text)]">
+              <SelectValue placeholder={t.reviewStatus} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="READY_TO_CLOSE">{t.reviewReady}</SelectItem>
+              <SelectItem value="CHANGES_REQUESTED">{t.reviewChangesRequested}</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <Textarea
+          id="close-review-notes"
+          value={notes}
+          onChange={(event) => onNotesChange(event.target.value)}
+          placeholder={t.reviewPlaceholder}
+          disabled={!data.run.id || isSaving}
+          className="min-h-28 border-[var(--dash-border-subtle)] bg-[rgba(3,7,10,0.42)] text-[var(--dash-text)] placeholder:text-[var(--dash-text-faint)]"
+        />
+        <Button
+          type="button"
+          onClick={onSave}
+          disabled={!canUpdate}
+          className="dashboard-button-primary h-10 rounded-lg"
+        >
+          {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <BookOpenCheck className="h-4 w-4" />}
+          {isSaving ? t.savingReview : t.saveReview}
+        </Button>
+        {!data.run.id ? <p className="text-xs leading-5 text-[var(--dash-warning)]">{t.reviewUnavailable}</p> : null}
+      </div>
+    </Panel>
   )
 }
 

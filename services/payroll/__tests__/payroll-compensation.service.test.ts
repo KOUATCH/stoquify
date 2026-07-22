@@ -206,7 +206,26 @@ function contractRow(overrides: Record<string, unknown> = {}) {
     convention: "Retail",
     signedDocumentHash: "sha256:contract",
     activatedBusinessEventId: "event-contract",
-    metadata: null,
+    metadata: {
+      hrisContractApproval: {
+        latest: {
+          status: "APPROVED",
+          requestId: "event-contract-request",
+          requestEvidenceHash: "sha256:contract-request",
+          approvalEvidenceHash: "sha256:contract-approval",
+          activationBusinessEventId: "event-contract",
+        },
+      },
+      hrisDocumentEvidence: {
+        current: {
+          status: "APPROVED",
+          artifactHash: "sha256:contract",
+          malwareScanEvidenceHash: "sha256:malware-scan",
+          approvalEvidenceHash: "sha256:document-approval",
+          approvalBusinessEventId: "event-document-approval",
+        },
+      },
+    },
     deletedAt: null,
     createdAt: new Date("2026-01-01T00:00:00.000Z"),
     updatedAt: new Date("2026-06-26T00:00:00.000Z"),
@@ -557,6 +576,40 @@ describe("payroll compensation approval service", () => {
         approvalEvidenceHash: "sha256:approval-evidence",
       }),
     ).rejects.toBeInstanceOf(BusinessRuleError)
+
+    expect(tx.payrollEmployeeRubriqueAssignment.update).not.toHaveBeenCalled()
+    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled()
+  })
+
+  it("blocks active compensation when contract fields exist without HRIS approval proof", async () => {
+    const tx = buildTx()
+    useTransaction(tx)
+    tx.payrollEmployeeRubriqueAssignment.findFirst.mockResolvedValue(assignmentRow({
+      status: PayrollRubriqueAssignmentStatus.DRAFT,
+      approvalBusinessEventId: null,
+      metadata: {
+        hrisCompensationApproval: {
+          status: "REQUESTED",
+          requestedById: "hr-1",
+          requestBusinessEventId: "event-request",
+        },
+      },
+    }))
+    tx.payrollContract.findFirst.mockResolvedValue(contractRow({ metadata: null }))
+
+    await expect(
+      approveEmployeeRubriqueAssignment({
+        organizationId: "org-1",
+        actorId: "checker-1",
+        actorPermissions: ["payroll.compensation.manage"],
+        employeeId: "emp-1",
+        assignmentId: "assignment-1",
+        decisionReasonHash: "sha256:decision-reason",
+        approvalEvidenceHash: "sha256:approval-evidence",
+      }),
+    ).rejects.toThrow(
+      "Active compensation requires complete HRIS contract activation and document approval proof.",
+    )
 
     expect(tx.payrollEmployeeRubriqueAssignment.update).not.toHaveBeenCalled()
     expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled()

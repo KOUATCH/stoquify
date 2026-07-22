@@ -3,6 +3,7 @@
 import { z } from "zod"
 
 import { err, ok } from "@/services/_shared/action-response"
+import { BusinessRuleError } from "@/services/_shared/action-errors"
 import { requireAnyPermission } from "@/lib/security/rbac"
 import { requireFreshAuth } from "@/lib/security/auth-session"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
@@ -49,7 +50,7 @@ async function enforceCashPaymentModules(ctx: Awaited<ReturnType<typeof requireA
     mode: "enforce",
     audit: true,
   })
-  if (!cashDecision.allowed) throw new Error("Cash drawer module is not available.")
+  if (!cashDecision.allowed) throw new BusinessRuleError("Cash drawer module is not available.")
 
   const paymentDecision = await observeModuleAccess({
     organizationId: ctx.orgId,
@@ -62,7 +63,7 @@ async function enforceCashPaymentModules(ctx: Awaited<ReturnType<typeof requireA
     mode: "enforce",
     audit: true,
   })
-  if (!paymentDecision.allowed) throw new Error("Payment reconciliation module is not available.")
+  if (!paymentDecision.allowed) throw new BusinessRuleError("Payment reconciliation module is not available.")
 }
 
 export async function getCashPaymentHistoryAction(input: unknown = {}) {
@@ -121,7 +122,7 @@ export async function prepareCashPaymentHistoryExportAction(input: unknown = {})
         watermarkId,
       },
     })
-    if (!decision.allowed) throw new Error(decision.safeMessage)
+    if (!decision.allowed) throw new BusinessRuleError(decision.safeMessage)
     return ok({ decision })
   } catch (error) {
     return err(error)

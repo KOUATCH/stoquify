@@ -626,6 +626,8 @@ export async function decideHrisApprovalInboxItem(
     actorPermissions: parsed.actorPermissions,
     employeeId: parsed.employeeId,
     limit: 1,
+    asOf: new Date(),
+    delegationAuthority: "APPROVAL_DECISION",
   }, client)
 
   const common = {

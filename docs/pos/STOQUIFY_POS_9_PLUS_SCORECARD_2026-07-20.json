@@ -1,0 +1,57 @@
+{
+  "artifact": "Stoquify POS 9+ Evaluation and Roadmap",
+  "evaluatedAt": "2026-07-20",
+  "overallScore": 5.8,
+  "confidence": "medium-high",
+  "releaseDecision": {
+    "pos9PlusClaim": "NO-GO",
+    "productionOfflineSelling": "NO-GO",
+    "controlledOnlineKernelTesting": "CONDITIONAL"
+  },
+  "dimensions": [
+    {"id":1,"name":"Cashier speed and efficiency","score":6.5,"confidence":"medium"},
+    {"id":2,"name":"Visual hierarchy and density","score":7.0,"confidence":"medium"},
+    {"id":3,"name":"Catalog search and scanning","score":6.0,"confidence":"medium"},
+    {"id":4,"name":"Cart accuracy/editability","score":7.0,"confidence":"medium-high"},
+    {"id":5,"name":"Customer usability/data safety","score":6.5,"confidence":"medium"},
+    {"id":6,"name":"Tender, split, cash, change","score":5.5,"confidence":"high"},
+    {"id":7,"name":"Shift and drawer control","score":6.5,"confidence":"high"},
+    {"id":8,"name":"Receipt and fiscal evidence","score":6.0,"confidence":"high"},
+    {"id":9,"name":"Refund/void/return safety","score":4.0,"confidence":"high"},
+    {"id":10,"name":"Offline resilience/recovery","score":3.0,"confidence":"high"},
+    {"id":11,"name":"Robust and conflict states","score":5.0,"confidence":"high"},
+    {"id":12,"name":"Keyboard/touch/scanner","score":5.5,"confidence":"medium"},
+    {"id":13,"name":"Accessibility","score":5.5,"confidence":"low-medium"},
+    {"id":14,"name":"Responsiveness","score":6.0,"confidence":"low-medium"},
+    {"id":15,"name":"Performance posture","score":5.0,"confidence":"medium"},
+    {"id":16,"name":"Localization/currency/tax/rounding","score":6.5,"confidence":"medium"},
+    {"id":17,"name":"Security/RBAC/tenant isolation","score":6.5,"confidence":"high"},
+    {"id":18,"name":"Inventory/accounting truth","score":6.5,"confidence":"high"},
+    {"id":19,"name":"Manager observability/audit","score":5.0,"confidence":"high"},
+    {"id":20,"name":"Test and release readiness","score":5.0,"confidence":"high"},
+    {"id":21,"name":"OHADA/target-market fit","score":6.5,"confidence":"medium"},
+    {"id":22,"name":"Competitive differentiation","score":6.0,"confidence":"medium-low"}
+  ],
+  "p0Blockers": [
+    "Unbacked STORE_CREDIT tender",
+    "No database-enforced one-active-shift invariant",
+    "Electronic payment can be marked PAID without authoritative provider acknowledgement",
+    "Refund and void lack provider reversal proof",
+    "No production cashier offline-charge fallback",
+    "Offline queue can strand SYNCING and prune before terminal replay",
+    "Offline device signatures are not cryptographically verified",
+    "No conflict acknowledgement, resolution, and retry workflow",
+    "Inconsistent module-entitlement enforcement"
+  ],
+  "verification": {
+    "typecheck": {"result":"pass"},
+    "focusedPosTests": {"result":"pass","suites":11,"tests":67},
+    "posActionTests": {"result":"pass","suites":7,"tests":43},
+    "offlineTests": {"result":"pass","suites":4,"tests":29},
+    "authenticatedBrowserAudit": {"result":"blocked","reason":"isolated audit environment could not establish the required database-backed session"}
+  },
+  "notes": [
+    "Passing regression tests do not prove missing P0 capabilities.",
+    "Scores are capped by mandatory financial, offline, security, and tenant-isolation release gates."
+  ]
+}

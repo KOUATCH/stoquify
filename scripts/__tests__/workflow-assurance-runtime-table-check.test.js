@@ -4,6 +4,8 @@ const path = require("path")
 
 const {
   applyRuntimeDatabaseEnv,
+  REQUIRED_WORKFLOW_ASSURANCE_MIGRATIONS,
+  REQUIRED_WORKFLOW_ASSURANCE_TABLES,
   evaluateRuntimeTablePresence,
   exitCodeForReport,
   parseArgs,
@@ -12,6 +14,13 @@ const {
 } = require("../workflow-assurance-runtime-table-check")
 
 describe("workflow assurance runtime table check", () => {
+  it("requires the multi-finding table and persistence migration", () => {
+    expect(REQUIRED_WORKFLOW_ASSURANCE_TABLES).toContain("workflow_assurance_check_findings")
+    expect(REQUIRED_WORKFLOW_ASSURANCE_MIGRATIONS).toContain(
+      "20260720210000_workflow_assurance_multi_finding_persistence",
+    )
+  })
+
   it("reports ready when required runtime tables and migration rows are present", () => {
     const report = evaluateRuntimeTablePresence({
       requiredTables: ["workflow_assurance_incidents"],

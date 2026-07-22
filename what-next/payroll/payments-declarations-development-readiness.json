@@ -1,0 +1,65 @@
+{
+  "summary": {
+    "generatedAt": "2026-07-20T07:07:29.717Z",
+    "mode": "fail",
+    "status": "READY_FOR_DEVELOPMENT_AND_SANDBOX_PROOF",
+    "checkCount": 9,
+    "readyCount": 9,
+    "blockerCount": 0
+  },
+  "scope": {
+    "environmentClass": "DEVELOPMENT_AND_SANDBOX_ONLY",
+    "syntheticOrAnonymizedDataOnly": true,
+    "productionUseAllowed": false,
+    "livePaymentsAllowed": false,
+    "legallyEffectiveDeclarationsAllowed": false,
+    "productionAuthorityCallsAllowed": false
+  },
+  "upstream": {
+    "developmentStatus": "READY_FOR_DEVELOPMENT_TESTING",
+    "productionStatus": "blocked",
+    "productionBlockers": [
+      "source_artifact_hash_verification",
+      "source_artifact_expert_approval"
+    ]
+  },
+  "checks": [
+    {
+      "id": "statutory_development_prerequisite_ready",
+      "ready": true
+    },
+    {
+      "id": "live_and_legal_effects_remain_disabled",
+      "ready": true
+    },
+    {
+      "id": "approved_destination_maker_checker_guard",
+      "ready": true
+    },
+    {
+      "id": "provider_callback_idempotency_and_conflict_guard",
+      "ready": true
+    },
+    {
+      "id": "authority_proof_idempotency_and_certification_guard",
+      "ready": true
+    },
+    {
+      "id": "settlement_amount_currency_and_evidence_tieout",
+      "ready": true
+    },
+    {
+      "id": "tenant_rbac_audit_and_redaction_evidence",
+      "ready": true
+    },
+    {
+      "id": "focused_negative_test_harness_present",
+      "ready": true
+    },
+    {
+      "id": "development_gate_is_not_a_production_policy_gate",
+      "ready": true
+    }
+  ],
+  "blockers": []
+}

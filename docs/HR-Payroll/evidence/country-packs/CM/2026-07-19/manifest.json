@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "1.0",
+  "countryCode": "CM",
+  "retrievedAt": "2026-07-19T17:54:28.374Z",
+  "reviewStatus": "PENDING_EXPERT_REVIEW",
+  "productionUseAllowed": false,
+  "artifacts": [
+    {
+      "artifactId": "CM_CNPS_CONTRIBUTION_DECREE_2016_SOURCE_2026_07_19",
+      "legalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+      "title": "Decree No. 2016/072 of 15 February 2016 fixing social contribution rates and remuneration ceilings",
+      "sourceAuthority": "Caisse Nationale de Prevoyance Sociale du Cameroun",
+      "sourceUrl": "https://www.cnps.cm/images/documentutile/decret%20fixant%20taux%20de%20cotisations%20sociales%20et%20plafonds%20des%20rmunrations_baremes%202.pdf",
+      "file": "CNPS-Decree-2016-072-contribution-rates.pdf",
+      "mediaType": "application/pdf",
+      "byteLength": 2608628,
+      "sha256": "1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+      "reviewStatus": "PENDING_EXPERT_REVIEW",
+      "productionUseAllowed": false
+    },
+    {
+      "artifactId": "CM_CNPS_EMPLOYER_RULES_SOURCE_2026_07_19",
+      "legalRef": "CM_CNPS_EMPLOYER_RULES",
+      "title": "CNPS Cameroon general rules for employers",
+      "sourceAuthority": "Caisse Nationale de Prevoyance Sociale du Cameroun",
+      "sourceUrl": "https://www.cnps.cm/fr/employeurs/regles-generales-pour-les-employeurs1.html",
+      "file": "CNPS-employer-general-rules.html",
+      "mediaType": "text/html",
+      "byteLength": 248633,
+      "sha256": "bc51f74de8dd3b0c7babd86e8f98d92dbdbece214480f66ac89c42d3e894a868",
+      "reviewStatus": "PENDING_EXPERT_REVIEW",
+      "productionUseAllowed": false
+    }
+  ],
+  "requiredApproval": {
+    "reviewerIdentity": null,
+    "reviewedAt": null,
+    "effectiveFrom": null,
+    "effectiveTo": null,
+    "approvalArtifactFile": null,
+    "approvalArtifactHash": null,
+    "approvedFixtureFamilies": [],
+    "fixtureFamilies": [
+      "payroll.cnps.pensionRatesBps",
+      "payroll.cnps.familyAllowanceRatesBps",
+      "payroll.cnps.occupationalRiskRatesBps",
+      "payroll.cnps.employerRules"
+    ]
+  },
+  "nonClaims": [
+    "Artifact capture does not certify legal interpretation.",
+    "Artifact capture does not constitute qualified reviewer approval.",
+    "The country-pack symbolic sourceEvidenceHash values must not be replaced until approval evidence is complete."
+  ]
+}

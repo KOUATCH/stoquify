@@ -25,6 +25,7 @@ const IGNORE_DIRS = new Set([
   "build",
   "node_modules",
   "graphify-out",
+  "transaction-history",
 ])
 
 const SOURCE_EXTENSIONS = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"])

@@ -29,8 +29,6 @@ export type {
   PayrollCountryPackReviewIntakeRecordedCertificate,
 };
 
-const PAYROLL_COUNTRY_PACK_INTAKE_PERMISSION = "payroll.runs.calculate";
-const PAYROLL_COUNTRY_PACK_APPROVAL_PERMISSION = "payroll.runs.approve";
 const payrollStatutoryScenarioFamilies = new Set<PayrollStatutoryScenarioFamily>([
   "CNPS_PENSION",
   "CNPS_FAMILY_ALLOWANCE",
@@ -145,7 +143,7 @@ const evaluateCountryPackReviewIntake = protect<
   PayrollCountryPackReviewIntakeCertificate
 >(
   {
-    permission: PAYROLL_COUNTRY_PACK_INTAKE_PERMISSION,
+    permission: "payroll.runs.calculate",
     auditResource: "PayrollCountryPackReviewIntakeCertificate",
     auditAllowed: false,
     tenantGuard: "handler-derived",
@@ -173,7 +171,7 @@ const recordCountryPackReviewIntake = protect<
   PayrollCountryPackReviewIntakeRecordedCertificate
 >(
   {
-    permission: PAYROLL_COUNTRY_PACK_INTAKE_PERMISSION,
+    permission: "payroll.runs.calculate",
     auditResource: "PayrollCountryPackReviewIntakeCertificate",
     freshAuth: true,
     tenantGuard: "handler-derived",
@@ -208,7 +206,7 @@ const approveCountryPackReviewIntake = protect<
   PayrollCountryPackReviewIntakeApproval
 >(
   {
-    permission: PAYROLL_COUNTRY_PACK_APPROVAL_PERMISSION,
+    permission: "payroll.runs.approve",
     auditResource: "PayrollCountryPackReviewIntakeApproval",
     freshAuth: true,
     tenantGuard: "handler-derived",

@@ -22,9 +22,22 @@ export const openShiftSchema = z.object({
   notes: z.string().trim().max(500).optional(),
 })
 
+const explicitClosingCountSchema = z
+  .union([z.string(), z.number()])
+  .transform((value) => String(value).trim())
+  .pipe(
+    z
+      .string()
+      .min(1, "Closing count is required")
+      .regex(
+        /^\d{1,12}(?:\.\d{1,2})?$/,
+        "Closing count must be a non-negative amount with no more than two decimal places",
+      ),
+  )
+
 export const closeShiftSchema = z.object({
   sessionId: z.string().min(1, "Session is required"),
-  actualBalance: z.coerce.number().min(0, "Closing count cannot be negative"),
+  actualBalance: explicitClosingCountSchema,
   notes: z.string().trim().max(500).optional(),
 })
 

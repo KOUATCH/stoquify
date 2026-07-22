@@ -24,6 +24,8 @@ import {
   markBusinessEventAppliedInTx,
   recordBusinessEventInTx,
 } from "@/services/events/business-event.service"
+import { validateHrisTimeLeaveAttendanceCertification } from "@/services/hris/time-leave.contract"
+import { evaluateRedaction, type RedactionDecision } from "@/services/security/redaction-policy.service"
 
 export type DbClient = typeof db | Prisma.TransactionClient
 
@@ -450,6 +452,36 @@ function attendanceReadinessFor(employee: EmployeeReadinessRecord, parsed: z.out
       blocker: "ATTENDANCE_SOURCE_HASH_MISSING",
     }
   }
+  try {
+    validateHrisTimeLeaveAttendanceCertification({
+      sourcePayload: metadataRecord(snapshot.metadata).sourcePayload,
+      approvedById: snapshot.frozenById ?? "",
+      countryCode: employee.countryCode ?? "",
+      periodStart: snapshot.periodStart,
+      periodEnd: snapshot.periodEnd,
+      totals: {
+        scheduledMinutes: snapshot.scheduledMinutes,
+        workedMinutes: snapshot.workedMinutes,
+        overtimeMinutes: snapshot.overtimeMinutes,
+        absenceMinutes: snapshot.absenceMinutes,
+        leaveMinutes: snapshot.leaveMinutes,
+      },
+    })
+  } catch {
+    return {
+      status: "CERTIFICATION_INVALID" as const,
+      snapshotId: snapshot.id,
+      snapshotStatus: snapshot.status,
+      periodStart: snapshot.periodStart.toISOString(),
+      periodEnd: snapshot.periodEnd.toISOString(),
+      sourceHashPresent: true,
+      expectedSourceHashPresent: Boolean(expectedSourceHash),
+      driftDetected: false,
+      frozenAt: snapshot.frozenAt?.toISOString() ?? null,
+      blocker: "ATTENDANCE_CERTIFICATION_INVALID",
+    }
+  }
+
   if (expectedSourceHash && expectedSourceHash !== snapshot.sourceHash) {
     return {
       status: "DRIFT_DETECTED" as const,
@@ -478,7 +510,11 @@ function attendanceReadinessFor(employee: EmployeeReadinessRecord, parsed: z.out
   }
 }
 
-function mapEmployeeReadiness(employee: EmployeeReadinessRecord, parsed: z.output<typeof paymentDestinationReadinessInputSchema>) {
+function mapEmployeeReadiness(
+  employee: EmployeeReadinessRecord,
+  parsed: z.output<typeof paymentDestinationReadinessInputSchema>,
+  documentEvidenceDecision: RedactionDecision,
+) {
   const approvedEvidence = approvedEvidenceFromMetadata(employee.metadata)
   const change = employee.paymentDestinationChangeRequests[0]
   const hasApprovedPaymentDestination = Boolean(
@@ -507,6 +543,18 @@ function mapEmployeeReadiness(employee: EmployeeReadinessRecord, parsed: z.outpu
   const identifierHashTypes = [employee.taxIdentifierHash ? "TAX" : null, employee.socialIdentifierHash ? "SOCIAL" : null]
     .filter((value): value is string => Boolean(value))
   const paymentHashes = paymentEvidenceHashes(employee)
+  const visibleEvidenceHashes = (hashes: string[]) =>
+    documentEvidenceDecision.allowed
+      ? hashes
+      : hashes.map(() => documentEvidenceDecision.replacement)
+  const latestChange = change
+    ? {
+        ...mapChange({ ...change, employee } as DestinationChangeRecord),
+        evidenceDocumentHash: documentEvidenceDecision.allowed
+          ? change.evidenceDocumentHash
+          : documentEvidenceDecision.replacement,
+      }
+    : null
   const blockers: string[] = []
   if (employee.status !== PayrollEmployeeStatus.ACTIVE) blockers.push("EMPLOYEE_NOT_ACTIVE")
   if (!hasApprovedPaymentDestination) blockers.push("APPROVED_PAYMENT_DESTINATION_EVIDENCE_MISSING")
@@ -523,13 +571,13 @@ function mapEmployeeReadiness(employee: EmployeeReadinessRecord, parsed: z.outpu
       maskedDestination: maskedDestinationFor(employee),
       approvedEvidenceHashPresent: Boolean(approvedEvidence.approvalEvidenceHash),
       paymentDestinationHashPresent: Boolean(employee.paymentDestinationHash),
-      latestChange: change ? mapChange({ ...change, employee } as DestinationChangeRecord) : null,
+      latestChange,
     },
     evidence: {
-      contractEvidenceHashes,
-      salaryChangeEvidenceHashes,
+      contractEvidenceHashes: visibleEvidenceHashes(contractEvidenceHashes),
+      salaryChangeEvidenceHashes: visibleEvidenceHashes(salaryChangeEvidenceHashes),
       identifierHashTypes,
-      paymentEvidenceHashes: paymentHashes,
+      paymentEvidenceHashes: visibleEvidenceHashes(paymentHashes),
       totalReferenceCount: contractEvidenceHashes.length + salaryChangeEvidenceHashes.length + identifierHashTypes.length + paymentHashes.length,
     },
     attendanceReadiness: attendance,
@@ -610,6 +658,12 @@ export async function getPaymentEvidenceReadiness(input: PaymentDestinationReadi
   const canReadDestination = hasAnyRbacPermission(parsed.actorPermissions, READ_PERMISSIONS)
   const canReadAttendance = hasAnyRbacPermission(parsed.actorPermissions, ATTENDANCE_READINESS_PERMISSIONS)
   if (!canReadDestination && !canReadAttendance) throw new ForbiddenError("Missing permission for payment evidence readiness read.")
+  const documentEvidenceDecision = evaluateRedaction({
+    field: "PayrollPaymentEvidenceReadiness.evidenceHashes",
+    category: "payroll_document_evidence",
+    actorPermissions: parsed.actorPermissions,
+  })
+
 
   const employees = await client.payrollEmployee.findMany({
     where: {
@@ -634,18 +688,38 @@ export async function getPaymentEvidenceReadiness(input: PaymentDestinationReadi
     orderBy: [{ employeeNumber: "asc" }],
     take: parsed.limit,
   })
-  const mapped = (employees as EmployeeReadinessRecord[]).map((employee) => mapEmployeeReadiness(employee, parsed))
+  const mapped = (employees as EmployeeReadinessRecord[]).map((employee) =>
+    mapEmployeeReadiness(employee, parsed, documentEvidenceDecision),
+  )
   await writeAudit(client, {
     organizationId: parsed.organizationId,
     entityType: "PayrollPaymentEvidenceReadiness",
     entityId: parsed.employeeId ?? "payment-evidence-readiness",
     action: "PAYROLL_PAYMENT_EVIDENCE_READINESS_READ",
     actorId: parsed.actorId,
-    after: { employeeCount: mapped.length, paymentDestinationReadAllowed: canReadDestination, attendanceReadAllowed: canReadAttendance },
+    after: {
+      employeeCount: mapped.length,
+      paymentDestinationReadAllowed: canReadDestination,
+      attendanceReadAllowed: canReadAttendance,
+      documentEvidenceAccess: {
+        allowed: documentEvidenceDecision.allowed,
+        mode: documentEvidenceDecision.mode,
+        reasonCode: documentEvidenceDecision.reasonCode,
+        policy: documentEvidenceDecision.policy,
+      },
+    },
   })
 
   return {
     organizationId: parsed.organizationId,
+    redaction: {
+      documentEvidenceDecision: {
+        allowed: documentEvidenceDecision.allowed,
+        mode: documentEvidenceDecision.mode,
+        reasonCode: documentEvidenceDecision.reasonCode,
+        policy: documentEvidenceDecision.policy,
+      },
+    },
     asOf: new Date().toISOString(),
     employees: mapped,
     summary: {

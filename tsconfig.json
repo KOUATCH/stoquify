@@ -32,9 +32,9 @@
   "include": [
     "**/*.ts",
     "**/*.tsx",
+    ".next-dev/types/**/*.ts",
     ".next/types/**/*.ts",
-    "next-env.d.ts",
-    ".next-dev/types/**/*.ts"
+    "next-env.d.ts"
   ],
   "exclude": [
     "node_modules",
@@ -45,6 +45,7 @@
     "graphify-out/**",
     "ideas/**",
     "outputs/**",
+    "what-next/**",
     "scripts/**",
     "prisma/*.ts",
     "prisma/**/*.ts",

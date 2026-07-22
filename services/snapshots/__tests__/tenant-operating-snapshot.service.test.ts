@@ -49,7 +49,10 @@ import { db } from "@/prisma/db"
 import { getCloseReadinessSnapshot } from "../close-readiness-snapshot.service"
 import { getInventoryCashSnapshot } from "../inventory-cash-snapshot.service"
 import { getPaymentTruthSnapshot } from "../payment-truth-snapshot.service"
-import { getTenantOperatingSnapshot } from "../tenant-operating-snapshot.service"
+import {
+  getTenantOperatingSnapshot,
+  getTenantOperatingSnapshotFromRelated,
+} from "../tenant-operating-snapshot.service"
 
 const mockDb = db as unknown as {
   location: { count: jest.Mock; findFirst: jest.Mock }
@@ -83,6 +86,38 @@ const mockCloseReadiness = getCloseReadinessSnapshot as jest.Mock
 describe("tenant operating snapshot service", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+  })
+
+  it("blocks a location scope before child snapshots or tenant reads", async () => {
+    const result = await getTenantOperatingSnapshot({
+      organizationId: "org-1",
+      locationId: "location-1",
+      periodStart: "2026-06-01",
+      periodEnd: "2026-06-30",
+      now: "2026-06-21T10:00:00.000Z",
+    })
+
+    expect(mockPaymentTruth).not.toHaveBeenCalled()
+    expect(mockInventoryCash).not.toHaveBeenCalled()
+    expect(mockCloseReadiness).not.toHaveBeenCalled()
+    expectNoTenantOperatingDatabaseReads()
+    expectLocationScopeBlockedResult(result)
+  })
+
+  it("blocks a related location scope before tenant reads", async () => {
+    const result = await getTenantOperatingSnapshotFromRelated(
+      {
+        organizationId: "org-1",
+        locationId: "location-1",
+        periodStart: "2026-06-01",
+        periodEnd: "2026-06-30",
+        now: "2026-06-21T10:00:00.000Z",
+      },
+      {} as Parameters<typeof getTenantOperatingSnapshotFromRelated>[1],
+    )
+
+    expectNoTenantOperatingDatabaseReads()
+    expectLocationScopeBlockedResult(result)
   })
 
   it("blocks operating BI when unresolved ledger assurance incidents exist", async () => {
@@ -364,6 +399,105 @@ describe("tenant operating snapshot service", () => {
     )
   })
 })
+
+function expectNoTenantOperatingDatabaseReads() {
+  for (const model of Object.values(mockDb)) {
+    for (const operation of Object.values(model) as jest.Mock[]) {
+      expect(operation).not.toHaveBeenCalled()
+    }
+  }
+}
+
+function expectLocationScopeBlockedResult(
+  result: Awaited<ReturnType<typeof getTenantOperatingSnapshot>>,
+) {
+  expect(result).toEqual(
+    expect.objectContaining({
+      kind: "tenant.operating",
+      organizationId: "org-1",
+      locationId: "location-1",
+      status: "blocked",
+      evidenceGrade: "blocked",
+      metrics: {
+        activeLocationCount: 0,
+        completedSalesCount: 0,
+        completedSalesRevenue: 0,
+        cashCollected: 0,
+        pendingPurchaseOrderCount: 0,
+        approvedOrPaidPayrollRunCount: 0,
+        activeEmployeeBalanceCaseCount: 0,
+        openEmployeeBalanceCaseCount: 0,
+        partiallySettledEmployeeBalanceCaseCount: 0,
+        employeeBalanceOutstandingAmount: 0,
+        periodEmployeeBalanceSettlementCount: 0,
+        periodEmployeeBalanceSettlementAmount: 0,
+        postedJournalEntryCount: 0,
+        sourceLinkCount: 0,
+        payrollFinanceForecast: expect.objectContaining({
+          status: "NON_AUTHORITATIVE",
+          authoritative: false,
+          reasonCode: "TENANT_OPERATING_LOCATION_SCOPE_UNSUPPORTED",
+          upcomingNetPayAmount: 0,
+          upcomingStatutoryLiabilityAmount: 0,
+          totalUpcomingAmount: 0,
+          personLevelAmountsRedacted: true,
+          blockerCodes: ["TENANT_OPERATING_LOCATION_SCOPE_UNSUPPORTED"],
+        }),
+        paymentTruth: {
+          providerAccountCount: 0,
+          activeProviderAccountCount: 0,
+          recentRunCount: 0,
+          readyForSignoffCount: 0,
+          signedRunCount: 0,
+          openExceptionCount: 0,
+          criticalExceptionCount: 0,
+          openSuspenseCount: 0,
+          openSuspenseAmount: 0,
+          pendingTransactionCount: 0,
+        },
+        inventoryCash: {
+          trackedItemCount: 0,
+          inventoryLevelCount: 0,
+          quantityOnHand: 0,
+          quantityAvailable: 0,
+          quantityReserved: 0,
+          quantityInTransit: 0,
+          quantityOnOrder: 0,
+          inventoryValue: 0,
+          zeroStockLevelCount: 0,
+          negativeStockLevelCount: 0,
+          periodTransactionCount: 0,
+          periodAdjustmentCount: 0,
+          periodTransferCount: 0,
+        },
+        closeReadiness: {
+          accountingPeriodCount: 0,
+          openPeriodCount: 0,
+          recentCloseRunCount: 0,
+          certifiedCloseRunCount: 0,
+          blockedCloseRunCount: 0,
+          averageReadinessScore: null,
+          openFindingCount: 0,
+          criticalOpenFindingCount: 0,
+          unavailableEvidenceCount: 0,
+        },
+      },
+    }),
+  )
+  expect(result.blockers).toContainEqual(
+    expect.objectContaining({
+      id: "tenant-operating-location-scope-unsupported",
+      severity: "high",
+      gate: "tenant_operating_scope",
+      sourceTables: expect.arrayContaining([
+        "sales_orders",
+        "payments",
+        "payroll_runs",
+        "journal_entries",
+      ]),
+    }),
+  )
+}
 
 function forecastPeriod(overrides: Record<string, unknown> = {}) {
   const declarations = (overrides.declarations as unknown[]) ?? [

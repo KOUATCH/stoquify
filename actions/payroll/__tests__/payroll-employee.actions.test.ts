@@ -4,9 +4,11 @@ import { requireFreshAuth, FreshAuthRequiredError } from "@/lib/security/auth-se
 import { requirePermission, RbacError } from "@/lib/security/rbac"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import {
-  attachPayrollEmployeeEvidenceReferences,
+  attachHrisEmployeeEvidenceReferences,
+  upsertHrisEmployeeProfile,
+} from "@/services/hris/employee.service"
+import {
   getPayrollEmployeeSourceData,
-  upsertPayrollEmployeeSourceProfile,
 } from "@/services/payroll/employee.service"
 
 import {
@@ -62,17 +64,20 @@ jest.mock("@/services/modules/module-entitlement.service", () => ({
 }))
 
 jest.mock("@/services/payroll/employee.service", () => ({
-  attachPayrollEmployeeEvidenceReferences: jest.fn(),
   getPayrollEmployeeSourceData: jest.fn(),
-  upsertPayrollEmployeeSourceProfile: jest.fn(),
+}))
+
+jest.mock("@/services/hris/employee.service", () => ({
+  attachHrisEmployeeEvidenceReferences: jest.fn(),
+  upsertHrisEmployeeProfile: jest.fn(),
 }))
 
 const mockRequirePermission = requirePermission as jest.Mock
 const mockRequireFreshAuth = requireFreshAuth as jest.Mock
 const mockObserveModuleAccess = observeModuleAccess as jest.Mock
 const mockGetPayrollEmployeeSourceData = getPayrollEmployeeSourceData as jest.Mock
-const mockUpsertPayrollEmployeeSourceProfile = upsertPayrollEmployeeSourceProfile as jest.Mock
-const mockAttachPayrollEmployeeEvidenceReferences = attachPayrollEmployeeEvidenceReferences as jest.Mock
+const mockUpsertHrisEmployeeProfile = upsertHrisEmployeeProfile as jest.Mock
+const mockAttachHrisEmployeeEvidenceReferences = attachHrisEmployeeEvidenceReferences as jest.Mock
 const mockRevalidatePath = revalidatePath as jest.Mock
 
 function moduleDecision(overrides: Record<string, unknown> = {}) {
@@ -198,21 +203,23 @@ describe("payroll employee actions", () => {
       code: "FRESH_AUTH_REQUIRED",
     }))
     expect(mockRequirePermission).not.toHaveBeenCalled()
-    expect(mockUpsertPayrollEmployeeSourceProfile).not.toHaveBeenCalled()
+    expect(mockUpsertHrisEmployeeProfile).not.toHaveBeenCalled()
   })
 
   it("derives tenant and actor context for profile upsert and evidence attachment", async () => {
     mockRequirePermission.mockResolvedValue(rbacContext("hr-1", ["payroll.employees.manage"]))
-    mockUpsertPayrollEmployeeSourceProfile.mockResolvedValue({
+    mockUpsertHrisEmployeeProfile.mockResolvedValue({
       payrollEmployee: { id: "employee-1" },
       created: true,
       businessEventId: "event-1",
       evidenceReferenceCount: 1,
+      dataOwnership: { sourceOwner: "HRIS_PEOPLE_CORE" },
     })
-    mockAttachPayrollEmployeeEvidenceReferences.mockResolvedValue({
+    mockAttachHrisEmployeeEvidenceReferences.mockResolvedValue({
       payrollEmployee: { id: "employee-1" },
       businessEventId: "event-2",
       evidenceReferenceCount: 2,
+      dataOwnership: { sourceOwner: "HRIS_PEOPLE_CORE" },
     })
 
     const upsertResult = await upsertPayrollEmployeeSourceProfileAction({
@@ -232,12 +239,12 @@ describe("payroll employee actions", () => {
 
     expect(upsertResult.success).toBe(true)
     expect(evidenceResult.success).toBe(true)
-    expect(mockUpsertPayrollEmployeeSourceProfile).toHaveBeenCalledWith(expect.objectContaining({
+    expect(mockUpsertHrisEmployeeProfile).toHaveBeenCalledWith(expect.objectContaining({
       organizationId: "org-1",
       actorId: "hr-1",
       actorPermissions: ["payroll.employees.manage"],
     }))
-    expect(mockAttachPayrollEmployeeEvidenceReferences).toHaveBeenCalledWith(expect.objectContaining({
+    expect(mockAttachHrisEmployeeEvidenceReferences).toHaveBeenCalledWith(expect.objectContaining({
       organizationId: "org-1",
       actorId: "hr-1",
       actorPermissions: ["payroll.employees.manage"],
@@ -245,6 +252,8 @@ describe("payroll employee actions", () => {
     }))
     expect(mockRevalidatePath).toHaveBeenCalledWith("/dashboard/payroll/employees", "page")
     expect(mockRevalidatePath).toHaveBeenCalledWith("/dashboard/payroll/setup", "page")
+    expect(upsertResult.data?.dataOwnership).toEqual({ sourceOwner: "HRIS_PEOPLE_CORE" })
+    expect(evidenceResult.data?.dataOwnership).toEqual({ sourceOwner: "HRIS_PEOPLE_CORE" })
   })
 
   it("returns a client-safe RBAC denial before employee write services run", async () => {
@@ -262,6 +271,6 @@ describe("payroll employee actions", () => {
       status: 403,
       code: "FORBIDDEN",
     }))
-    expect(mockAttachPayrollEmployeeEvidenceReferences).not.toHaveBeenCalled()
+    expect(mockAttachHrisEmployeeEvidenceReferences).not.toHaveBeenCalled()
   })
 })

@@ -1,0 +1,27 @@
+{
+  "checkedAt": "2026-07-20T16:37:49.017Z",
+  "auth": {
+    "storageState": "playwright/.auth/payroll.json",
+    "fixtureSource": "scripts/seed-payroll-e2e-user.js",
+    "organizationId": "org_payroll_e2e_local",
+    "accountingPeriodId": "payroll_e2e_browser_2026_06_accounting_period"
+  },
+  "results": [
+    {
+      "scenario": "close-dashboard",
+      "path": "/en/dashboard/accounting/close",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/accounting/close",
+      "screenshot": "what-next/accounting/close-assurance-browser-smoke/close-dashboard.png"
+    },
+    {
+      "scenario": "close-pack-draft-download",
+      "path": "/en/dashboard/accounting/close/payroll_e2e_browser_2026_06_accounting_period",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/accounting/close/payroll_e2e_browser_2026_06_accounting_period",
+      "screenshot": "what-next/accounting/close-assurance-browser-smoke/close-pack-draft-download.png",
+      "downloadedFile": "what-next/accounting/close-assurance-browser-smoke/close-pack-draft-not-certified-cmrt8pllx0017mansw7vq549m-f4b23925-484.json",
+      "contentHash": "sha256:00675e079e455d29ff9b2f2675c2ea734c5ebc5ea82b00df08ff7922494fd997",
+      "watermarkId": "close-pack-draft-not-certified-cmrt8pllx0017mansw7vq549m-f4b23925-484",
+      "mode": "DRAFT_NOT_CERTIFIED"
+    }
+  ]
+}

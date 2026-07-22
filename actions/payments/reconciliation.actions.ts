@@ -2,7 +2,11 @@
 
 import { z } from "zod"
 
-import { protect } from "@/services/_shared/protect"
+import {
+  FreshAuthRequiredError,
+  SESSION_ASSURANCE_LEVEL,
+} from "@/lib/security/auth-session"
+import { protect, type ProtectedActionContext } from "@/services/_shared/protect"
 import {
   getPaymentReconciliationDashboardData,
   type PaymentReconciliationDashboardData,
@@ -102,6 +106,10 @@ const approveSuspensePostingSchema = z.object({
 
 const signRunSchema = z.object({
   runId: z.string().min(1),
+  expectedSourceVersionHash: z
+    .string()
+    .regex(/^sha256:[a-f0-9]{64}$/)
+    .optional(),
   correlationId: z.string().optional(),
 })
 
@@ -240,16 +248,32 @@ const approveSuspense = protect<unknown, Awaited<ReturnType<typeof approveSuspen
 )
 
 const signRun = protect<unknown, SignReconciliationRunResult>(
-  { permission: "payments.reconciliation.sign", auditResource: "PaymentReconciliationRun", auditAllowed: true, freshAuth: true },
+  {
+    permission: "payments.reconciliation.sign",
+    auditResource: "PaymentReconciliationRun",
+    auditAllowed: true,
+    freshAuth: { maxAgeSeconds: 300 },
+    module: {
+      moduleSlug: "payment_reconciliation",
+      surface: "actions/payments/reconciliation.actions.ts",
+      surfaceType: "action",
+      accessIntent: "write",
+      mode: "enforce",
+      audit: true,
+    },
+  },
   async (input, ctx) => {
     const parsed = signRunSchema.parse(input)
+    const lastAuthAt = verifiedFreshAuthTime(ctx)
+
     return signReconciliationRun({
       organizationId: ctx.orgId,
       runId: parsed.runId,
       signedById: ctx.userId,
+      expectedSourceVersionHash: parsed.expectedSourceVersionHash,
       control: {
         actorPermissions: ctx.permissions,
-        lastAuthAt: Date.now(),
+        lastAuthAt,
       },
       correlationId: parsed.correlationId,
     })
@@ -321,4 +345,20 @@ export async function signReconciliationRunAction(input: unknown) {
 
 export async function exportReconciliationCertificateAction(input: unknown) {
   return exportCertificate(input)
+}
+
+function verifiedFreshAuthTime(ctx: ProtectedActionContext) {
+  const freshAuth = ctx.freshAuth
+  if (
+    !freshAuth ||
+    freshAuth.claims.userId !== ctx.userId ||
+    freshAuth.claims.tenantId !== ctx.orgId ||
+    freshAuth.claims.assuranceOrganizationId !== ctx.orgId ||
+    freshAuth.claims.assuranceLevel < SESSION_ASSURANCE_LEVEL.PASSWORD ||
+    freshAuth.claims.lastAuthAt !== freshAuth.lastAuthAt.getTime()
+  ) {
+    throw new FreshAuthRequiredError()
+  }
+
+  return freshAuth.lastAuthAt
 }

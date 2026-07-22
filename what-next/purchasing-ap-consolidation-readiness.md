@@ -1,6 +1,6 @@
 # Purchasing AP Consolidation Readiness Gate
 
-Generated: 2026-07-11T20:40:56.137Z
+Generated: 2026-07-20T03:58:00.562Z
 Mode: fail
 Status: ready
 

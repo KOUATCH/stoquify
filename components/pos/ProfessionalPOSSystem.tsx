@@ -41,6 +41,7 @@ import { Input } from "@/components/ui/input"
 import { Progress } from "@/components/ui/progress"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
+import { Textarea } from "@/components/ui/textarea"
 import { useNotifications } from "@/components/notifications/NotificationProvider"
 import { OfflineSyncStatusStrip } from "@/components/pos/offline/OfflineSyncStatusStrip"
 import { ReceiptTokenHistoryPanel, type ReceiptTokenSaleSearchItem } from "@/components/pos/ReceiptTokenHistoryPanel"
@@ -354,6 +355,8 @@ export default function ProfessionalPOSSystem() {
   const [customerSearch, setCustomerSearch] = useState("")
   const [openingBalance, setOpeningBalance] = useState("0")
   const [closingBalance, setClosingBalance] = useState("")
+  const [varianceExplanation, setVarianceExplanation] = useState("")
+  const [closeShiftError, setCloseShiftError] = useState<string | null>(null)
   const [tenderLines, setTenderLines] = useState<TenderLineState[]>(() => [createTenderLine()])
   const [receiptChannel, setReceiptChannel] = useState<ReceiptChannel>("NONE")
   const [receiptDestination, setReceiptDestination] = useState("")
@@ -512,6 +515,13 @@ export default function ProfessionalPOSSystem() {
   }, [selectedTerminalId, terminals])
 
   useEffect(() => {
+    setClosingBalance("")
+    setVarianceExplanation("")
+    setCloseShiftError(null)
+    setIsEndShiftDialogOpen(false)
+  }, [activeShift?.id])
+
+  useEffect(() => {
     searchRef.current?.focus()
   }, [cart?.lines.length, selectedLocationId, selectedTerminalId])
 
@@ -590,8 +600,12 @@ export default function ProfessionalPOSSystem() {
   const projectedCustomerBalance = customerCurrentBalance + onAccountAmountPreview
   const isCustomerCreditRisk = customerCreditLimit !== null && projectedCustomerBalance > customerCreditLimit
   const expectedCloseBalance = activeShift?.cashDrawer?.currentBalance ?? activeShift?.expectedBalance ?? 0
-  const countedCloseBalance = Number(closingBalance || expectedCloseBalance || 0)
-  const closeVariance = countedCloseBalance - expectedCloseBalance
+  const closingBalanceInput = closingBalance.trim()
+  const hasValidCloseBalance = /^\d{1,12}(?:\.\d{1,2})?$/.test(closingBalanceInput)
+  const parsedCloseBalance = hasValidCloseBalance ? Number(closingBalanceInput) : null
+  const closeVariance = parsedCloseBalance === null ? null : parsedCloseBalance - expectedCloseBalance
+  const needsVarianceExplanation = closeVariance !== null && Math.abs(closeVariance) >= 0.005
+  const canSubmitCloseShift = hasValidCloseBalance && (!needsVarianceExplanation || varianceExplanation.trim().length > 0)
   const hardwareStatuses = [
     { label: t("hardware.scanner"), value: canSell ? t("hardware.ready") : t("hardware.waiting"), ready: canSell },
     { label: t("hardware.drawer"), value: activeShift?.cashDrawer?.isOpen ? t("hardware.open") : t("hardware.closed"), ready: !!activeShift?.cashDrawer?.isOpen },
@@ -645,9 +659,9 @@ export default function ProfessionalPOSSystem() {
   }
 
   async function handleCloseShift() {
-    if (!activeShift) return
+    if (!activeShift || !canSubmitCloseShift || parsedCloseBalance === null) return false
 
-    const actualBalance = closingBalance || activeShift.cashDrawer?.currentBalance || activeShift.expectedBalance
+    setCloseShiftError(null)
     const pendingId = notifications.info(t("notifications.closeShiftPendingTitle"), t("notifications.closeShiftPendingMessage"), {
       category: "pos",
       duration: 0,
@@ -657,32 +671,39 @@ export default function ProfessionalPOSSystem() {
     try {
       const response = await closeShift.mutateAsync({
         sessionId: activeShift.id,
-        actualBalance,
+        actualBalance: closingBalanceInput,
+        notes: needsVarianceExplanation ? varianceExplanation.trim() : undefined,
       })
       const error = actionError(response)
 
       notifications.removeNotification(pendingId)
       if (error) {
+        setCloseShiftError(error)
         notifications.error(t("notifications.closeShiftErrorTitle"), error, { category: "pos", priority: "high" })
-        return
+        return false
       }
 
       setClosingBalance("")
+      setVarianceExplanation("")
       notifications.success(
         t("notifications.closeShiftSuccessTitle"),
         t("notifications.closeShiftSuccessMessage", {
           number: activeShift.sessionNumber,
-          amount: money.format(Number(actualBalance || 0)),
+          amount: money.format(parsedCloseBalance),
         }),
         { category: "pos" },
       )
+      return true
     } catch (error) {
+      const message = toErrorMessage(error, t("notifications.genericError"))
       notifications.removeNotification(pendingId)
+      setCloseShiftError(message)
       notifications.error(
         t("notifications.closeShiftErrorTitle"),
-        toErrorMessage(error, t("notifications.genericError")),
+        message,
         { category: "pos", priority: "high" },
       )
+      return false
     }
   }
 
@@ -1198,9 +1219,16 @@ export default function ProfessionalPOSSystem() {
                     <Input
                       value={closingBalance}
                       type="number"
+                      inputMode="decimal"
                       min="0"
+                      max="999999999999.99"
                       step="0.01"
-                      onChange={(event) => setClosingBalance(event.target.value)}
+                      aria-label={t("shift.countedCash")}
+                      aria-invalid={closingBalanceInput !== "" && !hasValidCloseBalance}
+                      onChange={(event) => {
+                        setClosingBalance(event.target.value)
+                        setCloseShiftError(null)
+                      }}
                       placeholder={t("shift.closingPlaceholder")}
                       className={posFieldClass}
                     />
@@ -2061,7 +2089,7 @@ export default function ProfessionalPOSSystem() {
       </Dialog>
 
       <Dialog open={isEndShiftDialogOpen} onOpenChange={setIsEndShiftDialogOpen}>
-        <DialogContent className={cn("max-w-2xl", posDialogClass)}>
+        <DialogContent className={cn("max-h-[90vh] max-w-2xl overflow-y-auto", posDialogClass)}>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <ClipboardList className={cn("h-5 w-5", posIconBrandClass)} />
@@ -2079,7 +2107,7 @@ export default function ProfessionalPOSSystem() {
                   [t("metrics.sessionSales"), money.format(activeShift.totalSales)],
                   [t("metrics.transactions"), activeShift.transactionCount],
                   [t("shift.expectedCash"), money.format(expectedCloseBalance)],
-                  [t("shift.variance"), money.format(closeVariance)],
+                  [t("shift.variance"), closeVariance === null ? "-" : money.format(closeVariance)],
                 ].map(([label, value]) => (
                   <div key={label} className={cn("p-2", posInsetClass)}>
                     <div className={cn("text-xs", posMutedTextClass)}>{label}</div>
@@ -2108,18 +2136,52 @@ export default function ProfessionalPOSSystem() {
                 <Input
                   value={closingBalance}
                   type="number"
+                  inputMode="decimal"
                   min="0"
+                  max="999999999999.99"
                   step="0.01"
-                  onChange={(event) => setClosingBalance(event.target.value)}
+                  aria-invalid={closingBalanceInput !== "" && !hasValidCloseBalance}
+                  onChange={(event) => {
+                    setClosingBalance(event.target.value)
+                    setCloseShiftError(null)
+                  }}
                   placeholder={money.format(expectedCloseBalance)}
+                  required
                   className={cn("mt-1", posFieldClass)}
                 />
               </label>
 
-              {Math.abs(closeVariance) > 0 ? (
-                <div className="flex items-center gap-2 rounded-lg border border-[var(--dash-warning)]/25 bg-[var(--dash-warning-soft)] px-3 py-2 text-sm text-[#ffe4a8]">
+              {needsVarianceExplanation && closeVariance !== null ? (
+                <div
+                  role="status"
+                  aria-live="polite"
+                  className="flex items-center gap-2 rounded-lg border border-[var(--dash-warning)]/25 bg-[var(--dash-warning-soft)] px-3 py-2 text-sm text-[#ffe4a8]"
+                >
                   <AlertTriangle className="h-4 w-4" />
                   {t("shift.varianceWarning", { amount: money.format(closeVariance) })}
+                </div>
+              ) : null}
+
+              {needsVarianceExplanation ? (
+                <label className={posLabelClass}>
+                  {t("shift.varianceExplanation")}
+                  <Textarea
+                    value={varianceExplanation}
+                    onChange={(event) => {
+                      setVarianceExplanation(event.target.value)
+                      setCloseShiftError(null)
+                    }}
+                    placeholder={t("shift.varianceExplanationPlaceholder")}
+                    required
+                    maxLength={500}
+                    className={cn("mt-1 min-h-20", posFieldClass)}
+                  />
+                </label>
+              ) : null}
+
+              {closeShiftError ? (
+                <div role="alert" className="rounded-lg border border-[var(--dash-danger)]/35 bg-[var(--dash-danger-soft)] px-3 py-2 text-sm text-[#ffd4db]">
+                  {closeShiftError}
                 </div>
               ) : null}
 
@@ -2130,10 +2192,11 @@ export default function ProfessionalPOSSystem() {
                 <POSButton
                   type="button"
                   className={posButtonPrimaryClass}
-                  disabled={closeShift.isPending}
+                  disabled={closeShift.isPending || !canSubmitCloseShift}
                   onClick={async () => {
-                    await handleCloseShift()
-                    setIsEndShiftDialogOpen(false)
+                    if (await handleCloseShift()) {
+                      setIsEndShiftDialogOpen(false)
+                    }
                   }}
                 >
                   {t("shift.close")}

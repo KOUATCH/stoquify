@@ -234,6 +234,12 @@ function physicalCashImpact(type: CashDrawerTransactionType, amount: Prisma.Deci
   return new Prisma.Decimal(0)
 }
 
+const UNRESOLVED_PAYMENT_STATUSES = new Set<PaymentStatus>([
+  PaymentStatus.PENDING,
+  PaymentStatus.PARTIAL,
+  PaymentStatus.CANCELLED,
+])
+
 function paymentControlState(row: PaymentRow): CashPaymentHistoryRow["controlState"] {
   if (row.reconciliationTransaction?.state === "SETTLED") return "reconciled"
   if (row.reconciliationTransaction?.state === "CONFIRMED") return "posted"
@@ -602,7 +608,7 @@ export async function readCashPaymentHistory(
     new Prisma.Decimal(0),
   )
   const unresolvedPaymentCount = paymentSummaryRows.filter((row) =>
-    [PaymentStatus.PENDING, PaymentStatus.PARTIAL, PaymentStatus.CANCELLED].includes(row.status),
+    UNRESOLVED_PAYMENT_STATUSES.has(row.status),
   ).length
 
   const appliedFilters: CashPaymentHistoryAppliedFilters = {

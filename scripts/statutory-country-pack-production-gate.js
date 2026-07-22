@@ -1,5 +1,6 @@
 const fs = require("fs")
 const path = require("path")
+const crypto = require("crypto")
 
 const DEFAULT_JSON_OUT = "what-next/statutory-country-pack-production-readiness.json"
 const DEFAULT_MARKDOWN_OUT = "what-next/statutory-country-pack-production-readiness.md"
@@ -23,6 +24,80 @@ function read(root, relativePath) {
   return fs.existsSync(target) ? fs.readFileSync(target, "utf8") : ""
 }
 
+function latestSourceEvidenceManifest(root) {
+  const evidenceRoot = path.join(root, "docs/HR-Payroll/evidence/country-packs/CM")
+  if (!fs.existsSync(evidenceRoot)) return null
+
+  const manifestPath = fs.readdirSync(evidenceRoot, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => path.join(evidenceRoot, entry.name, "manifest.json"))
+    .filter((candidate) => fs.existsSync(candidate))
+    .sort((left, right) => right.localeCompare(left))[0]
+  if (!manifestPath) return null
+
+  try {
+    return { manifestPath, manifest: JSON.parse(fs.readFileSync(manifestPath, "utf8")) }
+  } catch {
+    return null
+  }
+}
+
+function sourceEvidenceState(root, countryPackSource) {
+  const loaded = latestSourceEvidenceManifest(root)
+  if (!loaded || !Array.isArray(loaded.manifest.artifacts)) {
+    return { hashesVerified: false, expertApprovalComplete: false }
+  }
+
+  const manifestDir = path.dirname(loaded.manifestPath)
+  const artifactHashes = new Set()
+  const artifactsVerified = loaded.manifest.artifacts.length > 0 && loaded.manifest.artifacts.every((artifact) => {
+    if (!artifact || typeof artifact.file !== "string" || path.basename(artifact.file) !== artifact.file) return false
+    if (typeof artifact.sha256 !== "string" || !/^[a-f0-9]{64}$/.test(artifact.sha256)) return false
+    const artifactPath = path.join(manifestDir, artifact.file)
+    if (!fs.existsSync(artifactPath)) return false
+    const actual = crypto.createHash("sha256").update(fs.readFileSync(artifactPath)).digest("hex")
+    if (actual !== artifact.sha256) return false
+    artifactHashes.add(`sha256:${actual}`)
+    return true
+  })
+
+  const declaredHashes = Array.from(
+    countryPackSource.matchAll(/sourceEvidenceHash:\s*["']([^"']+)["']/g),
+    (match) => match[1],
+  )
+  const hashesVerified = artifactsVerified && declaredHashes.length > 0 && declaredHashes.every(
+    (hash) => /^sha256:[a-f0-9]{64}$/.test(hash) && artifactHashes.has(hash),
+  )
+  const approvedStatuses = new Set(["EXPERT_REVIEWED", "REGULATOR_CONFIRMED"])
+  const requiredFixtureFamilies = new Set([
+    "payroll.cnps.pensionRatesBps",
+    "payroll.cnps.familyAllowanceRatesBps",
+    "payroll.cnps.occupationalRiskRatesBps",
+    "payroll.cnps.employerRules",
+  ])
+  const approval = loaded.manifest.requiredApproval
+  const approvalArtifactVerified = Boolean(
+    approval &&
+    typeof approval.reviewerIdentity === "string" && approval.reviewerIdentity.trim() &&
+    typeof approval.reviewedAt === "string" && approval.reviewedAt.trim() &&
+    typeof approval.effectiveFrom === "string" && approval.effectiveFrom.trim() &&
+    typeof approval.approvalArtifactFile === "string" &&
+    path.basename(approval.approvalArtifactFile) === approval.approvalArtifactFile &&
+    typeof approval.approvalArtifactHash === "string" && /^[a-f0-9]{64}$/.test(approval.approvalArtifactHash) &&
+    Array.isArray(approval.approvedFixtureFamilies) &&
+    approval.approvedFixtureFamilies.length === requiredFixtureFamilies.size &&
+    approval.approvedFixtureFamilies.every((family) => requiredFixtureFamilies.has(family)) &&
+    fs.existsSync(path.join(manifestDir, approval.approvalArtifactFile)) &&
+    crypto.createHash("sha256").update(fs.readFileSync(path.join(manifestDir, approval.approvalArtifactFile))).digest("hex") === approval.approvalArtifactHash
+  )
+  const expertApprovalComplete = hashesVerified && loaded.manifest.productionUseAllowed === true &&
+    approvedStatuses.has(loaded.manifest.reviewStatus) && loaded.manifest.artifacts.every(
+      (artifact) => artifact.productionUseAllowed === true && approvedStatuses.has(artifact.reviewStatus),
+    ) && approvalArtifactVerified
+
+  return { hashesVerified, expertApprovalComplete }
+}
+
 function buildStatutoryCountryPackReadiness(root = process.cwd(), options = {}) {
   const schemas = read(root, "services/regulatory/country-packs/schemas.ts")
   const resolve = read(root, "services/regulatory/country-packs/resolve.ts")
@@ -36,6 +111,7 @@ function buildStatutoryCountryPackReadiness(root = process.cwd(), options = {}) 
   const payrollEvaluator = read(root, "services/payroll/payroll-tax-rule-evaluator.ts")
   const hardcodeGate = read(root, "scripts/regulatory-hardcode-gate.js")
   const packageJson = read(root, "package.json")
+  const sourceEvidence = sourceEvidenceState(root, cameroon)
 
   const checks = [
     {
@@ -53,6 +129,14 @@ function buildStatutoryCountryPackReadiness(root = process.cwd(), options = {}) 
       id: "publish_requires_reviewed_evidence",
       ready: validation.includes("validateCountryPackForPublish") && validation.includes("requirePublished: true") &&
         validation.includes("requireNoExpertReview: true") && validation.includes("GOLDEN_FIXTURE_FAILED"),
+    },
+    {
+      id: "source_artifact_hash_verification",
+      ready: sourceEvidence.hashesVerified,
+    },
+    {
+      id: "source_artifact_expert_approval",
+      ready: sourceEvidence.expertApprovalComplete,
     },
     {
       id: "cameroon_automation_claim_blocked",

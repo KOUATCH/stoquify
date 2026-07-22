@@ -8,6 +8,12 @@ const MODES = new Set(["report", "warn", "fail"])
 
 const REQUIRED_INDEXES = [
   {
+    id: "incident_stable_identity",
+    label: "organization + check + definition version + source identity",
+    pattern:
+      /@@unique\(\[organizationId,\s*checkKey,\s*definitionVersion,\s*sourceType,\s*sourceId\],\s*name:\s*"workflow_assurance_incident_identity_key"\)/,
+  },
+  {
     id: "incident_status_severity_date",
     label: "organization + status + severity + detected date",
     pattern: /@@index\(\[organizationId,\s*status,\s*severity,\s*lastDetectedAt\]\)/,
@@ -36,6 +42,26 @@ const REQUIRED_INDEXES = [
     id: "alert_delivery_status",
     label: "organization + alert delivery status",
     pattern: /@@index\(\[organizationId,\s*status,\s*createdAt\]\)/,
+  },
+  {
+    id: "run_execution_identity",
+    label: "organization + check + definition version + execution key",
+    pattern: /@@unique\(\[organizationId,\s*checkKey,\s*definitionVersion,\s*executionKey\],\s*name:\s*"workflow_assurance_run_execution_key"\)/,
+  },
+  {
+    id: "finding_run_ordinal",
+    label: "finding run + deterministic ordinal",
+    pattern: /model WorkflowAssuranceCheckFinding[\s\S]*?@@unique\(\[checkRunId,\s*ordinal\]\)/,
+  },
+  {
+    id: "finding_run_fingerprint",
+    label: "finding run + stable fingerprint",
+    pattern: /model WorkflowAssuranceCheckFinding[\s\S]*?@@unique\(\[checkRunId,\s*fingerprint\]\)/,
+  },
+  {
+    id: "finding_tenant_source_lookup",
+    label: "finding organization + source type + source id",
+    pattern: /model WorkflowAssuranceCheckFinding[\s\S]*?@@index\(\[organizationId,\s*sourceType,\s*sourceId\]\)/,
   },
 ]
 

@@ -1,0 +1,39 @@
+{
+  "checkedAt": "2026-07-20T16:29:53.820Z",
+  "mode": "fail",
+  "ok": true,
+  "recommendation": "The live close-assurance e2e smoke may be run against this local/dev database target.",
+  "command": "npm run test:e2e:close-assurance",
+  "allowRemoteOverride": false,
+  "environment": {
+    "productionMarkers": []
+  },
+  "database": {
+    "present": true,
+    "safe": true,
+    "reason": "Database host is local and has no production marker.",
+    "redactedUrl": "postgresql://postgres:***@localhost:5432/<database>",
+    "protocol": "postgresql",
+    "host": "localhost",
+    "databaseName": "dbakesman",
+    "hostClass": "local"
+  },
+  "directUrl": null,
+  "gates": [
+    {
+      "id": "environment:not-production",
+      "ok": true,
+      "reason": "No production environment markers are set."
+    },
+    {
+      "id": "database:local-or-explicitly-approved",
+      "ok": true,
+      "reason": "Database host is local and has no production marker."
+    },
+    {
+      "id": "direct-url:local-or-absent",
+      "ok": true,
+      "reason": "DIRECT_URL is absent, so no second write target was detected."
+    }
+  ]
+}

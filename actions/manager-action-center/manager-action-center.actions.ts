@@ -3,10 +3,10 @@
 import { z } from "zod"
 
 import { protect } from "@/services/_shared/protect"
-import type { ManagerActionCenterData } from "@/services/manager-action-center/manager-action-center-contracts"
-import { getManagerActionCenterData } from "@/services/manager-action-center/manager-action-center.service"
+import type { ManagerActionCenterQueryResult } from "@/services/manager-action-center/manager-action-center-query-contracts"
+import { getManagerActionCenterQuery } from "@/services/manager-action-center/manager-action-center-query.service"
 
-export type { ManagerActionCenterData }
+export type { ManagerActionCenterQueryResult }
 
 const managerActionCenterInputSchema = z.object({
   periodStart: z.coerce.date().nullable().optional(),
@@ -23,7 +23,7 @@ function asManagerActionCenterInput(input: unknown) {
   }
 }
 
-const getManagerActionCenter = protect<unknown, ManagerActionCenterData>(
+const getManagerActionCenter = protect<unknown, ManagerActionCenterQueryResult>(
   {
     permission: "dashboard.read",
     auditResource: "KontavaManagerActionCenter",
@@ -37,9 +37,8 @@ const getManagerActionCenter = protect<unknown, ManagerActionCenterData>(
   },
   async (input, ctx) => {
     const parsed = asManagerActionCenterInput(input)
-    return getManagerActionCenterData({
-      organizationId: ctx.orgId,
-      actorPermissions: ctx.permissions,
+    return getManagerActionCenterQuery({
+      accessContext: ctx,
       ...parsed,
     })
   },

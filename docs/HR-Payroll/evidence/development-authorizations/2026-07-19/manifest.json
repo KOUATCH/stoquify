@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "1.0",
+  "recordedAt": "2026-07-19T20:03:55.427Z",
+  "authorizationType": "PROGRAM_SPONSOR_DEVELOPMENT_AUTHORIZATION",
+  "skill": "aqstoqflow-hris-payroll-15-self-service",
+  "status": "ACCEPTED_FOR_DEVELOPMENT_EXECUTION",
+  "environmentScope": [
+    "DEVELOPMENT",
+    "TEST"
+  ],
+  "productionUseAllowed": false,
+  "artifact": {
+    "file": "skill-15-self-service-authorization.md",
+    "byteLength": 2685,
+    "sha256": "d9434a4ab027a1148f8161bb674546472b53fe444b585692a38b9781bde7d36b"
+  },
+  "authorizationSource": {
+    "channel": "ACTIVE_CODEX_TASK_USER_INSTRUCTION",
+    "workspaceUserIdentityIndependentlyVerified": false,
+    "cryptographicSignatureVerified": false
+  },
+  "authorizedCapabilities": [
+    "SELF_SERVICE_DEVELOPMENT_EXECUTION",
+    "SELF_SERVICE_AUTOMATED_TESTING",
+    "SELF_SERVICE_BROWSER_TESTING",
+    "SELF_SERVICE_ACCESSIBILITY_TESTING",
+    "SELF_SERVICE_NEGATIVE_RBAC_TESTING"
+  ],
+  "preservedControls": [
+    "TENANT_ISOLATION",
+    "OWN_EMPLOYEE_SCOPE",
+    "MANAGER_SCOPE",
+    "SERVER_OWNED_APPROVALS",
+    "MAKER_CHECKER",
+    "REDACTION",
+    "AUDIT",
+    "FRESH_AUTH"
+  ],
+  "nonAuthorizations": [
+    "STATUTORY_LEGAL_APPROVAL",
+    "PRODUCTION_PAYMENT_RELEASE",
+    "PRODUCTION_DECLARATION_SUBMISSION",
+    "PRODUCTION_ACCOUNTING_CLOSE_CERTIFICATION",
+    "OVERALL_PRODUCTION_READINESS"
+  ]
+}

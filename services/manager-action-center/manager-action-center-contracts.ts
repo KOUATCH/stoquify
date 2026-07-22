@@ -23,6 +23,10 @@ import type {
   SnapshotResult,
   TenantOperatingMetrics,
 } from "@/services/snapshots/snapshot-contracts"
+import type {
+  PaymentReconciliationSignOffCommandCandidate,
+  PaymentReconciliationSignOffCommandStateResult,
+} from "@/services/reconciliation/payment-reconciliation-sign-off-command-state-contracts"
 
 export type ManagerActionDueState = "overdue" | "due_today" | "due_soon" | "scheduled"
 
@@ -35,7 +39,7 @@ export type ManagerActionRunSheetGroupId =
   | "assigned"
   | "routine"
 
-export type ManagerActionCenterAction = {
+type ManagerActionCenterActionBase = {
   id: string
   signalId: string
   title: string
@@ -55,6 +59,23 @@ export type ManagerActionCenterAction = {
   redactions: SnapshotRedaction[]
   actionLink: BIActionLink
 }
+
+export type ManagerActionCenterAction =
+  | (ManagerActionCenterActionBase & {
+      origin: "SIGNAL" | "ASSURANCE"
+      kind: "LINK"
+      sourceCommand: null
+    })
+  | (ManagerActionCenterActionBase & {
+      origin: "SOURCE_COMMAND"
+      kind: "LINK"
+      sourceCommand: null
+    })
+  | (ManagerActionCenterActionBase & {
+      origin: "SOURCE_COMMAND"
+      kind: "PAYMENT_RECONCILIATION_SIGN_OFF"
+      sourceCommand: PaymentReconciliationSignOffCommandCandidate
+    })
 
 export type ManagerActionRunSheetGroup = {
   id: ManagerActionRunSheetGroupId
@@ -76,6 +97,7 @@ export type ManagerActionCenterSummary = {
   redacted: number
   blocked: number
   overdue: number
+  dueToday: number
   hiddenByPermission: number
 }
 
@@ -108,4 +130,5 @@ export type ComposeManagerActionCenterInput = {
   actionQueue: ActionQueueResult
   assuranceIncidents?: AssuranceControlTowerIncident[]
   assuranceHiddenByPermission?: number
+  paymentReconciliationSignOff?: PaymentReconciliationSignOffCommandStateResult | null
 }

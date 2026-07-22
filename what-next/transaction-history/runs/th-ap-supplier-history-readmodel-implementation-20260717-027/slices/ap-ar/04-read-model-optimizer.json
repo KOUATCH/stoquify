@@ -1,0 +1,130 @@
+{
+  "schemaVersion": "1.0",
+  "traceId": "72f71709-b8e7-4e91-b1d6-09dc3d3d1447",
+  "runId": "th-ap-supplier-history-readmodel-implementation-20260717-027",
+  "sliceId": "ap-ar",
+  "stageId": "04",
+  "skillName": "stoquify-transaction-history-04-read-model-optimizer",
+  "agentType": "Database Optimizer",
+  "mode": "implement",
+  "status": "PASS",
+  "activeLanes": [
+    "ap"
+  ],
+  "blockedLanes": [],
+  "inputArtifacts": [
+    {
+      "path": "what-next/transaction-history/runs/th-ap-supplier-history-security-accounting-20260717-026/slices/ap-ar/02-security-proof-gate.json",
+      "sha256": "sha256:58ee316354f104b0588f1935d5f4475b483ad499f2a052b480eb63fd19a00b4a"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-ap-supplier-history-security-accounting-20260717-026/slices/ap-ar/03-accounting-control-gate.json",
+      "sha256": "sha256:b62452fc4266c09fb1bfb46be357206abc79f395396eeac40ea21baead26d45c"
+    }
+  ],
+  "inputFingerprint": "sha256:0628f08178fe0441fe22ccbd1a6b429c2bb07b2ea5d278e6dcb799ab117c6979",
+  "allowedEdits": [
+    "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/04-read-model-optimizer.md",
+    "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/04-read-model-optimizer.json",
+    "services/purchasing/ap-history.schemas.ts",
+    "services/purchasing/ap-history.service.ts",
+    "actions/purchasing/ap-history.actions.ts",
+    "services/purchasing/__tests__/ap-history.service.test.ts"
+  ],
+  "observedEdits": [
+    "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/04-read-model-optimizer.md",
+    "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/04-read-model-optimizer.json",
+    "services/purchasing/ap-history.schemas.ts",
+    "services/purchasing/ap-history.service.ts",
+    "actions/purchasing/ap-history.actions.ts",
+    "services/purchasing/__tests__/ap-history.service.test.ts"
+  ],
+  "repository": {
+    "headBefore": "a27cb0328e044304590cecf20c47832df5e834d5",
+    "headAfter": "a27cb0328e044304590cecf20c47832df5e834d5",
+    "dirtyFilesBefore": [
+      "WORKTREE_DIRTY_SEE_TRANSACTION_HISTORY_RUNS"
+    ],
+    "dirtyFilesAfter": [
+      "services/purchasing/ap-history.schemas.ts",
+      "services/purchasing/ap-history.service.ts",
+      "actions/purchasing/ap-history.actions.ts",
+      "services/purchasing/__tests__/ap-history.service.test.ts"
+    ]
+  },
+  "claims": [
+    {
+      "id": "AP_HISTORY_BACKEND_READ_MODEL",
+      "result": "PASS",
+      "evidence": [
+        "services/purchasing/ap-history.service.ts",
+        "services/purchasing/ap-history.schemas.ts"
+      ]
+    },
+    {
+      "id": "AP_HISTORY_ACTION_SECURITY_EXPORT",
+      "result": "PASS",
+      "evidence": [
+        "actions/purchasing/ap-history.actions.ts"
+      ]
+    },
+    {
+      "id": "AP_HISTORY_SIGNED_MOVEMENT_AND_REDACTION_TEST",
+      "result": "PASS",
+      "evidence": [
+        "services/purchasing/__tests__/ap-history.service.test.ts"
+      ]
+    },
+    {
+      "id": "AP_HISTORY_FRONTEND_VISIBLE_SURFACE",
+      "result": "NA",
+      "evidence": [
+        "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/04-read-model-optimizer.md"
+      ]
+    }
+  ],
+  "verification": [
+    {
+      "command": "npm test -- services/purchasing/__tests__/ap-history.service.test.ts --runInBand",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": null
+    },
+    {
+      "command": "npx eslint services/purchasing/ap-history.schemas.ts services/purchasing/ap-history.service.ts actions/purchasing/ap-history.actions.ts services/purchasing/__tests__/ap-history.service.test.ts",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": null
+    }
+  ],
+  "outputs": [
+    {
+      "path": "services/purchasing/ap-history.schemas.ts",
+      "sha256": "sha256:3ef2aa891afab14e25a91c92b836d53eabf0d768f114710418d7e0e39fb61ec1"
+    },
+    {
+      "path": "services/purchasing/ap-history.service.ts",
+      "sha256": "sha256:fcc3f35d70cad79116e2c898066d9f3cce9e8b1eec3e189cc55fa1c22e2d1546"
+    },
+    {
+      "path": "actions/purchasing/ap-history.actions.ts",
+      "sha256": "sha256:6a7f14b6c79df77f43df2b990827d4dabe86b337efcd6521d40818b7dd87aceb"
+    },
+    {
+      "path": "services/purchasing/__tests__/ap-history.service.test.ts",
+      "sha256": "sha256:b1d6997658a8e898439f9fb62ee3568005bf4efaa2cc3c59b489224dc0b95ebc"
+    }
+  ],
+  "blockers": [
+    {
+      "severity": "medium",
+      "code": "AP_FRONTEND_NOT_DELIVERED",
+      "reason": "Stage 05 UX and Stage 06 frontend delivery remain pending."
+    }
+  ],
+  "nextEligibleStages": [
+    "05"
+  ],
+  "startedAt": "2026-07-17T06:48:08.920059+01:00",
+  "completedAt": "2026-07-17T06:48:08.920059+01:00"
+}

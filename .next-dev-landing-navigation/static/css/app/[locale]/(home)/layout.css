@@ -1,0 +1,315 @@
+/*!*****************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/[locale]/(home)/landing.css ***!
+  \*****************************************************************************************************************************************************************************************************************************************************************************/
+/**
+ * Marketing-page design tokens + base layer.
+ *
+ * Scoped under `.landing-root` so it never leaks into the app shell.
+ *
+ * Colors are named by responsibility first, then mapped to the older
+ * ink/rule/accent variables used by existing section components.
+ */
+
+.landing-root {
+  /* Semantic surfaces: shared with the canonical dashboard contract. */
+  --color-canvas: var(--product-canvas);
+  --color-chrome: var(--product-chrome);
+  --color-surface-deep: var(--product-chrome);
+  --color-surface-panel: var(--product-surface);
+  --color-surface-panel-raised: var(--product-surface-raised);
+  --color-surface-panel-hover: color-mix(in srgb, var(--product-surface-raised) 82%, var(--product-border));
+  --color-surface-soft: var(--product-canvas);
+  --color-surface-paper: var(--product-surface);
+  --color-surface-tint: var(--product-surface-warm);
+
+  /* Semantic borders */
+  --color-border-subtle: var(--product-border-subtle);
+  --color-border-muted: var(--product-border);
+  --color-border-strong: color-mix(in srgb, var(--product-border) 74%, var(--product-text-soft));
+  --color-paper-border: var(--product-border-subtle);
+
+  /* Brand and accents */
+  --color-brand: var(--product-brand);
+  --color-brand-action: var(--product-brand-action);
+  --color-brand-hover: var(--product-brand-action-hover);
+  --color-brand-soft: var(--product-brand-soft);
+  --color-brand-glow: var(--product-brand-glow);
+  --color-editorial: var(--product-gold);
+  --color-warm: var(--product-warm);
+  --color-spruce: var(--product-spruce);
+
+  /* Semantic status */
+  --color-success: var(--product-success);
+  --color-warning: var(--product-warning);
+  --color-danger: var(--product-danger);
+  --color-info: var(--product-info);
+
+  /* Text */
+  --color-text-primary: var(--product-text);
+  --color-text-secondary: var(--product-text-muted);
+  --color-text-tertiary: var(--product-text-soft);
+  --color-text-muted: var(--product-text-faint);
+  --color-text-on-paper: var(--product-text);
+  --color-text-on-paper-muted: var(--product-text-soft);
+
+  /* Legacy aliases used throughout components/landing */
+  --ink-0: var(--color-canvas);
+  --ink-1: var(--color-surface-deep);
+  --ink-2: var(--color-surface-panel);
+  --ink-3: var(--color-surface-panel-raised);
+  --ink-4: var(--color-surface-panel-hover);
+  --rule-1: var(--color-border-subtle);
+  --rule-2: var(--color-border-muted);
+  --rule-3: var(--color-border-strong);
+  --accent: var(--color-brand);
+  --accent-hi: var(--product-brand-strong);
+  --accent-glow: var(--color-brand-glow);
+  --signal-up: var(--color-success);
+  --signal-warn: var(--color-warning);
+  --signal-down: var(--color-danger);
+  --signal-info: var(--color-info);
+  --editorial: var(--color-editorial);
+  --copper: var(--color-warm);
+  --text-hi: var(--color-text-primary);
+  --text-mid: var(--color-text-secondary);
+  --text-lo: var(--color-text-secondary);
+  --text-faint: var(--color-text-tertiary);
+  --text-dim: var(--color-text-muted);
+  --num: var(--color-text-primary);
+  --num-pos: var(--color-success);
+  --num-neg: var(--color-danger);
+  --paper-0: var(--color-surface-soft);
+  --paper-1: var(--color-surface-paper);
+  --paper-rule: var(--color-paper-border);
+  --paper-muted: var(--color-surface-tint);
+
+  font-feature-settings: "ss01", "cv11", "tnum";
+  background:
+    linear-gradient(180deg, var(--color-canvas), var(--color-surface-deep) 34rem, var(--color-surface-soft) 100rem);
+}
+
+.landing-root .section-shell {
+  width: min(100% - 3rem, 80rem);
+  margin-inline: auto;
+}
+
+.landing-root .glass-panel {
+  border: 1px solid color-mix(in srgb, var(--color-border-subtle) 82%, transparent);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.018)),
+    color-mix(in srgb, var(--color-surface-panel) 88%, transparent);
+  box-shadow: 0 24px 70px rgba(2, 8, 23, 0.24);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+.landing-root .landing-hero {
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--color-brand) 11%, transparent), transparent 34rem),
+    linear-gradient(315deg, color-mix(in srgb, var(--color-editorial) 10%, transparent), transparent 30rem),
+    var(--color-canvas);
+}
+
+.landing-root .metric-card {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045), 0 16px 40px rgba(0, 0, 0, 0.14);
+  transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.landing-root .metric-card:hover {
+  border-color: var(--color-border-muted);
+  background: rgba(255, 255, 255, 0.07);
+  transform: translateY(-2px);
+}
+
+.landing-root .hero-command {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.018)),
+    var(--color-surface-panel);
+}
+
+.landing-root .command-center-beam {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 11rem;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--color-brand) 16%, transparent), transparent 36%, color-mix(in srgb, var(--color-editorial) 12%, transparent)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent);
+  opacity: 0.72;
+}
+
+.landing-root .workflow-card {
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.landing-root .workflow-card:hover {
+  border-color: var(--color-border-strong);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.24);
+  transform: translateY(-4px);
+}
+
+.landing-root .gallery-shot img {
+  filter: saturate(0.9) contrast(1.04);
+}
+
+.landing-root .gallery-card {
+  min-height: 100%;
+}
+
+.landing-root .soft-card {
+  border: 1px solid var(--paper-rule);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.018)),
+    var(--paper-1);
+  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.18);
+}
+
+.landing-root .scroll-fade {
+  mask-image: linear-gradient(90deg, transparent, black 4%, black 96%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 4%, black 96%, transparent);
+}
+
+/* Tabular numerals everywhere a number appears in a ticker / counter */
+.landing-root .tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* The fine grid that lives under hero + connected-workflow */
+.landing-grid-bg {
+  background-image:
+    linear-gradient(to right, rgba(210, 221, 216, 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(210, 221, 216, 0.055) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: linear-gradient(180deg, black, transparent 92%);
+  -webkit-mask-image: linear-gradient(180deg, black, transparent 92%);
+}
+
+.landing-root .surface-grid {
+  background-image:
+    linear-gradient(to right, rgba(238, 247, 242, 0.052) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(238, 247, 242, 0.052) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.landing-root .section-divider {
+  border-top: 1px solid var(--rule-1);
+}
+
+/* Subtle film grain — adds "this is real, not a render" texture */
+.landing-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.7'/></svg>");
+}
+
+/* Live status dot — heartbeat for the ticker bar */
+@keyframes landing-pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+.landing-root .live-dot {
+  animation: landing-pulse-dot 1.8s ease-in-out infinite;
+}
+
+/* Ticker — for the live-data marquee under the hero */
+@keyframes landing-ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.landing-root .ticker-track {
+  animation: landing-ticker 60s linear infinite;
+}
+.landing-root:hover .ticker-track,
+.landing-root .ticker-track:hover {
+  animation-play-state: paused;
+}
+
+/* Workflow-line animation — dashed line travels along the path */
+@keyframes landing-flow-dash {
+  to { stroke-dashoffset: -160; }
+}
+.landing-root .flow-line {
+  stroke-dasharray: 4 8;
+  animation: landing-flow-dash 8s linear infinite;
+}
+
+/* Numeric counter — slight scale on update */
+@keyframes landing-num-tick {
+  0% { transform: translateY(0); opacity: 1; }
+  40% { transform: translateY(-6px); opacity: 0; }
+  60% { transform: translateY(6px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* Border-glow for "command center" frames */
+.landing-root .frame-glow {
+  position: relative;
+}
+.landing-root .frame-glow::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--color-brand) 34%, transparent),
+    color-mix(in srgb, var(--color-info) 13%, transparent) 30%,
+    transparent 60%);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+          mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Section labels — small caps eyebrow */
+.landing-root .eyebrow {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent-hi);
+}
+
+/* Display headline — Instrument Serif with mixed sans for "boring nouns" */
+.landing-root .display {
+  font-family: var(--font-display, "Times New Roman", serif);
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.02;
+}
+
+.landing-root .display-italic {
+  font-family: var(--font-display, "Times New Roman", serif);
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* Body voice */
+.landing-root .body-text {
+  font-family: var(--font-body, ui-sans-serif, system-ui);
+}
+
+/* Mono / data voice */
+.landing-root .data-text {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-root .ticker-track,
+  .landing-root .flow-line,
+  .landing-root .live-dot {
+    animation: none;
+  }
+}
+

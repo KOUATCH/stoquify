@@ -120,6 +120,43 @@ function proofHash(value: unknown) {
   return `sha256:${hashBusinessPayload(value)}`;
 }
 
+export type HrisContractReadinessProofSource = Pick<
+  NonNullable<HrisPayrollReadinessEmployeeSource["contract"]>,
+  "id" | "signedDocumentHash" | "activatedBusinessEventId" | "metadata"
+>;
+
+export function evaluateHrisContractReadinessProof(
+  contract: HrisContractReadinessProofSource | null,
+) {
+  const contractMetadata = record(contract?.metadata);
+  const approval = record(
+    record(contractMetadata.hrisContractApproval).latest,
+  );
+  const documentEvidence = record(
+    record(contractMetadata.hrisDocumentEvidence).current,
+  );
+  const approvalValid = Boolean(
+    contract &&
+    approval.status === "APPROVED" &&
+    stringValue(approval.requestId) &&
+    stringValue(approval.requestEvidenceHash) &&
+    stringValue(approval.approvalEvidenceHash) &&
+    stringValue(approval.activationBusinessEventId) ===
+      contract.activatedBusinessEventId,
+  );
+  const documentValid = Boolean(
+    contract &&
+    contract.signedDocumentHash &&
+    documentEvidence.status === "APPROVED" &&
+    stringValue(documentEvidence.artifactHash) ===
+      contract.signedDocumentHash &&
+    stringValue(documentEvidence.malwareScanEvidenceHash) &&
+    stringValue(documentEvidence.approvalEvidenceHash) &&
+    stringValue(documentEvidence.approvalBusinessEventId),
+  );
+  return { approval, documentEvidence, approvalValid, documentValid };
+}
+
 function employeeProof(source: HrisPayrollReadinessEmployeeSource) {
   const blockers: HrisPayrollReadinessBlocker[] = [];
   const addBlocker = (
@@ -153,22 +190,10 @@ function employeeProof(source: HrisPayrollReadinessEmployeeSource) {
   }
 
   const contract = source.contract;
-  const contractMetadata = record(contract?.metadata);
-  const contractApproval = record(
-    record(contractMetadata.hrisContractApproval).latest,
-  );
-  const documentEvidence = record(
-    record(contractMetadata.hrisDocumentEvidence).current,
-  );
-  const contractApprovalValid = Boolean(
-    contract &&
-    contractApproval.status === "APPROVED" &&
-    stringValue(contractApproval.requestId) &&
-    stringValue(contractApproval.requestEvidenceHash) &&
-    stringValue(contractApproval.approvalEvidenceHash) &&
-    stringValue(contractApproval.activationBusinessEventId) ===
-      contract.activatedBusinessEventId,
-  );
+  const contractProof = evaluateHrisContractReadinessProof(contract);
+  const contractApproval = contractProof.approval;
+  const documentEvidence = contractProof.documentEvidence;
+  const contractApprovalValid = contractProof.approvalValid;
   if (contract && !contractApprovalValid) {
     addBlocker(
       "HRIS_PAYROLL_CONTRACT_APPROVAL_PROOF_MISSING",
@@ -176,16 +201,7 @@ function employeeProof(source: HrisPayrollReadinessEmployeeSource) {
       contract.id,
     );
   }
-  const contractDocumentValid = Boolean(
-    contract &&
-    contract.signedDocumentHash &&
-    documentEvidence.status === "APPROVED" &&
-    stringValue(documentEvidence.artifactHash) ===
-      contract.signedDocumentHash &&
-    stringValue(documentEvidence.malwareScanEvidenceHash) &&
-    stringValue(documentEvidence.approvalEvidenceHash) &&
-    stringValue(documentEvidence.approvalBusinessEventId),
-  );
+  const contractDocumentValid = contractProof.documentValid;
   if (contract && !contractDocumentValid) {
     addBlocker(
       "HRIS_PAYROLL_CONTRACT_DOCUMENT_PROOF_MISSING",

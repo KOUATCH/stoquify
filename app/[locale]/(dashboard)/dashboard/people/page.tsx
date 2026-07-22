@@ -55,7 +55,7 @@ export default async function PeopleWorkspacePage({
     actorPermissions: access.permissions,
     limit: 50,
   })
-  const locationScoped = directory.accessScope.authority.kind === "LOCATION_RESPONSIBILITY"
+  const locationScoped = directory.accessScope.authority.kind === "LOCATION_RESPONSIBILITY_COMPATIBILITY"
   const scopeDescription = locationScoped
     ? "Current employees in locations assigned to you. This is location responsibility, not direct-report authority."
     : "Tenant-scoped identity, employment, mapping, and readiness status."

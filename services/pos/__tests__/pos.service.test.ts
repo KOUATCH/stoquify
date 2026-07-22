@@ -83,10 +83,12 @@ const mockTx = {
   salesOrder: {
     findFirst: jest.fn(),
     update: jest.fn(),
+    updateMany: jest.fn(),
   },
   pOSSession: {
     findFirst: jest.fn(),
     update: jest.fn(),
+    updateMany: jest.fn(),
   },
   customer: {
     findFirst: jest.fn(),
@@ -322,6 +324,8 @@ describe("commitPOSSale accounting wiring", () => {
       outboxMessages: args.data.outboxMessages.create,
     }))
     mockTx.pOSSession.update.mockResolvedValue({ id: "session-1" })
+    mockTx.pOSSession.updateMany.mockResolvedValue({ count: 1 })
+    mockTx.salesOrder.updateMany.mockResolvedValue({ count: 1 })
     mockTx.salesOrder.update.mockResolvedValue({
       id: "sale-1",
       status: "COMPLETED",
@@ -442,6 +446,31 @@ describe("commitPOSSale accounting wiring", () => {
         }),
       }),
     )
+    expect(mockTx.pOSSession.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          id: "session-1",
+          organizationId: "org-1",
+          terminalId: "terminal-1",
+          locationId: "loc-1",
+          userId: "cashier-1",
+          status: "ACTIVE",
+        },
+      }),
+    )
+    expect(mockTx.salesOrder.updateMany).toHaveBeenCalledWith({
+      where: {
+        id: "sale-1",
+        organizationId: "org-1",
+        locationId: "loc-1",
+        terminalId: "terminal-1",
+        sessionId: "session-1",
+        createdById: "cashier-1",
+        status: "DRAFT",
+        deletedAt: null,
+      },
+      data: { status: "COMPLETED" },
+    })
     expect(mockTx.auditLog.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
@@ -584,6 +613,27 @@ describe("commitPOSSale accounting wiring", () => {
     expect(mockGetSalesReceipt).not.toHaveBeenCalled()
   })
 
+  it("stops before stock and payment writes when the cashier-owned active shift claim is lost", async () => {
+    mockTx.pOSSession.updateMany.mockResolvedValueOnce({ count: 0 })
+
+    await expect(commitPOSSale(commitInput())).rejects.toMatchObject({ code: "CONFLICT", status: 409 })
+
+    expect(mockTx.salesOrder.updateMany).not.toHaveBeenCalled()
+    expect(mockTx.inventoryTransaction.create).not.toHaveBeenCalled()
+    expect(mockTx.payment.create).not.toHaveBeenCalled()
+    expect(mockPostSale).not.toHaveBeenCalled()
+  })
+
+  it("stops before financial side effects when another request already claimed the draft sale", async () => {
+    mockTx.salesOrder.updateMany.mockResolvedValueOnce({ count: 0 })
+
+    await expect(commitPOSSale(commitInput())).rejects.toMatchObject({ code: "CONFLICT", status: 409 })
+
+    expect(mockTx.inventoryTransaction.create).not.toHaveBeenCalled()
+    expect(mockTx.payment.create).not.toHaveBeenCalled()
+    expect(mockPostSale).not.toHaveBeenCalled()
+  })
+
   it("refunds a fully paid POS sale and posts each refund inside the transaction", async () => {
     mockTx.salesOrder.findFirst.mockResolvedValue(completedSaleFixture())
     mockTx.salesOrder.update.mockResolvedValue({
@@ -612,6 +662,33 @@ describe("commitPOSSale accounting wiring", () => {
         }),
       }),
     )
+    expect(mockTx.pOSSession.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          id: "session-1",
+          organizationId: "org-1",
+          terminalId: "terminal-1",
+          locationId: "loc-1",
+          userId: "cashier-1",
+          status: "ACTIVE",
+        },
+      }),
+    )
+    expect(mockTx.salesOrder.updateMany).toHaveBeenCalledWith(expect.objectContaining({
+      where: {
+        id: "sale-1",
+        organizationId: "org-1",
+        locationId: "loc-1",
+        terminalId: "terminal-1",
+        sessionId: "session-1",
+        status: "COMPLETED",
+        deletedAt: null,
+      },
+      data: expect.objectContaining({
+        status: "RETURNED",
+        paymentStatus: "REFUNDED",
+      }),
+    }))
     expect(mockPostRefund).toHaveBeenCalledWith(
       "org-1",
       expect.objectContaining({
@@ -657,6 +734,17 @@ describe("commitPOSSale accounting wiring", () => {
     expectNoBusinessEvent("pos.refund.issued")
   })
 
+  it("stops a duplicate refund before restock, drawer, payment, or posting side effects", async () => {
+    mockTx.salesOrder.findFirst.mockResolvedValue(completedSaleFixture())
+    mockTx.salesOrder.updateMany.mockResolvedValueOnce({ count: 0 })
+
+    await expect(refundPOSSale(correctionInput())).rejects.toMatchObject({ code: "CONFLICT", status: 409 })
+
+    expect(mockTx.paymentRefund.create).not.toHaveBeenCalled()
+    expect(mockPostRefund).not.toHaveBeenCalled()
+    expectNoBusinessEvent("pos.refund.issued")
+  })
+
   it("voids a completed POS sale and posts the void inside the transaction", async () => {
     mockTx.salesOrder.findFirst.mockResolvedValue(completedSaleFixture())
     mockTx.salesOrder.update.mockResolvedValue({
@@ -679,6 +767,33 @@ describe("commitPOSSale accounting wiring", () => {
         data: { status: "CANCELLED" },
       }),
     )
+    expect(mockTx.pOSSession.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          id: "session-1",
+          organizationId: "org-1",
+          terminalId: "terminal-1",
+          locationId: "loc-1",
+          userId: "cashier-1",
+          status: "ACTIVE",
+        },
+      }),
+    )
+    expect(mockTx.salesOrder.updateMany).toHaveBeenCalledWith(expect.objectContaining({
+      where: {
+        id: "sale-1",
+        organizationId: "org-1",
+        locationId: "loc-1",
+        terminalId: "terminal-1",
+        sessionId: "session-1",
+        status: "COMPLETED",
+        deletedAt: null,
+      },
+      data: expect.objectContaining({
+        status: "CANCELLED",
+        paymentStatus: "CANCELLED",
+      }),
+    }))
     expect(mockPostVoid).toHaveBeenCalledWith(
       "org-1",
       expect.objectContaining({

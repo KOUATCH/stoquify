@@ -64,12 +64,19 @@ describe("workflow assurance release gate", () => {
       scheduler: `export const WORKFLOW_ASSURANCE_SCHEDULER_POLICIES = { scheduled_scan: { cursorFields: [] } }`,
       controlTower: `const staleRunningCount = 0; const failedRunCount = 0; const pendingAlertCount = 0; const failedAlertCount = 0;`,
       schema: `
+        @@unique([organizationId, checkKey, definitionVersion, sourceType, sourceId], name: "workflow_assurance_incident_identity_key")
         @@index([organizationId, status, severity, lastDetectedAt])
         @@index([organizationId, workflow, status])
         @@index([organizationId, ownerId, status, dueAt])
         @@index([organizationId, runStatus, startedAt])
         @@index([organizationId, sourceType, sourceId])
         @@index([organizationId, status, createdAt])
+        @@unique([organizationId, checkKey, definitionVersion, executionKey], name: "workflow_assurance_run_execution_key")
+        model WorkflowAssuranceCheckFinding {
+          @@unique([checkRunId, ordinal])
+          @@unique([checkRunId, fingerprint])
+          @@index([organizationId, sourceType, sourceId])
+        }
       `,
     })
 
@@ -110,6 +117,10 @@ describe("workflow assurance release gate", () => {
         expect.objectContaining({ area: "ledger.test", blocker: "missing action route" }),
         expect.objectContaining({ area: "ledger.test", blocker: "missing registered runner" }),
         expect.objectContaining({ area: "indexes" }),
+        expect.objectContaining({
+          area: "indexes",
+          blocker: "organization + check + definition version + source identity",
+        }),
       ]),
     )
   })

@@ -41,6 +41,11 @@ const accessScope = {
   managedLocations: [],
   employeeIds: null,
   limitations: [],
+  auditEvidence: {
+    asOf: "2026-07-15T00:00:00.000Z",
+    relationshipIds: ["rel-sensitive-1"],
+    delegationIds: ["delegation-sensitive-1"],
+  },
 }
 
 function client() {
@@ -114,6 +119,7 @@ describe("HRIS contract facade", () => {
       payrollReadiness: "LEGACY_REVIEW_REQUIRED",
     })
     expect(JSON.stringify(result)).not.toMatch(/baseSalary|userId|signedDocumentHash|artifactHash/i)
+    expect(JSON.stringify(result)).not.toMatch(/rel-sensitive-1|delegation-sensitive-1|auditEvidence/i)
   })
 
   it("fails before reading contracts when the employee is outside scope", async () => {

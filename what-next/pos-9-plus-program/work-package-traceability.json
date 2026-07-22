@@ -1,0 +1,804 @@
+{
+  "version": "GOV-01-2026-07-20",
+  "summary": {
+    "workPackages": 32,
+    "blocked": 32,
+    "ready": 0,
+    "cycles": 0,
+    "orphanDependencies": 0,
+    "missingOwners": 0
+  },
+  "policyHolds": {
+    "HP-1": {
+      "status": "ACTIVE",
+      "condition": "Approve D-01, D-02, D-07 and G1/G2/G5 design contracts before provider/offline implementation."
+    },
+    "HP-2": {
+      "status": "ACTIVE-FUTURE",
+      "condition": "No electronic-payment production claim without provider and reconciliation proof."
+    },
+    "HP-3": {
+      "status": "ACTIVE-FUTURE",
+      "condition": "Offline selling disabled until independent G3 and G4 PASS."
+    }
+  },
+  "semanticGaps": [
+    {
+      "workPackage": "DIF-01",
+      "issue": "Orchestrator is an epic/dispatch owner only and must assign future bounded implementation skills before execution."
+    }
+  ],
+  "workPackages": [
+    {
+      "id": "GOV-01",
+      "wave": 0,
+      "priority": "P0",
+      "owner": "stoquify-pos-9plus-program-orchestrator",
+      "contributors": [],
+      "dependencies": [],
+      "decisions": [],
+      "gates": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5",
+        "G6",
+        "G7",
+        "G8"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "GOV-01 artifacts created, but immutable candidate provenance and approved decisions are absent."
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "HON-01",
+      "wave": 0,
+      "priority": "P0",
+      "owner": "stoquify-pos-tender-accounting-truth",
+      "contributors": [
+        "stoquify-pos-cashier-workstation-ux"
+      ],
+      "dependencies": [
+        "GOV-01"
+      ],
+      "decisions": [
+        "D-01"
+      ],
+      "gates": [
+        "G1",
+        "G7"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: GOV-01",
+        "Unapproved decisions: D-01"
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "SEC-01",
+      "wave": 1,
+      "priority": "P0",
+      "owner": "stoquify-pos-access-trust-hardener",
+      "contributors": [],
+      "dependencies": [
+        "GOV-01"
+      ],
+      "decisions": [
+        "D-02"
+      ],
+      "gates": [
+        "G4",
+        "G5"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: GOV-01",
+        "Unapproved decisions: D-02"
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "SH-01",
+      "wave": 1,
+      "priority": "P0",
+      "owner": "stoquify-pos-shift-drawer-invariant",
+      "contributors": [],
+      "dependencies": [
+        "GOV-01"
+      ],
+      "decisions": [
+        "D-02"
+      ],
+      "gates": [
+        "G2",
+        "G5"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: GOV-01",
+        "Unapproved decisions: D-02"
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "SH-02",
+      "wave": 1,
+      "priority": "P0",
+      "owner": "stoquify-pos-shift-drawer-invariant",
+      "contributors": [],
+      "dependencies": [
+        "SH-01",
+        "SEC-01"
+      ],
+      "decisions": [
+        "D-02"
+      ],
+      "gates": [
+        "G2"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: SH-01, SEC-01",
+        "Unapproved decisions: D-02"
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "PAY-01",
+      "wave": 1,
+      "priority": "P0",
+      "owner": "stoquify-pos-tender-accounting-truth",
+      "contributors": [],
+      "dependencies": [
+        "HON-01"
+      ],
+      "decisions": [
+        "D-01",
+        "D-07"
+      ],
+      "gates": [
+        "G1",
+        "G6"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: HON-01",
+        "Unapproved decisions: D-01, D-07"
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "PAY-02",
+      "wave": 2,
+      "priority": "P0",
+      "owner": "stoquify-pos-provider-payment-lifecycle",
+      "contributors": [],
+      "dependencies": [
+        "PAY-01",
+        "SEC-01"
+      ],
+      "decisions": [
+        "D-03"
+      ],
+      "gates": [
+        "G1",
+        "G5"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: PAY-01, SEC-01",
+        "Unapproved decisions: D-03",
+        "Active policy holds: HP-1"
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "PAY-03",
+      "wave": 2,
+      "priority": "P0",
+      "owner": "stoquify-pos-provider-payment-lifecycle",
+      "contributors": [],
+      "dependencies": [
+        "PAY-02"
+      ],
+      "decisions": [
+        "D-03"
+      ],
+      "gates": [
+        "G1",
+        "G5"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: PAY-02",
+        "Unapproved decisions: D-03",
+        "Active policy holds: HP-1"
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "PAY-04",
+      "wave": 2,
+      "priority": "P0",
+      "owner": "stoquify-pos-provider-payment-lifecycle",
+      "contributors": [],
+      "dependencies": [
+        "PAY-02"
+      ],
+      "decisions": [
+        "D-03",
+        "D-06"
+      ],
+      "gates": [
+        "G1",
+        "G6"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: PAY-02",
+        "Unapproved decisions: D-03, D-06",
+        "Active policy holds: HP-1"
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "OFF-01",
+      "wave": 3,
+      "priority": "P0",
+      "owner": "stoquify-pos-offline-durable-edge-queue",
+      "contributors": [],
+      "dependencies": [
+        "PAY-01"
+      ],
+      "decisions": [
+        "D-04"
+      ],
+      "gates": [
+        "G3"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: PAY-01",
+        "Unapproved decisions: D-04",
+        "Active policy holds: HP-1, HP-3"
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "OFF-02",
+      "wave": 3,
+      "priority": "P0",
+      "owner": "stoquify-pos-offline-durable-edge-queue",
+      "contributors": [],
+      "dependencies": [
+        "OFF-01"
+      ],
+      "decisions": [
+        "D-04"
+      ],
+      "gates": [
+        "G3",
+        "G8"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: OFF-01",
+        "Unapproved decisions: D-04",
+        "Active policy holds: HP-1, HP-3"
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "OFF-03",
+      "wave": 3,
+      "priority": "P0",
+      "owner": "stoquify-pos-offline-durable-edge-queue",
+      "contributors": [],
+      "dependencies": [
+        "OFF-01"
+      ],
+      "decisions": [
+        "D-04"
+      ],
+      "gates": [
+        "G3",
+        "G8"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: OFF-01",
+        "Unapproved decisions: D-04",
+        "Active policy holds: HP-1, HP-3"
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "OFF-04",
+      "wave": 3,
+      "priority": "P0",
+      "owner": "stoquify-pos-offline-device-trust",
+      "contributors": [],
+      "dependencies": [
+        "SEC-01"
+      ],
+      "decisions": [
+        "D-04"
+      ],
+      "gates": [
+        "G4",
+        "G5"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: SEC-01",
+        "Unapproved decisions: D-04",
+        "Active policy holds: HP-1, HP-3"
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "OFF-05",
+      "wave": 3,
+      "priority": "P0",
+      "owner": "stoquify-pos-offline-replay-finalizer",
+      "contributors": [],
+      "dependencies": [
+        "OFF-03",
+        "OFF-04",
+        "PAY-01"
+      ],
+      "decisions": [
+        "D-04"
+      ],
+      "gates": [
+        "G1",
+        "G3",
+        "G4",
+        "G6"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: OFF-03, OFF-04, PAY-01",
+        "Unapproved decisions: D-04",
+        "Active policy holds: HP-1, HP-3"
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "OFF-06",
+      "wave": 3,
+      "priority": "P0",
+      "owner": "stoquify-pos-offline-conflict-operations",
+      "contributors": [],
+      "dependencies": [
+        "OFF-05",
+        "SEC-01"
+      ],
+      "decisions": [
+        "D-04"
+      ],
+      "gates": [
+        "G3",
+        "G5",
+        "G6",
+        "G8"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: OFF-05, SEC-01",
+        "Unapproved decisions: D-04",
+        "Active policy holds: HP-1, HP-3"
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "RET-01",
+      "wave": 2,
+      "priority": "P0",
+      "owner": "stoquify-pos-returns-reversal-controls",
+      "contributors": [],
+      "dependencies": [
+        "PAY-01"
+      ],
+      "decisions": [
+        "D-06"
+      ],
+      "gates": [
+        "G1",
+        "G6"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: PAY-01",
+        "Unapproved decisions: D-06"
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "RET-02",
+      "wave": 2,
+      "priority": "P0",
+      "owner": "stoquify-pos-returns-reversal-controls",
+      "contributors": [],
+      "dependencies": [
+        "RET-01",
+        "PAY-04"
+      ],
+      "decisions": [
+        "D-06"
+      ],
+      "gates": [
+        "G1",
+        "G2",
+        "G6"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: RET-01, PAY-04",
+        "Unapproved decisions: D-06"
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "RET-03",
+      "wave": 4,
+      "priority": "P1",
+      "owner": "stoquify-pos-returns-reversal-controls",
+      "contributors": [
+        "stoquify-pos-cashier-workstation-ux"
+      ],
+      "dependencies": [
+        "RET-02",
+        "SEC-01"
+      ],
+      "decisions": [
+        "D-06"
+      ],
+      "gates": [
+        "G5",
+        "G7"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: RET-02, SEC-01",
+        "Unapproved decisions: D-06"
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "UX-01",
+      "wave": 4,
+      "priority": "P1",
+      "owner": "stoquify-pos-cashier-workstation-ux",
+      "contributors": [],
+      "dependencies": [
+        "PAY-01",
+        "SEC-01"
+      ],
+      "decisions": [],
+      "gates": [
+        "G7"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: PAY-01, SEC-01"
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "UX-02",
+      "wave": 4,
+      "priority": "P1",
+      "owner": "stoquify-pos-cashier-workstation-ux",
+      "contributors": [],
+      "dependencies": [
+        "UX-01",
+        "PAY-02",
+        "OFF-06"
+      ],
+      "decisions": [],
+      "gates": [
+        "G7"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: UX-01, PAY-02, OFF-06"
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "UX-03",
+      "wave": 4,
+      "priority": "P1",
+      "owner": "stoquify-pos-cashier-workstation-ux",
+      "contributors": [],
+      "dependencies": [
+        "UX-01"
+      ],
+      "decisions": [
+        "D-08"
+      ],
+      "gates": [
+        "G7"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: UX-01",
+        "Unapproved decisions: D-08"
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "DEV-01",
+      "wave": 5,
+      "priority": "P1",
+      "owner": "stoquify-pos-device-adapter-certification",
+      "contributors": [],
+      "dependencies": [
+        "PAY-02",
+        "SH-02"
+      ],
+      "decisions": [
+        "D-05"
+      ],
+      "gates": [
+        "G1",
+        "G2",
+        "G4",
+        "G7"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: PAY-02, SH-02",
+        "Unapproved decisions: D-05"
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "RCP-01",
+      "wave": 5,
+      "priority": "P1",
+      "owner": "stoquify-pos-receipt-delivery-proof",
+      "contributors": [],
+      "dependencies": [
+        "PAY-02"
+      ],
+      "decisions": [
+        "D-07"
+      ],
+      "gates": [
+        "G6",
+        "G7"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: PAY-02",
+        "Unapproved decisions: D-07"
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "LOC-01",
+      "wave": 5,
+      "priority": "P1",
+      "owner": "stoquify-pos-country-pack-money-localization",
+      "contributors": [],
+      "dependencies": [
+        "PAY-01"
+      ],
+      "decisions": [
+        "D-07"
+      ],
+      "gates": [
+        "G1",
+        "G6"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: PAY-01",
+        "Unapproved decisions: D-07"
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "A11Y-01",
+      "wave": 5,
+      "priority": "P1",
+      "owner": "stoquify-pos-responsive-accessibility-certifier",
+      "contributors": [],
+      "dependencies": [
+        "UX-02",
+        "UX-03",
+        "DEV-01"
+      ],
+      "decisions": [
+        "D-05",
+        "D-08"
+      ],
+      "gates": [
+        "G7"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: UX-02, UX-03, DEV-01",
+        "Unapproved decisions: D-05, D-08"
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "REC-01",
+      "wave": 6,
+      "priority": "P1-P2",
+      "owner": "stoquify-pos-payment-reconciliation-certifier",
+      "contributors": [],
+      "dependencies": [
+        "PAY-03",
+        "PAY-04"
+      ],
+      "decisions": [
+        "D-03"
+      ],
+      "gates": [
+        "G1",
+        "G6",
+        "G8"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: PAY-03, PAY-04",
+        "Unapproved decisions: D-03",
+        "Active policy holds: HP-2"
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "OPS-01",
+      "wave": 6,
+      "priority": "P2",
+      "owner": "stoquify-pos-operability-slo-runbook-builder",
+      "contributors": [],
+      "dependencies": [
+        "UX-02",
+        "OFF-06",
+        "REC-01"
+      ],
+      "decisions": [
+        "D-08"
+      ],
+      "gates": [
+        "G8"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: UX-02, OFF-06, REC-01",
+        "Unapproved decisions: D-08"
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "OPS-02",
+      "wave": 6,
+      "priority": "P2",
+      "owner": "stoquify-pos-operability-slo-runbook-builder",
+      "contributors": [],
+      "dependencies": [
+        "OPS-01"
+      ],
+      "decisions": [],
+      "gates": [
+        "G8"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: OPS-01"
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "CERT-01",
+      "wave": 6,
+      "priority": "P0-GATE",
+      "owner": "stoquify-pos-chaos-field-certifier",
+      "contributors": [],
+      "dependencies": [
+        "SH-02",
+        "PAY-04",
+        "OFF-06",
+        "RET-02",
+        "REC-01",
+        "OPS-02"
+      ],
+      "decisions": [],
+      "gates": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5",
+        "G6",
+        "G8"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: SH-02, PAY-04, OFF-06, RET-02, REC-01, OPS-02"
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "CERT-02",
+      "wave": 6,
+      "priority": "P0-GATE",
+      "owner": "stoquify-pos-chaos-field-certifier",
+      "contributors": [],
+      "dependencies": [
+        "A11Y-01",
+        "DEV-01",
+        "RCP-01",
+        "LOC-01",
+        "OPS-02"
+      ],
+      "decisions": [],
+      "gates": [
+        "G7",
+        "G8"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: A11Y-01, DEV-01, RCP-01, LOC-01, OPS-02"
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "REL-01",
+      "wave": 7,
+      "priority": "P0-GATE",
+      "owner": "stoquify-pos-release-gate-governor",
+      "contributors": [],
+      "dependencies": [
+        "CERT-01",
+        "CERT-02"
+      ],
+      "decisions": [],
+      "gates": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5",
+        "G6",
+        "G7",
+        "G8"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: CERT-01, CERT-02",
+        "Active policy holds: HP-2, HP-3"
+      ],
+      "mutationBoundaryReserved": false
+    },
+    {
+      "id": "DIF-01",
+      "wave": 7,
+      "priority": "P3",
+      "owner": "stoquify-pos-9plus-program-orchestrator",
+      "contributors": [],
+      "dependencies": [
+        "REL-01"
+      ],
+      "decisions": [],
+      "gates": [
+        "G7",
+        "G8"
+      ],
+      "status": "BLOCKED",
+      "blockReasons": [
+        "Unmet dependencies: REL-01"
+      ],
+      "mutationBoundaryReserved": false
+    }
+  ]
+}

@@ -8,6 +8,8 @@ const WILDCARD_DENIED_RISKS = new Set<PermissionRisk>(["high", "crit"])
 const EXPLICIT_PERMISSION_RISKS = {
   "admin.role.assign": "crit",
   "admin.user.invite": "crit",
+  "branch.daily-close.review": "high",
+  "branch.daily-close.sign": "crit",
   "accounting.setup.manage": "crit",
   "accounting.accounts.manage": "crit",
   "accounting.journal.post": "crit",

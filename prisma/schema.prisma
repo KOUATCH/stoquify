@@ -72,21 +72,21 @@ model Account {
 }
 
 model Session {
-  id                              String    @id @default(cuid())
-  token                           String    @unique
-  userId                          String
-  expiresAt                       DateTime
-  ipAddress                       String?
-  userAgent                       String?
-  assuranceVerifiedAt             DateTime?
-  assuranceMethod                 String?
-  assuranceOrganizationId         String?
-  assuranceLevel                  Int       @default(0)
-  assuranceFailureCount           Int       @default(0)
-  assuranceLockedUntil            DateTime?
-  createdAt                       DateTime  @default(now())
-  updatedAt                       DateTime  @updatedAt
-  user                            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                      String    @id @default(cuid())
+  token                   String    @unique
+  userId                  String
+  expiresAt               DateTime
+  ipAddress               String?
+  userAgent               String?
+  assuranceVerifiedAt     DateTime?
+  assuranceMethod         String?
+  assuranceOrganizationId String?
+  assuranceLevel          Int       @default(0)
+  assuranceFailureCount   Int       @default(0)
+  assuranceLockedUntil    DateTime?
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+  user                    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([expiresAt])
@@ -156,7 +156,10 @@ model User {
   sessions Session[]
 
   // Location management
-  managedLocations Location[] @relation("LocationManager")
+  managedLocations                    Location[]                @relation("LocationManager")
+  startedBranchDailyCloseRuns         BranchDailyCloseRun[]     @relation("BranchDailyCloseStartedBy")
+  signedBranchDailyCloseSignOffs      BranchDailyCloseSignOff[] @relation("BranchDailyCloseSignedBy")
+  invalidatedBranchDailyCloseSignOffs BranchDailyCloseSignOff[] @relation("BranchDailyCloseInvalidatedBy")
 
   // Transaction tracking
   createdTransactions    InventoryTransaction[] @relation("TransactionCreatedBy")
@@ -185,8 +188,10 @@ model User {
   generatedReports DailySalesReport[] @relation("ReportGeneratedBy")
 
   // Audit
-  auditLogs       AuditLog[]
-  passwordHistory PasswordHistory[]
+  auditLogs                    AuditLog[]
+  passwordHistory              PasswordHistory[]
+  createdCashShortagePolicies  CashShortagePolicy[] @relation("CashShortagePolicyCreatedBy")
+  approvedCashShortagePolicies CashShortagePolicy[] @relation("CashShortagePolicyApprovedBy")
 
   importedStatementFiles       StatementFile[]     @relation("StatementFileImportedBy")
   matchedPaymentRecords        MatchRecord[]       @relation("MatchRecordMatchedBy")
@@ -306,6 +311,9 @@ model Organization {
   businessEvents                          BusinessEvent[]
   businessEventOutbox                     BusinessEventOutbox[]
   auditLogs                               AuditLog[]
+  branchDailyCloseRuns                    BranchDailyCloseRun[]
+  branchDailyCloseSignOffs                BranchDailyCloseSignOff[]
+  cashShortagePolicies                    CashShortagePolicy[]
   publicReceiptAccessTokens               PublicReceiptAccessToken[]
   posOfflineDevices                       POSOfflineDevice[]
   posOfflineSyncBatches                   POSOfflineSyncBatch[]
@@ -313,6 +321,11 @@ model Organization {
   posOfflineSyncConflicts                 POSOfflineSyncConflict[]
   posOfflineSyncCertificates              POSOfflineSyncCertificate[]
   payrollEmployees                        PayrollEmployee[]
+  hrisOrgUnits                            HrisOrgUnit[]
+  hrisPositions                           HrisPosition[]
+  hrisEmploymentAssignments               HrisEmploymentAssignment[]
+  hrisReportingRelationships              HrisReportingRelationship[]
+  hrisManagerDelegations                  HrisManagerDelegation[]
   payrollContracts                        PayrollContract[]
   payrollRubriques                        PayrollRubrique[]
   payrollRubriqueAssignments              PayrollEmployeeRubriqueAssignment[]
@@ -364,10 +377,15 @@ model Organization {
   supplierPayments                        SupplierPayment[]
   supplierPaymentAllocations              SupplierPaymentAllocation[]
   workflowAssuranceCheckRuns              WorkflowAssuranceCheckRun[]
+  workflowAssuranceCheckFindings          WorkflowAssuranceCheckFinding[]
   workflowAssuranceIncidents              WorkflowAssuranceIncident[]
   workflowAssuranceIncidentEvents         WorkflowAssuranceIncidentEvent[]
   workflowAssuranceAlertDeliveries        WorkflowAssuranceAlertDelivery[]
   workflowAssuranceWaivers                WorkflowAssuranceWaiver[]
+  agentRuns                               AgentRun[]
+  agentFeedback                           AgentFeedback[]
+  agentCostLedger                         AgentCostLedger[]
+  agentPolicyIncidents                    AgentPolicyIncident[]
 
   @@unique([slug])
   @@index([slug])
@@ -451,8 +469,11 @@ model Location {
   serialNumbers              SerialNumber[]
   stockCountSessions         StockCountSession[]
   stockCountLines            StockCountLine[]
+  branchDailyCloseRuns       BranchDailyCloseRun[]
+  hrisPositions              HrisPosition[]
 
   @@unique([organizationId, code])
+  @@unique([organizationId, id])
   @@index([organizationId])
   @@index([organizationId, type, isActive])
   @@map("locations")
@@ -469,6 +490,115 @@ enum LocationType {
   DAMAGED
   TRANSIT
   VIRTUAL
+}
+
+enum BranchDailyCloseRunStatus {
+  IN_REVIEW
+  BLOCKED
+}
+
+model BranchDailyCloseRun {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  locationId String
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Restrict)
+
+  businessDate DateTime                  @db.Date
+  periodStart  DateTime
+  periodEnd    DateTime
+  status       BranchDailyCloseRunStatus
+
+  readinessState        String @db.VarChar(32)
+  evidenceCoverageState String @db.VarChar(16)
+  supportedItemCount    Int
+  unsupportedItemCount  Int
+  blockerCount          Int
+
+  evidenceObservedAt  DateTime
+  readinessSourceHash String   @db.VarChar(71)
+  evidenceHash        String   @db.VarChar(71)
+  evidenceManifest    Json
+
+  startedById String
+  startedBy   User     @relation("BranchDailyCloseStartedBy", fields: [startedById], references: [id], onDelete: Restrict)
+  startedAt   DateTime
+
+  idempotencyKey String @db.VarChar(200)
+  requestHash    String @db.VarChar(71)
+  correlationId  String @db.VarChar(200)
+
+  signOffs BranchDailyCloseSignOff[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([organizationId, locationId, businessDate])
+  @@unique([organizationId, idempotencyKey])
+  @@unique([organizationId, id])
+  @@index([organizationId, status, businessDate])
+  @@index([organizationId, locationId, status, businessDate])
+  @@index([startedById])
+  @@index([correlationId])
+  @@map("branch_daily_close_runs")
+}
+
+enum BranchDailyCloseSignOffStatus {
+  ACTIVE
+  REVOKED
+  SUPERSEDED
+}
+
+model BranchDailyCloseSignOff {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  branchDailyCloseRunId String
+  branchDailyCloseRun   BranchDailyCloseRun @relation(fields: [organizationId, branchDailyCloseRunId], references: [organizationId, id], onDelete: Restrict)
+
+  status    BranchDailyCloseSignOffStatus @default(ACTIVE)
+  activeKey String?                       @db.VarChar(200)
+
+  signedReadinessSourceHash String   @db.VarChar(71)
+  signedEvidenceHash        String   @db.VarChar(71)
+  signedEvidenceObservedAt  DateTime
+
+  signedById String
+  signedBy   User     @relation("BranchDailyCloseSignedBy", fields: [signedById], references: [id], onDelete: Restrict)
+  signedAt   DateTime
+
+  authAssuranceLevel String   @db.VarChar(2)
+  freshAuthAt        DateTime
+
+  invalidatedById    String?
+  invalidatedBy      User?     @relation("BranchDailyCloseInvalidatedBy", fields: [invalidatedById], references: [id], onDelete: Restrict)
+  invalidatedAt      DateTime?
+  invalidationReason String?   @db.VarChar(500)
+
+  supersedesSignOffId  String?
+  supersedesSignOff    BranchDailyCloseSignOff?  @relation("BranchDailyCloseSignOffSupersession", fields: [organizationId, supersedesSignOffId], references: [organizationId, id], onDelete: Restrict)
+  supersededBySignOffs BranchDailyCloseSignOff[] @relation("BranchDailyCloseSignOffSupersession")
+
+  idempotencyKey String @db.VarChar(200)
+  requestHash    String @db.VarChar(71)
+  correlationId  String @db.VarChar(200)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([organizationId, id])
+  @@unique([organizationId, activeKey])
+  @@unique([organizationId, idempotencyKey])
+  @@index([organizationId, branchDailyCloseRunId, status, signedAt])
+  @@index([signedById])
+  @@index([invalidatedById])
+  @@index([supersedesSignOffId])
+  @@index([correlationId])
+  @@map("branch_daily_close_sign_offs")
 }
 
 // ============================================================
@@ -1705,17 +1835,219 @@ model PayrollEmployee {
   payslips                         PayrollPayslip[]
   paymentAllocations               PayrollPaymentAllocation[]
   balanceCases                     PayrollEmployeeBalanceCase[]
+  hrisEmploymentAssignments        HrisEmploymentAssignment[]
+  hrisManagedRelationships         HrisReportingRelationship[]              @relation("HrisReportingManager")
+  hrisReportRelationships          HrisReportingRelationship[]              @relation("HrisReportingReport")
+  hrisDelegationsGranted           HrisManagerDelegation[]                  @relation("HrisDelegationDelegator")
+  hrisDelegationsReceived          HrisManagerDelegation[]                  @relation("HrisDelegationDelegate")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@unique([organizationId, employeeNumber])
   @@unique([organizationId, userId])
+  @@unique([organizationId, id])
   @@index([organizationId, status, hireDate])
   @@index([organizationId, paymentDestinationHash])
   @@index([organizationId, socialIdentifierHash])
   @@index([locationId])
   @@map("payroll_employees")
+}
+
+enum HrisOrgUnitType {
+  COMPANY
+  DIVISION
+  DEPARTMENT
+  TEAM
+  BRANCH
+  COST_CENTER
+}
+
+enum HrisOrgUnitStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model HrisOrgUnit {
+  id             String                     @id @default(cuid())
+  organizationId String
+  organization   Organization               @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  code           String
+  name           String
+  type           HrisOrgUnitType
+  status         HrisOrgUnitStatus          @default(ACTIVE)
+  parentId       String?
+  parent         HrisOrgUnit?               @relation("HrisOrgUnitHierarchy", fields: [organizationId, parentId], references: [organizationId, id], onDelete: Restrict)
+  children       HrisOrgUnit[]              @relation("HrisOrgUnitHierarchy")
+  effectiveFrom  DateTime
+  effectiveTo    DateTime?
+  positions      HrisPosition[]
+  assignments    HrisEmploymentAssignment[]
+  delegations    HrisManagerDelegation[]
+  createdAt      DateTime                   @default(now())
+  updatedAt      DateTime                   @updatedAt
+
+  @@unique([organizationId, code])
+  @@unique([organizationId, id])
+  @@index([organizationId, type, status, effectiveFrom, effectiveTo])
+  @@index([organizationId, parentId])
+  @@map("hris_org_units")
+}
+
+enum HrisPositionStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model HrisPosition {
+  id             String                     @id @default(cuid())
+  organizationId String
+  organization   Organization               @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  orgUnitId      String
+  orgUnit        HrisOrgUnit                @relation(fields: [organizationId, orgUnitId], references: [organizationId, id], onDelete: Restrict)
+  locationId     String?
+  location       Location?                  @relation(fields: [organizationId, locationId], references: [organizationId, id], onDelete: Restrict)
+  code           String
+  title          String
+  status         HrisPositionStatus         @default(ACTIVE)
+  effectiveFrom  DateTime
+  effectiveTo    DateTime?
+  assignments    HrisEmploymentAssignment[]
+  createdAt      DateTime                   @default(now())
+  updatedAt      DateTime                   @updatedAt
+
+  @@unique([organizationId, code])
+  @@unique([organizationId, id])
+  @@index([organizationId, orgUnitId, status, effectiveFrom, effectiveTo])
+  @@index([organizationId, locationId])
+  @@map("hris_positions")
+}
+
+enum HrisEmploymentAssignmentType {
+  PRIMARY
+  SECONDARY
+}
+
+enum HrisEmploymentAssignmentStatus {
+  ACTIVE
+  SUSPENDED
+  ENDED
+}
+
+model HrisEmploymentAssignment {
+  id                   String                         @id @default(cuid())
+  organizationId       String
+  organization         Organization                   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  employeeId           String
+  employee             PayrollEmployee                @relation(fields: [organizationId, employeeId], references: [organizationId, id], onDelete: Restrict)
+  positionId           String
+  position             HrisPosition                   @relation(fields: [organizationId, positionId], references: [organizationId, id], onDelete: Restrict)
+  orgUnitId            String
+  orgUnit              HrisOrgUnit                    @relation(fields: [organizationId, orgUnitId], references: [organizationId, id], onDelete: Restrict)
+  type                 HrisEmploymentAssignmentType   @default(PRIMARY)
+  status               HrisEmploymentAssignmentStatus @default(ACTIVE)
+  effectiveFrom        DateTime
+  effectiveTo          DateTime?
+  managedRelationships HrisReportingRelationship[]    @relation("HrisReportingManagerAssignment")
+  reportRelationships  HrisReportingRelationship[]    @relation("HrisReportingReportAssignment")
+  createdAt            DateTime                       @default(now())
+  updatedAt            DateTime                       @updatedAt
+
+  @@unique([organizationId, id])
+  @@index([organizationId, employeeId, type, status, effectiveFrom, effectiveTo])
+  @@index([organizationId, orgUnitId, status, effectiveFrom, effectiveTo])
+  @@index([organizationId, positionId])
+  @@map("hris_employment_assignments")
+}
+
+enum HrisReportingRelationshipType {
+  DIRECT
+  MATRIX
+  SCOPED_APPROVER
+}
+
+enum HrisReportingRelationshipStatus {
+  ACTIVE
+  REVOKED
+  SUPERSEDED
+}
+
+model HrisReportingRelationship {
+  id                        String                          @id @default(cuid())
+  organizationId            String
+  organization              Organization                    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  managerEmployeeId         String
+  managerEmployee           PayrollEmployee                 @relation("HrisReportingManager", fields: [organizationId, managerEmployeeId], references: [organizationId, id], onDelete: Restrict)
+  managerAssignmentId       String
+  managerAssignment         HrisEmploymentAssignment        @relation("HrisReportingManagerAssignment", fields: [organizationId, managerAssignmentId], references: [organizationId, id], onDelete: Restrict)
+  reportEmployeeId          String
+  reportEmployee            PayrollEmployee                 @relation("HrisReportingReport", fields: [organizationId, reportEmployeeId], references: [organizationId, id], onDelete: Restrict)
+  reportAssignmentId        String
+  reportAssignment          HrisEmploymentAssignment        @relation("HrisReportingReportAssignment", fields: [organizationId, reportAssignmentId], references: [organizationId, id], onDelete: Restrict)
+  type                      HrisReportingRelationshipType   @default(DIRECT)
+  status                    HrisReportingRelationshipStatus @default(ACTIVE)
+  effectiveFrom             DateTime
+  effectiveTo               DateTime?
+  approvalEvidenceHash      String                          @db.VarChar(71)
+  approvedById              String
+  reasonHash                String                          @db.VarChar(71)
+  supersedesRelationshipId  String?
+  supersedesRelationship    HrisReportingRelationship?      @relation("HrisReportingSupersession", fields: [organizationId, supersedesRelationshipId], references: [organizationId, id], onDelete: Restrict)
+  supersededByRelationships HrisReportingRelationship[]     @relation("HrisReportingSupersession")
+  createdAt                 DateTime                        @default(now())
+  updatedAt                 DateTime                        @updatedAt
+
+  @@unique([organizationId, id])
+  @@index([organizationId, managerEmployeeId, status, effectiveFrom, effectiveTo])
+  @@index([organizationId, reportEmployeeId, status, effectiveFrom, effectiveTo])
+  @@index([organizationId, managerAssignmentId])
+  @@index([organizationId, reportAssignmentId])
+  @@index([organizationId, supersedesRelationshipId])
+  @@map("hris_reporting_relationships")
+}
+
+enum HrisManagerDelegationAuthority {
+  PEOPLE_READ
+  APPROVAL_DECISION
+}
+
+enum HrisManagerDelegationStatus {
+  ACTIVE
+  REVOKED
+  SUPERSEDED
+}
+
+model HrisManagerDelegation {
+  id                      String                         @id @default(cuid())
+  organizationId          String
+  organization            Organization                   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  delegatorEmployeeId     String
+  delegatorEmployee       PayrollEmployee                @relation("HrisDelegationDelegator", fields: [organizationId, delegatorEmployeeId], references: [organizationId, id], onDelete: Restrict)
+  delegateEmployeeId      String
+  delegateEmployee        PayrollEmployee                @relation("HrisDelegationDelegate", fields: [organizationId, delegateEmployeeId], references: [organizationId, id], onDelete: Restrict)
+  scopeOrgUnitId          String?
+  scopeOrgUnit            HrisOrgUnit?                   @relation(fields: [organizationId, scopeOrgUnitId], references: [organizationId, id], onDelete: Restrict)
+  authority               HrisManagerDelegationAuthority
+  status                  HrisManagerDelegationStatus    @default(ACTIVE)
+  effectiveFrom           DateTime
+  effectiveTo             DateTime
+  approvalEvidenceHash    String                         @db.VarChar(71)
+  approvedById            String
+  reasonHash              String                         @db.VarChar(71)
+  revokedAt               DateTime?
+  revocationReasonHash    String?                        @db.VarChar(71)
+  supersedesDelegationId  String?
+  supersedesDelegation    HrisManagerDelegation?         @relation("HrisDelegationSupersession", fields: [organizationId, supersedesDelegationId], references: [organizationId, id], onDelete: Restrict)
+  supersededByDelegations HrisManagerDelegation[]        @relation("HrisDelegationSupersession")
+  createdAt               DateTime                       @default(now())
+  updatedAt               DateTime                       @updatedAt
+
+  @@unique([organizationId, id])
+  @@index([organizationId, delegateEmployeeId, authority, status, effectiveFrom, effectiveTo])
+  @@index([organizationId, delegatorEmployeeId, status, effectiveFrom, effectiveTo])
+  @@index([organizationId, scopeOrgUnitId])
+  @@index([organizationId, supersedesDelegationId])
+  @@map("hris_manager_delegations")
 }
 
 model PayrollContract {
@@ -2571,7 +2903,7 @@ model PublicReceiptAccessToken {
   revocationReason String?
 
   lastAccessedAt DateTime?
-  accessCount    Int      @default(0)
+  accessCount    Int       @default(0)
   metadata       Json?
 
   createdAt DateTime @default(now())
@@ -6076,6 +6408,8 @@ model WorkflowAssuranceCheckRun {
   definition        WorkflowAssuranceCheckDefinition @relation(fields: [definitionId], references: [id], onDelete: Restrict)
   checkKey          String
   definitionVersion Int
+  executionKey      String? @db.VarChar(200)
+  executionDigest   String? @db.VarChar(71)
 
   runType      WorkflowAssuranceRunType
   runStatus    WorkflowAssuranceRunStatus     @default(RUNNING)
@@ -6108,10 +6442,12 @@ model WorkflowAssuranceCheckRun {
   metadata      Json?
 
   incidents WorkflowAssuranceIncident[]
+  findings  WorkflowAssuranceCheckFinding[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([organizationId, checkKey, definitionVersion, executionKey], name: "workflow_assurance_run_execution_key")
   @@index([organizationId, runStatus, startedAt])
   @@index([organizationId, resultStatus, startedAt])
   @@index([organizationId, checkKey, startedAt])
@@ -6119,6 +6455,51 @@ model WorkflowAssuranceCheckRun {
   @@index([definitionId])
   @@map("workflow_assurance_check_runs")
 }
+
+model WorkflowAssuranceCheckFinding {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  checkRunId String
+  checkRun   WorkflowAssuranceCheckRun @relation(fields: [checkRunId], references: [id], onDelete: Cascade)
+
+  incidentId String?
+  incident   WorkflowAssuranceIncident? @relation(fields: [incidentId], references: [id], onDelete: SetNull)
+
+  ordinal     Int
+  status      WorkflowAssuranceResultStatus
+  severity    WorkflowAssuranceSeverity
+  sourceType  String
+  sourceId    String
+  sourceHash  String
+  fingerprint String
+
+  scannedCount Int @default(0)
+  passedCount  Int @default(0)
+  warningCount Int @default(0)
+  failedCount  Int @default(0)
+  blockedCount Int @default(0)
+  skippedCount Int @default(0)
+  errorCount   Int @default(0)
+
+  message           String
+  recommendedAction String?
+  evidenceLinks     Json
+  resultMetadata    Json?
+  errorCode         String?
+  errorMessage      String?
+
+  createdAt DateTime @default(now())
+
+  @@unique([checkRunId, ordinal])
+  @@unique([checkRunId, fingerprint])
+  @@index([organizationId, sourceType, sourceId])
+  @@index([incidentId])
+  @@map("workflow_assurance_check_findings")
+}
+
 
 enum WorkflowAssuranceWorkflow {
   CASH_COMMAND
@@ -6230,11 +6611,12 @@ model WorkflowAssuranceIncident {
   events     WorkflowAssuranceIncidentEvent[]
   deliveries WorkflowAssuranceAlertDelivery[]
   waivers    WorkflowAssuranceWaiver[]
+  findings   WorkflowAssuranceCheckFinding[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([organizationId, checkKey, sourceType, sourceId, fingerprint, sourceHash], name: "workflow_assurance_incident_dedupe_key")
+  @@unique([organizationId, checkKey, definitionVersion, sourceType, sourceId], name: "workflow_assurance_incident_identity_key")
   @@index([organizationId, status, severity, lastDetectedAt])
   @@index([organizationId, ownerId, status, dueAt])
   @@index([organizationId, workflow, status])
@@ -6348,6 +6730,7 @@ enum WorkflowAssuranceIncidentStatus {
 enum WorkflowAssuranceIncidentEventType {
   CREATED
   DUPLICATE_DETECTED
+  SOURCE_CHANGED
   SEVERITY_CHANGED
   ACKNOWLEDGED
   ASSIGNED
@@ -6423,7 +6806,7 @@ model PublicIdentityAbuseBucket {
   subjectHash String
 
   windowStartedAt DateTime
-  requestCount    Int      @default(0)
+  requestCount    Int       @default(0)
   blockedUntil    DateTime?
 
   createdAt DateTime @default(now())
@@ -6448,4 +6831,339 @@ model PasswordHistory {
 
   @@index([userId, createdAt])
   @@map("password_history")
+}
+
+enum CashShortagePolicyStatus {
+  DRAFT
+  APPROVED
+}
+
+enum CashShortagePolicyMode {
+  OBSERVE
+}
+
+enum CashShortageRoundingMode {
+  HALF_UP
+  HALF_EVEN
+}
+
+model CashShortagePolicy {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  version  Int
+  currency String
+
+  reviewThreshold Decimal                  @db.Decimal(19, 4)
+  highThreshold   Decimal                  @db.Decimal(19, 4)
+  minorUnitScale  Int
+  roundingMode    CashShortageRoundingMode
+  effectiveFrom   DateTime
+  effectiveTo     DateTime?
+  mode            CashShortagePolicyMode   @default(OBSERVE)
+  status          CashShortagePolicyStatus @default(DRAFT)
+
+  createdById  String
+  createdBy    User      @relation("CashShortagePolicyCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  approvedById String?
+  approvedBy   User?     @relation("CashShortagePolicyApprovedBy", fields: [approvedById], references: [id], onDelete: Restrict)
+  approvedAt   DateTime?
+  documentHash String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([organizationId, currency, version])
+  @@index([organizationId, currency, status, effectiveFrom])
+  @@index([createdById])
+  @@index([approvedById])
+  @@map("cash_shortage_policies")
+}
+
+// ============================================================
+// AGENT RUNTIME GOVERNANCE
+// ============================================================
+
+enum AgentDefinitionStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  RETIRED
+}
+
+enum AgentRolloutMode {
+  INTERNAL
+  SHADOW
+  PILOT
+  GENERAL
+}
+
+enum AgentRiskLevel {
+  READ_ONLY
+  DRAFT
+  LOW_RISK
+  SENSITIVE
+  PROHIBITED
+}
+
+enum AgentToolType {
+  READ_ONLY
+  DRAFT
+  ACTION
+  PROHIBITED
+}
+
+enum AgentRunStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  BLOCKED
+  CANCELLED
+}
+
+enum AgentStepKind {
+  CONTEXT
+  TOOL
+  EVIDENCE
+  REDACTION
+  SUMMARY
+  POLICY
+}
+
+enum AgentStepStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  BLOCKED
+}
+
+enum AgentEvidenceFreshness {
+  FRESH
+  STALE
+  PARTIAL
+  BLOCKED
+  FAILED
+  EMPTY
+  UNKNOWN
+}
+
+enum AgentPolicyIncidentSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum AgentPolicyIncidentStatus {
+  OPEN
+  RESOLVED
+  DISMISSED
+}
+
+model AgentDefinition {
+  id                 String                @id @default(cuid())
+  key                String                @unique
+  name               String
+  description        String
+  ownerModuleSlug    String
+  status             AgentDefinitionStatus @default(DRAFT)
+  rolloutMode        AgentRolloutMode       @default(INTERNAL)
+  riskLevel          AgentRiskLevel
+  defaultModelPolicy Json?
+  allowedToolKeys    String[]              @default([])
+  allowedSkillKeys   String[]              @default([])
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+
+  runs AgentRun[]
+
+  @@index([ownerModuleSlug, status])
+  @@map("agent_definitions")
+}
+
+model AgentSkillDefinition {
+  id                  String                @id @default(cuid())
+  key                 String
+  version             Int
+  domain              String
+  promptHash          String
+  ownerModuleSlug     String
+  requiredPermissions String[]              @default([])
+  redactionCategories String[]              @default([])
+  status              AgentDefinitionStatus @default(DRAFT)
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+
+  @@unique([key, version])
+  @@index([ownerModuleSlug, status])
+  @@map("agent_skill_definitions")
+}
+
+model AgentToolDefinition {
+  id                 String                @id @default(cuid())
+  key                String                @unique
+  ownerService       String
+  moduleSlug         String
+  requiredPermission String
+  riskLevel          AgentRiskLevel
+  toolType           AgentToolType
+  inputSchemaHash    String
+  outputSchemaHash   String
+  approvalPolicy     String
+  idempotencyMode    String
+  status             AgentDefinitionStatus @default(DRAFT)
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+
+  @@index([moduleSlug, status])
+  @@map("agent_tool_definitions")
+}
+
+model AgentRun {
+  id                String           @id @default(cuid())
+  organizationId    String
+  organization      Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  actorId            String
+  agentDefinitionId String?
+  agentDefinition   AgentDefinition? @relation(fields: [agentDefinitionId], references: [id], onDelete: SetNull)
+  agentKey           String
+  status             AgentRunStatus  @default(PENDING)
+  sourceRoute        String
+  locale             String
+  currency           String
+  periodStart        DateTime?
+  periodEnd          DateTime?
+  correlationId      String          @unique
+  safeSummary        String?
+  failureCode        String?
+  startedAt          DateTime        @default(now())
+  completedAt        DateTime?
+  createdAt          DateTime        @default(now())
+
+  steps           AgentStep[]
+  evidenceLinks   AgentEvidenceLink[]
+  feedback        AgentFeedback[]
+  costs           AgentCostLedger[]
+  policyIncidents AgentPolicyIncident[]
+
+  @@index([organizationId, createdAt])
+  @@index([actorId, createdAt])
+  @@index([agentKey, status, createdAt])
+  @@map("agent_runs")
+}
+
+model AgentStep {
+  id          String          @id @default(cuid())
+  runId       String
+  run         AgentRun        @relation(fields: [runId], references: [id], onDelete: Cascade)
+  stepNumber  Int
+  kind        AgentStepKind
+  toolKey     String?
+  status      AgentStepStatus @default(PENDING)
+  inputHash   String?
+  outputHash  String?
+  safeSummary String?
+  startedAt   DateTime        @default(now())
+  completedAt DateTime?
+  errorCode   String?
+  createdAt   DateTime        @default(now())
+
+  evidenceLinks AgentEvidenceLink[]
+
+  @@unique([runId, stepNumber])
+  @@index([toolKey, status])
+  @@map("agent_steps")
+}
+
+model AgentEvidenceLink {
+  id             String                 @id @default(cuid())
+  runId          String
+  run            AgentRun               @relation(fields: [runId], references: [id], onDelete: Cascade)
+  stepId         String?
+  step           AgentStep?             @relation(fields: [stepId], references: [id], onDelete: SetNull)
+  subjectType    String
+  subjectId      String
+  sourceModule   String
+  sourceTable    String?
+  sourceHash     String?
+  evidenceGrade  String
+  freshness      AgentEvidenceFreshness
+  available      Boolean                @default(true)
+  blockerCount   Int                    @default(0)
+  redactionCount Int                    @default(0)
+  createdAt      DateTime               @default(now())
+
+  @@index([runId])
+  @@index([stepId])
+  @@index([subjectType, subjectId])
+  @@map("agent_evidence_links")
+}
+
+model AgentFeedback {
+  id             String       @id @default(cuid())
+  runId          String
+  run            AgentRun     @relation(fields: [runId], references: [id], onDelete: Cascade)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  actorId        String
+  helpful        Boolean?
+  accepted       Boolean?
+  rejectedReason String?
+  staleAnswer    Boolean      @default(false)
+  wrongAnswer    Boolean      @default(false)
+  unsafeAttempt  Boolean      @default(false)
+  correctionText String?
+  createdAt      DateTime     @default(now())
+
+  @@index([runId])
+  @@index([organizationId, actorId, createdAt])
+  @@map("agent_feedback")
+}
+
+model AgentCostLedger {
+  id               String       @id @default(cuid())
+  runId            String
+  run              AgentRun     @relation(fields: [runId], references: [id], onDelete: Cascade)
+  organizationId   String
+  organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  modelProvider     String
+  modelName         String
+  promptTokens      Int          @default(0)
+  completionTokens  Int          @default(0)
+  estimatedCost     Decimal      @default(0) @db.Decimal(19, 6)
+  currency          String
+  budgetBucket      String?
+  createdAt         DateTime     @default(now())
+
+  @@index([runId])
+  @@index([organizationId, createdAt])
+  @@index([modelProvider, modelName])
+  @@map("agent_cost_ledger")
+}
+
+model AgentPolicyIncident {
+  id             String                      @id @default(cuid())
+  runId          String?
+  run            AgentRun?                   @relation(fields: [runId], references: [id], onDelete: SetNull)
+  organizationId String
+  organization   Organization                @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  actorId        String
+  incidentType   String
+  severity       AgentPolicyIncidentSeverity
+  policyKey      String
+  blockedToolKey String?
+  safeSummary    String
+  status         AgentPolicyIncidentStatus   @default(OPEN)
+  resolvedById   String?
+  resolvedAt     DateTime?
+  createdAt      DateTime                    @default(now())
+
+  @@index([runId])
+  @@index([organizationId, severity, status])
+  @@index([actorId, createdAt])
+  @@map("agent_policy_incidents")
 }

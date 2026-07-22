@@ -11,16 +11,17 @@ export function LandingHero() {
     { key: "accuracy", value: t("metrics.accuracy.value"), label: t("metrics.accuracy.label"), Icon: Boxes },
     { key: "close", value: t("metrics.close.value"), label: t("metrics.close.label"), Icon: Landmark },
   ]
+  const proofKeys = ["sample", "evidence", "rollout"] as const
 
   return (
-    <section className="landing-hero relative isolate overflow-hidden bg-[var(--color-canvas)] px-4 pb-10 pt-8 text-[var(--color-text-primary)] sm:px-6 sm:pb-12 sm:pt-10 lg:min-h-[calc(100vh-4rem)] lg:px-8 lg:pb-10 lg:pt-12">
+    <section id="overview" className="landing-hero relative isolate overflow-hidden bg-[var(--color-canvas)] px-4 pb-10 pt-8 text-[var(--color-text-primary)] sm:px-6 sm:pb-12 sm:pt-10 lg:min-h-[calc(100vh-4rem)] lg:px-8 lg:pb-10 lg:pt-12">
       <div className="landing-grid-bg absolute inset-0" />
       <div className="landing-grain" />
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--color-spruce)] to-[var(--color-brand)] opacity-[0.45]" />
       <div className="relative mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.82fr_1.18fr] lg:items-center">
         <div className="min-w-0">
           <div className="mb-5 inline-flex items-center gap-3 rounded-lg border border-[var(--color-border-subtle)] bg-white/[0.045] px-4 py-2 data-text text-xs text-[var(--color-text-secondary)]">
-            <span className="live-dot size-2 rounded-full bg-[var(--color-success)]" />
+            <span className="size-2 rounded-full bg-[var(--color-spruce)]" aria-hidden="true" />
             {t("badge")}
           </div>
           <h1 className="display max-w-full text-4xl sm:text-5xl lg:text-6xl">
@@ -41,7 +42,7 @@ export function LandingHero() {
             ))}
           </div>
           <div className="mt-7 flex flex-wrap gap-3">
-            <Link href="/register" className="inline-flex items-center gap-2 rounded-lg bg-[var(--color-brand)] px-5 py-3 body-text text-sm font-semibold text-white shadow-lg shadow-[var(--color-brand-glow)] transition hover:bg-[var(--color-brand-hover)]">
+            <Link href="/#pricing" className="inline-flex items-center gap-2 rounded-lg bg-[var(--color-brand-action)] px-5 py-3 body-text text-sm font-semibold text-white shadow-lg shadow-[var(--color-brand-glow)] transition hover:bg-[var(--color-brand-hover)]">
               {t("primaryCta")}
               <ArrowRight className="size-4" aria-hidden="true" />
             </Link>
@@ -50,6 +51,14 @@ export function LandingHero() {
               {t("secondaryCta")}
             </Link>
           </div>
+          <ul className="mt-5 flex max-w-2xl flex-wrap gap-2" aria-label={t("proof.label")}>
+            {proofKeys.map((key) => (
+              <li key={key} className="inline-flex items-center gap-2 rounded-lg border border-[var(--color-border-subtle)] bg-black/[0.13] px-3 py-2 data-text text-[0.68rem] text-[var(--color-text-tertiary)]">
+                <ShieldCheck className="size-3.5 shrink-0 text-[var(--color-spruce)]" aria-hidden="true" />
+                {t(`proof.items.${key}`)}
+              </li>
+            ))}
+          </ul>
         </div>
         <div className="min-w-0 lg:-mr-2">
           <HeroDashboard />

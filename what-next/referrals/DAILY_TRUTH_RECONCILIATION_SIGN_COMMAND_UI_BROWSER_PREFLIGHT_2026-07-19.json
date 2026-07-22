@@ -1,0 +1,100 @@
+{
+  "kind": "DAILY_TRUTH_RECONCILIATION_SIGN_COMMAND_UI_BROWSER_PREFLIGHT",
+  "contractVersion": "1.0",
+  "checkedAt": "2026-07-19T14:33:58.839Z",
+  "status": "READY_FOR_AUTHORIZED_RUN",
+  "operationMode": "READ_ONLY_PREFLIGHT",
+  "authorizationRequired": true,
+  "authorizationPresent": true,
+  "scope": {
+    "organizationId": "org_payroll_e2e_local",
+    "disposableRunId": "recon_referral_sign_ui_e2e_local_mrrwc85n_14368",
+    "businessDate": "2025-01-15T12:00:00.000Z",
+    "baseUrl": "http://127.0.0.1:3012"
+  },
+  "actors": {
+    "distinct": true,
+    "reviewer": {
+      "userId": "usr_payroll_e2e_local",
+      "email": "hr.manager@stockflow.test",
+      "active": true,
+      "organizationMatch": true,
+      "roleCount": 1,
+      "roleHash": "sha256:c9b7a0769cc1c9ea7d2e5c071dd30272964cd42559e140cde87172f4e1de642d",
+      "sessionCount": 2,
+      "assuranceBaselineHash": "sha256:e7721a0e3b8fe18094c665c0fe13ca22edfd2f2e28477e649c64b45f07658bfc",
+      "hasReadPermission": true,
+      "hasSignPermission": false,
+      "kind": "maker"
+    },
+    "signer": {
+      "userId": "usr_payroll_e2e_requester_local",
+      "email": "payroll.requester@stockflow.test",
+      "active": true,
+      "organizationMatch": true,
+      "roleCount": 1,
+      "roleHash": "sha256:b0d037f4725670da68a8ef873a2c6c8bc918d9f1dcf8765bc6773c476b4f895f",
+      "sessionCount": 2,
+      "assuranceBaselineHash": "sha256:5d66a22875da79aad0b3d002c6bf7efc778bac58ea259ee5473fe7f9d53222ff",
+      "hasReadPermission": false,
+      "hasSignPermission": false,
+      "kind": "checker"
+    }
+  },
+  "tenantPackage": {
+    "requestedModulesHash": "sha256:7aa29cb13c96514bf7026a8106fe6c85e4d5cc28e132e95104308116da43776f",
+    "requestedModuleCount": 2,
+    "temporaryModulesRequired": [
+      "finance",
+      "payment_reconciliation"
+    ]
+  },
+  "sourceSelection": {
+    "existingReadyRunCount": 1,
+    "earliestExistingBusinessDate": "2026-06-30T12:00:00.000Z",
+    "disposableCandidatePrecedesExisting": true,
+    "overlappingCertifiedCloseCount": 0
+  },
+  "authState": [
+    {
+      "path": "playwright/.auth/payroll.json",
+      "exists": true,
+      "sizeBytes": 1844
+    },
+    {
+      "path": "playwright/.auth/payroll-requester.json",
+      "exists": true,
+      "sizeBytes": 1894
+    }
+  ],
+  "disposableNamespace": {
+    "role": 0,
+    "fiscalYear": 0,
+    "period": 0,
+    "ledgerAccounts": 0,
+    "rail": 0,
+    "provider": 0,
+    "settlement": 0,
+    "providerEvent": 0,
+    "run": 0,
+    "clean": true
+  },
+  "runtime": {
+    "port3012Listening": false
+  },
+  "redaction": {
+    "passwordSaved": false,
+    "sessionIdsSaved": false,
+    "sessionTokensSaved": false,
+    "cookieValuesSaved": false,
+    "assuranceValuesSaved": false,
+    "baselineUsesOpaqueHashes": true
+  },
+  "guardrails": [
+    "This preflight performed no database mutation.",
+    "The existing ready reconciliation remains untouched.",
+    "The disposable candidate uses an earlier isolated period so source selection is deterministic.",
+    "No certified close overlaps the disposable source period.",
+    "The temporary role, tenant package extension, session assurance, and operational rows must restore exactly."
+  ]
+}

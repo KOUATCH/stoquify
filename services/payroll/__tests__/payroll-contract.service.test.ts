@@ -436,6 +436,27 @@ describe("payroll employee contract workflow service", () => {
     expect(tx.payrollContract.update).not.toHaveBeenCalled()
   })
 
+  it("blocks in-place amendments to active contracts", async () => {
+    const tx = buildTx()
+    useTransaction(tx)
+    tx.payrollContract.findFirst.mockResolvedValue(contractRow())
+
+    await expect(
+      updatePayrollContract({
+        organizationId: "org-1",
+        actorId: "hr-1",
+        actorPermissions: ["payroll.contracts.manage"],
+        contractId: "contract-1",
+        classification: "M3",
+        changeReason: "Promotion",
+      }),
+    ).rejects.toThrow(
+      "Active contracts cannot be amended in place; use an approved effective-dated lifecycle workflow.",
+    )
+
+    expect(tx.payrollContract.update).not.toHaveBeenCalled()
+  })
+
   it("terminates a contract through lifecycle event and audit history", async () => {
     const tx = buildTx()
     useTransaction(tx)

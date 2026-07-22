@@ -925,6 +925,10 @@ export async function updatePayrollContract(
       updateData.baseSalary = nextBaseSalary
     }
 
+    if (existing.status === PayrollContractStatus.ACTIVE) {
+      throw new BusinessRuleError("Active contracts cannot be amended in place; use an approved effective-dated lifecycle workflow.")
+    }
+
     if (nextStatus === PayrollContractStatus.ACTIVE && !nextSignedDocumentHash) {
       throw new BusinessRuleError("Active contracts require signed contract evidence.")
     }

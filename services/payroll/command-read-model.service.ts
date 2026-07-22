@@ -878,7 +878,10 @@ export async function getPayrollCommandReadModel(
   const nextActions: PayrollCommandNextAction[] = []
   const unmappedEmployees = Math.max(activeEmployees - linkedEmployees, 0)
   const contractGap = Math.max(activeEmployees - activeContracts, 0)
-  const attendanceGap = Math.max(activeEmployees - frozenAttendanceSnapshots, 0)
+  const attendanceGap = Math.max(
+    activeEmployees - paymentEvidence.summary.attendanceReadyCount,
+    0,
+  )
   const paymentMissing = paymentEvidence.summary.missingPaymentDestinationCount
   const paymentPending = paymentEvidence.summary.pendingPaymentDestinationCount
 

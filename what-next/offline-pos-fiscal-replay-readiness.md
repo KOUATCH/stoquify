@@ -1,6 +1,6 @@
 # Offline POS Fiscal Replay Readiness Gate
 
-Generated: 2026-07-11T20:40:59.509Z
+Generated: 2026-07-20T03:58:04.235Z
 Mode: fail
 Status: ready
 

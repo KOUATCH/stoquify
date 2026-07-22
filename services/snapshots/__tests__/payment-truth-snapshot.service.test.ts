@@ -87,6 +87,56 @@ describe("payment truth snapshot service", () => {
     jest.clearAllMocks()
   })
 
+  it("blocks unsupported location scope before tenant-wide payment queries", async () => {
+    const result = await getPaymentTruthSnapshot({
+      organizationId: "org-1",
+      locationId: "loc-1",
+      periodStart: "2026-06-01",
+      periodEnd: "2026-06-30",
+      now: "2026-06-20T12:00:00.000Z",
+    })
+
+    expect(mockDb.providerAccount.count).not.toHaveBeenCalled()
+    expect(mockDb.reconciliationRun.count).not.toHaveBeenCalled()
+    expect(mockDb.paymentException.count).not.toHaveBeenCalled()
+    expect(mockDb.suspenseItem.count).not.toHaveBeenCalled()
+    expect(mockDb.paymentTransaction.count).not.toHaveBeenCalled()
+    expect(mockDb.providerAccount.findFirst).not.toHaveBeenCalled()
+    expect(mockDb.reconciliationRun.findFirst).not.toHaveBeenCalled()
+    expect(mockDb.paymentException.findFirst).not.toHaveBeenCalled()
+    expect(mockDb.suspenseItem.findFirst).not.toHaveBeenCalled()
+    expect(mockDb.paymentTransaction.findFirst).not.toHaveBeenCalled()
+
+    expect(result).toMatchObject({
+      kind: "payment.truth",
+      organizationId: "org-1",
+      locationId: "loc-1",
+      status: "blocked",
+      uiState: "blocked",
+      evidenceGrade: "blocked",
+      metrics: {
+        providerAccountCount: 0,
+        activeProviderAccountCount: 0,
+        recentRunCount: 0,
+        readyForSignoffCount: 0,
+        signedRunCount: 0,
+        openExceptionCount: 0,
+        criticalExceptionCount: 0,
+        openSuspenseCount: 0,
+        openSuspenseAmount: 0,
+        pendingTransactionCount: 0,
+      },
+      blockers: [
+        expect.objectContaining({
+          id: "payment-location-scope-unsupported",
+          severity: "high",
+          gate: "payment_truth_scope",
+          sourceTables: ["provider_accounts", "reconciliation_runs", "payment_transactions"],
+        }),
+      ],
+    })
+  })
+
   it("returns tenant-scoped blocked evidence when critical exceptions and suspense are open", async () => {
     setupPaymentTruthMocks({
       openExceptionCount: 3,

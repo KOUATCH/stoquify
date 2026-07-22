@@ -929,7 +929,9 @@
       "expectedCash": "Expected cash",
       "variance": "Variance",
       "countedCash": "Counted cash",
-      "varianceWarning": "Drawer variance is {amount}. A manager review may be required."
+      "varianceWarning": "Drawer variance is {amount}. A manager review may be required.",
+      "varianceExplanation": "Variance explanation (required)",
+      "varianceExplanationPlaceholder": "Explain the shortage or overage"
     },
     "categories": {
       "title": "Categories",
@@ -1178,297 +1180,385 @@
   "landing": {
     "header": {
       "homeAria": "Stoquify home",
-      "subtitle": "OHADA SMB platform",
-      "navAria": "Primary",
+      "subtitle": "OHADA operating system",
+      "navAria": "Landing page sections",
       "product": "Product",
       "workflow": "Workflow",
-      "modules": "Modules",
+      "platform": "Platform",
+      "people": "People & payroll",
+      "controls": "Daily control",
+      "automation": "Automation",
       "trust": "Trust",
-      "pricing": "Pricing",
+      "useCases": "Scenarios",
+      "pricing": "Adoption",
+      "explore": "More",
+      "exploreAria": "More landing page sections",
       "login": "Log in",
       "dashboard": "Dashboard",
-      "startFree": "Create workspace",
+      "startFree": "Plan rollout",
       "openNavigation": "Open navigation",
       "languageLabel": "FR",
       "languageAria": "View in French"
     },
     "hero": {
-      "badge": "OHADA operating system for SMBs",
-      "titleStart": "Control sales, stock, cash, compliance, and close from",
-      "titleEmphasis": "one live workspace",
-      "description": "Stoquify gives OHADA SMB teams one product state for POS, inventory, purchasing, finance, accounting close, compliance evidence, payroll, and branch controls without losing tenant scope or source proof.",
-      "primaryCta": "Create workspace",
-      "secondaryCta": "See product state",
+      "badge": "POS, inventory, and OHADA accounting control",
+      "titleStart": "Run POS, inventory, and OHADA accounting in",
+      "titleEmphasis": "one controlled flow",
+      "description": "Stoquify connects sales, stock, purchasing, payments, reconciliation, and close evidence so retail and SMB teams can operate daily without losing OHADA accounting control.",
+      "primaryCta": "Plan rollout",
+      "secondaryCta": "See product workflow",
       "metrics": {
         "branches": {
-          "value": "Tenant",
-          "label": "Scoped by organization"
+          "value": "POS",
+          "label": "Sales start the evidence trail"
         },
         "accuracy": {
-          "value": "Ledger",
-          "label": "Source-linked postings"
+          "value": "Stock",
+          "label": "Movements stay source-linked"
         },
         "close": {
           "value": "OHADA",
-          "label": "Country-pack ready"
+          "label": "Close controls stay visible"
         }
       },
       "ticker": {
-        "approved": "Purchase approval captured",
-        "synced": "Offline POS replay queued",
-        "lowStock": "Stock exception needs review",
-        "cash": "Cash drawer evidence attached",
-        "margin": "Close blocker assigned"
+        "approved": "Supplier approval captured",
+        "synced": "Offline POS replay protected",
+        "lowStock": "Stock exception routed",
+        "cash": "Payment evidence attached",
+        "margin": "Reconciliation suspense assigned"
+      },
+      "proof": {
+        "label": "Public preview boundaries",
+        "items": {
+          "sample": "Sample data is labeled",
+          "evidence": "Product evidence is source-linked",
+          "rollout": "Scoped rollout before activation"
+        }
       }
     },
     "dashboard": {
-      "period": "Today",
-      "title": "Today's operating truth",
-      "synced": "evidence live",
+      "period": "Sample control room",
+      "title": "Business truth, ready for action",
+      "synced": "evidence-linked preview",
       "rows": {
         "revenue": {
-          "label": "Ledger state",
-          "value": "Draft close",
-          "meta": "source-linked"
+          "label": "Operating state",
+          "value": "On track",
+          "meta": "POS to ledger"
         },
         "pos": {
-          "label": "Exception queues",
-          "value": "Open",
-          "meta": "stock/AP/payroll"
+          "label": "Risk queue",
+          "value": "Review",
+          "meta": "stock, AP, payroll"
         },
         "turns": {
-          "label": "Evidence",
-          "value": "Hashes",
-          "meta": "exports ready"
+          "label": "Evidence trail",
+          "value": "Ready",
+          "meta": "hashes and exports"
         },
         "variance": {
-          "label": "Controls",
-          "value": "RBAC",
-          "meta": "step-up"
+          "label": "Access control",
+          "value": "Scoped",
+          "meta": "RBAC and step-up"
         }
       },
-      "inventoryHealth": "Operational control coverage",
+      "inventoryHealth": "Operating coverage",
       "branches": {
-        "downtown": "POS",
-        "warehouse": "Inventory",
-        "airport": "Accounting"
+        "downtown": "Sales",
+        "warehouse": "Stock",
+        "airport": "Close"
       },
       "nextActionLabel": "Next action",
-      "nextAction": "Review reconciliation suspense before period close",
+      "nextAction": "Clear payment suspense before period close",
       "liveFeed": "Evidence feed",
       "activity": {
-        "sale": "POS event",
-        "transfer": "Stock movement",
-        "po": "PO approval"
-      }
+        "sale": "Mobile money sale",
+        "transfer": "Inter-branch transfer",
+        "po": "Supplier approval"
+      },
+      "sampleLabel": "Sample operating data"
     },
     "operations": {
-      "eyebrow": "connected product",
-      "title": "One operating model, not disconnected modules.",
-      "description": "The platform surfaces real operational boundaries: POS sessions, inventory movement, purchasing/AP, finance, OHADA accounting, compliance evidence, payroll and presence, payment reconciliation, role controls, and branch administration.",
-      "moduleLabel": "module",
+      "eyebrow": "buyer pathways",
+      "title": "Choose the operating pathway first, then add controlled modules.",
+      "description": "Stoquify is clearest when buyers start from a real operating job: branch sales, stock, purchasing, cash, or OHADA close. Compliance, HRIS, payroll, and automation expand the record after the core flow is understood.",
+      "moduleLabel": "pathway",
       "modules": {
         "pos": {
-          "name": "POS",
-          "description": "Sessions, receipts, drawers",
-          "meta": "checkout to ledger"
+          "name": "Point of sale",
+          "description": "Checkout, payments, receipts, drawers",
+          "meta": "sale to ledger"
         },
         "inventory": {
           "name": "Inventory",
-          "description": "Items, movements, counts",
-          "meta": "stock evidence"
+          "description": "Stock, counts, transfers, valuation",
+          "meta": "movement evidence"
         },
         "purchasing": {
           "name": "Purchasing",
-          "description": "POs, receiving, AP",
-          "meta": "3-way discipline"
+          "description": "Orders, receiving, supplier payables",
+          "meta": "controlled buying"
         },
         "finance": {
           "name": "Finance",
-          "description": "Cash, AP, AR, margins",
-          "meta": "cash visibility"
+          "description": "Cash, receivables, payables, margins",
+          "meta": "source-linked position"
+        },
+        "reconciliation": {
+          "name": "Payment reconciliation",
+          "description": "Provider events, matching, suspense",
+          "meta": "payment truth"
         },
         "accounting": {
           "name": "Accounting",
-          "description": "OHADA ledger and close",
-          "meta": "source-linked"
+          "description": "OHADA ledger, controls, close",
+          "meta": "accountant review"
         },
         "compliance": {
           "name": "Compliance",
-          "description": "Fiscal evidence and rules",
-          "meta": "country packs"
+          "description": "Fiscal states, country rules, evidence",
+          "meta": "qualified assurance"
         },
-        "reconciliation": {
-          "name": "Reconciliation",
-          "description": "Provider matching and suspense",
-          "meta": "close blocker"
+        "hris": {
+          "name": "HRIS and people",
+          "description": "Identity, contracts, time, approvals",
+          "meta": "controlled foundation"
         },
         "payroll": {
           "name": "Payroll",
-          "description": "Presence and statutory pay",
-          "meta": "approval gated"
+          "description": "Runs, payslips, declarations, postings",
+          "meta": "approved-input path"
         },
         "customers": {
           "name": "Customers",
-          "description": "Receivables and history",
-          "meta": "account context"
+          "description": "Receivables and account history",
+          "meta": "customer truth"
         },
         "suppliers": {
           "name": "Suppliers",
-          "description": "Vendor terms and AP risk",
+          "description": "Vendor terms and payable risk",
           "meta": "payment controls"
         },
         "users": {
           "name": "Users",
-          "description": "Teams and invitations",
-          "meta": "tenant access"
+          "description": "Identity and organization scope",
+          "meta": "controlled access"
         },
         "roles": {
           "name": "Roles",
-          "description": "Permission control",
-          "meta": "maker-checker"
+          "description": "Permission and approval control",
+          "meta": "separation of duties"
+        },
+        "retailControl": {
+          "name": "Retail control",
+          "description": "POS, inventory, transfers, and offline continuity in one branch operating path.",
+          "meta": "frontline evidence"
+        },
+        "cashClose": {
+          "name": "Cash and OHADA close",
+          "description": "Payments, reconciliation, journals, and close blockers stay tied to source work.",
+          "meta": "cash to ledger"
+        },
+        "procurement": {
+          "name": "Purchasing and suppliers",
+          "description": "Purchase orders, receiving, supplier invoices, approvals, and payable readiness.",
+          "meta": "buying control"
+        },
+        "regulatedOps": {
+          "name": "Regulated extensions",
+          "description": "Compliance, HRIS, payroll, and automation layer on after the core record is understood.",
+          "meta": "controlled expansion"
         }
       }
     },
     "problem": {
-      "eyebrow": "the problem",
-      "title": "SMBs do not just need screens. They need provable operating truth.",
-      "copy": "Risky when it lives alone; reliable when the event, permission, evidence, and ledger record travel together.",
+      "eyebrow": "fragmented operations",
+      "title": "Growth becomes harder to control when every team works from a different record.",
+      "copy": "Stoquify connects the operational event, the responsible person, the approval, the payment evidence, and the accounting consequence so each handoff can be explained.",
       "systems": {
-        "pos": "POS",
-        "inventory": "Inventory",
-        "purchasing": "Purchasing",
-        "finance": "Finance",
-        "attendance": "Attendance",
-        "approvals": "Approvals"
-      }
-    },
-    "workflow": {
-      "eyebrow": "workflow",
-      "title": "Every module moves on the same ledger-first operating spine.",
-      "description": "Scroll across the Stoquify workflow: a country-pack-driven, multi-tenant OHADA SMB operating system where POS, inventory, purchasing/AP, accounting close, compliance, reconciliation, payroll/presence, offline sync, and controls all carry source evidence forward.",
-      "carouselLabel": "Stoquify module workflow carousel",
-      "cards": {
         "pos": {
-          "title": "POS",
-          "copy": "Cashier sessions, receipts, returns, drawers, fiscal handoff, and sales evidence start the operating record.",
-          "meta": "sell"
+          "title": "Point of sale",
+          "copy": "A completed sale should still explain the drawer, payment, receipt, return, and stock movement."
         },
         "inventory": {
           "title": "Inventory",
-          "copy": "Items, counts, transfers, write-offs, locations, and valuation signals explain stock before it reaches the books.",
-          "meta": "stock"
+          "copy": "A quantity should be traceable to a location, movement, count, transfer, or adjustment."
         },
         "purchasing": {
-          "title": "Purchasing/AP",
-          "copy": "Purchase orders, receiving, supplier invoices, matching, approvals, and payment release keep AP disciplined.",
-          "meta": "procure"
-        },
-        "suppliers": {
-          "title": "Suppliers",
-          "copy": "Vendor terms, item links, payable readiness, bank-change review, and payment risk stay visible.",
-          "meta": "vendor"
-        },
-        "customers": {
-          "title": "Customers",
-          "copy": "Customer history, receivables context, payments, orders, and account signals stay tied to operations.",
-          "meta": "AR"
+          "title": "Purchasing",
+          "copy": "An order should remain connected to receipt, approval, supplier balance, and payment evidence."
         },
         "finance": {
           "title": "Finance",
-          "copy": "Cash drawers, payables, receivables, taxes, margins, profitability, and retail analytics converge.",
-          "meta": "cash"
+          "copy": "Cash, receivables, payables, and provider settlements need a shared reconciliation trail."
+        },
+        "attendance": {
+          "title": "People and payroll",
+          "copy": "Presence, leave, contracts, payroll inputs, payslips, and postings should agree."
+        },
+        "approvals": {
+          "title": "Approvals",
+          "copy": "Sensitive actions need visible scope, separation of duties, and a retained decision record."
+        }
+      }
+    },
+    "workflow": {
+      "eyebrow": "connected workflow",
+      "title": "Follow the operating record from frontline action to controlled close.",
+      "description": "Move through the modules that carry source evidence forward. Each card names the operating job, the handoff it creates, and the control that keeps the record explainable.",
+      "carouselLabel": "Stoquify connected module workflow",
+      "slideLabel": "Workflow module {current} of {total}",
+      "previous": "Previous workflow module",
+      "next": "Next workflow module",
+      "position": "{current} of {total}",
+      "positionControls": "Choose a workflow module",
+      "goTo": "Go to workflow module {slide}",
+      "proofLabel": "Control signal",
+      "cards": {
+        "pos": {
+          "title": "Point of sale",
+          "copy": "Start the operating record with cashier sessions, sales, payments, receipts, returns, drawer activity, and fiscal handoff.",
+          "meta": "sell",
+          "proof": "Sale, session, payment method, receipt state, and stock effect remain connected."
+        },
+        "inventory": {
+          "title": "Inventory",
+          "copy": "Explain stock through receipts, counts, transfers, adjustments, write-offs, locations, and valuation context.",
+          "meta": "stock",
+          "proof": "Every quantity change can retain its source, location, reason, actor, and approval."
+        },
+        "purchasing": {
+          "title": "Purchasing and payables",
+          "copy": "Connect purchase requests, orders, receiving, supplier invoices, matching, approvals, and payment readiness.",
+          "meta": "procure",
+          "proof": "Order, receipt, liability, approval, and payment evidence form one review path."
+        },
+        "suppliers": {
+          "title": "Suppliers",
+          "copy": "Keep terms, item relationships, payable readiness, bank-detail changes, and payment risk visible.",
+          "meta": "supplier",
+          "proof": "Supplier identity, approved terms, account changes, balances, and review history stay scoped."
+        },
+        "customers": {
+          "title": "Customers and receivables",
+          "copy": "Connect customer history, orders, credit exposure, invoices, collections, balances, and disputes.",
+          "meta": "collect",
+          "proof": "Commercial activity and financial position retain a shared customer and document trail."
+        },
+        "finance": {
+          "title": "Finance",
+          "copy": "Bring drawers, payments, receivables, payables, tax context, margins, and cash exposure into view.",
+          "meta": "cash",
+          "proof": "Financial signals lead back to the transactions and evidence that produced them."
         },
         "accounting": {
-          "title": "Accounting close",
-          "copy": "OHADA chart, journals, posting rules, trial balance, source links, close blockers, and close packs align.",
-          "meta": "close"
+          "title": "OHADA accounting and close",
+          "copy": "Align chart, journals, posting controls, trial balance, reconciliations, close blockers, and proof packs.",
+          "meta": "close",
+          "proof": "Journal lines and close checks retain source links, control state, and reviewer history."
         },
         "compliance": {
           "title": "Compliance",
-          "copy": "Fiscal documents, legal evidence, country packs, authority queues, and adapter readiness stay governed.",
-          "meta": "rules"
+          "copy": "Track fiscal-document states, country rules, authority evidence, adapter responses, and unresolved obligations.",
+          "meta": "govern",
+          "proof": "Rule provenance, evidence, provider state, and uncertainty remain visible."
         },
         "reconciliation": {
-          "title": "Reconciliation",
-          "copy": "Provider events, statement imports, matching, suspense, sign-off, and certificates protect payment truth.",
-          "meta": "match"
+          "title": "Payment reconciliation",
+          "copy": "Compare provider events and statements, match recorded payments, isolate differences, and route review.",
+          "meta": "match",
+          "proof": "Matches, suspense, reviewer decisions, and provider evidence stay linked."
+        },
+        "hris": {
+          "title": "HRIS and people",
+          "copy": "Govern people identity, organization scope, contracts, compensation, time and leave, approvals, and self-service.",
+          "meta": "controlled",
+          "proof": "Profiles, approved changes, permissions, redaction, and movement history preserve people truth."
         },
         "payroll": {
-          "title": "Payroll/presence",
-          "copy": "Employees, contracts, presence, attendance, leave, payroll runs, approvals, payslips, and postings connect.",
-          "meta": "people"
+          "title": "Payroll",
+          "copy": "Consume approved people inputs for payroll runs, payslips, declarations, payment evidence, and postings.",
+          "meta": "pay",
+          "proof": "Input readiness, approval, output, payment, declaration, and ledger references remain distinct."
         },
         "offline": {
-          "title": "Offline sync",
-          "copy": "Device identity, queued POS work, replay discipline, conflict handling, and evidence preserve branch continuity.",
-          "meta": "sync"
+          "title": "Offline continuity",
+          "copy": "Keep branch selling available during network interruption, then replay queued work through visible controls.",
+          "meta": "continue",
+          "proof": "Device identity, local order, replay status, conflicts, and exceptions remain traceable."
         },
         "transfers": {
-          "title": "Transfers",
-          "copy": "Branch-to-branch dispatch, receiving, variance, accountability, and source movement records remain traceable.",
-          "meta": "move"
+          "title": "Stock transfers",
+          "copy": "Coordinate dispatch, receiving, variance review, location accountability, and source movement between branches.",
+          "meta": "move",
+          "proof": "Sending and receiving records preserve quantity, custody, variance, and acceptance state."
         },
         "locations": {
-          "title": "Locations",
-          "copy": "Branches, warehouses, terminals, tax settings, units, and organization setup define operating scope.",
-          "meta": "scope"
+          "title": "Locations and devices",
+          "copy": "Define branches, warehouses, terminals, drawers, tax context, units, and operating responsibility.",
+          "meta": "scope",
+          "proof": "Organization, branch, location, device, and operator scope travel with the work."
         },
         "controls": {
-          "title": "Controls",
-          "copy": "Tenant scope, RBAC, step-up, maker-checker, approvals, and audit trails prevent silent risky moves.",
-          "meta": "trust"
+          "title": "Access and approvals",
+          "copy": "Apply role boundaries, fresh verification, double validation, approval queues, and retained audit history.",
+          "meta": "protect",
+          "proof": "Actor, permission, assurance, approval state, and decision history remain explicit."
         },
         "analytics": {
-          "title": "Analytics",
-          "copy": "Dashboards, reports, accountant exports, exception queues, and data-trust indicators reflect source records.",
-          "meta": "insight"
+          "title": "Operational insight",
+          "copy": "Surface dashboards, reports, accountant exports, exception queues, freshness, and data-trust indicators.",
+          "meta": "understand",
+          "proof": "Every signal should resolve to a source workflow, scope, timestamp, and evidence state."
         },
         "administration": {
           "title": "Administration",
-          "copy": "Users, invitations, roles, permissions, module gates, country settings, and setup keep the platform governed.",
-          "meta": "admin"
+          "copy": "Manage organizations, users, invitations, roles, module access, country settings, and workspace setup.",
+          "meta": "configure",
+          "proof": "Configuration changes retain scope, responsible actor, effective state, and audit history."
         }
       }
     },
     "gallery": {
-      "eyebrow": "product views",
-      "title": "Product views built around evidence, exceptions, and close readiness.",
-      "description": "The page should sell the operating discipline without becoming noisy: one product surface, then compact panels that show the signals teams actually scan.",
-      "screenshotAlt": "Stoquify dashboard product view",
+      "eyebrow": "product command",
+      "title": "A product surface for the numbers operators actually trust.",
+      "description": "Live views put evidence, exceptions, money movement, stock risk, payroll readiness, and close blockers next to the records that explain them.",
+      "screenshotAlt": "Stoquify Manager Action Center showing read-only branch daily-close evidence",
       "preview": {
-        "meta": "live workspace",
-        "title": "Product views stay close to the records they explain"
+        "meta": "captured read-only state",
+        "title": "Branch daily close with completion and evidence coverage",
+        "classification": "Redacted product screenshot"
       },
       "panels": {
         "inventory": {
-          "title": "Inventory movement ledger",
-          "copy": "Stock levels, counts, transfers, write-offs, and valuation risk stay visible by location.",
-          "meta": "source trail",
+          "title": "Stock truth by location",
+          "copy": "Counts, transfers, write-offs, valuation risk, and replenishment signals stay tied to source movement.",
+          "meta": "movement proof",
           "signals": {
             "1": "count coverage",
             "2": "transfer proof",
-            "3": "valuation check"
+            "3": "valuation risk"
           }
         },
         "purchase": {
-          "title": "Purchasing and AP controls",
-          "copy": "Purchase orders, receiving, supplier invoices, bank changes, and payments move through review.",
-          "meta": "approval lane",
+          "title": "Supplier and AP discipline",
+          "copy": "Orders, receiving, invoices, bank-change reviews, payment approvals, and supplier risk move through controlled lanes.",
+          "meta": "maker-checker",
           "signals": {
-            "1": "PO match",
+            "1": "PO coverage",
             "2": "receipt trail",
-            "3": "payment review"
+            "3": "payment approval"
           }
         },
         "finance": {
-          "title": "Close and reconciliation cockpit",
-          "copy": "Cash, provider evidence, suspense, journals, and close blockers converge before reporting.",
-          "meta": "close view",
+          "title": "Cash, reconciliation, and close",
+          "copy": "Provider events, statement imports, suspense, journals, close blockers, and proof packs converge before reporting.",
+          "meta": "assurance view",
           "signals": {
-            "1": "cash evidence",
-            "2": "suspense review",
-            "3": "close blockers"
+            "1": "provider proof",
+            "2": "suspense cleared",
+            "3": "close evidence"
           }
         }
       }
@@ -1522,7 +1612,7 @@
         },
         "reconciliation": {
           "title": "Reconciliation",
-          "copy": "Provider events, statement imports, matching, suspense workflows, sign-off, and certificates.",
+          "copy": "Provider events, statement imports, matching, suspense workflows, sign-off, and evidence packs.",
           "metric": "payment assurance"
         },
         "payroll": {
@@ -1554,175 +1644,442 @@
     },
     "deepDives": {
       "eyebrow": "daily control",
-      "title": "Designed for the decisions that decide whether the books can be trusted.",
+      "title": "Put the next operating decision and its evidence in the same view.",
+      "description": "Choose a control domain to see the question an operator must answer, the signals that support it, and the evidence that should survive review.",
+      "tablistLabel": "Daily control domains",
+      "focusLabel": "control focus",
+      "decisionLabel": "decision to make",
+      "controlSignal": "signals to review",
+      "evidenceLabel": "evidence retained",
       "items": {
         "inventory": {
           "title": "Inventory",
-          "copy": "Explain quantity, location, movement, valuation, and variance from the same record.",
+          "role": "Stock controller",
+          "copy": "Explain quantity, location, movement, valuation, and variance from one source-linked record.",
+          "decision": "Can today's stock position be explained by approved movement and count evidence?",
+          "evidence": "Item, location, movement, source document, count, variance reason, actor, and approval.",
           "labels": {
-            "a": "Levels",
-            "b": "Moves",
-            "c": "Counts"
+            "a": "Levels by location",
+            "b": "Movement history",
+            "c": "Counts and variance"
           }
         },
         "purchasing": {
           "title": "Purchasing",
-          "copy": "Keep order, receipt, invoice, approval, and supplier-payment risk in one workflow.",
+          "role": "Buyer and finance reviewer",
+          "copy": "Keep request, order, receipt, invoice, approval, supplier liability, and payment readiness connected.",
+          "decision": "Is this supplier commitment complete, matched, approved, and ready for the next financial action?",
+          "evidence": "Request, order, receipt, invoice, match result, approver, supplier balance, and payment state.",
           "labels": {
-            "a": "PO",
-            "b": "Receive",
-            "c": "AP"
+            "a": "Orders and commitments",
+            "b": "Receipts and invoices",
+            "c": "Payables readiness"
           }
         },
         "finance": {
           "title": "Finance",
-          "copy": "Connect cash drawers, payments, receivables, payables, margins, and tax visibility.",
+          "role": "Finance operator",
+          "copy": "Connect drawers, payments, receivables, payables, margins, and tax context to the underlying activity.",
+          "decision": "Which cash exposure or financial exception needs action before it becomes a close blocker?",
+          "evidence": "Transaction source, account position, provider evidence, due state, exception, and reviewer action.",
           "labels": {
-            "a": "Cash",
-            "b": "AR/AP",
-            "c": "Tax"
+            "a": "Cash positions",
+            "b": "Receivables and payables",
+            "c": "Exceptions and tax context"
           }
         },
         "accounting": {
           "title": "Accounting",
-          "copy": "Tie journals, posting rules, trial balance, source links, and close packs together.",
+          "role": "Accountant and controller",
+          "copy": "Tie journals, posting controls, trial balance, source links, reconciliations, and close packs together.",
+          "decision": "Are the books supported, reconciled, reviewed, and ready for the period decision?",
+          "evidence": "Journal source, posting rule, reviewer, reconciliation, blocker state, correction, and close proof.",
           "labels": {
-            "a": "Journals",
-            "b": "Controls",
-            "c": "Close"
+            "a": "Source-linked journals",
+            "b": "Posting and review controls",
+            "c": "Close assurance"
           }
         },
         "compliance": {
           "title": "Compliance",
-          "copy": "Track fiscal-document status, authority evidence, country-pack rules, and adapter health.",
+          "role": "Compliance reviewer",
+          "copy": "Track fiscal-document status, authority evidence, country rules, adapter health, and unresolved obligations.",
+          "decision": "What is proven, what depends on an external authority, and what remains unresolved?",
+          "evidence": "Rule version, jurisdiction, fiscal state, authority response, adapter status, exception, and review.",
           "labels": {
-            "a": "Fiscal",
-            "b": "Evidence",
-            "c": "Rules"
+            "a": "Fiscal-document state",
+            "b": "Authority evidence",
+            "c": "Country rules and exceptions"
+          }
+        },
+        "hris": {
+          "title": "HRIS",
+          "role": "HR administrator and manager",
+          "copy": "Govern people identity, organization scope, contracts, compensation, time, leave, approvals, and self-service.",
+          "decision": "Is this people change authorized, effective-dated, correctly scoped, and ready for downstream use?",
+          "evidence": "Employee identity, scope, effective date, approved change, redaction policy, actor, and movement history.",
+          "labels": {
+            "a": "People and organization truth",
+            "b": "Contracts, time, and compensation",
+            "c": "Approvals and self-service"
           }
         },
         "payroll": {
           "title": "Payroll",
-          "copy": "Connect presence, contracts, leave, approvals, payslips, declarations, and payroll postings.",
+          "role": "Payroll operator",
+          "copy": "Consume approved HRIS facts for payroll runs, payslips, declarations, payments, and accounting postings.",
+          "decision": "Are payroll inputs approved and are outputs, payments, declarations, and postings in the right state?",
+          "evidence": "Input proof, run approval, payslip, declaration, payment evidence, correction, and ledger reference.",
           "labels": {
-            "a": "Presence",
-            "b": "Payslips",
-            "c": "Postings"
+            "a": "Approved inputs and runs",
+            "b": "Payslips and declarations",
+            "c": "Payments and postings"
           }
         }
       }
     },
     "automation": {
-      "eyebrow": "automation",
-      "title": "Automation stays controlled because every action needs evidence.",
+      "eyebrow": "controlled automation",
+      "title": "Automate the handoff, keep the decision visible.",
       "when": "WHEN",
       "then": "THEN",
       "rules": {
         "stock": {
-          "when": "When stock falls below policy or a count variance appears",
-          "then": "Queue adjustment or purchase review with source evidence"
+          "when": "Stock falls below policy or a count variance is recorded",
+          "then": "Open the adjustment or purchasing review with its source evidence"
         },
         "margin": {
-          "when": "When payment evidence does not match the ledger",
-          "then": "Create suspense and block close until reviewed"
+          "when": "Payment evidence and the recorded ledger position do not agree",
+          "then": "Place the difference in review and hold close until it is resolved"
         },
         "transfer": {
-          "when": "When payroll, fiscal, or supplier payment needs approval",
+          "when": "A payroll, fiscal, or supplier payment action requires approval",
           "then": "Route maker-checker review before posting or release"
         }
       }
     },
     "trust": {
-      "eyebrow": "trust",
-      "title": "Trust is built from tenant scope, source evidence, and controlled posting.",
+      "eyebrow": "operational assurance",
+      "title": "Controls that keep operational evidence explainable.",
       "points": {
         "permissions": {
-          "title": "Tenant, RBAC, and step-up controls",
-          "copy": "Keep every action scoped to the right organization, branch, role, and assurance level."
+          "title": "Scoped access and step-up checks",
+          "copy": "Actions stay bounded by organization, branch, role, module, and the assurance required for sensitive work."
         },
         "audit": {
           "title": "Source-linked audit trails",
-          "copy": "Receipts, movements, approvals, journals, and close packs preserve their supporting evidence."
+          "copy": "Receipts, movements, approvals, journals, and close packs retain the references needed for review and handoff."
         },
         "branches": {
-          "title": "Branch and device controls",
-          "copy": "Model branches, warehouses, POS terminals, drawers, and offline replay without losing accountability."
+          "title": "Branch and device accountability",
+          "copy": "Model branches, warehouses, POS terminals, drawers, and offline replay while preserving operator context."
         },
         "finance": {
-          "title": "Ledger-backed financial truth",
-          "copy": "Cash, margins, receivables, payables, taxes, reconciliation, and close status share one record."
+          "title": "Ledger-connected financial control",
+          "copy": "Cash, margins, receivables, payables, tax records, reconciliation, payments, and close status share traceable sources."
         }
       }
     },
     "useCases": {
-      "eyebrow": "use cases",
-      "title": "Adapt the same control spine to each OHADA SMB operating model.",
+      "eyebrow": "operating scenarios",
+      "title": "One control model, shaped around the work each team must prove.",
+      "description": "Explore focused paths for frontline operators, finance teams, accountants, payroll teams, and multi-branch leadership. Each scenario is grounded in surfaces already present in Stoquify.",
+      "carouselLabel": "Stoquify operating use cases",
+      "slideLabel": "Use case {current} of {total}",
+      "previous": "Previous use case",
+      "next": "Next use case",
+      "position": "{current} of {total}",
+      "positionControls": "Choose a use case",
+      "goTo": "Go to use case {slide}",
+      "proofLabel": "Control signal",
+      "ctaCopy": "Start with the workflow carrying the most operational risk, then extend the same evidence trail across the business.",
+      "cta": "Create your workspace",
       "items": {
-        "retail": {
-          "title": "Retail chains",
-          "copy": "Connect branch sales, drawer sessions, stock counts, replenishment, and daily cash evidence.",
-          "label": "multi-branch"
+        "branchControl": {
+          "label": "multi-branch operations",
+          "title": "Hold every branch to one operating record",
+          "copy": "Compare sales, stock, drawers, purchasing, and daily evidence without stripping away the local operating context.",
+          "proof": "Branch, location, terminal, operator, and source references remain attached to the underlying work."
         },
-        "wholesale": {
-          "title": "Wholesale teams",
-          "copy": "Coordinate supplier terms, purchase orders, customer receivables, payment evidence, and margin risk.",
-          "label": "credit aware"
+        "posControl": {
+          "label": "frontline retail",
+          "title": "Move from checkout to an accountable daily close",
+          "copy": "Keep sales, payments, receipts, returns, drawer sessions, and stock consequences connected from the counter onward.",
+          "proof": "The transaction path preserves the sale, payment method, receipt state, and responsible session."
         },
-        "restaurants": {
-          "title": "Restaurants",
-          "copy": "Track fast-moving inputs, shift accountability, cash drawers, purchasing, and stock variance.",
-          "label": "shift-ready"
+        "offlineContinuity": {
+          "label": "intermittent connectivity",
+          "title": "Keep selling while replay remains controlled",
+          "copy": "Support frontline continuity during network interruptions, then bring queued activity back through a visible synchronization path.",
+          "proof": "Offline events retain local identity, ordering, replay status, and exception visibility."
         },
-        "pharmacies": {
-          "title": "Pharmacies",
-          "copy": "Control batches, expiry, transfers, restricted permissions, audit evidence, and supplier follow-up.",
-          "label": "batch control"
+        "inventoryTruth": {
+          "label": "stock and transfers",
+          "title": "Explain what moved, where, and why",
+          "copy": "Connect receipts, transfers, counts, adjustments, write-offs, and valuation context across stores and warehouses.",
+          "proof": "Every change can carry its location, source document, reason, actor, and approval context."
         },
-        "service": {
-          "title": "Service counters",
-          "copy": "Align orders, customer balances, payments, payroll presence, and accountant-ready records.",
-          "label": "account ledgers"
+        "purchasingPayables": {
+          "label": "purchasing and payables",
+          "title": "Control supplier commitments before cash leaves",
+          "copy": "Bring purchase requests, orders, receipts, invoices, approvals, supplier balances, and payment readiness into one flow.",
+          "proof": "Order, receipt, liability, approval, and payment evidence can be reviewed as a connected sequence."
+        },
+        "receivables": {
+          "label": "sales and receivables",
+          "title": "Follow customer value beyond the invoice",
+          "copy": "Track orders, credit exposure, collections, receipts, balances, and disputes without separating the commercial and financial record.",
+          "proof": "Customer, document, due position, collection, and ledger references remain available for follow-up."
+        },
+        "paymentReconciliation": {
+          "label": "payment operations",
+          "title": "Turn provider evidence into resolved differences",
+          "copy": "Compare recorded payments with provider files, surface unmatched items, and route exceptions through review before close.",
+          "proof": "Matches, suspense items, reviewer decisions, and supporting provider evidence stay linked."
+        },
+        "accountingClose": {
+          "label": "OHADA accounting",
+          "title": "Move from source activity to a defensible close",
+          "copy": "Connect journals, posting controls, trial balance review, reconciliations, supporting schedules, and close assurance.",
+          "proof": "Journal lines and close checks retain their source, control status, and review history."
+        },
+        "complianceCountry": {
+          "label": "country and compliance",
+          "title": "Apply local obligations without hiding uncertainty",
+          "copy": "Manage country-pack rules, fiscal-document states, authority evidence, and adapter health with explicit status and provenance.",
+          "proof": "Rules, evidence, adapter responses, and unresolved states remain visible to reviewers."
+        },
+        "payrollEvidence": {
+          "label": "people and payroll",
+          "title": "Connect presence to payroll, payment, and posting",
+          "copy": "Bring contracts, attendance, leave, input readiness, approvals, payslips, declarations, payment evidence, and accounting together.",
+          "proof": "The payroll trail can preserve source inputs, approvals, outputs, payment proof, and ledger references."
+        },
+        "ownerCommand": {
+          "label": "owner and manager",
+          "title": "See the exceptions that need a decision today",
+          "copy": "Bring branch operations, cash exposure, stock issues, approvals, reconciliation breaks, payroll readiness, and close status into view.",
+          "proof": "Operational signals lead back to the workflow and evidence that produced them."
+        },
+        "accountantCollaboration": {
+          "label": "accountant collaboration",
+          "title": "Review the books without reconstructing operations",
+          "copy": "Give accounting teams source-linked journals, reconciliation status, supporting evidence, review queues, and close packs.",
+          "proof": "Operational documents, ledger entries, reviewer notes, and exported evidence can share a traceable path."
+        },
+        "accessApprovals": {
+          "label": "roles and approvals",
+          "title": "Separate action, approval, and release",
+          "copy": "Apply role boundaries and maker-checker review to sensitive stock, payment, payroll, accounting, and compliance work.",
+          "proof": "Permission scope, approval state, actor identity, and decision history stay explicit."
+        },
+        "groupOversight": {
+          "label": "group oversight",
+          "title": "Govern several entities without flattening their context",
+          "copy": "Compare organizations, branches, modules, exceptions, and close readiness while preserving each operating boundary.",
+          "proof": "Tenant, entity, branch, role, and module scope remain part of every review."
         }
       }
     },
     "pricing": {
-      "eyebrow": "pricing",
-      "title": "Adopt the platform by control depth, not by slogans.",
-      "popular": "recommended rollout",
-      "choose": "Create workspace",
-      "plans": {
-        "starter": {
-          "name": "Core operations",
-          "price": "Start",
-          "description": "For teams centralizing POS, stock, and purchasing",
-          "features": "Inventory, POS, customers, suppliers, purchase orders, dashboard basics"
-        },
-        "growth": {
-          "name": "Control layer",
-          "price": "Scale",
-          "description": "For teams adding finance, roles, and branch controls",
-          "features": "Finance, cash drawers, RBAC, locations, analytics, approval queues"
-        },
-        "enterprise": {
-          "name": "Assurance layer",
-          "price": "Governed",
-          "description": "For regulated OHADA workflows and accountant-ready operations",
-          "features": "Accounting, close assurance, compliance, reconciliation, payroll, offline sync"
+      "eyebrow": "packages and adoption paths",
+      "title": "Build the operating system your business needs now, with room to extend.",
+      "description": "Every rollout starts with a shared platform foundation, then combines operating paths and controlled extensions around the work, evidence, and support your team actually needs.",
+      "foundation": {
+        "label": "always included",
+        "title": "Platform Foundation",
+        "copy": "The tenant shell and core controls stay consistent across every path. They are the operating foundation, not a module sold back to the customer.",
+        "points": {
+          "governance": "Dashboard, settings, roles, and administration",
+          "scope": "Organization, location, user, and permission scope",
+          "evidence": "Baseline security, audit, and operating evidence controls"
         }
+      },
+      "tabs": {
+        "label": "Choose an adoption view",
+        "paths": "Adoption paths",
+        "extensions": "Extensions",
+        "delivery": "Commercial model"
+      },
+      "paths": {
+        "label": "three connected paths",
+        "intro": "Start with one coherent business outcome. Paths can be combined, but required dependencies and release readiness are confirmed before scope is committed.",
+        "bestForLabel": "Best for",
+        "includesLabel": "Operating scope",
+        "dependencyLabel": "Dependency boundary",
+        "commercialLabel": "Commercial driver",
+        "operations": {
+          "kicker": "operate",
+          "name": "Operations Core",
+          "outcome": "Create one dependable operating record across stock, buying, selling, suppliers, customers, locations, and daily reporting.",
+          "bestFor": "Retailers, distributors, and stock-led teams replacing disconnected operational tools",
+          "points": {
+            "a": "Inventory, movements, counts, transfers, and valuation context",
+            "b": "Sales, customers, purchasing, suppliers, and approval handoffs",
+            "c": "Source-aware operating dashboards and reports"
+          },
+          "dependency": "Platform Foundation is included; retail POS and continuity are optional extensions.",
+          "commercial": "Organization and active operating locations"
+        },
+        "finance": {
+          "kicker": "control and close",
+          "name": "Finance and Assurance",
+          "outcome": "Carry operational events into finance, OHADA accounting, reconciliation, compliance review, and an explainable period close.",
+          "bestFor": "Growing or multi-branch businesses formalizing cash, ledger, provider, and close control",
+          "points": {
+            "a": "Cash visibility, receivables, payables, and finance control",
+            "b": "OHADA accounting records with source-linked posting evidence",
+            "c": "Reconciliation, close assurance, and qualified compliance workflows"
+          },
+          "dependency": "Finance and accounting establish the base; reconciliation and close layer on proven source data.",
+          "commercial": "Organization, assurance scope, and active provider connections"
+        },
+        "people": {
+          "kicker": "people to pay",
+          "name": "People and Payroll",
+          "outcome": "Keep approved people facts, time, payroll inputs, outputs, payments, declarations, and ledger handoffs controlled but connected.",
+          "bestFor": "SMBs formalizing workforce records, attendance, payroll execution, and payroll evidence",
+          "points": {
+            "a": "HRIS people records, organization scope, contracts, and approved changes",
+            "b": "Presence, payroll readiness, runs, payslips, and declarations",
+            "c": "Payment, accounting, privacy, and review evidence"
+          },
+          "dependency": "Country, privacy, payroll, provider, and accounting readiness are confirmed before rollout.",
+          "commercial": "Organization and active employees in a payroll period"
+        }
+      },
+      "extensions": {
+        "label": "dependency-aware extensions",
+        "intro": "Extensions deepen a proven path. They do not silently grant source modules, skip required controls, or turn internal capabilities into disconnected products.",
+        "requiresLabel": "Requires",
+        "driverLabel": "Commercial driver",
+        "retail": {
+          "status": "retail extension",
+          "name": "Retail POS and Continuity",
+          "copy": "Add cashier sessions, tenders, receipts, drawers, refunds, devices, and controlled offline replay for permanent selling locations.",
+          "requires": "Operations Core, sales, inventory, and approved device controls",
+          "driver": "Active locations or terminals; hardware and payment fees remain separate"
+        },
+        "reconciliation": {
+          "status": "assurance extension",
+          "name": "Provider Reconciliation",
+          "copy": "Ingest provider evidence, match recorded payments, isolate suspense, route exceptions, and retain sign-off proof.",
+          "requires": "Finance, OHADA accounting, and a validated provider adapter",
+          "driver": "Active provider connections and qualified setup scope"
+        },
+        "production": {
+          "status": "controlled beta",
+          "name": "Production Operations",
+          "copy": "Connect recipes, raw materials, batches, planning, costing, yield, and profitability to inventory evidence.",
+          "requires": "Operations Core and production-readiness validation",
+          "driver": "Operating sites and implementation scope"
+        },
+        "intelligence": {
+          "status": "later-stage extension",
+          "name": "Intelligence and Growth",
+          "copy": "Add source-aware analytics and commercial-agent workflows without exposing data from paths the organization does not hold.",
+          "requires": "Active source paths and explicit report-access controls",
+          "driver": "Organization scope and approved source domains"
+        }
+      },
+      "delivery": {
+        "label": "commercial model and delivery",
+        "intro": "Use charging units that follow customer value and real delivery cost. Configuration, migration, country, provider, and assurance work remain visible instead of being hidden in a misleading plan price.",
+        "modelTitle": "Quote-led while regional economics and automation are validated",
+        "modelCopy": "No public numeric price is presented until package composition, taxes, currency, provider costs, support obligations, and entitlement operations are approved. The units below are working hypotheses for customer discovery.",
+        "drivers": {
+          "platform": {
+            "name": "Platform and operations",
+            "basis": "Organization base plus active operating locations"
+          },
+          "retail": {
+            "name": "Retail and devices",
+            "basis": "Active locations or terminals, with hardware and payment costs separated"
+          },
+          "people": {
+            "name": "People and payroll",
+            "basis": "Organization base plus employees active in a payroll period"
+          },
+          "regulated": {
+            "name": "Assurance and adapters",
+            "basis": "Provider, country, and qualified control scope"
+          }
+        },
+        "servicesTitle": "Delivery services scoped to the rollout",
+        "services": {
+          "onboarding": {
+            "name": "Onboarding and migration",
+            "copy": "Data mapping, opening balances, workflow setup, control validation, training, and acceptance evidence."
+          },
+          "country": {
+            "name": "Country-pack setup",
+            "copy": "Qualified rule scope, statutory configuration, provenance, limitations, and change ownership."
+          },
+          "providers": {
+            "name": "Provider adapters",
+            "copy": "Validated integration, credential setup, event mapping, reconciliation, outage handling, and support boundaries."
+          },
+          "assurance": {
+            "name": "Assurance and support",
+            "copy": "Close onboarding, review routines, response targets, operational guidance, and managed support where contracted."
+          }
+        }
+      },
+      "cta": {
+        "label": "qualified rollout request",
+        "title": "Plan the smallest coherent rollout, then expand on evidence.",
+        "copy": "Choose the first operating outcome, confirm dependencies and data readiness, and add extensions only when they create measurable control or capacity.",
+        "button": "Start rollout request",
+        "note": "Availability is confirmed against country, provider, security, migration, and release readiness. This is not instant self-service activation."
       }
     },
     "finalCta": {
-      "eyebrow": "ready",
-      "title": "Give daily operations the same discipline as period close.",
-      "copy": "Start with the modules your team runs today, then grow into OHADA accounting, compliance, reconciliation, payroll, and assurance without breaking the evidence trail.",
-      "cta": "Create workspace"
+      "eyebrow": "next step",
+      "title": "Bring daily operations into one explainable OHADA record.",
+      "copy": "Start with POS, inventory, purchasing, and payments. Expand into reconciliation, OHADA accounting, compliance, payroll, and close assurance as the evidence trail matures.",
+      "cta": "Review adoption path"
     },
     "footer": {
       "homeAria": "Stoquify home",
-      "subtitle": "OHADA SMB operations, controlled",
-      "copy": "A ledger-first operating layer for inventory-heavy businesses that need POS, stock, purchasing, finance, compliance, payroll, reconciliation, and branch controls to speak the same truth.",
+      "subtitle": "OHADA operating system",
+      "copy": "A ledger-first operating layer for OHADA businesses that need POS, stock, purchasing, payments, finance, compliance, payroll, reconciliation, and branch controls to speak the same truth.",
       "navAria": "Footer",
       "copyright": "Stoquify. Built for disciplined OHADA operations."
+    },
+    "peopleToPay": {
+      "eyebrow": "people to pay",
+      "title": "Keep people truth separate from payroll execution, but never disconnected.",
+      "description": "Stoquify already contains a permission-gated HRIS foundation. The operating model makes its responsibility explicit: HRIS owns approved people facts; payroll consumes approved inputs; payments, declarations, and accounting retain their own proof.",
+      "stages": {
+        "people": {
+          "title": "HRIS people truth",
+          "copy": "People identity, organization scope, contracts, compensation, time, leave, approvals, self-service, and movement history.",
+          "signal": "Permission-scoped and redacted records"
+        },
+        "payroll": {
+          "title": "Payroll readiness",
+          "copy": "Approved people facts become controlled payroll inputs without allowing payroll to overwrite HRIS truth.",
+          "signal": "Input readiness and approval state"
+        },
+        "proof": {
+          "title": "Payments and declarations",
+          "copy": "Payslips, payment evidence, statutory declarations, provider state, and exceptions remain distinct.",
+          "signal": "Output, payment, and authority evidence"
+        },
+        "close": {
+          "title": "Accounting and close",
+          "copy": "Payroll postings, liabilities, reconciliation, corrections, and close assurance connect back to source.",
+          "signal": "Ledger references and close controls"
+        }
+      },
+      "liveLabel": "implemented foundation",
+      "statusTitle": "The HRIS core is present behind role controls",
+      "statusBody": "The repository includes people directories and profiles, manager and employee self-service, approvals, movement history, contracts, compensation, time and leave, document evidence, organization scope, and payroll-readiness services.",
+      "peopleCta": "Plan people rollout",
+      "payrollCta": "Plan payroll extension",
+      "gatedLabel": "release boundary",
+      "boundaryTitle": "Unrestricted production promotion remains gated",
+      "boundaryBody": "The latest readiness evidence approves a controlled local pilot, not an unrestricted production claim. Final environment, provider, authority, deployment, and release evidence must still be proven."
     }
   },
   "purchaseOrders": {
@@ -1887,6 +2244,347 @@
       "CYCLE_COUNT": "Cycle count",
       "PHYSICAL_COUNT": "Physical count",
       "WRITE_OFF": "Write-off"
+    }
+  },
+  "cashPaymentHistory": {
+    "eyebrow": "Cash and payment history",
+    "title": "Cash and payment history",
+    "summary": "Review cashier cash events, payment captures, settlement state, variance, and export readiness from the server-owned complete history contract.",
+    "scopeLabel": "Complete server history",
+    "common": {
+      "unknown": "Unknown"
+    },
+    "filters": {
+      "title": "History filters",
+      "detail": "Filters, page size, cursor, and selected row are preserved in the URL. Changing filters resets traversal.",
+      "searchPlaceholder": "Search cash or payment reference",
+      "searchLabel": "Search cash/payment history",
+      "type": "Scope",
+      "allTypes": "All cash and payment events",
+      "dateFrom": "From",
+      "dateTo": "To",
+      "pageSize": "Page size",
+      "reset": "Reset filters"
+    },
+    "actions": {
+      "export": "Prepare controlled export",
+      "exporting": "Preparing export",
+      "exportReady": "Export controls passed. Use the approved server export channel for the same filters.",
+      "partialSourceTitle": "Partial source coverage",
+      "partialSourceSummary": "One or more cash/payment sources are incomplete for this filtered scope.",
+      "partialSource": "Source",
+      "cashVarianceTitle": "Cash variance needs review",
+      "cashVarianceSummary": "Counted cash and expected physical cash differ for the applied filters.",
+      "unresolvedPaymentsTitle": "Unresolved payments need review",
+      "unresolvedPaymentsSummary": "One or more payment rows are pending, partial, cancelled, or otherwise unresolved."
+    },
+    "kpis": {
+      "transactionCount": "Transactions",
+      "transactionCountDetail": "Server summary count for the applied filters.",
+      "expectedPhysicalCash": "Expected cash",
+      "expectedPhysicalCashDetail": "Physical cash impact returned by the read model.",
+      "cashVariance": "Cash variance",
+      "cashVarianceDetail": "Counted cash minus expected physical cash.",
+      "electronicTenderTotal": "Electronic tenders",
+      "electronicTenderTotalDetail": "Non-cash tenders excluded from physical drawer cash.",
+      "unresolvedPayments": "Unresolved payments"
+    },
+    "columns": {
+      "source": "Source",
+      "type": "Type",
+      "amount": "Amount",
+      "cashier": "Cashier",
+      "status": "Control status",
+      "effectiveAt": "Effective time"
+    },
+    "snapshot": {
+      "timezone": "Organization timezone",
+      "recordedThrough": "Recorded through",
+      "generatedAt": "Generated at"
+    },
+    "table": {
+      "caption": "Cash and payment history table",
+      "details": "Details",
+      "nextPage": "Next cursor page",
+      "noNextPage": "No next page",
+      "mobileCardAction": "Open cash/payment details",
+      "resultCount": "{count} visible rows"
+    },
+    "states": {
+      "retry": "Retry",
+      "loadingTitle": "Loading cash/payment history",
+      "loadingMessage": "The server-owned history scope is loading without showing false cash totals.",
+      "emptyTitle": "No cash or payment history yet",
+      "emptyMessage": "Cash and payment history appears after drawer events, POS sales, refunds, payouts, or payment captures are recorded.",
+      "emptyFilteredTitle": "No cash/payment rows match these filters",
+      "emptyFilteredMessage": "Keep or reset the filters to review another history scope.",
+      "errorTitle": "Cash/payment history could not load",
+      "partialTitle": "Partial source data",
+      "partialMessage": "Partial sources are named here. Totals and export should be read with that limitation.",
+      "permissionTitle": "Cash/payment permission required",
+      "permissionMessage": "The server denied cash/payment history access for this user.",
+      "noOrgTitle": "Organization required",
+      "noOrgMessage": "Select an active organization before loading cash/payment history."
+    },
+    "proof": {
+      "unavailableTitle": "Proof unavailable",
+      "unavailableMessage": "Stage 02 supports access, redaction, cursor, and export controls, but not a cash/payment proof-grade badge yet."
+    },
+    "drawer": {
+      "businessIdentity": "Business identity",
+      "sourceAttribution": "Source attribution",
+      "controlStates": "Control states",
+      "lane": "Lane",
+      "source": "Source",
+      "amount": "Amount",
+      "direction": "Direction",
+      "physicalCashImpact": "Physical cash impact",
+      "location": "Location",
+      "cashier": "Cashier",
+      "drawer": "Drawer",
+      "session": "Session",
+      "effectiveAt": "Effective time",
+      "recordedAt": "Recorded time",
+      "businessState": "Business state",
+      "controlState": "Control state",
+      "paymentMethod": "Payment method",
+      "paymentStatus": "Payment status",
+      "reconciliationState": "Reconciliation state",
+      "ledgerPostingBatch": "Ledger posting batch",
+      "providerReference": "Provider reference",
+      "proof": "Proof"
+    },
+    "lanes": {
+      "cash": "Cash",
+      "payment": "Payment",
+      "all": "Cash and payment"
+    },
+    "directions": {
+      "inflow": "Inflow",
+      "outflow": "Outflow",
+      "neutral": "Neutral"
+    },
+    "controlStates": {
+      "capture": "Captured",
+      "posted": "Posted",
+      "reconciled": "Reconciled",
+      "certified": "Certified",
+      "exception": "Exception",
+      "suspense": "Suspense",
+      "cash_count": "Cash count"
+    },
+    "cashTypes": {
+      "OPENING_BALANCE": "Opening balance",
+      "SALE": "Sale",
+      "RETURN": "Return",
+      "CASH_IN": "Cash in",
+      "CASH_OUT": "Cash out",
+      "CLOSING_BALANCE": "Closing balance",
+      "REFUND": "Refund",
+      "PAYOUT": "Payout"
+    },
+    "paymentMethods": {
+      "CASH": "Cash",
+      "CARD": "Card",
+      "MOBILE_MONEY": "Mobile money",
+      "BANK_TRANSFER": "Bank transfer",
+      "CHEQUE": "Cheque",
+      "CREDIT": "Credit",
+      "STORE_CREDIT": "Store credit",
+      "GIFT_CARD": "Gift card",
+      "LOYALTY_POINTS": "Loyalty points",
+      "MIXED": "Mixed",
+      "OTHER": "Other"
+    },
+    "paymentStatuses": {
+      "PENDING": "Pending",
+      "PARTIAL": "Partial",
+      "PAID": "Paid",
+      "OVERPAID": "Overpaid",
+      "REFUNDED": "Refunded",
+      "CANCELLED": "Cancelled",
+      "FAILED": "Failed"
+    }
+  },
+  "apHistory": {
+    "eyebrow": "Supplier AP history",
+    "title": "Supplier payable history",
+    "summary": "Review supplier invoices, payments, payable movements, and AP proof signals from one operational history.",
+    "scopeLabel": "Tenant-scoped AP history",
+    "filters": {
+      "title": "Filter AP history",
+      "detail": "Use server-owned filters. Cursor and export preparation stay on the server.",
+      "searchPlaceholder": "Search is not enabled yet",
+      "searchLabel": "Search",
+      "type": "Lane",
+      "allTypes": "All AP activity",
+      "dateFrom": "From",
+      "dateTo": "To",
+      "pageSize": "Rows",
+      "reset": "Reset"
+    },
+    "actions": {
+      "export": "Prepare export",
+      "exporting": "Preparing"
+    },
+    "table": {
+      "caption": "Supplier AP events",
+      "details": "Details",
+      "nextPage": "Next page",
+      "noNextPage": "No more rows",
+      "mobileCardAction": "Open details",
+      "resultCount": "{count, plural, one {# AP row} other {# AP rows}}",
+      "supplier": "Supplier",
+      "reference": "Reference",
+      "amount": "Amount",
+      "movement": "AP movement",
+      "state": "State",
+      "effectiveAt": "Effective"
+    },
+    "states": {
+      "retry": "Retry",
+      "loadingTitle": "Loading AP history",
+      "loadingMessage": "Collecting supplier invoices and payments.",
+      "emptyTitle": "No AP history yet",
+      "emptyMessage": "Supplier invoices and payments will appear here after AP activity is recorded.",
+      "emptyFilteredTitle": "No AP history matches these filters",
+      "emptyFilteredMessage": "Adjust the dates or lane.",
+      "errorTitle": "AP history could not load",
+      "partialTitle": "Partial proof scope",
+      "partialMessage": "This page is operational AP history. Release-grade reconciliation remains a review step.",
+      "permissionTitle": "Permission required",
+      "permissionMessage": "You need supplier/AP history access.",
+      "noOrgTitle": "No active organization",
+      "noOrgMessage": "Select an organization to view AP history."
+    },
+    "proof": {
+      "unavailableTitle": "Proof pending",
+      "unavailableMessage": "Proof drawers and certified close evidence are not attached to this view yet."
+    },
+    "lanes": {
+      "invoice": "Invoice",
+      "payment": "Payment"
+    },
+    "kpis": {
+      "transactions": "Transactions",
+      "openPayable": "Open payable",
+      "releasedPayments": "Released payments",
+      "ledgerBlockers": "Ledger blockers"
+    },
+    "drawer": {
+      "businessIdentity": "Business identity",
+      "lane": "Lane",
+      "source": "Source",
+      "amount": "Amount",
+      "signedMovement": "Signed payable movement",
+      "accounting": "Accounting proof",
+      "businessState": "Business state",
+      "ledgerPostingBatch": "Ledger batch",
+      "businessEvent": "Business event",
+      "documentHash": "Document hash",
+      "evidenceHash": "Evidence hash",
+      "sourceAttribution": "Source attribution",
+      "supplier": "Supplier",
+      "purchaseOrder": "Purchase order",
+      "dueDate": "Due date",
+      "bankDestination": "Bank destination",
+      "effectiveAt": "Effective at",
+      "recordedAt": "Recorded at"
+    },
+    "snapshot": {
+      "timezone": "Timezone",
+      "recordedThrough": "Recorded through",
+      "generatedAt": "Generated"
+    },
+    "exportStatus": {
+      "ready": "Export preparation passed. Use the server export worker to generate the file."
+    }
+  },
+  "arHistory": {
+    "eyebrow": "Customer AR history",
+    "title": "Customer receivable history",
+    "summary": "Review customer open items, allocations, aging, and settlement state from one tenant-scoped receivables history.",
+    "scopeLabel": "Tenant-scoped AR history",
+    "filters": {
+      "title": "Filter AR history",
+      "detail": "Use the as-of date to inspect customer receivable state at a point in time.",
+      "searchPlaceholder": "Search is not enabled yet",
+      "searchLabel": "Search",
+      "type": "State",
+      "allTypes": "All receivables",
+      "dateFrom": "From",
+      "asOf": "As of",
+      "pageSize": "Rows",
+      "reset": "Reset"
+    },
+    "actions": {
+      "export": "Prepare export",
+      "exporting": "Preparing"
+    },
+    "table": {
+      "caption": "Customer receivable open items",
+      "details": "Details",
+      "nextPage": "Next page",
+      "noNextPage": "No more rows",
+      "mobileCardAction": "Open details",
+      "resultCount": "{count, plural, one {# AR item} other {# AR items}}",
+      "customer": "Customer",
+      "reference": "Reference",
+      "opened": "Opened",
+      "allocated": "Allocated",
+      "open": "Open",
+      "status": "Status"
+    },
+    "states": {
+      "retry": "Retry",
+      "loadingTitle": "Loading AR history",
+      "loadingMessage": "Collecting customer open items and allocations.",
+      "emptyTitle": "No AR history yet",
+      "emptyMessage": "Customer receivable open items will appear here after credit sales or balances are recorded.",
+      "emptyFilteredTitle": "No AR history matches these filters",
+      "emptyFilteredMessage": "Adjust the as-of date.",
+      "errorTitle": "AR history could not load",
+      "partialTitle": "Operational proof scope",
+      "partialMessage": "This page shows open-item receivable history. Certified close evidence remains a release review step.",
+      "permissionTitle": "Permission required",
+      "permissionMessage": "You need receivables history access.",
+      "noOrgTitle": "No active organization",
+      "noOrgMessage": "Select an organization to view AR history."
+    },
+    "proof": {
+      "unavailableTitle": "Proof pending",
+      "unavailableMessage": "Certified AR close evidence is not attached to this view yet."
+    },
+    "kpis": {
+      "items": "Items",
+      "open": "Open AR",
+      "overdue": "Overdue",
+      "settled": "Settled"
+    },
+    "drawer": {
+      "openItem": "Open item",
+      "aging": "Aging",
+      "allocations": "Allocations",
+      "customer": "Customer",
+      "reference": "Reference",
+      "opened": "Opened",
+      "allocated": "Allocated",
+      "open": "Open",
+      "status": "Status",
+      "invoiceDate": "Invoice date",
+      "dueDate": "Due date",
+      "recordedThrough": "Recorded through",
+      "daysPastDue": "Days past due",
+      "bucket": "Aging bucket",
+      "evidenceGrade": "Evidence grade",
+      "noAllocations": "No allocations yet"
+    },
+    "snapshot": {
+      "asOf": "As of",
+      "recordedThrough": "Recorded through"
+    },
+    "exportStatus": {
+      "ready": "Export preparation passed. Use the server export worker to generate the file."
     }
   }
 }

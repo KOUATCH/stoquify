@@ -1,17 +1,18 @@
 # CI Release Readiness
 
-Generated: 2026-07-11T20:42:10.667Z
+Generated: 2026-07-20T16:44:30.300Z
 Mode: `fail`
 Status: `ready`
 
 ## Summary
 
-- Checks ready: 10/10
+- Checks ready: 11/11
 - Blockers: 0
 - PostgreSQL service: configured
 - Isolated database names: yes
 - Production secret references: none
 - Secret values printed: no
+- Close assurance browser smoke: configured
 
 ## Checks
 
@@ -23,6 +24,7 @@ Status: `ready`
 - ready: ci_auth_configuration_is_synthetic_and_sufficient
 - ready: production_credentials_and_release_flags_are_absent
 - ready: verify_ci_migrates_before_repository_verification
+- ready: close_assurance_browser_smoke_is_configured
 - ready: node_and_dependency_cache_are_pinned
 - ready: ci_readiness_gate_is_policy_owned
 

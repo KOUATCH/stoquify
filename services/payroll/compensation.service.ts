@@ -25,6 +25,7 @@ import {
   markBusinessEventAppliedInTx,
   recordBusinessEventInTx,
 } from "@/services/events/business-event.service"
+import { evaluateHrisContractReadinessProof } from "@/services/hris/payroll-readiness-contract"
 import { resolveRegulatoryParameter } from "@/services/regulatory/country-packs/resolve"
 import { evaluateRedaction, type RedactionDecision } from "@/services/security/redaction-policy.service"
 
@@ -671,11 +672,22 @@ async function assertApprovedEffectiveContractForActiveAssignment(
       effectiveTo: true,
       signedDocumentHash: true,
       activatedBusinessEventId: true,
+      metadata: true,
     },
   })
 
   if (!contract) {
     throw new BusinessRuleError("Active rubrique assignments require an approved effective contract covering the assignment period.")
+  }
+
+  const proof = evaluateHrisContractReadinessProof({
+    id: contract.id,
+    signedDocumentHash: contract.signedDocumentHash,
+    activatedBusinessEventId: contract.activatedBusinessEventId,
+    metadata: contract.metadata,
+  })
+  if (!proof.approvalValid || !proof.documentValid) {
+    throw new BusinessRuleError("Active compensation requires complete HRIS contract activation and document approval proof.")
   }
 
   return contract

@@ -49,6 +49,7 @@ function applyRuntimeDatabaseEnv(env = process.env, filePath = path.join(process
 const REQUIRED_WORKFLOW_ASSURANCE_TABLES = [
   "workflow_assurance_check_definitions",
   "workflow_assurance_check_runs",
+  "workflow_assurance_check_findings",
   "workflow_assurance_incidents",
   "workflow_assurance_incident_events",
   "workflow_assurance_alert_deliveries",
@@ -58,6 +59,7 @@ const REQUIRED_WORKFLOW_ASSURANCE_TABLES = [
 const REQUIRED_WORKFLOW_ASSURANCE_MIGRATIONS = [
   "20260621103000_workflow_assurance_registry_foundation",
   "20260621113000_workflow_assurance_incident_spine",
+  "20260720210000_workflow_assurance_multi_finding_persistence",
 ]
 
 function parseArgs(argv) {

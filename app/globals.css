@@ -30,6 +30,40 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+
+    /* Shared product color contract. Public, auth, and dashboard surfaces
+       may vary in density, but must preserve these color meanings. */
+    --product-canvas: #152027;
+    --product-chrome: #19272f;
+    --product-surface: #1d2d35;
+    --product-surface-raised: #253943;
+    --product-surface-warm: #2d444d;
+    --product-border: #54707a;
+    --product-border-subtle: #344a54;
+    --product-text: #f7faf8;
+    --product-text-muted: #d3ddd8;
+    --product-text-soft: #a9b8b2;
+    --product-text-faint: #7e9189;
+    --product-brand: #2f7df6;
+    --product-brand-strong: #5796ff;
+    --product-brand-action: #2563eb;
+    --product-brand-action-hover: #1d4ed8;
+    --product-brand-soft: rgba(47, 125, 246, 0.16);
+    --product-brand-glow: rgba(47, 125, 246, 0.26);
+    --product-spruce: #2dd4bf;
+    --product-spruce-soft: rgba(45, 212, 191, 0.14);
+    --product-gold: #d7a84f;
+    --product-gold-soft: rgba(215, 168, 79, 0.14);
+    --product-warm: #c97855;
+    --product-warm-soft: rgba(201, 120, 85, 0.14);
+    --product-success: #2ec98a;
+    --product-success-soft: rgba(46, 201, 138, 0.14);
+    --product-warning: #f0ae3a;
+    --product-warning-soft: rgba(240, 174, 58, 0.16);
+    --product-danger: #ef6a6a;
+    --product-danger-soft: rgba(239, 106, 106, 0.16);
+    --product-info: #49c6e5;
+    --product-info-soft: rgba(73, 198, 229, 0.14);
   }
 
   .dark {
@@ -71,11 +105,73 @@
 
 /* Modern Form UI Styles */
 @layer components {
+  .auth-shell {
+    --auth-canvas: #dfe8eb;
+    --auth-surface: #eef4f5;
+    --auth-surface-raised: #ffffff;
+    --auth-border: #9fb4bb;
+    --auth-text: #132028;
+    --auth-text-muted: #58707a;
+    --auth-text-soft: #45606a;
+    --auth-text-faint: #7f969f;
+    --auth-brand: var(--product-brand);
+    --auth-brand-strong: var(--product-brand-strong);
+    --auth-brand-ink: var(--product-brand);
+    --auth-brand-action: var(--product-brand-action);
+    --auth-spruce: var(--product-spruce);
+    --auth-spruce-ink: #178e83;
+    --auth-gold: var(--product-gold);
+    --auth-gold-ink: #8b6a20;
+    --auth-warm: var(--product-warm);
+    --auth-success: var(--product-success);
+    --auth-warning: var(--product-warning);
+    --auth-danger: var(--product-danger);
+    --auth-info: var(--product-info);
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 0 0% 100%;
+    --ring: 221.2 83.2% 53.3%;
+  }
+
+  .dark .auth-shell {
+    --auth-canvas: #0b1116;
+    --auth-surface: #142129;
+    --auth-surface-raised: var(--product-surface);
+    --auth-border: var(--product-border-subtle);
+    --auth-text: var(--product-text);
+    --auth-text-muted: var(--product-text-muted);
+    --auth-text-soft: var(--product-text-soft);
+    --auth-text-faint: var(--product-text-faint);
+    --auth-brand-strong: #8fb7ff;
+    --auth-brand-ink: #8fb7ff;
+    --auth-spruce-ink: #7de8dc;
+    --auth-gold-ink: #f0c76a;
+  }
+
+  .auth-shell-grid {
+    background-image:
+      linear-gradient(color-mix(in srgb, var(--auth-brand) 7.5%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--auth-spruce) 7%, transparent) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+
+  .auth-shell-wash {
+    background:
+      linear-gradient(135deg, color-mix(in srgb, var(--auth-brand) 18%, transparent), transparent 36%),
+      linear-gradient(315deg, color-mix(in srgb, var(--auth-spruce) 11%, transparent), transparent 34%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.58), transparent 44%);
+  }
+
+  .dark .auth-shell-wash {
+    background:
+      linear-gradient(135deg, color-mix(in srgb, var(--auth-brand) 13%, transparent), transparent 36%),
+      linear-gradient(315deg, color-mix(in srgb, var(--auth-spruce) 8%, transparent), transparent 34%);
+  }
+
   .auth-input {
-    color: #132028 !important;
+    color: var(--auth-text, #132028) !important;
     background-color: rgba(255, 255, 255, 0.92) !important;
-    caret-color: #2f7df6;
-    -webkit-text-fill-color: #132028 !important;
+    caret-color: var(--auth-brand, #2f7df6);
+    -webkit-text-fill-color: var(--auth-text, #132028) !important;
     color-scheme: light;
   }
 
@@ -86,10 +182,10 @@
   }
 
   .dark .auth-input {
-    color: #ffffff !important;
+    color: var(--auth-text, #ffffff) !important;
     background-color: rgba(15, 23, 29, 0.92) !important;
-    caret-color: #8fb7ff;
-    -webkit-text-fill-color: #ffffff !important;
+    caret-color: var(--auth-brand-strong, #8fb7ff);
+    -webkit-text-fill-color: var(--auth-text, #ffffff) !important;
     color-scheme: dark;
   }
 
@@ -101,10 +197,10 @@
   .auth-input:-webkit-autofill,
   .auth-input:-webkit-autofill:hover,
   .auth-input:-webkit-autofill:focus {
-    color: #132028 !important;
+    color: var(--auth-text, #132028) !important;
     background-color: rgba(255, 255, 255, 0.94) !important;
-    caret-color: #2f7df6;
-    -webkit-text-fill-color: #132028 !important;
+    caret-color: var(--auth-brand, #2f7df6);
+    -webkit-text-fill-color: var(--auth-text, #132028) !important;
     -webkit-box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.94) inset !important;
     transition: background-color 99999s ease-in-out 0s;
   }
@@ -112,10 +208,10 @@
   .dark .auth-input:-webkit-autofill,
   .dark .auth-input:-webkit-autofill:hover,
   .dark .auth-input:-webkit-autofill:focus {
-    color: #ffffff !important;
+    color: var(--auth-text, #ffffff) !important;
     background-color: rgba(15, 23, 29, 0.96) !important;
-    caret-color: #8fb7ff;
-    -webkit-text-fill-color: #ffffff !important;
+    caret-color: var(--auth-brand-strong, #8fb7ff);
+    -webkit-text-fill-color: var(--auth-text, #ffffff) !important;
     -webkit-box-shadow: 0 0 0 1000px rgba(15, 23, 29, 0.96) inset !important;
   }
 
@@ -206,34 +302,34 @@
   }
 
   .dashboard-landing-theme {
-    --dash-canvas: #152027;
-    --dash-chrome: #19272f;
-    --dash-surface: #1d2d35;
-    --dash-surface-raised: #253943;
-    --dash-surface-warm: #2d444d;
-    --dash-border: #54707a;
-    --dash-border-subtle: #344a54;
-    --dash-text: #f7faf8;
-    --dash-text-muted: #d3ddd8;
-    --dash-text-soft: #a9b8b2;
-    --dash-text-faint: #7e9189;
-    --dash-brand: #2f7df6;
-    --dash-brand-strong: #5796ff;
-    --dash-brand-soft: rgba(47, 125, 246, 0.16);
-    --dash-spruce: #2dd4bf;
-    --dash-spruce-soft: rgba(45, 212, 191, 0.14);
-    --dash-gold: #d7a84f;
-    --dash-gold-soft: rgba(215, 168, 79, 0.14);
-    --dash-warm: #c97855;
-    --dash-warm-soft: rgba(201, 120, 85, 0.14);
-    --dash-success: #2ec98a;
-    --dash-success-soft: rgba(46, 201, 138, 0.14);
-    --dash-warning: #f0ae3a;
-    --dash-warning-soft: rgba(240, 174, 58, 0.16);
-    --dash-danger: #ef6a6a;
-    --dash-danger-soft: rgba(239, 106, 106, 0.16);
-    --dash-info: #49c6e5;
-    --dash-info-soft: rgba(73, 198, 229, 0.14);
+    --dash-canvas: var(--product-canvas);
+    --dash-chrome: var(--product-chrome);
+    --dash-surface: var(--product-surface);
+    --dash-surface-raised: var(--product-surface-raised);
+    --dash-surface-warm: var(--product-surface-warm);
+    --dash-border: var(--product-border);
+    --dash-border-subtle: var(--product-border-subtle);
+    --dash-text: var(--product-text);
+    --dash-text-muted: var(--product-text-muted);
+    --dash-text-soft: var(--product-text-soft);
+    --dash-text-faint: var(--product-text-faint);
+    --dash-brand: var(--product-brand);
+    --dash-brand-strong: var(--product-brand-strong);
+    --dash-brand-soft: var(--product-brand-soft);
+    --dash-spruce: var(--product-spruce);
+    --dash-spruce-soft: var(--product-spruce-soft);
+    --dash-gold: var(--product-gold);
+    --dash-gold-soft: var(--product-gold-soft);
+    --dash-warm: var(--product-warm);
+    --dash-warm-soft: var(--product-warm-soft);
+    --dash-success: var(--product-success);
+    --dash-success-soft: var(--product-success-soft);
+    --dash-warning: var(--product-warning);
+    --dash-warning-soft: var(--product-warning-soft);
+    --dash-danger: var(--product-danger);
+    --dash-danger-soft: var(--product-danger-soft);
+    --dash-info: var(--product-info);
+    --dash-info-soft: var(--product-info-soft);
     --background: 201 30% 12%;
     --foreground: 120 18% 98%;
     --card: 199 29% 16%;
@@ -688,31 +784,31 @@
   }
 
   .dashboard-enterprise-sidebar {
-    --dash-canvas: #152027;
-    --dash-chrome: #19272f;
-    --dash-surface: #1d2d35;
-    --dash-surface-raised: #253943;
-    --dash-border: #54707a;
-    --dash-border-subtle: #344a54;
-    --dash-text: #f7faf8;
-    --dash-text-muted: #d3ddd8;
-    --dash-text-soft: #a9b8b2;
-    --dash-text-faint: #7e9189;
-    --dash-brand: #2f7df6;
-    --dash-brand-strong: #5796ff;
-    --dash-brand-soft: rgba(47, 125, 246, 0.16);
-    --dash-spruce: #2dd4bf;
-    --dash-spruce-soft: rgba(45, 212, 191, 0.14);
-    --dash-gold: #d7a84f;
-    --dash-gold-soft: rgba(215, 168, 79, 0.14);
-    --dash-success: #2ec98a;
-    --dash-success-soft: rgba(46, 201, 138, 0.14);
-    --dash-warning: #f0ae3a;
-    --dash-warning-soft: rgba(240, 174, 58, 0.16);
-    --dash-danger: #ef6a6a;
-    --dash-danger-soft: rgba(239, 106, 106, 0.16);
-    --dash-info: #49c6e5;
-    --dash-info-soft: rgba(73, 198, 229, 0.14);
+    --dash-canvas: var(--product-canvas);
+    --dash-chrome: var(--product-chrome);
+    --dash-surface: var(--product-surface);
+    --dash-surface-raised: var(--product-surface-raised);
+    --dash-border: var(--product-border);
+    --dash-border-subtle: var(--product-border-subtle);
+    --dash-text: var(--product-text);
+    --dash-text-muted: var(--product-text-muted);
+    --dash-text-soft: var(--product-text-soft);
+    --dash-text-faint: var(--product-text-faint);
+    --dash-brand: var(--product-brand);
+    --dash-brand-strong: var(--product-brand-strong);
+    --dash-brand-soft: var(--product-brand-soft);
+    --dash-spruce: var(--product-spruce);
+    --dash-spruce-soft: var(--product-spruce-soft);
+    --dash-gold: var(--product-gold);
+    --dash-gold-soft: var(--product-gold-soft);
+    --dash-success: var(--product-success);
+    --dash-success-soft: var(--product-success-soft);
+    --dash-warning: var(--product-warning);
+    --dash-warning-soft: var(--product-warning-soft);
+    --dash-danger: var(--product-danger);
+    --dash-danger-soft: var(--product-danger-soft);
+    --dash-info: var(--product-info);
+    --dash-info-soft: var(--product-info-soft);
     --sidebar-canvas: #0f171d;
     --sidebar-panel: #142129;
     --sidebar-border: rgba(170, 199, 207, 0.16);
@@ -1312,7 +1408,7 @@
   .notification-action-button--brand {
     border-color: color-mix(in srgb, var(--dash-brand, #2f7df6) 62%, var(--dash-border, #54707a)) !important;
     background: var(--dash-brand, #2f7df6) !important;
-    color: #ffffff !important;
+    color: var(--auth-text, #ffffff) !important;
   }
 
   .notification-action-button--danger {

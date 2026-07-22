@@ -7,6 +7,12 @@ export const dashboardPermissions = [
   "dashboard.overview.read",
 ] as const;
 
+// Branch daily-close controls
+export const branchDailyClosePermissions = [
+  "branch.daily-close.review",
+  "branch.daily-close.sign",
+] as const;
+
 // User management permissions
 export const userPermissions = [
   "users.read",
@@ -340,6 +346,7 @@ export const dataPermissions = [
 // Admin permissions (all permissions combined)
 export const adminPermissions = [
   ...dashboardPermissions,
+  ...branchDailyClosePermissions,
   ...userPermissions,
   ...profilePermissions,
   ...rolePermissions,
@@ -365,6 +372,7 @@ export const adminPermissions = [
 // Manager permissions (subset of admin)
 export const managerPermissions = [
   ...dashboardPermissions,
+  ...branchDailyClosePermissions,
   ...profilePermissions,
   "users.read",
   "users.invite",
@@ -499,6 +507,7 @@ export const rolePermissionMap = {
 // Permission categories for UI organization
 export const permissionCategories = {
   "Dashboard & Overview": dashboardPermissions,
+  "Branch Daily Close Controls": branchDailyClosePermissions,
   "User Management": userPermissions,
   "Profile Management": profilePermissions,
   "Role Management": rolePermissions,
@@ -557,6 +566,7 @@ export function isValidPermission(permission: string): permission is Permission 
 
 export default {
   adminPermissions,
+  branchDailyClosePermissions,
   accountingPermissions,
   compliancePermissions,
   hrisPermissions,

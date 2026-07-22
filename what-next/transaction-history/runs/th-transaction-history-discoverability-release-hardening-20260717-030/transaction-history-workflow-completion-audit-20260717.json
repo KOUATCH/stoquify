@@ -1,0 +1,254 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-07-17T14:46:56.398Z",
+  "status": "PASS",
+  "scope": {
+    "completedSlices": [
+      "cash-payment",
+      "supplier-ap",
+      "customer-ar"
+    ],
+    "visibleRoutes": [
+      "/dashboard/finance/cash-payment-history",
+      "/dashboard/purchases/payables/history",
+      "/dashboard/finance/receivables/history"
+    ],
+    "supersededHistoricalArtifacts": [
+      "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/07-release-review.json",
+      "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/07-release-review.json",
+      "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/07-release-review.json"
+    ]
+  },
+  "requirements": [
+    {
+      "id": "NO_FOUNDATION_RERUN",
+      "status": "PASS",
+      "evidence": [
+        {
+          "path": "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/run-manifest.json",
+          "exists": true,
+          "sha256": "sha256:340877d1cff706bdc6083dc29cef49d7c96df2b539aa9419790eca69249c3fce"
+        },
+        {
+          "path": "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/01-architecture-gate.json",
+          "exists": true,
+          "sha256": "sha256:2ab3abf532c7c10979ea4a8c007227c45a9a3b7c21fe42f24660ebe0f3ff3795"
+        }
+      ],
+      "note": "The continuation used cash-payment and ap-ar runs; foundation-inventory remains historical and was not rerun for this closure."
+    },
+    {
+      "id": "CASH_PAYMENT_STAGES_01_TO_06",
+      "status": "PASS",
+      "evidence": [
+        {
+          "path": "what-next/transaction-history/runs/th-cash-payment-architecture-20260716-023",
+          "exists": true,
+          "sha256": null
+        },
+        {
+          "path": "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/02-security-proof-gate.json",
+          "exists": true,
+          "sha256": "sha256:9fdba16aee735178b3e8e40df0c633e627e6267b49994dd9fa0b33f848a3847b"
+        },
+        {
+          "path": "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/03-accounting-control-gate.json",
+          "exists": true,
+          "sha256": "sha256:6499ba4d9a03dc0168e78c034055731f71caf0bf0fed446328a4f34938f9abb7"
+        },
+        {
+          "path": "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/04-read-model-optimizer.json",
+          "exists": true,
+          "sha256": "sha256:ea837b870d24b1d12847ee2d5aabf1338fad610df88c5ec608a5a7198d5795b0"
+        },
+        {
+          "path": "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/05-workbench-ux-contract.json",
+          "exists": true,
+          "sha256": "sha256:b99a32a9261c6f74e34657382367a060e433d274e18b51e0f2df9c0a605be839"
+        },
+        {
+          "path": "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/06-frontend-delivery.json",
+          "exists": true,
+          "sha256": "sha256:4f15f949f767bd58b8d03a12813720b8a4028fb14304082e695fe186977f3e0e"
+        },
+        {
+          "path": "app/[locale]/(dashboard)/dashboard/finance/cash-payment-history/page.tsx",
+          "exists": true,
+          "sha256": "sha256:65fa23981ad0bf4d425175b2dea75755ca44267036f38985c125f76bcf6e7baa"
+        },
+        {
+          "path": "components/finance/CashPaymentHistoryWorkbench.tsx",
+          "exists": true,
+          "sha256": "sha256:fc6804b10003f6aed1761e1af86077fdf11b4a70f2a54a560da78c163fcb0bbc"
+        },
+        {
+          "path": "services/pos/cash-payment-history.service.ts",
+          "exists": true,
+          "sha256": "sha256:ad512ee4825f928b04efd2f75b4da74a5870ea0130edb4b01c0b23b23705cb57"
+        },
+        {
+          "path": "actions/pos/cash-payment-history.actions.ts",
+          "exists": true,
+          "sha256": "sha256:7d80c0b765a2d1a11d46e159f7ce5acef7193871a1c69dc7062164f72152b74e"
+        }
+      ],
+      "note": "Cashier/cash/payment/settlement history is visible through the cash-payment history route and workbench."
+    },
+    {
+      "id": "SUPPLIER_AP_STAGES_01_TO_06",
+      "status": "PASS",
+      "evidence": [
+        {
+          "path": "what-next/transaction-history/runs/th-ap-ar-architecture-20260717-025",
+          "exists": true,
+          "sha256": null
+        },
+        {
+          "path": "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/02-security-proof-gate.json",
+          "exists": true,
+          "sha256": "sha256:4eaaa302cefb68bfa6910345671b680a0e6e0bc974682b96763776a4b258563e"
+        },
+        {
+          "path": "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/03-accounting-control-gate.json",
+          "exists": true,
+          "sha256": "sha256:84e4800199cbe80a04c2b41780876f7c33093c19a3c0c36d995b28ac6cf08e20"
+        },
+        {
+          "path": "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/04-read-model-optimizer.json",
+          "exists": true,
+          "sha256": "sha256:2295d8b6b920340b972855f3560f69ef49e74054b2b5dbad67cca5d665f8ed3b"
+        },
+        {
+          "path": "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/05-workbench-ux-contract.json",
+          "exists": true,
+          "sha256": "sha256:9b323fe56968e21c73ce09b1ac45d228440789e9ca09e74dd5015b80032ffc9d"
+        },
+        {
+          "path": "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/06-frontend-delivery.json",
+          "exists": true,
+          "sha256": "sha256:754d4fefa34d32a10fcb58401d6733f0a63b43457fd6d90fc197c3c020cb3809"
+        },
+        {
+          "path": "app/[locale]/(dashboard)/dashboard/purchases/payables/history/page.tsx",
+          "exists": true,
+          "sha256": "sha256:8f9f3c0ff7352b407bb41758d83b639ed4726f9c4a851d9232ca4b6278263f38"
+        },
+        {
+          "path": "components/purchasing/APHistoryWorkbench.tsx",
+          "exists": true,
+          "sha256": "sha256:48d7e7fbaf736c3068b7d1b8e0c1ac016c0c6858360fdab80ee52a7414b65da6"
+        },
+        {
+          "path": "services/purchasing/ap-history.service.ts",
+          "exists": true,
+          "sha256": "sha256:2e8991736333beb090ea686c331a045c35ff876a7f25f3355929007faca8da99"
+        },
+        {
+          "path": "actions/purchasing/ap-history.actions.ts",
+          "exists": true,
+          "sha256": "sha256:16dfa889f045e5de6959031b09ac1f975aa1847c6a42b30c550fae35185406a8"
+        }
+      ],
+      "note": "Supplier/AP invoice and payment history is visible through the purchases payables history route and workbench."
+    },
+    {
+      "id": "CUSTOMER_AR_STAGES_01_TO_06",
+      "status": "PASS",
+      "evidence": [
+        {
+          "path": "what-next/transaction-history/runs/th-ar-accounting-prerequisites-20260717-028",
+          "exists": true,
+          "sha256": null
+        },
+        {
+          "path": "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/01-architecture-gate.json",
+          "exists": true,
+          "sha256": "sha256:2ab3abf532c7c10979ea4a8c007227c45a9a3b7c21fe42f24660ebe0f3ff3795"
+        },
+        {
+          "path": "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/02-security-proof-gate.json",
+          "exists": true,
+          "sha256": "sha256:1734e4c8644fa9cedd249b5b82340f74da84cac3338f3c528b57202aa569112a"
+        },
+        {
+          "path": "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/03-accounting-control-gate.json",
+          "exists": true,
+          "sha256": "sha256:411f10e6efb64d96601d368cea2f1b4dd11d53a7c2f5f8712a866bce9dc0e7fa"
+        },
+        {
+          "path": "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/04-read-model-optimizer.json",
+          "exists": true,
+          "sha256": "sha256:3691503159a8bd2ff1710662617740eed187c43fb816e540f01ff2c8d430a177"
+        },
+        {
+          "path": "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/05-workbench-ux-contract.json",
+          "exists": true,
+          "sha256": "sha256:2e49f52a60b68001c77b0dfb1c3663d6db3aff18d28fa5b3aab71a4921cd356e"
+        },
+        {
+          "path": "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/06-frontend-delivery.json",
+          "exists": true,
+          "sha256": "sha256:19774718b0624708caab8c1e7145fc8113d2f2bd582d5ebf9b21073e5f376dab"
+        },
+        {
+          "path": "app/[locale]/(dashboard)/dashboard/finance/receivables/history/page.tsx",
+          "exists": true,
+          "sha256": "sha256:7235784bc97ae36f90bd0e241d539f85e83c60e7727099142f22cc6f1b262354"
+        },
+        {
+          "path": "components/finance/AROpenItemsHistoryWorkbench.tsx",
+          "exists": true,
+          "sha256": "sha256:c0010cdde39df88a8444fbe90c0a150618a002784753503a2c1c491dfc6da311"
+        },
+        {
+          "path": "services/accounting/ar-open-item.service.ts",
+          "exists": true,
+          "sha256": "sha256:b1b4aefb8f5a3bd0e8e6265a43b43bb8ce47c2e2e688ca351fbeaa05635d4da5"
+        },
+        {
+          "path": "actions/finance/ar-history.actions.ts",
+          "exists": true,
+          "sha256": "sha256:b1ca2663d4d39e1f60c873068cbc06f8698bd9bbb522013df85b76db7daba054"
+        }
+      ],
+      "note": "Customer/AR open-item, allocation, aging, and settlement history is visible through the receivables history route and workbench."
+    },
+    {
+      "id": "STAGE_07_RELEASE_REVIEW_SUPERSESSION",
+      "status": "PASS",
+      "evidence": [
+        {
+          "path": "what-next\\transaction-history\\runs\\th-transaction-history-discoverability-release-hardening-20260717-030\\discoverability-release-hardening.json",
+          "exists": true,
+          "sha256": "sha256:10f4898ca11bf9f0f7ed0a1993636c39efb7fa9ca3057dad1a81df5ea89de739"
+        },
+        {
+          "path": "what-next\\transaction-history\\runs\\th-transaction-history-discoverability-release-hardening-20260717-030\\discoverability-release-hardening.md",
+          "exists": true,
+          "sha256": "sha256:97717bef98839b6bf6a2535dc7ffae53fa62092db41a107e8c47f52c2f8a1ad0"
+        },
+        {
+          "path": "what-next\\transaction-history\\runs\\th-transaction-history-discoverability-release-hardening-20260717-030\\transaction-history-stage07-release-fixtures-output.json",
+          "exists": true,
+          "sha256": "sha256:8e92883d897105b23acab7aa284078f4b10bd9066ffcb08b2e0098e05b65be55"
+        },
+        {
+          "path": "what-next\\transaction-history\\runs\\th-transaction-history-discoverability-release-hardening-20260717-030\\transaction-history-authenticated-browser-a11y-output.json",
+          "exists": true,
+          "sha256": "sha256:d9492db182e44a3bccf54e799e96b2c4c6d5558de28b9f03eafa6b66a5b85aab"
+        },
+        {
+          "path": "what-next\\transaction-history\\runs\\th-transaction-history-discoverability-release-hardening-20260717-030\\transaction-history-static-release-smoke-output.json",
+          "exists": true,
+          "sha256": "sha256:23ae19720446bbe1cdd23af04658c5eab1dc8863185b373fdf69c4220c346dd1"
+        },
+        {
+          "path": "what-next\\transaction-history\\runs\\th-transaction-history-discoverability-release-hardening-20260717-030\\transaction-history-route-playwright-smoke-output.json",
+          "exists": true,
+          "sha256": "sha256:98328205757dd7626061de2b471bc1c8389786a15219cbcb3a174969a10dd608"
+        }
+      ],
+      "note": "Older per-slice 07-release-review artifacts remain historical and still show BLOCKED. The current Stage 07 closure is the run 030 cross-slice release-hardening evidence, which is PASS with blockers empty."
+    }
+  ]
+}

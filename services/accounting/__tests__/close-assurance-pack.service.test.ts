@@ -22,6 +22,7 @@ jest.mock("@/prisma/db", () => {
     },
     ledgerAuditEvent: {
       create: jest.fn(),
+      findMany: jest.fn(),
     },
     payrollRun: {
       findMany: jest.fn(),
@@ -64,6 +65,7 @@ const mockDb = db as unknown as {
   }
   ledgerAuditEvent: {
     create: jest.Mock
+    findMany: jest.Mock
   }
   payrollRun: {
     findMany: jest.Mock
@@ -417,6 +419,18 @@ describe("close assurance pack service", () => {
       id: "close-pack-export-1",
     })
     mockDb.ledgerAuditEvent.create.mockResolvedValue({ id: "audit-1" })
+    mockDb.ledgerAuditEvent.findMany.mockResolvedValue([
+      {
+        id: "ledger-audit-1",
+        action: "CLOSE_ASSURANCE_RUN_COMPLETED",
+        actorId: "controller-1",
+        resourceType: "CloseRun",
+        resourceId: "close-run-1",
+        message: "Close run completed.",
+        metadata: { correlationId: "run-corr-1" },
+        createdAt: new Date("2026-06-15T12:35:00.000Z"),
+      },
+    ])
     mockDb.businessEvent.findUnique.mockResolvedValue(null)
     mockDb.businessEvent.create.mockImplementation(({ data }) =>
       Promise.resolve({
@@ -551,6 +565,169 @@ describe("close assurance pack service", () => {
       }),
     )
     expect(mockDb.closeRun.update).not.toHaveBeenCalled()
+  })
+
+  it("requires fresh authentication before certified export", async () => {
+    await expect(
+      exportClosePack(
+        "org-1",
+        { closeRunId: "close-run-1", mode: "CERTIFIED" },
+        {
+          actorId: "certifier-1",
+          actorPermissions: ["accounting.close.certify"],
+          now: "2026-06-15T13:01:00.000Z",
+        },
+      ),
+    ).rejects.toThrow(/Fresh authentication is required/i)
+
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+  })
+
+  it("blocks certified exports below T4 data trust", async () => {
+    const run = closeRun()
+    mockDb.closeRun.findFirst.mockResolvedValue({
+      ...run,
+      metadata: {
+        ...(run.metadata as Record<string, unknown>),
+        trustLevel: "T3",
+      },
+    })
+
+    await expect(
+      exportClosePack(
+        "org-1",
+        { closeRunId: "close-run-1", mode: "CERTIFIED" },
+        {
+          actorId: "certifier-1",
+          actorPermissions: ["accounting.close.certify"],
+          lastAuthAt: "2026-06-15T13:00:00.000Z",
+          now: "2026-06-15T13:01:00.000Z",
+        },
+      ),
+    ).rejects.toThrow(/requires at least T4 data trust/i)
+
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+  })
+
+  it("blocks certified exports when reconciliation certificates are unsigned", async () => {
+    const run = closeRun()
+    mockDb.closeRun.findFirst.mockResolvedValue({
+      ...run,
+      evidenceItems: run.evidenceItems.map((item) =>
+        item.id === "evidence-recon"
+          ? { ...item, sourceHash: null, provenance: "CAPTURED" }
+          : item,
+      ),
+    })
+
+    await expect(
+      exportClosePack(
+        "org-1",
+        { closeRunId: "close-run-1", mode: "CERTIFIED" },
+        {
+          actorId: "certifier-1",
+          actorPermissions: ["accounting.close.certify"],
+          lastAuthAt: "2026-06-15T13:00:00.000Z",
+          now: "2026-06-15T13:01:00.000Z",
+        },
+      ),
+    ).rejects.toThrow(/reconciliation certificate reference/i)
+
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+  })
+
+  it("redacts raw provider payloads, secrets, and audit metadata from public pack content", async () => {
+    const run = closeRun()
+    mockDb.closeRun.findFirst.mockResolvedValue({
+      ...run,
+      metadata: {
+        ...(run.metadata as Record<string, unknown>),
+        rawProviderPayload: {
+          merchantEmail: "merchant@example.test",
+          token: "provider-token",
+        },
+        apiSecret: "super-secret-api-key",
+      },
+      evidenceItems: [
+        ...run.evidenceItems,
+        {
+          id: "evidence-provider-event",
+          checklistItemId: "check-payment",
+          findingId: null,
+          evidenceType: "PROVIDER_EVENT",
+          sourceTable: "provider_events",
+          sourceType: "ProviderSettlement",
+          sourceId: "provider-event-1",
+          sourceLabel: "Provider settlement",
+          sourceDate: new Date("2026-06-15T10:05:00.000Z"),
+          sourceHash: "sha256:provider-event",
+          provenance: "POSTED",
+          available: true,
+          unavailableReason: null,
+          metadata: {
+            providerPayload: {
+              customerPhone: "+237612345678",
+              authorization: "Bearer raw-token",
+            },
+          },
+          correlationId: "provider-corr-1",
+        },
+      ],
+    })
+    mockDb.ledgerAuditEvent.findMany.mockResolvedValue([
+      {
+        id: "ledger-audit-sensitive",
+        action: "CLOSE_ASSURANCE_RUN_COMPLETED",
+        actorId: "controller-1",
+        resourceType: "CloseRun",
+        resourceId: "close-run-1",
+        message: "Close run completed.",
+        metadata: {
+          rawPayload: {
+            customerEmail: "buyer@example.test",
+            token: "audit-token",
+          },
+          requestSecret: "audit-secret",
+        },
+        createdAt: new Date("2026-06-15T12:35:00.000Z"),
+      },
+    ])
+
+    const result = await exportClosePack(
+      "org-1",
+      {
+        closeRunId: "close-run-1",
+        mode: "DRAFT_NOT_CERTIFIED",
+        correlationId: "redaction-corr-1",
+      },
+      {
+        actorId: "operator-1",
+        actorPermissions: ["accounting.close.export"],
+        now: "2026-06-15T13:00:00.000Z",
+      },
+    )
+
+    expect(result.content).not.toContain("merchant@example.test")
+    expect(result.content).not.toContain("provider-token")
+    expect(result.content).not.toContain("super-secret-api-key")
+    expect(result.content).not.toContain("+237612345678")
+    expect(result.content).not.toContain("Bearer raw-token")
+    expect(result.content).not.toContain("buyer@example.test")
+    expect(result.content).not.toContain("audit-secret")
+
+    const payload = JSON.parse(result.content)
+    expect(payload.closeRun.metadata.rawProviderPayload).toBe("redacted")
+    expect(payload.closeRun.metadata.apiSecret).toMatch(/^redacted:/)
+    const providerEvidence = payload.evidenceItems.find(
+      (item: { id: string }) => item.id === "evidence-provider-event",
+    )
+    expect(providerEvidence.metadata.providerPayload).toBe("redacted")
+    expect(
+      payload.evidenceSummaries.auditLogExcerpt[0].metadata.rawPayload,
+    ).toBe("redacted")
+    expect(
+      payload.evidenceSummaries.auditLogExcerpt[0].metadata.requestSecret,
+    ).toMatch(/^redacted:/)
   })
 
   it("blocks certified exports when high-risk findings remain open", async () => {
@@ -690,6 +867,40 @@ describe("close assurance pack service", () => {
     )
   })
 
+  it("uses a safe inventory-refresh limitation when draft pack evidence is unavailable", async () => {
+    mockReconcileInventoryClass3.mockRejectedValue(
+      new Error("provider secret token leaked from downstream adapter"),
+    )
+
+    const result = await exportClosePack(
+      "org-1",
+      {
+        closeRunId: "close-run-1",
+        mode: "DRAFT_NOT_CERTIFIED",
+        correlationId: "inventory-unavailable-corr-1",
+      },
+      {
+        actorId: "operator-1",
+        actorPermissions: ["accounting.close.export"],
+        now: "2026-06-15T13:00:00.000Z",
+      },
+    )
+
+    expect(result.content).toContain(
+      "Inventory valuation annex could not be refreshed.",
+    )
+    expect(result.content).not.toContain("provider secret token")
+    expect(result.content).not.toContain("downstream adapter")
+    const payload = JSON.parse(result.content)
+    expect(payload.annexes.inventoryValuation.freshness.status).toBe(
+      "UNAVAILABLE",
+    )
+    expect(payload.export.certificationBlockers).toEqual(
+      expect.arrayContaining([
+        "Inventory valuation annex freshness could not be verified.",
+      ]),
+    )
+  })
   it("blocks certified exports and records invalidation when inventory annex evidence is stale", async () => {
     mockReconcileInventoryClass3.mockResolvedValue(
       cleanInventoryValuation("sha256:inventory-valuation-new"),

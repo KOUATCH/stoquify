@@ -1,0 +1,1642 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [6 0 R 8 0 R 10 0 R 12 0 R 14 0 R 16 0 R 18 0 R 20 0 R 22 0 R 24 0 R 26 0 R 28 0 R 30 0 R 32 0 R 34 0 R 36 0 R 38 0 R 40 0 R 42 0 R 44 0 R 46 0 R 48 0 R 50 0 R 52 0 R 54 0 R 56 0 R 58 0 R 60 0 R] /Count 28 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 5606 >>
+stream
+BT /F2 23.00 Tf 0.05 0.46 0.42 rg 48.00 789.89 Td (Stoquify Agent Runtime) Tj ET
+BT /F2 18.00 Tf 0.05 0.46 0.42 rg 48.00 764.89 Td (Strategic Roadmap Report) Tj ET
+BT /F1 10.50 Tf 0.31 0.38 0.47 rg 48.00 741.89 Td (Executed roadmap prompt | 2026-07-21) Tj ET
+0.08 0.72 0.65 RG 1.10 w 48.00 725.89 m 547.28 725.89 l S
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 696.89 Td (Generated: 2026-07-21) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 684.39 Td (Source prompt:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 671.89 Td (docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_ROADMAP_REFINED_PROMPT_2026-07-21.md) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 659.39 Td (Source report: docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PROPOSAL_REPORT_2026-07-21.md) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 646.89 Td (Scope: strategic, architectural, and implementation roadmap only. No application code or) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 634.39 Td (schema changes were made.) Tj ET
+BT /F2 13.30 Tf 0.05 0.46 0.42 rg 48.00 608.89 Td (Executive Summary) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 584.39 Td (Stoquify should implement the agent-runtime proposal as a controlled operating copilot) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 571.89 Td (program, not as a generic AI chatbot feature. The implementation should be a shared,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 559.39 Td (Stoquify-owned runtime that sits above the existing source-of-truth services and below the) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 546.89 Td (user-facing command surfaces. Its job is to translate trusted business data into) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 534.39 Td (role-specific explanations, evidence-backed recommendations, action drafts, approval routes,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 521.89 Td (and safe workflow execution.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 502.39 Td (The highest-leverage path is deliberately narrow:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 482.89 Td (1. Add one shared agent runtime.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 470.39 Td (2. Wrap existing Stoquify services as permission-filtered, module-entitled, redacted tools.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 457.89 Td (3. Launch one read-only Command Agent first.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 445.39 Td (4. Add Cash/Reconciliation and Inventory/Replenishment agents in read-and-draft mode.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 432.89 Td (5. Add approval, idempotency, durable execution, observability, and low-risk controlled) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 420.39 Td (   actions only after usage proves the workflows.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 400.89 Td (This roadmap positions Stoquify as a daily operating intelligence layer for African and) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 388.39 Td (OHADA SMBs. The destination is not "dashboards plus AI." It is a trusted command system that) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 375.89 Td (tells each role what matters now, why it matters, what evidence supports it, who can resolve) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 363.39 Td (it, and which controlled workflow should be used.) Tj ET
+BT /F2 13.30 Tf 0.05 0.46 0.42 rg 48.00 337.89 Td (Evidence Basis) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 313.39 Td (This roadmap is grounded in the generated proposal report and current workspace evidence.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 293.89 Td (Existing Stoquify strengths to reuse:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 274.39 Td (- Protected action boundary: services/_shared/protect.ts) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 261.89 Td (- RBAC and audit decisions: lib/security/rbac.ts) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 249.39 Td (- Module entitlement: services/modules/module-entitlement.service.ts) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 236.89 Td (- Module contracts: services/modules/module-control-contracts.ts) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 224.39 Td (- Business signals and action queues: services/signals) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 211.89 Td (- Tenant, payment, inventory, and close snapshots: services/snapshots) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 199.39 Td (- Payment reconciliation workbench:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 186.89 Td (  services/payments/payment-reconciliation-workbench.service.ts) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 174.39 Td (- Inventory cash truth: services/snapshots/inventory-cash-snapshot.service.ts) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 161.89 Td (- Stock-to-cash contracts: services/stock-to-cash) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 149.39 Td (- Payroll command read model: services/payroll/command-read-model.service.ts) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 136.89 Td (- Close assurance: services/accounting/close-assurance.service.ts) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 124.39 Td (- Ledger posting and idempotency: services/accounting/posting.service.ts) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 111.89 Td (- Step-up auth and redaction: services/security) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 99.39 Td (- Evidence contracts and proof drawer: services/evidence, components/evidence) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 86.89 Td (- Command, daily digest, finance, inventory, payroll, compliance, and assurance routes under) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 74.39 Td (  app/[locale]/\(dashboard\)/dashboard) Tj ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 9 0 R >>
+endobj
+9 0 obj
+<< /Length 5841 >>
+stream
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 48.00 789.89 Td (Stoquify Agent Runtime Strategic Roadmap) Tj ET
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 505.28 789.89 Td (Page 2) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 765.89 Td (Current implementation gaps observed:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 746.39 Td (- services/agents does not exist.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 733.89 Td (- components/agents does not exist.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 721.39 Td (- app/[locale]/\(dashboard\)/dashboard/agent-runs does not exist.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 708.89 Td (- No Prisma agent runtime models were found for AgentRun, AgentStep, AgentApproval,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 696.39 Td (  AgentActionDraft, or equivalent.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 683.89 Td (- No AI runtime packages were found in package.json or package-lock.json for AI SDK,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 671.39 Td (  Inngest, Trigger.dev, Langfuse, Helicone, LiteLLM, or MCP.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 651.89 Td (Existing verification scripts to preserve and extend:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 632.39 Td (- npm run prisma:validate) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 619.89 Td (- npm run typecheck) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 607.39 Td (- npm run lint) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 594.89 Td (- npm run service:boundary:fail) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 582.39 Td (- npm run workflow:assurance:runtime-check) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 569.89 Td (- npm run inventory:boundary:fail) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 557.39 Td (- npm run payment:cash-truth:gate) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 544.89 Td (- npm run ledger:close-truth:gate) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 532.39 Td (- npm run report:trust:export:gate) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 519.89 Td (- npm run verify:repo) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 500.39 Td (External technology references from the source report:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 480.89 Td (- Vercel AI SDK: https://vercel.com/blog/ai-sdk-7,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 468.39 Td (  https://ai-sdk.dev/docs/ai-sdk-core/tools-and-tool-calling) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 455.89 Td (- Model Context Protocol:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 443.39 Td (  https://modelcontextprotocol.io/specification/2025-06-18/server/tools) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 430.89 Td (- Inngest: https://www.inngest.com/docs/learn/inngest-functions) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 418.39 Td (- Trigger.dev: https://trigger.dev/docs/tasks/overview) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 405.89 Td (- Langfuse: https://langfuse.com/?tab=observability) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 393.39 Td (- Helicone: https://docs.helicone.ai/getting-started/platform-overview) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 380.89 Td (- LiteLLM: https://docs.litellm.ai/) Tj ET
+BT /F2 13.30 Tf 0.05 0.46 0.42 rg 48.00 355.39 Td (1. Strategic North Star) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 330.89 Td (Stoquify should become the operating copilot for SMB work, with OHADA-aware evidence and) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 318.39 Td (controlled execution as the differentiator.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 298.89 Td (The product destination:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 279.39 Td (- For owners: a daily command view that explains cash, stock, risk, and what needs approval.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 266.89 Td (- For managers: a work queue that turns signals into assigned, evidence-backed actions.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 254.39 Td (- For finance officers: a cash and reconciliation assistant that explains unmatched money,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 241.89 Td (  duplicate references, suspense risk, and cash exposure.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 229.39 Td (- For accountants: a close and ledger readiness assistant that explains source links,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 216.89 Td (  posting state, close blockers, and evidence quality.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 204.39 Td (- For stockkeepers and purchasing users: an inventory and replenishment assistant that) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 191.89 Td (  explains stockout, overstock, transfer delay, supplier, and cash-tied-in-stock risk.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 179.39 Td (- For HR and payroll specialists: a readiness assistant that explains missing employee data,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 166.89 Td (  contracts, attendance, payment destination, declarations, redaction, and close exposure.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 154.39 Td (- For POS cashiers and supervisors: an operating assistant that explains drawer variance,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 141.89 Td (  payment completion, refund/void risk, and end-of-day blockers.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 129.39 Td (- For auditors: a proof trail and evidence assistant that explains what is certified,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 116.89 Td (  reconciled, posted, operational, raw, blocked, or redacted.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 97.39 Td (Why this is defensible:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 77.89 Td (- Generic AI tools do not own Stoquify's tenant-scoped source data.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 65.39 Td (- Generic ERP tools rarely expose evidence-grade continuity from POS to cash to inventory to) Tj ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 11 0 R >>
+endobj
+11 0 obj
+<< /Length 5694 >>
+stream
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 48.00 789.89 Td (Stoquify Agent Runtime Strategic Roadmap) Tj ET
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 505.28 789.89 Td (Page 3) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 765.89 Td (  ledger to close.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 753.39 Td (- Generic SMB dashboards show metrics, but do not route work with proof, permissions,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 740.89 Td (  redaction, approvals, and workflow state.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 728.39 Td (- Generic chatbots produce answers, but Stoquify can produce controlled actions tied to) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 715.89 Td (  business records and service-owned workflows.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 696.39 Td (The new category should be described as:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 676.89 Td (> Stoquify is the evidence-backed command system for SMB operators, finance teams,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 664.39 Td (accountants, inventory teams, payroll teams, and managers.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 644.89 Td (That positioning is stronger than "business management SaaS" because it gives Stoquify daily) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 632.39 Td (and hourly relevance. It is stronger than "AI copilot" because the value comes from trusted) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 619.89 Td (operational truth, not the model itself.) Tj ET
+BT /F2 13.30 Tf 0.05 0.46 0.42 rg 48.00 594.39 Td (2. Synthesized Solution Architecture) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 569.89 Td (The full solution should be one integrated system with eight layers.) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 547.39 Td (User surfaces) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 537.09 Td (  Command panels, module assistant panels, evidence drawers, action draft cards,) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 526.79 Td (  approval timelines, exception queues, agent-run admin views) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 509.49 Td (Agent runtime) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 499.19 Td (  Agent definitions, runs, steps, skills, tools, evidence links, action drafts,) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 488.89 Td (  approvals, feedback, cost ledger, policy incidents) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 471.59 Td (Agent skills) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 461.29 Td (  Trusted context, permission guard, evidence retrieval, redaction, freshness,) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 450.99 Td (  action drafting, approval routing, trust monitoring) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 433.69 Td (Tool registry) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 423.39 Td (  Service-owned read tools and controlled action-draft tools only) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 406.09 Td (Stoquify source-of-truth services) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 395.79 Td (  Snapshots, business signals, action queue, proof trails, payment reconciliation,) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 385.49 Td (  inventory cash truth, stock-to-cash, close assurance, payroll command read model) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 368.19 Td (Control plane) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 357.89 Td (  RBAC, module entitlement, fresh auth, maker-checker, redaction, safe errors,) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 347.59 Td (  idempotency, audit logging, service boundary checks) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 330.29 Td (Optional execution and observability) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 319.99 Td (  AI SDK tool loop, MCP-compatible tool contracts, one durable executor,) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 309.69 Td (  redacted LLM traces, model routing, cost tracking, evaluations) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 292.39 Td (Release assurance) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 282.09 Td (  Agent-specific tests and gates plus existing Stoquify policy gates) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 261.79 Td (The runtime must not own business truth. It owns orchestration metadata. Source-of-truth) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 249.29 Td (remains in existing domain services.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 229.79 Td (Primary runtime responsibilities:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 210.29 Td (- Resolve trusted context for the current user, tenant, role, locale, currency, module) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 197.79 Td (  access, and time window.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 185.29 Td (- Select only tools that the actor can use.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 172.79 Td (- Pull redacted, evidence-bound read-model data from existing services.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 160.29 Td (- Produce explanations and recommendations with source evidence.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 147.79 Td (- Create action drafts for human review.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 135.29 Td (- Route approval and fresh-auth requirements.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 122.79 Td (- Record runs, steps, costs, feedback, and policy incidents.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 110.29 Td (- Reject unsafe or unregistered tool requests.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 90.79 Td (This architecture lets Stoquify move fast without creating a parallel ERP. The agent runtime) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 78.29 Td (becomes a thin, auditable layer over protected services.) Tj ET
+endstream
+endobj
+12 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 13 0 R >>
+endobj
+13 0 obj
+<< /Length 5963 >>
+stream
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 48.00 789.89 Td (Stoquify Agent Runtime Strategic Roadmap) Tj ET
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 505.28 789.89 Td (Page 4) Tj ET
+BT /F2 13.30 Tf 0.05 0.46 0.42 rg 48.00 765.89 Td (3. Current-State Fit) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 741.39 Td (Stoquify is unusually ready for this roadmap because the hard substrate already exists.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 721.89 Td (services/_shared/protect.ts already shows the right pattern: permission requirement,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 709.39 Td (optional fresh auth, tenant guard, module gate, safe errors, correlation IDs, and module) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 696.89 Td (access observation. Agent tools should be thin wrappers around this pattern.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 677.39 Td (lib/security/rbac.ts already establishes session-backed RBAC, active organization) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 664.89 Td (enforcement, stale session organization detection, permission expansion, and audited) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 652.39 Td (allowed/denied decisions. The agent context resolver should use this rather than) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 639.89 Td (implementing its own authorization.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 620.39 Td (services/modules already has a canonical module catalog and entitlement decision model.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 607.89 Td (Agent visibility must respect module slug, surface type, access intent, and observe/enforce) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 595.39 Td (mode.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 575.89 Td (services/signals already has the strongest first abstraction for the Command Agent. Business) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 563.39 Td (signals include severity, required permission, assigned role, action path, evidence grade,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 550.89 Td (blockers, redactions, source hash, and proof link. The agent should summarize and explain) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 538.39 Td (these signals.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 518.89 Td (services/snapshots already provides structured operating truth. Snapshot contracts include) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 506.39 Td (freshness, source hash, evidence grade, blockers, redactions, source modules, and UI state.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 493.89 Td (That is almost exactly the kind of data the agent needs.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 474.39 Td (services/payments already supports payment reconciliation workbench data with rails,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 461.89 Td (failures, duplicate provider references, suspense readiness, and current persistence) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 449.39 Td (limitations. This is the seed of the Cash/Reconciliation Agent.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 429.89 Td (services/snapshots/inventory-cash-snapshot.service.ts already detects zero and negative) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 417.39 Td (stock and links inventory to cash and accounting source modules. This is the seed of the) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 404.89 Td (Inventory/Replenishment Agent.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 385.39 Td (services/payroll/command-read-model.service.ts is a later expansion path, not an MVP) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 372.89 Td (dependency. It already contains role scope, redaction, country-pack evidence, readiness,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 360.39 Td (blockers, next actions, and release readiness. That makes payroll a high-value phase after) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 347.89 Td (the runtime is trusted.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 328.39 Td (services/accounting/close-assurance.service.ts and services/accounting/posting.service.ts) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 315.89 Td (define the sensitive boundary. Agents must not post ledgers or certify close packs. They) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 303.39 Td (should explain close blockers and draft actions routed through existing services.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 283.89 Td (components/evidence/ProofTrailDrawer.tsx already gives a UI pattern for showing evidence) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 271.39 Td (chains, blockers, redactions, and audit status. Agent answers should reuse this mental) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 258.89 Td (model.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 239.39 Td (config/sidebar.ts already groups the product into Command, Operations, Finance & Trust,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 226.89 Td (People, and Governance. Agent UI should map into those sections rather than adding a) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 214.39 Td (disconnected "AI" area.) Tj ET
+BT /F2 13.30 Tf 0.05 0.46 0.42 rg 48.00 188.89 Td (4. Implementation Principles) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 164.39 Td (These principles should be treated as release-gate requirements.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 144.89 Td (1. One shared runtime, not one framework per module.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 132.39 Td (2. Service-owned tools only.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 119.89 Td (3. No raw Prisma tool.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 107.39 Td (4. No direct database writes by agents.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 94.89 Td (5. No direct ledger posting by agents.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 82.39 Td (6. No direct statutory filing by agents.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 69.89 Td (7. No payroll approval, payroll release, or payroll mutation by agents.) Tj ET
+endstream
+endobj
+14 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 15 0 R >>
+endobj
+15 0 obj
+<< /Length 4626 >>
+stream
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 48.00 789.89 Td (Stoquify Agent Runtime Strategic Roadmap) Tj ET
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 505.28 789.89 Td (Page 5) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 765.89 Td (8. No role, permission, entitlement, or security setting changes by agents.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 753.39 Td (9. No close certification or close waiver approval by agents.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 740.89 Td (10. No direct cash drawer adjustment by agents.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 728.39 Td (11. No stock adjustment, stock write-off, stock count approval, or purchase order approval) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 715.89 Td (    by agents.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 703.39 Td (12. Evidence, freshness, and redaction must be resolved before model output.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 690.89 Td (13. Agent recommendations must link to source evidence or explicitly say evidence is) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 678.39 Td (    unavailable.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 665.89 Td (14. Action drafts must be validated server-side before display and again before approval) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 653.39 Td (    replay.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 640.89 Td (15. Human approval is required for medium, high, critical, financial, payroll, compliance,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 628.39 Td (    or governance actions.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 615.89 Td (16. Durable execution must be idempotent.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 603.39 Td (17. Agent traces must not store unredacted sensitive payloads.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 590.89 Td (18. Agent UX must be workflow-first, role-aware, and embedded in existing Stoquify surfaces.) Tj ET
+BT /F2 13.30 Tf 0.05 0.46 0.42 rg 48.00 565.39 Td (5. Phased Roadmap) Tj ET
+BT /F2 11.30 Tf 0.62 0.43 0.11 rg 48.00 536.89 Td (Phase 0: Readiness And Design Freeze) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 514.39 Td (Objective:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 494.89 Td (- Freeze the agent runtime boundaries before writing code.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 482.39 Td (- Confirm what is in scope for MVP and what remains prohibited.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 462.89 Td (Technical work:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 443.39 Td (- Create an architecture decision record under docs/agents-runtime.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 430.89 Td (- Define agent risk levels: read-only, draft, low-risk action, sensitive action, prohibited.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 418.39 Td (- Define tool categories: read tool, explanation tool, action draft tool, approval tool,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 405.89 Td (  blocked tool.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 393.39 Td (- Define data classification for model context.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 380.89 Td (- Define redaction-before-prompt policy.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 368.39 Td (- Define first pilot roles: owner, manager, accountant, finance officer, stockkeeper.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 348.89 Td (Files/modules likely affected:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 329.39 Td (- docs/agents-runtime) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 316.89 Td (- optional what-next/agents-runtime) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 304.39 Td (- no application code) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 284.89 Td (Database changes:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 265.39 Td (- None.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 245.89 Td (UI surfaces:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 226.39 Td (- None.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 206.89 Td (Tests:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 187.39 Td (- None required, but produce an implementation checklist and risk register.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 167.89 Td (Risks:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 148.39 Td (- Scope creep into generic chatbot work.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 135.89 Td (- Premature dependency adoption.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 116.39 Td (Dependencies:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 96.89 Td (- Product/engineering/security agreement on prohibited actions.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 77.39 Td (Acceptance criteria:) Tj ET
+endstream
+endobj
+16 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 17 0 R >>
+endobj
+17 0 obj
+<< /Length 4581 >>
+stream
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 48.00 789.89 Td (Stoquify Agent Runtime Strategic Roadmap) Tj ET
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 505.28 789.89 Td (Page 6) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 765.89 Td (- Written design freeze exists.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 753.39 Td (- Prohibited tool list is approved.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 740.89 Td (- MVP agents and tools are selected.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 728.39 Td (- Dependency adoption order is approved.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 708.89 Td (Release gates:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 689.39 Td (- Document review only.) Tj ET
+BT /F2 11.30 Tf 0.62 0.43 0.11 rg 48.00 665.89 Td (Phase 1: Shared Runtime Foundation) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 643.39 Td (Objective:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 623.89 Td (- Add the minimum runtime needed to record agent runs, tools, steps, evidence, feedback, and) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 611.39 Td (  policy incidents.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 591.89 Td (Technical work:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 572.39 Td (- Add Prisma models for AgentDefinition, AgentSkillDefinition, AgentToolDefinition,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 559.89 Td (  AgentRun, AgentStep, AgentEvidenceLink, AgentFeedback, AgentCostLedger, and) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 547.39 Td (  AgentPolicyIncident.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 534.89 Td (- Add services/agents/agent-contracts.ts.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 522.39 Td (- Add agent-context.service.ts using RBAC, module entitlement, locale, currency, tenant, and) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 509.89 Td (  route context.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 497.39 Td (- Add agent-tool-registry.service.ts with hardcoded MVP read tools.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 484.89 Td (- Add agent-evidence.service.ts to bind evidence grade, source hash, freshness, blockers,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 472.39 Td (  redactions, and proof subjects.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 459.89 Td (- Add agent-redaction.service.ts over existing redaction policies.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 447.39 Td (- Add agent-runner.service.ts as a deterministic non-LLM stub first.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 434.89 Td (- Add tests proving no raw Prisma or direct write tool is registered.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 415.39 Td (Files/modules likely affected:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 395.89 Td (- prisma/schema.prisma) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 383.39 Td (- services/agents) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 370.89 Td (- services/agents/__tests__) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 358.39 Td (- optional seed file for default agent definitions) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 338.89 Td (Database changes:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 319.39 Td (- Introduce runtime tables but no business data mutation path.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 299.89 Td (UI surfaces:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 280.39 Td (- None required beyond optional admin/dev inspection later.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 260.89 Td (Tests:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 241.39 Td (- agent-context.service.test.ts) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 228.89 Td (- agent-tool-registry.service.test.ts) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 216.39 Td (- agent-evidence.service.test.ts) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 203.89 Td (- agent-redaction.service.test.ts) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 191.39 Td (- agent-no-direct-write-boundary.test.ts) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 171.89 Td (Risks:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 152.39 Td (- Runtime models become too broad.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 139.89 Td (- Tool registry accidentally exposes unsafe service paths.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 120.39 Td (Dependencies:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 100.89 Td (- Existing RBAC, module entitlement, snapshots, signals, evidence, and redaction services.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 81.39 Td (Acceptance criteria:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 61.89 Td (- Runtime tables validate through Prisma.) Tj ET
+endstream
+endobj
+18 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 19 0 R >>
+endobj
+19 0 obj
+<< /Length 4597 >>
+stream
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 48.00 789.89 Td (Stoquify Agent Runtime Strategic Roadmap) Tj ET
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 505.28 789.89 Td (Page 7) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 765.89 Td (- All registered tools have module slug, required permission, risk level, output schema, and) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 753.39 Td (  evidence behavior.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 740.89 Td (- No direct Prisma write tool exists.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 728.39 Td (- Agent runs can be recorded with steps and evidence links.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 708.89 Td (Release gates:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 689.39 Td (- npm run prisma:validate) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 676.89 Td (- npm run typecheck) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 664.39 Td (- npm run lint) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 651.89 Td (- npm run service:boundary:fail) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 639.39 Td (- focused services/agents Jest tests) Tj ET
+BT /F2 11.30 Tf 0.62 0.43 0.11 rg 48.00 615.89 Td (Phase 2: Read-Only Command Agent) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 593.39 Td (Objective:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 573.89 Td (- Launch the first internal agent as a read-only command brief that explains daily) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 561.39 Td (  priorities using existing Stoquify truth.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 541.89 Td (Technical work:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 522.39 Td (- Add AI SDK or equivalent TypeScript-native model/tool loop.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 509.89 Td (- Register read-only tools:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 497.39 Td (  - readTenantOperatingSnapshot) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 484.89 Td (  - readBusinessSignals) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 472.39 Td (  - readActionQueue) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 459.89 Td (  - readProofTrail) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 447.39 Td (  - readCloseReadinessSnapshot) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 434.89 Td (- Add prompt templates as versioned agent skills.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 422.39 Td (- Ensure every response includes evidence grade, freshness, source modules, and limitations.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 409.89 Td (- Add feedback capture.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 390.39 Td (Files/modules likely affected:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 370.89 Td (- services/agents) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 358.39 Td (- components/agents/AgentCommandPanel.tsx) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 345.89 Td (- components/agents/AgentEvidenceDrawer.tsx) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 333.39 Td (- app/[locale]/\(dashboard\)/dashboard/daily-digest/page.tsx) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 320.89 Td (- app/[locale]/\(dashboard\)/dashboard/manager-action-center/page.tsx) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 308.39 Td (- app/[locale]/\(dashboard\)/dashboard/owner-war-room/page.tsx) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 288.89 Td (Database changes:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 269.39 Td (- Use existing Phase 1 runtime tables.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 256.89 Td (- No action draft or approval tables yet unless included in Phase 1 as inactive.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 237.39 Td (UI surfaces:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 217.89 Td (- Daily Digest agent panel.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 205.39 Td (- Manager Action Center agent panel.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 192.89 Td (- Owner War Room command brief.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 180.39 Td (- Proof trail drawer integration.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 160.89 Td (Tests:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 141.39 Td (- Role-specific context tests.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 128.89 Td (- Permission-filtered signal tests.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 116.39 Td (- Redaction-before-output tests.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 103.89 Td (- Stale snapshot response tests.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 91.39 Td (- UI rendering tests for evidence badges and no-visible-actions state.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 71.89 Td (Risks:) Tj ET
+endstream
+endobj
+20 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 21 0 R >>
+endobj
+21 0 obj
+<< /Length 4495 >>
+stream
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 48.00 789.89 Td (Stoquify Agent Runtime Strategic Roadmap) Tj ET
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 505.28 789.89 Td (Page 8) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 758.89 Td (- Users expect the agent to execute actions.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 746.39 Td (- Agent hallucination if context is not tightly bounded.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 726.89 Td (Dependencies:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 707.39 Td (- AI SDK or equivalent.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 694.89 Td (- Existing snapshots/signals/action queue/proof trail services.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 675.39 Td (Acceptance criteria:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 655.89 Td (- Agent can answer "what matters today" using only allowed context.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 643.39 Td (- Agent refuses or safely redirects action requests.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 630.89 Td (- Agent output is evidence-bound.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 618.39 Td (- Agent output changes by role and permission.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 605.89 Td (- Agent run history records steps and feedback.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 586.39 Td (Release gates:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 566.89 Td (- npm run typecheck) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 554.39 Td (- npm run lint) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 541.89 Td (- npm run workflow:assurance:runtime-check) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 529.39 Td (- npm run report:trust:export:gate) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 516.89 Td (- focused component and service tests) Tj ET
+BT /F2 11.30 Tf 0.62 0.43 0.11 rg 48.00 493.39 Td (Phase 3: Cash/Reconciliation Agent In Read-And-Draft Mode) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 470.89 Td (Objective:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 451.39 Td (- Convert payment and cash truth into daily reconciliation triage and draft recommendations.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 431.89 Td (Technical work:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 412.39 Td (- Register read tools:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 399.89 Td (  - readPaymentTruthSnapshot) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 387.39 Td (  - readPaymentReconciliationWorkbench) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 374.89 Td (  - readCashPaymentHistory) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 362.39 Td (  - readProofTrail) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 349.89 Td (- Add draft tools:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 337.39 Td (  - draftReconciliationMatchSuggestion) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 324.89 Td (  - draftSuspenseClassification) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 312.39 Td (  - draftEvidenceRequest) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 299.89 Td (  - draftActionItemAssignment) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 287.39 Td (- Add AgentActionDraft if not already introduced.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 274.89 Td (- Add draft validation service.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 262.39 Td (- Add visible risk labels: read-only, draft only, requires approval, prohibited.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 242.89 Td (Files/modules likely affected:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 223.39 Td (- services/agents) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 210.89 Td (- services/payments) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 198.39 Td (- components/agents/AgentActionDraftCard.tsx) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 185.89 Td (- components/finance/PaymentReconciliationWorkbench.tsx) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 173.39 Td (- components/finance/CashPaymentHistoryWorkbench.tsx) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 160.89 Td (- app/[locale]/\(dashboard\)/dashboard/finance/reconciliation/page.tsx) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 148.39 Td (- app/[locale]/\(dashboard\)/dashboard/finance/cash-command/page.tsx) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 128.89 Td (Database changes:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 109.39 Td (- AgentActionDraft) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 96.89 Td (- optional AgentDraftEvidenceLink) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 77.39 Td (UI surfaces:) Tj ET
+endstream
+endobj
+22 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 23 0 R >>
+endobj
+23 0 obj
+<< /Length 4547 >>
+stream
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 48.00 789.89 Td (Stoquify Agent Runtime Strategic Roadmap) Tj ET
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 505.28 789.89 Td (Page 9) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 765.89 Td (- Finance reconciliation assistant panel.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 753.39 Td (- Cash command exception explanation.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 740.89 Td (- Draft suggestion cards.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 728.39 Td (- Evidence drawer for reconciliation runs and payment transactions.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 708.89 Td (Tests:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 689.39 Td (- Duplicate provider reference triage.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 676.89 Td (- Suspense suggestion remains draft-only.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 664.39 Td (- No direct ledger posting.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 651.89 Td (- No direct cash adjustment.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 639.39 Td (- Payment provider references masked or redacted by permission.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 619.89 Td (Risks:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 600.39 Td (- False match suggestions.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 587.89 Td (- Users over-trust draft recommendations.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 568.39 Td (Dependencies:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 548.89 Td (- Payment reconciliation workbench.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 536.39 Td (- Payment truth snapshot.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 523.89 Td (- Redaction policy for payment provider references and suspense details.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 504.39 Td (Acceptance criteria:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 484.89 Td (- Agent explains open suspense and duplicate reference risk.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 472.39 Td (- Agent creates draft suggestions only.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 459.89 Td (- Drafts include evidence, source hash, required permission, and approval requirement.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 447.39 Td (- Agent cannot post suspense, reconcile, or mutate cash.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 427.89 Td (Release gates:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 408.39 Td (- npm run payment:cash-truth:gate) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 395.89 Td (- npm run ledger:close-truth:gate) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 383.39 Td (- npm run report:trust:export:gate) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 370.89 Td (- focused payment/agent tests) Tj ET
+BT /F2 11.30 Tf 0.62 0.43 0.11 rg 48.00 347.39 Td (Phase 4: Inventory/Replenishment Agent In Read-And-Draft Mode) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 324.89 Td (Objective:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 305.39 Td (- Turn inventory cash truth and stock-to-cash continuity into actionable stock risk and) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 292.89 Td (  replenishment drafts.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 273.39 Td (Technical work:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 253.89 Td (- Register read tools:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 241.39 Td (  - readInventoryCashSnapshot) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 228.89 Td (  - readStockToCashFlow) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 216.39 Td (  - readInventoryMovements) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 203.89 Td (  - readItemSupplierLinks) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 191.39 Td (  - readPurchaseOrderSignals) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 178.89 Td (- Add draft tools:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 166.39 Td (  - draftReplenishmentSuggestion) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 153.89 Td (  - draftTransferReview) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 141.39 Td (  - draftStockCountReview) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 128.89 Td (  - draftPurchaseOrderReview) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 116.39 Td (- Add velocity and risk scoring as deterministic service logic before model explanation.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 96.89 Td (Files/modules likely affected:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 77.39 Td (- services/agents) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 64.89 Td (- services/snapshots/inventory-cash-snapshot.service.ts) Tj ET
+endstream
+endobj
+24 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 25 0 R >>
+endobj
+25 0 obj
+<< /Length 4552 >>
+stream
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 48.00 789.89 Td (Stoquify Agent Runtime Strategic Roadmap) Tj ET
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 505.28 789.89 Td (Page 10) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 765.89 Td (- services/stock-to-cash) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 753.39 Td (- inventory hooks/components) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 740.89 Td (- app/[locale]/\(dashboard\)/dashboard/inventory/page.tsx) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 728.39 Td (- app/[locale]/\(dashboard\)/dashboard/inventory/items/page.tsx) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 715.89 Td (- app/[locale]/\(dashboard\)/dashboard/inventory/movements/page.tsx) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 703.39 Td (- app/[locale]/\(dashboard\)/dashboard/inventory/transfers/page.tsx) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 690.89 Td (- app/[locale]/\(dashboard\)/dashboard/purchase-orders/page.tsx) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 678.39 Td (- app/[locale]/\(dashboard\)/dashboard/finance/stock-to-cash/page.tsx) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 658.89 Td (Database changes:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 639.39 Td (- Reuse AgentActionDraft.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 626.89 Td (- No direct stock mutation table.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 607.39 Td (UI surfaces:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 587.89 Td (- Inventory assistant panel.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 575.39 Td (- Stock-to-cash risk explanation.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 562.89 Td (- Replenishment draft card.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 550.39 Td (- Transfer review draft.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 537.89 Td (- Count variance review draft.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 518.39 Td (Tests:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 498.89 Td (- Negative stock blocker explanation.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 486.39 Td (- Zero stock risk explanation.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 473.89 Td (- Draft reorder never creates PO directly.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 461.39 Td (- Draft transfer never updates inventory.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 448.89 Td (- Stock write-off is prohibited.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 429.39 Td (Risks:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 409.89 Td (- Replenishment suggestions become noisy if demand data is thin.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 397.39 Td (- Users confuse suggestions with approved purchase orders.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 377.89 Td (Dependencies:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 358.39 Td (- Inventory cash snapshot.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 345.89 Td (- Stock-to-cash service.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 333.39 Td (- Purchasing and item supplier read models.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 313.89 Td (Acceptance criteria:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 294.39 Td (- Agent identifies negative stock, zero stock, dead stock exposure, and replenishment) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 281.89 Td (  candidates.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 269.39 Td (- Every suggestion is draft-only and evidence-bound.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 256.89 Td (- No stock adjustment, write-off, transfer, or PO approval can be executed by the agent.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 237.39 Td (Release gates:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 217.89 Td (- npm run inventory:boundary:fail) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 205.39 Td (- npm run service:boundary:fail) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 192.89 Td (- npm run ledger:close-truth:gate) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 180.39 Td (- focused inventory/agent tests) Tj ET
+BT /F2 11.30 Tf 0.62 0.43 0.11 rg 48.00 156.89 Td (Phase 5: Approval, Idempotency, And Low-Risk Controlled Actions) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 134.39 Td (Objective:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 114.89 Td (- Allow only approved, low-risk service actions after draft validation, approval, fresh-auth) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 102.39 Td (  where needed, and idempotency.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 82.89 Td (Technical work:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 63.39 Td (- Add AgentApproval.) Tj ET
+endstream
+endobj
+26 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 27 0 R >>
+endobj
+27 0 obj
+<< /Length 4506 >>
+stream
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 48.00 789.89 Td (Stoquify Agent Runtime Strategic Roadmap) Tj ET
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 505.28 789.89 Td (Page 11) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 765.89 Td (- Add approval replay validation.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 753.39 Td (- Add signed input hash or equivalent tamper detection.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 740.89 Td (- Add maker-checker rules by action risk.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 728.39 Td (- Add idempotency key generation for action drafts.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 715.89 Td (- Add low-risk controlled action execution only through protected services.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 703.39 Td (- Define medium/high/critical actions as approval-only or prohibited.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 683.89 Td (Allowed early low-risk actions:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 664.39 Td (- assign an action item) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 651.89 Td (- dismiss an agent suggestion as not relevant) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 639.39 Td (- create an evidence request) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 626.89 Td (- create a reminder or follow-up task) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 614.39 Td (- mark an agent draft as accepted for human follow-up) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 594.89 Td (Still prohibited:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 575.39 Td (- ledger posting) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 562.89 Td (- cash adjustment) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 550.39 Td (- stock adjustment or write-off) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 537.89 Td (- payroll approval or release) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 525.39 Td (- statutory filing) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 512.89 Td (- close certification) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 500.39 Td (- role or permission change) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 480.89 Td (Files/modules likely affected:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 461.39 Td (- services/agents/agent-approval.service.ts) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 448.89 Td (- services/agents/agent-action-draft.service.ts) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 436.39 Td (- components/agents/AgentApprovalTimeline.tsx) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 423.89 Td (- services/signals/action-queue.service.ts) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 411.39 Td (- selected protected action wrappers) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 391.89 Td (Database changes:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 372.39 Td (- AgentApproval) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 359.89 Td (- action execution result fields on AgentActionDraft) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 340.39 Td (UI surfaces:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 320.89 Td (- Approval timeline.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 308.39 Td (- Approval modal or side panel.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 295.89 Td (- Draft replay details.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 283.39 Td (- Execution result badge.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 263.89 Td (Tests:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 244.39 Td (- Approval cannot replay changed input.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 231.89 Td (- Approval fails if actor loses permission.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 219.39 Td (- Approval fails if module entitlement changes.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 206.89 Td (- Approval fails when fresh auth expires.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 194.39 Td (- Idempotency prevents duplicate service execution.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 174.89 Td (Risks:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 155.39 Td (- Approval flows are perceived as slow.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 142.89 Td (- Users try to use agents as a shortcut around controls.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 123.39 Td (Dependencies:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 103.89 Td (- Fresh auth.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 91.39 Td (- RBAC.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 78.89 Td (- Module entitlement.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 66.39 Td (- Safe action responses.) Tj ET
+endstream
+endobj
+28 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 29 0 R >>
+endobj
+29 0 obj
+<< /Length 4506 >>
+stream
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 48.00 789.89 Td (Stoquify Agent Runtime Strategic Roadmap) Tj ET
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 505.28 789.89 Td (Page 12) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 758.89 Td (Acceptance criteria:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 739.39 Td (- Low-risk actions execute through protected service paths.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 726.89 Td (- Medium/high/critical actions require approval or remain prohibited.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 714.39 Td (- Approval replay revalidates all controls.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 701.89 Td (- Every execution has audit and agent history.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 682.39 Td (Release gates:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 662.89 Td (- npm run service:boundary:fail) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 650.39 Td (- npm run workflow:assurance:runtime-check) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 637.89 Td (- npm run hard-delete:fail) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 625.39 Td (- focused approval/idempotency tests) Tj ET
+BT /F2 11.30 Tf 0.62 0.43 0.11 rg 48.00 601.89 Td (Phase 6: Observability, Cost Control, Evaluations, And Trust Monitoring) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 579.39 Td (Objective:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 559.89 Td (- Make the agent runtime measurable, auditable, and governable in production.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 540.39 Td (Technical work:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 520.89 Td (- Add redacted trace integration.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 508.39 Td (- Add cost ledger aggregation by tenant, agent, module, and model.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 495.89 Td (- Add prompt/template version tracking.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 483.39 Td (- Add feedback dashboards.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 470.89 Td (- Add policy incident dashboard.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 458.39 Td (- Add stale-answer and unsafe-attempt detection.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 445.89 Td (- Add evaluation datasets from accepted/rejected recommendations.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 433.39 Td (- Add one model routing strategy when traffic justifies it.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 413.89 Td (Technology options:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 394.39 Td (- Langfuse for trace/evaluation/prompt management emphasis.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 381.89 Td (- Helicone for gateway, request observability, caching, routing, and cost control emphasis.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 369.39 Td (- LiteLLM later for multi-provider routing and budgets.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 349.89 Td (Files/modules likely affected:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 330.39 Td (- services/agents/agent-observability.service.ts) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 317.89 Td (- app/[locale]/\(dashboard\)/dashboard/agent-runs/page.tsx) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 305.39 Td (- components/agents) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 292.89 Td (- optional scripts/agent-runtime-gate.js) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 273.39 Td (Database changes:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 253.89 Td (- Enhance AgentCostLedger.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 241.39 Td (- Enhance AgentPolicyIncident.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 228.89 Td (- Add evaluation metadata if not externalized.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 209.39 Td (UI surfaces:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 189.89 Td (- Agent run admin surface.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 177.39 Td (- Agent trust monitor.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 164.89 Td (- Cost and usage dashboard.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 152.39 Td (- Policy incident queue.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 132.89 Td (Tests:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 113.39 Td (- Trace redaction.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 100.89 Td (- Prompt version hash stored.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 88.39 Td (- Cost ledger records model and token metadata.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 75.89 Td (- Policy incident generated for prohibited tool attempts.) Tj ET
+endstream
+endobj
+30 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 31 0 R >>
+endobj
+31 0 obj
+<< /Length 4552 >>
+stream
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 48.00 789.89 Td (Stoquify Agent Runtime Strategic Roadmap) Tj ET
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 505.28 789.89 Td (Page 13) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 765.89 Td (Risks:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 746.39 Td (- Observability stores sensitive data.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 733.89 Td (- Cost controls arrive too late.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 714.39 Td (Dependencies:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 694.89 Td (- Mature enough agent traffic to make traces useful.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 682.39 Td (- Redaction policy and privacy review.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 662.89 Td (Acceptance criteria:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 643.39 Td (- No unredacted sensitive data appears in traces.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 630.89 Td (- Costs are visible by tenant/module/agent.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 618.39 Td (- Policy incidents are reviewable.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 605.89 Td (- Evaluation loop exists for accepted, rejected, stale, and unsafe outputs.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 586.39 Td (Release gates:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 566.89 Td (- npm run report:trust:export:gate) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 554.39 Td (- npm run release:secrets:preflight) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 541.89 Td (- npm run ci:release:gate) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 529.39 Td (- agent trace redaction tests) Tj ET
+BT /F2 11.30 Tf 0.62 0.43 0.11 rg 48.00 505.89 Td (Phase 7: Expansion Into Purchasing/AP, Close/Compliance, Payroll Readiness, And) Tj ET
+BT /F2 11.30 Tf 0.62 0.43 0.11 rg 48.00 490.39 Td (Customer Success) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 467.89 Td (Objective:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 448.39 Td (- Expand the runtime only after the first three agents prove trust, adoption, and control.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 428.89 Td (Expansion agents:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 409.39 Td (- Purchasing/AP Agent: supplier exposure, PO delays, goods receipt gaps, payables readiness,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 396.89 Td (  fraud-control warnings.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 384.39 Td (- Close/Compliance Agent: close blockers, evidence gaps, waiver routing, statutory) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 371.89 Td (  readiness, compliance evidence.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 359.39 Td (- Payroll Readiness Agent: employee, contract, attendance, payment destination, declaration,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 346.89 Td (  payroll run, posting, and close exposure.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 334.39 Td (- Customer Success/Adoption Agent: tenant onboarding, module adoption, stuck workflows,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 321.89 Td (  repeated support issues, and usage gaps.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 302.39 Td (Files/modules likely affected:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 282.89 Td (- services/purchasing) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 270.39 Td (- services/accounting) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 257.89 Td (- services/compliance) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 245.39 Td (- services/payroll) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 232.89 Td (- services/modules) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 220.39 Td (- components/agents) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 207.89 Td (- corresponding dashboard routes) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 188.39 Td (Database changes:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 168.89 Td (- No new runtime family if Phase 1 to 6 were designed correctly.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 156.39 Td (- Add new agent definitions, skills, tools, and evaluation datasets.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 136.89 Td (UI surfaces:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 117.39 Td (- AP control workbench.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 104.89 Td (- Accounting close center.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 92.39 Td (- Compliance center.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 79.89 Td (- Payroll command center.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 67.39 Td (- Settings/modules customer success view.) Tj ET
+endstream
+endobj
+32 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 33 0 R >>
+endobj
+33 0 obj
+<< /Length 4952 >>
+stream
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 48.00 789.89 Td (Stoquify Agent Runtime Strategic Roadmap) Tj ET
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 505.28 789.89 Td (Page 14) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 758.89 Td (Tests:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 739.39 Td (- Payroll redaction and readiness tests.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 726.89 Td (- Close certification prohibition tests.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 714.39 Td (- Statutory filing prohibition tests.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 701.89 Td (- AP fraud-control draft-only tests.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 689.39 Td (- Customer success tenant isolation tests.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 669.89 Td (Risks:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 650.39 Td (- Expansion reaches high-risk domains too early.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 637.89 Td (- Payroll or statutory output becomes non-authoritative.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 618.39 Td (Dependencies:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 598.89 Td (- Proven runtime trust metrics from phases 2 to 6.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 586.39 Td (- Mature approval and redaction controls.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 566.89 Td (Acceptance criteria:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 547.39 Td (- Expansion agents reuse the same runtime.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 534.89 Td (- No new module-specific agent framework is introduced.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 522.39 Td (- High-risk actions remain human-owned.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 509.89 Td (- Evidence and source provenance are mandatory.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 490.39 Td (Release gates:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 470.89 Td (- npm run statutory:country-pack:gate) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 458.39 Td (- npm run payroll:immutability:runtime) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 445.89 Td (- npm run ledger:close-truth:gate) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 433.39 Td (- npm run report:trust:export:gate) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 420.89 Td (- domain-specific focused tests) Tj ET
+BT /F2 13.30 Tf 0.05 0.46 0.42 rg 48.00 395.39 Td (6. Implementation Blueprint) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 370.89 Td (Recommended module layout:) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 348.39 Td (services/agents/) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 338.09 Td (  agent-contracts.ts) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 327.79 Td (  agent-context.service.ts) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 317.49 Td (  agent-tool-registry.service.ts) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 307.19 Td (  agent-runner.service.ts) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 296.89 Td (  agent-evidence.service.ts) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 286.59 Td (  agent-redaction.service.ts) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 276.29 Td (  agent-action-draft.service.ts) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 265.99 Td (  agent-approval.service.ts) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 255.69 Td (  agent-observability.service.ts) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 245.39 Td (  agent-policy.service.ts) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 235.09 Td (  tools/) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 224.79 Td (    command-tools.ts) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 214.49 Td (    payment-reconciliation-tools.ts) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 204.19 Td (    inventory-replenishment-tools.ts) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 193.89 Td (    proof-trail-tools.ts) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 183.59 Td (  skills/) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 173.29 Td (    trusted-context.skill.ts) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 162.99 Td (    permission-entitlement-guard.skill.ts) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 152.69 Td (    evidence-grounded-retrieval.skill.ts) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 142.39 Td (    redaction-safe-output.skill.ts) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 132.09 Td (    freshness-evaluator.skill.ts) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 121.79 Td (    action-draft-builder.skill.ts) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 111.49 Td (    approval-router.skill.ts) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 101.19 Td (    trust-monitor.skill.ts) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 90.89 Td (  __tests__/) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 80.59 Td (    agent-context.service.test.ts) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 70.29 Td (    agent-tool-registry.service.test.ts) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 59.99 Td (    agent-evidence.service.test.ts) Tj ET
+endstream
+endobj
+34 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 35 0 R >>
+endobj
+35 0 obj
+<< /Length 5094 >>
+stream
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 48.00 789.89 Td (Stoquify Agent Runtime Strategic Roadmap) Tj ET
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 505.28 789.89 Td (Page 15) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 765.89 Td (    agent-redaction.service.test.ts) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 755.59 Td (    agent-action-draft.service.test.ts) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 745.29 Td (    agent-approval.service.test.ts) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 734.99 Td (    agent-no-direct-write-boundary.test.ts) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 724.69 Td (    agent-tenant-boundary.test.ts) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 704.39 Td (Recommended UI layout:) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 681.89 Td (components/agents/) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 671.59 Td (  AgentCommandPanel.tsx) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 661.29 Td (  AgentModuleAssistantPanel.tsx) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 650.99 Td (  AgentEvidenceDrawer.tsx) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 640.69 Td (  AgentActionDraftCard.tsx) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 630.39 Td (  AgentApprovalTimeline.tsx) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 620.09 Td (  AgentRunStatusBadge.tsx) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 609.79 Td (  AgentTrustNotice.tsx) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 599.49 Td (  AgentFeedbackControls.tsx) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 589.19 Td (  AgentPolicyIncidentList.tsx) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 568.89 Td (Recommended route additions:) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 546.39 Td (app/[locale]/\(dashboard\)/dashboard/agent-runs/) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 536.09 Td (  page.tsx) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 525.79 Td (  loading.tsx) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 515.49 Td (  error.tsx) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 498.19 Td (app/[locale]/\(dashboard\)/dashboard/agent-runs/[runId]/) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 487.89 Td (  page.tsx) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 467.59 Td (Recommended integration points:) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 445.09 Td (app/[locale]/\(dashboard\)/dashboard/daily-digest/page.tsx) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 434.79 Td (app/[locale]/\(dashboard\)/dashboard/manager-action-center/page.tsx) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 424.49 Td (app/[locale]/\(dashboard\)/dashboard/owner-war-room/page.tsx) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 414.19 Td (app/[locale]/\(dashboard\)/dashboard/finance/reconciliation/page.tsx) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 403.89 Td (app/[locale]/\(dashboard\)/dashboard/finance/cash-command/page.tsx) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 393.59 Td (app/[locale]/\(dashboard\)/dashboard/finance/stock-to-cash/page.tsx) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 383.29 Td (app/[locale]/\(dashboard\)/dashboard/inventory/page.tsx) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 372.99 Td (app/[locale]/\(dashboard\)/dashboard/inventory/items/page.tsx) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 362.69 Td (app/[locale]/\(dashboard\)/dashboard/inventory/movements/page.tsx) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 352.39 Td (app/[locale]/\(dashboard\)/dashboard/inventory/transfers/page.tsx) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 332.09 Td (Recommended scripts:) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 309.59 Td (scripts/agent-runtime-boundary-gate.js) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 299.29 Td (scripts/agent-tool-registry-gate.js) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 288.99 Td (scripts/agent-redaction-trace-gate.js) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 278.69 Td (scripts/agent-prohibited-action-gate.js) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 258.39 Td (Recommended package scripts:) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 235.89 Td ({) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 225.59 Td (  "agent:runtime:gate": "node scripts/agent-runtime-boundary-gate.js --mode fail",) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 215.29 Td (  "agent:tools:gate": "node scripts/agent-tool-registry-gate.js --mode fail",) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 204.99 Td (  "agent:redaction:gate": "node scripts/agent-redaction-trace-gate.js --mode fail",) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 194.69 Td (  "agent:prohibited-actions:gate": "node scripts/agent-prohibited-action-gate.js --mode) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 184.39 Td (  fail") Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 174.09 Td (}) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 153.79 Td (These scripts should eventually be added into policy:gates after the runtime is introduced.) Tj ET
+BT /F2 13.30 Tf 0.05 0.46 0.42 rg 48.00 128.29 Td (7. Data Model Roadmap) Tj ET
+BT /F2 11.30 Tf 0.62 0.43 0.11 rg 48.00 99.79 Td (Phase 1 Models) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 77.29 Td (AgentDefinition) Tj ET
+endstream
+endobj
+36 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 37 0 R >>
+endobj
+37 0 obj
+<< /Length 4748 >>
+stream
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 48.00 789.89 Td (Stoquify Agent Runtime Strategic Roadmap) Tj ET
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 505.28 789.89 Td (Page 16) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 765.89 Td (- Stores canonical agent key, name, owner module, status, rollout mode, risk level, default) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 753.39 Td (  model policy, allowed tools, and allowed skills.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 740.89 Td (- Needed to prevent hidden or ad hoc agents.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 728.39 Td (- Phase: 1.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 708.89 Td (AgentSkillDefinition) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 689.39 Td (- Stores skill key, version, domain, prompt hash, owner module, required permissions,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 676.89 Td (  redaction categories, and evaluation notes.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 664.39 Td (- Needed to version Stoquify-native expertise.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 651.89 Td (- Phase: 1.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 632.39 Td (AgentToolDefinition) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 612.89 Td (- Stores tool key, owner service, module slug, required permission, risk level, input schema) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 600.39 Td (  hash, output schema hash, approval policy, and idempotency behavior.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 587.89 Td (- Needed to make model-visible tools auditable and stable.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 575.39 Td (- Phase: 1.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 555.89 Td (AgentRun) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 536.39 Td (- Stores tenant, actor, agent, status, source route, correlation ID, started/completed) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 523.89 Td (  timestamps, model policy, cost estimate, and failure state.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 511.39 Td (- Needed for traceability and support.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 498.89 Td (- Phase: 1.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 479.39 Td (AgentStep) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 459.89 Td (- Stores step order, tool call, prompt hash, input hash, output hash, status, retry count,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 447.39 Td (  safe summary, and error category.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 434.89 Td (- Needed for audit and debugging.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 422.39 Td (- Phase: 1.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 402.89 Td (AgentEvidenceLink) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 383.39 Td (- Stores run/step link to proof subject, source module, source table, source hash, evidence) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 370.89 Td (  grade, freshness, blocker count, and redaction count.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 358.39 Td (- Needed to make every answer evidence-backed.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 345.89 Td (- Phase: 1.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 326.39 Td (AgentFeedback) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 306.89 Td (- Stores actor feedback, accepted/rejected state, stale answer flag, wrong answer flag,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 294.39 Td (  unsafe attempt flag, correction text, and follow-up outcome.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 281.89 Td (- Needed for improvement and trust measurement.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 269.39 Td (- Phase: 1 or 2.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 249.89 Td (AgentCostLedger) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 230.39 Td (- Stores model provider, model name, token counts, estimated cost, tenant, module, and) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 217.89 Td (  budget bucket.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 205.39 Td (- Needed for cost control.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 192.89 Td (- Phase: 1 as basic fields, expanded in Phase 6.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 173.39 Td (AgentPolicyIncident) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 153.89 Td (- Stores prohibited tool attempts, redaction failures, stale context violations, approval) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 141.39 Td (  replay failures, and unsafe action attempts.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 128.89 Td (- Needed for governance and release assurance.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 116.39 Td (- Phase: 1.) Tj ET
+BT /F2 11.30 Tf 0.62 0.43 0.11 rg 48.00 92.89 Td (Phase 3 To 5 Models) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 70.39 Td (AgentActionDraft) Tj ET
+endstream
+endobj
+38 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 39 0 R >>
+endobj
+39 0 obj
+<< /Length 4130 >>
+stream
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 48.00 789.89 Td (Stoquify Agent Runtime Strategic Roadmap) Tj ET
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 505.28 789.89 Td (Page 17) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 758.89 Td (- Stores proposed service action, visible summary, payload hash, required permission, module) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 746.39 Td (  slug, evidence references, risk level, idempotency key, status, and execution result.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 733.89 Td (- Needed for read-and-draft agents.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 721.39 Td (- Phase: 3.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 701.89 Td (AgentApproval) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 682.39 Td (- Stores draft/action reference, requestedBy, approvedBy, status, approval policy,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 669.89 Td (  fresh-auth requirement, signed input hash, expiration, approval time, rejection reason,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 657.39 Td (  and replay validation result.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 644.89 Td (- Needed for controlled action execution.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 632.39 Td (- Phase: 5.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 612.89 Td (Optional later model: AgentEvaluationCase) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 593.39 Td (- Stores anonymized/redacted production examples for regression tests and prompt) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 580.89 Td (  evaluations.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 568.39 Td (- Needed after real usage exists.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 555.89 Td (- Phase: 6.) Tj ET
+BT /F2 13.30 Tf 0.05 0.46 0.42 rg 48.00 530.39 Td (8. Agent And Skill Roadmap) Tj ET
+BT /F2 11.30 Tf 0.62 0.43 0.11 rg 48.00 501.89 Td (Command Agent) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 479.39 Td (Purpose:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 459.89 Td (- Turn tenant operating truth, business signals, action queues, and proof trails into) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 447.39 Td (  role-specific daily priorities.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 427.89 Td (Users:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 408.39 Td (- Owner, manager, accountant, finance officer, stockkeeper, HR/payroll lead, auditor.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 388.89 Td (Tools:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 369.39 Td (- readTenantOperatingSnapshot) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 356.89 Td (- readBusinessSignals) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 344.39 Td (- readActionQueue) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 331.89 Td (- readProofTrail) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 319.39 Td (- readCloseReadinessSnapshot) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 299.89 Td (Permissions:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 280.39 Td (- Base dashboard read plus per-signal required permissions.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 267.89 Td (- Module entitlement by source module.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 248.39 Td (Risk boundary:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 228.89 Td (- Read-only in Phase 2.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 216.39 Td (- Draft-only after Phase 3.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 196.89 Td (Evidence requirements:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 177.39 Td (- Evidence grade, freshness, source modules, source hash, blockers, redactions.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 157.89 Td (UI entry points:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 138.39 Td (- Daily Digest.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 125.89 Td (- Manager Action Center.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 113.39 Td (- Owner War Room.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 100.89 Td (- dashboard header command launcher.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 81.39 Td (Success metrics:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 61.89 Td (- Weekly active users by role.) Tj ET
+endstream
+endobj
+40 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 41 0 R >>
+endobj
+41 0 obj
+<< /Length 3849 >>
+stream
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 48.00 789.89 Td (Stoquify Agent Runtime Strategic Roadmap) Tj ET
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 505.28 789.89 Td (Page 18) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 765.89 Td (- Action queue resolution time.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 753.39 Td (- Recommendation helpfulness.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 740.89 Td (- Stale answer rate.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 728.39 Td (- Redaction correctness.) Tj ET
+BT /F2 11.30 Tf 0.62 0.43 0.11 rg 48.00 704.89 Td (Cash/Reconciliation Agent) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 682.39 Td (Purpose:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 662.89 Td (- Explain unmatched, duplicated, pending, and suspense payment/cash issues.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 643.39 Td (Users:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 623.89 Td (- Finance officer, accountant, owner, manager, cashier supervisor, auditor.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 604.39 Td (Tools:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 584.89 Td (- readPaymentTruthSnapshot) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 572.39 Td (- readPaymentReconciliationWorkbench) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 559.89 Td (- readCashPaymentHistory) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 547.39 Td (- readProofTrail) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 534.89 Td (- draftReconciliationMatchSuggestion) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 522.39 Td (- draftSuspenseClassification) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 502.89 Td (Permissions:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 483.39 Td (- payments.reconciliation.read) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 470.89 Td (- finance payment/cash permissions) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 458.39 Td (- stricter permissions for suspense detail.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 438.89 Td (Risk boundary:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 419.39 Td (- No cash adjustment.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 406.89 Td (- No suspense posting.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 394.39 Td (- No ledger posting.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 381.89 Td (- Draft only.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 362.39 Td (Evidence requirements:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 342.89 Td (- Reconciliation run, payment transaction, provider reference coverage, suspense amount,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 330.39 Td (  evidence grade, redaction state.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 310.89 Td (UI entry points:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 291.39 Td (- Finance reconciliation.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 278.89 Td (- Cash command.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 266.39 Td (- Cash payment history.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 253.89 Td (- Finance payments.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 234.39 Td (Success metrics:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 214.89 Td (- Open suspense decline.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 202.39 Td (- Duplicate reference triage time.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 189.89 Td (- Accepted match suggestion rate.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 177.39 Td (- False match suggestion rate.) Tj ET
+BT /F2 11.30 Tf 0.62 0.43 0.11 rg 48.00 153.89 Td (Inventory/Replenishment Agent) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 131.39 Td (Purpose:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 111.89 Td (- Explain stock risk, cash tied in stock, replenishment priorities, and stock-to-cash) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 99.39 Td (  impact.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 79.89 Td (Users:) Tj ET
+endstream
+endobj
+42 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 43 0 R >>
+endobj
+43 0 obj
+<< /Length 3943 >>
+stream
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 48.00 789.89 Td (Stoquify Agent Runtime Strategic Roadmap) Tj ET
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 505.28 789.89 Td (Page 19) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 765.89 Td (- Stockkeeper, purchasing officer, manager, owner, cashier supervisor, accountant.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 746.39 Td (Tools:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 726.89 Td (- readInventoryCashSnapshot) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 714.39 Td (- readStockToCashFlow) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 701.89 Td (- readInventoryMovements) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 689.39 Td (- readItemSupplierLinks) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 676.89 Td (- draftReplenishmentSuggestion) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 664.39 Td (- draftTransferReview) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 651.89 Td (- draftStockCountReview) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 632.39 Td (Permissions:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 612.89 Td (- inventory read permissions) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 600.39 Td (- purchasing read permissions for supplier context) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 587.89 Td (- draft permissions for action suggestions.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 568.39 Td (Risk boundary:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 548.89 Td (- No stock adjustment.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 536.39 Td (- No write-off.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 523.89 Td (- No PO approval.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 511.39 Td (- No stock count approval.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 491.89 Td (Evidence requirements:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 472.39 Td (- stock levels, transaction history, purchase orders, source hash, negative/zero stock) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 459.89 Td (  blockers.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 440.39 Td (UI entry points:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 420.89 Td (- Inventory overview.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 408.39 Td (- Inventory items.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 395.89 Td (- Inventory movements.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 383.39 Td (- Inventory transfers.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 370.89 Td (- Purchase orders.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 358.39 Td (- Finance stock-to-cash.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 338.89 Td (Success metrics:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 319.39 Td (- Stockout incidents.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 306.89 Td (- Negative stock blockers.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 294.39 Td (- Replenishment acceptance.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 281.89 Td (- Dead stock exposure.) Tj ET
+BT /F2 11.30 Tf 0.62 0.43 0.11 rg 48.00 258.39 Td (Exception Orchestrator) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 235.89 Td (Purpose:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 216.39 Td (- Normalize blockers, safe errors, workflow assurance incidents, snapshot partial states,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 203.89 Td (  and reconciliation failures into work items.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 184.39 Td (Users:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 164.89 Td (- Mostly invisible infrastructure.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 145.39 Td (Tools:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 125.89 Td (- read signals) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 113.39 Td (- create internal exception summary) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 100.89 Td (- route to action queue) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 88.39 Td (- attach evidence) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 68.89 Td (Risk boundary:) Tj ET
+endstream
+endobj
+44 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 45 0 R >>
+endobj
+45 0 obj
+<< /Length 3815 >>
+stream
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 48.00 789.89 Td (Stoquify Agent Runtime Strategic Roadmap) Tj ET
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 505.28 789.89 Td (Page 20) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 758.89 Td (- No business action execution.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 739.39 Td (Evidence requirements:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 719.89 Td (- source module, source hash, blocker, severity, required permission.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 700.39 Td (UI entry points:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 680.89 Td (- Assurance Control Tower.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 668.39 Td (- Manager Action Center.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 655.89 Td (- Agent Run admin view.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 636.39 Td (Success metrics:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 616.89 Td (- Duplicate exception reduction.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 604.39 Td (- Time to assignment.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 591.89 Td (- Critical exception visibility.) Tj ET
+BT /F2 11.30 Tf 0.62 0.43 0.11 rg 48.00 568.39 Td (Action Orchestrator) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 545.89 Td (Purpose:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 526.39 Td (- Convert accepted recommendations into validated drafts, approvals, and low-risk service) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 513.89 Td (  executions.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 494.39 Td (Users:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 474.89 Td (- Mostly infrastructure, visible through action draft cards and approval timelines.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 455.39 Td (Tools:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 435.89 Td (- validate draft) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 423.39 Td (- request approval) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 410.89 Td (- replay approval) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 398.39 Td (- execute allowed service action) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 385.89 Td (- record result) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 366.39 Td (Risk boundary:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 346.89 Td (- Service-owned execution only.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 334.39 Td (- Medium/high/critical actions require approval or remain prohibited.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 314.89 Td (Evidence requirements:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 295.39 Td (- input hash, approval policy, permission, module entitlement, evidence links, idempotency) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 282.89 Td (  key.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 263.39 Td (UI entry points:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 243.89 Td (- action draft cards) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 231.39 Td (- approval timeline) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 218.89 Td (- agent run detail) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 199.39 Td (Success metrics:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 179.89 Td (- Approval completion rate.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 167.39 Td (- Replay validation failures.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 154.89 Td (- Duplicate execution prevention.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 142.39 Td (- Audit completeness.) Tj ET
+BT /F2 11.30 Tf 0.62 0.43 0.11 rg 48.00 118.89 Td (Platform Skills) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 96.39 Td (Trusted Context Resolver) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 76.89 Td (- Resolves user, tenant, org, locale, currency, role, permissions, module entitlements,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 64.39 Td (  route, and time window.) Tj ET
+endstream
+endobj
+46 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 47 0 R >>
+endobj
+47 0 obj
+<< /Length 5028 >>
+stream
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 48.00 789.89 Td (Stoquify Agent Runtime Strategic Roadmap) Tj ET
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 505.28 789.89 Td (Page 21) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 758.89 Td (Permission and Entitlement Guard) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 739.39 Td (- Filters tools, records, fields, and actions before model context exists.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 719.89 Td (Evidence-Grounded Retrieval) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 700.39 Td (- Pulls only service-owned read models and attaches proof links, source hashes, evidence) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 687.89 Td (  grades, blockers, and redactions.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 668.39 Td (Redaction and Safe Output) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 648.89 Td (- Applies redaction categories before prompts and before final output.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 629.39 Td (Freshness Evaluator) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 609.89 Td (- Marks answers fresh, stale, partial, blocked, empty, or failed.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 590.39 Td (Action Draft Builder) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 570.89 Td (- Creates draft payloads with visible summary, permission, risk level, evidence, idempotency) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 558.39 Td (  key, and prohibited-action checks.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 538.89 Td (Approval Router) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 519.39 Td (- Determines approver role, fresh-auth requirement, maker-checker policy, expiration, and) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 506.89 Td (  replay validation.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 487.39 Td (Agent Trust Monitor) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 467.89 Td (- Watches stale answers, unsafe attempts, cost spikes, low acceptance, policy denials, and) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 455.39 Td (  repeated tool failures.) Tj ET
+BT /F2 13.30 Tf 0.05 0.46 0.42 rg 48.00 429.89 Td (9. UI/UX Roadmap) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 405.39 Td (The agent experience should appear as operating intelligence embedded into existing) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 392.89 Td (workflows.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 373.39 Td (Primary UI components:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 353.89 Td (- AgentCommandPanel: brief, role-aware daily explanation with linked evidence.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 341.39 Td (- AgentModuleAssistantPanel: contextual panel for "explain this", "what is blocked", and) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 328.89 Td (  "what should happen next".) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 316.39 Td (- AgentEvidenceDrawer: wrapper around the proof trail drawer with agent run context.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 303.89 Td (- AgentActionDraftCard: shows recommendation, affected records, evidence, risk, permission,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 291.39 Td (  and approval state.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 278.89 Td (- AgentApprovalTimeline: shows requested, pending, approved, rejected, executed, failed, or) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 266.39 Td (  expired.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 253.89 Td (- AgentTrustNotice: shows freshness, redaction, limitations, and source modules.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 241.39 Td (- AgentFeedbackControls: useful, wrong, stale, unsafe, accepted, rejected.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 228.89 Td (- AgentRunStatusBadge: visible state for running, completed, failed, blocked, approval) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 216.39 Td (  required.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 196.89 Td (Placement:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 177.39 Td (- Daily Digest: Command Agent daily brief and top priorities.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 164.89 Td (- Owner War Room: cash, stock, close, and payroll exposure summary.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 152.39 Td (- Manager Action Center: exception queue and assignment recommendations.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 139.89 Td (- Finance Reconciliation: Cash/Reconciliation Agent panel and draft cards.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 127.39 Td (- Finance Cash Command: cash exposure and suspense explanation.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 114.89 Td (- Inventory Overview: Inventory/Replenishment Agent risk summary.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 102.39 Td (- Stock-to-Cash: cross-module explanation and evidence.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 89.89 Td (- Assurance Control Tower: policy incidents and exception orchestration.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 77.39 Td (- Payroll Command Center: later payroll readiness assistant.) Tj ET
+endstream
+endobj
+48 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 49 0 R >>
+endobj
+49 0 obj
+<< /Length 4288 >>
+stream
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 48.00 789.89 Td (Stoquify Agent Runtime Strategic Roadmap) Tj ET
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 505.28 789.89 Td (Page 22) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 765.89 Td (UX rules:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 746.39 Td (- Do not make a generic chat-first screen.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 733.89 Td (- Do not hide evidence behind vague generated text.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 721.39 Td (- Do not show action buttons without permission and risk state.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 708.89 Td (- Do not show sensitive fields without redaction evaluation.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 696.39 Td (- Do not let an agent response be the only record of a decision.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 683.89 Td (- Use badges for evidence grade, freshness, redaction, and approval status.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 671.39 Td (- Use drawers and side panels for details, not oversized marketing-style surfaces.) Tj ET
+BT /F2 13.30 Tf 0.05 0.46 0.42 rg 48.00 645.89 Td (10. Technology Adoption Plan) Tj ET
+BT /F2 11.30 Tf 0.62 0.43 0.11 rg 48.00 617.39 Td (Adopt Immediately: AI SDK Or Equivalent TypeScript Tool Loop) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 594.89 Td (Reason:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 575.39 Td (- Stoquify is already TypeScript/Next.js.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 562.89 Td (- Tool calling and structured output map naturally to service-owned tools.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 550.39 Td (- Streaming can improve command panels.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 537.89 Td (- Tool lifecycle events can map to AgentStep.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 518.39 Td (Condition:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 498.89 Td (- Adopt only after Phase 1 tool registry and no-direct-write gates exist.) Tj ET
+BT /F2 11.30 Tf 0.62 0.43 0.11 rg 48.00 475.39 Td (Design Immediately: MCP-Compatible Tool Contracts) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 452.89 Td (Reason:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 433.39 Td (- MCP-style tool contracts create clean names, descriptions, and input schemas.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 420.89 Td (- Future internal or external agent clients can reuse the boundary.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 401.39 Td (Condition:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 381.89 Td (- Do not expose a broad MCP server in MVP.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 369.39 Td (- Start with internal registry shapes compatible with MCP.) Tj ET
+BT /F2 11.30 Tf 0.62 0.43 0.11 rg 48.00 345.89 Td (Defer Until Phase 5: Durable Execution) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 323.39 Td (Candidate:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 303.89 Td (- Inngest or Trigger.dev, not both.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 284.39 Td (Reason:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 264.89 Td (- Approval wait, retry, resume, delayed actions, and scheduled digests benefit from durable) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 252.39 Td (  execution.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 232.89 Td (Condition:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 213.39 Td (- Adopt only after idempotency and approval replay rules exist.) Tj ET
+BT /F2 11.30 Tf 0.62 0.43 0.11 rg 48.00 189.89 Td (Add In Phase 6: Observability And Evaluation) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 167.39 Td (Candidate:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 147.89 Td (- Langfuse if evaluation, prompt management, and trace quality are most important.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 135.39 Td (- Helicone if gateway, cost, cache, and routing are most important.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 122.89 Td (- LiteLLM later if multi-provider routing, budgets, and provider abstraction become) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 110.39 Td (  important.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 90.89 Td (Condition:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 71.39 Td (- No unredacted payroll, bank, fiscal, compliance, close-certification, or audit payloads in) Tj ET
+endstream
+endobj
+50 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 51 0 R >>
+endobj
+51 0 obj
+<< /Length 6104 >>
+stream
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 48.00 789.89 Td (Stoquify Agent Runtime Strategic Roadmap) Tj ET
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 505.28 789.89 Td (Page 23) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 765.89 Td (  external traces.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 753.39 Td (- Self-host or configure privacy controls if sensitive trace storage is needed.) Tj ET
+BT /F2 11.30 Tf 0.62 0.43 0.11 rg 48.00 729.89 Td (Avoid) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 707.39 Td (- Multiple agent frameworks per module.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 694.89 Td (- Python-first agent framework as the core runtime.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 682.39 Td (- Raw database tools.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 669.89 Td (- Browser automation as a business execution layer.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 657.39 Td (- Agent-visible tools that ignore RBAC or module entitlement.) Tj ET
+BT /F2 13.30 Tf 0.05 0.46 0.42 rg 48.00 631.89 Td (11. Risk And Control Matrix) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 607.39 Td ( |  Risk  |  Severity  |  Owner  |  Mitigation  |  Gate  |  Rollback  |) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 594.89 Td ( | --- | ---: | --- | --- | --- | --- |) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 582.39 Td ( |  Parallel business logic  |  High  |  Architecture  |  Tools wrap service-owned read) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 569.89 Td ( models only  |  service boundary gate  |  disable tool definition  |) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 557.39 Td ( |  Direct database mutation  |  Critical  |  Security/Architecture  |  no raw Prisma tools,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 544.89 Td ( registry denylist  |  agent prohibited action gate  |  disable runtime  |) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 532.39 Td ( |  Ledger posting by agent  |  Critical  |  Finance/Accounting  |  ledger tools prohibited,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 519.89 Td ( drafts only  |  ledger close truth gate  |  revoke tool  |) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 507.39 Td ( |  Statutory filing by agent  |  Critical  |  Compliance  |  filing prohibited, evidence) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 494.89 Td ( review only  |  statutory country-pack gate  |  disable compliance agent  |) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 482.39 Td ( |  Payroll sensitive leakage  |  Critical  |  Payroll/Security  |  redaction before) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 469.89 Td ( prompt/output  |  redaction trace gate  |  disable payroll tools  |) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 457.39 Td ( |  Permission bypass  |  Critical  |  Security  |  RBAC plus module entitlement before) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 444.89 Td ( tools  |  RBAC tests  |  disable agent route  |) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 432.39 Td ( |  Stale recommendations  |  High  |  Product/Architecture  |  freshness evaluator, stale) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 419.89 Td ( labels  |  snapshot tests  |  hide recommendation  |) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 407.39 Td ( |  False match suggestion  |  High  |  Finance  |  draft-only, confidence, human approval) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 394.89 Td ( |  payment cash truth gate  |  disable draft type  |) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 382.39 Td ( |  Unsafe approval replay  |  Critical  |  Security  |  signed input hash, revalidate) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 369.89 Td ( permission/module/fresh auth  |  approval tests  |  expire approvals  |) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 357.39 Td ( |  Cost spike  |  Medium  |  Platform  |  cost ledger, budgets, model policy  |  cost) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 344.89 Td ( monitor  |  downgrade/disable model  |) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 332.39 Td ( |  Bad UX adoption  |  Medium  |  Product/UX  |  embedded panels, role workflows  |  route) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 319.89 Td ( smoke tests  |  hide panel  |) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 307.39 Td ( |  Observability data leak  |  Critical  |  Security  |  redacted traces, self-host option) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 294.89 Td ( |  redaction trace gate  |  disable trace export  |) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 282.39 Td ( |  Dependency sprawl  |  Medium  |  Architecture  |  one durable layer, one primary) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 269.89 Td ( observability path  |  ADR review  |  remove dependency  |) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 257.39 Td ( |  Generic chatbot drift  |  Medium  |  Product  |  no standalone chatbot MVP  |  product) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 244.89 Td ( review  |  remove chat entry  |) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 232.39 Td ( |  OHADA non-authoritative advice  |  High  |  Compliance  |  country-pack provenance and) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 219.89 Td ( expert review  |  statutory gate  |  block answer  |) Tj ET
+BT /F2 13.30 Tf 0.05 0.46 0.42 rg 48.00 194.39 Td (12. Verification And Release Plan) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 169.89 Td (Baseline commands:) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 147.39 Td (npm run prisma:validate) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 137.09 Td (npm run typecheck) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 126.79 Td (npm run lint) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 116.49 Td (npm run service:boundary:fail) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 106.19 Td (npm run workflow:assurance:runtime-check) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 95.89 Td (npm run inventory:boundary:fail) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 85.59 Td (npm run payment:cash-truth:gate) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 75.29 Td (npm run ledger:close-truth:gate) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 64.99 Td (npm run report:trust:export:gate) Tj ET
+endstream
+endobj
+52 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 53 0 R >>
+endobj
+53 0 obj
+<< /Length 4948 >>
+stream
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 48.00 789.89 Td (Stoquify Agent Runtime Strategic Roadmap) Tj ET
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 505.28 789.89 Td (Page 24) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 765.89 Td (npm test -- --runInBand services/agents) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 745.59 Td (Phase 1 verification:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 726.09 Td (- Prisma validates agent runtime schema.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 713.59 Td (- Agent tool registry has no raw Prisma tool.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 701.09 Td (- Every registered tool has owner service, permission, module slug, risk level, and schema) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 688.59 Td (  hash.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 676.09 Td (- Agent context differs by tenant and role.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 663.59 Td (- Redaction tests pass before prompt construction.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 644.09 Td (Phase 2 verification:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 624.59 Td (- Command Agent is read-only.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 612.09 Td (- Role-specific daily brief shows only visible signals.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 599.59 Td (- Stale snapshots produce caution state.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 587.09 Td (- Proof trail links render where available.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 574.59 Td (- Feedback writes only to agent feedback.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 555.09 Td (Phase 3 verification:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 535.59 Td (- Cash/Reconciliation Agent cannot mutate reconciliation, cash, or ledger records.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 523.09 Td (- Draft suggestions include evidence and required permission.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 510.59 Td (- Suspense details are masked or redacted for unauthorized users.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 498.09 Td (- Payment cash truth gate passes.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 478.59 Td (Phase 4 verification:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 459.09 Td (- Inventory/Replenishment Agent cannot adjust stock, write off stock, approve counts, or) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 446.59 Td (  approve POs.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 434.09 Td (- Negative stock and zero stock explanations are evidence-bound.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 421.59 Td (- Replenishment remains a draft recommendation.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 409.09 Td (- Inventory boundary gate passes.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 389.59 Td (Phase 5 verification:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 370.09 Td (- Approval replay revalidates actor permission, module entitlement, fresh auth, and input) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 357.59 Td (  hash.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 345.09 Td (- Idempotency prevents duplicate low-risk action execution.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 332.59 Td (- Medium/high/critical actions remain approval-only or prohibited.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 313.09 Td (Phase 6 verification:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 293.59 Td (- Trace export stores only redacted safe summaries.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 281.09 Td (- Cost ledger records model, tenant, module, and usage metadata.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 268.59 Td (- Policy incidents are generated and visible.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 256.09 Td (- Evaluation loop includes accepted/rejected/stale/unsafe feedback.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 236.59 Td (Manual role smoke tests:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 217.09 Td (- Owner sees cross-module priorities.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 204.59 Td (- Accountant sees close, ledger, reconciliation, and evidence.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 192.09 Td (- Finance officer sees cash and reconciliation details allowed by permission.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 179.59 Td (- Stockkeeper sees inventory actions but not payroll or finance sensitive details.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 167.09 Td (- HR/payroll user sees payroll readiness only when phase 7 is enabled.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 154.59 Td (- Auditor sees proof and audit context according to permissions.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 142.09 Td (- Cashier sees POS/cashier-safe operational guidance only.) Tj ET
+BT /F2 13.30 Tf 0.05 0.46 0.42 rg 48.00 116.59 Td (13. 30/60/90-Day Execution Plan) Tj ET
+BT /F2 11.30 Tf 0.62 0.43 0.11 rg 48.00 88.09 Td (Days 1-7) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 65.59 Td (Engineering outputs:) Tj ET
+endstream
+endobj
+54 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 55 0 R >>
+endobj
+55 0 obj
+<< /Length 3530 >>
+stream
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 48.00 789.89 Td (Stoquify Agent Runtime Strategic Roadmap) Tj ET
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 505.28 789.89 Td (Page 25) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 758.89 Td (- Design freeze document.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 746.39 Td (- Agent risk taxonomy.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 733.89 Td (- Prohibited tool denylist.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 721.39 Td (- Initial Prisma model draft.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 701.89 Td (Product outputs:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 682.39 Td (- Pilot role list.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 669.89 Td (- MVP use cases for Command Agent.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 657.39 Td (- "What matters today" brief template.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 637.89 Td (Review checkpoint:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 618.39 Td (- Architecture/security review.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 598.89 Td (Decision gate:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 579.39 Td (- Approve one shared runtime and no-direct-write boundary.) Tj ET
+BT /F2 11.30 Tf 0.62 0.43 0.11 rg 48.00 555.89 Td (Days 8-14) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 533.39 Td (Engineering outputs:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 513.89 Td (- services/agents/agent-contracts.ts) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 501.39 Td (- context resolver) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 488.89 Td (- tool registry skeleton) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 476.39 Td (- no-direct-write tests) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 463.89 Td (- evidence binder skeleton) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 444.39 Td (Product outputs:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 424.89 Td (- Command Agent answer examples.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 412.39 Td (- Evidence and freshness display rules.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 392.89 Td (Review checkpoint:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 373.39 Td (- Service boundary review.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 353.89 Td (Decision gate:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 334.39 Td (- Approve MVP read tools.) Tj ET
+BT /F2 11.30 Tf 0.62 0.43 0.11 rg 48.00 310.89 Td (Days 15-21) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 288.39 Td (Engineering outputs:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 268.89 Td (- Runtime Prisma migration.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 256.39 Td (- Agent run/step/evidence persistence.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 243.89 Td (- Redaction wrapper.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 231.39 Td (- MVP read tools for snapshots, signals, action queue, proof trail.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 211.89 Td (Product outputs:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 192.39 Td (- Role-specific daily brief acceptance criteria.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 172.89 Td (Review checkpoint:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 153.39 Td (- Security and redaction review.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 133.89 Td (Decision gate:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 114.39 Td (- Approve internal read-only Command Agent build.) Tj ET
+BT /F2 11.30 Tf 0.62 0.43 0.11 rg 48.00 90.89 Td (Days 22-30) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 68.39 Td (Engineering outputs:) Tj ET
+endstream
+endobj
+56 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 57 0 R >>
+endobj
+57 0 obj
+<< /Length 3566 >>
+stream
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 48.00 789.89 Td (Stoquify Agent Runtime Strategic Roadmap) Tj ET
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 505.28 789.89 Td (Page 26) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 758.89 Td (- Command Agent service.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 746.39 Td (- AgentCommandPanel.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 733.89 Td (- Daily Digest or Manager Action Center integration.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 721.39 Td (- Feedback controls.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 708.89 Td (- Initial tests and route smoke.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 689.39 Td (Product outputs:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 669.89 Td (- Internal pilot plan.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 657.39 Td (- Feedback taxonomy.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 637.89 Td (Review checkpoint:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 618.39 Td (- Internal demo and release-gate review.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 598.89 Td (Decision gate:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 579.39 Td (- Launch internal read-only pilot.) Tj ET
+BT /F2 11.30 Tf 0.62 0.43 0.11 rg 48.00 555.89 Td (Days 31-45) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 533.39 Td (Engineering outputs:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 513.89 Td (- Cash/Reconciliation Agent read tools.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 501.39 Td (- Payment reconciliation draft schemas.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 488.89 Td (- Action draft base model.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 476.39 Td (- Finance reconciliation assistant panel.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 456.89 Td (Product outputs:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 437.39 Td (- Reconciliation triage workflow.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 424.89 Td (- Match suggestion confidence rules.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 405.39 Td (Review checkpoint:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 385.89 Td (- Finance/accounting risk review.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 366.39 Td (Decision gate:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 346.89 Td (- Enable read-and-draft for payment/cash pilot.) Tj ET
+BT /F2 11.30 Tf 0.62 0.43 0.11 rg 48.00 323.39 Td (Days 46-60) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 300.89 Td (Engineering outputs:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 281.39 Td (- Inventory/Replenishment Agent read tools.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 268.89 Td (- Replenishment draft schemas.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 256.39 Td (- Inventory assistant panel.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 243.89 Td (- Stock-to-cash integration.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 224.39 Td (Product outputs:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 204.89 Td (- Replenishment and stock risk pilot workflow.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 192.39 Td (- Draft language and approval copy.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 172.89 Td (Review checkpoint:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 153.39 Td (- Operations/inventory risk review.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 133.89 Td (Decision gate:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 114.39 Td (- Enable read-and-draft for inventory pilot.) Tj ET
+BT /F2 11.30 Tf 0.62 0.43 0.11 rg 48.00 90.89 Td (Days 61-75) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 68.39 Td (Engineering outputs:) Tj ET
+endstream
+endobj
+58 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 59 0 R >>
+endobj
+59 0 obj
+<< /Length 4025 >>
+stream
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 48.00 789.89 Td (Stoquify Agent Runtime Strategic Roadmap) Tj ET
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 505.28 789.89 Td (Page 27) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 758.89 Td (- Approval model.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 746.39 Td (- Approval timeline UI.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 733.89 Td (- Approval replay validation.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 721.39 Td (- Idempotency rules.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 708.89 Td (- Low-risk action execution path.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 689.39 Td (Product outputs:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 669.89 Td (- Approval policy matrix.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 657.39 Td (- Low-risk action list.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 637.89 Td (Review checkpoint:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 618.39 Td (- Security and workflow assurance review.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 598.89 Td (Decision gate:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 579.39 Td (- Allow low-risk controlled actions only.) Tj ET
+BT /F2 11.30 Tf 0.62 0.43 0.11 rg 48.00 555.89 Td (Days 76-90) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 533.39 Td (Engineering outputs:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 513.89 Td (- Agent run admin view.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 501.39 Td (- Policy incident reporting.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 488.89 Td (- Cost ledger reporting.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 476.39 Td (- Observability proof-of-concept.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 463.89 Td (- Evaluation dataset seed.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 444.39 Td (Product outputs:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 424.89 Td (- Pilot scorecard.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 412.39 Td (- Phase 7 expansion proposal.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 392.89 Td (Review checkpoint:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 373.39 Td (- Executive/product/security review.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 353.89 Td (Decision gate:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 334.39 Td (- Continue, pause, or expand based on adoption, trust, cost, and safety metrics.) Tj ET
+BT /F2 13.30 Tf 0.05 0.46 0.42 rg 48.00 308.89 Td (14. Final Recommendation) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 284.39 Td (The first implementation slice should be the shared runtime foundation plus a read-only) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 271.89 Td (Command Agent. That slice gives Stoquify the highest leverage because it proves the core) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 259.39 Td (pattern without touching dangerous workflows. It also reuses existing Stoquify strengths:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 246.89 Td (protected services, snapshots, business signals, action queues, proof trails, RBAC, module) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 234.39 Td (entitlement, redaction, and workflow assurance.) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 214.89 Td (Postpone:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 195.39 Td (- direct service execution beyond low-risk actions) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 182.89 Td (- statutory/compliance agents) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 170.39 Td (- payroll readiness agent) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 157.89 Td (- close certification workflows) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 145.39 Td (- multi-provider routing) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 132.89 Td (- full MCP exposure) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 120.39 Td (- broad durable execution) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 100.89 Td (Start now with:) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 81.39 Td (- services/agents) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 68.89 Td (- runtime Prisma models) Tj ET
+endstream
+endobj
+60 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 61 0 R >>
+endobj
+61 0 obj
+<< /Length 4560 >>
+stream
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 48.00 789.89 Td (Stoquify Agent Runtime Strategic Roadmap) Tj ET
+BT /F1 8.00 Tf 0.31 0.38 0.47 rg 505.28 789.89 Td (Page 28) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 765.89 Td (- internal tool registry) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 753.39 Td (- evidence binder) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 740.89 Td (- redaction wrapper) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 728.39 Td (- run logger) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 715.89 Td (- Command Agent panel in Daily Digest or Manager Action Center) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 703.39 Td (- tests and gates proving no direct write authority) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 683.89 Td (This roadmap elevates Stoquify because it turns the application into a trusted daily work) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 671.39 Td (system. Stoquify will not merely show records or dashboards. It will explain what matters,) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 658.89 Td (prove why it matters, route the right person to the right controlled workflow, and preserve) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 646.39 Td (audit-grade evidence along the way.) Tj ET
+BT /F2 13.30 Tf 0.05 0.46 0.42 rg 48.00 620.89 Td (Immediate Next Implementation Prompt) Tj ET
+BT /F1 8.85 Tf 0.09 0.13 0.20 rg 48.00 596.39 Td (Use this prompt to begin the first code implementation slice:) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 573.89 Td (Act as a senior Stoquify platform engineer and security architect.) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 556.59 Td (Implement Phase 1 of the Stoquify agent-runtime roadmap only.) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 539.29 Td (Scope:) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 528.99 Td (- Add the shared runtime foundation under services/agents.) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 518.69 Td (- Add the minimum Prisma models needed to record agent definitions, tools, runs, steps,) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 508.39 Td (  evidence links, feedback, cost ledger, and policy incidents.) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 498.09 Td (- Add a static MVP tool registry for read-only service-owned tools only.) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 487.79 Td (- Add an agent context resolver that uses existing RBAC, module entitlement, tenant,) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 477.49 Td (  locale, and permission context.) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 467.19 Td (- Add an evidence binder that records source hash, evidence grade, freshness, blockers,) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 456.89 Td (  redactions, and source modules.) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 446.59 Td (- Add a redaction wrapper that applies existing redaction policies before model context) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 436.29 Td (  construction.) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 425.99 Td (- Add tests proving tenant isolation, permission filtering, module entitlement) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 415.69 Td (  filtering, redaction, and no direct Prisma write tool registration.) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 398.39 Td (Non-goals:) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 388.09 Td (- Do not add a visible agent UI yet.) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 377.79 Td (- Do not add AI SDK yet unless absolutely necessary for type contracts.) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 367.49 Td (- Do not add durable execution.) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 357.19 Td (- Do not add observability vendors.) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 346.89 Td (- Do not create action execution tools.) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 336.59 Td (- Do not allow direct Prisma writes, ledger posting, statutory filing, payroll approval,) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 326.29 Td (  close certification, cash adjustment, stock write-off, or permission changes.) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 308.99 Td (Verification:) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 298.69 Td (- npm run prisma:validate) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 288.39 Td (- npm run typecheck) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 278.09 Td (- npm run lint) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 267.79 Td (- npm run service:boundary:fail) Tj ET
+BT /F3 7.50 Tf 0.09 0.13 0.20 rg 48.00 257.49 Td (- npm test -- --runInBand services/agents) Tj ET
+endstream
+endobj
+xref
+0 62
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000310 00000 n 
+0000000380 00000 n 
+0000000455 00000 n 
+0000000523 00000 n 
+0000000675 00000 n 
+0000006332 00000 n 
+0000006484 00000 n 
+0000012376 00000 n 
+0000012530 00000 n 
+0000018276 00000 n 
+0000018430 00000 n 
+0000024445 00000 n 
+0000024599 00000 n 
+0000029277 00000 n 
+0000029431 00000 n 
+0000034064 00000 n 
+0000034218 00000 n 
+0000038867 00000 n 
+0000039021 00000 n 
+0000043568 00000 n 
+0000043722 00000 n 
+0000048321 00000 n 
+0000048475 00000 n 
+0000053079 00000 n 
+0000053233 00000 n 
+0000057791 00000 n 
+0000057945 00000 n 
+0000062503 00000 n 
+0000062657 00000 n 
+0000067261 00000 n 
+0000067415 00000 n 
+0000072419 00000 n 
+0000072573 00000 n 
+0000077719 00000 n 
+0000077873 00000 n 
+0000082673 00000 n 
+0000082827 00000 n 
+0000087009 00000 n 
+0000087163 00000 n 
+0000091064 00000 n 
+0000091218 00000 n 
+0000095213 00000 n 
+0000095367 00000 n 
+0000099234 00000 n 
+0000099388 00000 n 
+0000104468 00000 n 
+0000104622 00000 n 
+0000108962 00000 n 
+0000109116 00000 n 
+0000115272 00000 n 
+0000115426 00000 n 
+0000120426 00000 n 
+0000120580 00000 n 
+0000124162 00000 n 
+0000124316 00000 n 
+0000127934 00000 n 
+0000128088 00000 n 
+0000132165 00000 n 
+0000132319 00000 n 
+trailer
+<< /Size 62 /Root 1 0 R >>
+startxref
+136931
+%%EOF

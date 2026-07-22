@@ -21,6 +21,84 @@ function writeFile(root, relativePath, content) {
 }
 
 describe("module surface inventory", () => {
+  it("classifies shared password step-up as cross-module session assurance", () => {
+    const root = makeTempRepo()
+    writeFile(
+      root,
+      "services/modules/module-catalog.service.ts",
+      `export const MODULE_CATALOG = [{ slug: "dashboard", routePrefixes: ["/dashboard"], dependencies: [] }]`,
+    )
+    writeFile(
+      root,
+      "actions/security/step-up-auth.actions.ts",
+      `export async function stepUpWithPasswordAction() { await requireSession(); return verifyPasswordSessionStepUp() }`,
+    )
+
+    const report = buildModuleSurfaceInventory(root)
+    const action = report.records.find(
+      (record) => record.file === "actions/security/step-up-auth.actions.ts",
+    )
+
+    expect(action).toMatchObject({
+      moduleSlug: null,
+      permission: null,
+      moduleApplicability: "not applicable: cross-module session assurance",
+      classification: "not applicable: cross-module session assurance",
+    })
+    expect(moduleSurfaceGapFindings(report)).not.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          file: "actions/security/step-up-auth.actions.ts",
+        }),
+      ]),
+    )
+  })
+
+  it("inherits action and report RBAC evidence through @ alias re-exports", () => {
+    const root = makeTempRepo()
+    writeFile(
+      root,
+      "services/modules/module-catalog.service.ts",
+      `export const MODULE_CATALOG = [{ slug: "analytics", routePrefixes: ["/dashboard/analytics"], dependencies: [] }]`,
+    )
+    writeFile(
+      root,
+      "actions/analytics/financial-reports.ts",
+      `export async function getFinancialSummaryReport() { await requirePermission("reports.read", { resource: "AnalyticsReport" }) }`,
+    )
+    writeFile(
+      root,
+      "actions/analytics/analytics/financial-reports.ts",
+      `export * from "@/actions/analytics/financial-reports"`,
+    )
+
+    const report = buildModuleSurfaceInventory(root)
+    const action = report.records.find(
+      (record) => record.surfaceType === "action" && record.file === "actions/analytics/analytics/financial-reports.ts",
+    )
+    const reportSurface = report.records.find(
+      (record) => record.surfaceType === "report" && record.file === "actions/analytics/analytics/financial-reports.ts",
+    )
+
+    expect(action).toMatchObject({
+      moduleSlug: "analytics",
+      permission: "reports.read",
+      guard: "delegated-re-export",
+      delegatedTo: ["actions/analytics/financial-reports.ts"],
+    })
+    expect(reportSurface).toMatchObject({
+      moduleSlug: "analytics",
+      permission: "reports.read",
+      guard: "delegated-re-export",
+      delegatedTo: ["actions/analytics/financial-reports.ts"],
+    })
+    expect(moduleSurfaceGapFindings(report)).not.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ file: "actions/analytics/analytics/financial-reports.ts" }),
+      ]),
+    )
+  })
+
   it("builds report-only records across sidebar, modules, dashboard pages, and actions", () => {
     const root = makeTempRepo()
     writeFile(

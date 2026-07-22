@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "1.0",
+  "traceId": "8a1cbf54-3fc3-48ab-a179-ef3b5cd9ad29",
+  "runId": "th-ar-open-item-history-implementation-20260717-029",
+  "sliceId": "ap-ar",
+  "stageId": "07",
+  "skillName": "stoquify-transaction-history-07-release-review",
+  "agentType": "API Tester/Code Reviewer",
+  "mode": "implement",
+  "status": "BLOCKED",
+  "activeLanes": [
+    "ar"
+  ],
+  "blockedLanes": [],
+  "inputArtifacts": [
+    {
+      "path": "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/02-security-proof-gate.json",
+      "sha256": "sha256:1734e4c8644fa9cedd249b5b82340f74da84cac3338f3c528b57202aa569112a"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/03-accounting-control-gate.json",
+      "sha256": "sha256:411f10e6efb64d96601d368cea2f1b4dd11d53a7c2f5f8712a866bce9dc0e7fa"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/04-read-model-optimizer.json",
+      "sha256": "sha256:3691503159a8bd2ff1710662617740eed187c43fb816e540f01ff2c8d430a177"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/05-workbench-ux-contract.json",
+      "sha256": "sha256:2e49f52a60b68001c77b0dfb1c3663d6db3aff18d28fa5b3aab71a4921cd356e"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/06-frontend-delivery.json",
+      "sha256": "sha256:19774718b0624708caab8c1e7145fc8113d2f2bd582d5ebf9b21073e5f376dab"
+    }
+  ],
+  "inputFingerprint": "sha256:0628f08178fe0441fe22ccbd1a6b429c2bb07b2ea5d278e6dcb799ab117c6979",
+  "allowedEdits": [
+    "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/07-release-review.md",
+    "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/07-release-review.json"
+  ],
+  "observedEdits": [
+    "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/07-release-review.md",
+    "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/07-release-review.json"
+  ],
+  "repository": {
+    "headBefore": "6e78e9aa01af7d8c86f1795d7105d72fb034a72d",
+    "headAfter": "6e78e9aa01af7d8c86f1795d7105d72fb034a72d",
+    "dirtyFilesBefore": [
+      "WORKTREE_DIRTY_SEE_TRANSACTION_HISTORY_RUNS"
+    ],
+    "dirtyFilesAfter": [
+      "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/07-release-review.md",
+      "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/07-release-review.json"
+    ]
+  },
+  "claims": [
+    {
+      "id": "AR_IMPLEMENTATION_HANDOFF",
+      "result": "PASS",
+      "evidence": [
+        "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/06-frontend-delivery.json"
+      ]
+    },
+    {
+      "id": "AR_PRODUCTION_RELEASE",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/07-release-review.md"
+      ]
+    }
+  ],
+  "verification": [
+    {
+      "command": "Focused ESLint, AR open-item Jest test, EN/FR JSON parse",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": null
+    },
+    {
+      "command": "Full repo typecheck, authenticated browser/mobile/a11y smoke, export parity, role matrix, subledger-to-GL tie-out fixtures",
+      "status": "SKIPPED",
+      "exitCode": null,
+      "logPath": null
+    }
+  ],
+  "outputs": [],
+  "blockers": [
+    {
+      "severity": "high",
+      "code": "FULL_TYPECHECK_PENDING",
+      "reason": "Full repo typecheck has not been completed for the AR slice."
+    },
+    {
+      "severity": "high",
+      "code": "AR_BROWSER_A11Y_NOT_RUN",
+      "reason": "Authenticated browser, mobile, keyboard, and accessibility smoke were not run."
+    },
+    {
+      "severity": "medium",
+      "code": "AR_RELEASE_FIXTURES_PENDING",
+      "reason": "Export parity, role matrix, and subledger-to-GL tie-out disposable fixtures remain pending."
+    }
+  ],
+  "nextEligibleStages": [],
+  "startedAt": "2026-07-17T10:11:57.705Z",
+  "completedAt": "2026-07-17T10:11:57.705Z"
+}

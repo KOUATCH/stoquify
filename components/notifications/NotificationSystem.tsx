@@ -91,6 +91,7 @@ interface NotificationSystemProps {
   soundEnabled: boolean
   onToggleSound: () => void
   unreadCount?: number
+  showSoundControl?: boolean
 }
 
 const priorityRank: Record<NonNullable<NotificationData["priority"]>, number> = {
@@ -210,6 +211,7 @@ export function NotificationSystem({
   soundEnabled,
   onToggleSound,
   unreadCount = 0,
+  showSoundControl = true,
 }: NotificationSystemProps) {
   const [soundsPlayed, setSoundsPlayed] = useState<Set<string>>(new Set())
 
@@ -230,35 +232,37 @@ export function NotificationSystem({
 
   return (
     <>
-      <div className="fixed right-4 top-4 z-50">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onToggleSound}
-          className="notification-control h-10 gap-2 rounded-lg px-3"
-          aria-label={soundEnabled ? "Disable notification sound" : "Enable notification sound"}
-        >
-          <span className="relative inline-flex">
-            <Bell className="h-4 w-4" />
-            {unreadCount > 0 ? (
-              <span className="notification-unread-count absolute -right-2 -top-2 grid min-h-4 min-w-4 place-items-center rounded-full px-1 text-[10px] font-bold leading-none">
-                {unreadCount > 9 ? "9+" : unreadCount}
-              </span>
-            ) : null}
-          </span>
-          {soundEnabled ? (
-            <>
-              <Volume2 className="notification-control-icon notification-control-icon--on h-4 w-4" />
-              <span className="notification-control-label notification-control-label--on text-xs font-bold">On</span>
-            </>
-          ) : (
-            <>
-              <VolumeX className="notification-control-icon h-4 w-4" />
-              <span className="notification-control-label text-xs font-bold">Off</span>
-            </>
-          )}
-        </Button>
-      </div>
+      {showSoundControl ? (
+        <div className="fixed right-4 top-4 z-50">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onToggleSound}
+            className="notification-control h-10 gap-2 rounded-lg px-3"
+            aria-label={soundEnabled ? "Disable notification sound" : "Enable notification sound"}
+          >
+            <span className="relative inline-flex">
+              <Bell className="h-4 w-4" />
+              {unreadCount > 0 ? (
+                <span className="notification-unread-count absolute -right-2 -top-2 grid min-h-4 min-w-4 place-items-center rounded-full px-1 text-[10px] font-bold leading-none">
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              ) : null}
+            </span>
+            {soundEnabled ? (
+              <>
+                <Volume2 className="notification-control-icon notification-control-icon--on h-4 w-4" />
+                <span className="notification-control-label notification-control-label--on text-xs font-bold">On</span>
+              </>
+            ) : (
+              <>
+                <VolumeX className="notification-control-icon h-4 w-4" />
+                <span className="notification-control-label text-xs font-bold">Off</span>
+              </>
+            )}
+          </Button>
+        </div>
+      ) : null}
 
       <div className="fixed right-4 top-16 z-50 w-[calc(100vw-2rem)] max-w-sm space-y-3 sm:w-96">
         {sortedNotifications.map((notification, index) => (

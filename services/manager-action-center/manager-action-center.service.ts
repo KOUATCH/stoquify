@@ -1,5 +1,6 @@
 import "server-only"
 
+import { ForbiddenError } from "@/services/_shared/action-errors"
 import { createActionLinkFromActionItem, createSignalInsight, createSnapshotKpi, normalizeSnapshotFreshness } from "@/services/bi/bi-evidence-adapter.service"
 import type { BICommandBrief, BIKpiCard, BIKpiState } from "@/services/bi/bi-contracts"
 import { evidenceGradeToBITrustState } from "@/services/bi/bi-contracts"
@@ -7,6 +8,14 @@ import { getAssuranceControlTowerData } from "@/services/assurance/assurance-con
 import type { AssuranceControlTowerIncident } from "@/services/assurance/assurance-control-tower-contracts"
 import type { EvidenceGrade } from "@/services/evidence/evidence-contracts"
 import type { CommercialModuleSlug } from "@/services/modules/module-control-contracts"
+import type { AllowedOperatingAccessScope } from "@/services/operating-access/operating-access-scope-contracts"
+import { resolveOperatingAccessScope } from "@/services/operating-access/operating-access-scope.service"
+import {
+  PAYMENT_RECONCILIATION_SIGN_OFF_COMMAND_STATE,
+} from "@/services/reconciliation/payment-reconciliation-sign-off-command-state-contracts"
+import {
+  getPaymentReconciliationSignOffCommandState,
+} from "@/services/reconciliation/payment-reconciliation-sign-off-command-state.service"
 import { buildActionQueue } from "@/services/signals/action-queue.service"
 import type {
   ActionItem,
@@ -29,15 +38,7 @@ import type {
   ManagerActionRunSheetGroup,
   ManagerActionRunSheetGroupId,
 } from "./manager-action-center-contracts"
-
-type ManagerActionCenterInput = {
-  organizationId: string
-  actorPermissions: readonly string[]
-  periodStart?: Date | string | null
-  periodEnd?: Date | string | null
-  maxAgeMinutes?: number | null
-  now?: Date | string | null
-}
+import type { ManagerActionCenterQueryInput } from "./manager-action-center-query-contracts"
 
 const SEVERITY_RANK: Record<BusinessSignalSeverity, number> = {
   info: 0,
@@ -90,21 +91,64 @@ const RUN_SHEET_GROUPS: Array<{
 ]
 
 export async function getManagerActionCenterData(
-  input: ManagerActionCenterInput,
+  input: ManagerActionCenterQueryInput,
 ): Promise<ManagerActionCenterData> {
+  const access = await resolveOperatingAccessScope(input.accessContext)
+  if (!access.allowed) {
+    throw new ForbiddenError("Manager Action Center is not available for this account.")
+  }
+
+  return getManagerActionCenterDataFromResolvedAccess(input, access)
+}
+
+export async function getManagerActionCenterDataFromResolvedAccess(
+  input: ManagerActionCenterQueryInput,
+  access: AllowedOperatingAccessScope,
+): Promise<ManagerActionCenterData> {
+  if (
+    access.organizationId !== input.accessContext.orgId ||
+    access.actorId !== input.accessContext.userId
+  ) {
+    throw new ForbiddenError("Manager Action Center operating scope evidence is inconsistent.")
+  }
+  if (
+    access.scope.kind !== "TENANT" ||
+    access.authority.kind !== "TENANT_WIDE"
+  ) {
+    throw new ForbiddenError(
+      "Manager Action Center tenant truth is not available for location-scoped operating access.",
+    )
+  }
+
+  const organizationId = access.organizationId
+  const actorPermissions = input.accessContext.permissions
   const scope = {
-    organizationId: input.organizationId,
+    organizationId,
     periodStart: input.periodStart ?? null,
     periodEnd: input.periodEnd ?? null,
     maxAgeMinutes: input.maxAgeMinutes ?? null,
     now: input.now ?? null,
   }
 
-  const [paymentTruth, inventoryCash, closeReadiness, assuranceControlTower] = await Promise.all([
+  const [
+    paymentTruth,
+    inventoryCash,
+    closeReadiness,
+    assuranceControlTower,
+    paymentReconciliationSignOff,
+  ] = await Promise.all([
     getPaymentTruthSnapshot(scope),
     getInventoryCashSnapshot(scope),
     getCloseReadinessSnapshot(scope),
-    getSafeAssuranceControlTowerData(input),
+    getSafeAssuranceControlTowerData({
+      organizationId,
+      actorPermissions,
+      now: input.now ?? null,
+    }),
+    getSafePaymentReconciliationSignOffCommandState({
+      accessContext: input.accessContext,
+      now: input.now ?? null,
+    }),
   ])
   const tenantOperating = await getTenantOperatingSnapshotFromRelated(scope, {
     paymentTruth,
@@ -113,18 +157,18 @@ export async function getManagerActionCenterData(
   })
 
   const signals = buildBusinessSignalsFromSnapshots({
-    organizationId: input.organizationId,
+    organizationId,
     snapshots: [tenantOperating, paymentTruth, inventoryCash, closeReadiness],
   })
   const actionQueue = buildActionQueue({
-    organizationId: input.organizationId,
+    organizationId,
     signals,
-    actorPermissions: input.actorPermissions,
+    actorPermissions,
     now: input.now ?? null,
   })
 
   return composeManagerActionCenterData({
-    organizationId: input.organizationId,
+    organizationId,
     generatedAt: normalizeNow(input.now).toISOString(),
     snapshots: {
       tenantOperating,
@@ -134,6 +178,7 @@ export async function getManagerActionCenterData(
     },
     actionQueue,
     assuranceIncidents: assuranceControlTower.incidents,
+    paymentReconciliationSignOff,
     assuranceHiddenByPermission: assuranceControlTower.hiddenByPermission,
   })
 }
@@ -143,14 +188,35 @@ export function composeManagerActionCenterData(
 ): ManagerActionCenterData {
   const { tenantOperating, paymentTruth, inventoryCash, closeReadiness } = input.snapshots
   const now = new Date(input.generatedAt)
-  const assuranceActions = (input.assuranceIncidents ?? []).map((incident) => managerActionFromAssuranceIncident(incident, now))
-  const summary = summarizeManagerActions(input.actionQueue, now, assuranceActions, input.assuranceHiddenByPermission ?? 0)
-  const signalModuleById = new Map(input.actionQueue.signals.map((signal) => [signal.id, signal.moduleSlug]))
+  const assuranceActions = (input.assuranceIncidents ?? []).map((incident) =>
+    managerActionFromAssuranceIncident(incident, now),
+  )
+  const sourceCommandActions =
+    managerActionsFromPaymentReconciliationSignOff(
+      input.paymentReconciliationSignOff ?? null,
+      now,
+    )
+  const additionalActions = [...assuranceActions, ...sourceCommandActions]
+  const summary = summarizeManagerActions(
+    input.actionQueue,
+    now,
+    additionalActions,
+    input.assuranceHiddenByPermission ?? 0,
+  )
+  const signalModuleById = new Map(
+    input.actionQueue.signals.map((signal) => [signal.id, signal.moduleSlug]),
+  )
   const actionItems = input.actionQueue.actionItems
     .slice()
     .sort(sortActionItems)
-    .map((item) => managerActionFromItem(item, signalModuleById.get(item.signalId) ?? "dashboard", now))
-    .concat(assuranceActions)
+    .map((item) =>
+      managerActionFromItem(
+        item,
+        signalModuleById.get(item.signalId) ?? "dashboard",
+        now,
+      ),
+    )
+    .concat(additionalActions)
     .sort(sortManagerActions)
   const commandBrief = buildManagerCommandBrief({
     input,
@@ -170,15 +236,15 @@ export function composeManagerActionCenterData(
       managerKpi({
         id: "manager-open-actions",
         title: "Open manager actions",
-        detail: "Permission-filtered work items generated from trusted business signals.",
+        detail: "Permission-filtered work from trusted business signals and source-owned workflows.",
         value: summary.total,
         unit: "actions",
         snapshot: tenantOperating,
         href: "/dashboard/manager-action-center",
-        evidenceGrade: strongestEvidenceGrade(input.actionQueue.actionItems.map((item) => item.evidenceGrade)),
+        evidenceGrade: strongestEvidenceGrade(actionItems.map((item) => item.evidenceGrade)),
         state: queueState(summary),
-        blockers: input.actionQueue.actionItems.flatMap((item) => item.blockers),
-        redactions: input.actionQueue.actionItems.flatMap((item) => item.redactions),
+        blockers: actionItems.flatMap((item) => item.blockers),
+        redactions: actionItems.flatMap((item) => item.redactions),
       }),
       managerKpi({
         id: "manager-critical-actions",
@@ -189,7 +255,7 @@ export function composeManagerActionCenterData(
         snapshot: paymentTruth,
         href: "/dashboard/finance/payments",
         evidenceGrade: strongestEvidenceGrade(
-          input.actionQueue.actionItems
+          actionItems
             .filter((item) => item.severity === "critical" || item.severity === "high")
             .map((item) => item.evidenceGrade),
         ),
@@ -234,7 +300,23 @@ export function composeManagerActionCenterData(
   }
 }
 
-async function getSafeAssuranceControlTowerData(input: ManagerActionCenterInput) {
+async function getSafePaymentReconciliationSignOffCommandState(
+  input: Parameters<
+    typeof getPaymentReconciliationSignOffCommandState
+  >[0],
+) {
+  try {
+    return await getPaymentReconciliationSignOffCommandState(input)
+  } catch {
+    return null
+  }
+}
+
+async function getSafeAssuranceControlTowerData(input: {
+  organizationId: string
+  actorPermissions: readonly string[]
+  now: Date | string | null
+}) {
   try {
     const data = await getAssuranceControlTowerData({
       organizationId: input.organizationId,
@@ -461,6 +543,9 @@ function managerActionFromItem(
   now: Date,
 ): ManagerActionCenterAction {
   return {
+    origin: "SIGNAL",
+    kind: "LINK",
+    sourceCommand: null,
     id: item.id,
     signalId: item.signalId,
     title: item.title,
@@ -490,6 +575,9 @@ function managerActionFromAssuranceIncident(
   const dueAt = incident.dueAt ?? incident.lastDetectedAt
 
   return {
+    origin: "ASSURANCE",
+    kind: "LINK",
+    sourceCommand: null,
     id: `assurance-${incident.id}`,
     signalId: incident.id,
     title: incident.title,
@@ -519,19 +607,113 @@ function managerActionFromAssuranceIncident(
   }
 }
 
+
+function managerActionsFromPaymentReconciliationSignOff(
+  state: ComposeManagerActionCenterInput["paymentReconciliationSignOff"],
+  now: Date,
+): ManagerActionCenterAction[] {
+  if (
+    !state ||
+    (state.state !== "AVAILABLE" && state.state !== "READ_ONLY")
+  ) {
+    return []
+  }
+
+  const candidate = state.candidate
+  const isAvailable = state.state === "AVAILABLE"
+  const evidenceGrade = "reconciled" as const
+  const blockers = isAvailable
+    ? []
+    : [
+        {
+          id: `payment-reconciliation-sign-off:${candidate.source.id}:read-only`,
+          severity: "medium" as const,
+          gate: "payment_reconciliation_sign_off",
+          title: "Reconciliation sign-off is read-only",
+          detail: paymentReconciliationReadOnlyDetail(state.reason),
+          sourceTables: ["reconciliation_runs"],
+          nextAction: "Open payment reconciliation to review current evidence and access.",
+        },
+      ]
+  const base = {
+    id: candidate.commandId,
+    signalId: candidate.source.id,
+    origin: "SOURCE_COMMAND" as const,
+    title: "Sign payment reconciliation",
+    nextStep: isAvailable
+      ? "Verify the provider totals and apply independent sign-off with fresh authentication."
+      : "Review the ready reconciliation evidence. Signing is unavailable for this actor.",
+    actionPath: candidate.actionPath,
+    requiredPermission: isAvailable
+      ? candidate.requiredPermission
+      : PAYMENT_RECONCILIATION_SIGN_OFF_COMMAND_STATE.readPermission,
+    status: "open" as const,
+    severity: "high" as const,
+    severityScore: 88,
+    assignedRole: "finance" as const,
+    dueAt: candidate.periodEnd,
+    dueState: dueState(candidate.periodEnd, now),
+    evidenceGrade,
+    trustState: evidenceGradeToBITrustState(evidenceGrade),
+    state: isAvailable ? "ready" as const : "permission_denied" as const,
+    blockers,
+    redactions: [],
+    actionLink: {
+      id: `${candidate.commandId}:open`,
+      label: "Open reconciliation",
+      href: candidate.actionPath,
+      requiredPermission:
+        PAYMENT_RECONCILIATION_SIGN_OFF_COMMAND_STATE.readPermission,
+      moduleSlug:
+        PAYMENT_RECONCILIATION_SIGN_OFF_COMMAND_STATE.moduleSlug,
+      disabled: false,
+      disabledReason: null,
+    },
+  }
+
+  if (isAvailable) {
+    return [
+      {
+        ...base,
+        kind: "PAYMENT_RECONCILIATION_SIGN_OFF",
+        sourceCommand: candidate,
+      },
+    ]
+  }
+
+  return [{ ...base, kind: "LINK", sourceCommand: null }]
+}
+
+function paymentReconciliationReadOnlyDetail(
+  reason: Extract<
+    NonNullable<
+      ComposeManagerActionCenterInput["paymentReconciliationSignOff"]
+    >,
+    { state: "READ_ONLY" }
+  >["reason"],
+) {
+  if (reason === "MAKER_CHECKER_REQUIRED") {
+    return "The reconciliation maker cannot sign their own run."
+  }
+  if (reason === "MODULE_WRITE_UNAVAILABLE") {
+    return "Payment reconciliation write access is unavailable for this tenant."
+  }
+  return "The actor does not hold the critical reconciliation sign permission."
+}
 function summarizeManagerActions(
   actionQueue: ActionQueueResult,
   now: Date,
-  assuranceActions: readonly ManagerActionCenterAction[] = [],
+  additionalActions: readonly ManagerActionCenterAction[] = [],
   assuranceHiddenByPermission = 0,
 ): ManagerActionCenterSummary {
   const actionItems = [
     ...actionQueue.actionItems.map((item) => managerActionFromItem(item, "dashboard", now)),
-    ...assuranceActions,
+    ...additionalActions,
   ]
 
   return {
     total: actionItems.length,
+    dueToday: actionItems.filter((item) => item.dueState === "due_today").length,
     open: actionItems.filter((item) => item.status === "open").length,
     assigned: actionItems.filter((item) => item.status === "assigned").length,
     stale: actionQueue.summary.stale,

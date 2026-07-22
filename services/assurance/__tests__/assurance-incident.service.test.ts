@@ -6,7 +6,7 @@ jest.mock("@/prisma/db", () => ({
 
 function mockPrismaClient() {
   const client = {
-    $transaction: jest.fn((handler) => handler(client)),
+    $transaction: jest.fn(),
     workflowAssuranceIncident: {
       findUnique: jest.fn(),
       findFirst: jest.fn(),
@@ -28,6 +28,7 @@ function mockPrismaClient() {
       create: jest.fn(),
     },
   }
+  client.$transaction.mockImplementation((handler) => handler(client))
 
   return client
 }
@@ -120,6 +121,17 @@ describe("workflow assurance incident service", () => {
         }),
       }),
     )
+    expect(mockDb.workflowAssuranceIncident.findUnique).toHaveBeenCalledWith({
+      where: {
+        workflow_assurance_incident_identity_key: {
+          organizationId: "org-1",
+          checkKey: definition.checkKey,
+          definitionVersion: definition.version,
+          sourceType: "journal_entries",
+          sourceId: "aggregate",
+        },
+      },
+    })
     expect(mockDb.workflowAssuranceIncidentEvent.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({ eventType: "CREATED", toStatus: "OPEN" }),
@@ -178,7 +190,155 @@ describe("workflow assurance incident service", () => {
     )
   })
 
-  it("reopens a resolved incident when the same fingerprint has a newer source hash", async () => {
+  it("updates one active case and records source drift without another alert", async () => {
+    const result = failedResult("new-hash")
+    const existing = incidentRecord({
+      id: "incident-1",
+      sourceHash: "old-hash",
+      fingerprint: result.fingerprint,
+      occurrenceCount: 1,
+    })
+    mockDb.workflowAssuranceIncident.findUnique.mockResolvedValue(existing)
+    mockDb.workflowAssuranceIncident.update.mockResolvedValue({
+      ...existing,
+      sourceHash: "new-hash",
+      occurrenceCount: 2,
+    })
+
+    const incident = await upsertWorkflowAssuranceIncidentFromResult({
+      organizationId: "org-1",
+      definitionId: "definition-1",
+      definition,
+      result,
+    })
+
+    expect(incident?.id).toBe("incident-1")
+    expect(incident?.sourceHash).toBe("new-hash")
+    expect(mockDb.workflowAssuranceIncident.create).not.toHaveBeenCalled()
+    expect(mockDb.workflowAssuranceAlertDelivery.upsert).not.toHaveBeenCalled()
+    expect(mockDb.workflowAssuranceIncidentEvent.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          eventType: "SOURCE_CHANGED",
+          fromStatus: "OPEN",
+          toStatus: "OPEN",
+        }),
+      }),
+    )
+    expect(mockDb.auditLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          action: "WORKFLOW_ASSURANCE_INCIDENT_SOURCE_CHANGED",
+        }),
+      }),
+    )
+  })
+
+  it("preserves suppression when source evidence changes", async () => {
+    const result = failedResult("new-hash")
+    const suppressed = incidentRecord({
+      id: "incident-1",
+      status: "SUPPRESSED",
+      sourceHash: "old-hash",
+      fingerprint: result.fingerprint,
+      suppressedAt: new Date("2026-06-20T08:00:00.000Z"),
+      suppressedById: "user-2",
+      suppressionReason: "Approved maintenance window",
+    })
+    mockDb.workflowAssuranceIncident.findUnique.mockResolvedValue(suppressed)
+    mockDb.workflowAssuranceIncident.update.mockResolvedValue({
+      ...suppressed,
+      sourceHash: "new-hash",
+      occurrenceCount: 2,
+    })
+
+    const incident = await upsertWorkflowAssuranceIncidentFromResult({
+      organizationId: "org-1",
+      definitionId: "definition-1",
+      definition,
+      result,
+    })
+
+    expect(incident?.status).toBe("suppressed")
+    expect(mockDb.workflowAssuranceIncident.update.mock.calls[0][0].data).not.toHaveProperty("status")
+    expect(mockDb.workflowAssuranceAlertDelivery.upsert).not.toHaveBeenCalled()
+    expect(mockDb.workflowAssuranceIncidentEvent.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          eventType: "SOURCE_CHANGED",
+          fromStatus: "SUPPRESSED",
+          toStatus: "SUPPRESSED",
+          metadata: expect.objectContaining({ suppressionPreserved: true }),
+        }),
+      }),
+    )
+  })
+
+  it("retries a unique or serialization race and converges on the committed case", async () => {
+    const result = failedResult("hash-1")
+    const existing = incidentRecord({
+      id: "incident-1",
+      sourceHash: "hash-1",
+      fingerprint: result.fingerprint,
+    })
+    mockDb.$transaction.mockRejectedValueOnce({ code: "P2034" }).mockImplementationOnce((handler) => handler(mockDb))
+    mockDb.workflowAssuranceIncident.findUnique.mockResolvedValue(existing)
+    mockDb.workflowAssuranceIncident.update.mockResolvedValue({
+      ...existing,
+      occurrenceCount: 2,
+    })
+
+    const incident = await upsertWorkflowAssuranceIncidentFromResult({
+      organizationId: "org-1",
+      definitionId: "definition-1",
+      definition,
+      result,
+    })
+
+    expect(incident?.id).toBe("incident-1")
+    expect(mockDb.$transaction).toHaveBeenCalledTimes(2)
+    expect(mockDb.$transaction).toHaveBeenLastCalledWith(expect.any(Function), {
+      isolationLevel: "Serializable",
+    })
+    expect(mockDb.workflowAssuranceIncident.create).not.toHaveBeenCalled()
+    expect(mockDb.workflowAssuranceAlertDelivery.upsert).not.toHaveBeenCalled()
+  })
+
+  it("returns a safe typed error when incident upsert fails with an unknown transaction error", async () => {
+    mockDb.$transaction.mockRejectedValueOnce(new Error("database password leaked in provider detail"))
+
+    await expect(
+      upsertWorkflowAssuranceIncidentFromResult({
+        organizationId: "org-1",
+        definitionId: "definition-1",
+        definition,
+        result: failedResult("hash-1"),
+      }),
+    ).rejects.toMatchObject({
+      name: "BusinessRuleError",
+      message: "Workflow assurance incident could not be recorded safely.",
+    })
+    expect(mockDb.$transaction).toHaveBeenCalledTimes(1)
+  })
+
+  it("returns a safe typed error when incident upsert cannot converge after retryable races", async () => {
+    mockDb.$transaction.mockRejectedValue({ code: "P2034" })
+
+    await expect(
+      upsertWorkflowAssuranceIncidentFromResult({
+        organizationId: "org-1",
+        definitionId: "definition-1",
+        definition,
+        result: failedResult("hash-1"),
+      }),
+    ).rejects.toMatchObject({
+      name: "BusinessRuleError",
+      message: "Workflow assurance incident could not converge on one logical identity.",
+    })
+    expect(mockDb.$transaction).toHaveBeenCalledTimes(2)
+  })
+
+  it("reopens a resolved incident when the same identity has newer source evidence", async () => {
     const resolved = incidentRecord({
       id: "incident-1",
       status: "RESOLVED",
@@ -187,8 +347,7 @@ describe("workflow assurance incident service", () => {
       resolvedAt: new Date("2026-06-20T08:00:00.000Z"),
       resolvedById: "user-2",
     })
-    mockDb.workflowAssuranceIncident.findUnique.mockResolvedValue(null)
-    mockDb.workflowAssuranceIncident.findFirst.mockResolvedValue(resolved)
+    mockDb.workflowAssuranceIncident.findUnique.mockResolvedValue(resolved)
     mockDb.workflowAssuranceIncident.update.mockResolvedValue({
       ...resolved,
       status: "REOPENED",
@@ -213,6 +372,17 @@ describe("workflow assurance incident service", () => {
     expect(mockDb.workflowAssuranceIncidentEvent.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({ eventType: "REOPENED", fromStatus: "RESOLVED", toStatus: "REOPENED" }),
+      }),
+    )
+    expect(mockDb.workflowAssuranceIncident.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          resolutionNote: null,
+          suppressedAt: null,
+          suppressedById: null,
+          suppressionReason: null,
+          closedAt: null,
+        }),
       }),
     )
   })
@@ -460,6 +630,28 @@ describe("workflow assurance incident service", () => {
         actorId: "user-1",
       }),
     ).rejects.toThrow(/requester cannot approve/i)
+  })
+
+  it("rejects a result whose version is outside the server-owned definition identity", async () => {
+    const result = normalizeAssuranceResult({
+      organizationId: "org-1",
+      checkKey: definition.checkKey,
+      definitionVersion: definition.version + 1,
+      status: "failed",
+      sourceType: "journal_entries",
+      sourceId: "aggregate",
+      sourceHash: "hash-version-2",
+    })
+
+    await expect(
+      upsertWorkflowAssuranceIncidentFromResult({
+        organizationId: "org-1",
+        definitionId: "definition-1",
+        definition,
+        result,
+      }),
+    ).rejects.toThrow(/server-owned definition/i)
+    expect(mockDb.$transaction).not.toHaveBeenCalled()
   })
 })
 

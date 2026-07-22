@@ -32,12 +32,20 @@ describe("rbac permission compatibility", () => {
   it("does not let wildcard grants bypass high-risk or critical permissions", () => {
     expect(hasRbacPermission(["*"], "dashboard.read")).toBe(true)
     expect(hasRbacPermission(["*"], "roles.permissions.assign")).toBe(false)
+    expect(hasRbacPermission(["*"], "branch.daily-close.sign")).toBe(false)
     expect(hasRbacPermission(["*"], "accounting.period.close")).toBe(false)
     expect(hasRbacPermission(["*"], "pos.receipts.revoke")).toBe(false)
     expect(hasAnyRbacPermission(["*"], ["users.delete", "roles.delete"])).toBe(false)
     expect(hasAllRbacPermissions(["*"], ["users.delete", "roles.delete"])).toBe(false)
     expect(hasRbacPermission(["*", "roles.permissions.assign"], "roles.permissions.assign")).toBe(true)
+    expect(hasRbacPermission(["*", "branch.daily-close.sign"], "branch.daily-close.sign")).toBe(true)
     expect(hasRbacPermission(["*", "pos.receipts.revoke"], "pos.receipts.revoke")).toBe(true)
+  })
+
+  it("registers branch daily-close sign-off as canonical critical authority", () => {
+    expect(isKnownPermission("branch.daily-close.sign")).toBe(true)
+    expect(permissionRisk("branch.daily-close.sign")).toBe("crit")
+    expect(hasRbacPermission(["branch.daily-close.sign"], "branch.daily-close.sign")).toBe(true)
   })
 
   it("fails closed for unknown permission keys", () => {

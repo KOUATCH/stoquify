@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { useState } from "react"
+import Link from "next/link";
+import { useState } from "react";
 import {
   ArrowUpRight,
   CalendarClock,
@@ -10,86 +10,117 @@ import {
   LockKeyhole,
   ShieldCheck,
   Sparkles,
-} from "lucide-react"
+} from "lucide-react";
 
-import { BIActionPriorityBoard, BICommandBriefHeader, BIStateSurface, BITrustLegend } from "@/components/bi"
-import type { BIActionPriorityItem } from "@/components/bi/BIActionPriorityBoard"
-import { BIEvidenceBadgeRow } from "@/components/bi/BIEvidenceBadgeRow"
-import { BIEmptyState } from "@/components/bi/BIEmptyState"
-import { BIKpiCard } from "@/components/bi/BIKpiCard"
-import { BISeverityBadge, BIStateBadge } from "@/components/bi/BIStateBadge"
-import { EvidenceGradeBadge } from "@/components/evidence/EvidenceGradeBadge"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import {
+  BIActionPriorityBoard,
+  BICommandBriefHeader,
+  BIStateSurface,
+  BITrustLegend,
+} from "@/components/bi";
+import type { BIActionPriorityItem } from "@/components/bi/BIActionPriorityBoard";
+import { BIEvidenceBadgeRow } from "@/components/bi/BIEvidenceBadgeRow";
+import { BIEmptyState } from "@/components/bi/BIEmptyState";
+import { BIKpiCard } from "@/components/bi/BIKpiCard";
+import { BISeverityBadge, BIStateBadge } from "@/components/bi/BIStateBadge";
+import { EvidenceGradeBadge } from "@/components/evidence/EvidenceGradeBadge";
+import { PaymentReconciliationSignOffCommand } from "@/components/manager-action-center/PaymentReconciliationSignOffCommand";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   dashboardMutedTextClass,
   dashboardPanelClass,
   dashboardRowClass,
   dashboardToneClass,
-} from "@/components/finance/finance-dashboard-theme"
-import { cn } from "@/lib/utils"
-import type { BICommandMode } from "@/services/bi/bi-contracts"
-import type { ManagerActionCenterData, ManagerActionRunSheetGroup } from "@/services/manager-action-center/manager-action-center-contracts"
+} from "@/components/finance/finance-dashboard-theme";
+import { cn } from "@/lib/utils";
+import type { BICommandMode } from "@/services/bi/bi-contracts";
+import type {
+  ManagerActionCenterData,
+  ManagerActionRunSheetGroup,
+} from "@/services/manager-action-center/manager-action-center-contracts";
 
 type ManagerActionCenterDashboardProps = {
-  data: ManagerActionCenterData
-  locale: "en" | "fr"
-  title: string
-  subtitle: string
-}
+  data: ManagerActionCenterData;
+  locale: "en" | "fr";
+  title: string;
+  subtitle: string;
+};
 
 const copy = {
   en: {
-    readOnly: "Read-only",
+    sourceOwned: "Source-owned",
     evidenceBacked: "Evidence-backed",
     permissionFiltered: "Permission-filtered",
     generated: "Generated",
     period: "Period",
     open: "Open",
+    dueToday: "Due today",
     critical: "Critical",
     overdue: "Overdue",
     hidden: "Hidden",
     actions: "Manager actions",
     insights: "Business signals",
     doFirst: "Do first today",
-    doFirstDetail: "Permission-filtered actions ranked by urgency, evidence, blockers, and business pressure.",
+    doFirstDetail:
+      "Permission-filtered actions ranked by urgency, evidence, blockers, and business pressure.",
     runSheet: "Daily run sheet",
-    runSheetDetail: "Urgency lanes for the work managers can actually move today.",
-    noActions: "No manager action is visible for this tenant and permission set.",
-    noSignals: "No business signal is visible for this tenant and permission set.",
+    runSheetDetail:
+      "Urgency lanes for the work managers can actually move today.",
+    noActions:
+      "No manager action is visible for this tenant and permission set.",
+    noSignals:
+      "No business signal is visible for this tenant and permission set.",
     nextStep: "Next step",
     due: "Due",
     role: "Role",
     requiredPermission: "Required permission",
     openSurface: "Open",
-    hiddenNotice: "Some actions are withheld by server-side permission filtering.",
+    reconciliationTitle: "Sign payment reconciliation",
+    reconciliationDetail:
+      "Verify provider totals and apply independent sign-off with fresh authentication.",
+    reconciliationReadOnly:
+      "Review the ready reconciliation evidence. Signing is unavailable for this actor.",
+    hiddenNotice:
+      "Some actions are withheld by server-side permission filtering.",
   },
   fr: {
-    readOnly: "Lecture seule",
+    sourceOwned: "Pilote par les sources",
     evidenceBacked: "Appuye sur preuves",
     permissionFiltered: "Filtre par permission",
     generated: "Genere",
     period: "Periode",
     open: "Ouvert",
+    dueToday: "A traiter aujourd'hui",
     critical: "Critique",
     overdue: "En retard",
     hidden: "Masque",
     actions: "Actions manager",
     insights: "Signaux metier",
     doFirst: "A traiter en premier",
-    doFirstDetail: "Actions filtrees par permission et classees par urgence, preuve, blocages et pression metier.",
+    doFirstDetail:
+      "Actions filtrees par permission et classees par urgence, preuve, blocages et pression metier.",
     runSheet: "Plan de journee",
-    runSheetDetail: "Couloirs d'urgence pour le travail qu'un manager peut vraiment faire avancer aujourd'hui.",
-    noActions: "Aucune action manager n'est visible pour ce tenant et ces permissions.",
-    noSignals: "Aucun signal metier n'est visible pour ce tenant et ces permissions.",
+    runSheetDetail:
+      "Couloirs d'urgence pour le travail qu'un manager peut vraiment faire avancer aujourd'hui.",
+    noActions:
+      "Aucune action manager n'est visible pour ce tenant et ces permissions.",
+    noSignals:
+      "Aucun signal metier n'est visible pour ce tenant et ces permissions.",
     nextStep: "Prochaine etape",
     due: "Echeance",
     role: "Role",
     requiredPermission: "Permission requise",
     openSurface: "Ouvrir",
-    hiddenNotice: "Certaines actions sont retenues par le filtrage serveur des permissions.",
+    reconciliationTitle: "Valider le rapprochement des paiements",
+    reconciliationDetail:
+      "Verifier les totaux fournisseur et appliquer une validation independante avec une authentification recente.",
+    reconciliationReadOnly:
+      "Revoir les preuves du rapprochement pret. La validation n'est pas disponible pour cet acteur.",
+    hiddenNotice:
+      "Certaines actions sont retenues par le filtrage serveur des permissions.",
   },
-} as const
+} as const;
 
 export function ManagerActionCenterDashboard({
   data,
@@ -97,10 +128,12 @@ export function ManagerActionCenterDashboard({
   title,
   subtitle,
 }: ManagerActionCenterDashboardProps) {
-  const t = copy[locale]
-  const formatterLocale = locale === "fr" ? "fr-FR" : "en-US"
-  const periodLabel = `${formatDate(data.periodStart, formatterLocale)} - ${formatDate(data.periodEnd, formatterLocale)}`
-  const [commandMode, setCommandMode] = useState<BICommandMode>(data.commandBrief.mode)
+  const t = copy[locale];
+  const formatterLocale = locale === "fr" ? "fr-FR" : "en-US";
+  const periodLabel = `${formatDate(data.periodStart, formatterLocale)} - ${formatDate(data.periodEnd, formatterLocale)}`;
+  const [commandMode, setCommandMode] = useState<BICommandMode>(
+    data.commandBrief.mode,
+  );
 
   return (
     <main className="dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]">
@@ -113,7 +146,9 @@ export function ManagerActionCenterDashboard({
 
         <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(360px,0.9fr)]">
           <BIActionPriorityBoard
-            items={data.actionItems.map((item) => toPriorityAction(item, formatterLocale))}
+            items={data.actionItems.map((item) =>
+              toPriorityAction(item, formatterLocale, locale),
+            )}
             title={t.doFirst}
             detail={t.doFirstDetail}
             maxItems={8}
@@ -121,14 +156,23 @@ export function ManagerActionCenterDashboard({
           <section className={cn(dashboardPanelClass, "p-4")}>
             <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
               <div>
-                <h2 className="text-base font-semibold text-[var(--dash-text)]">{t.runSheet}</h2>
-                <p className={cn("text-sm", dashboardMutedTextClass)}>{t.runSheetDetail}</p>
+                <h2 className="text-base font-semibold text-[var(--dash-text)]">
+                  {t.runSheet}
+                </h2>
+                <p className={cn("text-sm", dashboardMutedTextClass)}>
+                  {t.runSheetDetail}
+                </p>
               </div>
               <BITrustLegend compact />
             </div>
             <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
               {data.runSheetGroups.map((group) => (
-                <RunSheetLane key={group.id} group={group} formatterLocale={formatterLocale} />
+                <RunSheetLane
+                  key={group.id}
+                  group={group}
+                  formatterLocale={formatterLocale}
+                  locale={locale}
+                />
               ))}
             </div>
           </section>
@@ -138,21 +182,44 @@ export function ManagerActionCenterDashboard({
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div className="max-w-5xl space-y-3">
               <div className="flex flex-wrap items-center gap-2">
-                <Badge className={cn("border", dashboardToneClass("success"))}>{t.readOnly}</Badge>
-                <Badge className={cn("border", dashboardToneClass("brand"))}>{t.evidenceBacked}</Badge>
-                <Badge className={cn("border", dashboardToneClass("gold"))}>{t.permissionFiltered}</Badge>
+                <Badge className={cn("border", dashboardToneClass("success"))}>
+                  {t.sourceOwned}
+                </Badge>
+                <Badge className={cn("border", dashboardToneClass("brand"))}>
+                  {t.evidenceBacked}
+                </Badge>
+                <Badge className={cn("border", dashboardToneClass("gold"))}>
+                  {t.permissionFiltered}
+                </Badge>
               </div>
               <div>
                 <h1 className="text-2xl font-semibold tracking-normal text-[var(--dash-text)] md:text-3xl">
                   {title}
                 </h1>
-                <p className={cn("mt-2 max-w-4xl text-sm leading-6", dashboardMutedTextClass)}>{subtitle}</p>
+                <p
+                  className={cn(
+                    "mt-2 max-w-4xl text-sm leading-6",
+                    dashboardMutedTextClass,
+                  )}
+                >
+                  {subtitle}
+                </p>
               </div>
             </div>
-            <div className={cn(dashboardRowClass, "min-w-0 p-3 text-sm lg:min-w-[340px]")}>
+            <div
+              className={cn(
+                dashboardRowClass,
+                "min-w-0 p-3 text-sm lg:min-w-[340px]",
+              )}
+            >
               <div className="flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4 text-[var(--dash-success)]" aria-hidden="true" />
-                <span className="font-medium text-[var(--dash-text)]">{data.organizationId}</span>
+                <ShieldCheck
+                  className="h-4 w-4 text-[var(--dash-success)]"
+                  aria-hidden="true"
+                />
+                <span className="font-medium text-[var(--dash-text)]">
+                  {data.organizationId}
+                </span>
               </div>
               <dl className="mt-3 grid grid-cols-1 gap-2 text-xs text-[var(--dash-text-soft)] sm:grid-cols-2 lg:grid-cols-1">
                 <div className="flex items-center justify-between gap-3">
@@ -163,24 +230,46 @@ export function ManagerActionCenterDashboard({
                 </div>
                 <div className="flex items-center justify-between gap-3">
                   <dt>{t.period}</dt>
-                  <dd className="font-medium text-[var(--dash-text)]">{periodLabel}</dd>
+                  <dd className="font-medium text-[var(--dash-text)]">
+                    {periodLabel}
+                  </dd>
                 </div>
               </dl>
             </div>
           </div>
         </section>
 
-        <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
           <SummaryTile label={t.open} value={data.summary.open} tone="brand" />
-          <SummaryTile label={t.critical} value={data.summary.critical} tone="danger" />
-          <SummaryTile label={t.overdue} value={data.summary.overdue} tone="gold" />
-          <SummaryTile label={t.hidden} value={data.summary.hiddenByPermission} tone="spruce" />
+          <SummaryTile
+            label={t.dueToday}
+            value={data.summary.dueToday}
+            tone="spruce"
+          />
+          <SummaryTile
+            label={t.critical}
+            value={data.summary.critical}
+            tone="danger"
+          />
+          <SummaryTile
+            label={t.overdue}
+            value={data.summary.overdue}
+            tone="gold"
+          />
+          <SummaryTile
+            label={t.hidden}
+            value={data.summary.hiddenByPermission}
+            tone="spruce"
+          />
         </section>
 
         {data.summary.hiddenByPermission > 0 ? (
           <div className="rounded-lg border border-[var(--dash-gold)] bg-[var(--dash-gold-soft)] p-3 text-sm text-[var(--dash-text)]">
             <div className="flex gap-2">
-              <LockKeyhole className="mt-0.5 h-4 w-4 text-[var(--dash-gold)]" aria-hidden="true" />
+              <LockKeyhole
+                className="mt-0.5 h-4 w-4 text-[var(--dash-gold)]"
+                aria-hidden="true"
+              />
               <p>{t.hiddenNotice}</p>
             </div>
           </div>
@@ -196,20 +285,34 @@ export function ManagerActionCenterDashboard({
           <div className={cn(dashboardPanelClass, "p-4")}>
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h2 className="text-lg font-semibold text-[var(--dash-text)]">{t.actions}</h2>
+                <h2 className="text-lg font-semibold text-[var(--dash-text)]">
+                  {t.actions}
+                </h2>
                 <p className={cn("text-sm", dashboardMutedTextClass)}>
-                  {data.summary.total} total / {data.summary.assigned} assigned / {data.summary.redacted} redacted
+                  {data.summary.total} total / {data.summary.assigned} assigned
+                  / {data.summary.redacted} redacted
                 </p>
               </div>
-              <Badge variant="outline" className="border-[var(--dash-border-subtle)] text-[var(--dash-text-soft)]">
+              <Badge
+                variant="outline"
+                className="border-[var(--dash-border-subtle)] text-[var(--dash-text-soft)]"
+              >
                 <ListChecks className="mr-1 h-3.5 w-3.5" aria-hidden="true" />
-                {data.actionQueue.generatedAt ? formatDateTime(data.actionQueue.generatedAt, formatterLocale) : t.generated}
+                {data.actionQueue.generatedAt
+                  ? formatDateTime(
+                      data.actionQueue.generatedAt,
+                      formatterLocale,
+                    )
+                  : t.generated}
               </Badge>
             </div>
             <div className="mt-4 space-y-3">
               {data.actionItems.length ? (
                 data.actionItems.slice(0, 10).map((item) => (
-                  <article key={item.id} className={cn(dashboardRowClass, "p-3")}>
+                  <article
+                    key={item.id}
+                    className={cn(dashboardRowClass, "p-3")}
+                  >
                     <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                       <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
@@ -217,42 +320,85 @@ export function ManagerActionCenterDashboard({
                           <BIStateBadge state={item.state} />
                           <EvidenceGradeBadge grade={item.evidenceGrade} />
                         </div>
-                        <h3 className="mt-3 text-sm font-semibold text-[var(--dash-text)]">{item.title}</h3>
-                        <p className={cn("mt-1 text-sm leading-6", dashboardMutedTextClass)}>{item.nextStep}</p>
+                        <h3 className="mt-3 text-sm font-semibold text-[var(--dash-text)]">
+                          {managerActionCopy(item, locale).title}
+                        </h3>
+                        <p
+                          className={cn(
+                            "mt-1 text-sm leading-6",
+                            dashboardMutedTextClass,
+                          )}
+                        >
+                          {managerActionCopy(item, locale).nextStep}
+                        </p>
                       </div>
-                      <Button
-                        asChild
-                        size="sm"
-                        variant="outline"
-                        className="shrink-0 rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]"
-                      >
-                        <Link href={item.actionLink.href}>
-                          <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
-                          {t.openSurface}
-                        </Link>
-                      </Button>
+                      {item.kind === "PAYMENT_RECONCILIATION_SIGN_OFF" ? (
+                        <PaymentReconciliationSignOffCommand
+                          locale={locale}
+                          command={item.sourceCommand}
+                        />
+                      ) : (
+                        <Button
+                          asChild
+                          size="sm"
+                          variant="outline"
+                          className="shrink-0 rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]"
+                        >
+                          <Link href={item.actionLink.href}>
+                            <ArrowUpRight
+                              className="h-4 w-4"
+                              aria-hidden="true"
+                            />
+                            {t.openSurface}
+                          </Link>
+                        </Button>
+                      )}
                     </div>
                     <div className="mt-3 grid gap-2 text-xs text-[var(--dash-text-soft)] md:grid-cols-3">
-                      <InfoLine icon={<CalendarClock className="h-3.5 w-3.5" />} label={t.due}>
-                        {formatDateTime(item.dueAt, formatterLocale)} / {item.dueState}
+                      <InfoLine
+                        icon={<CalendarClock className="h-3.5 w-3.5" />}
+                        label={t.due}
+                      >
+                        {formatDateTime(item.dueAt, formatterLocale)} /{" "}
+                        {item.dueState}
                       </InfoLine>
-                      <InfoLine icon={<Sparkles className="h-3.5 w-3.5" />} label={t.role}>
+                      <InfoLine
+                        icon={<Sparkles className="h-3.5 w-3.5" />}
+                        label={t.role}
+                      >
                         {item.assignedRole}
                       </InfoLine>
-                      <InfoLine icon={<LockKeyhole className="h-3.5 w-3.5" />} label={t.requiredPermission}>
+                      <InfoLine
+                        icon={<LockKeyhole className="h-3.5 w-3.5" />}
+                        label={t.requiredPermission}
+                      >
                         {item.requiredPermission}
                       </InfoLine>
                     </div>
                     {item.redactions.length || item.blockers.length ? (
                       <div className="mt-3 flex flex-wrap gap-2">
                         {item.blockers.map((blocker) => (
-                          <Badge key={blocker.id} variant="outline" className={cn("border", dashboardToneClass("danger"))}>
+                          <Badge
+                            key={blocker.id}
+                            variant="outline"
+                            className={cn(
+                              "border",
+                              dashboardToneClass("danger"),
+                            )}
+                          >
                             {blocker.title}
                           </Badge>
                         ))}
                         {item.redactions.map((redaction) => (
-                          <Badge key={redaction.id} variant="outline" className={cn("border", dashboardToneClass("gold"))}>
-                            <EyeOff className="mr-1 h-3 w-3" aria-hidden="true" />
+                          <Badge
+                            key={redaction.id}
+                            variant="outline"
+                            className={cn("border", dashboardToneClass("gold"))}
+                          >
+                            <EyeOff
+                              className="mr-1 h-3 w-3"
+                              aria-hidden="true"
+                            />
                             {redaction.field}
                           </Badge>
                         ))}
@@ -268,21 +414,41 @@ export function ManagerActionCenterDashboard({
 
           <div className={cn(dashboardPanelClass, "p-4")}>
             <div>
-              <h2 className="text-lg font-semibold text-[var(--dash-text)]">{t.insights}</h2>
-              <p className={cn("mt-1 text-sm leading-6", dashboardMutedTextClass)}>
-                {data.insights.length} visible signal{data.insights.length === 1 ? "" : "s"}
+              <h2 className="text-lg font-semibold text-[var(--dash-text)]">
+                {t.insights}
+              </h2>
+              <p
+                className={cn(
+                  "mt-1 text-sm leading-6",
+                  dashboardMutedTextClass,
+                )}
+              >
+                {data.insights.length} visible signal
+                {data.insights.length === 1 ? "" : "s"}
               </p>
             </div>
             <div className="mt-4 space-y-3">
               {data.insights.length ? (
                 data.insights.map((insight) => (
-                  <article key={insight.id} className={cn(dashboardRowClass, "p-3")}>
+                  <article
+                    key={insight.id}
+                    className={cn(dashboardRowClass, "p-3")}
+                  >
                     <div className="flex flex-wrap items-center gap-2">
                       <BISeverityBadge severity={insight.severity} />
                       <BIStateBadge state={insight.state} />
                     </div>
-                    <h3 className="mt-3 text-sm font-semibold text-[var(--dash-text)]">{insight.title}</h3>
-                    <p className={cn("mt-1 text-sm leading-6", dashboardMutedTextClass)}>{insight.businessImpact}</p>
+                    <h3 className="mt-3 text-sm font-semibold text-[var(--dash-text)]">
+                      {insight.title}
+                    </h3>
+                    <p
+                      className={cn(
+                        "mt-1 text-sm leading-6",
+                        dashboardMutedTextClass,
+                      )}
+                    >
+                      {insight.businessImpact}
+                    </p>
                     <BIEvidenceBadgeRow
                       className="mt-3"
                       evidenceGrade={insight.evidenceGrade}
@@ -294,10 +460,13 @@ export function ManagerActionCenterDashboard({
                         asChild
                         size="sm"
                         variant="outline"
-                        className="mt-3 rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]"
+                        className="mt-3 h-auto max-w-full whitespace-normal break-words rounded-lg border-[var(--dash-border-subtle)] text-left text-[var(--dash-text)]"
                       >
                         <Link href={insight.actionLink.href}>
-                          <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+                          <ArrowUpRight
+                            className="h-4 w-4"
+                            aria-hidden="true"
+                          />
                           {insight.actionLink.label}
                         </Link>
                       </Button>
@@ -312,24 +481,49 @@ export function ManagerActionCenterDashboard({
         </section>
       </div>
     </main>
-  )
+  );
+}
+
+function managerActionCopy(
+  item: ManagerActionCenterData["actionItems"][number],
+  locale: "en" | "fr",
+) {
+  if (item.origin !== "SOURCE_COMMAND") {
+    return { title: item.title, nextStep: item.nextStep };
+  }
+
+  const t = copy[locale];
+  return {
+    title: t.reconciliationTitle,
+    nextStep:
+      item.kind === "PAYMENT_RECONCILIATION_SIGN_OFF"
+        ? t.reconciliationDetail
+        : t.reconciliationReadOnly,
+  };
 }
 
 function toPriorityAction(
   item: ManagerActionCenterData["actionItems"][number],
   formatterLocale: string,
+  locale: "en" | "fr",
 ): BIActionPriorityItem {
+  const display = managerActionCopy(item, locale);
   return {
     id: item.id,
-    title: item.title,
-    nextStep: item.nextStep,
+    title: display.title,
+    nextStep: display.nextStep,
     severity: item.severity,
     state: item.state,
     actionLink: item.actionLink,
     evidenceGrade: item.evidenceGrade,
     trustState: item.trustState,
     freshness: {
-      state: item.state === "stale" ? "stale" : item.state === "blocked" ? "blocked" : "fresh",
+      state:
+        item.state === "stale"
+          ? "stale"
+          : item.state === "blocked"
+            ? "blocked"
+            : "fresh",
       generatedAt: item.dueAt,
       sourceMaxUpdatedAt: item.dueAt,
       maxAgeMinutes: null,
@@ -340,15 +534,17 @@ function toPriorityAction(
     ownerLabel: item.assignedRole,
     blockers: item.blockers,
     redactions: item.redactions,
-  }
+  };
 }
 
 function RunSheetLane({
   group,
   formatterLocale,
+  locale,
 }: {
-  group: ManagerActionRunSheetGroup
-  formatterLocale: string
+  group: ManagerActionRunSheetGroup;
+  formatterLocale: string;
+  locale: "en" | "fr";
 }) {
   return (
     <article className={cn(dashboardRowClass, "p-3")}>
@@ -356,68 +552,119 @@ function RunSheetLane({
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <BIStateBadge state={group.state} />
-            <Badge variant="outline" className="rounded-md border-[var(--dash-border-subtle)] text-[var(--dash-text-soft)]">
+            <Badge
+              variant="outline"
+              className="rounded-md border-[var(--dash-border-subtle)] text-[var(--dash-text-soft)]"
+            >
               {group.count} action{group.count === 1 ? "" : "s"}
             </Badge>
           </div>
-          <h3 className="mt-2 text-sm font-semibold text-[var(--dash-text)]">{group.title}</h3>
-          <p className={cn("mt-1 text-xs leading-5", dashboardMutedTextClass)}>{group.detail}</p>
+          <h3 className="mt-2 text-sm font-semibold text-[var(--dash-text)]">
+            {group.title}
+          </h3>
+          <p className={cn("mt-1 text-xs leading-5", dashboardMutedTextClass)}>
+            {group.detail}
+          </p>
         </div>
       </div>
       {group.actions.length ? (
         <div className="mt-3 space-y-2">
           {group.actions.slice(0, 3).map((item) => (
-            <div key={item.id} className="rounded-md border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.22)] p-2">
+            <div
+              key={item.id}
+              className="rounded-md border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.22)] p-2"
+            >
               <div className="flex flex-wrap items-center gap-2">
                 <BISeverityBadge severity={item.severity} />
                 <span className="text-xs text-[var(--dash-text-soft)]">
-                  {formatDateTime(item.dueAt, formatterLocale)} / {item.assignedRole}
+                  {formatDateTime(item.dueAt, formatterLocale)} /{" "}
+                  {item.assignedRole}
                 </span>
               </div>
-              <p className="mt-2 text-xs font-medium text-[var(--dash-text)]">{item.title}</p>
+              <p className="mt-2 text-xs font-medium text-[var(--dash-text)]">
+                {managerActionCopy(item, locale).title}
+              </p>
             </div>
           ))}
         </div>
       ) : (
-        <BIStateSurface state="empty" title="No action in this lane" detail="The server did not surface a visible action for this urgency lane." className="mt-3" />
+        <BIStateSurface
+          state="empty"
+          title="No action in this lane"
+          detail="The server did not surface a visible action for this urgency lane."
+          className="mt-3"
+        />
       )}
     </article>
-  )
+  );
 }
 
-function SummaryTile({ label, value, tone }: { label: string; value: number; tone: "brand" | "danger" | "gold" | "spruce" }) {
+function SummaryTile({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: number;
+  tone: "brand" | "danger" | "gold" | "spruce";
+}) {
   return (
     <div className={cn(dashboardPanelClass, "p-4")}>
-      <p className={cn("text-xs font-medium uppercase tracking-normal", dashboardMutedTextClass)}>{label}</p>
-      <p className="mt-2 text-2xl font-semibold tracking-normal text-[var(--dash-text)]">{value}</p>
+      <p
+        className={cn(
+          "text-xs font-medium uppercase tracking-normal",
+          dashboardMutedTextClass,
+        )}
+      >
+        {label}
+      </p>
+      <p className="mt-2 text-2xl font-semibold tracking-normal text-[var(--dash-text)]">
+        {value}
+      </p>
       <div className="mt-3 h-1 rounded-full bg-[var(--dash-border-subtle)]">
-        <div className={cn("h-1 rounded-full", summaryBarClass(tone))} style={{ width: value > 0 ? "72%" : "18%" }} />
+        <div
+          className={cn("h-1 rounded-full", summaryBarClass(tone))}
+          style={{ width: value > 0 ? "72%" : "18%" }}
+        />
       </div>
     </div>
-  )
+  );
 }
 
-function InfoLine({ icon, label, children }: { icon: React.ReactNode; label: string; children: React.ReactNode }) {
+function InfoLine({
+  icon,
+  label,
+  children,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  children: React.ReactNode;
+}) {
   return (
     <div className="flex min-w-0 items-start gap-2">
-      <span className="mt-0.5 shrink-0 text-[var(--dash-text-faint)]">{icon}</span>
+      <span className="mt-0.5 shrink-0 text-[var(--dash-text-faint)]">
+        {icon}
+      </span>
       <p className="min-w-0">
         <span className="font-medium text-[var(--dash-text)]">{label}: </span>
         <span className="break-words">{children}</span>
       </p>
     </div>
-  )
+  );
 }
 
 function summaryBarClass(tone: "brand" | "danger" | "gold" | "spruce") {
-  if (tone === "danger") return "bg-[var(--dash-danger)]"
-  if (tone === "gold") return "bg-[var(--dash-gold)]"
-  if (tone === "spruce") return "bg-[var(--dash-spruce)]"
-  return "bg-[var(--dash-brand)]"
+  if (tone === "danger") return "bg-[var(--dash-danger)]";
+  if (tone === "gold") return "bg-[var(--dash-gold)]";
+  if (tone === "spruce") return "bg-[var(--dash-spruce)]";
+  return "bg-[var(--dash-brand)]";
 }
 
 function formatDate(value: string, locale: string) {
-  return new Intl.DateTimeFormat(locale, { month: "short", day: "numeric" }).format(new Date(value))
+  return new Intl.DateTimeFormat(locale, {
+    month: "short",
+    day: "numeric",
+  }).format(new Date(value));
 }
 
 function formatDateTime(value: string, locale: string) {
@@ -426,5 +673,5 @@ function formatDateTime(value: string, locale: string) {
     day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
-  }).format(new Date(value))
+  }).format(new Date(value));
 }

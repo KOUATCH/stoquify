@@ -4,9 +4,11 @@ import { revalidatePath } from "next/cache"
 
 import { protect } from "@/services/_shared/protect"
 import {
-  attachPayrollEmployeeEvidenceReferences,
+  attachHrisEmployeeEvidenceReferences,
+  upsertHrisEmployeeProfile,
+} from "@/services/hris/employee.service"
+import {
   getPayrollEmployeeSourceData,
-  upsertPayrollEmployeeSourceProfile,
   type AttachPayrollEmployeeEvidenceInput,
   type PayrollEmployeeProfileInput,
   type PayrollEmployeeSourceDataResult,
@@ -66,7 +68,7 @@ export async function getPayrollEmployeeSourceDataAction(input: unknown = {}) {
   return readEmployeeSourceData(input)
 }
 
-const upsertEmployeeSourceProfile = protect<unknown, Awaited<ReturnType<typeof upsertPayrollEmployeeSourceProfile>>>(
+const upsertEmployeeSourceProfile = protect<unknown, Awaited<ReturnType<typeof upsertHrisEmployeeProfile>>>(
   {
     permission: "payroll.employees.manage",
     auditResource: "PayrollEmployee",
@@ -86,7 +88,7 @@ const upsertEmployeeSourceProfile = protect<unknown, Awaited<ReturnType<typeof u
       actorId: ctx.userId,
       actorPermissions: ctx.permissions,
     } as PayrollEmployeeProfileInput
-    const result = await upsertPayrollEmployeeSourceProfile(payload)
+    const result = await upsertHrisEmployeeProfile(payload)
     revalidatePayrollEmployeePaths()
     return result
   },
@@ -96,7 +98,7 @@ export async function upsertPayrollEmployeeSourceProfileAction(input: unknown) {
   return upsertEmployeeSourceProfile(input)
 }
 
-const attachEmployeeEvidence = protect<unknown, Awaited<ReturnType<typeof attachPayrollEmployeeEvidenceReferences>>>(
+const attachEmployeeEvidence = protect<unknown, Awaited<ReturnType<typeof attachHrisEmployeeEvidenceReferences>>>(
   {
     permission: "payroll.employees.manage",
     auditResource: "PayrollEmployee",
@@ -116,7 +118,7 @@ const attachEmployeeEvidence = protect<unknown, Awaited<ReturnType<typeof attach
       actorId: ctx.userId,
       actorPermissions: ctx.permissions,
     } as AttachPayrollEmployeeEvidenceInput
-    const result = await attachPayrollEmployeeEvidenceReferences(payload)
+    const result = await attachHrisEmployeeEvidenceReferences(payload)
     revalidatePayrollEmployeePaths()
     return result
   },

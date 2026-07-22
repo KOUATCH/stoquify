@@ -159,6 +159,29 @@ describe("HRIS payroll readiness contract", () => {
     );
   });
 
+  it("blocks superficially active contracts without approval and document metadata", () => {
+    const base = readyEmployeeSource();
+    const result = readinessExport({
+      ...base,
+      contract: base.contract
+        ? {
+            ...base.contract,
+            signedDocumentHash: "sha256:present-but-unproven",
+            activatedBusinessEventId: "event-present-but-unproven",
+            metadata: null,
+          }
+        : null,
+    });
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.blockerCodes).toEqual(
+      expect.arrayContaining([
+        "HRIS_PAYROLL_CONTRACT_APPROVAL_PROOF_MISSING",
+        "HRIS_PAYROLL_CONTRACT_DOCUMENT_PROOF_MISSING",
+      ]),
+    );
+  });
+
   it("rejects a tampered readiness export", () => {
     const result = readinessExport();
     const tampered = { ...result, countryCode: "GA" };
@@ -176,6 +199,24 @@ describe("HRIS payroll readiness contract", () => {
       contract: source.contract
         ? { ...source.contract, baseSalary: "120000.00" }
         : null,
+    };
+
+    expect(() =>
+      assertHrisPayrollEmployeeSourceCurrent(result, changedSource),
+    ).toThrow("source proof is stale");
+  });
+
+  it("rejects approved compensation assignment drift after certification", () => {
+    const source = readyEmployeeSource();
+    const result = readinessExport(source);
+    const changedSource = {
+      ...source,
+      compensationAssignments: source.compensationAssignments.map(
+        (assignment) =>
+          assignment.id === "assignment-1"
+            ? { ...assignment, amount: "7500.00" }
+            : assignment,
+      ),
     };
 
     expect(() =>

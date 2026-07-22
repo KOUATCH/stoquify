@@ -9,6 +9,14 @@ jest.mock("@/services/_shared/protect", () => ({
       const data = await handler(input, {
         orgId: "org-session",
         userId: "user-session",
+        roles: [
+          {
+            id: "role-admin",
+            name: "Administrator",
+            code: "admin",
+            permissions: ["dashboard.read"],
+          },
+        ],
         permissions: ["dashboard.read", "payments.reconciliation.read", "inventory.read"],
         isSuperUser: false,
       })
@@ -18,24 +26,25 @@ jest.mock("@/services/_shared/protect", () => ({
   }),
 }))
 
-jest.mock("@/services/manager-action-center/manager-action-center.service", () => ({
-  getManagerActionCenterData: jest.fn(),
+jest.mock("@/services/manager-action-center/manager-action-center-query.service", () => ({
+  getManagerActionCenterQuery: jest.fn(),
 }))
 
 import type { ManagerActionCenterData } from "@/services/manager-action-center/manager-action-center-contracts"
-import { getManagerActionCenterData } from "@/services/manager-action-center/manager-action-center.service"
+import type { ManagerActionCenterQueryResult } from "@/services/manager-action-center/manager-action-center-query-contracts"
+import { getManagerActionCenterQuery } from "@/services/manager-action-center/manager-action-center-query.service"
 
 import { getManagerActionCenterAction } from "../manager-action-center.actions"
 
-const mockGetManagerActionCenterData = getManagerActionCenterData as jest.Mock
+const mockGetManagerActionCenterQuery = getManagerActionCenterQuery as jest.Mock
 
 describe("manager action center actions", () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockGetManagerActionCenterData.mockResolvedValue(managerActionCenterData())
+    mockGetManagerActionCenterQuery.mockResolvedValue(managerActionCenterResult())
   })
 
-  it("derives tenant and actor permissions from the protected context", async () => {
+  it("passes the trusted protected RBAC context to the query boundary", async () => {
     const result = await getManagerActionCenterAction({
       organizationId: "attacker-org",
       periodStart: "2026-06-01",
@@ -43,14 +52,56 @@ describe("manager action center actions", () => {
     })
 
     expect(result.success).toBe(true)
-    expect(mockGetManagerActionCenterData).toHaveBeenCalledWith(
+    expect(mockGetManagerActionCenterQuery).toHaveBeenCalledWith(
       expect.objectContaining({
-        organizationId: "org-session",
-        actorPermissions: ["dashboard.read", "payments.reconciliation.read", "inventory.read"],
+        accessContext: expect.objectContaining({
+          orgId: "org-session",
+          userId: "user-session",
+          roles: [
+            {
+              id: "role-admin",
+              name: "Administrator",
+              code: "admin",
+              permissions: ["dashboard.read"],
+            },
+          ],
+          permissions: ["dashboard.read", "payments.reconciliation.read", "inventory.read"],
+          isSuperUser: false,
+        }),
         periodStart: new Date("2026-06-01T00:00:00.000Z"),
         maxAgeMinutes: 60,
       }),
     )
+  })
+
+  it("returns the unified managed-location result without flattening its bundles", async () => {
+    const locationResult: ManagerActionCenterQueryResult = {
+      kind: "LOCATIONS",
+      organizationId: "org-session",
+      actorId: "user-session",
+      data: {
+        organizationId: "org-session",
+        actorId: "user-session",
+        generatedAt: "2026-06-20T10:00:00.000Z",
+        periodStart: "2026-06-01T00:00:00.000Z",
+        periodEnd: "2026-06-20T23:59:59.999Z",
+        authority: {
+          kind: "LOCATION_RESPONSIBILITY",
+          basis: "Location.managerId",
+        },
+        scope: {
+          kind: "LOCATIONS",
+          locationIds: ["location-1"],
+        },
+        bundles: [],
+      },
+    }
+    mockGetManagerActionCenterQuery.mockResolvedValue(locationResult)
+
+    const result = await getManagerActionCenterAction({})
+
+    expect(result).toEqual({ success: true, data: locationResult, error: null, status: 200 })
+    expect(mockGetManagerActionCenterQuery).toHaveBeenCalledTimes(1)
   })
 
   it("registers the surface behind dashboard.read with audit enabled", async () => {
@@ -76,6 +127,15 @@ describe("manager action center actions", () => {
     )
   })
 })
+
+function managerActionCenterResult(): ManagerActionCenterQueryResult {
+  return {
+    kind: "TENANT",
+    organizationId: "org-session",
+    actorId: "user-session",
+    data: managerActionCenterData(),
+  }
+}
 
 function managerActionCenterData(): ManagerActionCenterData {
   return {

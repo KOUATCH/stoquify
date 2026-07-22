@@ -3,6 +3,7 @@
 import { revalidateTag } from "next/cache"
 import { err, ok } from "@/services/_shared/action-response"
 import { requirePermission } from "@/lib/security/rbac"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import { closePOSShift, getActivePOSSession, openPOSShift } from "@/services/pos/pos.service"
 import { activePOSSessionSchema, closeShiftSchema, openShiftSchema } from "@/services/pos/pos.schemas"
 
@@ -42,12 +43,23 @@ export async function openPOSShiftAction(input: unknown) {
 export async function closePOSShiftAction(input: unknown) {
   try {
     const parsed = closeShiftSchema.parse(input)
-    const { orgId, userId } = await requirePermission("pos.session.end", {
+    const ctx = await requirePermission("pos.session.end", {
       resource: "POSSession",
       resourceId: parsed.sessionId,
       auditAllowed: true,
     })
-    const result = await closePOSShift({ ...parsed, organizationId: orgId, userId })
+    await observeModuleAccess({
+      organizationId: ctx.orgId,
+      userId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      moduleSlug: "pos",
+      surfaceType: "action",
+      surface: "actions/pos/session.actions.ts:closePOSShiftAction",
+      accessIntent: "write",
+      mode: "observe",
+      audit: true,
+    })
+    const result = await closePOSShift({ ...parsed, organizationId: ctx.orgId, userId: ctx.userId })
 
     revalidateTag("pos-sessions")
     revalidateTag(`pos-terminal-${result.terminalId}`)

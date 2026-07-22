@@ -15,6 +15,9 @@ const mockGetCompatibilityScope = getPayrollOrgManagerScopedEmployees as jest.Mo
 function client() {
   return {
     auditLog: { create: jest.fn().mockResolvedValue({ id: "audit-1" }) },
+    payrollEmployee: { findFirst: jest.fn().mockResolvedValue(null) },
+    hrisReportingRelationship: { findMany: jest.fn().mockResolvedValue([]) },
+    hrisManagerDelegation: { findMany: jest.fn().mockResolvedValue([]) },
   }
 }
 
@@ -85,7 +88,7 @@ describe("HRIS organization and people access scope", () => {
     }, scopedClient)
     expect(result).toMatchObject({
       authority: {
-        kind: "LOCATION_RESPONSIBILITY",
+        kind: "LOCATION_RESPONSIBILITY_COMPATIBILITY",
         basis: "Location.managerId",
         reportingLineAuthority: false,
         effectiveDating: "CURRENT_ONLY",
@@ -123,7 +126,7 @@ describe("HRIS organization and people access scope", () => {
 
     expect(scopedClient.auditLog.create).toHaveBeenCalledWith(expect.objectContaining({
       data: expect.objectContaining({
-        action: "HRIS_LOCATION_RESPONSIBILITY_SCOPE_DENIED",
+        action: "HRIS_CROSS_TENANT_SCOPE_DENIED",
         entityId: "emp-other-tenant",
         organizationId: "org-1",
       }),

@@ -1,0 +1,101 @@
+{
+  "schemaVersion": "1.0",
+  "traceId": "72f71709-b8e7-4e91-b1d6-09dc3d3d1447",
+  "runId": "th-ap-supplier-history-readmodel-implementation-20260717-027",
+  "sliceId": "ap-ar",
+  "stageId": "03",
+  "skillName": "stoquify-transaction-history-03-accounting-control-gate",
+  "agentType": "Bookkeeper & Controller",
+  "mode": "implement",
+  "status": "PASS",
+  "activeLanes": [
+    "ap"
+  ],
+  "blockedLanes": [],
+  "inputArtifacts": [
+    {
+      "path": "what-next/transaction-history/runs/th-ap-supplier-history-security-accounting-20260717-026/slices/ap-ar/01-architecture-gate.json",
+      "sha256": "sha256:e3b90cd1e75d27a46b3c277aed216cd44a23f8fede2437144c4a0353a636fc70"
+    }
+  ],
+  "inputFingerprint": "sha256:0628f08178fe0441fe22ccbd1a6b429c2bb07b2ea5d278e6dcb799ab117c6979",
+  "allowedEdits": [
+    "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/03-accounting-control-gate.md",
+    "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/03-accounting-control-gate.json"
+  ],
+  "observedEdits": [
+    "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/03-accounting-control-gate.md",
+    "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/03-accounting-control-gate.json"
+  ],
+  "repository": {
+    "headBefore": "a27cb0328e044304590cecf20c47832df5e834d5",
+    "headAfter": "a27cb0328e044304590cecf20c47832df5e834d5",
+    "dirtyFilesBefore": [
+      "WORKTREE_DIRTY_SEE_TRANSACTION_HISTORY_RUNS"
+    ],
+    "dirtyFilesAfter": [
+      "services/purchasing/ap-history.schemas.ts",
+      "services/purchasing/ap-history.service.ts",
+      "actions/purchasing/ap-history.actions.ts",
+      "services/purchasing/__tests__/ap-history.service.test.ts"
+    ]
+  },
+  "claims": [
+    {
+      "id": "AP_HISTORY_SIGNED_PAYABLE_MOVEMENT",
+      "result": "PASS",
+      "evidence": [
+        "services/purchasing/ap-history.service.ts",
+        "services/purchasing/__tests__/ap-history.service.test.ts"
+      ]
+    },
+    {
+      "id": "AP_HISTORY_EFFECTIVE_RECORDED_ORDERING",
+      "result": "PASS",
+      "evidence": [
+        "services/purchasing/ap-history.service.ts"
+      ]
+    },
+    {
+      "id": "AP_HISTORY_OPERATIONAL_POSTED_GRADE",
+      "result": "PASS",
+      "evidence": [
+        "services/purchasing/ap-history.service.ts"
+      ]
+    },
+    {
+      "id": "AR_ACCOUNTING_EXCLUDED",
+      "result": "NA",
+      "evidence": [
+        "what-next/transaction-history/runs/th-ap-ar-architecture-20260717-025/slices/ap-ar/01-architecture-gate.md"
+      ]
+    }
+  ],
+  "verification": [
+    {
+      "command": "npm test -- services/purchasing/__tests__/ap-history.service.test.ts --runInBand",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": null
+    },
+    {
+      "command": "npx eslint services/purchasing/ap-history.schemas.ts services/purchasing/ap-history.service.ts actions/purchasing/ap-history.actions.ts services/purchasing/__tests__/ap-history.service.test.ts",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": null
+    }
+  ],
+  "outputs": [],
+  "blockers": [
+    {
+      "severity": "medium",
+      "code": "RELEASE_GRADE_BROWSER_AND_FULL_TYPECHECK_PENDING",
+      "reason": "Full browser role matrix, authenticated accessibility checks, export-generation parity, and full repo typecheck remain Stage 07 release work."
+    }
+  ],
+  "nextEligibleStages": [
+    "04"
+  ],
+  "startedAt": "2026-07-17T06:48:08.9200590+01:00",
+  "completedAt": "2026-07-17T06:48:08.9200590+01:00"
+}

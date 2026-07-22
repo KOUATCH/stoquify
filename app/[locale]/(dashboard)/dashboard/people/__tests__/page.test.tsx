@@ -137,8 +137,8 @@ function directoryResult() {
     accessScope: {
       organizationId: "org-1",
       authority: {
-        kind: "LOCATION_RESPONSIBILITY",
-        label: "Managed-location responsibility",
+        kind: "LOCATION_RESPONSIBILITY_COMPATIBILITY",
+        label: "Managed-location responsibility (compatibility)",
         basis: "Location.managerId",
         reportingLineAuthority: false,
         effectiveDating: "CURRENT_ONLY",
@@ -177,7 +177,7 @@ describe("PeopleWorkspacePage", () => {
     })
     expect(screen.getByRole("heading", { name: "Employee directory" })).toBeInTheDocument()
     expect(screen.getByText("Alice Ngono")).toBeInTheDocument()
-    expect(screen.getByText("Managed-location responsibility")).toBeInTheDocument()
+    expect(screen.getByText("Managed-location responsibility (compatibility)")).toBeInTheDocument()
     expect(screen.getByText(/not direct-report authority/i)).toBeInTheDocument()
     expect(screen.getByRole("link", { name: "Open Alice Ngono profile" })).toHaveAttribute(
       "href",

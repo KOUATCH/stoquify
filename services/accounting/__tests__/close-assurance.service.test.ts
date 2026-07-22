@@ -66,10 +66,15 @@ jest.mock("@/services/snapshots/tenant-operating-snapshot.service", () => ({
   getTenantOperatingSnapshot: jest.fn(),
 }))
 
+jest.mock("@/services/events/business-event.service", () => ({
+  recordBusinessEventInTx: jest.fn(),
+}))
+
 import { db } from "@/prisma/db"
 import { getAccountantPortalData } from "../data-trust.service"
 import { reconcileInventoryClass3 } from "@/services/inventory/inventory-valuation.service"
 import { getTenantOperatingSnapshot } from "@/services/snapshots/tenant-operating-snapshot.service"
+import { recordBusinessEventInTx } from "@/services/events/business-event.service"
 import {
   getPeriodClosePreflight,
   getPeriodClosePreflightFailures,
@@ -81,6 +86,8 @@ import {
   assignCloseFinding,
   commentOnCloseFinding,
   getCloseAssuranceDashboard,
+  getCloseEvidenceGraph,
+  requestCloseWaiver,
   runCloseAssurance,
 } from "../close-assurance.service"
 
@@ -127,6 +134,7 @@ const mockGetPaymentReconciliationDashboardData =
   getPaymentReconciliationDashboardData as jest.Mock
 const mockReconcileInventoryClass3 = reconcileInventoryClass3 as jest.Mock
 const mockGetTenantOperatingSnapshot = getTenantOperatingSnapshot as jest.Mock
+const mockRecordBusinessEventInTx = recordBusinessEventInTx as jest.Mock
 
 const period = {
   id: "period-1",
@@ -476,14 +484,16 @@ function seedCleanSources() {
   mockDb.accountingPeriod.findFirst.mockResolvedValue(period)
   mockDb.accountingPeriod.findMany.mockResolvedValue([period])
   mockDb.closeRun.findFirst.mockResolvedValue(null)
-  mockDb.closeRun.create.mockResolvedValue({
-    id: "close-run-1",
-    periodId: period.id,
-    status: "READY",
-    readinessScore: 88,
-    criticalBlockerCount: 0,
-    highBlockerCount: 0,
-  })
+  mockDb.closeRun.create.mockImplementation(({ data }) =>
+    Promise.resolve({
+      id: "close-run-1",
+      periodId: data.periodId,
+      status: data.status,
+      readinessScore: data.readinessScore,
+      criticalBlockerCount: data.criticalBlockerCount,
+      highBlockerCount: data.highBlockerCount,
+    }),
+  )
   mockDb.closeChecklistItem.create.mockImplementation(({ data }) =>
     Promise.resolve({
       id: `check-${data.key}`,
@@ -500,6 +510,10 @@ function seedCleanSources() {
   mockDb.closeEvidenceItem.create.mockResolvedValue({ id: "evidence-created" })
   mockDb.ledgerAuditEvent.create.mockResolvedValue({
     id: "ledger-audit-created",
+  })
+  mockRecordBusinessEventInTx.mockResolvedValue({
+    event: { id: "business-event-1" },
+    created: true,
   })
   mockGetPeriodClosePreflight.mockResolvedValue(cleanPreflight())
   mockGetPeriodClosePreflightFailures.mockReturnValue([])
@@ -865,5 +879,306 @@ describe("close assurance service", () => {
         { actorId: "user-1" },
       ),
     ).rejects.toThrow(/requester cannot approve/i)
+  })
+  it("blocks draft journals and failed posting batches from period preflight", async () => {
+    mockGetPeriodClosePreflight.mockResolvedValue({
+      ...cleanPreflight(),
+      draftEntryCount: 1,
+      unresolvedPostingBatchCount: 1,
+    })
+    mockGetPeriodClosePreflightFailures.mockReturnValue([
+      "1 draft journal entry must be posted or voided",
+      "1 pending or failed posting batch must be resolved",
+    ])
+
+    const result = await getCloseAssuranceDashboard("org-1", period.id)
+
+    expect(result.run.status).toBe("BLOCKED")
+    expect(result.checklist).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          key: "period-close-preflight",
+          status: "FAILED",
+          severity: "CRITICAL",
+        }),
+      ]),
+    )
+    expect(result.findings).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          title: "Draft journal entries remain open",
+          severity: "HIGH",
+        }),
+        expect.objectContaining({
+          title: "Pending or failed posting batches remain unresolved",
+          severity: "CRITICAL",
+        }),
+      ]),
+    )
+  })
+
+  it("blocks unbalanced ledger reconciliation as a critical close finding", async () => {
+    mockReconcileLedger.mockResolvedValue({
+      ...cleanLedger(),
+      isClean: false,
+      totalsByCurrency: [
+        {
+          currency: "XAF",
+          debit: "120000.00",
+          credit: "119000.00",
+          difference: "1000.00",
+        },
+      ],
+      failures: [
+        {
+          type: "TRIAL_BALANCE_OUT_OF_BALANCE",
+          severity: "critical",
+          message:
+            "Trial balance is not balanced for XAF: debit 120000.00 credit 119000.00",
+          metadata: { currency: "XAF" },
+        },
+      ],
+    })
+
+    const result = await getCloseAssuranceDashboard("org-1", period.id)
+
+    expect(result.run.status).toBe("BLOCKED")
+    expect(result.checklist).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          key: "ledger-reconciliation",
+          status: "FAILED",
+          severity: "CRITICAL",
+        }),
+      ]),
+    )
+    expect(result.findings).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          sourceType: "TRIAL_BALANCE_OUT_OF_BALANCE",
+          severity: "CRITICAL",
+        }),
+      ]),
+    )
+  })
+
+  it("marks missing domain evidence unavailable without leaking dependency internals", async () => {
+    mockReconcileLedger.mockRejectedValue(new Error("database://ledger-secret host failed"))
+    mockGetPaymentReconciliationDashboardData.mockRejectedValue(
+      new Error("redis://payment-secret timeout"),
+    )
+    mockGetAccountantPortalData.mockRejectedValue(new Error("sql://trust-secret failed"))
+    mockReconcileInventoryClass3.mockRejectedValue(new Error("inventory-secret failed"))
+    mockGetTenantOperatingSnapshot.mockRejectedValue(new Error("payroll-secret failed"))
+
+    const result = await getCloseAssuranceDashboard("org-1", period.id)
+    const serialized = JSON.stringify(result)
+
+    expect(result.run.status).toBe("BLOCKED")
+    expect(result.checklist).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ key: "ledger-reconciliation", status: "UNAVAILABLE" }),
+        expect.objectContaining({ key: "payment-reconciliation", status: "UNAVAILABLE" }),
+        expect.objectContaining({ key: "data-trust-provenance", status: "UNAVAILABLE" }),
+        expect.objectContaining({ key: "inventory-valuation", status: "UNAVAILABLE" }),
+        expect.objectContaining({ key: "payroll-finance-forecast-proof", status: "UNAVAILABLE" }),
+      ]),
+    )
+    expect(result.evidenceItems).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ sourceType: "LedgerReconciliation", available: false }),
+        expect.objectContaining({ sourceType: "PaymentReconciliationDashboard", available: false }),
+        expect.objectContaining({ sourceType: "AccountantPortalDataTrust", available: false }),
+      ]),
+    )
+    expect(serialized).toContain("Ledger reconciliation evidence could not be loaded.")
+    expect(serialized).not.toContain("ledger-secret")
+    expect(serialized).not.toContain("payment-secret")
+    expect(serialized).not.toContain("trust-secret")
+    expect(serialized).not.toContain("inventory-secret")
+    expect(serialized).not.toContain("payroll-secret")
+  })
+
+  it("denies cross-tenant period access by resolving periods inside organization scope", async () => {
+    mockDb.accountingPeriod.findFirst.mockResolvedValueOnce(null)
+
+    await expect(
+      getCloseAssuranceDashboard("org-1", "period-from-other-org"),
+    ).rejects.toThrow(/Accounting period not found/i)
+  })
+
+  it("emits durable notification events for blocked close runs and critical findings", async () => {
+    mockGetPeriodClosePreflight.mockResolvedValue({
+      ...cleanPreflight(),
+      unresolvedPostingBatchCount: 1,
+    })
+    mockGetPeriodClosePreflightFailures.mockReturnValue([
+      "1 pending or failed posting batch must be resolved",
+    ])
+    mockDb.closeRun.findFirst.mockResolvedValue(
+      persistedRun({
+        status: "BLOCKED",
+        criticalBlockerCount: 1,
+        highBlockerCount: 0,
+      }),
+    )
+
+    await runCloseAssurance(
+      "org-1",
+      { periodId: period.id, correlationId: "corr-blocked" },
+      { actorId: "controller-1" },
+    )
+
+    expect(mockRecordBusinessEventInTx).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        eventType: "close.assurance.run.completed",
+        idempotencyKey: "close-assurance-run:close-run-1:completed",
+        sourceType: "MANUAL",
+        sourceId: "close-run-1",
+        metadata: expect.objectContaining({
+          sourceType: "CloseRun",
+          sourceId: "close-run-1",
+        }),
+        outboxMessages: expect.arrayContaining([
+          expect.objectContaining({ channel: "NOTIFICATION" }),
+        ]),
+      }),
+    )
+    expect(mockRecordBusinessEventInTx).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        eventType: "close.assurance.blocked",
+      }),
+    )
+    expect(mockRecordBusinessEventInTx).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        eventType: "close.assurance.critical_finding.created",
+        sourceType: "MANUAL",
+        metadata: expect.objectContaining({
+          sourceType: "CloseAssuranceFinding",
+        }),
+      }),
+    )
+  })
+
+  it("emits assignment and due-soon notifications for close findings", async () => {
+    const dueAt = new Date(Date.now() + 60 * 60 * 1000)
+    mockDb.closeAssuranceFinding.findFirst.mockResolvedValue({
+      id: "finding-1",
+      organizationId: "org-1",
+      periodId: period.id,
+      closeRunId: "close-run-1",
+      status: "OPEN",
+      closeRun: { id: "close-run-1" },
+    })
+    mockDb.closeAssuranceFinding.update.mockResolvedValue({
+      id: "finding-1",
+      checklistItemId: "check-1",
+      domain: "LEDGER",
+      severity: "HIGH",
+      status: "ASSIGNED",
+      title: "Draft entries remain open",
+      detail: "1 blocker detected.",
+      sourceService: "services/accounting/periods.service.ts",
+      sourceType: "AccountingPeriodClosePreflight",
+      sourceId: null,
+      ownerId: "user-2",
+      assignedById: "user-1",
+      assignedAt: new Date("2026-06-15T12:00:00.000Z"),
+      dueAt,
+      waiverRequestedById: null,
+      waiverApprovedById: null,
+      correlationId: "corr-assign",
+    })
+
+    await assignCloseFinding(
+      "org-1",
+      { findingId: "finding-1", assignedToId: "user-2", correlationId: "corr-assign" },
+      { actorId: "user-1" },
+    )
+
+    expect(mockRecordBusinessEventInTx).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ eventType: "close.assurance.finding.assigned" }),
+    )
+    expect(mockRecordBusinessEventInTx).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ eventType: "close.assurance.finding.due_soon" }),
+    )
+  })
+
+  it("emits waiver request notifications with reason evidence", async () => {
+    mockDb.closeAssuranceFinding.findFirst.mockResolvedValue({
+      id: "finding-1",
+      organizationId: "org-1",
+      periodId: period.id,
+      closeRunId: "close-run-1",
+      status: "OPEN",
+      severity: "HIGH",
+      ownerId: "controller-1",
+      dueAt: null,
+      closeRun: { id: "close-run-1" },
+    })
+    mockDb.closeAssuranceFinding.update.mockResolvedValue({
+      id: "finding-1",
+      checklistItemId: "check-1",
+      domain: "LEDGER",
+      severity: "HIGH",
+      status: "IN_REVIEW",
+      title: "Draft entries remain open",
+      detail: "Waiver requested.",
+      sourceService: "services/accounting/periods.service.ts",
+      sourceType: "AccountingPeriodClosePreflight",
+      sourceId: null,
+      ownerId: "controller-1",
+      assignedById: null,
+      assignedAt: null,
+      dueAt: null,
+      waiverRequestedById: "user-1",
+      waiverApprovedById: null,
+      correlationId: "corr-waiver",
+    })
+
+    await requestCloseWaiver(
+      "org-1",
+      {
+        findingId: "finding-1",
+        reason: "Documented management approval for a timing-only close exception.",
+        correlationId: "corr-waiver",
+      },
+      { actorId: "user-1" },
+    )
+
+    expect(mockRecordBusinessEventInTx).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        eventType: "close.assurance.waiver.requested",
+        payload: expect.objectContaining({
+          reason: "Documented management approval for a timing-only close exception.",
+        }),
+      }),
+    )
+  })
+
+  it("maps source-link evidence into posting batch and journal entry graph nodes", async () => {
+    const graph = await getCloseEvidenceGraph("org-1", { periodId: period.id })
+
+    expect(graph.nodes).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: "posting-batch:batch-1" }),
+        expect.objectContaining({ id: "journal-entry:JE-1" }),
+      ]),
+    )
+    expect(graph.edges).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          from: "posting-batch:batch-1",
+          to: "journal-entry:JE-1",
+          label: "produces",
+        }),
+      ]),
+    )
   })
 })

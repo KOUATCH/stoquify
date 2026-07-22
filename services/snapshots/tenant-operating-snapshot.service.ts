@@ -114,6 +114,10 @@ export async function getTenantOperatingSnapshot(
   input: SnapshotScopeInput,
 ): Promise<SnapshotResult<TenantOperatingMetrics>> {
   const scope = normalizeSnapshotScope(input)
+  if (scope.locationId) {
+    return buildLocationScopeUnsupportedSnapshot(scope)
+  }
+
   const [paymentTruth, inventoryCash, closeReadiness] = await Promise.all([
     getPaymentTruthSnapshot(scope),
     getInventoryCashSnapshot(scope),
@@ -136,9 +140,146 @@ export async function getTenantOperatingSnapshotFromRelated(
     closeReadiness: SnapshotResult<CloseReadinessMetrics>
   },
 ): Promise<SnapshotResult<TenantOperatingMetrics>> {
+  const scope = normalizeSnapshotScope(input)
+  if (scope.locationId) {
+    return buildLocationScopeUnsupportedSnapshot(scope)
+  }
+
   return buildTenantOperatingSnapshot({
-    scope: normalizeSnapshotScope(input),
+    scope,
     ...related,
+  })
+}
+
+function buildLocationScopeUnsupportedSnapshot(
+  scope: NormalizedSnapshotScope,
+): SnapshotResult<TenantOperatingMetrics> {
+  const reasonCode = "TENANT_OPERATING_LOCATION_SCOPE_UNSUPPORTED"
+
+  return buildSnapshotResult({
+    kind: "tenant.operating",
+    scope,
+    status: "blocked",
+    evidenceGrade: "blocked",
+    sourceModules: [
+      "dashboard",
+      "sales",
+      "payments",
+      "inventory",
+      "purchasing",
+      "hris",
+      "payroll",
+      "accounting",
+      "close",
+      "compliance",
+    ],
+    metrics: {
+      activeLocationCount: 0,
+      completedSalesCount: 0,
+      completedSalesRevenue: 0,
+      cashCollected: 0,
+      pendingPurchaseOrderCount: 0,
+      approvedOrPaidPayrollRunCount: 0,
+      activeEmployeeBalanceCaseCount: 0,
+      openEmployeeBalanceCaseCount: 0,
+      partiallySettledEmployeeBalanceCaseCount: 0,
+      employeeBalanceOutstandingAmount: 0,
+      periodEmployeeBalanceSettlementCount: 0,
+      periodEmployeeBalanceSettlementAmount: 0,
+      postedJournalEntryCount: 0,
+      sourceLinkCount: 0,
+      payrollFinanceForecast: {
+        status: "NON_AUTHORITATIVE",
+        authoritative: false,
+        reasonCode,
+        message:
+          "Tenant operating truth is not available for a location-scoped request.",
+        horizonStart: scope.periodStart.toISOString(),
+        horizonEnd: scope.periodEnd.toISOString(),
+        upcomingNetPayAmount: 0,
+        upcomingStatutoryLiabilityAmount: 0,
+        totalUpcomingAmount: 0,
+        payrollPeriodCount: 0,
+        payrollRunCount: 0,
+        paymentBatchCount: 0,
+        declarationCount: 0,
+        sourceLinkCount: 0,
+        evidenceHashCount: 0,
+        certifiedInputRunCount: 0,
+        certifiedInputProofHashCount: 0,
+        registerToLedgerRunCount: 0,
+        nextPayDate: null,
+        nextDeclarationDueDate: null,
+        personLevelAmountsRedacted: true,
+        blockerCodes: [reasonCode],
+      },
+      paymentTruth: {
+        providerAccountCount: 0,
+        activeProviderAccountCount: 0,
+        recentRunCount: 0,
+        readyForSignoffCount: 0,
+        signedRunCount: 0,
+        openExceptionCount: 0,
+        criticalExceptionCount: 0,
+        openSuspenseCount: 0,
+        openSuspenseAmount: 0,
+        pendingTransactionCount: 0,
+      },
+      inventoryCash: {
+        trackedItemCount: 0,
+        inventoryLevelCount: 0,
+        quantityOnHand: 0,
+        quantityAvailable: 0,
+        quantityReserved: 0,
+        quantityInTransit: 0,
+        quantityOnOrder: 0,
+        inventoryValue: 0,
+        zeroStockLevelCount: 0,
+        negativeStockLevelCount: 0,
+        periodTransactionCount: 0,
+        periodAdjustmentCount: 0,
+        periodTransferCount: 0,
+      },
+      closeReadiness: {
+        accountingPeriodCount: 0,
+        openPeriodCount: 0,
+        recentCloseRunCount: 0,
+        certifiedCloseRunCount: 0,
+        blockedCloseRunCount: 0,
+        averageReadinessScore: null,
+        openFindingCount: 0,
+        criticalOpenFindingCount: 0,
+        unavailableEvidenceCount: 0,
+      },
+    },
+    blockers: [
+      blocker({
+        id: "tenant-operating-location-scope-unsupported",
+        severity: "high",
+        gate: "tenant_operating_scope",
+        title: "Location-scoped tenant operating truth is unavailable",
+        detail:
+          "Tenant operating sources cannot yet prove a complete location allocation, so no tenant-wide values are returned for this location.",
+        sourceTables: [
+          "locations",
+          "sales_orders",
+          "payments",
+          "purchase_orders",
+          "payroll_runs",
+          "journal_entries",
+          "accounting_source_links",
+          "workflow_assurance_incidents",
+        ],
+        nextAction:
+          "Use branch operating truth until every tenant operating source supports location allocation.",
+      }),
+    ],
+    redactions: [],
+    sourceMaxUpdatedAt: null,
+    sourceHashParts: {
+      scopeSupport: "TENANT_ONLY",
+      reasonCode,
+    },
   })
 }
 

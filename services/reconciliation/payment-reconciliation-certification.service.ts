@@ -13,7 +13,12 @@ import { createHash, randomUUID } from "node:crypto"
 
 import { db } from "@/prisma/db"
 import { recordCloseCertificationInvalidationsForSourceInTx } from "@/services/accounting/close-assurance-pack.service"
-import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
+import {
+  ApplicationError,
+  BusinessRuleError,
+  ForbiddenError,
+  NotFoundError,
+} from "@/services/_shared/action-errors"
 import {
   assertSensitiveActionAllowed,
   auditSensitiveActionDecision,
@@ -26,6 +31,10 @@ import {
   buildReconciliationEvidenceManifestInTx,
   reconciliationCertificateSourceEvidenceHash,
 } from "./payment-reconciliation-evidence.service"
+import {
+  buildPaymentReconciliationSignOffSourceVersionHash,
+  isPaymentReconciliationSourceVersionHash,
+} from "./payment-reconciliation-sign-off-source-version"
 type ControlContext = {
   actorPermissions: readonly string[]
   lastAuthAt?: Date | number | string | null
@@ -43,6 +52,7 @@ export type SignReconciliationRunInput = {
   organizationId: string
   runId: string
   signedById: string
+  expectedSourceVersionHash?: string
   control: ControlContext
   correlationId?: string
 }
@@ -50,7 +60,11 @@ export type SignReconciliationRunInput = {
 export type SignReconciliationRunResult = {
   runId: string
   status: ReconciliationRunStatus
+  outcome: "SIGNED" | "ALREADY_SIGNED"
+  replayed: boolean
+  completedByAnotherActor: boolean
   certificateHash: string
+  sourceVersionHash: string | null
   signedAt: string
   correlationId: string
 }
@@ -418,255 +432,357 @@ export async function getReconciliationRunDetail(
   }
 }
 
-export async function signReconciliationRun(input: SignReconciliationRunInput): Promise<SignReconciliationRunResult> {
-  const correlationId = input.correlationId ?? randomUUID()
-  const now = input.control.now ? new Date(input.control.now) : new Date()
+export async function signReconciliationRun(
+  input: SignReconciliationRunInput,
+): Promise<SignReconciliationRunResult> {
+  const normalized = normalizeSignInput(input)
+  let result: ControlledResult<SignReconciliationRunResult>
 
-  const result = await db.$transaction(async (tx): Promise<ControlledResult<SignReconciliationRunResult>> => {
-    const run = await loadRunForCertification(tx, input.organizationId, input.runId, now)
+  try {
+    result = await db.$transaction(
+      async (tx): Promise<ControlledResult<SignReconciliationRunResult>> => {
+        const run = await loadRunForCertification(
+          tx,
+          normalized.organizationId,
+          normalized.runId,
+          normalized.now,
+        )
 
-    const decision = evaluateSensitiveAction({
-      action: "payment.reconciliation.sign",
-      actorId: input.signedById,
-      organizationId: input.organizationId,
-      actorPermissions: input.control.actorPermissions,
-      resourceType: "ReconciliationRun",
-      resourceId: run.id,
-      subjectActorId: run.runById,
-      lastAuthAt: input.control.lastAuthAt,
-      now,
-      metadata: {
-        providerAccountId: run.providerAccountId,
-        businessDate: run.businessDate.toISOString(),
-        status: run.status,
-      },
-    })
-    await auditSensitiveActionDecision(tx, decision)
-    if (!decision.allowed) return { denied: decision }
+        const decision = evaluateSensitiveAction({
+          action: "payment.reconciliation.sign",
+          actorId: normalized.signedById,
+          organizationId: normalized.organizationId,
+          actorPermissions: normalized.actorPermissions,
+          resourceType: "ReconciliationRun",
+          resourceId: run.id,
+          subjectActorId: run.runById,
+          lastAuthAt: normalized.lastAuthAt,
+          now: normalized.now,
+          metadata: {
+            providerAccountId: run.providerAccountId,
+            businessDate: run.businessDate.toISOString(),
+            status: run.status,
+          },
+        })
+        if (!decision.allowed) {
+          await auditSensitiveActionDecision(tx, decision)
+          return { denied: decision }
+        }
 
-    if (run.status !== ReconciliationRunStatus.READY_FOR_SIGNOFF) {
-      throw new BusinessRuleError("Only reconciliation runs ready for sign-off can be signed.")
-    }
+        if (run.status === ReconciliationRunStatus.SIGNED) {
+          return {
+            value: signedRunResult(run, normalized, {
+              created: false,
+              committedSourceVersionHash: null,
+            }),
+          }
+        }
+        if (run.status !== ReconciliationRunStatus.READY_FOR_SIGNOFF) {
+          throw new BusinessRuleError(
+            "Only reconciliation runs ready for sign-off can be signed.",
+          )
+        }
+        if (run.signedAt || run.signedById || run.certificateHash) {
+          throw inconsistentSignedEvidence()
+        }
+        if (!run.runById?.trim()) {
+          throw new BusinessRuleError(
+            "A reconciliation maker is required before sign-off.",
+          )
+        }
 
-    if (run.signedAt || run.signedById || run.certificateHash) {
-      throw new BusinessRuleError("Reconciliation run is already signed.")
-    }
-    assertProviderAccountReconciliationReady({
-      ...run.providerAccount,
-      paymentRail: run.paymentRail,
-    })
+        assertProviderAccountReconciliationReady({
+          ...run.providerAccount,
+          paymentRail: run.paymentRail,
+        })
 
-    const period = run.accountingPeriod ?? (await resolveOpenAccountingPeriod(tx, input.organizationId, run.businessDate))
-    if (!period || period.status !== AccountingPeriodStatus.OPEN) {
-      throw new BusinessRuleError("An open accounting period is required before reconciliation sign-off.")
-    }
+        const sourceVersionHash = sourceVersionHashForRun(run)
+        if (
+          normalized.expectedSourceVersionHash &&
+          normalized.expectedSourceVersionHash !== sourceVersionHash
+        ) {
+          throw new BusinessRuleError(
+            "Reconciliation source evidence changed; refresh before signing.",
+          )
+        }
 
-    const [providerEventCount, statementLineCount, openExceptionCount, openSuspenseCount, suspenseWithoutLedgerCount] = await Promise.all([
-      tx.providerEvent.count({
-        where: {
-          organizationId: input.organizationId,
+        const period =
+          run.accountingPeriod ??
+          (await resolveOpenAccountingPeriod(
+            tx,
+            normalized.organizationId,
+            run.businessDate,
+          ))
+        if (!period || period.status !== AccountingPeriodStatus.OPEN) {
+          throw new BusinessRuleError(
+            "An open accounting period is required before reconciliation sign-off.",
+          )
+        }
+
+        const [
+          providerEventCount,
+          statementLineCount,
+          openExceptionCount,
+          openSuspenseCount,
+          suspenseWithoutLedgerCount,
+        ] = await Promise.all([
+          tx.providerEvent.count({
+            where: {
+              organizationId: normalized.organizationId,
+              providerAccountId: run.providerAccountId,
+              status: {
+                in: [
+                  ProviderEventStatus.VERIFIED,
+                  ProviderEventStatus.PROCESSED,
+                ],
+              },
+              receivedAt: { gte: run.periodStart, lt: run.periodEnd },
+            },
+          }),
+          tx.statementLine.count({
+            where: {
+              organizationId: normalized.organizationId,
+              providerAccountId: run.providerAccountId,
+              occurredAt: { gte: run.periodStart, lt: run.periodEnd },
+            },
+          }),
+          tx.paymentException.count({
+            where: {
+              organizationId: normalized.organizationId,
+              reconciliationRunId: run.id,
+              status: { in: openExceptionStatuses() },
+            },
+          }),
+          tx.suspenseItem.count({
+            where: {
+              organizationId: normalized.organizationId,
+              reconciliationRunId: run.id,
+              status: { in: openSuspenseStatuses() },
+            },
+          }),
+          tx.suspenseItem.count({
+            where: {
+              organizationId: normalized.organizationId,
+              reconciliationRunId: run.id,
+              status: SuspenseStatus.POSTED_TO_SUSPENSE,
+              ledgerPostingBatchId: null,
+            },
+          }),
+        ])
+
+        if (providerEventCount + statementLineCount === 0) {
+          throw new BusinessRuleError(
+            "Provider events or statement lines are required before reconciliation sign-off.",
+          )
+        }
+        if (openExceptionCount > 0) {
+          throw new BusinessRuleError(
+            "Open reconciliation exceptions must be resolved before sign-off.",
+          )
+        }
+        if (openSuspenseCount > 0) {
+          throw new BusinessRuleError(
+            "Open suspense items must be resolved before sign-off.",
+          )
+        }
+        if (suspenseWithoutLedgerCount > 0) {
+          throw new BusinessRuleError(
+            "Posted suspense items must include a ledger posting batch before sign-off.",
+          )
+        }
+
+        const sourceEvidence = await buildReconciliationEvidenceManifestInTx(
+          tx,
+          {
+            organizationId: normalized.organizationId,
+            providerAccountId: run.providerAccountId,
+            reconciliationRunId: run.id,
+            periodStart: run.periodStart,
+            periodEnd: run.periodEnd,
+          },
+        )
+        if (
+          sourceEvidence.counts.providerEventCount !== providerEventCount ||
+          sourceEvidence.counts.statementLineCount !== statementLineCount
+        ) {
+          throw new BusinessRuleError(
+            "Reconciliation source evidence changed during sign-off; rerun reconciliation.",
+          )
+        }
+
+        const certificatePayload = {
+          version: 2,
+          mode: "DURABLE_EVIDENCE_KERNEL",
+          organizationId: normalized.organizationId,
+          runId: run.id,
           providerAccountId: run.providerAccountId,
-          status: { in: [ProviderEventStatus.VERIFIED, ProviderEventStatus.PROCESSED] },
-          receivedAt: { gte: run.periodStart, lt: run.periodEnd },
-        },
-      }),
-      tx.statementLine.count({
-        where: {
-          organizationId: input.organizationId,
-          providerAccountId: run.providerAccountId,
-          occurredAt: { gte: run.periodStart, lt: run.periodEnd },
-        },
-      }),
-      tx.paymentException.count({
-        where: {
-          organizationId: input.organizationId,
-          reconciliationRunId: run.id,
-          status: { in: openExceptionStatuses() },
-        },
-      }),
-      tx.suspenseItem.count({
-        where: {
-          organizationId: input.organizationId,
-          reconciliationRunId: run.id,
-          status: { in: openSuspenseStatuses() },
-        },
-      }),
-      tx.suspenseItem.count({
-        where: {
-          organizationId: input.organizationId,
-          reconciliationRunId: run.id,
-          status: SuspenseStatus.POSTED_TO_SUSPENSE,
-          ledgerPostingBatchId: null,
-        },
-      }),
-    ])
+          paymentRailId: run.paymentRailId,
+          providerCode: run.providerAccount.providerCode,
+          businessDate: run.businessDate.toISOString(),
+          periodStart: run.periodStart.toISOString(),
+          periodEnd: run.periodEnd.toISOString(),
+          accountingPeriodId: period.id,
+          sourceVersionHash,
+          totals: {
+            internalAmount: decimalString(run.totalInternalAmount),
+            externalAmount: decimalString(run.totalExternalAmount),
+            matchedAmount: decimalString(run.matchedAmount),
+            suspenseAmount: decimalString(run.suspenseAmount),
+            matchCount: run.matchCount,
+            exceptionCount: run.exceptionCount,
+          },
+          evidence: {
+            providerEventCount,
+            statementLineCount,
+            openExceptionCount,
+            openSuspenseCount,
+            sourceManifestVersion: sourceEvidence.version,
+            sourceHash: sourceEvidence.sourceHash,
+            sourceCounts: sourceEvidence.counts,
+          },
+          controls: {
+            makerCheckerEnforced: true,
+            freshAuthEnforced: true,
+            periodOpenVerified: true,
+            providerAccountReadyVerified: true,
+            suspensePostingGatewayOnly: true,
+            sourceVersionGuardEnforced: true,
+            conditionalTerminalTransition: true,
+          },
+          signedById: normalized.signedById,
+          signedAt: normalized.now.toISOString(),
+          correlationId: normalized.correlationId,
+        }
+        const certificateHash = certificatePayloadHash(certificatePayload)
 
-    if (providerEventCount + statementLineCount === 0) {
-      throw new BusinessRuleError("Provider events or statement lines are required before reconciliation sign-off.")
-    }
+        await auditSensitiveActionDecision(tx, decision)
 
-    if (openExceptionCount > 0) {
-      throw new BusinessRuleError("Open reconciliation exceptions must be resolved before sign-off.")
-    }
+        const transition = await tx.reconciliationRun.updateMany({
+          where: {
+            id: run.id,
+            organizationId: normalized.organizationId,
+            status: ReconciliationRunStatus.READY_FOR_SIGNOFF,
+            updatedAt: run.updatedAt,
+            signedById: null,
+            signedAt: null,
+            certificateHash: null,
+          },
+          data: {
+            status: ReconciliationRunStatus.SIGNED,
+            signedById: normalized.signedById,
+            signedAt: normalized.now,
+            certificateHash,
+            certificatePayload: asJsonObject(certificatePayload),
+            accountingPeriodId: period.id,
+            metadata: asJsonObject({
+              ...metadataRecord(run.metadata),
+              immutableAfterSignoff: true,
+              signedCorrelationId: normalized.correlationId,
+              signedSourceVersionHash: sourceVersionHash,
+            }),
+          },
+        })
+        if (transition.count !== 1) {
+          throw new ReconciliationSignTransitionConflict()
+        }
 
-    if (openSuspenseCount > 0) {
-      throw new BusinessRuleError("Open suspense items must be resolved before sign-off.")
-    }
+        const signed = await tx.reconciliationRun.findUnique({
+          where: { id: run.id },
+          select: SIGNED_RUN_RESULT_SELECT,
+        })
+        if (!signed) throw inconsistentSignedEvidence()
 
-    if (suspenseWithoutLedgerCount > 0) {
-      throw new BusinessRuleError("Posted suspense items must include a ledger posting batch before sign-off.")
-    }
-    const sourceEvidence = await buildReconciliationEvidenceManifestInTx(tx, {
-      organizationId: input.organizationId,
-      providerAccountId: run.providerAccountId,
-      reconciliationRunId: run.id,
-      periodStart: run.periodStart,
-      periodEnd: run.periodEnd,
-    })
-    if (
-      sourceEvidence.counts.providerEventCount !== providerEventCount ||
-      sourceEvidence.counts.statementLineCount !== statementLineCount
-    ) {
-      throw new BusinessRuleError("Reconciliation source evidence changed during sign-off; rerun reconciliation.")
-    }
+        await auditReconciliationCertification(tx, {
+          organizationId: normalized.organizationId,
+          actorId: normalized.signedById,
+          action: "PAYMENT_RECONCILIATION_RUN_SIGN",
+          runId: run.id,
+          message: `Payment reconciliation run ${run.id} signed`,
+          metadata: asJsonObject({
+            certificateHash,
+            sourceVersionHash,
+            providerEventCount,
+            statementLineCount,
+            correlationId: normalized.correlationId,
+          }),
+        })
 
-    const certificatePayload = {
-      version: 1,
-      mode: "DURABLE_EVIDENCE_KERNEL",
-      organizationId: input.organizationId,
-      runId: run.id,
-      providerAccountId: run.providerAccountId,
-      paymentRailId: run.paymentRailId,
-      providerCode: run.providerAccount.providerCode,
-      businessDate: run.businessDate.toISOString(),
-      periodStart: run.periodStart.toISOString(),
-      periodEnd: run.periodEnd.toISOString(),
-      accountingPeriodId: period.id,
-      totals: {
-        internalAmount: decimalString(run.totalInternalAmount),
-        externalAmount: decimalString(run.totalExternalAmount),
-        matchedAmount: decimalString(run.matchedAmount),
-        suspenseAmount: decimalString(run.suspenseAmount),
-        matchCount: run.matchCount,
-        exceptionCount: run.exceptionCount,
-      },
-      evidence: {
-        providerEventCount,
-        statementLineCount,
-        openExceptionCount,
-        openSuspenseCount,
-        sourceManifestVersion: sourceEvidence.version,
-        sourceHash: sourceEvidence.sourceHash,
-        sourceCounts: sourceEvidence.counts,
-      },
-      controls: {
-        makerCheckerEnforced: true,
-        freshAuthEnforced: true,
-        periodOpenVerified: true,
-        providerAccountReadyVerified: true,
-        suspensePostingGatewayOnly: true,
-      },
-      signedById: input.signedById,
-      signedAt: now.toISOString(),
-      correlationId,
-    }
-    const certificateHash = certificatePayloadHash(certificatePayload)
-
-    const signed = await tx.reconciliationRun.update({
-      where: { id: run.id },
-      data: {
-        status: ReconciliationRunStatus.SIGNED,
-        signedById: input.signedById,
-        signedAt: now,
-        certificateHash,
-        certificatePayload: asJsonObject(certificatePayload),
-        accountingPeriodId: period.id,
-        metadata: asJsonObject({
-          immutableAfterSignoff: true,
-          signedCorrelationId: correlationId,
-        }),
-      },
-      select: {
-        id: true,
-        status: true,
-        certificateHash: true,
-        signedAt: true,
-      },
-    })
-
-    await auditReconciliationCertification(tx, {
-      organizationId: input.organizationId,
-      actorId: input.signedById,
-      action: "PAYMENT_RECONCILIATION_RUN_SIGN",
-      runId: run.id,
-      message: `Payment reconciliation run ${run.id} signed`,
-      metadata: asJsonObject({
-        certificateHash,
-        providerEventCount,
-        statementLineCount,
-        correlationId,
-      }),
-    })
-
-    await recordBusinessEventInTx(tx, {
-      organizationId: input.organizationId,
-      eventType: "payment.reconciliation.signed",
-      eventSource: "SYSTEM",
-      idempotencyKey: `reconciliation-run:${run.id}:signed`,
-      actorId: input.signedById,
-      sourceType: "PAYMENT_RECONCILIATION",
-      sourceId: run.id,
-      documentHash: certificateHash,
-      payload: {
-        runId: run.id,
-        providerAccountId: run.providerAccountId,
-        paymentRailId: run.paymentRailId,
-        accountingPeriodId: period.id,
-        certificateHash,
-        providerEventCount,
-        statementLineCount,
-        signedById: input.signedById,
-        signedAt: now.toISOString(),
-        correlationId,
-      },
-      outboxMessages: [
-        {
-          channel: "NOTIFICATION",
-          eventName: "payment.reconciliation.signed",
+        await recordBusinessEventInTx(tx, {
+          organizationId: normalized.organizationId,
+          eventType: "payment.reconciliation.signed",
+          eventSource: "SYSTEM",
+          idempotencyKey: `reconciliation-run:${run.id}:signed`,
+          actorId: normalized.signedById,
+          sourceType: "PAYMENT_RECONCILIATION",
+          sourceId: run.id,
+          documentHash: certificateHash,
           payload: {
             runId: run.id,
             providerAccountId: run.providerAccountId,
+            paymentRailId: run.paymentRailId,
+            accountingPeriodId: period.id,
             certificateHash,
-            signedAt: now.toISOString(),
-            correlationId,
+            sourceVersionHash,
+            providerEventCount,
+            statementLineCount,
+            signedById: normalized.signedById,
+            signedAt: normalized.now.toISOString(),
+            correlationId: normalized.correlationId,
           },
-        },
-      ],
-    })
-    await recordCloseCertificationInvalidationsForSourceInTx(tx, input.organizationId, {
-      sourceCode: "PAYMENT_RECONCILIATION_SIGNED",
-      sourceId: run.id,
-      periodId: period.id,
-      periodStart: run.periodStart,
-      periodEnd: run.periodEnd,
-      staleReason: "Payment reconciliation sign-off changed certified close evidence.",
-      newEvidenceHash: certificateHash,
-      correlationId,
-    }, {
-      actorId: input.signedById,
-      now,
-    })
+          outboxMessages: [
+            {
+              channel: "NOTIFICATION",
+              eventName: "payment.reconciliation.signed",
+              payload: {
+                runId: run.id,
+                providerAccountId: run.providerAccountId,
+                certificateHash,
+                sourceVersionHash,
+                signedAt: normalized.now.toISOString(),
+                correlationId: normalized.correlationId,
+              },
+            },
+          ],
+        })
+        await recordCloseCertificationInvalidationsForSourceInTx(
+          tx,
+          normalized.organizationId,
+          {
+            sourceCode: "PAYMENT_RECONCILIATION_SIGNED",
+            sourceId: run.id,
+            periodId: period.id,
+            periodStart: run.periodStart,
+            periodEnd: run.periodEnd,
+            staleReason:
+              "Payment reconciliation sign-off changed certified close evidence.",
+            newEvidenceHash: certificateHash,
+            correlationId: normalized.correlationId,
+          },
+          {
+            actorId: normalized.signedById,
+            now: normalized.now,
+          },
+        )
 
-    return {
-      value: {
-        runId: signed.id,
-        status: signed.status,
-        certificateHash: signed.certificateHash ?? certificateHash,
-        signedAt: (signed.signedAt ?? now).toISOString(),
-        correlationId,
+        return {
+          value: signedRunResult(signed, normalized, {
+            created: true,
+            committedSourceVersionHash: sourceVersionHash,
+          }),
+        }
       },
+      { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+    )
+  } catch (error) {
+    if (
+      error instanceof ReconciliationSignTransitionConflict ||
+      ["P2002", "P2034"].includes(prismaErrorCode(error) ?? "")
+    ) {
+      return recoverConcurrentReconciliationSign(normalized)
     }
-  })
+    if (error instanceof ApplicationError) throw error
+    throw new BusinessRuleError("Payment reconciliation sign-off could not be completed safely.")
+  }
 
   if ("denied" in result && result.denied) {
     assertSensitiveActionAllowed(result.denied)
@@ -674,6 +790,243 @@ export async function signReconciliationRun(input: SignReconciliationRunInput): 
   }
 
   return result.value
+}
+
+const SIGNED_RUN_RESULT_SELECT = {
+  id: true,
+  organizationId: true,
+  status: true,
+  runById: true,
+  signedById: true,
+  signedAt: true,
+  certificateHash: true,
+  certificatePayload: true,
+  metadata: true,
+} satisfies Prisma.ReconciliationRunSelect
+
+type StoredSignedRun = Prisma.ReconciliationRunGetPayload<{
+  select: typeof SIGNED_RUN_RESULT_SELECT
+}>
+
+type NormalizedSignInput = {
+  organizationId: string
+  runId: string
+  signedById: string
+  actorPermissions: readonly string[]
+  lastAuthAt: Date | number | string | null | undefined
+  expectedSourceVersionHash: string | null
+  now: Date
+  correlationId: string
+}
+
+class ReconciliationSignTransitionConflict extends Error {
+  constructor() {
+    super("Reconciliation sign transition lost a concurrent race.")
+    this.name = "ReconciliationSignTransitionConflict"
+  }
+}
+
+function normalizeSignInput(
+  input: SignReconciliationRunInput,
+): NormalizedSignInput {
+  const organizationId = requiredSignText(
+    input.organizationId,
+    "An organization is required for reconciliation sign-off.",
+  )
+  const runId = requiredSignText(
+    input.runId,
+    "A reconciliation run is required for sign-off.",
+  )
+  const signedById = requiredSignText(
+    input.signedById,
+    "A signer is required for reconciliation sign-off.",
+  )
+  const now = input.control?.now
+    ? new Date(input.control.now)
+    : new Date()
+  if (Number.isNaN(now.getTime())) {
+    throw new BusinessRuleError(
+      "Reconciliation sign-off now must be a valid date.",
+    )
+  }
+
+  const expectedSourceVersionHash =
+    input.expectedSourceVersionHash?.trim() ?? null
+  if (
+    expectedSourceVersionHash !== null &&
+    !isPaymentReconciliationSourceVersionHash(expectedSourceVersionHash)
+  ) {
+    throw new BusinessRuleError(
+      "Reconciliation source version must be a valid SHA-256 hash.",
+    )
+  }
+
+  return {
+    organizationId,
+    runId,
+    signedById,
+    actorPermissions: input.control?.actorPermissions ?? [],
+    lastAuthAt: input.control?.lastAuthAt,
+    expectedSourceVersionHash,
+    now,
+    correlationId: input.correlationId?.trim() || randomUUID(),
+  }
+}
+
+function sourceVersionHashForRun(
+  run: Awaited<ReturnType<typeof loadRunForCertification>>,
+) {
+  return buildPaymentReconciliationSignOffSourceVersionHash({
+    version: 1,
+    sourceType: "ReconciliationRun",
+    organizationId: run.organizationId,
+    runId: run.id,
+    providerAccountId: run.providerAccountId,
+    provider: {
+      id: run.providerAccount.id,
+      displayName: run.providerAccount.displayName.trim(),
+      currencyCode: run.providerAccount.currencyCode,
+    },
+    businessDate: run.businessDate.toISOString(),
+    periodStart: run.periodStart.toISOString(),
+    periodEnd: run.periodEnd.toISOString(),
+    status: "READY_FOR_SIGNOFF",
+    makerActorId: run.runById!,
+    totals: {
+      internalAmount: decimalString(run.totalInternalAmount),
+      externalAmount: decimalString(run.totalExternalAmount),
+      matchedAmount: decimalString(run.matchedAmount),
+      suspenseAmount: decimalString(run.suspenseAmount),
+    },
+    matchCount: run.matchCount,
+    exceptionCount: run.exceptionCount,
+    updatedAt: run.updatedAt.toISOString(),
+  })
+}
+
+async function recoverConcurrentReconciliationSign(
+  normalized: NormalizedSignInput,
+) {
+  const signed = await db.reconciliationRun.findFirst({
+    where: {
+      id: normalized.runId,
+      organizationId: normalized.organizationId,
+    },
+    select: SIGNED_RUN_RESULT_SELECT,
+  })
+  if (signed?.status === ReconciliationRunStatus.SIGNED) {
+    return signedRunResult(signed, normalized, {
+      created: false,
+      committedSourceVersionHash: null,
+    })
+  }
+
+  throw new BusinessRuleError(
+    "Reconciliation source evidence changed; refresh before signing.",
+  )
+}
+
+function signedRunResult(
+  run: StoredSignedRun,
+  normalized: NormalizedSignInput,
+  options: {
+    created: boolean
+    committedSourceVersionHash: string | null
+  },
+): SignReconciliationRunResult {
+  const certificatePayload = metadataRecord(run.certificatePayload)
+  const metadata = metadataRecord(run.metadata)
+  const payloadSourceVersionHash = stringField(
+    certificatePayload.sourceVersionHash,
+  )
+  const metadataSourceVersionHash = stringField(
+    metadata.signedSourceVersionHash,
+  )
+  if (
+    payloadSourceVersionHash &&
+    metadataSourceVersionHash &&
+    payloadSourceVersionHash !== metadataSourceVersionHash
+  ) {
+    throw inconsistentSignedEvidence()
+  }
+  const sourceVersionHash =
+    payloadSourceVersionHash ?? metadataSourceVersionHash
+
+  if (
+    run.id !== normalized.runId ||
+    run.organizationId !== normalized.organizationId ||
+    run.status !== ReconciliationRunStatus.SIGNED ||
+    !run.signedById?.trim() ||
+    !run.signedAt ||
+    Number.isNaN(run.signedAt.getTime()) ||
+    run.signedAt.getTime() > normalized.now.getTime() ||
+    !run.certificateHash ||
+    !/^[a-f0-9]{64}$/.test(run.certificateHash) ||
+    Object.keys(certificatePayload).length === 0 ||
+    certificatePayloadHash(run.certificatePayload) !== run.certificateHash ||
+    run.runById === run.signedById ||
+    (sourceVersionHash !== null &&
+      !isPaymentReconciliationSourceVersionHash(sourceVersionHash)) ||
+    (options.created &&
+      (run.signedById !== normalized.signedById ||
+        !options.committedSourceVersionHash ||
+        sourceVersionHash !== options.committedSourceVersionHash))
+  ) {
+    throw inconsistentSignedEvidence()
+  }
+
+  const completedByAnotherActor =
+    run.signedById !== normalized.signedById
+  if (
+    !completedByAnotherActor &&
+    normalized.expectedSourceVersionHash &&
+    sourceVersionHash &&
+    normalized.expectedSourceVersionHash !== sourceVersionHash
+  ) {
+    throw new BusinessRuleError(
+      "Reconciliation source evidence changed; refresh before signing.",
+    )
+  }
+
+  return {
+    runId: run.id,
+    status: ReconciliationRunStatus.SIGNED,
+    outcome: completedByAnotherActor ? "ALREADY_SIGNED" : "SIGNED",
+    replayed: !options.created && !completedByAnotherActor,
+    completedByAnotherActor,
+    certificateHash: run.certificateHash,
+    sourceVersionHash,
+    signedAt: run.signedAt.toISOString(),
+    correlationId: normalized.correlationId,
+  }
+}
+
+function requiredSignText(value: unknown, message: string) {
+  if (typeof value !== "string" || !value.trim()) {
+    throw new BusinessRuleError(message)
+  }
+  return value.trim()
+}
+
+function metadataRecord(value: unknown): Record<string, unknown> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return {}
+  return value as Record<string, unknown>
+}
+
+function stringField(value: unknown) {
+  return typeof value === "string" && value.trim() ? value.trim() : null
+}
+
+function prismaErrorCode(error: unknown) {
+  if (!error || typeof error !== "object" || !("code" in error)) return null
+  const code = (error as { code?: unknown }).code
+  return typeof code === "string" ? code : null
+}
+
+function inconsistentSignedEvidence() {
+  return new ForbiddenError(
+    "Payment reconciliation signed evidence is inconsistent.",
+  )
 }
 
 export async function exportReconciliationCertificate(
@@ -916,3 +1269,4 @@ export async function exportReconciliationCertificate(
 
   return result.value
 }
+

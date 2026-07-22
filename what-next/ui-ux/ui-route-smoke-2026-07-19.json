@@ -1,0 +1,278 @@
+{
+  "checkedAt": "2026-07-19T19:34:28.796Z",
+  "baseUrl": "http://127.0.0.1:3001",
+  "mode": "fail",
+  "ok": true,
+  "routeCount": 6,
+  "screenshotTool": "playwright",
+  "auth": {
+    "storageState": null,
+    "protectedRouteScreenshotMode": "unauthenticated-or-redirect-safe"
+  },
+  "routes": [
+    {
+      "route": {
+        "id": "public-home",
+        "path": "/en",
+        "surface": "Public first impression",
+        "requiresAuth": false,
+        "viewports": [
+          "mobile",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3001/en",
+        "durationMs": 5307,
+        "errorMarkers": []
+      }
+    },
+    {
+      "route": {
+        "id": "login",
+        "path": "/en/login",
+        "surface": "Authentication",
+        "requiresAuth": false,
+        "viewports": [
+          "mobile",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3001/en/login",
+        "durationMs": 1821,
+        "errorMarkers": []
+      }
+    },
+    {
+      "route": {
+        "id": "register",
+        "path": "/en/register",
+        "surface": "Account registration",
+        "requiresAuth": false,
+        "viewports": [
+          "mobile",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3001/en/register",
+        "durationMs": 1925,
+        "errorMarkers": []
+      }
+    },
+    {
+      "route": {
+        "id": "public-home-fr",
+        "path": "/fr",
+        "surface": "Premiere impression publique",
+        "requiresAuth": false,
+        "viewports": [
+          "mobile",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3001/fr",
+        "durationMs": 5016,
+        "errorMarkers": []
+      }
+    },
+    {
+      "route": {
+        "id": "login-fr",
+        "path": "/fr/login",
+        "surface": "Authentification",
+        "requiresAuth": false,
+        "viewports": [
+          "mobile",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3001/fr/login",
+        "durationMs": 3608,
+        "errorMarkers": []
+      }
+    },
+    {
+      "route": {
+        "id": "register-fr",
+        "path": "/fr/register",
+        "surface": "Creation de compte",
+        "requiresAuth": false,
+        "viewports": [
+          "mobile",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3001/fr/register",
+        "durationMs": 2409,
+        "errorMarkers": []
+      }
+    }
+  ],
+  "warmup": {
+    "enabled": true,
+    "skipped": false,
+    "timeoutMs": 60000,
+    "routes": [
+      {
+        "routeId": "public-home",
+        "ok": true,
+        "finalUrl": "http://127.0.0.1:3001/en",
+        "durationMs": 9142,
+        "authenticated": null
+      },
+      {
+        "routeId": "login",
+        "ok": true,
+        "finalUrl": "http://127.0.0.1:3001/en/login",
+        "durationMs": 3420,
+        "authenticated": null
+      },
+      {
+        "routeId": "register",
+        "ok": true,
+        "finalUrl": "http://127.0.0.1:3001/en/register",
+        "durationMs": 4495,
+        "authenticated": null
+      },
+      {
+        "routeId": "public-home-fr",
+        "ok": true,
+        "finalUrl": "http://127.0.0.1:3001/fr",
+        "durationMs": 7893,
+        "authenticated": null
+      },
+      {
+        "routeId": "login-fr",
+        "ok": true,
+        "finalUrl": "http://127.0.0.1:3001/fr/login",
+        "durationMs": 4825,
+        "authenticated": null
+      },
+      {
+        "routeId": "register-fr",
+        "ok": true,
+        "finalUrl": "http://127.0.0.1:3001/fr/register",
+        "durationMs": 3448,
+        "authenticated": null
+      }
+    ]
+  },
+  "screenshots": {
+    "available": true,
+    "captures": [
+      {
+        "routeId": "public-home",
+        "viewport": "mobile",
+        "ok": true,
+        "file": "what-next/ui-ux/screenshots/2026-07-19/public-home-mobile.png",
+        "finalUrl": "http://127.0.0.1:3001/en",
+        "authenticated": null
+      },
+      {
+        "routeId": "login",
+        "viewport": "mobile",
+        "ok": true,
+        "file": "what-next/ui-ux/screenshots/2026-07-19/login-mobile.png",
+        "finalUrl": "http://127.0.0.1:3001/en/login",
+        "authenticated": null
+      },
+      {
+        "routeId": "register",
+        "viewport": "mobile",
+        "ok": true,
+        "file": "what-next/ui-ux/screenshots/2026-07-19/register-mobile.png",
+        "finalUrl": "http://127.0.0.1:3001/en/register",
+        "authenticated": null
+      },
+      {
+        "routeId": "public-home-fr",
+        "viewport": "mobile",
+        "ok": true,
+        "file": "what-next/ui-ux/screenshots/2026-07-19/public-home-fr-mobile.png",
+        "finalUrl": "http://127.0.0.1:3001/fr",
+        "authenticated": null
+      },
+      {
+        "routeId": "login-fr",
+        "viewport": "mobile",
+        "ok": true,
+        "file": "what-next/ui-ux/screenshots/2026-07-19/login-fr-mobile.png",
+        "finalUrl": "http://127.0.0.1:3001/fr/login",
+        "authenticated": null
+      },
+      {
+        "routeId": "register-fr",
+        "viewport": "mobile",
+        "ok": true,
+        "file": "what-next/ui-ux/screenshots/2026-07-19/register-fr-mobile.png",
+        "finalUrl": "http://127.0.0.1:3001/fr/register",
+        "authenticated": null
+      },
+      {
+        "routeId": "public-home",
+        "viewport": "desktop",
+        "ok": true,
+        "file": "what-next/ui-ux/screenshots/2026-07-19/public-home-desktop.png",
+        "finalUrl": "http://127.0.0.1:3001/en",
+        "authenticated": null
+      },
+      {
+        "routeId": "login",
+        "viewport": "desktop",
+        "ok": true,
+        "file": "what-next/ui-ux/screenshots/2026-07-19/login-desktop.png",
+        "finalUrl": "http://127.0.0.1:3001/en/login",
+        "authenticated": null
+      },
+      {
+        "routeId": "register",
+        "viewport": "desktop",
+        "ok": true,
+        "file": "what-next/ui-ux/screenshots/2026-07-19/register-desktop.png",
+        "finalUrl": "http://127.0.0.1:3001/en/register",
+        "authenticated": null
+      },
+      {
+        "routeId": "public-home-fr",
+        "viewport": "desktop",
+        "ok": true,
+        "file": "what-next/ui-ux/screenshots/2026-07-19/public-home-fr-desktop.png",
+        "finalUrl": "http://127.0.0.1:3001/fr",
+        "authenticated": null
+      },
+      {
+        "routeId": "login-fr",
+        "viewport": "desktop",
+        "ok": true,
+        "file": "what-next/ui-ux/screenshots/2026-07-19/login-fr-desktop.png",
+        "finalUrl": "http://127.0.0.1:3001/fr/login",
+        "authenticated": null
+      },
+      {
+        "routeId": "register-fr",
+        "viewport": "desktop",
+        "ok": true,
+        "file": "what-next/ui-ux/screenshots/2026-07-19/register-fr-desktop.png",
+        "finalUrl": "http://127.0.0.1:3001/fr/register",
+        "authenticated": null
+      }
+    ]
+  }
+}

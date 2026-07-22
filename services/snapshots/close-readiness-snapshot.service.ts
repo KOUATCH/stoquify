@@ -23,6 +23,39 @@ export async function getCloseReadinessSnapshot(
   input: SnapshotScopeInput,
 ): Promise<SnapshotResult<CloseReadinessMetrics>> {
   const scope = normalizeSnapshotScope(input)
+  if (scope.locationId) {
+    return buildSnapshotResult({
+      kind: "close.readiness",
+      scope,
+      status: "blocked",
+      evidenceGrade: "blocked",
+      sourceModules: ["accounting", "close", "compliance"],
+      metrics: {
+        accountingPeriodCount: 0,
+        openPeriodCount: 0,
+        recentCloseRunCount: 0,
+        certifiedCloseRunCount: 0,
+        blockedCloseRunCount: 0,
+        averageReadinessScore: null,
+        openFindingCount: 0,
+        criticalOpenFindingCount: 0,
+        unavailableEvidenceCount: 0,
+      },
+      blockers: [
+        blocker({
+          id: "close-location-scope-unsupported",
+          severity: "high",
+          gate: "close_readiness_scope",
+          title: "Location-scoped close readiness is unavailable",
+          detail:
+            "Close Readiness currently certifies tenant-wide accounting and evidence controls and cannot safely claim location-level results.",
+          sourceTables: ["accounting_periods", "close_runs", "close_assurance_findings", "close_evidence_items"],
+          nextAction:
+            "Use tenant-wide Close Readiness until accounting and close evidence can be allocated and certified by location.",
+        }),
+      ],
+    })
+  }
   const periodOverlap = {
     startDate: { lte: scope.periodEnd },
     endDate: { gte: scope.periodStart },

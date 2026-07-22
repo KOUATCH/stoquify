@@ -26,6 +26,12 @@ jobs:
           cache: npm
       - run: psql --command 'CREATE DATABASE stockflow_immutability_test;'
       - run: npm run verify:ci
+  close-assurance-smoke:
+    needs: verify
+    steps:
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e:close-assurance
 `
 function makeRepo(input = {}) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "ci-release-readiness-"))
@@ -42,7 +48,7 @@ function makeRepo(input = {}) {
 describe("CI release readiness gate", () => {
   it("accepts an isolated database-backed verification workflow", () => {
     const report = buildCiReleaseReadiness(makeRepo())
-    expect(report.summary).toMatchObject({ status: "ready", readyCount: 10, checkCount: 10, blockerCount: 0 })
+    expect(report.summary).toMatchObject({ status: "ready", readyCount: 11, checkCount: 11, blockerCount: 0 })
     expect(gateResultForReport(report, "fail").exitCode).toBe(0)
   })
   it("blocks a missing PostgreSQL service", () => {
@@ -62,11 +68,19 @@ describe("CI release readiness gate", () => {
     const report = buildCiReleaseReadiness(makeRepo({ verifyCi: "npm run ci:release:gate && npm run verify:repo && npm run prisma:migrate:deploy" }))
     expect(report.blockers).toContain("verify_ci_migrates_before_repository_verification")
   })
+  it("blocks a missing close assurance browser smoke job", () => {
+    const withoutSmoke = workflow
+      .replace("      - run: npx playwright install --with-deps chromium\n", "")
+      .replace("      - run: npm run test:e2e:close-assurance\n", "")
+    const report = buildCiReleaseReadiness(makeRepo({ workflow: withoutSmoke }))
+    expect(report.blockers).toContain("close_assurance_browser_smoke_is_configured")
+  })
   it("never serializes CI credentials or database URLs", () => {
     const report = buildCiReleaseReadiness(makeRepo())
     const evidence = renderMarkdown(report, "fail") + JSON.stringify(report)
     expect(evidence).not.toContain("ci-only-auth-secret-32-characters-minimum-value")
     expect(evidence).not.toContain("postgresql://")
     expect(report.summary.secretValuePrinted).toBe(false)
+    expect(evidence).toContain("closeAssuranceBrowserSmokeConfigured")
   })
 })

@@ -43,4 +43,16 @@ describe("regulatory hardcode gate", () => {
     expect(result.status).toBe(0)
     expect(result.stdout).toContain("No production regulatory hardcodes detected.")
   })
+
+  it("ignores archived docs and generated evidence snapshots", () => {
+    const root = makeTempRoot()
+    writeFile(root, "docs/landing page/current-landing-page-snapshot-2026-07-19/components/landing/people-to-pay.tsx", "const cnps = { employee: 4.2, monthlyCeiling: 750000 }\n")
+    writeFile(root, "what-next/archive/generated.ts", "const cnps = { employee: 4.2, monthlyCeiling: 750000 }\n")
+    writeFile(root, ".codex-assurance-prisma/client/index.js", "const providers = ['MTN_MOMO', 'ORANGE_MONEY']; const vat = 19.25\n")
+
+    const result = runGate(root)
+
+    expect(result.status).toBe(0)
+    expect(result.stdout).toContain("No production regulatory hardcodes detected.")
+  })
 })

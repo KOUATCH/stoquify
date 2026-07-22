@@ -1,6 +1,6 @@
 # Role-Based Operating Cockpit Readiness Gate
 
-Generated: 2026-07-11T20:41:10.632Z
+Generated: 2026-07-20T10:13:56.991Z
 Mode: fail
 Status: ready
 

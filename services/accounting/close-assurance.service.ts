@@ -18,8 +18,10 @@ import {
 import { randomUUID } from "node:crypto"
 
 import { db } from "@/prisma/db"
+import { recordBusinessEventInTx } from "@/services/events/business-event.service"
 import {
   BusinessRuleError,
+  isApplicationError,
   NotFoundError,
 } from "@/services/_shared/action-errors"
 import { getAccountantPortalData } from "./data-trust.service"
@@ -322,6 +324,125 @@ function iso(value: Date | string | null | undefined) {
 
 function jsonObject(value: Record<string, unknown>): Prisma.InputJsonObject {
   return value as Prisma.InputJsonObject
+}
+
+type CloseWorkflowEventInput = {
+  eventType: string
+  idempotencyKey: string
+  organizationId: string
+  actorId?: string | null
+  sourceType: string
+  sourceId: string
+  message: string
+  severity: "INFO" | "MEDIUM" | "HIGH" | "CRITICAL"
+  closeRunId?: string | null
+  periodId?: string | null
+  findingId?: string | null
+  ownerId?: string | null
+  dueAt?: Date | string | null
+  documentHash?: string | null
+  correlationId?: string | null
+  payload?: Record<string, unknown>
+}
+
+const CLOSE_WORKFLOW_ACCOUNTING_SOURCE_TYPE = "MANUAL"
+
+function optionalString(value: string | null | undefined) {
+  const trimmed = value?.trim()
+  return trimmed ? trimmed : undefined
+}
+
+function closeEventPayload(params: CloseWorkflowEventInput) {
+  return {
+    closeRunId: params.closeRunId ?? null,
+    periodId: params.periodId ?? null,
+    findingId: params.findingId ?? null,
+    ownerId: params.ownerId ?? null,
+    severity: params.severity,
+    message: params.message,
+    dueAt: iso(params.dueAt),
+    correlationId: params.correlationId ?? null,
+    ...(params.payload ?? {}),
+  }
+}
+
+async function recordCloseWorkflowEventInTx(
+  tx: Prisma.TransactionClient,
+  params: CloseWorkflowEventInput,
+) {
+  const payload = closeEventPayload(params)
+  await recordBusinessEventInTx(
+    tx as Parameters<typeof recordBusinessEventInTx>[0],
+    {
+      organizationId: params.organizationId,
+      eventType: params.eventType,
+      eventSource: "SYSTEM",
+      idempotencyKey: params.idempotencyKey,
+      payload,
+      actorId: optionalString(params.actorId),
+      sourceType: CLOSE_WORKFLOW_ACCOUNTING_SOURCE_TYPE,
+      sourceId: params.sourceId,
+      documentHash: optionalString(params.documentHash),
+      metadata: {
+        closeRunId: params.closeRunId ?? null,
+        periodId: params.periodId ?? null,
+        findingId: params.findingId ?? null,
+        sourceType: params.sourceType,
+        sourceId: params.sourceId,
+        severity: params.severity,
+        correlationId: params.correlationId ?? null,
+      },
+      outboxMessages: [
+        {
+          channel: "NOTIFICATION",
+          eventName: params.eventType,
+          idempotencyKey: `${params.idempotencyKey}:notification`,
+          payload: {
+            notification: {
+              type: params.eventType,
+              severity: params.severity,
+              ownerId: params.ownerId ?? null,
+              dueAt: iso(params.dueAt),
+              status: "UNREAD",
+            },
+            evidenceRef: {
+              closeRunId: params.closeRunId ?? null,
+              periodId: params.periodId ?? null,
+              findingId: params.findingId ?? null,
+            },
+            message: params.message,
+            correlationId: params.correlationId ?? null,
+          },
+          metadata: {
+            sourceType: params.sourceType,
+            sourceId: params.sourceId,
+            correlationId: params.correlationId ?? null,
+          },
+        },
+      ],
+    },
+  )
+}
+
+function isDueSoon(dueAt: Date | string | null | undefined, now = new Date()) {
+  if (!dueAt) return false
+  const due = new Date(dueAt).getTime()
+  if (!Number.isFinite(due)) return false
+  const diffMs = due - now.getTime()
+  return diffMs >= 0 && diffMs <= 48 * 60 * 60 * 1000
+}
+
+function notificationSeverity(severity: CloseFindingSeverity) {
+  switch (severity) {
+    case CloseFindingSeverity.CRITICAL:
+      return "CRITICAL"
+    case CloseFindingSeverity.HIGH:
+      return "HIGH"
+    case CloseFindingSeverity.MEDIUM:
+      return "MEDIUM"
+    default:
+      return "INFO"
+  }
 }
 
 function decimalNumber(
@@ -803,10 +924,10 @@ async function getPreflightSafe(
       failures: getPeriodClosePreflightFailures(preflight),
     }
   } catch (error) {
-    const message =
-      error instanceof Error
-        ? error.message
-        : "Period close preflight is unavailable."
+    const message = messageFromError(
+      error,
+      "Period close preflight is unavailable.",
+    )
     return { preflight: null, error: message, failures: [message] }
   }
 }
@@ -938,7 +1059,8 @@ function buildPreflightFindings(
 }
 
 function buildLedgerFindings(
-  ledger: LedgerReconciliationResult,
+  ledger: LedgerReconciliationResult | null,
+  unavailableReason?: string | null,
 ): Array<
   Omit<
     CloseAssuranceFindingDto,
@@ -949,6 +1071,28 @@ function buildLedgerFindings(
     | "waiverApprovedById"
   > & { checklistKey: string }
 > {
+  if (!ledger) {
+    return [
+      {
+        checklistKey: "ledger-reconciliation",
+        domain: CloseFindingDomain.LEDGER,
+        severity: CloseFindingSeverity.CRITICAL,
+        status: CloseFindingStatus.OPEN,
+        title: "Ledger reconciliation unavailable",
+        detail:
+          unavailableReason ??
+          "Ledger reconciliation evidence could not be loaded.",
+        sourceService: "services/accounting/reconciliations.service.ts",
+        sourceType: "LedgerReconciliation",
+        sourceId: null,
+        ownerId: null,
+        assignedById: null,
+        dueAt: null,
+        correlationId: null,
+      },
+    ]
+  }
+
   return ledger.failures.map((failure) => ({
     checklistKey: "ledger-reconciliation",
     domain: CloseFindingDomain.LEDGER,
@@ -977,9 +1121,10 @@ function buildLedgerFindings(
 }
 
 function messageFromError(error: unknown, fallback: string) {
-  return error instanceof Error && error.message.trim()
-    ? error.message
-    : fallback
+  if (isApplicationError(error) && error.expose && error.message.trim()) {
+    return error.message
+  }
+  return fallback
 }
 
 function sourceIdFromInventoryFailure(failure: InventoryClass3Failure) {
@@ -1083,6 +1228,33 @@ function buildInventoryValuationFindings(
     dueAt: null,
     correlationId: null,
   }))
+}
+
+function unavailableDomainFinding(params: {
+  checklistKey: string
+  domain: CloseFindingDomain
+  title: string
+  detail: string
+  sourceService: string
+  sourceType: string
+  periodId: string
+  severity?: CloseFindingSeverity
+}): DraftFinding {
+  return {
+    checklistKey: params.checklistKey,
+    domain: params.domain,
+    severity: params.severity ?? CloseFindingSeverity.HIGH,
+    status: CloseFindingStatus.OPEN,
+    title: params.title,
+    detail: params.detail,
+    sourceService: params.sourceService,
+    sourceType: params.sourceType,
+    sourceId: params.periodId,
+    ownerId: null,
+    assignedById: null,
+    dueAt: null,
+    correlationId: null,
+  }
 }
 
 function statutoryCertificationBlockerMetadata() {
@@ -1214,7 +1386,7 @@ async function buildAssessment(
     payrollForecastSnapshot,
   ] = await Promise.all([
     getPreflightSafe(organizationId, period),
-    reconcileLedger(organizationId, { periodId: period.id }),
+    reconcileLedger(organizationId, { periodId: period.id }).catch((error) => ({ error })) as Promise<LedgerReconciliationResult | { error: unknown }>,
     getPaymentReconciliationDashboardData(organizationId).catch((error) => ({
       error,
     })),
@@ -1235,8 +1407,28 @@ async function buildAssessment(
   ])
 
   const preflight = preflightResult.preflight
+  const ledgerUnavailable = "error" in ledger
+  const ledgerResult = ledgerUnavailable ? null : ledger
+  const ledgerUnavailableReason = ledgerUnavailable
+    ? messageFromError(
+        ledger.error,
+        "Ledger reconciliation evidence could not be loaded.",
+      )
+    : null
   const paymentUnavailable = "error" in paymentDashboard
+  const paymentUnavailableReason = paymentUnavailable
+    ? messageFromError(
+        paymentDashboard.error,
+        "Payment reconciliation dashboard data is unavailable.",
+      )
+    : null
   const dataTrustUnavailable = "error" in dataTrust
+  const dataTrustUnavailableReason = dataTrustUnavailable
+    ? messageFromError(
+        dataTrust.error,
+        "Accountant data-trust service is unavailable.",
+      )
+    : null
   const inventoryUnavailable = "error" in inventoryValuation
   const inventoryUnavailableReason = inventoryUnavailable
     ? messageFromError(
@@ -1329,21 +1521,31 @@ async function buildAssessment(
     {
       key: "ledger-reconciliation",
       domain: CloseFindingDomain.LEDGER,
-      status: ledger.isClean
-        ? CloseChecklistStatus.PASSED
-        : CloseChecklistStatus.FAILED,
-      severity: ledger.failures.some(
-        (failure) => failure.severity === "critical",
-      )
+      status: ledgerUnavailable
+        ? CloseChecklistStatus.UNAVAILABLE
+        : ledgerResult!.isClean
+          ? CloseChecklistStatus.PASSED
+          : CloseChecklistStatus.FAILED,
+      severity: ledgerUnavailable
         ? CloseFindingSeverity.CRITICAL
-        : CloseFindingSeverity.HIGH,
+        : ledgerResult!.failures.some(
+              (failure) => failure.severity === "critical",
+            )
+          ? CloseFindingSeverity.CRITICAL
+          : CloseFindingSeverity.HIGH,
       label: "Ledger balance and traceability",
-      detail: ledger.isClean
-        ? "Posted ledger entries balance and retain posting/source traceability."
-        : ledger.failures.map((failure) => failure.message).join("; "),
+      detail: ledgerUnavailable
+        ? (ledgerUnavailableReason ??
+          "Ledger reconciliation evidence could not be loaded.")
+        : ledgerResult!.isClean
+          ? "Posted ledger entries balance and retain posting/source traceability."
+          : ledgerResult!.failures.map((failure) => failure.message).join("; "),
       sourceService: "services/accounting/reconciliations.service.ts",
-      evidenceCount: ledger.totalsByCurrency.length,
-      blockerReason: ledger.failures[0]?.message ?? null,
+      evidenceCount: ledgerResult?.totalsByCurrency.length ?? 0,
+      blockerReason: ledgerUnavailable
+        ? (ledgerUnavailableReason ??
+          "Ledger reconciliation evidence could not be loaded.")
+        : (ledgerResult!.failures[0]?.message ?? null),
       nextActionHref: "/dashboard/accounting/reports/trial-balance",
       ownerId: null,
       dueAt: null,
@@ -1365,7 +1567,7 @@ async function buildAssessment(
           : CloseFindingSeverity.MEDIUM,
       label: "Payment reconciliation sign-off",
       detail: paymentUnavailable
-        ? "Payment reconciliation dashboard data is unavailable."
+        ? (paymentUnavailableReason ?? "Payment reconciliation dashboard data is unavailable.")
         : paymentUnsignedRuns > 0
           ? `${paymentUnsignedRuns} reconciliation run${paymentUnsignedRuns === 1 ? "" : "s"} must be signed or voided.`
           : paymentCriticalExceptions > 0
@@ -1435,7 +1637,7 @@ async function buildAssessment(
             : CloseFindingSeverity.MEDIUM,
       label: "Data trust and provenance",
       detail: dataTrustUnavailable
-        ? "Accountant data-trust service is unavailable."
+        ? (dataTrustUnavailableReason ?? "Accountant data-trust service is unavailable.")
         : `Data-trust level ${dataTrustLevel}; ${dataTrustBlockers.length} blocker${dataTrustBlockers.length === 1 ? "" : "s"} detected.`,
       sourceService: "services/accounting/data-trust.service.ts",
       evidenceCount: dataTrustUnavailable
@@ -1509,7 +1711,7 @@ async function buildAssessment(
       severity: CloseFindingSeverity.HIGH,
       label: "AP, payroll, and compliance exposure",
       detail: dataTrustUnavailable
-        ? "AP/payroll/tax readiness data is unavailable."
+        ? (dataTrustUnavailableReason ?? "AP/payroll/tax readiness data is unavailable.")
         : dataTrust.moduleEvidence
             .filter((module) =>
               ["purchasing", "payroll", "compliance"].includes(module.module),
@@ -1539,7 +1741,38 @@ async function buildAssessment(
 
   const findings = [
     ...buildPreflightFindings(preflight, preflightResult.failures),
-    ...buildLedgerFindings(ledger),
+    ...buildLedgerFindings(ledgerResult, ledgerUnavailableReason),
+    ...(paymentUnavailable
+      ? [
+          unavailableDomainFinding({
+            checklistKey: "payment-reconciliation",
+            domain: CloseFindingDomain.PAYMENT_RECONCILIATION,
+            title: "Payment reconciliation evidence unavailable",
+            detail:
+              paymentUnavailableReason ??
+              "Payment reconciliation dashboard data is unavailable.",
+            sourceService:
+              "services/reconciliation/payment-reconciliation-dashboard.service.ts",
+            sourceType: "PaymentReconciliationDashboard",
+            periodId: period.id,
+          }),
+        ]
+      : []),
+    ...(dataTrustUnavailable
+      ? [
+          unavailableDomainFinding({
+            checklistKey: "data-trust-provenance",
+            domain: CloseFindingDomain.DATA_TRUST,
+            title: "Data-trust evidence unavailable",
+            detail:
+              dataTrustUnavailableReason ??
+              "Accountant data-trust service is unavailable.",
+            sourceService: "services/accounting/data-trust.service.ts",
+            sourceType: "AccountantPortalDataTrust",
+            periodId: period.id,
+          }),
+        ]
+      : []),
     ...buildInventoryValuationFindings(inventoryAnnex),
     ...payrollForecastFindings(payrollForecastSnapshot),
     ...(!dataTrustUnavailable
@@ -1584,20 +1817,39 @@ async function buildAssessment(
       checklistKey?: string
     }
   > = [
-    ...ledger.totalsByCurrency.map((total) => ({
-      checklistKey: "ledger-reconciliation",
-      evidenceType: CloseEvidenceType.REPORT_EXPORT,
-      sourceTable: "journal_entry_lines",
-      sourceType: "TrialBalanceCurrency",
-      sourceId: total.currency,
-      sourceLabel: `Trial balance ${total.currency}: debit ${total.debit} / credit ${total.credit}`,
-      sourceDate: now.toISOString(),
-      sourceHash: null,
-      provenance: "POSTED",
-      available: true,
-      unavailableReason: null,
-      correlationId: null,
-    })),
+    ...(ledgerResult
+      ? ledgerResult.totalsByCurrency.map((total) => ({
+          checklistKey: "ledger-reconciliation",
+          evidenceType: CloseEvidenceType.REPORT_EXPORT,
+          sourceTable: "journal_entry_lines",
+          sourceType: "TrialBalanceCurrency",
+          sourceId: total.currency,
+          sourceLabel: `Trial balance ${total.currency}: debit ${total.debit} / credit ${total.credit}`,
+          sourceDate: now.toISOString(),
+          sourceHash: null,
+          provenance: "POSTED",
+          available: true,
+          unavailableReason: null,
+          correlationId: null,
+        }))
+      : [
+          {
+            checklistKey: "ledger-reconciliation",
+            evidenceType: CloseEvidenceType.REPORT_EXPORT,
+            sourceTable: "journal_entry_lines",
+            sourceType: "LedgerReconciliation",
+            sourceId: period.id,
+            sourceLabel: "Ledger reconciliation evidence unavailable",
+            sourceDate: now.toISOString(),
+            sourceHash: null,
+            provenance: "UNAVAILABLE",
+            available: false,
+            unavailableReason:
+              ledgerUnavailableReason ??
+              "Ledger reconciliation evidence could not be loaded.",
+            correlationId: null,
+          },
+        ]),
     ...(!paymentUnavailable
       ? paymentDashboard.recentRuns.map((run) => ({
           checklistKey: "payment-reconciliation",
@@ -1626,7 +1878,7 @@ async function buildAssessment(
             provenance: "UNAVAILABLE",
             available: false,
             unavailableReason:
-              "Payment reconciliation dashboard could not be loaded.",
+              paymentUnavailableReason ?? "Payment reconciliation dashboard could not be loaded.",
             correlationId: null,
           },
         ]),
@@ -1679,6 +1931,13 @@ async function buildAssessment(
             available: true,
             unavailableReason: null,
             correlationId: null,
+            metadata: {
+              sourceLinkId: link.id,
+              sourceNumber: link.sourceNumber,
+              journalEntryNumber: link.journalEntryNumber,
+              postingBatchId: link.postingBatchId,
+              postingStatus: link.postingStatus,
+            } as Prisma.JsonValue,
           })),
           ...dataTrust.latestAuditEvents.map((event) => ({
             checklistKey: "data-trust-provenance",
@@ -1696,7 +1955,24 @@ async function buildAssessment(
             correlationId: null,
           })),
         ]
-      : []),
+      : [
+          {
+            checklistKey: "data-trust-provenance",
+            evidenceType: CloseEvidenceType.DATA_TRUST_CERTIFICATE,
+            sourceTable: "ledger_audit_events",
+            sourceType: "AccountantPortalDataTrust",
+            sourceId: period.id,
+            sourceLabel: "Data-trust evidence unavailable",
+            sourceDate: now.toISOString(),
+            sourceHash: null,
+            provenance: "UNAVAILABLE",
+            available: false,
+            unavailableReason:
+              dataTrustUnavailableReason ??
+              "Accountant data-trust service is unavailable.",
+            correlationId: null,
+          },
+        ]),
     {
       checklistKey: "inventory-valuation",
       evidenceType: CloseEvidenceType.REPORT_EXPORT,
@@ -1742,7 +2018,14 @@ async function buildAssessment(
       persisted: false,
       trustLevel: dataTrustLevel,
       provenance:
-        dataTrustUnavailable || paymentUnavailable ? "MIXED" : "POSTED",
+        ledgerUnavailable ||
+        paymentUnavailable ||
+        dataTrustUnavailable ||
+        inventoryUnavailable ||
+        payrollForecastUnavailable(payrollForecastSnapshot) ||
+        payrollForecastBlocked(payrollForecastSnapshot)
+          ? "MIXED"
+          : "POSTED",
       sourceTables: [...CLOSE_SOURCE_TABLES],
     },
     period: periodSummary(period),
@@ -1764,7 +2047,8 @@ async function buildAssessment(
     provenance: [
       {
         label: "Ledger and period close",
-        provenance: "POSTED",
+        provenance:
+          ledgerUnavailable || preflightResult.error ? "UNAVAILABLE" : "POSTED",
         asOf: now.toISOString(),
         periodStatus: period.status,
         sourceTables: [
@@ -1773,6 +2057,10 @@ async function buildAssessment(
           "journal_entry_lines",
           "ledger_posting_batches",
         ],
+        reason:
+          ledgerUnavailable || preflightResult.error
+            ? (ledgerUnavailableReason ?? preflightResult.error ?? undefined)
+            : undefined,
       },
       {
         label: "Payment reconciliation",
@@ -1785,7 +2073,7 @@ async function buildAssessment(
           "payment_exceptions",
         ],
         reason: paymentUnavailable
-          ? "Payment reconciliation dashboard failed to load."
+          ? (paymentUnavailableReason ?? "Payment reconciliation dashboard failed to load.")
           : undefined,
       },
       {
@@ -1797,7 +2085,7 @@ async function buildAssessment(
           ? ["ledger_audit_events", "audit_logs"]
           : dataTrust.source.sourceTables,
         reason: dataTrustUnavailable
-          ? "Accountant data-trust service failed to load."
+          ? (dataTrustUnavailableReason ?? "Accountant data-trust service failed to load.")
           : undefined,
       },
       {
@@ -2109,6 +2397,78 @@ export async function runCloseAssurance(
       },
     })
 
+    const runSeverity = closeRun.criticalBlockerCount > 0
+      ? "CRITICAL"
+      : closeRun.highBlockerCount > 0
+        ? "HIGH"
+        : "INFO"
+    await recordCloseWorkflowEventInTx(tx, {
+      organizationId,
+      actorId: control.actorId,
+      eventType: "close.assurance.run.completed",
+      idempotencyKey: `close-assurance-run:${closeRun.id}:completed`,
+      sourceType: "CloseRun",
+      sourceId: closeRun.id,
+      closeRunId: closeRun.id,
+      periodId: closeRun.periodId,
+      message: `Close assurance run completed with ${closeRun.status}`,
+      severity: runSeverity,
+      correlationId,
+      payload: {
+        status: closeRun.status,
+        readinessScore: closeRun.readinessScore,
+        criticalBlockerCount: closeRun.criticalBlockerCount,
+        highBlockerCount: closeRun.highBlockerCount,
+      },
+    })
+
+    if (closeRun.status === CloseRunStatus.BLOCKED) {
+      await recordCloseWorkflowEventInTx(tx, {
+        organizationId,
+        actorId: control.actorId,
+        eventType: "close.assurance.blocked",
+        idempotencyKey: `close-assurance-run:${closeRun.id}:blocked`,
+        sourceType: "CloseRun",
+        sourceId: closeRun.id,
+        closeRunId: closeRun.id,
+        periodId: closeRun.periodId,
+        message: "Close assurance is blocked by open high or critical findings.",
+        severity: runSeverity,
+        correlationId,
+        payload: {
+          status: closeRun.status,
+          criticalBlockerCount: closeRun.criticalBlockerCount,
+          highBlockerCount: closeRun.highBlockerCount,
+        },
+      })
+    }
+
+    for (const finding of findings) {
+      if (finding.severity !== CloseFindingSeverity.CRITICAL) continue
+      await recordCloseWorkflowEventInTx(tx, {
+        organizationId,
+        actorId: control.actorId,
+        eventType: "close.assurance.critical_finding.created",
+        idempotencyKey: `close-assurance-finding:${finding.id}:critical-created`,
+        sourceType: "CloseAssuranceFinding",
+        sourceId: finding.id,
+        closeRunId: closeRun.id,
+        periodId: closeRun.periodId,
+        findingId: finding.id,
+        ownerId: finding.ownerId,
+        dueAt: finding.dueAt,
+        message: finding.title,
+        severity: "CRITICAL",
+        correlationId: finding.correlationId ?? correlationId,
+        payload: {
+          domain: finding.domain,
+          sourceService: finding.sourceService,
+          sourceType: finding.sourceType,
+          sourceId: finding.sourceId,
+        },
+      })
+    }
+
     return closeRun
   })
 
@@ -2395,6 +2755,85 @@ export async function getCloseEvidenceGraph(
     }),
   ]
 
+  const graphNodeIds = new Set(nodes.map((node) => node.id))
+  function addGraphNode(node: CloseEvidenceGraphDto["nodes"][number]) {
+    if (graphNodeIds.has(node.id)) return
+    graphNodeIds.add(node.id)
+    nodes.push(node)
+  }
+
+  evidence.forEach((item, index) => {
+    if (item.sourceTable !== "accounting_source_links") return
+    const evidenceNodeId = item.id ?? `evidence:${index}:${item.evidenceType}`
+    const sourceNodeId = item.sourceType && item.sourceId
+      ? `source:${item.sourceType}:${item.sourceId}`
+      : null
+    const sourceNumber = metadataString(item.metadata ?? null, "sourceNumber")
+    const postingBatchId = metadataString(item.metadata ?? null, "postingBatchId")
+    const journalEntryNumber = metadataString(item.metadata ?? null, "journalEntryNumber")
+
+    if (sourceNodeId) {
+      addGraphNode({
+        id: sourceNodeId,
+        type: item.sourceType ?? "source",
+        label: sourceNumber ?? item.sourceLabel,
+        provenance: item.provenance,
+        available: item.available,
+      })
+      edges.push({
+        from: sourceNodeId,
+        to: evidenceNodeId,
+        label: "captured by source link",
+      })
+    }
+
+    if (postingBatchId) {
+      const postingBatchNodeId = `posting-batch:${postingBatchId}`
+      addGraphNode({
+        id: postingBatchNodeId,
+        type: "ledger-posting-batch",
+        label: `Posting batch ${postingBatchId}`,
+        provenance: "POSTED",
+        available: true,
+      })
+      edges.push({
+        from: evidenceNodeId,
+        to: postingBatchNodeId,
+        label: "posts through",
+      })
+
+      if (journalEntryNumber) {
+        const journalNodeId = `journal-entry:${journalEntryNumber}`
+        addGraphNode({
+          id: journalNodeId,
+          type: "journal-entry",
+          label: `Journal entry ${journalEntryNumber}`,
+          provenance: "POSTED",
+          available: true,
+        })
+        edges.push({
+          from: postingBatchNodeId,
+          to: journalNodeId,
+          label: "produces",
+        })
+      }
+    } else if (journalEntryNumber) {
+      const journalNodeId = `journal-entry:${journalEntryNumber}`
+      addGraphNode({
+        id: journalNodeId,
+        type: "journal-entry",
+        label: `Journal entry ${journalEntryNumber}`,
+        provenance: "POSTED",
+        available: true,
+      })
+      edges.push({
+        from: evidenceNodeId,
+        to: journalNodeId,
+        label: "links to",
+      })
+    }
+  })
+
   return {
     source: {
       mode: "CLOSE_ASSURANCE_EVIDENCE_GRAPH",
@@ -2492,6 +2931,52 @@ export async function assignCloseFinding(
       metadata: jsonObject({ assignedToId, correlationId }),
     })
 
+    await recordCloseWorkflowEventInTx(tx, {
+      organizationId,
+      actorId: control.actorId,
+      eventType: "close.assurance.finding.assigned",
+      idempotencyKey: `close-assurance-finding:${finding.id}:assigned:${assignedToId}:${correlationId}`,
+      sourceType: "CloseAssuranceFinding",
+      sourceId: finding.id,
+      closeRunId: finding.closeRunId,
+      periodId: finding.periodId,
+      findingId: finding.id,
+      ownerId: assignedToId,
+      dueAt: updated.dueAt,
+      message: `Close finding ${finding.id} assigned`,
+      severity: notificationSeverity(updated.severity),
+      correlationId,
+      payload: {
+        assignedToId,
+        status: updated.status,
+        domain: updated.domain,
+      },
+    })
+
+    if (isDueSoon(updated.dueAt)) {
+      await recordCloseWorkflowEventInTx(tx, {
+        organizationId,
+        actorId: control.actorId,
+        eventType: "close.assurance.finding.due_soon",
+        idempotencyKey: `close-assurance-finding:${finding.id}:due-soon:${correlationId}`,
+        sourceType: "CloseAssuranceFinding",
+        sourceId: finding.id,
+        closeRunId: finding.closeRunId,
+        periodId: finding.periodId,
+        findingId: finding.id,
+        ownerId: assignedToId,
+        dueAt: updated.dueAt,
+        message: `Close finding ${finding.id} is due soon`,
+        severity: notificationSeverity(updated.severity),
+        correlationId,
+        payload: {
+          assignedToId,
+          status: updated.status,
+          domain: updated.domain,
+        },
+      })
+    }
+
     return mapFinding(updated)
   })
 }
@@ -2571,6 +3056,26 @@ export async function commentOnCloseFinding(
       metadata: jsonObject({ commentId: comment.id, correlationId }),
     })
 
+    await recordCloseWorkflowEventInTx(tx, {
+      organizationId,
+      actorId: control.actorId,
+      eventType: "close.assurance.accountant_comment.added",
+      idempotencyKey: `close-assurance-comment:${comment.id}:added`,
+      sourceType: findingId ? "CloseAssuranceFinding" : "CloseRun",
+      sourceId: findingId ?? closeRunId,
+      closeRunId,
+      periodId,
+      findingId,
+      message: "Close assurance comment added",
+      severity: "INFO",
+      correlationId,
+      payload: {
+        commentId: comment.id,
+        evidenceItemId,
+        reviewId,
+      },
+    })
+
     return {
       id: comment.id,
       findingId: comment.findingId,
@@ -2627,6 +3132,27 @@ export async function requestCloseWaiver(
       metadata: jsonObject({ reason: input.reason, correlationId }),
     })
 
+    await recordCloseWorkflowEventInTx(tx, {
+      organizationId,
+      actorId: control.actorId,
+      eventType: "close.assurance.waiver.requested",
+      idempotencyKey: `close-assurance-finding:${finding.id}:waiver-requested:${correlationId}`,
+      sourceType: "CloseAssuranceFinding",
+      sourceId: finding.id,
+      closeRunId: finding.closeRunId,
+      periodId: finding.periodId,
+      findingId: finding.id,
+      ownerId: finding.ownerId,
+      dueAt: finding.dueAt,
+      message: "Close finding waiver requested",
+      severity: notificationSeverity(finding.severity),
+      correlationId,
+      payload: {
+        reason: input.reason,
+        requestedById: control.actorId ?? null,
+      },
+    })
+
     return mapFinding(updated)
   })
 }
@@ -2679,6 +3205,27 @@ export async function approveCloseWaiver(
       }),
     })
 
+    await recordCloseWorkflowEventInTx(tx, {
+      organizationId,
+      actorId: control.actorId,
+      eventType: "close.assurance.waiver.approved",
+      idempotencyKey: `close-assurance-finding:${finding.id}:waiver-approved:${correlationId}`,
+      sourceType: "CloseAssuranceFinding",
+      sourceId: finding.id,
+      closeRunId: finding.closeRunId,
+      periodId: finding.periodId,
+      findingId: finding.id,
+      ownerId: finding.ownerId,
+      dueAt: finding.dueAt,
+      message: "Close finding waiver approved",
+      severity: notificationSeverity(finding.severity),
+      correlationId,
+      payload: {
+        requestedById: finding.waiverRequestedById,
+        approvedById: control.actorId ?? null,
+      },
+    })
+
     return mapFinding(updated)
   })
 }
@@ -2719,6 +3266,26 @@ export async function updateAccountantReview(
       resourceId: review.id,
       message: `Accountant review marked ${review.status}`,
       metadata: jsonObject({ closeRunId: run.id, correlationId }),
+    })
+
+    await recordCloseWorkflowEventInTx(tx, {
+      organizationId,
+      actorId: control.actorId,
+      eventType: "close.assurance.accountant_review.updated",
+      idempotencyKey: `close-assurance-review:${review.id}:${review.status}`,
+      sourceType: "AccountantReview",
+      sourceId: review.id,
+      closeRunId: run.id,
+      periodId: run.periodId,
+      ownerId: review.reviewerId,
+      message: `Accountant review marked ${review.status}`,
+      severity: review.status === AccountantReviewStatus.REJECTED ? "HIGH" : "INFO",
+      correlationId,
+      payload: {
+        reviewId: review.id,
+        status: review.status,
+        decisionNotes: review.decisionNotes,
+      },
     })
 
     return {

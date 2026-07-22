@@ -1,0 +1,68 @@
+{
+  "summary": {
+    "generatedAt": "2026-07-20T07:07:32.261Z",
+    "mode": "fail",
+    "status": "READY_FOR_DEVELOPMENT_ACCOUNTING_CLOSE_ASSURANCE",
+    "checkCount": 10,
+    "readyCount": 10,
+    "blockerCount": 0
+  },
+  "scope": {
+    "environmentClass": "DEVELOPMENT_AND_SYNTHETIC_CLOSE_ONLY",
+    "productionUseAllowed": false,
+    "postedLedgerMutationAllowed": false,
+    "certifiedProductionCloseAllowed": false,
+    "syntheticCloseAndInvalidationTestingAllowed": true
+  },
+  "upstream": {
+    "developmentStatus": "READY_FOR_DEVELOPMENT_AND_SANDBOX_PROOF",
+    "productionStatus": "blocked",
+    "productionBlockers": [
+      "source_artifact_hash_verification",
+      "source_artifact_expert_approval"
+    ]
+  },
+  "checks": [
+    {
+      "id": "payments_declarations_development_prerequisite_ready",
+      "ready": true
+    },
+    {
+      "id": "production_close_claims_remain_disabled",
+      "ready": true
+    },
+    {
+      "id": "register_to_ledger_and_component_tieout",
+      "ready": true
+    },
+    {
+      "id": "unresolved_payroll_proof_blocks_close",
+      "ready": true
+    },
+    {
+      "id": "source_links_are_tenant_scoped_audited_and_idempotent",
+      "ready": true
+    },
+    {
+      "id": "certification_requires_clean_evidence_and_segregation",
+      "ready": true
+    },
+    {
+      "id": "stale_evidence_invalidates_certification",
+      "ready": true
+    },
+    {
+      "id": "auditor_exports_are_controlled_audited_and_redacted",
+      "ready": true
+    },
+    {
+      "id": "focused_close_negative_test_harness_present",
+      "ready": true
+    },
+    {
+      "id": "development_gate_is_not_a_production_policy_gate",
+      "ready": true
+    }
+  ],
+  "blockers": []
+}

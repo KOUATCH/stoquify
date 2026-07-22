@@ -1,11 +1,11 @@
 {
   "summary": {
-    "generatedAt": "2026-07-12T09:02:57.210Z",
+    "generatedAt": "2026-07-20T07:25:52.785Z",
     "mode": "fail",
-    "status": "ready",
-    "checkCount": 10,
+    "status": "blocked",
+    "checkCount": 12,
     "readyCount": 10,
-    "blockerCount": 0
+    "blockerCount": 2
   },
   "checks": [
     {
@@ -19,6 +19,14 @@
     {
       "id": "publish_requires_reviewed_evidence",
       "ready": true
+    },
+    {
+      "id": "source_artifact_hash_verification",
+      "ready": false
+    },
+    {
+      "id": "source_artifact_expert_approval",
+      "ready": false
     },
     {
       "id": "cameroon_automation_claim_blocked",
@@ -49,5 +57,8 @@
       "ready": true
     }
   ],
-  "blockers": []
+  "blockers": [
+    "source_artifact_hash_verification",
+    "source_artifact_expert_approval"
+  ]
 }

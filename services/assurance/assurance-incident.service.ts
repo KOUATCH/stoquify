@@ -1,7 +1,7 @@
 import "server-only"
 
+import { Prisma } from "@prisma/client"
 import type {
-  Prisma,
   WorkflowAssuranceAlertChannel as PrismaAlertChannel,
   WorkflowAssuranceAlertDeliveryStatus as PrismaAlertDeliveryStatus,
   WorkflowAssuranceIncident,
@@ -13,7 +13,7 @@ import type {
 } from "@prisma/client"
 
 import { db } from "@/prisma/db"
-import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
+import { ApplicationError, BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
 import {
   EVIDENCE_GRADES,
   type EvidenceGrade,
@@ -28,7 +28,11 @@ import {
   type SensitiveFieldCategory,
 } from "@/services/security/redaction-policy.service"
 
-import type { WorkflowAssuranceEvidenceLink, WorkflowAssuranceSeverity } from "./assurance-registry-contracts"
+import {
+  createWorkflowAssuranceCaseFingerprint,
+  type WorkflowAssuranceEvidenceLink,
+  type WorkflowAssuranceSeverity,
+} from "./assurance-registry-contracts"
 import {
   detailForIncident,
   evidenceGradeForIncident,
@@ -62,6 +66,7 @@ const INCIDENT_STATUS_TO_PRISMA = {
 const INCIDENT_EVENT_TO_PRISMA = {
   created: "CREATED",
   duplicate_detected: "DUPLICATE_DETECTED",
+  source_changed: "SOURCE_CHANGED",
   severity_changed: "SEVERITY_CHANGED",
   acknowledged: "ACKNOWLEDGED",
   assigned: "ASSIGNED",
@@ -115,6 +120,7 @@ const PRISMA_TO_WAIVER_STATUS = invertMap(WAIVER_STATUS_TO_PRISMA)
 const REOPENABLE_STATUSES: PrismaIncidentStatus[] = ["RESOLVED", "WAIVED", "CLOSED"]
 const FINAL_STATUSES = new Set<PrismaIncidentStatus>(["RESOLVED", "WAIVED", "SUPPRESSED", "CLOSED"])
 const EVIDENCE_GRADE_SET = new Set<EvidenceGrade>(EVIDENCE_GRADES)
+const INCIDENT_UPSERT_MAX_ATTEMPTS = 2
 
 const PROOF_SUBJECT_TABLE_MAP: Record<string, ProofTrailSubjectType> = {
   journal_entries: "journal.entry",
@@ -134,11 +140,66 @@ type IncidentPresentationContext = {
 
 export async function upsertWorkflowAssuranceIncidentFromResult(input: WorkflowAssuranceIncidentSource) {
   if (!shouldCreateIncidentForResult(input.result.status)) return null
+  assertWorkflowAssuranceIncidentIdentity(input)
 
-  return db.$transaction(async (tx) => {
-    const client = tx as unknown as IncidentDbClient
-    return upsertIncidentInTx(client, input)
+  for (let attempt = 0; attempt < INCIDENT_UPSERT_MAX_ATTEMPTS; attempt += 1) {
+    try {
+      return await db.$transaction(
+        async (tx) => {
+          return upsertWorkflowAssuranceIncidentFromResultInTx(tx, input)
+        },
+        { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+      )
+    } catch (error) {
+      const finalAttempt = attempt === INCIDENT_UPSERT_MAX_ATTEMPTS - 1
+      if (!isRetryableIncidentUpsertError(error)) {
+        if (error instanceof ApplicationError) throw error
+        throw new BusinessRuleError("Workflow assurance incident could not be recorded safely.")
+      }
+      if (finalAttempt) {
+        throw new BusinessRuleError("Workflow assurance incident could not converge on one logical identity.")
+      }
+    }
+  }
+
+  throw new BusinessRuleError("Workflow assurance incident could not converge on one logical identity.")
+}
+
+export async function upsertWorkflowAssuranceIncidentFromResultInTx(
+  tx: Prisma.TransactionClient,
+  input: WorkflowAssuranceIncidentSource,
+) {
+  if (!shouldCreateIncidentForResult(input.result.status)) return null
+  assertWorkflowAssuranceIncidentIdentity(input)
+
+  return upsertIncidentInTx(tx as unknown as IncidentDbClient, input)
+}
+
+function assertWorkflowAssuranceIncidentIdentity(input: WorkflowAssuranceIncidentSource) {
+  const sourceType = input.result.sourceType ?? "workflow_assurance_check"
+  const sourceId = input.result.sourceId ?? input.definition.checkKey
+  const expectedFingerprint = createWorkflowAssuranceCaseFingerprint({
+    organizationId: input.organizationId,
+    checkKey: input.definition.checkKey,
+    definitionVersion: input.definition.version,
+    sourceType,
+    sourceId,
   })
+
+  if (
+    input.result.organizationId !== input.organizationId ||
+    input.result.checkKey !== input.definition.checkKey ||
+    input.result.definitionVersion !== input.definition.version ||
+    input.result.fingerprint !== expectedFingerprint
+  ) {
+    throw new BusinessRuleError("Workflow assurance incident identity does not match its server-owned definition.")
+  }
+}
+
+function isRetryableIncidentUpsertError(error: unknown) {
+  if (!error || typeof error !== "object" || !("code" in error)) return false
+  const code = (error as { code?: unknown }).code
+  return code === "P2002" || code === "P2034"
 }
 
 export async function acknowledgeWorkflowAssuranceIncident(input: WorkflowAssuranceIncidentTransitionInput) {
@@ -350,120 +411,132 @@ async function upsertIncidentInTx(client: IncidentDbClient, input: WorkflowAssur
     errorMessage: input.result.errorMessage,
   })
 
-  const exact = await client.workflowAssuranceIncident.findUnique({
+  const existing = await client.workflowAssuranceIncident.findUnique({
     where: {
-      workflow_assurance_incident_dedupe_key: {
+      workflow_assurance_incident_identity_key: {
         organizationId: input.organizationId,
         checkKey: input.definition.checkKey,
+        definitionVersion: input.definition.version,
         sourceType,
         sourceId,
-        fingerprint: input.result.fingerprint,
-        sourceHash: input.result.sourceHash,
       },
     },
   })
 
-  if (exact) {
-    const severityChanged = exact.severity !== SEVERITY_TO_PRISMA[input.result.severity]
-    const updated = await client.workflowAssuranceIncident.update({
-      where: { id: exact.id },
-      data: {
-        checkRunId: input.checkRunId ?? null,
-        title,
-        detail,
-        severity: SEVERITY_TO_PRISMA[input.result.severity],
-        sourceLinks,
-        actionRoute: input.definition.actionRoute,
-        lastDetectedAt: now,
-        occurrenceCount: { increment: 1 },
-        metadata,
-      },
-    })
-    await recordIncidentEvent(client, {
-      organizationId: input.organizationId,
-      incidentId: updated.id,
-      eventType: severityChanged ? "severity_changed" : "duplicate_detected",
-      fromStatus: exact.status,
-      toStatus: updated.status,
-      actorId: input.actorId,
-      message: severityChanged
-        ? "Workflow assurance incident severity changed for unchanged source state"
-        : "Workflow assurance incident duplicate detected for unchanged source state",
-      metadata: {
-        previousSeverity: exact.severity,
-        currentSeverity: updated.severity,
-        sourceHash: updated.sourceHash,
-      },
-    })
-    await recordAuditLog(client, {
-      organizationId: input.organizationId,
-      incidentId: updated.id,
-      actorId: input.actorId,
-      action: severityChanged
-        ? "WORKFLOW_ASSURANCE_INCIDENT_SEVERITY_CHANGED"
-        : "WORKFLOW_ASSURANCE_INCIDENT_DUPLICATE_DETECTED",
-      before: { status: exact.status, severity: exact.severity, occurrenceCount: exact.occurrenceCount },
-      after: { status: updated.status, severity: updated.severity, occurrenceCount: updated.occurrenceCount },
-    })
-    return toIncidentDto(updated)
-  }
-
-  const reopenable = await client.workflowAssuranceIncident.findFirst({
-    where: {
-      organizationId: input.organizationId,
-      checkKey: input.definition.checkKey,
-      sourceType,
-      sourceId,
+  if (existing) {
+    const sourceChanged = existing.sourceHash !== input.result.sourceHash
+    const severityChanged = existing.severity !== SEVERITY_TO_PRISMA[input.result.severity]
+    const observationData = {
+      definitionId: input.definitionId,
+      checkRunId: input.checkRunId ?? null,
+      workflow: workflowToPrisma(input.definition.workflow),
+      moduleSlug: input.definition.moduleSlug,
+      sourceHash: input.result.sourceHash,
       fingerprint: input.result.fingerprint,
-      status: { in: REOPENABLE_STATUSES },
-      NOT: { sourceHash: input.result.sourceHash },
-    },
-    orderBy: { lastDetectedAt: "desc" },
-  })
+      title,
+      detail,
+      severity: SEVERITY_TO_PRISMA[input.result.severity],
+      evidenceGrade: evidenceGradeForIncident(input.result.status),
+      sourceLinks,
+      actionRoute: input.definition.actionRoute,
+      lastDetectedAt: now,
+      occurrenceCount: { increment: 1 },
+      metadata,
+    }
 
-  if (reopenable) {
+    if (sourceChanged && REOPENABLE_STATUSES.includes(existing.status)) {
+      const updated = await client.workflowAssuranceIncident.update({
+        where: { id: existing.id },
+        data: {
+          ...observationData,
+          status: INCIDENT_STATUS_TO_PRISMA.reopened,
+          reopenedAt: now,
+          resolvedAt: null,
+          resolvedById: null,
+          resolutionNote: null,
+          suppressedAt: null,
+          suppressedById: null,
+          suppressionReason: null,
+          closedAt: null,
+        },
+      })
+      await recordIncidentEvent(client, {
+        organizationId: input.organizationId,
+        incidentId: updated.id,
+        eventType: "reopened",
+        fromStatus: existing.status,
+        toStatus: updated.status,
+        actorId: input.actorId,
+        message: "Finalized workflow assurance incident reopened for changed source evidence",
+        metadata: {
+          previousSourceHash: existing.sourceHash,
+          currentSourceHash: updated.sourceHash,
+        },
+      })
+      await recordIncidentAlert(client, updated, "reopened")
+      await recordAuditLog(client, {
+        organizationId: input.organizationId,
+        incidentId: updated.id,
+        actorId: input.actorId,
+        action: "WORKFLOW_ASSURANCE_INCIDENT_REOPENED",
+        before: { status: existing.status, sourceHash: existing.sourceHash },
+        after: { status: updated.status, sourceHash: updated.sourceHash },
+      })
+      return toIncidentDto(updated)
+    }
+
+    const eventType: WorkflowAssuranceIncidentEventType = sourceChanged
+      ? "source_changed"
+      : severityChanged
+        ? "severity_changed"
+        : "duplicate_detected"
     const updated = await client.workflowAssuranceIncident.update({
-      where: { id: reopenable.id },
-      data: {
-        checkRunId: input.checkRunId ?? null,
-        sourceHash: input.result.sourceHash,
-        title,
-        detail,
-        severity: SEVERITY_TO_PRISMA[input.result.severity],
-        status: INCIDENT_STATUS_TO_PRISMA.reopened,
-        evidenceGrade: evidenceGradeForIncident(input.result.status),
-        sourceLinks,
-        actionRoute: input.definition.actionRoute,
-        lastDetectedAt: now,
-        reopenedAt: now,
-        resolvedAt: null,
-        resolvedById: null,
-        closedAt: null,
-        occurrenceCount: { increment: 1 },
-        metadata,
-      },
+      where: { id: existing.id },
+      data: observationData,
     })
     await recordIncidentEvent(client, {
       organizationId: input.organizationId,
       incidentId: updated.id,
-      eventType: "reopened",
-      fromStatus: reopenable.status,
+      eventType,
+      fromStatus: existing.status,
       toStatus: updated.status,
       actorId: input.actorId,
-      message: "Resolved workflow assurance incident reopened for a newer source hash",
+      message: sourceChanged
+        ? existing.status === "SUPPRESSED"
+          ? "Workflow assurance source evidence changed while suppression remains in force"
+          : "Workflow assurance source evidence changed for the existing case"
+        : severityChanged
+          ? "Workflow assurance incident severity changed for unchanged source evidence"
+          : "Workflow assurance incident duplicate detected for unchanged source evidence",
       metadata: {
-        previousSourceHash: reopenable.sourceHash,
+        previousSourceHash: existing.sourceHash,
         currentSourceHash: updated.sourceHash,
+        previousSeverity: existing.severity,
+        currentSeverity: updated.severity,
+        suppressionPreserved: sourceChanged && existing.status === "SUPPRESSED",
       },
     })
-    await recordIncidentAlert(client, updated, "reopened")
     await recordAuditLog(client, {
       organizationId: input.organizationId,
       incidentId: updated.id,
       actorId: input.actorId,
-      action: "WORKFLOW_ASSURANCE_INCIDENT_REOPENED",
-      before: { status: reopenable.status, sourceHash: reopenable.sourceHash },
-      after: { status: updated.status, sourceHash: updated.sourceHash },
+      action: sourceChanged
+        ? "WORKFLOW_ASSURANCE_INCIDENT_SOURCE_CHANGED"
+        : severityChanged
+          ? "WORKFLOW_ASSURANCE_INCIDENT_SEVERITY_CHANGED"
+          : "WORKFLOW_ASSURANCE_INCIDENT_DUPLICATE_DETECTED",
+      before: {
+        status: existing.status,
+        severity: existing.severity,
+        sourceHash: existing.sourceHash,
+        occurrenceCount: existing.occurrenceCount,
+      },
+      after: {
+        status: updated.status,
+        severity: updated.severity,
+        sourceHash: updated.sourceHash,
+        occurrenceCount: updated.occurrenceCount,
+      },
     })
     return toIncidentDto(updated)
   }

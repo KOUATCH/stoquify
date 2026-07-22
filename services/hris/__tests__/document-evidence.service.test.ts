@@ -229,10 +229,21 @@ describe("HRIS contract document evidence", () => {
       purpose: "REDACTED_EXPORT",
     }, client as never)
 
+    expect(client.payrollContract.findFirst).toHaveBeenCalledWith(expect.objectContaining({
+      where: expect.objectContaining({
+        id: "contract-1", organizationId: "org-1", employeeId: "emp-1", deletedAt: null,
+      }),
+    }))
     const serialized = JSON.stringify(result)
     expect(result.exportPolicy).toBe("HASHES_AND_ACTOR_DETAILS_EXCLUDED")
     expect(serialized).not.toMatch(/artifactHash|approvalEvidenceHash|malwareScanEvidenceHash|capturedById|approvedById/)
     expect(serialized).not.toContain("sha256:")
+    expect(client.auditLog.create).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({
+        action: "HRIS_CONTRACT_DOCUMENT_REDACTED_EXPORT",
+        changes: expect.objectContaining({ purpose: "REDACTED_EXPORT", allowed: true, rawDocumentIncluded: false }),
+      }),
+    }))
   })
 
   it("fails closed before document lookup when employee scope is denied", async () => {
@@ -249,5 +260,22 @@ describe("HRIS contract document evidence", () => {
     }, client as never)).rejects.toBeInstanceOf(ForbiddenError)
 
     expect(client.payrollContract.findFirst).not.toHaveBeenCalled()
+  })
+
+  it("denies callers without HRIS document authority before scope or document lookup", async () => {
+    const client = txWith(contract())
+
+    await expect(evaluateHrisContractDocumentAccess({
+      organizationId: "org-1",
+      actorId: "unauthorized-1",
+      actorPermissions: [],
+      employeeId: "emp-1",
+      contractId: "contract-1",
+      purpose: "METADATA_READ",
+    }, client as never)).rejects.toBeInstanceOf(ForbiddenError)
+
+    expect(mockResolveScope).not.toHaveBeenCalled()
+    expect(client.payrollContract.findFirst).not.toHaveBeenCalled()
+    expect(client.auditLog.create).not.toHaveBeenCalled()
   })
 })

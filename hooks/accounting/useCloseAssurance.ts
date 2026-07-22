@@ -131,6 +131,10 @@ export function useRunCloseAssurance(locale: Locale = "en", organizationId = "cu
       return unwrap(await runCloseAssuranceAction(input))
     },
     onSuccess: (data) => {
+      queryClient.setQueryData(
+        closeAssuranceKeys.dashboard(organizationId, data.period?.id ?? "current", locale),
+        data,
+      )
       queryClient.invalidateQueries({ queryKey: closeAssuranceKeys.all })
       queryClient.invalidateQueries({ queryKey: closeAssuranceKeys.dashboard(organizationId, data.period?.id ?? "current", locale) })
       notifications.success(t.runSuccessTitle, `${data.run.status} - ${data.run.readinessScore}%`)

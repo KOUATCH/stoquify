@@ -4,10 +4,45 @@ const { createHash } = require("crypto")
 const { existsSync, readFileSync } = require("fs")
 const { resolve } = require("path")
 const argon2 = require("argon2")
+
+function bootstrapExpandEnvValue(value) {
+  return value.replace(/\${([A-Za-z_][A-Za-z0-9_]*)}/g, (_, key) => process.env[key] || "")
+}
+
+function bootstrapPrismaEnv() {
+  for (const envPath of [resolve(process.cwd(), ".env.local"), resolve(process.cwd(), ".env")]) {
+    if (!existsSync(envPath)) continue
+
+    for (const line of readFileSync(envPath, "utf8").split(/\r?\n/)) {
+      const trimmed = line.trim()
+      if (!trimmed || trimmed.startsWith("#")) continue
+
+      const match = trimmed.match(/^([A-Za-z_][A-Za-z0-9_]*)=(.*)$/)
+      if (!match || process.env[match[1]] !== undefined) continue
+
+      let value = match[2].trim()
+      if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+        value = value.slice(1, -1)
+      }
+      process.env[match[1]] = bootstrapExpandEnvValue(value).replace(/\\n/g, "\n")
+    }
+  }
+
+  for (const key of ["DATABASE_URL", "DIRECT_URL"]) {
+    if (process.env[key]?.includes("${")) {
+      process.env[key] = bootstrapExpandEnvValue(process.env[key])
+    }
+  }
+}
+
+bootstrapPrismaEnv()
+
 const {
+  AccountingPeriodStatus,
   AccountingPostingPurpose,
   AccountingSetupStatus,
   AccountingSourceType,
+  FiscalYearStatus,
   LedgerPostingBatchStatus,
   Locale,
   MatchRule,
@@ -45,6 +80,10 @@ const {
   PrismaClient,
 } = require("@prisma/client")
 
+function expandEnvValue(value) {
+  return value.replace(/\${([A-Za-z_][A-Za-z0-9_]*)}/g, (_, key) => process.env[key] || "")
+}
+
 function loadLocalEnv() {
   for (const envPath of [resolve(process.cwd(), ".env.local"), resolve(process.cwd(), ".env")]) {
     if (!existsSync(envPath)) continue
@@ -60,9 +99,13 @@ function loadLocalEnv() {
       if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
         value = value.slice(1, -1)
       }
-      process.env[match[1]] = value
-        .replace(/\${([A-Za-z_][A-Za-z0-9_]*)}/g, (_, key) => process.env[key] || "")
-        .replace(/\\n/g, "\n")
+      process.env[match[1]] = expandEnvValue(value).replace(/\\n/g, "\n")
+    }
+  }
+
+  for (const key of ["DATABASE_URL", "DIRECT_URL"]) {
+    if (process.env[key]?.includes("${")) {
+      process.env[key] = expandEnvValue(process.env[key])
     }
   }
 }
@@ -94,6 +137,10 @@ const PAYROLL_SMOKE_PERMISSIONS = [
   "payments.reconciliation.read",
   "payments.reconciliation.match",
   "payments.reconciliation.exception.resolve",
+  "accounting.close.read",
+  "accounting.close.run",
+  "accounting.close.export",
+  "accounting.close.accountant.review",
   "payroll.read",
   "payroll.command.read",
   "payroll.payment_destination.read",
@@ -249,6 +296,60 @@ async function upsertAccountingSettings(tx, organizationId, now) {
     now,
     now,
   )
+}
+
+async function seedAccountingCloseFixtures(tx, organizationId, now) {
+  const fiscalYear = await tx.fiscalYear.upsert({
+    where: { organizationId_name: { organizationId, name: "FY 2026" } },
+    update: {
+      startDate: new Date("2026-01-01T00:00:00.000Z"),
+      endDate: new Date("2026-12-31T23:59:59.999Z"),
+      status: FiscalYearStatus.OPEN,
+      notes: DEMO_ONLY_NOTICE,
+      updatedAt: now,
+    },
+    create: {
+      id: `${FIXTURE_PREFIX}_fiscal_year`,
+      organizationId,
+      name: "FY 2026",
+      startDate: new Date("2026-01-01T00:00:00.000Z"),
+      endDate: new Date("2026-12-31T23:59:59.999Z"),
+      status: FiscalYearStatus.OPEN,
+      notes: DEMO_ONLY_NOTICE,
+      updatedAt: now,
+    },
+  })
+
+  const accountingPeriod = await tx.accountingPeriod.upsert({
+    where: {
+      organizationId_fiscalYearId_periodNumber: {
+        organizationId,
+        fiscalYearId: fiscalYear.id,
+        periodNumber: 6,
+      },
+    },
+    update: {
+      name: "June 2026 close assurance browser period",
+      startDate: PERIOD_START,
+      endDate: PERIOD_END,
+      status: AccountingPeriodStatus.OPEN,
+    },
+    create: {
+      id: `${FIXTURE_PREFIX}_accounting_period`,
+      organizationId,
+      fiscalYearId: fiscalYear.id,
+      periodNumber: 6,
+      name: "June 2026 close assurance browser period",
+      startDate: PERIOD_START,
+      endDate: PERIOD_END,
+      status: AccountingPeriodStatus.OPEN,
+    },
+  })
+
+  return {
+    fiscalYearId: fiscalYear.id,
+    accountingPeriodId: accountingPeriod.id,
+  }
 }
 
 async function seedPayrollFixtures(tx, organizationId, userId, requesterUserId, now) {
@@ -1524,6 +1625,7 @@ async function main() {
     })
 
     await upsertAccountingSettings(tx, organization.id, now)
+    const closeFixtures = await seedAccountingCloseFixtures(tx, organization.id, now)
     const fixtures = await seedPayrollFixtures(tx, organization.id, user.id, requesterUser.id, now)
 
     return {
@@ -1538,7 +1640,7 @@ async function main() {
       permissions: role.permissions,
       requesterPermissions: requesterRole.permissions,
       revokedSessionCount: revokedSessionResult.count,
-      fixtures,
+      fixtures: { ...fixtures, ...closeFixtures },
       warning: DEMO_ONLY_NOTICE,
     }
   })

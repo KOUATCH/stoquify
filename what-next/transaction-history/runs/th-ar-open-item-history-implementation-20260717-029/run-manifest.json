@@ -1,0 +1,93 @@
+{
+  "schemaVersion": "1.0",
+  "runId": "th-ar-open-item-history-implementation-20260717-029",
+  "traceId": "8a1cbf54-3fc3-48ab-a179-ef3b5cd9ad29",
+  "mode": "implement",
+  "sliceId": "ap-ar",
+  "contractVersion": "2026-07-14",
+  "proposal": {
+    "path": "docs/new ideas/STOQUIFY_TRANSACTION_HISTORY_ANALYTICS_AND_SECURITY_PROPOSAL_2026-07-14.md",
+    "sha256": "sha256:0628f08178fe0441fe22ccbd1a6b429c2bb07b2ea5d278e6dcb799ab117c6979"
+  },
+  "baseCommit": "6e78e9aa01af7d8c86f1795d7105d72fb034a72d",
+  "runtimeArtifactRoot": "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/",
+  "scope": {
+    "lanes": [
+      "ar"
+    ],
+    "includePaths": [
+      "services/accounting/ar-open-item.service.ts",
+      "services/accounting/__tests__/ar-open-item.service.test.ts",
+      "actions/finance/ar-history.actions.ts",
+      "app/[locale]/(dashboard)/dashboard/finance/receivables/history/page.tsx",
+      "components/finance/AROpenItemsHistoryWorkbench.tsx",
+      "hooks/useAROpenItemsHistoryWorkbench.ts",
+      "messages/en.json",
+      "messages/fr.json"
+    ],
+    "excludePaths": [
+      "prisma/migrations/**"
+    ]
+  },
+  "stageAllowlists": {
+    "01": [
+      "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/01-architecture-gate.md",
+      "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/01-architecture-gate.json"
+    ],
+    "02": [
+      "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/02-security-proof-gate.md",
+      "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/02-security-proof-gate.json",
+      "actions/finance/ar-history.actions.ts"
+    ],
+    "03": [
+      "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/03-accounting-control-gate.md",
+      "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/03-accounting-control-gate.json",
+      "services/accounting/ar-open-item.service.ts",
+      "services/accounting/__tests__/ar-open-item.service.test.ts"
+    ],
+    "04": [
+      "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/04-read-model-optimizer.md",
+      "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/04-read-model-optimizer.json",
+      "services/accounting/ar-open-item.service.ts",
+      "actions/finance/ar-history.actions.ts",
+      "services/accounting/__tests__/ar-open-item.service.test.ts"
+    ],
+    "05": [
+      "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/05-workbench-ux-contract.md",
+      "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/05-workbench-ux-contract.json"
+    ],
+    "06": [
+      "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/06-frontend-delivery.md",
+      "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/06-frontend-delivery.json",
+      "app/[locale]/(dashboard)/dashboard/finance/receivables/history/page.tsx",
+      "components/finance/AROpenItemsHistoryWorkbench.tsx",
+      "hooks/useAROpenItemsHistoryWorkbench.ts",
+      "messages/en.json",
+      "messages/fr.json"
+    ],
+    "07": [
+      "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/07-release-review.md",
+      "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/07-release-review.json"
+    ]
+  },
+  "orchestratorPolicy": {
+    "productCodeEdits": false,
+    "installSkills": false,
+    "deployMigrations": false
+  },
+  "gates": {
+    "foundationInventory": {
+      "status": "PASS",
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/slices/foundation-inventory/07-release-review.json"
+      ]
+    },
+    "arAccountingPrerequisites": {
+      "status": "PASS",
+      "evidence": [
+        "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/03-accounting-control-gate.json"
+      ]
+    }
+  },
+  "createdAt": "2026-07-17T10:11:57.705Z"
+}

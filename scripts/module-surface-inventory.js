@@ -108,6 +108,26 @@ function inferModuleSlug(surface, source, catalog) {
 
   if (normalizedSurface === "modules/module-control.actions.ts") return "settings"
 
+  if (
+    normalizedSurface === "signals/business-signals.actions.ts" ||
+    normalizedSurface === "snapshots/snapshot.actions.ts"
+  ) {
+    return "dashboard"
+  }
+
+  if (normalizedSurface === "purchaseOrderWorkflow/GoodsReceiptAndSummary.ts") {
+    return "purchasing"
+  }
+
+  if (
+    normalizedSurface === "suppliers/itemSupplierActions.ts" ||
+    normalizedSurface === "suppliers/supplier-management-actions.ts"
+  ) {
+    return "purchasing"
+  }
+
+  if (/^(item-suppliers|itemsShow|item|units)\//i.test(normalizedSurface)) return "inventory"
+
   const fallback = [
     ["inventory", "inventory"],
     ["pos", "pos"],
@@ -118,6 +138,7 @@ function inferModuleSlug(surface, source, catalog) {
     ["purchasing", "purchasing"],
     ["purchase", "purchasing"],
     ["payroll", "payroll"],
+    ["hris", "payroll"],
     ["hr", "payroll"],
     ["compliance", "compliance"],
     ["assurance", "compliance"],
@@ -134,6 +155,29 @@ function inferModuleSlug(surface, source, catalog) {
 function extractStringList(block) {
   const values = Array.from(block.matchAll(/["']([^"']+)["']/g)).map((match) => match[1])
   return values.length ? values.join(" | ") : null
+}
+
+function extractNamedPermissionMap(source, constantName) {
+  const escapedName = escapeRegExp(constantName)
+  const match = source.match(
+    new RegExp(`const\\s+${escapedName}\\s*=\\s*\\{([\\s\\S]*?)\\}\\s*as const`),
+  )
+  if (!match) return null
+  const permissions = unique(
+    Array.from(match[1].matchAll(/["']([^"']+)["']/g)).map((item) => item[1]),
+  )
+  return permissions.length ? permissions.join(" | ") : null
+}
+
+function extractSurfacePermission(file, source) {
+  const normalizedFile = (file || "").replace(/\\\\/g, "/")
+  if (normalizedFile === "actions/suppliers/itemSupplierActions.ts") {
+    return extractNamedPermissionMap(source, "ITEM_SUPPLIER_PERMISSIONS")
+  }
+  if (normalizedFile === "actions/suppliers/supplier-management-actions.ts") {
+    return extractNamedPermissionMap(source, "SUPPLIER_PERMISSIONS")
+  }
+  return extractPermission(source)
 }
 
 function parsePermissionConstants(root) {
@@ -239,12 +283,36 @@ function detectGuard(source) {
   return "none"
 }
 
+function detectSurfaceGuard(file, source) {
+  const normalizedFile = (file || "").replace(/\\\\/g, "/")
+  if (
+    normalizedFile === "actions/suppliers/supplier-management-actions.ts" &&
+    source.includes("requireOrg()") &&
+    source.includes("hasPermission(user.permissions")
+  ) {
+    return "requireOrg+permission-check"
+  }
+  return detectGuard(source)
+}
+
 function inferModuleApplicability(file, surface, source) {
   const normalizedFile = (file || "").replace(/\\/g, "/")
   const normalizedSurface = (surface || "").replace(/\\/g, "/")
 
+  if (normalizedFile === "actions/_shared/safe-action-responses.ts") {
+    return "not applicable: internal action response helper"
+  }
+
+  if (normalizedFile === "actions/auth.ts") {
+    return "not applicable: public identity boundary"
+  }
+
   if (normalizedFile === "actions/roles/role-utils.ts" || normalizedSurface === "roles/role-utils.ts") {
     return "not applicable: internal display helper"
+  }
+
+  if (normalizedFile === "actions/security/step-up-auth.actions.ts") {
+    return "not applicable: cross-module session assurance"
   }
 
   if (/^actions\/users\/(createInvitedUser|createUser|sendResetLink|verifyOtp)\.ts$/.test(normalizedFile)) {
@@ -290,8 +358,8 @@ function createRecord(input, catalog) {
     surfaceType: input.surfaceType,
     moduleApplicability: input.moduleApplicability || inferModuleApplicability(input.file, input.surface, input.source || ""),
     moduleSlug,
-    permission: input.permission || extractPermission(input.source || ""),
-    guard: input.guard || detectGuard(input.source || ""),
+    permission: input.permission || extractSurfacePermission(input.file, input.source || ""),
+    guard: input.guard || detectSurfaceGuard(input.file, input.source || ""),
     observeOrEnforce: input.observeOrEnforce || "report-only",
     dependencyGaps: dependencies || [],
     delegatedTo: input.delegatedTo || [],
@@ -321,7 +389,9 @@ function pureReExportTargets(root, file, source) {
 
   const directory = path.dirname(path.join(root, file))
   const candidatesFor = (spec) => {
-    const base = path.resolve(directory, spec)
+    const base = spec.startsWith("@/")
+      ? path.resolve(root, spec.slice(2))
+      : path.resolve(directory, spec)
     return [
       base,
       `${base}.ts`,
@@ -332,7 +402,7 @@ function pureReExportTargets(root, file, source) {
   }
 
   return specs
-    .filter((spec) => spec.startsWith("."))
+    .filter((spec) => spec.startsWith(".") || spec.startsWith("@/"))
     .map((spec) => candidatesFor(spec).find((candidate) => fs.existsSync(candidate)))
     .filter(Boolean)
     .map((target) => toRepoPath(root, target))
@@ -556,7 +626,11 @@ function reportExportRecords(root, catalog) {
     for (const absolute of files) {
       const file = toRepoPath(root, absolute)
       const source = fs.readFileSync(absolute, "utf8")
-      const moduleSlug = inferModuleSlug(file.replace(new RegExp(`^${target.prefix}/`), ""), source, catalog)
+      const delegatedTo = pureReExportTargets(root, file, source)
+      const effectiveSource = delegatedTo.length
+        ? delegatedTo.map((delegatedTarget) => readFile(root, delegatedTarget)).join("\n")
+        : source
+      const moduleSlug = inferModuleSlug(file.replace(new RegExp(`^${target.prefix}/`), ""), effectiveSource, catalog)
       const surfaceBase = file.replace(new RegExp(`^${target.prefix}/`), "")
       const sharedMetadata = {
         sourceModules: sourceModulesFor(moduleSlug),
@@ -570,9 +644,12 @@ function reportExportRecords(root, catalog) {
           surfaceType: target.evidence ? "report_evidence" : "report",
           moduleApplicability: target.evidence ? "source_inherited_service" : undefined,
           moduleSlug,
-          permission: target.evidence ? null : extractPermissionForSurface(source, "report"),
-          guard: target.evidence ? detectGuard(source) : undefined,
-          source,
+          permission: target.evidence ? null : extractPermissionForSurface(effectiveSource, "report"),
+          guard: target.evidence
+            ? detectGuard(effectiveSource)
+            : delegatedTo.length ? "delegated-re-export" : undefined,
+          source: effectiveSource,
+          delegatedTo,
           metadata: {
             ...sharedMetadata,
             reportExportKind: "report",
@@ -587,13 +664,16 @@ function reportExportRecords(root, catalog) {
           surfaceType: target.evidence ? "export_evidence" : "export",
           moduleApplicability: target.evidence ? "source_inherited_service" : undefined,
           moduleSlug,
-          permission: target.evidence ? null : extractPermissionForSurface(source, "export"),
-          guard: target.evidence ? detectGuard(source) : undefined,
-          source,
+          permission: target.evidence ? null : extractPermissionForSurface(effectiveSource, "export"),
+          guard: target.evidence
+            ? detectGuard(effectiveSource)
+            : delegatedTo.length ? "delegated-re-export" : undefined,
+          source: effectiveSource,
+          delegatedTo,
           metadata: {
             ...sharedMetadata,
             reportExportKind: "export",
-            freshAuthEvidence: /freshAuth\s*:/.test(source),
+            freshAuthEvidence: /freshAuth\s*:/.test(effectiveSource),
           },
         }, catalog))
       }
@@ -904,4 +984,3 @@ module.exports = {
   parseArgs,
   renderMarkdown,
 }
-

@@ -1,3 +1,7 @@
+import type {
+  AllowedOperatingAccessScope,
+  OperatingAccessContext,
+} from "@/services/operating-access/operating-access-scope-contracts"
 import type { ActionQueueResult, BusinessSignal } from "@/services/signals/business-signal-contracts"
 import type {
   CloseReadinessMetrics,
@@ -7,6 +11,11 @@ import type {
   SnapshotResult,
   TenantOperatingMetrics,
 } from "@/services/snapshots/snapshot-contracts"
+import type { PaymentReconciliationSignOffCommandStateResult } from "@/services/reconciliation/payment-reconciliation-sign-off-command-state-contracts"
+
+jest.mock("@/services/operating-access/operating-access-scope.service", () => ({
+  resolveOperatingAccessScope: jest.fn(),
+}))
 
 jest.mock("@/services/snapshots/close-readiness-snapshot.service", () => ({
   getCloseReadinessSnapshot: jest.fn(),
@@ -29,25 +38,95 @@ jest.mock("@/services/assurance/assurance-control-tower.service", () => ({
   getAssuranceControlTowerData: jest.fn(),
 }))
 
+jest.mock("@/services/reconciliation/payment-reconciliation-sign-off-command-state.service", () => ({
+  getPaymentReconciliationSignOffCommandState: jest.fn(),
+}))
+
+import { resolveOperatingAccessScope } from "@/services/operating-access/operating-access-scope.service"
 import { getCloseReadinessSnapshot } from "@/services/snapshots/close-readiness-snapshot.service"
 import { getInventoryCashSnapshot } from "@/services/snapshots/inventory-cash-snapshot.service"
 import { getPaymentTruthSnapshot } from "@/services/snapshots/payment-truth-snapshot.service"
 import { getTenantOperatingSnapshotFromRelated } from "@/services/snapshots/tenant-operating-snapshot.service"
 import { getAssuranceControlTowerData } from "@/services/assurance/assurance-control-tower.service"
+import { getPaymentReconciliationSignOffCommandState } from "@/services/reconciliation/payment-reconciliation-sign-off-command-state.service"
 
-import { composeManagerActionCenterData, getManagerActionCenterData } from "../manager-action-center.service"
+import {
+  composeManagerActionCenterData,
+  getManagerActionCenterData,
+  getManagerActionCenterDataFromResolvedAccess,
+} from "../manager-action-center.service"
 
+const mockResolveOperatingAccessScope = resolveOperatingAccessScope as jest.Mock
 const mockGetCloseReadinessSnapshot = getCloseReadinessSnapshot as jest.Mock
 const mockGetInventoryCashSnapshot = getInventoryCashSnapshot as jest.Mock
 const mockGetPaymentTruthSnapshot = getPaymentTruthSnapshot as jest.Mock
 const mockGetTenantOperatingSnapshotFromRelated = getTenantOperatingSnapshotFromRelated as jest.Mock
 const mockGetAssuranceControlTowerData = getAssuranceControlTowerData as jest.Mock
+const mockGetPaymentReconciliationSignOffCommandState = getPaymentReconciliationSignOffCommandState as jest.Mock
 
 const generatedAt = "2026-06-20T10:00:00.000Z"
 
 describe("manager action center service", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockResolveOperatingAccessScope.mockResolvedValue(tenantAccessDecision())
+    mockGetPaymentReconciliationSignOffCommandState.mockResolvedValue(emptyReconciliationCommandState())
+  })
+
+  it("fails closed on a denied operating scope before downstream reads", async () => {
+    const context = accessContext()
+    mockResolveOperatingAccessScope.mockResolvedValue({
+      allowed: false,
+      organizationId: context.orgId,
+      actorId: context.userId,
+      requiredPermission: "dashboard.read",
+      authority: { kind: "DENIED", basis: "LOCATION_ASSIGNMENT" },
+      reason: "NO_MANAGED_LOCATIONS",
+      scope: null,
+    })
+
+    await expect(
+      getManagerActionCenterData({ accessContext: context, now: generatedAt }),
+    ).rejects.toEqual(
+      expect.objectContaining({
+        name: "ForbiddenError",
+        code: "FORBIDDEN",
+        message: "Manager Action Center is not available for this account.",
+      }),
+    )
+
+    expect(mockResolveOperatingAccessScope).toHaveBeenCalledWith(context)
+    expectNoManagerActionCenterReads()
+  })
+
+  it("fails closed on location responsibility before tenant reads", async () => {
+    const context = accessContext({ roles: [] })
+    mockResolveOperatingAccessScope.mockResolvedValue({
+      allowed: true,
+      organizationId: context.orgId,
+      actorId: context.userId,
+      requiredPermission: "dashboard.read",
+      authority: {
+        kind: "LOCATION_RESPONSIBILITY",
+        basis: "Location.managerId",
+        managedLocations: [{ id: "location-1", name: "Branch One", code: "B1" }],
+      },
+      scope: { kind: "LOCATIONS", locationIds: ["location-1"] },
+    })
+
+    await expect(
+      getManagerActionCenterData({ accessContext: context, now: generatedAt }),
+    ).rejects.toEqual(
+      expect.objectContaining({
+        name: "ForbiddenError",
+        code: "FORBIDDEN",
+        message:
+          "Manager Action Center tenant truth is not available for location-scoped operating access.",
+      }),
+    )
+
+    expect(mockResolveOperatingAccessScope).toHaveBeenCalledWith(context)
+    expectNoManagerActionCenterReads()
   })
 
   it("composes BI-backed manager actions from the permission-filtered action queue", () => {
@@ -208,16 +287,41 @@ describe("manager action center service", () => {
     mockGetTenantOperatingSnapshotFromRelated.mockResolvedValue(tenantSnapshot())
     mockGetAssuranceControlTowerData.mockRejectedValue(new Error("assurance timeout"))
 
+    const context = accessContext()
     const data = await getManagerActionCenterData({
-      organizationId: "org-1",
-      actorPermissions: ["dashboard.read", "payments.reconciliation.read", "inventory.read", "purchases.orders.read"],
+      accessContext: context,
       now: generatedAt,
     })
 
+    expect(mockResolveOperatingAccessScope).toHaveBeenCalledWith(context)
     expect(mockGetAssuranceControlTowerData).toHaveBeenCalled()
     expect(data.assuranceIncidents).toEqual([])
     expect(data.commandBrief.title).toBe("Manager daily run sheet")
     expect(data.runSheetGroups).toHaveLength(7)
+  })
+
+  it("builds tenant data from resolved access without resolving again", async () => {
+    mockGetPaymentTruthSnapshot.mockResolvedValue(paymentSnapshot())
+    mockGetInventoryCashSnapshot.mockResolvedValue(inventorySnapshot())
+    mockGetCloseReadinessSnapshot.mockResolvedValue(closeSnapshot())
+    mockGetTenantOperatingSnapshotFromRelated.mockResolvedValue(tenantSnapshot())
+    mockGetAssuranceControlTowerData.mockRejectedValue(new Error("assurance timeout"))
+
+    const context = accessContext()
+    const data = await getManagerActionCenterDataFromResolvedAccess(
+      {
+        accessContext: context,
+        now: generatedAt,
+      },
+      tenantAccessDecision(),
+    )
+
+    expect(mockResolveOperatingAccessScope).not.toHaveBeenCalled()
+    expect(mockGetPaymentTruthSnapshot).toHaveBeenCalled()
+    expect(mockGetInventoryCashSnapshot).toHaveBeenCalled()
+    expect(mockGetCloseReadinessSnapshot).toHaveBeenCalled()
+    expect(mockGetTenantOperatingSnapshotFromRelated).toHaveBeenCalled()
+    expect(data.organizationId).toBe("org-1")
   })
 
   it("adds visible workflow assurance incidents to manager action items", () => {
@@ -256,7 +360,367 @@ describe("manager action center service", () => {
       },
     })
   })
+
+  it("composes an available reconciliation descriptor as an executable source command", () => {
+    const data = composeManagerActionCenterData({
+      organizationId: "org-1",
+      generatedAt,
+      snapshots: {
+        tenantOperating: tenantSnapshot(),
+        paymentTruth: paymentSnapshot(),
+        inventoryCash: inventorySnapshot(),
+        closeReadiness: closeSnapshot(),
+      },
+      actionQueue: actionQueue({ total: 0, filteredOutCount: 0 }),
+      paymentReconciliationSignOff:
+        availableReconciliationCommandState(),
+    })
+
+    expect(data.summary).toMatchObject({
+      total: 1,
+      dueToday: 1,
+      open: 1,
+      high: 1,
+      hiddenByPermission: 0,
+    })
+    expect(data.actionItems).toEqual([
+      expect.objectContaining({
+        id: "payment-reconciliation-sign:run-ready-1",
+        origin: "SOURCE_COMMAND",
+        kind: "PAYMENT_RECONCILIATION_SIGN_OFF",
+        requiredPermission: "payments.reconciliation.sign",
+        sourceCommand: expect.objectContaining({
+          commandId: "payment-reconciliation-sign:run-ready-1",
+          source: expect.objectContaining({
+            id: "run-ready-1",
+            status: "READY_FOR_SIGNOFF",
+          }),
+        }),
+        actionLink: expect.objectContaining({
+          href: "/dashboard/finance/reconciliation",
+          requiredPermission: "payments.reconciliation.read",
+        }),
+      }),
+    ])
+    expect(data.runSheetGroups.find((group) => group.id === "critical"))
+      .toMatchObject({ count: 1 })
+  })
+
+  it("keeps a read-only reconciliation descriptor link-only with no executable payload", () => {
+    const data = composeManagerActionCenterData({
+      organizationId: "org-1",
+      generatedAt,
+      snapshots: {
+        tenantOperating: tenantSnapshot(),
+        paymentTruth: paymentSnapshot(),
+        inventoryCash: inventorySnapshot(),
+        closeReadiness: closeSnapshot(),
+      },
+      actionQueue: actionQueue({ total: 0, filteredOutCount: 0 }),
+      paymentReconciliationSignOff:
+        readOnlyReconciliationCommandState("SIGN_PERMISSION_REQUIRED"),
+    })
+
+    expect(data.summary).toMatchObject({
+      total: 1,
+      blocked: 1,
+      hiddenByPermission: 0,
+    })
+    expect(data.actionItems[0]).toMatchObject({
+      origin: "SOURCE_COMMAND",
+      kind: "LINK",
+      sourceCommand: null,
+      requiredPermission: "payments.reconciliation.read",
+      state: "permission_denied",
+      blockers: [
+        expect.objectContaining({
+          gate: "payment_reconciliation_sign_off",
+        }),
+      ],
+    })
+    expect(data.actionItems).toEqual(
+      expect.not.arrayContaining([
+        expect.objectContaining({
+          kind: "PAYMENT_RECONCILIATION_SIGN_OFF",
+        }),
+      ]),
+    )
+  })
+
+  it("does not enumerate empty or hidden reconciliation command states", () => {
+    const inputs = [
+      emptyReconciliationCommandState(),
+      hiddenReconciliationCommandState(),
+    ]
+
+    for (const paymentReconciliationSignOff of inputs) {
+      const data = composeManagerActionCenterData({
+        organizationId: "org-1",
+        generatedAt,
+        snapshots: {
+          tenantOperating: tenantSnapshot(),
+          paymentTruth: paymentSnapshot(),
+          inventoryCash: inventorySnapshot(),
+          closeReadiness: closeSnapshot(),
+        },
+        actionQueue: actionQueue({ total: 0, filteredOutCount: 0 }),
+        paymentReconciliationSignOff,
+      })
+
+      expect(data.actionItems).toEqual([])
+      expect(data.summary).toMatchObject({
+        total: 0,
+        hiddenByPermission: 0,
+      })
+    }
+  })
+
+  it("loads the source-owned descriptor for tenant-wide composition", async () => {
+    mockGetPaymentTruthSnapshot.mockResolvedValue(paymentSnapshot())
+    mockGetInventoryCashSnapshot.mockResolvedValue(inventorySnapshot())
+    mockGetCloseReadinessSnapshot.mockResolvedValue(closeSnapshot())
+    mockGetTenantOperatingSnapshotFromRelated.mockResolvedValue(
+      tenantSnapshot(),
+    )
+    mockGetAssuranceControlTowerData.mockRejectedValue(
+      new Error("assurance unavailable"),
+    )
+    mockGetPaymentReconciliationSignOffCommandState.mockResolvedValue(
+      availableReconciliationCommandState(),
+    )
+
+    const context = accessContext({
+      permissions: [
+        "dashboard.read",
+        "payments.reconciliation.read",
+        "payments.reconciliation.sign",
+      ],
+    })
+    const data = await getManagerActionCenterDataFromResolvedAccess(
+      {
+        accessContext: context,
+        now: generatedAt,
+      },
+      tenantAccessDecision(context),
+    )
+
+    expect(mockGetPaymentReconciliationSignOffCommandState)
+      .toHaveBeenCalledWith({
+        accessContext: context,
+        now: generatedAt,
+      })
+    expect(data.actionItems).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          kind: "PAYMENT_RECONCILIATION_SIGN_OFF",
+        }),
+      ]),
+    )
+  })
+
+  it("keeps tenant dashboard data available when command-state evidence fails closed", async () => {
+    mockGetPaymentTruthSnapshot.mockResolvedValue(paymentSnapshot())
+    mockGetInventoryCashSnapshot.mockResolvedValue(inventorySnapshot())
+    mockGetCloseReadinessSnapshot.mockResolvedValue(closeSnapshot())
+    mockGetTenantOperatingSnapshotFromRelated.mockResolvedValue(
+      tenantSnapshot(),
+    )
+    mockGetAssuranceControlTowerData.mockRejectedValue(
+      new Error("assurance unavailable"),
+    )
+    mockGetPaymentReconciliationSignOffCommandState.mockRejectedValue(
+      new Error("command evidence inconsistent"),
+    )
+
+    const data = await getManagerActionCenterDataFromResolvedAccess(
+      {
+        accessContext: accessContext(),
+        now: generatedAt,
+      },
+      tenantAccessDecision(),
+    )
+
+    expect(data.actionItems).toEqual(
+      expect.not.arrayContaining([
+        expect.objectContaining({ origin: "SOURCE_COMMAND" }),
+      ]),
+    )
+    expect(data.summary.hiddenByPermission).toBe(
+      actionQueue().filteredOutCount,
+    )
+  })
 })
+
+function accessContext(
+  overrides: Partial<OperatingAccessContext> = {},
+): OperatingAccessContext {
+  return {
+    orgId: "org-1",
+    userId: "user-1",
+    roles: [
+      {
+        id: "role-admin",
+        name: "Administrator",
+        code: "admin",
+        permissions: ["dashboard.read"],
+      },
+    ],
+    permissions: [
+      "dashboard.read",
+      "payments.reconciliation.read",
+      "inventory.read",
+      "purchases.orders.read",
+    ],
+    isSuperUser: false,
+    ...overrides,
+  }
+}
+
+function tenantAccessDecision(
+  context = accessContext(),
+): AllowedOperatingAccessScope {
+  return {
+    allowed: true,
+    organizationId: context.orgId,
+    actorId: context.userId,
+    requiredPermission: "dashboard.read",
+    authority: {
+      kind: "TENANT_WIDE",
+      basis: "RBAC_ROLE",
+      matchedRoleCode: "admin",
+    },
+    scope: {
+      kind: "TENANT",
+      locationIds: null,
+    },
+  }
+}
+
+function expectNoManagerActionCenterReads() {
+  expect(mockGetPaymentTruthSnapshot).not.toHaveBeenCalled()
+  expect(mockGetInventoryCashSnapshot).not.toHaveBeenCalled()
+  expect(mockGetCloseReadinessSnapshot).not.toHaveBeenCalled()
+  expect(mockGetAssuranceControlTowerData).not.toHaveBeenCalled()
+  expect(mockGetPaymentReconciliationSignOffCommandState).not.toHaveBeenCalled()
+  expect(mockGetTenantOperatingSnapshotFromRelated).not.toHaveBeenCalled()
+}
+
+function reconciliationCommandStateBase() {
+  return {
+    kind: "PAYMENT_RECONCILIATION_SIGN_OFF_COMMAND_STATE" as const,
+    version: 1 as const,
+    organizationId: "org-1",
+    actorId: "user-1",
+    generatedAt,
+    authority: {
+      kind: "TENANT_WIDE" as const,
+      basis: "RBAC_ROLE" as const,
+    },
+    scope: { kind: "TENANT" as const },
+    controls: {
+      projectionPurpose:
+        "SOURCE_OWNED_SIGN_OFF_COMMAND_STATE_ONLY" as const,
+      sourceOfTruth: "ReconciliationRun" as const,
+      tenantWideOnly: true as const,
+      moduleEntitlementEnforced: true as const,
+      makerCheckerRequired: true as const,
+      freshAuthRequired: true as const,
+      minimumAssurance: "L1" as const,
+      sourceRevalidatedAtWrite: true as const,
+      clientResolutionAccepted: false as const,
+    },
+    projectionHash: `sha256:${"f".repeat(64)}`,
+  }
+}
+
+function reconciliationCommandCandidate() {
+  return {
+    commandId: "payment-reconciliation-sign:run-ready-1",
+    actionPath: "/dashboard/finance/reconciliation" as const,
+    requiredPermission: "payments.reconciliation.sign" as const,
+    source: {
+      type: "ReconciliationRun" as const,
+      id: "run-ready-1",
+      status: "READY_FOR_SIGNOFF" as const,
+      updatedAt: "2026-06-20T09:30:00.000Z",
+      versionHash: `sha256:${"a".repeat(64)}`,
+    },
+    provider: {
+      id: "provider-account-1",
+      displayName: "MTN settlement",
+      currencyCode: "XAF",
+    },
+    businessDate: "2026-06-20T00:00:00.000Z",
+    periodStart: "2026-06-20T00:00:00.000Z",
+    periodEnd: "2026-06-20T23:59:59.999Z",
+    makerActorId: "maker-1",
+    totals: {
+      internalAmount: "10000.00",
+      externalAmount: "10000.00",
+      matchedAmount: "10000.00",
+      suspenseAmount: "0.00",
+    },
+    matchCount: 1,
+    exceptionCount: 0,
+  }
+}
+
+function availableReconciliationCommandState(): Extract<
+  PaymentReconciliationSignOffCommandStateResult,
+  { state: "AVAILABLE" }
+> {
+  return {
+    ...reconciliationCommandStateBase(),
+    state: "AVAILABLE",
+    reason: null,
+    commandAllowed: true,
+    candidate: reconciliationCommandCandidate(),
+  }
+}
+
+function readOnlyReconciliationCommandState(
+  reason: Extract<
+    PaymentReconciliationSignOffCommandStateResult,
+    { state: "READ_ONLY" }
+  >["reason"],
+): Extract<
+  PaymentReconciliationSignOffCommandStateResult,
+  { state: "READ_ONLY" }
+> {
+  return {
+    ...reconciliationCommandStateBase(),
+    state: "READ_ONLY",
+    reason,
+    commandAllowed: false,
+    candidate: reconciliationCommandCandidate(),
+  }
+}
+
+function emptyReconciliationCommandState(): Extract<
+  PaymentReconciliationSignOffCommandStateResult,
+  { state: "EMPTY" }
+> {
+  return {
+    ...reconciliationCommandStateBase(),
+    state: "EMPTY",
+    reason: "NO_READY_RUN",
+    commandAllowed: false,
+    candidate: null,
+  }
+}
+
+function hiddenReconciliationCommandState(): Extract<
+  PaymentReconciliationSignOffCommandStateResult,
+  { state: "HIDDEN" }
+> {
+  return {
+    ...reconciliationCommandStateBase(),
+    state: "HIDDEN",
+    reason: "READ_PERMISSION_REQUIRED",
+    commandAllowed: false,
+    candidate: null,
+  }
+}
 
 function freshness(overrides: Partial<SnapshotFreshness> = {}): SnapshotFreshness {
   return {

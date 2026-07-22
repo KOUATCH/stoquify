@@ -1,0 +1,430 @@
+{
+  "version": "2026-07-20",
+  "status": "installed-validated",
+  "sourceReport": "docs/pos/STOQUIFY_POS_9_PLUS_EVALUATION_AND_ROADMAP_2026-07-20.md",
+  "orchestrator": "stoquify-pos-9plus-program-orchestrator",
+  "skills": [
+    {
+      "name": "stoquify-pos-9plus-program-orchestrator",
+      "action": "create",
+      "category": "program",
+      "owns": [
+        "decisions",
+        "dependency-dag",
+        "dispatch",
+        "evidence-registry",
+        "hold-points"
+      ],
+      "mustNotOwn": [
+        "product-code",
+        "specialist-certification",
+        "release-approval"
+      ],
+      "gates": []
+    },
+    {
+      "name": "stoquify-pos-tender-accounting-truth",
+      "action": "adapt",
+      "from": [
+        "007-aqstoqflow-pos-ledger-controls"
+      ],
+      "category": "financial",
+      "owns": [
+        "tender-state",
+        "store-credit-policy",
+        "cash-stock-ledger-fiscal-effects"
+      ],
+      "gates": [
+        "G1",
+        "G6"
+      ]
+    },
+    {
+      "name": "stoquify-pos-shift-drawer-invariant",
+      "action": "create",
+      "category": "session",
+      "owns": [
+        "physical-boundary",
+        "active-session-invariant",
+        "atomic-claim",
+        "handover"
+      ],
+      "gates": [
+        "G2",
+        "G5"
+      ]
+    },
+    {
+      "name": "stoquify-pos-provider-payment-lifecycle",
+      "action": "create",
+      "category": "payments",
+      "owns": [
+        "authorization",
+        "capture",
+        "webhook-trust",
+        "timeout",
+        "reversal",
+        "provider-refund"
+      ],
+      "gates": [
+        "G1",
+        "G5",
+        "G6"
+      ]
+    },
+    {
+      "name": "stoquify-pos-returns-reversal-controls",
+      "action": "adapt",
+      "from": [
+        "007-aqstoqflow-pos-ledger-controls"
+      ],
+      "category": "corrections",
+      "owns": [
+        "return-eligibility",
+        "partial-return",
+        "cash-disposition",
+        "correction-effects"
+      ],
+      "gates": [
+        "G1",
+        "G2",
+        "G5",
+        "G6",
+        "G7"
+      ]
+    },
+    {
+      "name": "stoquify-pos-payment-reconciliation-certifier",
+      "action": "compose",
+      "from": [
+        "01-payment-recon-readiness-audit",
+        "02-payment-recon-evidence-schema",
+        "03-payment-recon-ingestion-adapters",
+        "04-payment-recon-matching-suspense",
+        "05-payment-recon-dashboard-certification"
+      ],
+      "category": "reconciliation",
+      "owns": [
+        "statements",
+        "matching",
+        "suspense",
+        "settlement-certification",
+        "close-link"
+      ],
+      "gates": [
+        "G1",
+        "G5",
+        "G6",
+        "G8"
+      ]
+    },
+    {
+      "name": "stoquify-pos-offline-durable-edge-queue",
+      "action": "adapt-split",
+      "from": [
+        "014-aqstoqflow-offline-pos-sync"
+      ],
+      "category": "offline",
+      "owns": [
+        "indexeddb",
+        "leases",
+        "stale-recovery",
+        "per-event-ack",
+        "retention",
+        "queue-export"
+      ],
+      "gates": [
+        "G3",
+        "G8"
+      ]
+    },
+    {
+      "name": "stoquify-pos-offline-device-trust",
+      "action": "adapt-split",
+      "from": [
+        "014-aqstoqflow-offline-pos-sync"
+      ],
+      "category": "security",
+      "owns": [
+        "device-registration",
+        "canonical-signing",
+        "verification",
+        "rotation",
+        "revocation"
+      ],
+      "gates": [
+        "G4",
+        "G5"
+      ]
+    },
+    {
+      "name": "stoquify-pos-offline-replay-finalizer",
+      "action": "strengthen",
+      "from": [
+        "aqstoqflow-offline-pos-replay-finalizer"
+      ],
+      "category": "offline",
+      "owns": [
+        "canonical-replay",
+        "economic-idempotency",
+        "terminal-evidence",
+        "stable-blockers"
+      ],
+      "gates": [
+        "G1",
+        "G3",
+        "G4",
+        "G6"
+      ]
+    },
+    {
+      "name": "stoquify-pos-offline-conflict-operations",
+      "action": "create",
+      "category": "operations",
+      "owns": [
+        "conflict-taxonomy",
+        "authorized-resolution",
+        "ownership",
+        "sla",
+        "audit",
+        "close-link"
+      ],
+      "gates": [
+        "G3",
+        "G5",
+        "G6",
+        "G7",
+        "G8"
+      ]
+    },
+    {
+      "name": "stoquify-pos-access-trust-hardener",
+      "action": "adapt",
+      "from": [
+        "aqstoqflow-module-access-guard-contract"
+      ],
+      "category": "security",
+      "owns": [
+        "authentication",
+        "tenant-ownership",
+        "module-entitlement",
+        "rbac",
+        "fresh-auth",
+        "privacy"
+      ],
+      "gates": [
+        "G4",
+        "G5"
+      ]
+    },
+    {
+      "name": "stoquify-pos-cashier-workstation-ux",
+      "action": "adapt",
+      "from": [
+        "aqstoqflow-uiux-00-orchestrator"
+      ],
+      "category": "experience",
+      "owns": [
+        "frontend-decomposition",
+        "cashier-workflow",
+        "robust-states",
+        "keyboard-touch-performance"
+      ],
+      "gates": [
+        "G7"
+      ]
+    },
+    {
+      "name": "stoquify-pos-device-adapter-certification",
+      "action": "create",
+      "category": "hardware",
+      "owns": [
+        "scanner-adapter",
+        "printer-adapter",
+        "drawer-adapter",
+        "terminal-capability",
+        "diagnostics",
+        "device-matrix"
+      ],
+      "gates": [
+        "G1",
+        "G2",
+        "G4",
+        "G7"
+      ]
+    },
+    {
+      "name": "stoquify-pos-receipt-delivery-proof",
+      "action": "create",
+      "category": "receipts",
+      "owns": [
+        "delivery-capabilities",
+        "provisional-final-state",
+        "retry",
+        "revocation",
+        "redaction"
+      ],
+      "gates": [
+        "G6",
+        "G7"
+      ]
+    },
+    {
+      "name": "stoquify-pos-country-pack-money-localization",
+      "action": "adapt",
+      "from": [
+        "015-aqstoqflow-country-adapter-pilot"
+      ],
+      "category": "localization",
+      "owns": [
+        "en-fr-copy",
+        "minor-units",
+        "cash-rounding",
+        "country-presentation",
+        "golden-fixtures"
+      ],
+      "gates": [
+        "G1",
+        "G6"
+      ]
+    },
+    {
+      "name": "stoquify-pos-responsive-accessibility-certifier",
+      "action": "create",
+      "category": "experience-assurance",
+      "owns": [
+        "wcag",
+        "keyboard-screen-reader",
+        "focus-announcements",
+        "touch",
+        "viewport-certification"
+      ],
+      "gates": [
+        "G7"
+      ]
+    },
+    {
+      "name": "stoquify-pos-operability-slo-runbook-builder",
+      "action": "create",
+      "category": "operability",
+      "owns": [
+        "telemetry",
+        "sli-slo",
+        "alerts",
+        "runbooks",
+        "support-bundles",
+        "recovery-drills"
+      ],
+      "gates": [
+        "G8"
+      ]
+    },
+    {
+      "name": "stoquify-pos-chaos-field-certifier",
+      "action": "adapt",
+      "from": [
+        "aqstoqflow-release-verification-foundation"
+      ],
+      "category": "independent-assurance",
+      "owns": [
+        "db-concurrency-tests",
+        "offline-chaos",
+        "provider-failure-tests",
+        "browser-accessibility",
+        "hardware-field-evidence",
+        "performance"
+      ],
+      "gates": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5",
+        "G6",
+        "G7",
+        "G8"
+      ]
+    },
+    {
+      "name": "stoquify-pos-release-gate-governor",
+      "action": "adapt",
+      "from": [
+        "017-aqstoqflow-enterprise-release-gate"
+      ],
+      "category": "release",
+      "owns": [
+        "candidate-evidence-review",
+        "g1-g8-verdict",
+        "claims-matrix",
+        "residual-risk",
+        "promotion-decision"
+      ],
+      "gates": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5",
+        "G6",
+        "G7",
+        "G8"
+      ]
+    }
+  ],
+  "creationWaves": [
+    {
+      "id": "S0",
+      "skills": [
+        "stoquify-pos-9plus-program-orchestrator",
+        "stoquify-pos-tender-accounting-truth",
+        "stoquify-pos-shift-drawer-invariant",
+        "stoquify-pos-access-trust-hardener"
+      ],
+      "holdPoint": "HP-1"
+    },
+    {
+      "id": "S1",
+      "skills": [
+        "stoquify-pos-provider-payment-lifecycle",
+        "stoquify-pos-offline-durable-edge-queue",
+        "stoquify-pos-offline-device-trust",
+        "stoquify-pos-offline-replay-finalizer",
+        "stoquify-pos-offline-conflict-operations",
+        "stoquify-pos-returns-reversal-controls",
+        "stoquify-pos-payment-reconciliation-certifier"
+      ]
+    },
+    {
+      "id": "S2",
+      "skills": [
+        "stoquify-pos-cashier-workstation-ux",
+        "stoquify-pos-device-adapter-certification",
+        "stoquify-pos-receipt-delivery-proof",
+        "stoquify-pos-country-pack-money-localization",
+        "stoquify-pos-responsive-accessibility-certifier"
+      ]
+    },
+    {
+      "id": "S3",
+      "skills": [
+        "stoquify-pos-operability-slo-runbook-builder",
+        "stoquify-pos-chaos-field-certifier",
+        "stoquify-pos-release-gate-governor"
+      ]
+    }
+  ],
+  "mandatoryRules": [
+    "one accountable skill per mutation boundary",
+    "builders do not self-certify",
+    "orchestrator does not implement product code",
+    "release governor does not repair defects",
+    "failed mandatory gate is NO-GO",
+    "offline selling remains disabled until G3 and G4 pass"
+  ],
+  "installationRoot": "C:\\Users\\J COMPUTER\\.codex\\skills",
+  "validation": {
+    "systemQuickValidate": "19/19 PASS",
+    "suiteValidator": "19/19 PASS",
+    "waveS0ForwardTests": "PASS: all skills respected stop conditions and gate boundaries"
+  }
+}

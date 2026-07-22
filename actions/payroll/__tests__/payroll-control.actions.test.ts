@@ -13,6 +13,7 @@ import {
 } from "@/services/payroll/authority-adapter-execution.service";
 import {
   approveAndPostPayrollRun,
+  calculatePayrollRun,
   getPayrollRunWorkbenchData,
   getPayrollWorkbenchData,
   preparePayrollDeclarations,
@@ -33,6 +34,7 @@ import {
 import {
   enqueuePayrollAuthorityAdapterExecutionAction,
   approveAndPostPayrollRunAction,
+  calculatePayrollRunAction,
   getPayrollDeclarationWorkbenchAction,
   getPayrollEmployeeBalanceWorkbenchAction,
   getPayrollRunWorkbenchAction,
@@ -102,6 +104,9 @@ jest.mock("@/services/payroll/payroll-control.service", () => ({
   releasePayrollPaymentBatch: jest.fn(),
   preparePayrollDeclarations: jest.fn(),
   calculatePayrollRun: jest.fn(),
+  calculatePayrollRunInputSchema: {
+    parse: jest.fn((input) => input),
+  },
   approveAndPostPayrollRun: jest.fn(),
 }));
 
@@ -153,6 +158,7 @@ const mockLoggerError = logger.error as jest.Mock;
 const mockEnqueuePayrollAuthorityAdapterExecution =
   enqueuePayrollAuthorityAdapterExecution as jest.Mock;
 const mockApproveAndPostPayrollRun = approveAndPostPayrollRun as jest.Mock;
+const mockCalculatePayrollRun = calculatePayrollRun as jest.Mock;
 const mockGetPayrollRunWorkbenchData = getPayrollRunWorkbenchData as jest.Mock;
 const mockGetPayrollWorkbenchData = getPayrollWorkbenchData as jest.Mock;
 const mockReleasePayrollPaymentBatch = releasePayrollPaymentBatch as jest.Mock;
@@ -376,6 +382,51 @@ describe("payroll control actions", () => {
       organizationId: "client-org",
       approvedById: "client-approver",
     });
+    expect(mockRevalidatePath).toHaveBeenCalledWith(
+      "/dashboard/payroll",
+      "page",
+    );
+  });
+
+  it("derives payroll calculation tenant and preparer from authenticated context", async () => {
+    mockRequirePermission.mockResolvedValue(
+      rbacContext("payroll-preparer-1", ["payroll.runs.calculate"]),
+    );
+    mockCalculatePayrollRun.mockResolvedValue({
+      payrollRun: { id: "run-1" },
+      created: true,
+      businessEventId: "event-1",
+    });
+
+    const result = await calculatePayrollRunAction({
+      organizationId: "client-org",
+      payrollPeriodId: "period-1",
+      preparedById: "client-preparer",
+      idempotencyKey: "calculate-key-1",
+    });
+
+    expect(result.success).toBe(true);
+    expect(mockCalculatePayrollRun).toHaveBeenCalledWith(
+      expect.objectContaining({
+        organizationId: "org-1",
+        payrollPeriodId: "period-1",
+        preparedById: "payroll-preparer-1",
+        idempotencyKey: "calculate-key-1",
+      }),
+    );
+    expect(mockCalculatePayrollRun.mock.calls[0][0]).not.toMatchObject({
+      organizationId: "client-org",
+      preparedById: "client-preparer",
+    });
+    expect(mockObserveModuleAccess).toHaveBeenCalledWith(
+      expect.objectContaining({
+        organizationId: "org-1",
+        userId: "payroll-preparer-1",
+        moduleSlug: "payroll",
+        surface: "payroll.runs.calculate",
+        accessIntent: "write",
+      }),
+    );
     expect(mockRevalidatePath).toHaveBeenCalledWith(
       "/dashboard/payroll",
       "page",

@@ -105,9 +105,12 @@ export type WorkflowAssuranceCheckDefinitionContract = {
   metadata: Record<string, unknown>
 }
 
+export const WORKFLOW_ASSURANCE_CASE_IDENTITY_VERSION = 1 as const
+
 export type WorkflowAssuranceCheckResultInput = {
   organizationId: string
   checkKey: string
+  definitionVersion?: number
   status: WorkflowAssuranceResultStatus
   severity?: WorkflowAssuranceSeverity
   sourceType?: string
@@ -125,6 +128,7 @@ export type WorkflowAssuranceCheckResultInput = {
 export type WorkflowAssuranceCheckResult = Required<
   Pick<WorkflowAssuranceCheckResultInput, "organizationId" | "checkKey" | "status" | "severity">
 > & {
+  definitionVersion: number
   sourceType?: string
   sourceId?: string
   sourceHash: string
@@ -138,8 +142,43 @@ export type WorkflowAssuranceCheckResult = Required<
   errorMessage?: string
 }
 
+export const WORKFLOW_ASSURANCE_MAX_SOURCE_FINDINGS = 100 as const
+
+export type WorkflowAssuranceSourceFindingInput = Omit<
+  WorkflowAssuranceCheckResultInput,
+  "organizationId" | "checkKey" | "definitionVersion" | "sourceType" | "sourceId"
+> & {
+  ordinal: number
+  sourceType: string
+  sourceId: string
+}
+
+export type WorkflowAssuranceSourceFinding = Omit<WorkflowAssuranceCheckResult, "sourceType" | "sourceId"> & {
+  ordinal: number
+  sourceType: string
+  sourceId: string
+}
+
+export type WorkflowAssuranceDefinitionExecutionInput = {
+  aggregate: Omit<
+    WorkflowAssuranceCheckResultInput,
+    "organizationId" | "checkKey" | "definitionVersion" | "sourceType" | "sourceId"
+  >
+  findings: readonly WorkflowAssuranceSourceFindingInput[]
+}
+
+export type WorkflowAssuranceDefinitionExecution = {
+  aggregate: WorkflowAssuranceCheckResult
+  findings: readonly WorkflowAssuranceSourceFinding[]
+}
+
+export type WorkflowAssuranceRunnerOutput =
+  | WorkflowAssuranceCheckResult
+  | WorkflowAssuranceDefinitionExecutionInput
+
 export type WorkflowAssuranceRunInput = {
   organizationId: string
+  executionKey?: string
   actorId?: string
   actorPermissions?: string[]
   checkKey?: string
@@ -150,8 +189,23 @@ export type WorkflowAssuranceRunInput = {
   sourceId?: string
 }
 
+export type WorkflowAssuranceFindingRunSummary = {
+  id: string
+  ordinal: number
+  status: WorkflowAssuranceResultStatus
+  severity: WorkflowAssuranceSeverity
+  sourceType: string
+  sourceId: string
+  sourceHash: string
+  fingerprint: string
+  incidentId?: string
+}
+
+
 export type WorkflowAssuranceCheckRunSummary = {
   id: string
+  executionKey: string
+  replayed: boolean
   checkKey: string
   version: number
   workflow: WorkflowAssuranceWorkflow
@@ -170,6 +224,7 @@ export type WorkflowAssuranceCheckRunSummary = {
   evidenceLinks: WorkflowAssuranceEvidenceLink[]
   actionRoute: string
   incidentId?: string
+  findings: WorkflowAssuranceFindingRunSummary[]
   observeMode: boolean
   startedAt: string
   completedAt: string
@@ -956,37 +1011,60 @@ export function stableJsonStringify(value: unknown): string {
   return JSON.stringify(normalizeJson(value))
 }
 
+export function createWorkflowAssuranceCaseFingerprint(input: {
+  organizationId: string
+  checkKey: string
+  definitionVersion: number
+  sourceType: string
+  sourceId: string
+}): string {
+  if (!Number.isInteger(input.definitionVersion) || input.definitionVersion < 1) {
+    throw new BusinessRuleError("Workflow assurance definition version must be a positive integer")
+  }
+
+  return createAssuranceSourceHash({
+    identityVersion: WORKFLOW_ASSURANCE_CASE_IDENTITY_VERSION,
+    organizationId: input.organizationId,
+    checkKey: input.checkKey,
+    definitionVersion: input.definitionVersion,
+    sourceType: input.sourceType,
+    sourceId: input.sourceId,
+  })
+}
+
 export function normalizeAssuranceResult(input: WorkflowAssuranceCheckResultInput): WorkflowAssuranceCheckResult {
   const counts = normalizeCounts(input.counts, input.status)
   const evidenceLinks = input.evidenceLinks ?? []
   const message = input.message ?? defaultMessageForStatus(input.status)
+  const definitionVersion = input.definitionVersion ?? 1
+  const sourceType = input.sourceType ?? "workflow_assurance_check"
+  const sourceId = input.sourceId ?? input.checkKey
   const sourceHash =
     input.sourceHash ??
     createAssuranceSourceHash({
       checkKey: input.checkKey,
-      sourceType: input.sourceType,
-      sourceId: input.sourceId,
+      sourceType,
+      sourceId,
       evidenceLinks,
       counts,
       metadata: input.metadata ?? {},
     })
-  const fingerprint = createAssuranceSourceHash({
+  const fingerprint = createWorkflowAssuranceCaseFingerprint({
+    organizationId: input.organizationId,
     checkKey: input.checkKey,
-    status: input.status,
-    severity: input.severity ?? defaultSeverityForStatus(input.status),
-    sourceType: input.sourceType,
-    sourceId: input.sourceId,
-    sourceHash,
-    recommendedAction: input.recommendedAction,
+    definitionVersion,
+    sourceType,
+    sourceId,
   })
 
   return {
     organizationId: input.organizationId,
     checkKey: input.checkKey,
+    definitionVersion,
     status: input.status,
     severity: input.severity ?? defaultSeverityForStatus(input.status),
-    sourceType: input.sourceType,
-    sourceId: input.sourceId,
+    sourceType,
+    sourceId,
     sourceHash,
     fingerprint,
     evidenceLinks,
@@ -997,6 +1075,103 @@ export function normalizeAssuranceResult(input: WorkflowAssuranceCheckResultInpu
     errorCode: input.errorCode,
     errorMessage: input.errorMessage,
   }
+}
+
+export function normalizeWorkflowAssuranceRunnerOutput(input: {
+  organizationId: string
+  checkKey: string
+  definitionVersion: number
+  output: WorkflowAssuranceRunnerOutput
+}): WorkflowAssuranceDefinitionExecution {
+  if (!("aggregate" in input.output)) {
+    const aggregate = normalizeAssuranceResult({
+      ...input.output,
+      organizationId: input.organizationId,
+      checkKey: input.checkKey,
+      definitionVersion: input.definitionVersion,
+    })
+    const sourceType = normalizeSourceFindingIdentity(aggregate.sourceType, "source type")
+    const sourceId = normalizeSourceFindingIdentity(
+      aggregate.sourceId,
+      "source ID",
+    )
+
+    return {
+      aggregate,
+      findings: [{ ...aggregate, ordinal: 0, sourceType, sourceId }],
+    }
+  }
+
+  const findings = input.output.findings
+  if (findings.length > WORKFLOW_ASSURANCE_MAX_SOURCE_FINDINGS) {
+    throw new BusinessRuleError(
+      `Workflow assurance execution cannot contain more than ${WORKFLOW_ASSURANCE_MAX_SOURCE_FINDINGS} source findings`,
+    )
+  }
+
+  const preparedFindings = findings.map((finding) => ({
+    ...finding,
+    sourceType: normalizeSourceFindingIdentity(finding.sourceType, "source type"),
+    sourceId: normalizeSourceFindingIdentity(finding.sourceId, "source ID"),
+  }))
+
+  for (const finding of preparedFindings) {
+    if (!Number.isInteger(finding.ordinal) || finding.ordinal < 0) {
+      throw new BusinessRuleError("Workflow assurance source finding ordinal must be a non-negative integer")
+    }
+  }
+
+  const orderedFindings = [...preparedFindings].sort((left, right) => left.ordinal - right.ordinal)
+  const normalizedFindings = orderedFindings.map<WorkflowAssuranceSourceFinding>((finding, index) => {
+    if (finding.ordinal !== index) {
+      throw new BusinessRuleError("Workflow assurance source finding ordinals must be unique and contiguous from zero")
+    }
+
+    const normalized = normalizeAssuranceResult({
+      ...finding,
+      organizationId: input.organizationId,
+      checkKey: input.checkKey,
+      definitionVersion: input.definitionVersion,
+      sourceType: finding.sourceType,
+      sourceId: finding.sourceId,
+    })
+
+    return {
+      ...normalized,
+      ordinal: finding.ordinal,
+      sourceType: finding.sourceType,
+      sourceId: finding.sourceId,
+    }
+  })
+  const fingerprints = new Set<string>()
+
+  for (const finding of normalizedFindings) {
+    if (fingerprints.has(finding.fingerprint)) {
+      throw new BusinessRuleError("Workflow assurance execution contains a duplicate source finding identity")
+    }
+    fingerprints.add(finding.fingerprint)
+  }
+
+  const aggregate = normalizeAssuranceResult({
+    ...input.output.aggregate,
+    organizationId: input.organizationId,
+    checkKey: input.checkKey,
+    definitionVersion: input.definitionVersion,
+    sourceType: "workflow_assurance_check",
+    sourceId: input.checkKey,
+  })
+
+  return {
+    aggregate,
+    findings: normalizedFindings,
+  }
+}
+
+function normalizeSourceFindingIdentity(value: unknown, label: string): string {
+  if (typeof value !== "string" || !value.trim()) {
+    throw new BusinessRuleError(`Workflow assurance source finding ${label} is required`)
+  }
+  return value.trim()
 }
 
 function normalizeCounts(

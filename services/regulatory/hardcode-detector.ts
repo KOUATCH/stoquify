@@ -25,8 +25,11 @@ type DetectorRule = {
 const DEFAULT_EXCLUDED_PARTS = [
   ".git",
   ".next",
+  ".codex-assurance-prisma",
   "node_modules",
+  "docs/",
   "graphify-out",
+  "what-next/",
   "services/regulatory",
   "prisma/migrations",
   "prisma/comprehensive-seed.ts",

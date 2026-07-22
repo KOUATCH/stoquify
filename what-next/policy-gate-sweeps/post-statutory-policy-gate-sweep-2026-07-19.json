@@ -1,0 +1,259 @@
+[
+  {
+    "gate": "report:trust:export:gate",
+    "exitCode": 0,
+    "status": "passed",
+    "durationSeconds": 2.2,
+    "summary": [
+      "Status: ready",
+      "- Checks ready: 9/9",
+      "- Blockers: 0",
+      "- ready: service_owned_accounting_export_data",
+      "- ready: versioned_self_describing_export_manifest",
+      "- ready: tenant_scoped_period_status",
+      "- ready: balance_redaction_and_certification_disclosed",
+      "- ready: tamper_evident_content_and_audit",
+      "- ready: permission_and_fresh_auth_boundary",
+      "- ready: analytics_currency_is_service_owned",
+      "- ready: report_ui_has_no_hardcoded_usd",
+      "- ready: trust_banner_and_policy_wiring"
+    ]
+  },
+  {
+    "gate": "role:cockpit:gate",
+    "exitCode": 0,
+    "status": "passed",
+    "durationSeconds": 2.1,
+    "summary": [
+      "Status: ready",
+      "- Checks ready: 9/9",
+      "- Blockers: 0",
+      "- ready: tenant_metadata_is_service_owned",
+      "- ready: route_propagates_roles_without_currency_override",
+      "- ready: digest_configs_are_permission_filtered",
+      "- ready: owner_and_manager_dashboard_roles_are_separated",
+      "- ready: hidden_workspace_evidence_is_explicit",
+      "- ready: no_workspace_permission_and_session_states",
+      "- ready: command_center_anatomy_is_present",
+      "- ready: canonical_dashboard_tokens_and_accessibility",
+      "- ready: cockpit_gate_is_in_policy_chain"
+    ]
+  },
+  {
+    "gate": "settings:surface:fail",
+    "exitCode": 0,
+    "status": "passed",
+    "durationSeconds": 1.0,
+    "summary": []
+  },
+  {
+    "gate": "workflow:assurance:runtime-check",
+    "exitCode": 0,
+    "status": "passed",
+    "durationSeconds": 2.0,
+    "summary": [
+      "Status: `ready`",
+      "- Blockers: 0",
+      "- A passing result does not replace a healthy Prisma migration workflow for release."
+    ]
+  },
+  {
+    "gate": "workflow:assurance:release-gate",
+    "exitCode": 0,
+    "status": "passed",
+    "durationSeconds": 3.1,
+    "summary": [
+      "- Enforce-mode status: `ready`",
+      "- Checks ready: 37/37",
+      "- Indexes ready: 6/6",
+      "- Engine-health gates ready: 2/2",
+      "- Blockers: 0",
+      "| ledger.failed_posting_batch.visible | scheduled_scan | finance_manager | /dashboard/manager-action-center | None |",
+      "- ready: organization + status + severity + detected date",
+      "- ready: organization + workflow + status",
+      "- ready: organization + owner + status + due date",
+      "- ready: organization + run status + started date",
+      "- ready: organization + source type + source id",
+      "- ready: organization + alert delivery status",
+      "- ready: Control Tower exposes stale run, failed run, pending alert, and failed alert health",
+      "- ready: Scheduler policy classifies execution modes and cursor fields"
+    ]
+  },
+  {
+    "gate": "kontava:moat:release-gate",
+    "exitCode": 0,
+    "status": "passed",
+    "durationSeconds": 2.1,
+    "summary": [
+      "- Release status: `ready`",
+      "- Seed scenarios ready: 8/8",
+      "- Backfill checks ready: 6/6",
+      "- Release gates ready: 8/8",
+      "- Blockers: 0",
+      "- Critical blockers: 0",
+      "| Status | Area | Passed | Missing |",
+      "| Status | Area | Passed | Missing |",
+      "| Status | Area | Passed | Missing |"
+    ]
+  },
+  {
+    "gate": "receipt:token:config-gate",
+    "exitCode": 0,
+    "status": "passed",
+    "durationSeconds": 2.1,
+    "summary": [
+      "- Status: `ready`",
+      "- Checks ready: 4/4",
+      "- Blockers: 0",
+      "- Warnings: 1"
+    ]
+  },
+  {
+    "gate": "payroll:immutability:runtime",
+    "exitCode": 0,
+    "status": "passed",
+    "durationSeconds": 11.2,
+    "summary": [
+      "Status: `ready`",
+      "- Forbidden mutation checks blocked: 14/14",
+      "- Allowed lifecycle checks passed: 3/3",
+      "- Blockers: 0",
+      "- blocked: block_run_update - P2010: PrismaClientKnownRequestError",
+      "- blocked: block_run_delete - P2010: PrismaClientKnownRequestError",
+      "- blocked: block_run_line_update - P2010: PrismaClientKnownRequestError",
+      "- blocked: block_payslip_update - P2010: PrismaClientKnownRequestError",
+      "- blocked: block_payslip_line_update - P2010: PrismaClientKnownRequestError",
+      "- blocked: block_payment_batch_update - P2010: PrismaClientKnownRequestError",
+      "- blocked: block_payment_batch_status_reversal - P2010: PrismaClientKnownRequestError",
+      "- blocked: block_payment_allocation_update - P2010: PrismaClientKnownRequestError",
+      "- blocked: block_declaration_update - P2010: PrismaClientKnownRequestError",
+      "- blocked: block_declaration_delete - P2010: PrismaClientKnownRequestError",
+      "- blocked: block_declaration_evidence_update - P2010: PrismaClientKnownRequestError",
+      "- blocked: block_declaration_evidence_delete - P2010: PrismaClientKnownRequestError",
+      "- blocked: block_employee_balance_event_update - P2010: PrismaClientKnownRequestError",
+      "- blocked: block_employee_balance_event_delete - P2010: PrismaClientKnownRequestError"
+    ]
+  },
+  {
+    "gate": "hard-delete:fail",
+    "exitCode": 0,
+    "status": "passed",
+    "durationSeconds": 3.1,
+    "summary": []
+  },
+  {
+    "gate": "regulatory:hardcode:fail",
+    "exitCode": 0,
+    "status": "passed",
+    "durationSeconds": 10.1,
+    "summary": [
+      "Status: `pass`"
+    ]
+  },
+  {
+    "gate": "demo:trust:fail",
+    "exitCode": 0,
+    "status": "passed",
+    "durationSeconds": 2.1,
+    "summary": []
+  },
+  {
+    "gate": "error:boundary:fail",
+    "exitCode": 0,
+    "status": "passed",
+    "durationSeconds": 2.1,
+    "summary": [
+      "> STOQUIFY@0.1.0 error:boundary:fail",
+      "> node scripts/raw-error-boundary-gate.js --mode fail",
+      "# AqStoqFlow Raw Error Boundary Gate Report",
+      "Scan directories: `actions`, `app/api`, `services`, `lib/error-handling`",
+      "- Active unsafe raw-error findings: 0",
+      "- Total raw-error callsites scanned: 75",
+      "- No active unsafe raw-error findings.",
+      "No active unsafe raw-error findings remain in the scanned runtime boundaries.",
+      "- TYPED_APPLICATION_ERROR_RETHROW: 10",
+      "4. Replace POS raw service errors with typed domain errors.",
+      "5. Replace purchase-order raw service errors with typed domain errors.",
+      "- `report`: classify current raw-error findings without blocking development.",
+      "- `warn`: exit 0 while surfacing active unsafe raw-error findings in logs."
+    ]
+  },
+  {
+    "gate": "ci:release:gate",
+    "exitCode": 0,
+    "status": "passed",
+    "durationSeconds": 2.1,
+    "summary": [
+      "Status: `ready`",
+      "- Checks ready: 10/10",
+      "- Blockers: 0",
+      "- ready: workflow_exists",
+      "- ready: workflow_permissions_are_read_only",
+      "- ready: postgres_16_service_is_healthy",
+      "- ready: ci_databases_are_isolated",
+      "- ready: payroll_test_database_is_created",
+      "- ready: ci_auth_configuration_is_synthetic_and_sufficient",
+      "- ready: production_credentials_and_release_flags_are_absent",
+      "- ready: verify_ci_migrates_before_repository_verification",
+      "- ready: node_and_dependency_cache_are_pinned",
+      "- ready: ci_readiness_gate_is_policy_owned"
+    ]
+  },
+  {
+    "gate": "prisma:migration:safety:gate",
+    "exitCode": 0,
+    "status": "passed",
+    "durationSeconds": 3.1,
+    "summary": [
+      "Status: `ready`",
+      "- Checks ready: 8/8",
+      "- Blockers: 0",
+      "- ready: migration_history_present",
+      "- ready: migration_files_nonempty",
+      "- ready: risk_approval_registry_valid",
+      "- ready: destructive_sql_is_exact_hash_approved",
+      "- ready: deployment_target_is_safe",
+      "- ready: production_build_orders_secret_migration_and_app_gates",
+      "- ready: migration_safety_gate_is_in_policy_chain",
+      "- ready: release_verification_has_migration_preflight"
+    ]
+  },
+  {
+    "gate": "release:secrets:preflight",
+    "exitCode": 0,
+    "status": "passed",
+    "durationSeconds": 2.1,
+    "summary": [
+      "Status: `conditional`",
+      "- Checks ready: 2/8",
+      "- Blockers: 0",
+      "- Warnings: 6"
+    ]
+  },
+  {
+    "gate": "release:evidence:gate",
+    "exitCode": 0,
+    "status": "passed",
+    "durationSeconds": 2.1,
+    "summary": [
+      "Status: conditional",
+      "- Structural checks ready: 10/11",
+      "- Structural blockers: 1",
+      "- Release-only blockers: 3",
+      "- blocked: public_identity_hash_secret via release:secrets:preflight:release",
+      "- blocked: public_receipt_token_secret via release:secrets:preflight:release",
+      "- blocked: production_database_target via prisma:migration:release:preflight",
+      "| all_skill_run_reports_present | passed |",
+      "| run_reports_record_date_and_verification | passed |",
+      "| readiness_json_is_parseable_and_clear | failed |",
+      "| readiness_markdown_is_present | passed |",
+      "| supporting_inventory_evidence_is_present | passed |",
+      "| domain_policy_gates_are_composed | passed |",
+      "| release_verification_enforces_both_secret_gates | passed |",
+      "| dedicated_release_secret_preflight_is_wired | passed |",
+      "| prisma_migration_automation_is_wired | passed |",
+      "| database_backed_ci_release_gate_is_wired | passed |",
+      "| release_evidence_gate_is_wired | passed |"
+    ]
+  }
+]

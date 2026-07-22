@@ -1,6 +1,3 @@
 "use server"
 
-import { getOrgBrands } from "./getBrandsAction"
-
-export { getOrgBrands }
-export default getOrgBrands
+export { getOrgBrands, getOrgBrands as default } from "./getBrandsAction"

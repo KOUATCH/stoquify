@@ -1,0 +1,240 @@
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react"
+
+const mockNotifications = {
+  warning: jest.fn(),
+  info: jest.fn(() => "notification-1"),
+  removeNotification: jest.fn(),
+  error: jest.fn(),
+  success: jest.fn(),
+}
+
+jest.mock("lucide-react", () => {
+  const Icon = (props: Record<string, unknown>) => <svg {...props} />
+  return new Proxy({}, { get: () => Icon })
+})
+
+jest.mock("next-intl", () => ({
+  useLocale: () => "en",
+  useTranslations: () => (key: string) => key,
+}))
+
+jest.mock("@/components/notifications/NotificationProvider", () => ({
+  useNotifications: () => mockNotifications,
+}))
+
+jest.mock("@/components/pos/ReceiptTokenHistoryPanel", () => ({
+  ReceiptTokenHistoryPanel: () => <div data-testid="receipt-token-history-panel" />,
+}))
+
+jest.mock("@/components/pos/ReceiptTokenControlStrip", () => ({
+  ReceiptTokenControlStrip: () => <div data-testid="receipt-token-control-strip" />,
+}))
+
+jest.mock("@/components/pos/offline/OfflineSyncStatusStrip", () => ({
+  OfflineSyncStatusStrip: () => <div data-testid="offline-sync-status" />,
+}))
+
+jest.mock("@/hooks/posHooks/usePosOperations", () => ({
+  useActivePOSCart: jest.fn(),
+  useActivePOSShift: jest.fn(),
+  useAddPOSCartLine: jest.fn(),
+  useClosePOSShift: jest.fn(),
+  useCommitPOSSale: jest.fn(),
+  useOpenPOSShift: jest.fn(),
+  usePOSCatalog: jest.fn(),
+  usePOSCustomers: jest.fn(),
+  usePOSLocations: jest.fn(),
+  usePOSTerminals: jest.fn(),
+  usePublicReceiptAccessTokens: jest.fn(),
+  usePublicReceiptSalesSearch: jest.fn(),
+  usePublicReceiptTokenManagementCapability: jest.fn(),
+  useRemovePOSCartLine: jest.fn(),
+  useRevokePublicReceiptAccessToken: jest.fn(),
+  useUpdatePOSCartLine: jest.fn(),
+}))
+
+import * as posHooks from "@/hooks/posHooks/usePosOperations"
+import ProfessionalPOSSystem from "../ProfessionalPOSSystem"
+
+const mockHooks = posHooks as jest.Mocked<typeof posHooks>
+
+function actionSuccess<T>(data: T) {
+  return { success: true, data, error: null, status: 200 }
+}
+
+function mutationState(mutateAsync = jest.fn()) {
+  return {
+    isPending: false,
+    variables: undefined,
+    mutateAsync,
+  }
+}
+
+function shiftFixture(expectedBalance: number) {
+  return {
+    id: "session-1",
+    sessionNumber: "SHIFT-0001",
+    status: "ACTIVE",
+    startTime: "2026-07-19T08:00:00.000Z",
+    terminalId: "terminal-1",
+    terminalName: "Till 1",
+    terminalNumber: "T01",
+    locationId: "location-1",
+    locationName: "Main shop",
+    cashierName: "Cashier One",
+    openingBalance: 0,
+    expectedBalance,
+    totalSales: 100,
+    totalTax: 0,
+    totalDiscount: 0,
+    transactionCount: 1,
+    cashTotal: 100,
+    cardTotal: 0,
+    mobileMoneyTotal: 0,
+    bankTransferTotal: 0,
+    creditTotal: 0,
+    cashDrawer: {
+      id: "drawer-1",
+      currentBalance: expectedBalance,
+      expectedBalance,
+      isOpen: true,
+    },
+  }
+}
+
+function setupHooks(expectedBalance: number, closeResponse: unknown) {
+  const closeMutateAsync = jest.fn().mockResolvedValue(closeResponse)
+
+  mockHooks.usePOSLocations.mockReturnValue({ data: actionSuccess([]) } as never)
+  mockHooks.usePOSTerminals.mockReturnValue({ data: actionSuccess([]) } as never)
+  mockHooks.useActivePOSShift.mockReturnValue({ data: actionSuccess(shiftFixture(expectedBalance)) } as never)
+  mockHooks.usePOSCustomers.mockReturnValue({ data: actionSuccess([]) } as never)
+  mockHooks.usePOSCatalog.mockReturnValue({ data: actionSuccess({ categories: [], items: [] }) } as never)
+  mockHooks.useActivePOSCart.mockReturnValue({ data: actionSuccess(null) } as never)
+  mockHooks.useOpenPOSShift.mockReturnValue(mutationState() as never)
+  mockHooks.useClosePOSShift.mockReturnValue(mutationState(closeMutateAsync) as never)
+  mockHooks.useAddPOSCartLine.mockReturnValue(mutationState() as never)
+  mockHooks.useUpdatePOSCartLine.mockReturnValue(mutationState() as never)
+  mockHooks.useRemovePOSCartLine.mockReturnValue(mutationState() as never)
+  mockHooks.useCommitPOSSale.mockReturnValue(mutationState() as never)
+  mockHooks.useRevokePublicReceiptAccessToken.mockReturnValue(mutationState() as never)
+  mockHooks.usePublicReceiptAccessTokens.mockReturnValue({ data: actionSuccess([]), isFetching: false } as never)
+  mockHooks.usePublicReceiptSalesSearch.mockReturnValue({ data: actionSuccess([]), isFetching: false } as never)
+  mockHooks.usePublicReceiptTokenManagementCapability.mockReturnValue({
+    data: actionSuccess({
+      canManageReceiptTokens: false,
+      moduleSlug: "pos",
+      permission: "pos.receipts.revoke",
+    }),
+    isLoading: false,
+    isFetching: false,
+    isError: false,
+    error: null,
+  } as never)
+
+  return closeMutateAsync
+}
+
+function openCloseDialog() {
+  fireEvent.click(screen.getByRole("button", { name: "smart.endShift" }))
+  return screen.getByRole("dialog")
+}
+
+describe("ProfessionalPOSSystem shift close", () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
+  it("requires an explicit count and submits a literal zero instead of falling back to expected cash", async () => {
+    const closeMutateAsync = setupHooks(0, actionSuccess({ terminalId: "terminal-1" }))
+    render(<ProfessionalPOSSystem />)
+    const dialog = openCloseDialog()
+    const submit = within(dialog).getByRole("button", { name: "shift.close" })
+    const countedCash = within(dialog).getByLabelText("shift.countedCash")
+
+    expect(submit).toBeDisabled()
+    fireEvent.change(countedCash, { target: { value: "0.000" } })
+    expect(submit).toBeDisabled()
+    fireEvent.change(countedCash, { target: { value: "0" } })
+    expect(submit).toBeEnabled()
+    fireEvent.click(submit)
+
+    await waitFor(() => {
+      expect(closeMutateAsync).toHaveBeenCalledWith({
+        sessionId: "session-1",
+        actualBalance: "0",
+        notes: undefined,
+      })
+    })
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument())
+  })
+
+  it("requires a variance explanation and keeps the dialog open when the server rejects the close", async () => {
+    const closeMutateAsync = setupHooks(100, {
+      success: false,
+      data: null,
+      error: "Shift state changed; refresh before closing it",
+      status: 409,
+    })
+    render(<ProfessionalPOSSystem />)
+    const dialog = openCloseDialog()
+    const submit = within(dialog).getByRole("button", { name: "shift.close" })
+    const countedCash = within(dialog).getByLabelText("shift.countedCash")
+
+    fireEvent.change(countedCash, { target: { value: "95" } })
+    expect(within(dialog).getByLabelText("shift.varianceExplanation")).toBeInTheDocument()
+    expect(submit).toBeDisabled()
+
+    fireEvent.change(within(dialog).getByLabelText("shift.varianceExplanation"), {
+      target: { value: "Cash payout not recorded" },
+    })
+    expect(submit).toBeEnabled()
+    fireEvent.click(submit)
+
+    await waitFor(() => {
+      expect(closeMutateAsync).toHaveBeenCalledWith({
+        sessionId: "session-1",
+        actualBalance: "95",
+        notes: "Cash payout not recorded",
+      })
+    })
+    await waitFor(() => {
+      expect(within(dialog).getByRole("alert")).toHaveTextContent("Shift state changed; refresh before closing it")
+    })
+    expect(screen.getByRole("dialog")).toBeInTheDocument()
+    expect(countedCash).toHaveValue(95)
+    expect(within(dialog).getByLabelText("shift.varianceExplanation")).toHaveValue("Cash payout not recorded")
+    expect(mockNotifications.error).toHaveBeenCalledWith(
+      "notifications.closeShiftErrorTitle",
+      "Shift state changed; refresh before closing it",
+      { category: "pos", priority: "high" },
+    )
+  })
+
+  it("clears the count and explanation when the active shift identity changes", async () => {
+    const closeMutateAsync = setupHooks(100, actionSuccess({ terminalId: "terminal-1" }))
+    const { rerender } = render(<ProfessionalPOSSystem />)
+    const firstDialog = openCloseDialog()
+
+    fireEvent.change(within(firstDialog).getByLabelText("shift.countedCash"), { target: { value: "95" } })
+    fireEvent.change(within(firstDialog).getByLabelText("shift.varianceExplanation"), {
+      target: { value: "Count for the first shift" },
+    })
+
+    mockHooks.useActivePOSShift.mockReturnValue({
+      data: actionSuccess({
+        ...shiftFixture(50),
+        id: "session-2",
+        sessionNumber: "SHIFT-0002",
+      }),
+    } as never)
+    rerender(<ProfessionalPOSSystem />)
+
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument())
+    const secondDialog = openCloseDialog()
+    expect(within(secondDialog).getByLabelText("shift.countedCash")).toHaveValue(null)
+    expect(within(secondDialog).queryByLabelText("shift.varianceExplanation")).not.toBeInTheDocument()
+    expect(within(secondDialog).getByRole("button", { name: "shift.close" })).toBeDisabled()
+    expect(closeMutateAsync).not.toHaveBeenCalled()
+  })
+})

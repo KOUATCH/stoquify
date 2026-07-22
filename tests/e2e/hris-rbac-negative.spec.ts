@@ -38,18 +38,20 @@ const deniedRoutes = [
   },
 ]
 
+const evidenceTag = process.env.HRIS_BROWSER_EVIDENCE_TAG ?? "2026-07-16"
+
 const evidenceDir = join(
   process.cwd(),
   "what-next",
   "payroll",
   "screenshots",
-  "hris-browser-accessibility-rbac-release-2026-07-16",
+  `hris-browser-accessibility-rbac-release-${evidenceTag}`,
 )
 const evidencePath = join(
   process.cwd(),
   "what-next",
   "payroll",
-  "STOQUIFY_HRIS_RBAC_NEGATIVE_BROWSER_EVIDENCE_2026-07-16.json",
+  `STOQUIFY_HRIS_RBAC_NEGATIVE_BROWSER_EVIDENCE_${evidenceTag}.json`,
 )
 const evidence: Array<Record<string, unknown>> = []
 

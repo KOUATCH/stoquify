@@ -1,12 +1,12 @@
 {
   "summary": {
-    "generatedAt": "2026-07-16T15:21:18.646Z",
+    "generatedAt": "2026-07-19T20:40:57.629Z",
     "mode": "fail",
     "releaseEnforced": false,
     "status": "conditional",
     "checkCount": 11,
-    "readyCount": 11,
-    "blockerCount": 0,
+    "readyCount": 10,
+    "blockerCount": 1,
     "releaseConditionCount": 3,
     "releaseBlockerCount": 3,
     "runReportCount": 14,
@@ -24,7 +24,7 @@
     },
     {
       "id": "readiness_json_is_parseable_and_clear",
-      "ready": true
+      "ready": false
     },
     {
       "id": "readiness_markdown_is_present",
@@ -59,7 +59,9 @@
       "ready": true
     }
   ],
-  "blockers": [],
+  "blockers": [
+    "readiness_json_is_parseable_and_clear"
+  ],
   "releaseConditions": [
     {
       "id": "public_identity_hash_secret",
@@ -283,10 +285,10 @@
       "jsonExists": true,
       "markdownExists": true,
       "parseable": true,
-      "status": "ready",
+      "status": "blocked",
       "readyCount": 10,
-      "checkCount": 10,
-      "blockerCount": 0,
+      "checkCount": 12,
+      "blockerCount": 2,
       "warningCount": 0
     },
     {

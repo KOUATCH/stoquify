@@ -398,6 +398,14 @@ const CRITICAL_EVIDENCE_TYPES: readonly CloseEvidenceType[] = [
   CloseEvidenceType.DATA_TRUST_CERTIFICATE,
 ];
 
+const TRUST_LEVEL_RANK: Record<string, number> = {
+  T0: 0,
+  T1: 1,
+  T2: 2,
+  T3: 3,
+  T4: 4,
+};
+
 function stableStringify(value: unknown): string {
   if (value === null || typeof value !== "object") return JSON.stringify(value);
   if (Array.isArray(value)) return `[${value.map(stableStringify).join(",")}]`;
@@ -460,6 +468,75 @@ function stringArray(value: unknown) {
 function redactClosePackEvidenceRef(value?: string | null) {
   if (!value) return null;
   return `redacted:${createHash("sha256").update(value).digest("hex").slice(0, 12)}`;
+}
+
+function sensitiveMetadataKey(key: string) {
+  const compact = key.toLowerCase().replace(/[^a-z0-9]/g, "");
+  return (
+    compact.includes("secret") ||
+    compact.includes("token") ||
+    compact.includes("password") ||
+    compact.includes("credential") ||
+    compact.includes("apikey") ||
+    compact.includes("authorization") ||
+    compact === "auth" ||
+    compact === "authheader" ||
+    compact === "payload" ||
+    compact.includes("providerpayload") ||
+    compact.includes("rawpayload") ||
+    compact.includes("rawprovider") ||
+    compact.includes("authoritypayload") ||
+    compact.includes("auditpayload") ||
+    compact.includes("salaryamount") ||
+    compact.includes("personlevelamounts") ||
+    compact.includes("employeeid") ||
+    compact.includes("paymentdestination")
+  );
+}
+
+function redactedMetadataValue(value: unknown) {
+  if (value === null || value === undefined) return null;
+  if (typeof value === "string" && value.trim()) {
+    return redactClosePackEvidenceRef(value);
+  }
+  if (Array.isArray(value)) return value.length ? "redacted" : [];
+  if (typeof value === "object") return "redacted";
+  return "redacted";
+}
+
+function redactSensitiveMetadata(
+  value: unknown,
+  parentKey = "",
+  depth = 0,
+): unknown {
+  if (sensitiveMetadataKey(parentKey)) return redactedMetadataValue(value);
+  if (value === null || value === undefined) return value;
+  if (depth > 8) return "redacted";
+  if (Array.isArray(value)) {
+    return value.map((entry) =>
+      redactSensitiveMetadata(entry, parentKey, depth + 1),
+    );
+  }
+  if (typeof value !== "object") return value;
+
+  return Object.fromEntries(
+    Object.entries(value as Record<string, unknown>).map(([key, entry]) => [
+      key,
+      redactSensitiveMetadata(entry, key, depth + 1),
+    ]),
+  );
+}
+
+function closePackTrustLevelFromMetadata(value: unknown) {
+  const trustLevel = stringOrNull(metadataRecord(value).trustLevel);
+  return trustLevel && TRUST_LEVEL_RANK[trustLevel] !== undefined
+    ? trustLevel
+    : null;
+}
+
+function closePackTrustRank(value: unknown) {
+  const trustLevel = closePackTrustLevelFromMetadata(value);
+  return trustLevel ? TRUST_LEVEL_RANK[trustLevel] ?? -1 : -1;
 }
 
 function auditPayloadAfter(row: PilotAuditRow | null) {
@@ -634,12 +711,16 @@ function redactedPayrollFinanceForecastProof(value: unknown) {
 
 function redactedCloseRunMetadata(value: unknown) {
   const metadata = metadataRecord(value);
+  const redactedMetadata = redactSensitiveMetadata(metadata) as Record<
+    string,
+    unknown
+  >;
   const payrollFinanceForecastProof = redactedPayrollFinanceForecastProof(
     metadata.payrollFinanceForecastProof,
   );
   return payrollFinanceForecastProof
-    ? { ...metadata, payrollFinanceForecastProof }
-    : metadata;
+    ? { ...redactedMetadata, payrollFinanceForecastProof }
+    : redactedMetadata;
 }
 
 function pilotCertificationEvidenceFromAudit(
@@ -809,11 +890,8 @@ async function evaluateInventoryAnnexFreshness(
       },
       tx,
     );
-  } catch (error) {
-    const message =
-      error instanceof Error && error.message.trim()
-        ? error.message
-        : "Inventory valuation annex could not be refreshed.";
+  } catch {
+    const message = "Inventory valuation annex could not be refreshed.";
     return {
       status: "UNAVAILABLE",
       sourceModel: "InventoryValuationAnnex",
@@ -928,6 +1006,7 @@ function certificationLimitations(mode: ClosePackExportMode) {
 
 function certificationBlockers(
   run: Awaited<ReturnType<typeof loadCloseRunForPack>>,
+  mode: ClosePackExportMode,
   inventoryFreshness?: InventoryAnnexFreshness,
   pilotCertification?: PilotCertificationEvidence,
 ) {
@@ -960,9 +1039,16 @@ function certificationBlockers(
     (item) =>
       !item.available && CRITICAL_EVIDENCE_TYPES.includes(item.evidenceType),
   );
+  const minimumTrustLevel = mode === "CERTIFIED" ? "T4" : "T3";
+  const trustLevel = closePackTrustLevelFromMetadata(run.metadata);
+  const trustRank = closePackTrustRank(run.metadata);
 
   if (run.status !== CloseRunStatus.READY)
     blockers.push(`Close run status is ${run.status}, not READY.`);
+  if (trustRank < TRUST_LEVEL_RANK[minimumTrustLevel])
+    blockers.push(
+      `${mode === "CERTIFIED" ? "Certified" : "Draft"} close pack requires at least ${minimumTrustLevel} data trust; current close run trust level is ${trustLevel ?? "missing"}.`,
+    );
   if (run.criticalBlockerCount > 0)
     blockers.push(
       `${run.criticalBlockerCount} critical blocker(s) remain open.`,
@@ -1037,8 +1123,271 @@ async function loadCloseRunForPack(
   });
 }
 
+async function loadClosePackAuditExcerpt(
+  tx: Prisma.TransactionClient,
+  organizationId: string,
+  closeRunId: string,
+) {
+  return tx.ledgerAuditEvent.findMany({
+    where: {
+      organizationId,
+      OR: [
+        { resourceType: "CloseRun", resourceId: closeRunId },
+        { resourceType: "ClosePackExport" },
+        {
+          action: {
+            in: [
+              "CLOSE_ASSURANCE_RUN_COMPLETED",
+              "CLOSE_ASSURANCE_RUN_BLOCKED",
+              "CLOSE_ASSURANCE_FINDING_ASSIGNED",
+              "CLOSE_ASSURANCE_FINDING_RESOLVED",
+              "CLOSE_ACCOUNTANT_REVIEW_UPDATED",
+              "CLOSE_CERTIFICATION_EVIDENCE_STALE",
+            ],
+          },
+        },
+      ],
+    },
+    orderBy: { createdAt: "desc" },
+    take: 12,
+    select: {
+      id: true,
+      action: true,
+      actorId: true,
+      resourceType: true,
+      resourceId: true,
+      message: true,
+      metadata: true,
+      createdAt: true,
+    },
+  });
+}
+
+type CloseRunForPack = NonNullable<
+  Awaited<ReturnType<typeof loadCloseRunForPack>>
+>;
+type ClosePackEvidenceItem = CloseRunForPack["evidenceItems"][number];
+type ClosePackChecklistItem = CloseRunForPack["checklistItems"][number];
+type ClosePackAuditExcerpt = Awaited<
+  ReturnType<typeof loadClosePackAuditExcerpt>
+>;
+
+function evidenceText(item: ClosePackEvidenceItem) {
+  return [
+    item.evidenceType,
+    item.sourceTable,
+    item.sourceType,
+    item.sourceId,
+    item.sourceLabel,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+}
+
+function checklistText(item: ClosePackChecklistItem) {
+  return [item.domain, item.key, item.label, item.detail]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+}
+
+function evidenceRefs(items: ClosePackEvidenceItem[]) {
+  return items.map((item) => ({
+    id: item.id,
+    evidenceType: item.evidenceType,
+    sourceTable: item.sourceTable,
+    sourceType: item.sourceType,
+    sourceId: item.sourceId,
+    sourceLabel: item.sourceLabel,
+    sourceDate: iso(item.sourceDate),
+    sourceHash: item.sourceHash,
+    provenance: item.provenance,
+    available: item.available,
+    correlationId: item.correlationId,
+  }));
+}
+
+function matchedEvidence(run: CloseRunForPack, terms: string[]) {
+  return run.evidenceItems.filter((item) => {
+    const text = evidenceText(item);
+    return terms.some((term) => text.includes(term));
+  });
+}
+
+function matchedChecklist(run: CloseRunForPack, terms: string[]) {
+  return run.checklistItems.filter((item) => {
+    const text = checklistText(item);
+    return terms.some((term) => text.includes(term));
+  });
+}
+
+function availabilitySummary(
+  label: string,
+  evidenceItems: ClosePackEvidenceItem[],
+  checklistItems: ClosePackChecklistItem[],
+) {
+  return {
+    status:
+      evidenceItems.length > 0 || checklistItems.length > 0
+        ? "CAPTURED_IN_CLOSE_RUN"
+        : "NOT_CAPTURED_IN_CLOSE_RUN",
+    evidenceCount: evidenceItems.length,
+    checklistGateCount: checklistItems.length,
+    sourceHashes: evidenceItems
+      .map((item) => item.sourceHash)
+      .filter((hash): hash is string => Boolean(hash)),
+    limitation:
+      evidenceItems.length > 0 || checklistItems.length > 0
+        ? null
+        : `${label} evidence was not captured in this close-run snapshot.`,
+  };
+}
+
+function closePackRowCount(
+  run: CloseRunForPack,
+  auditLogExcerpt: ClosePackAuditExcerpt,
+) {
+  return (
+    run.checklistItems.length +
+    run.findings.length +
+    run.evidenceItems.length +
+    run.reviews.length +
+    run.comments.length +
+    auditLogExcerpt.length
+  );
+}
+
+function closePackEvidenceSummaries(
+  run: CloseRunForPack,
+  auditLogExcerpt: ClosePackAuditExcerpt,
+) {
+  const ledgerChecklist = matchedChecklist(run, ["ledger"]);
+  const ledgerEvidence = matchedEvidence(run, ["ledger", "journal"]);
+  const trialBalanceEvidence = matchedEvidence(run, [
+    "trialbalance",
+    "trial balance",
+  ]);
+  const reconciliationCertificates = run.evidenceItems.filter(
+    (item) =>
+      item.evidenceType === CloseEvidenceType.RECONCILIATION_CERTIFICATE,
+  );
+  const signedReconciliationCertificates = reconciliationCertificates.filter(
+    (item) => item.sourceHash && item.provenance === "POSTED",
+  );
+  const suspenseEvidence = run.evidenceItems.filter(
+    (item) => item.evidenceType === CloseEvidenceType.SUSPENSE_ITEM,
+  );
+  const openFindings = run.findings.filter((finding) =>
+    OPEN_FINDING_STATUSES.includes(
+      finding.status as (typeof OPEN_FINDING_STATUSES)[number],
+    ),
+  );
+  const resolvedFindings = run.findings.filter(
+    (finding) =>
+      finding.status === CloseFindingStatus.RESOLVED ||
+      finding.status === CloseFindingStatus.WAIVED_WITH_APPROVAL,
+  );
+  const arApTerms = [
+    "accounts receivable",
+    "accounts payable",
+    "receivable",
+    "payable",
+    "ar",
+    "ap",
+  ];
+  const taxVatTerms = ["tax", "vat", "tva", "declaration", "statutory"];
+  const arApEvidence = matchedEvidence(run, arApTerms);
+  const arApChecklist = matchedChecklist(run, arApTerms);
+  const taxVatEvidence = matchedEvidence(run, taxVatTerms);
+  const taxVatChecklist = matchedChecklist(run, taxVatTerms);
+  const inventoryEvidence = matchedEvidence(run, ["inventory", "valuation"]);
+  const inventoryChecklist = matchedChecklist(run, ["inventory", "valuation"]);
+
+  return {
+    dataTrust: {
+      closeRunTrustLevel: closePackTrustLevelFromMetadata(run.metadata),
+      draftMinimumTrustLevel: "T3",
+      certifiedTargetTrustLevel: "T4",
+    },
+    ledgerReconciliationSummary: {
+      checklistGateCount: ledgerChecklist.length,
+      evidenceCount: ledgerEvidence.length,
+      failedOrUnavailableHighRiskGateCount: ledgerChecklist.filter(
+        (item) =>
+          HIGH_RISK_CHECKLIST_STATUSES.includes(
+            item.status as (typeof HIGH_RISK_CHECKLIST_STATUSES)[number],
+          ) &&
+          (item.severity === CloseFindingSeverity.CRITICAL ||
+            item.severity === CloseFindingSeverity.HIGH),
+      ).length,
+      evidence: evidenceRefs(ledgerEvidence),
+    },
+    trialBalanceSummary: {
+      evidenceCount: trialBalanceEvidence.length,
+      hashes: trialBalanceEvidence
+        .map((item) => item.sourceHash)
+        .filter((hash): hash is string => Boolean(hash)),
+      evidence: evidenceRefs(trialBalanceEvidence),
+    },
+    signedPaymentReconciliationRuns: evidenceRefs(
+      signedReconciliationCertificates,
+    ),
+    reconciliationCertificateHashes: signedReconciliationCertificates
+      .map((item) => item.sourceHash)
+      .filter((hash): hash is string => Boolean(hash)),
+    suspenseRegister: suspenseEvidence.map((item) => ({
+      id: item.id,
+      sourceTable: item.sourceTable,
+      sourceType: item.sourceType,
+      sourceId: item.sourceId,
+      sourceLabel: item.sourceLabel,
+      sourceDate: iso(item.sourceDate),
+      sourceHash: item.sourceHash,
+      available: item.available,
+      unavailableReason: item.unavailableReason,
+      correlationId: item.correlationId,
+    })),
+    exceptionSummary: {
+      openFindingCount: openFindings.length,
+      resolvedFindingCount: resolvedFindings.length,
+      criticalOpenFindingCount: openFindings.filter(
+        (finding) => finding.severity === CloseFindingSeverity.CRITICAL,
+      ).length,
+      highOpenFindingCount: openFindings.filter(
+        (finding) => finding.severity === CloseFindingSeverity.HIGH,
+      ).length,
+    },
+    arApSummary: availabilitySummary(
+      "AR/AP",
+      arApEvidence,
+      arApChecklist,
+    ),
+    inventoryValuationSummary: availabilitySummary(
+      "Inventory valuation",
+      inventoryEvidence,
+      inventoryChecklist,
+    ),
+    taxVatEvidenceSummary: availabilitySummary(
+      "Tax/VAT",
+      taxVatEvidence,
+      taxVatChecklist,
+    ),
+    auditLogExcerpt: auditLogExcerpt.map((row) => ({
+      id: row.id,
+      action: row.action,
+      actorId: row.actorId,
+      resourceType: row.resourceType,
+      resourceId: row.resourceId,
+      message: row.message,
+      metadata: redactSensitiveMetadata(row.metadata),
+      createdAt: row.createdAt.toISOString(),
+    })),
+  };
+}
+
 function buildClosePackPayload(
-  run: NonNullable<Awaited<ReturnType<typeof loadCloseRunForPack>>>,
+  run: CloseRunForPack,
   params: {
     exportId: string;
     mode: ClosePackExportMode;
@@ -1051,6 +1400,7 @@ function buildClosePackPayload(
     certificationBlockers: string[];
     inventoryFreshness: InventoryAnnexFreshness;
     pilotCertification: PilotCertificationEvidence;
+    auditLogExcerpt: ClosePackAuditExcerpt;
   },
 ) {
   return {
@@ -1172,7 +1522,7 @@ function buildClosePackPayload(
       metadata:
         item.sourceType === "PayrollFinanceForecastProof"
           ? redactedPayrollFinanceForecastProof(item.metadata)
-          : item.metadata,
+          : redactSensitiveMetadata(item.metadata),
       correlationId: item.correlationId,
     })),
     reviews: run.reviews.map((review) => ({
@@ -1197,12 +1547,7 @@ function buildClosePackPayload(
       createdAt: comment.createdAt.toISOString(),
     })),
     summaries: {
-      rowCount:
-        run.checklistItems.length +
-        run.findings.length +
-        run.evidenceItems.length +
-        run.reviews.length +
-        run.comments.length,
+      rowCount: closePackRowCount(run, params.auditLogExcerpt),
       availableEvidenceCount: run.evidenceItems.filter((item) => item.available)
         .length,
       openFindingCount: run.findings.filter((finding) =>
@@ -1220,6 +1565,7 @@ function buildClosePackPayload(
         (item) => item.evidenceType === CloseEvidenceType.SUSPENSE_ITEM,
       ).length,
     },
+    evidenceSummaries: closePackEvidenceSummaries(run, params.auditLogExcerpt),
   };
 }
 
@@ -1585,6 +1931,7 @@ export async function exportClosePack(
     );
     const blockers = certificationBlockers(
       run,
+      mode,
       inventoryFreshness,
       pilotCertification,
     );
@@ -1614,12 +1961,12 @@ export async function exportClosePack(
       );
     }
 
-    const rowCount =
-      run.checklistItems.length +
-      run.findings.length +
-      run.evidenceItems.length +
-      run.reviews.length +
-      run.comments.length;
+    const auditLogExcerpt = await loadClosePackAuditExcerpt(
+      tx,
+      organizationId,
+      run.id,
+    );
+    const rowCount = closePackRowCount(run, auditLogExcerpt);
     const watermarkId = `close-pack-${mode.toLowerCase().replaceAll("_", "-")}-${run.id}-${exportId.slice(0, 12)}`;
     const redactionNote =
       "Secrets, raw provider payloads, credentials, and tenant internals are excluded from this close pack.";
@@ -1635,6 +1982,7 @@ export async function exportClosePack(
       certificationBlockers: blockers,
       inventoryFreshness,
       pilotCertification,
+      auditLogExcerpt,
     });
     const contentHash = sha256(stableStringify(payload));
     const content = JSON.stringify(
@@ -1660,12 +2008,7 @@ export async function exportClosePack(
         correlationId,
         metadata: jsonObject({
           mode,
-          trustLevel:
-            typeof run.metadata === "object" &&
-            run.metadata &&
-            !Array.isArray(run.metadata)
-              ? (run.metadata as Record<string, unknown>).trustLevel
-              : null,
+          trustLevel: closePackTrustLevelFromMetadata(run.metadata),
           certificationBlockers: blockers,
           inventoryValuationAnnex: inventoryFreshness.savedAnnex,
           inventoryAnnexFreshness: {

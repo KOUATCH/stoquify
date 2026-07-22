@@ -1,6 +1,6 @@
 import "server-only"
 
-import { createHash } from "node:crypto"
+import { createHash, randomUUID } from "node:crypto"
 
 import {
   AccountingPeriodStatus,
@@ -52,20 +52,27 @@ import {
   buildReconciliationEvidenceManifestInTx,
   reconciliationCertificateSourceEvidenceHash,
 } from "@/services/reconciliation/payment-reconciliation-evidence.service"
-import { upsertWorkflowAssuranceIncidentFromResult } from "./assurance-incident.service"
+import { assertWorkflowAssuranceExecutionReconciled } from "./assurance-registry-persistence-contracts"
+import {
+  normalizeWorkflowAssuranceExecutionKey,
+  persistWorkflowAssuranceDefinitionExecution,
+} from "./assurance-registry-persistence.service"
 import {
   INITIAL_WORKFLOW_ASSURANCE_CHECK_DEFINITIONS,
   assertCheckDefinitionComplete,
   createAssuranceSourceHash,
   normalizeAssuranceResult,
+  normalizeWorkflowAssuranceRunnerOutput,
   type WorkflowAssuranceCheckDefinitionContract,
   type WorkflowAssuranceCheckResult,
+  type WorkflowAssuranceDefinitionExecution,
   type WorkflowAssuranceCheckRunSummary,
   type WorkflowAssuranceCounts,
   type WorkflowAssuranceExecutionMode,
   type WorkflowAssuranceRegistryRunOutput,
   type WorkflowAssuranceResultStatus,
   type WorkflowAssuranceRunInput,
+  type WorkflowAssuranceRunnerOutput,
   type WorkflowAssuranceRunStatus,
   type WorkflowAssuranceRunType,
   type WorkflowAssuranceSeverity,
@@ -141,7 +148,7 @@ const PRISMA_TO_SEVERITY = invertMap(SEVERITY_TO_PRISMA)
 type WorkflowAssuranceRunner = (
   definition: WorkflowAssuranceCheckDefinitionContract,
   input: WorkflowAssuranceRunInput,
-) => Promise<WorkflowAssuranceCheckResult>
+) => Promise<WorkflowAssuranceRunnerOutput>
 
 const CHECK_RUNNERS: Record<string, WorkflowAssuranceRunner> = {
   "ledger.posted_source_link.required": runPostedSourceLinkCheck,
@@ -387,71 +394,39 @@ export async function runWorkflowAssuranceRegistry(
 
   const runs: WorkflowAssuranceCheckRunSummary[] = []
   const runType = input.runType ?? "manual"
+  const executionKey = normalizeWorkflowAssuranceExecutionKey(input.executionKey ?? randomUUID())
 
   for (const record of records) {
     const definition = toDefinitionContract(record)
     const startedAt = new Date()
-    const result = await executeDefinition(definition, input)
+    const execution = await executeDefinition(definition, input)
+    const result = execution.aggregate
     const runStatus = runStatusForResult(result.status)
     const completedAt = new Date()
     const durationMs = Math.max(0, completedAt.getTime() - startedAt.getTime())
-    const created = await db.workflowAssuranceCheckRun.create({
-      data: {
-        organizationId: input.organizationId,
-        definitionId: record.id,
-        checkKey: definition.checkKey,
-        definitionVersion: definition.version,
-        runType: RUN_TYPE_TO_PRISMA[runType],
-        runStatus: RUN_STATUS_TO_PRISMA[runStatus],
-        resultStatus: RESULT_STATUS_TO_PRISMA[result.status],
-        severity: SEVERITY_TO_PRISMA[result.severity],
-        actorId: input.actorId,
-        sourceType: result.sourceType ?? input.sourceType,
-        sourceId: result.sourceId ?? input.sourceId,
-        sourceHash: result.sourceHash,
-        fingerprint: result.fingerprint,
-        periodId: input.periodId,
-        locationId: input.locationId,
-        scannedCount: result.counts.scanned,
-        passedCount: result.counts.passed,
-        warningCount: result.counts.warning,
-        failedCount: result.counts.failed,
-        blockedCount: result.counts.blocked,
-        skippedCount: result.counts.skipped,
-        errorCount: result.counts.error,
-        startedAt,
-        completedAt,
-        durationMs,
-        resultSummary: {
-          message: result.message,
-          recommendedAction: result.recommendedAction,
-          evidenceLinks: result.evidenceLinks,
-          metadata: result.metadata,
-        } as Prisma.InputJsonValue,
-        errorCode: result.errorCode,
-        errorMessage: result.errorMessage,
-        metadata: {
-          observeMode: !definition.enforceMode,
-          workflow: definition.workflow,
-          executionMode: definition.executionMode,
-          moduleSlug: definition.moduleSlug,
-          requiredPermission: definition.requiredPermission,
-          actorPermissionCount: input.actorPermissions?.length ?? null,
-        } as Prisma.InputJsonValue,
-      },
-    })
-
-    const incident = await upsertWorkflowAssuranceIncidentFromResult({
+    const persisted = await persistWorkflowAssuranceDefinitionExecution({
       organizationId: input.organizationId,
       definitionId: record.id,
-      checkRunId: created.id,
       definition,
-      result,
+      execution,
+      executionKey,
       actorId: input.actorId,
+      actorPermissionCount: input.actorPermissions?.length ?? null,
+      runType,
+      runStatus,
+      periodId: input.periodId,
+      locationId: input.locationId,
+      sourceType: input.sourceType,
+      sourceId: input.sourceId,
+      startedAt,
+      completedAt,
+      durationMs,
     })
 
     runs.push({
-      id: created.id,
+      id: persisted.checkRunId,
+      executionKey: persisted.executionKey,
+      replayed: persisted.replayed,
       checkKey: definition.checkKey,
       version: definition.version,
       workflow: definition.workflow,
@@ -469,11 +444,12 @@ export async function runWorkflowAssuranceRegistry(
       message: result.message,
       evidenceLinks: result.evidenceLinks,
       actionRoute: definition.actionRoute,
-      incidentId: incident?.id,
+      incidentId: persisted.incidentId,
+      findings: persisted.findings,
       observeMode: !definition.enforceMode,
-      startedAt: startedAt.toISOString(),
-      completedAt: completedAt.toISOString(),
-      durationMs,
+      startedAt: persisted.startedAt.toISOString(),
+      completedAt: persisted.completedAt.toISOString(),
+      durationMs: persisted.durationMs,
     })
   }
 
@@ -489,11 +465,12 @@ export async function runWorkflowAssuranceRegistry(
 async function executeDefinition(
   definition: WorkflowAssuranceCheckDefinitionContract,
   input: WorkflowAssuranceRunInput,
-) {
+): Promise<WorkflowAssuranceDefinitionExecution> {
   if (!canRunDefinition(definition, input.actorPermissions)) {
-    return normalizeAssuranceResult({
+    return aggregateOnlyWorkflowAssuranceExecution(normalizeAssuranceResult({
       organizationId: input.organizationId,
       checkKey: definition.checkKey,
+      definitionVersion: definition.version,
       status: "skipped",
       severity: "info",
       sourceType: "permission",
@@ -505,14 +482,15 @@ async function executeDefinition(
         requiredPermission: definition.requiredPermission,
         permissionBounded: true,
       },
-    })
+    }))
   }
 
   const runner = CHECK_RUNNERS[definition.checkKey]
   if (!runner) {
-    return normalizeAssuranceResult({
+    return aggregateOnlyWorkflowAssuranceExecution(normalizeAssuranceResult({
       organizationId: input.organizationId,
       checkKey: definition.checkKey,
+      definitionVersion: definition.version,
       status: "skipped",
       severity: "info",
       sourceType: "registry",
@@ -523,30 +501,50 @@ async function executeDefinition(
       metadata: {
         missingRunner: true,
       },
-    })
+    }))
   }
 
+  let output: WorkflowAssuranceRunnerOutput
   try {
-    return await runner(definition, input)
+    output = await runner(definition, input)
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown assurance runner error"
-    return normalizeAssuranceResult({
+    return aggregateOnlyWorkflowAssuranceExecution(
+      normalizeAssuranceResult({
+        organizationId: input.organizationId,
+        checkKey: definition.checkKey,
+        definitionVersion: definition.version,
+        status: "error",
+        severity: "blocking",
+        sourceType: "assurance_runner",
+        sourceId: definition.checkKey,
+        message: "The assurance runner failed before it could produce a trusted result.",
+        recommendedAction: "Review the assurance runner error and rerun the check after repair.",
+        counts: { scanned: 0, error: 1 },
+        errorCode: "ASSURANCE_RUNNER_ERROR",
+        errorMessage: message,
+        metadata: {
+          errorName: error instanceof Error ? error.name : "UnknownError",
+        },
+      }),
+    )
+  }
+
+  return assertWorkflowAssuranceExecutionReconciled(
+    normalizeWorkflowAssuranceRunnerOutput({
       organizationId: input.organizationId,
       checkKey: definition.checkKey,
-      status: "error",
-      severity: "blocking",
-      sourceType: "assurance_runner",
-      sourceId: definition.checkKey,
-      message: "The assurance runner failed before it could produce a trusted result.",
-      recommendedAction: "Review the assurance runner error and rerun the check after repair.",
-      counts: { scanned: 0, error: 1 },
-      errorCode: "ASSURANCE_RUNNER_ERROR",
-      errorMessage: message,
-      metadata: {
-        errorName: error instanceof Error ? error.name : "UnknownError",
-      },
-    })
-  }
+      definitionVersion: definition.version,
+      output,
+    }),
+  )
+}
+
+
+function aggregateOnlyWorkflowAssuranceExecution(
+  aggregate: WorkflowAssuranceCheckResult,
+): WorkflowAssuranceDefinitionExecution {
+  return assertWorkflowAssuranceExecutionReconciled({ aggregate, findings: [] })
 }
 
 async function runPostedSourceLinkCheck(

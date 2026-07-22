@@ -29,6 +29,7 @@ export const WORKFLOW_ASSURANCE_INCIDENT_STATUSES = [
 export const WORKFLOW_ASSURANCE_INCIDENT_EVENT_TYPES = [
   "created",
   "duplicate_detected",
+  "source_changed",
   "severity_changed",
   "acknowledged",
   "assigned",

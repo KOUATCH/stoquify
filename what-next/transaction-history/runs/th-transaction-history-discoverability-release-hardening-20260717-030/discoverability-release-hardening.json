@@ -1,0 +1,155 @@
+{
+  "schemaVersion": "1.0",
+  "runId": "th-transaction-history-discoverability-release-hardening-20260717-030",
+  "sliceId": "cross-slice",
+  "mode": "implement",
+  "status": "PASS",
+  "completedAt": "2026-07-17T14:30:31.828Z",
+  "scope": {
+    "lanes": [
+      "cash-payment",
+      "ap",
+      "ar"
+    ],
+    "visibleRoutes": [
+      "/dashboard/finance/cash-payment-history",
+      "/dashboard/purchases/payables/history",
+      "/dashboard/finance/receivables/history"
+    ],
+    "productChanges": [
+      "config/sidebar.ts",
+      "config/__tests__/sidebar.test.ts"
+    ]
+  },
+  "claims": [
+    {
+      "result": "PASS",
+      "id": "TH_NAV_CASH_PAYMENT_VISIBLE",
+      "evidence": [
+        "config/sidebar.ts",
+        "app/[locale]/(dashboard)/dashboard/finance/cash-payment-history/page.tsx"
+      ]
+    },
+    {
+      "result": "PASS",
+      "id": "TH_NAV_AP_VISIBLE",
+      "evidence": [
+        "config/sidebar.ts",
+        "app/[locale]/(dashboard)/dashboard/purchases/payables/history/page.tsx"
+      ]
+    },
+    {
+      "result": "PASS",
+      "id": "TH_NAV_AR_VISIBLE",
+      "evidence": [
+        "config/sidebar.ts",
+        "app/[locale]/(dashboard)/dashboard/finance/receivables/history/page.tsx"
+      ]
+    },
+    {
+      "result": "PASS",
+      "id": "TH_STAGE07_FULL_RELEASE",
+      "evidence": [
+        "Full typecheck, lint, policy gates, build, static smoke, protected-route Playwright smoke, authenticated browser/mobile/accessibility smoke, Prisma validation, focused regression tests, and Stage 07 cross-slice release fixtures pass."
+      ]
+    }
+  ],
+  "verification": [
+    {
+      "status": "PASS",
+      "exitCode": 0,
+      "command": "npx eslint config/sidebar.ts config/__tests__/sidebar.test.ts"
+    },
+    {
+      "summary": "17 tests passed",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": "npm test -- config/__tests__/sidebar.test.ts --runInBand"
+    },
+    {
+      "command": "node what-next/transaction-history/runs/th-transaction-history-discoverability-release-hardening-20260717-030/transaction-history-static-release-smoke.mjs",
+      "status": "PASS",
+      "exitCode": 0,
+      "summary": "7 static smoke checks passed for guarded routes, sidebar discoverability, and action controls",
+      "logPath": "what-next/transaction-history/runs/th-transaction-history-discoverability-release-hardening-20260717-030/transaction-history-static-release-smoke-output.json"
+    },
+    {
+      "command": "PLAYWRIGHT_BASE_URL=http://127.0.0.1:3019 node what-next/transaction-history/runs/th-transaction-history-discoverability-release-hardening-20260717-030/transaction-history-route-playwright-smoke.mjs",
+      "status": "PASS",
+      "exitCode": 0,
+      "summary": "Cash/payment, AP, and AR protected routes redirected to login with callback URLs and no desktop/mobile document overflow",
+      "logPath": "what-next/transaction-history/runs/th-transaction-history-discoverability-release-hardening-20260717-030/transaction-history-route-playwright-smoke-output.json"
+    },
+    {
+      "command": "npx prisma generate",
+      "status": "PASS",
+      "exitCode": 0,
+      "summary": "Prisma Client generated successfully after stale Next dev servers were stopped",
+      "logPath": null
+    },
+    {
+      "command": "npm run prisma:validate",
+      "status": "PASS",
+      "exitCode": 0,
+      "summary": "Prisma schema is valid",
+      "logPath": null
+    },
+    {
+      "command": "npm run policy:gates",
+      "status": "PASS",
+      "exitCode": 0,
+      "summary": "Repository policy gates completed successfully",
+      "logPath": null
+    },
+    {
+      "command": "npm run typecheck",
+      "status": "PASS",
+      "exitCode": 0,
+      "summary": "Full repo typecheck passed after excluding what-next evidence artifacts and fixing transaction-history diagnostics",
+      "logPath": null
+    },
+    {
+      "command": "npm run lint",
+      "status": "PASS",
+      "exitCode": 0,
+      "summary": "Full ESLint completed with 0 errors and 4 pre-existing warnings",
+      "logPath": null
+    },
+    {
+      "command": "npm test -- services/pos/__tests__/cash-payment-history.service.test.ts actions/pos/__tests__/cash-payment-history.actions.test.ts hooks/__tests__/useCashPaymentHistoryWorkbench.test.ts components/finance/__tests__/CashPaymentHistoryWorkbench.test.ts services/purchasing/__tests__/ap-history.service.test.ts services/accounting/__tests__/ar-open-item.service.test.ts services/security/__tests__/export-safety.service.test.ts config/__tests__/sidebar.test.ts --runInBand",
+      "status": "PASS",
+      "exitCode": 0,
+      "summary": "8 test suites passed, 35 tests passed",
+      "logPath": null
+    },
+    {
+      "command": "npm run build:app",
+      "status": "PASS",
+      "exitCode": 0,
+      "summary": "Next production build passed; route table includes cash-payment, AP history, and AR history pages",
+      "logPath": null
+    },
+    {
+      "command": "npx eslint playwright.config.ts tests/e2e/transaction-history-auth.setup.ts tests/e2e/transaction-history-authenticated-release.spec.ts scripts/seed-transaction-history-e2e-user.js",
+      "status": "PASS",
+      "exitCode": 0,
+      "summary": "Focused lint passed for the transaction-history E2E seed, auth setup, browser/a11y smoke, and Playwright config",
+      "logPath": null
+    },
+    {
+      "command": "npm run test:e2e:transaction-history",
+      "status": "PASS",
+      "exitCode": 0,
+      "summary": "Migrations were current, transaction-history E2E user seeded, dedicated auth state created, and 6 authenticated cash/payment, AP, and AR browser/a11y checks passed",
+      "logPath": "what-next/transaction-history/runs/th-transaction-history-discoverability-release-hardening-20260717-030/transaction-history-authenticated-browser-a11y-output.json"
+    },
+    {
+      "command": "node what-next/transaction-history/runs/th-transaction-history-discoverability-release-hardening-20260717-030/transaction-history-stage07-release-fixtures.mjs",
+      "status": "PASS",
+      "exitCode": 0,
+      "summary": "Cross-slice role matrix, export parity, cursor/backdated insert, and accounting tie-out release fixtures passed",
+      "logPath": "what-next/transaction-history/runs/th-transaction-history-discoverability-release-hardening-20260717-030/transaction-history-stage07-release-fixtures-output.json"
+    }
+  ],
+  "blockers": []
+}

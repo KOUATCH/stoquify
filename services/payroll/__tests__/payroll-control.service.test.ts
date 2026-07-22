@@ -1910,40 +1910,45 @@ describe("payroll control service", () => {
     expect(tx.payrollEmployee.findMany).not.toHaveBeenCalled();
   });
 
-  it("blocks ordinary recalculation after the payroll input snapshot is sealed", async () => {
-    const tx = buildTx();
-    mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
-    tx.payrollRun.findFirst.mockResolvedValueOnce(null).mockResolvedValueOnce({
-      id: "sealed-run-1",
-      runNumber: "PAY-20260630-0001",
-      status: PayrollRunStatus.POSTED,
-      documentHash: "sha256:sealed-run-doc",
-      evidenceHash: "sha256:sealed-run-evidence",
-      calculationHash: "sha256:sealed-run-calc",
-      attendanceSnapshotHash: "sha256:sealed-attendance",
-    });
-    tx.payrollPeriod.findFirst.mockResolvedValue({
-      ...payrollPeriod,
-      status: PayrollPeriodStatus.CALCULATED,
-    });
+  it.each([PayrollRunStatus.CALCULATED, PayrollRunStatus.POSTED])(
+    "blocks ordinary recalculation after the payroll input snapshot is sealed (%s)",
+    async (sealedStatus) => {
+      const tx = buildTx();
+      mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
+      tx.payrollRun.findFirst
+        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce({
+          id: "sealed-run-1",
+          runNumber: "PAY-20260630-0001",
+          status: sealedStatus,
+          documentHash: "sha256:sealed-run-doc",
+          evidenceHash: "sha256:sealed-run-evidence",
+          calculationHash: "sha256:sealed-run-calc",
+          attendanceSnapshotHash: "sha256:sealed-attendance",
+        });
+      tx.payrollPeriod.findFirst.mockResolvedValue({
+        ...payrollPeriod,
+        status: PayrollPeriodStatus.CALCULATED,
+      });
 
-    await expect(
-      calculatePayrollRun({
-        organizationId: "org-1",
-        payrollPeriodId: "period-1",
-        preparedById: "preparer-1",
-        idempotencyKey: "calc-key-after-snapshot-sealed",
-        runDate: "2026-06-30",
-      }),
-    ).rejects.toThrow("PAYROLL_INPUT_SNAPSHOT_ALREADY_SEALED");
+      await expect(
+        calculatePayrollRun({
+          organizationId: "org-1",
+          payrollPeriodId: "period-1",
+          preparedById: "preparer-1",
+          idempotencyKey: "calc-key-after-snapshot-sealed",
+          runDate: "2026-06-30",
+        }),
+      ).rejects.toThrow("PAYROLL_INPUT_SNAPSHOT_ALREADY_SEALED");
 
-    expect(tx.organization.findFirst).not.toHaveBeenCalled();
-    expect(tx.payrollSalaryChangeRequest.findMany).not.toHaveBeenCalled();
-    expect(tx.payrollEmployee.findMany).not.toHaveBeenCalled();
-    expect(tx.payrollRun.findMany).not.toHaveBeenCalled();
-    expect(tx.payrollRun.create).not.toHaveBeenCalled();
-    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
-  });
+      expect(tx.organization.findFirst).not.toHaveBeenCalled();
+      expect(tx.payrollSalaryChangeRequest.findMany).not.toHaveBeenCalled();
+      expect(tx.payrollEmployee.findMany).not.toHaveBeenCalled();
+      expect(tx.payrollRun.findMany).not.toHaveBeenCalled();
+      expect(tx.payrollRun.create).not.toHaveBeenCalled();
+      expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
+    },
+  );
 
   it("calculates correction runs as deltas against posted original register lines", async () => {
     const tx = buildTx();

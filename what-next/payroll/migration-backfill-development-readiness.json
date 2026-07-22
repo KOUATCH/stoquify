@@ -1,0 +1,73 @@
+{
+  "summary": {
+    "generatedAt": "2026-07-20T07:07:34.358Z",
+    "mode": "fail",
+    "status": "READY_FOR_SYNTHETIC_MIGRATION_DRY_RUN",
+    "checkCount": 11,
+    "readyCount": 11,
+    "blockerCount": 0
+  },
+  "scope": {
+    "environmentClass": "DEVELOPMENT_SYNTHETIC_DRY_RUN_ONLY",
+    "productionUseAllowed": false,
+    "mutationModeAvailable": false,
+    "productionTenantWritesAllowed": false,
+    "ownerSignoffGranted": false,
+    "finalReadinessAllowed": false
+  },
+  "upstream": {
+    "developmentStatus": "READY_FOR_DEVELOPMENT_ACCOUNTING_CLOSE_ASSURANCE",
+    "productionStatus": "blocked",
+    "productionBlockers": [
+      "source_artifact_hash_verification",
+      "source_artifact_expert_approval"
+    ]
+  },
+  "checks": [
+    {
+      "id": "accounting_close_development_prerequisite_ready",
+      "ready": true
+    },
+    {
+      "id": "production_migration_and_final_readiness_remain_disabled",
+      "ready": true
+    },
+    {
+      "id": "dry_run_only_before_database_reads",
+      "ready": true
+    },
+    {
+      "id": "tenant_and_cross_tenant_rows_fail_closed",
+      "ready": true
+    },
+    {
+      "id": "stable_hashes_and_idempotency_evidence",
+      "ready": true
+    },
+    {
+      "id": "correction_only_rollback_preserves_immutable_evidence",
+      "ready": true
+    },
+    {
+      "id": "backfill_reconciliation_requires_source_certificate",
+      "ready": true
+    },
+    {
+      "id": "reports_and_certificates_are_redacted",
+      "ready": true
+    },
+    {
+      "id": "owner_signoff_remains_pending_and_non_automated",
+      "ready": true
+    },
+    {
+      "id": "focused_migration_test_harness_present",
+      "ready": true
+    },
+    {
+      "id": "development_gate_is_not_a_production_policy_gate",
+      "ready": true
+    }
+  ],
+  "blockers": []
+}

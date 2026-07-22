@@ -240,8 +240,17 @@ describe("sidebar filtering and route matching", () => {
       expect.objectContaining({ title: "Payables", href: "/dashboard/finance/payables" }),
     ])
     expect(filtered.find((link) => link.title === "Purchases")?.dropdownMenu).toEqual([
+      expect.objectContaining({ title: "AP History", href: "/dashboard/purchases/payables/history" }),
       expect.objectContaining({ title: "AP Workbench", href: "/dashboard/purchases/payables" }),
     ])
+  })
+
+  it("surfaces transaction-history destinations in the sidebar", () => {
+    expect(allSidebarHrefs()).toEqual(expect.arrayContaining([
+      "/dashboard/finance/cash-payment-history",
+      "/dashboard/finance/receivables/history",
+      "/dashboard/purchases/payables/history",
+    ]))
   })
 
   it("keeps the default sidebar broad enough for functional testability", () => {

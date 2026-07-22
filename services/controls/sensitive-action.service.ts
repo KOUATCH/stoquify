@@ -10,6 +10,8 @@ export type SensitiveActionId =
   | "pos.sale.commit"
   | "pos.refund.process"
   | "pos.void.process"
+  | "branch.daily-close.sign"
+  | "cash-shortage.policy.approve"
   | "payment.provider-account.manage"
   | "payment.reconciliation.import"
   | "payment.reconciliation.run"
@@ -33,6 +35,7 @@ export type SensitiveActionId =
   | "payroll.payslip.self.export"
   | "payroll.register.export"
   | "accounting.export"
+  | "report.export"
   | "accounting.journal.post"
   | "accounting.journal.reverse"
   | "accounting.period.close"
@@ -79,6 +82,34 @@ export const SENSITIVE_ACTION_POLICIES: Record<SensitiveActionId, SensitiveActio
     blockSelfApproval: true,
     auditAction: "POS_VOID_CONTROL",
     detectorSignals: ["void_frequency", "void_own_sale", "void_after_hours"],
+  },
+  "branch.daily-close.sign": {
+    action: "branch.daily-close.sign",
+    permission: "branch.daily-close.sign",
+    riskTier: "critical",
+    requiredAssurance: "L1",
+    freshAuthMaxAgeSeconds: 300,
+    blockSelfApproval: true,
+    auditAction: "BRANCH_DAILY_CLOSE_SIGN_OFF_CONTROL",
+    detectorSignals: [
+      "branch_daily_close_sign_off_attempt",
+      "branch_daily_close_self_approval_attempt",
+      "branch_daily_close_evidence_drift",
+    ],
+  },
+  "cash-shortage.policy.approve": {
+    action: "cash-shortage.policy.approve",
+    permission: "controls.manage",
+    riskTier: "critical",
+    requiredAssurance: "L1",
+    freshAuthMaxAgeSeconds: 300,
+    blockSelfApproval: true,
+    auditAction: "CASH_SHORTAGE_POLICY_APPROVAL_CONTROL",
+    detectorSignals: [
+      "cash_shortage_policy_approval_attempt",
+      "cash_shortage_policy_self_approval_attempt",
+      "cash_shortage_policy_threshold_change",
+    ],
   },
   "payment.provider-account.manage": {
     action: "payment.provider-account.manage",
@@ -287,6 +318,16 @@ export const SENSITIVE_ACTION_POLICIES: Record<SensitiveActionId, SensitiveActio
     exportControl: true,
     auditAction: "PAYROLL_REGISTER_EXPORT_CONTROL",
     detectorSignals: ["payroll_register_export", "statutory_export", "mass_export"],
+  },
+  "report.export": {
+    action: "report.export",
+    permission: "reports.export",
+    riskTier: "critical",
+    requiredAssurance: "L1",
+    freshAuthMaxAgeSeconds: 300,
+    exportControl: true,
+    auditAction: "REPORT_EXPORT_CONTROL",
+    detectorSignals: ["financial_report_export", "mass_export", "after_hours_export"],
   },
   "accounting.export": {
     action: "accounting.export",
@@ -526,4 +567,3 @@ export async function enforceSensitiveAction(
   const decision = await evaluateAndAuditSensitiveAction(tx, input)
   return assertSensitiveActionAllowed(decision)
 }
-

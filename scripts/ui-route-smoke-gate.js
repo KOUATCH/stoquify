@@ -19,6 +19,34 @@ const DEFAULT_ROUTES = [
     viewports: ["mobile", "desktop"],
   },
   {
+    id: "register",
+    path: "/en/register",
+    surface: "Account registration",
+    requiresAuth: false,
+    viewports: ["mobile", "desktop"],
+  },
+  {
+    id: "public-home-fr",
+    path: "/fr",
+    surface: "Premiere impression publique",
+    requiresAuth: false,
+    viewports: ["mobile", "desktop"],
+  },
+  {
+    id: "login-fr",
+    path: "/fr/login",
+    surface: "Authentification",
+    requiresAuth: false,
+    viewports: ["mobile", "desktop"],
+  },
+  {
+    id: "register-fr",
+    path: "/fr/register",
+    surface: "Creation de compte",
+    requiresAuth: false,
+    viewports: ["mobile", "desktop"],
+  },
+  {
     id: "dashboard",
     path: "/en/dashboard",
     surface: "Today's Operating Truth",
@@ -108,6 +136,13 @@ const DEFAULT_ROUTES = [
     surface: "Payroll setup control plane",
     requiresAuth: true,
     viewports: ["tablet", "desktop"],
+  },
+  {
+    id: "manager-daily-close",
+    path: "/en/dashboard/manager-action-center/daily-close",
+    surface: "Read-only branch daily close",
+    requiresAuth: true,
+    viewports: ["mobile", "desktop"],
   },
   {
     id: "inventory-items",

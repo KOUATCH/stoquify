@@ -657,9 +657,9 @@ describe("payroll command read model service", () => {
     expect(JSON.stringify(result)).not.toContain("bankAccountNumber")
   })
 
-  it("treats frozen attendance without source-hash proof as a readiness gap", async () => {
+  it("treats frozen but uncertified attendance as a readiness gap", async () => {
     const client = buildClient()
-    client.payrollAttendanceSnapshot.count.mockResolvedValue(0)
+    client.payrollAttendanceSnapshot.count.mockResolvedValue(2)
     mockGetPaymentEvidenceReadiness.mockResolvedValueOnce({
       organizationId: "org-1",
       asOf: "2026-06-26T07:25:00.000Z",

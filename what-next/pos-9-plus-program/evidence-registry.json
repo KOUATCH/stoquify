@@ -1,0 +1,184 @@
+{
+  "version": "GOV-01-2026-07-20",
+  "candidate": {
+    "id": "632e3fd3-dirty-26ec69547311",
+    "repository": "E:/ohada saas/Focused projects/stoquify",
+    "branch": "codex/service-boundary-burndown",
+    "commitSha": "632e3fd3c3328d4b67502cf7be2749f811f9b8f5",
+    "treeSha": "e678716f480869796ecfaebec4749f92aa69ff13",
+    "dirty": true,
+    "changedPathsAtBaseline": 411,
+    "statusCodes": {
+      " M": 157,
+      "??": 254
+    },
+    "dirtyWorktreeStatusSha256": "26ec69547311b64a81743910b431b31fc6374be3d172cbb77e786a5553be81cd",
+    "capturedBeforeGov01Artifacts": true,
+    "buildId": null,
+    "schemaDigest": null,
+    "configurationFingerprint": null,
+    "certifiable": false,
+    "limitations": [
+      "Dirty mutable worktree",
+      "No build identity",
+      "No schema/migration digest",
+      "No feature-flag/environment/provider/country/browser/hardware fingerprint"
+    ]
+  },
+  "gateStatus": {
+    "G1": {
+      "status": "FAIL-NO-GO",
+      "strength": "strong",
+      "reason": "Unbacked store credit, operator-entered electronic PAID, and missing reversal/reconciliation proof."
+    },
+    "G2": {
+      "status": "FAIL-BLOCKED",
+      "strength": "strong",
+      "reason": "No database active-session invariant or candidate-bound concurrency/migration proof."
+    },
+    "G3": {
+      "status": "FAIL-NO-GO",
+      "strength": "strong",
+      "reason": "Stale SYNCING, premature pruning, and localStorage durability gaps; existing tests are regression-only."
+    },
+    "G4": {
+      "status": "FAIL-INCOMPLETE",
+      "strength": "strong",
+      "reason": "No cryptographic device-signature verification, rotation, revocation, or attack-suite evidence."
+    },
+    "G5": {
+      "status": "FAIL-NO-GO",
+      "strength": "strong",
+      "reason": "Inconsistent module entitlement and incomplete negative tenant/RBAC/fresh-auth evidence."
+    },
+    "G6": {
+      "status": "FAIL-NO-GO",
+      "strength": "strong-normal-path-only",
+      "reason": "Normal sale/close kernel is strong; store-credit, provider, correction, offline, and reconciliation paths are not proven."
+    },
+    "G7": {
+      "status": "NOT-DEMONSTRATED-BLOCKED",
+      "strength": "low-medium",
+      "reason": "Authenticated browser audit blocked; accessibility, viewport, performance, and physical hardware evidence absent."
+    },
+    "G8": {
+      "status": "NOT-DEMONSTRATED-BLOCKED",
+      "strength": "low",
+      "reason": "No candidate-bound SLO, alert, runbook, support-bundle, rollback, or disaster-recovery drill evidence."
+    }
+  },
+  "evidence": [
+    {
+      "id": "E-001",
+      "artifact": "docs/pos/STOQUIFY_POS_9_PLUS_EVALUATION_AND_ROADMAP_2026-07-20.md",
+      "sha256": "f46ca14f795f1ad752be33ab1df02f5d5f380ec2f2e7509cbc0d34c19a445b57",
+      "class": "report-or-planning",
+      "candidateBinding": "baseline-only",
+      "certificationEligible": false
+    },
+    {
+      "id": "E-002",
+      "artifact": "docs/pos/STOQUIFY_POS_9_PLUS_SCORECARD_2026-07-20.json",
+      "sha256": "1f9ede5785c7036ece79be8730b2a5e4dc350e82be86177e205072d6ab63d698",
+      "class": "report-or-planning",
+      "candidateBinding": "baseline-only",
+      "certificationEligible": false
+    },
+    {
+      "id": "E-003",
+      "artifact": "what-next/STOQUIFY_POS_9_PLUS_EXECUTION_ROADMAP_2026-07-20.md",
+      "sha256": "c452db502d56ca16c34235c30543d168a6185eadb5a3efa37d9b2ba0d5446dd8",
+      "class": "report-or-planning",
+      "candidateBinding": "baseline-only",
+      "certificationEligible": false
+    },
+    {
+      "id": "E-004",
+      "artifact": "what-next/STOQUIFY_POS_9_PLUS_EXECUTION_BACKLOG_2026-07-20.json",
+      "sha256": "0bc6327e569d97f135a31c28741f43b4488c93876274de8fefd1762089f86d95",
+      "class": "report-or-planning",
+      "candidateBinding": "baseline-only",
+      "certificationEligible": false
+    },
+    {
+      "id": "E-005",
+      "artifact": "what-next/STOQUIFY_POS_9_PLUS_SPECIALIST_SKILL_CATALOG_2026-07-20.json",
+      "sha256": "fa517196c3bdcbd0218f3e45be7254e889933ff3a1ccf4cf49c519fbf42bbfe3",
+      "class": "report-or-planning",
+      "candidateBinding": "baseline-only",
+      "certificationEligible": false
+    },
+    {
+      "id": "E-006",
+      "artifact": "what-next/STOQUIFY_POS_9_PLUS_SKILL_INSTALLATION_REPORT_2026-07-20.md",
+      "sha256": "e120d92a25705e200084dbf3f0d17bd77e65569e5dac3374922ae68c0c477009",
+      "class": "report-or-planning",
+      "candidateBinding": "baseline-only",
+      "certificationEligible": false
+    },
+    {
+      "id": "E-101",
+      "artifact": "Evaluation-recorded typecheck",
+      "class": "automated-test-summary",
+      "result": "PASS",
+      "detail": "npm run typecheck passed",
+      "candidateBinding": "audit-run only",
+      "certificationEligible": false
+    },
+    {
+      "id": "E-102",
+      "artifact": "Evaluation-recorded focused POS tests",
+      "class": "automated-test-summary",
+      "result": "PASS",
+      "detail": "11 suites / 67 tests",
+      "candidateBinding": "audit-run only",
+      "certificationEligible": false
+    },
+    {
+      "id": "E-103",
+      "artifact": "Evaluation-recorded POS action tests",
+      "class": "automated-test-summary",
+      "result": "PASS",
+      "detail": "7 suites / 43 tests",
+      "candidateBinding": "audit-run only",
+      "certificationEligible": false
+    },
+    {
+      "id": "E-104",
+      "artifact": "Evaluation-recorded offline tests",
+      "class": "automated-test-summary",
+      "result": "PASS",
+      "detail": "4 suites / 29 tests",
+      "candidateBinding": "audit-run only",
+      "certificationEligible": false
+    },
+    {
+      "id": "E-105",
+      "artifact": "Authenticated browser audit",
+      "class": "browser",
+      "result": "BLOCKED",
+      "detail": "Database-backed authenticated session unavailable",
+      "candidateBinding": "none",
+      "certificationEligible": false
+    },
+    {
+      "id": "E-106",
+      "artifact": "Installed POS skill suite",
+      "class": "tooling-validation",
+      "result": "PASS",
+      "detail": "19/19 quick validation and suite validation; Wave S0 forward tests preserved blockers",
+      "candidateBinding": "skill-version only",
+      "certificationEligible": false
+    }
+  ],
+  "invalidationTriggers": [
+    "source change",
+    "schema or migration change",
+    "feature-flag or configuration change",
+    "provider adapter change",
+    "country-pack change",
+    "browser/device/hardware matrix change",
+    "security policy change"
+  ],
+  "note": "Skill validation proves orchestration/tool integrity, not POS release readiness."
+}

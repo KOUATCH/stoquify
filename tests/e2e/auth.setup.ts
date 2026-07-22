@@ -101,6 +101,9 @@ test("creates a tenant-scoped payroll and HRIS manager auth state", async ({
       "hris.people.read",
       "hris.people.manage",
       "hris.self_service.read",
+      "accounting.close.read",
+      "accounting.close.run",
+      "accounting.close.export",
     ],
   })
 })

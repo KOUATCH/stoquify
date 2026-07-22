@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "1.0",
+  "traceId": "2a6f0aa1-4908-4d38-97c2-455a5428851f",
+  "runId": "th-ap-supplier-history-security-accounting-20260717-026",
+  "sliceId": "ap-ar",
+  "stageId": "01",
+  "skillName": "stoquify-transaction-history-01-architecture-gate",
+  "agentType": "Software Architect",
+  "mode": "audit",
+  "status": "PASS",
+  "activeLanes": [
+    "ap"
+  ],
+  "blockedLanes": [],
+  "inputArtifacts": [
+    {
+      "path": "what-next/transaction-history/runs/th-ap-ar-architecture-20260717-025/slices/ap-ar/01-architecture-gate.json",
+      "sha256": "sha256:003a2c48057c1ae687bc3e31b3dfec18187da449ff0a5f04b1c465c55936c712"
+    }
+  ],
+  "inputFingerprint": "sha256:0628f08178fe0441fe22ccbd1a6b429c2bb07b2ea5d278e6dcb799ab117c6979",
+  "allowedEdits": [
+    "what-next/transaction-history/runs/th-ap-supplier-history-security-accounting-20260717-026/slices/ap-ar/01-architecture-gate.md",
+    "what-next/transaction-history/runs/th-ap-supplier-history-security-accounting-20260717-026/slices/ap-ar/01-architecture-gate.json"
+  ],
+  "observedEdits": [
+    "what-next/transaction-history/runs/th-ap-supplier-history-security-accounting-20260717-026/slices/ap-ar/01-architecture-gate.md",
+    "what-next/transaction-history/runs/th-ap-supplier-history-security-accounting-20260717-026/slices/ap-ar/01-architecture-gate.json"
+  ],
+  "repository": {
+    "headBefore": "a27cb0328e044304590cecf20c47832df5e834d5",
+    "headAfter": "a27cb0328e044304590cecf20c47832df5e834d5",
+    "dirtyFilesBefore": [
+      "WORKTREE_DIRTY_SEE_TRANSACTION_HISTORY_RUNS"
+    ],
+    "dirtyFilesAfter": [
+      "WORKTREE_DIRTY_SEE_TRANSACTION_HISTORY_RUNS",
+      "what-next/transaction-history/runs/th-ap-supplier-history-security-accounting-20260717-026/"
+    ]
+  },
+  "claims": [
+    {
+      "id": "AP_ONLY_NARROWING",
+      "result": "PASS",
+      "evidence": [
+        "what-next/transaction-history/runs/th-ap-ar-architecture-20260717-025/slices/ap-ar/01-architecture-gate.json"
+      ]
+    },
+    {
+      "id": "AP_ARCHITECTURE_OWNER",
+      "result": "PASS",
+      "evidence": [
+        "services/purchasing/ap-control.service.ts",
+        "actions/purchasing/ap-control.actions.ts",
+        "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx"
+      ]
+    },
+    {
+      "id": "AR_EXCLUDED_FROM_THIS_RUN",
+      "result": "NA",
+      "evidence": [
+        "what-next/transaction-history/runs/th-ap-ar-architecture-20260717-025/slices/ap-ar/01-architecture-gate.md"
+      ]
+    }
+  ],
+  "verification": [
+    {
+      "command": "Read prior AP/AR Stage 01 architecture gate and AP action evidence",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": null
+    }
+  ],
+  "outputs": [],
+  "blockers": [],
+  "nextEligibleStages": [
+    "02"
+  ],
+  "startedAt": "2026-07-17T06:48:08.9200590+01:00",
+  "completedAt": "2026-07-17T06:48:08.9200590+01:00"
+}

@@ -84,4 +84,85 @@ describe("workflow assurance registry contracts", () => {
     expect(result.sourceHash).toMatch(/^[a-f0-9]{64}$/)
     expect(result.fingerprint).toMatch(/^[a-f0-9]{64}$/)
   })
+
+  it("keeps case fingerprint stable when evidence and mutable observations change", () => {
+    const baseline = normalizeAssuranceResult({
+      organizationId: "org-1",
+      checkKey: "pos.closed_shift_cash_shortage.review",
+      definitionVersion: 3,
+      status: "failed",
+      severity: "blocking",
+      sourceType: "pos_shift",
+      sourceId: "shift-1",
+      sourceHash: "source-hash-1",
+      evidenceLinks: [{ sourceTable: "business_events", sourceId: "event-1", label: "Shift close event 1" }],
+      recommendedAction: "Review the count.",
+      metadata: { variance: "-100" },
+    })
+    const changedObservation = normalizeAssuranceResult({
+      organizationId: "org-1",
+      checkKey: "pos.closed_shift_cash_shortage.review",
+      definitionVersion: 3,
+      status: "warning",
+      severity: "high",
+      sourceType: "pos_shift",
+      sourceId: "shift-1",
+      sourceHash: "source-hash-2",
+      evidenceLinks: [{ sourceTable: "business_events", sourceId: "event-2", label: "Shift close event 2" }],
+      recommendedAction: "Assign an independent reviewer.",
+      message: "The evidence changed.",
+      counts: { scanned: 2, warning: 1 },
+      metadata: { variance: "-150", reviewed: true },
+    })
+
+    expect(changedObservation.sourceHash).not.toBe(baseline.sourceHash)
+    expect(changedObservation.fingerprint).toBe(baseline.fingerprint)
+    expect(changedObservation.definitionVersion).toBe(3)
+  })
+
+  it("changes case fingerprint for every logical identity dimension", () => {
+    const base = {
+      organizationId: "org-1",
+      checkKey: "pos.closed_shift_cash_shortage.review",
+      definitionVersion: 1,
+      status: "failed" as const,
+      sourceType: "pos_shift",
+      sourceId: "shift-1",
+      sourceHash: "source-hash",
+    }
+    const baseline = normalizeAssuranceResult(base)
+    const changedIdentities = [
+      { ...base, organizationId: "org-2" },
+      { ...base, checkKey: "pos.closed_shift_cash_overage.review" },
+      { ...base, definitionVersion: 2 },
+      { ...base, sourceType: "pos_terminal" },
+      { ...base, sourceId: "shift-2" },
+    ]
+
+    for (const identity of changedIdentities) {
+      expect(normalizeAssuranceResult(identity).fingerprint).not.toBe(baseline.fingerprint)
+    }
+  })
+
+  it("canonicalizes missing source identity and rejects invalid definition versions", () => {
+    const result = normalizeAssuranceResult({
+      organizationId: "org-1",
+      checkKey: "ledger.test",
+      status: "failed",
+    })
+
+    expect(result).toMatchObject({
+      definitionVersion: 1,
+      sourceType: "workflow_assurance_check",
+      sourceId: "ledger.test",
+    })
+    expect(() =>
+      normalizeAssuranceResult({
+        organizationId: "org-1",
+        checkKey: "ledger.test",
+        definitionVersion: 0,
+        status: "failed",
+      }),
+    ).toThrow(/positive integer/i)
+  })
 })

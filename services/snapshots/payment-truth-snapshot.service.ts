@@ -49,6 +49,48 @@ export async function getPaymentTruthSnapshot(
   input: SnapshotScopeInput,
 ): Promise<SnapshotResult<PaymentTruthMetrics>> {
   const scope = normalizeSnapshotScope(input)
+  if (scope.locationId) {
+    return buildSnapshotResult({
+      kind: "payment.truth",
+      scope,
+      status: "blocked",
+      evidenceGrade: "blocked",
+      sourceModules: ["payments", "finance", "accounting"],
+      metrics: {
+        providerAccountCount: 0,
+        activeProviderAccountCount: 0,
+        recentRunCount: 0,
+        readyForSignoffCount: 0,
+        signedRunCount: 0,
+        openExceptionCount: 0,
+        criticalExceptionCount: 0,
+        openSuspenseCount: 0,
+        openSuspenseAmount: 0,
+        pendingTransactionCount: 0,
+      },
+      blockers: [
+        blocker({
+          id: "payment-location-scope-unsupported",
+          severity: "high",
+          gate: "payment_truth_scope",
+          title: "Location-scoped payment truth is unavailable",
+          detail:
+            "Payment Truth currently reconciles tenant-wide provider evidence and cannot safely claim location-level results.",
+          sourceTables: ["provider_accounts", "reconciliation_runs", "payment_transactions"],
+          nextAction:
+            "Use tenant-wide Payment Truth or a location-aware branch snapshot until payment allocation evidence supports location scope.",
+        }),
+      ],
+      redactions: [
+        {
+          id: "payment-provider-identifiers-redacted",
+          field: "providerAccount.externalAccountHash",
+          reason: "Payment provider account identifiers remain server-side only in snapshot read models.",
+          policy: "KONTAVA_SENSITIVE_PAYMENT_EVIDENCE",
+        },
+      ],
+    })
+  }
   const periodWhere = { gte: scope.periodStart, lte: scope.periodEnd }
 
   const [

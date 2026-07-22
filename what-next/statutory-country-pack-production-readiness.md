@@ -1,19 +1,21 @@
 # Statutory Country Pack Production Readiness Gate
 
-Generated: 2026-07-12T09:02:57.210Z
+Generated: 2026-07-20T07:25:52.785Z
 Mode: fail
-Status: ready
+Status: blocked
 
 ## Summary
 
-- Checks ready: 10/10
-- Blockers: 0
+- Checks ready: 10/12
+- Blockers: 2
 
 ## Checks
 
 - ready: country_pack_provenance_schema
 - ready: published_effective_resolution
 - ready: publish_requires_reviewed_evidence
+- blocked: source_artifact_hash_verification
+- blocked: source_artifact_expert_approval
 - ready: cameroon_automation_claim_blocked
 - ready: payroll_tax_fail_closed
 - ready: sandbox_only_adapter_registry
@@ -24,7 +26,8 @@ Status: ready
 
 ## Blockers
 
-- None
+- source_artifact_hash_verification
+- source_artifact_expert_approval
 
 ## Safety
 

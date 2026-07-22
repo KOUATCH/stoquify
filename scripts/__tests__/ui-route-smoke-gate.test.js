@@ -30,6 +30,48 @@ describe("ui-route-smoke-gate", () => {
     expect(selectedRoutes(args).map((route) => route.id)).toEqual(["payroll-payments", "payroll-runs"])
   })
 
+  it("registers the read-only daily-close route for mobile and desktop smoke evidence", () => {
+    const args = parseArgs(["node", "script", "--route", "manager-daily-close"])
+
+    expect(selectedRoutes(args)).toEqual([
+      {
+        id: "manager-daily-close",
+        path: "/en/dashboard/manager-action-center/daily-close",
+        surface: "Read-only branch daily close",
+        requiresAuth: true,
+        viewports: ["mobile", "desktop"],
+      },
+    ])
+  })
+
+  it("selects the complete bilingual public first-impression route set", () => {
+    const args = parseArgs([
+      "node",
+      "script",
+      "--route",
+      "public-home",
+      "--route",
+      "login",
+      "--route",
+      "register",
+      "--route",
+      "public-home-fr",
+      "--route",
+      "login-fr",
+      "--route",
+      "register-fr",
+    ])
+
+    expect(selectedRoutes(args).map((route) => route.id)).toEqual([
+      "public-home",
+      "login",
+      "register",
+      "public-home-fr",
+      "login-fr",
+      "register-fr",
+    ])
+  })
+
   it("builds stable absolute route URLs from a base URL", () => {
     expect(routeUrl("http://127.0.0.1:3001/app", "/en/dashboard/payroll/runs")).toBe(
       "http://127.0.0.1:3001/en/dashboard/payroll/runs",

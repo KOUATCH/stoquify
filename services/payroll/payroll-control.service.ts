@@ -1251,6 +1251,8 @@ function buildCertifiedPayrollEngineInputs(input: {
           "Certified payroll engine input requires active contract, HRIS-certified frozen attendance evidence, and payment destination proof.",
         );
       }
+      const certifiedContract = { ...contract };
+      const certifiedAttendance = { ...attendance };
 
       const rubriqueAssignments = [...(employee.rubriqueAssignments ?? [])]
         .sort((left, right) => left.id.localeCompare(right.id))
@@ -1270,23 +1272,24 @@ function buildCertifiedPayrollEngineInputs(input: {
         hrisSourceSnapshotHash: hrisEmployeeProof.sourceSnapshotHash,
         employeeId: employee.id,
         contract: {
-          id: contract.id,
-          baseSalary: decimalProof(contract.baseSalary),
-          currency: normalizeCurrency(contract.currency),
-          signedDocumentHash: contract.signedDocumentHash ?? null,
-          activatedBusinessEventId: contract.activatedBusinessEventId ?? null,
+          id: certifiedContract.id,
+          baseSalary: decimalProof(certifiedContract.baseSalary),
+          currency: normalizeCurrency(certifiedContract.currency),
+          signedDocumentHash: certifiedContract.signedDocumentHash ?? null,
+          activatedBusinessEventId:
+            certifiedContract.activatedBusinessEventId ?? null,
         },
         attendance: {
-          id: attendance.id,
+          id: certifiedAttendance.id,
           sourceHash: attendanceSourceHash,
           certificationHash: attendanceCertificationHash,
-          scheduledMinutes: Number(attendance.scheduledMinutes ?? 0),
-          workedMinutes: Number(attendance.workedMinutes ?? 0),
-          overtimeMinutes: Number(attendance.overtimeMinutes ?? 0),
-          absenceMinutes: Number(attendance.absenceMinutes ?? 0),
-          leaveMinutes: Number(attendance.leaveMinutes ?? 0),
-          frozenAt: timestampProof(attendance.frozenAt),
-          frozenById: attendance.frozenById ?? null,
+          scheduledMinutes: Number(certifiedAttendance.scheduledMinutes ?? 0),
+          workedMinutes: Number(certifiedAttendance.workedMinutes ?? 0),
+          overtimeMinutes: Number(certifiedAttendance.overtimeMinutes ?? 0),
+          absenceMinutes: Number(certifiedAttendance.absenceMinutes ?? 0),
+          leaveMinutes: Number(certifiedAttendance.leaveMinutes ?? 0),
+          frozenAt: timestampProof(certifiedAttendance.frozenAt),
+          frozenById: certifiedAttendance.frozenById ?? null,
         },
         paymentDestinationHash,
         rubriqueAssignments: rubriqueAssignments.map((assignment) => ({
@@ -1322,8 +1325,8 @@ function buildCertifiedPayrollEngineInputs(input: {
         id: employee.id,
         displayName: employee.displayName,
         paymentDestinationHash,
-        contract,
-        attendance,
+        contract: certifiedContract,
+        attendance: certifiedAttendance,
         attendanceSourceHash,
         attendanceCertificationHash,
         rubriqueAssignments,

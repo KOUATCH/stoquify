@@ -337,6 +337,13 @@ describe("payroll country-pack review intake actions", () => {
         code: "FORBIDDEN",
       }),
     );
+    expect(mockRequirePermission).toHaveBeenCalledWith(
+      "payroll.runs.calculate",
+      {
+        resource: "PayrollCountryPackReviewIntakeCertificate",
+        auditAllowed: false,
+      },
+    );
     expect(mockBuildPayrollCountryPackReviewIntakeCertificate).not.toHaveBeenCalled();
   });
 });
