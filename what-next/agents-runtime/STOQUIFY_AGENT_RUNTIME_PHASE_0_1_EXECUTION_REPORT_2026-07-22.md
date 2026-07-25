@@ -199,33 +199,47 @@ Lint warnings were not changed:
 - three existing `@next/next/no-img-element` warnings
 - one existing `import/no-anonymous-default-export` warning in `config/permissions.ts`
 
+## Controlled PostgreSQL Deployment And Persistence Smoke Test
+
+- Target: configured local PostgreSQL database `dbakesman`, schema `public`, at `localhost:5432`; credentials were not printed or persisted in evidence.
+- The migration safety gate passed all 8 checks with 0 risk findings and 0 blockers across 27 migrations.
+- `20260722143000_agent_runtime_phase_1_foundation` was applied successfully.
+- `20260722150000_agent_runtime_tenant_consistency` was then applied to enforce run-to-tenant and step-to-run consistency at the database boundary.
+- `20260722153000_agent_runtime_incident_cascade_consistency` preserved tenant consistency while allowing database-cascaded tenant lifecycle cleanup.
+- The post-deployment migration check reported: `Database schema is up to date!`
+
+`npm run agent:runtime:postgres-smoke` passed with:
+
+- a valid organization, definition, skill, tool, run, step, evidence, feedback, cost, and policy-incident round trip;
+- a tenant-scoped read returning only the requested tenant's runtime graph;
+- PostgreSQL `P2003` rejection of cross-tenant feedback, cost, and policy incidents, plus cross-run evidence;
+- PostgreSQL `P2002` rejection of a duplicate run correlation ID; and
+- verified database-cascade cleanup with zero residual fixture rows, including policy incidents.
+
 ## Deliberate Deviations And Boundaries
 
 The Phase 1 registry contains governed tool metadata, not direct domain adapters. This keeps Phase 1 deterministic and prevents unused service wrappers from becoming an accidental execution surface. Each adapter will be introduced with its consuming agent beginning with the Phase 2 Command Agent and must return redacted, evidence-bound output through this registry.
 
-The migration file was created but not deployed. Running `prisma migrate deploy` in the current workspace could apply other pending user-owned migrations and mutate the configured database. Deployment must occur through the repository's normal reviewed migration flow.
+The additive runtime migrations are deployed to the controlled local PostgreSQL environment. Any deployment to preview or production remains subject to Stoquify's reviewed migration and release flow.
 
 No `AgentActionDraft` or `AgentApproval` model was added because the roadmap assigns them to Phases 3 and 5.
 
 ## Remaining Risks
 
-- The new migration still needs deployment verification against a controlled PostgreSQL environment.
-- The deterministic runner persistence path is covered with a mocked store, not a PostgreSQL integration test.
+- PostgreSQL schema persistence and isolation are smoke-tested; the deterministic runner orchestration remains unit-tested with a mocked store until Phase 2 connects its first domain adapter.
 - Domain tool adapters must enforce subject-specific permissions in addition to registry-level permission checks.
 - Safe summary producers must pass through the output redaction boundary before persistence.
 - The current architecture graph predates this runtime and should be refreshed after Phase 2.
 
 ## Rollback
 
-Phase 1 is additive. Before database deployment, rollback consists of removing the isolated migration, agent schema additions, `services/agents`, and the two agent gate scripts. After deployment, rollback must use a reviewed database migration because run and evidence records may exist.
+Phase 1 is additive and now deployed locally. Rollback must use a new reviewed migration rather than editing or deleting applied migration history because runtime records may exist.
 
 ## Phase 2 Readiness Decision
 
-Phase 0 and Phase 1 implementation gates are green. Phase 2 should begin only after:
+Phase 0 and Phase 1 implementation gates are green, including the database deployment and persistence entry gate. Phase 2 should begin after:
 
-1. The migration is applied and smoke-tested in a controlled environment.
-2. A PostgreSQL persistence test confirms tenant-scoped run, step, evidence, and policy-incident writes.
-3. Product and security approve the Phase 0 design freeze.
-4. The Command Agent domain adapters are defined with subject-specific permissions and redaction maps.
+1. Product and security approve the Phase 0 design freeze.
+2. The Command Agent domain adapters are defined with subject-specific permissions and redaction maps.
 
 Recommended next execution: implement the read-only Command Agent only, using Daily Digest as the first entry point and retaining direct execution as structurally disabled.

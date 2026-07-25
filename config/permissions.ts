@@ -321,6 +321,18 @@ export const systemPermissions = [
   "system.organization.update",
 ] as const;
 
+// Governed agent release controls
+export const agentReleasePermissions = [
+  "agent.release.prepare",
+  "agent.release.product.approve",
+  "agent.release.security.approve",
+  "agent.release.owner.manage",
+  "agent.release.owner.accept",
+  "agent.release.provision",
+  "agent.release.activate",
+  "agent.release.suspend",
+  "agent.release.retire",
+] as const;
 // Communication permissions
 export const communicationPermissions = [
   "communication.emails.send",
@@ -365,6 +377,7 @@ export const adminPermissions = [
   ...posReceiptControlPermissions,
   ...analyticsPermissions,
   ...systemPermissions,
+  ...agentReleasePermissions,
   ...communicationPermissions,
   ...dataPermissions,
 ] as const;
@@ -526,6 +539,7 @@ export const permissionCategories = {
   "POS Receipt Controls": posReceiptControlPermissions,
   "Analytics & Reporting": analyticsPermissions,
   "System Administration": systemPermissions,
+  "Agent Release Controls": agentReleasePermissions,
   "Communication": communicationPermissions,
   "Data Management": dataPermissions,
 } as const;
@@ -566,6 +580,7 @@ export function isValidPermission(permission: string): permission is Permission 
 
 export default {
   adminPermissions,
+  agentReleasePermissions,
   branchDailyClosePermissions,
   accountingPermissions,
   compliancePermissions,

@@ -96,6 +96,7 @@ const WORKFLOW_TO_PRISMA = {
   offline_pos: "OFFLINE_POS",
   snapshot_bi: "SNAPSHOT_BI",
   cross_module: "CROSS_MODULE",
+  agent_runtime: "AGENT_RUNTIME",
 } as const satisfies Record<WorkflowAssuranceWorkflow, string>
 
 const EXECUTION_MODE_TO_PRISMA = {

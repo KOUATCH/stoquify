@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react"
 import { CalendarDays, EyeOff, LayoutList, LockKeyhole } from "lucide-react"
+import { AgentCommandPanel } from "@/components/agents/AgentCommandPanel"
 
 import {
   BICommandBriefHeader,
@@ -20,11 +21,20 @@ import {
 import { cn } from "@/lib/utils"
 import type { BICommandMode, BIDailyDigest } from "@/services/bi/bi-contracts"
 import type { DailyHabitDigestData } from "@/services/daily-habit/daily-habit-digest-contracts"
+import type { CommandAgentSurfaceAccess } from "@/services/agents/command-agent-contracts"
 
 type DailyHabitDigestDashboardProps = {
   data: DailyHabitDigestData
   locale: "en" | "fr"
+  commandAgentAccess?: CommandAgentSurfaceAccess
 }
+const DISABLED_COMMAND_AGENT_ACCESS: CommandAgentSurfaceAccess = {
+  mode: "off",
+  canRun: false,
+  canRender: false,
+  reason: "disabled",
+}
+
 
 const copy = {
   en: {
@@ -59,7 +69,11 @@ const copy = {
   },
 } as const
 
-export function DailyHabitDigestDashboard({ data, locale }: DailyHabitDigestDashboardProps) {
+export function DailyHabitDigestDashboard({
+  data,
+  locale,
+  commandAgentAccess = DISABLED_COMMAND_AGENT_ACCESS,
+}: DailyHabitDigestDashboardProps) {
   const [selectedId, setSelectedId] = useState(data.digests[0]?.id ?? "")
   const [mode, setMode] = useState<BICommandMode>("brief")
   const t = copy[locale]
@@ -127,7 +141,15 @@ export function DailyHabitDigestDashboard({ data, locale }: DailyHabitDigestDash
 
         {selectedDigest ? (
           <>
+            <AgentCommandPanel
+              access={commandAgentAccess}
+              digestId={selectedDigest.id}
+              periodStart={selectedDigest.periodStart}
+              periodEnd={selectedDigest.periodEnd}
+              locale={locale}
+            />
             <BICommandBriefHeader
+
               brief={selectedDigest.commandBrief}
               mode={mode}
               onModeChange={setMode}

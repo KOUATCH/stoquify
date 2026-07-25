@@ -20,8 +20,8 @@ describe("Workflow Assurance multi-finding persistence migration", () => {
   )
 
   it("adds paired replay identity and a tenant/check/version execution key", () => {
-    expect(schema).toContain("executionKey      String? @db.VarChar(200)")
-    expect(schema).toContain("executionDigest   String? @db.VarChar(71)")
+    expect(schema).toMatch(/executionKey\s+String\?\s+@db\.VarChar\(200\)/)
+    expect(schema).toMatch(/executionDigest\s+String\?\s+@db\.VarChar\(71\)/)
     expect(schema).toContain('name: "workflow_assurance_run_execution_key"')
     expect(migration).toContain("workflow_assurance_check_runs_execution_identity_check")
     expect(migration).toContain('CREATE UNIQUE INDEX "workflow_assurance_run_execution_key"')

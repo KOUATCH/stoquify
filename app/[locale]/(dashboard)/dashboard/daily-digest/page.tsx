@@ -5,6 +5,7 @@ import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
 import { localizePath } from "@/i18n/routing"
 import { RbacError, requireAnyPermission } from "@/lib/security/rbac"
 import { getDailyHabitDigestData } from "@/services/daily-habit/daily-habit-digest.service"
+import { resolveCommandAgentRollout } from "@/services/agents/agent-rollout.service"
 
 export const metadata: Metadata = {
   title: "Daily Habit Digest | Kontava",
@@ -54,6 +55,17 @@ export default async function DailyHabitDigestPage({
     actorPermissions: ctx.permissions,
     actorRoleCodes: ctx.roles.map((role) => role.code),
   })
+  const commandAgentAccess = resolveCommandAgentRollout({
+    organizationId: ctx.orgId,
+    roleCodes: ctx.roles.map((role) => role.code),
+    permissions: ctx.permissions,
+  })
 
-  return <DailyHabitDigestDashboard data={data} locale={resolvedLocale} />
+  return (
+    <DailyHabitDigestDashboard
+      data={data}
+      locale={resolvedLocale}
+      commandAgentAccess={commandAgentAccess}
+    />
+  )
 }

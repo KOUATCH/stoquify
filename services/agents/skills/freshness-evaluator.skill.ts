@@ -1,3 +1,4 @@
+import { BusinessRuleError } from "@/services/_shared/action-errors"
 import type { SnapshotStatus } from "@/services/snapshots/snapshot-contracts"
 
 import type { AgentFreshness } from "../agent-contracts"
@@ -44,6 +45,8 @@ function normalizeStatus(status: SnapshotStatus, staleByAge: boolean): AgentFres
 
 function normalizeDate(value: Date | string) {
   const date = value instanceof Date ? value : new Date(value)
-  if (Number.isNaN(date.getTime())) throw new Error("Freshness evidence date is invalid.")
+  if (Number.isNaN(date.getTime())) {
+    throw new BusinessRuleError("Freshness evidence date is invalid.")
+  }
   return date
 }

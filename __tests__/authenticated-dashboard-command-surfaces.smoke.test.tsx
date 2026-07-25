@@ -60,8 +60,8 @@ jest.mock("@/services/owner-war-room/owner-war-room.service", () => ({
   getOwnerWarRoomData: jest.fn(),
 }))
 
-jest.mock("@/services/manager-action-center/manager-action-center.service", () => ({
-  getManagerActionCenterData: jest.fn(),
+jest.mock("@/services/manager-action-center/manager-action-center-query.service", () => ({
+  getManagerActionCenterQuery: jest.fn(),
 }))
 
 jest.mock("@/services/cash-command/cash-command.service", () => ({
@@ -95,13 +95,14 @@ jest.mock("@/hooks/accounting/useCloseAssurance", () => ({
   useCommentOnCloseFinding: jest.fn(),
   useExportClosePack: jest.fn(),
   useRunCloseAssurance: jest.fn(),
+  useUpdateAccountantReview: jest.fn(),
 }))
 
 import { auth } from "@/lib/auth"
 import { db } from "@/prisma/db"
 import { getCloseAssuranceDashboard } from "@/services/accounting/close-assurance.service"
 import { getCashCommandData } from "@/services/cash-command/cash-command.service"
-import { getManagerActionCenterData } from "@/services/manager-action-center/manager-action-center.service"
+import { getManagerActionCenterQuery } from "@/services/manager-action-center/manager-action-center-query.service"
 import { getOwnerWarRoomData } from "@/services/owner-war-room/owner-war-room.service"
 import { getStockToCashFlowData } from "@/services/stock-to-cash/stock-to-cash-flow.service"
 import {
@@ -112,6 +113,7 @@ import {
   useCommentOnCloseFinding,
   useExportClosePack,
   useRunCloseAssurance,
+  useUpdateAccountantReview,
 } from "@/hooks/accounting/useCloseAssurance"
 import type { CashCommandData } from "@/services/cash-command/cash-command-contracts"
 import type { CloseAssuranceDashboardData } from "@/actions/accounting/close-assurance.actions"
@@ -789,6 +791,10 @@ function useDefaultCloseHookState(data = buildCloseDashboardData()) {
     draft: { isPending: false, mutateAsync: jest.fn() },
     certified: { isPending: false, mutateAsync: jest.fn() },
   })
+  ;(useUpdateAccountantReview as jest.Mock).mockReturnValue({
+    isPending: false,
+    mutateAsync: jest.fn(),
+  })
 }
 
 function mockAuthenticatedTenant(permissions = tenantPermissions) {
@@ -837,7 +843,12 @@ describe("authenticated dashboard command surface smoke", () => {
     consoleError = jest.spyOn(console, "error").mockImplementation(() => undefined)
     mockAuthenticatedTenant()
     ;(getOwnerWarRoomData as jest.Mock).mockResolvedValue(buildOwnerWarRoomData())
-    ;(getManagerActionCenterData as jest.Mock).mockResolvedValue(buildManagerActionCenterData())
+    ;(getManagerActionCenterQuery as jest.Mock).mockResolvedValue({
+      kind: "TENANT",
+      organizationId: "org-session",
+      actorId: "user-session",
+      data: buildManagerActionCenterData(),
+    })
     ;(getCloseAssuranceDashboard as jest.Mock).mockResolvedValue(buildCloseDashboardData())
     ;(getCashCommandData as jest.Mock).mockResolvedValue(buildCashCommandData())
     ;(getStockToCashFlowData as jest.Mock).mockResolvedValue(buildStockToCashFlowData())
@@ -869,9 +880,12 @@ describe("authenticated dashboard command surface smoke", () => {
     render(ui)
 
     expect(auth.api.getSession).toHaveBeenCalled()
-    expect(getManagerActionCenterData).toHaveBeenCalledWith({
-      organizationId: "org-session",
-      actorPermissions: expect.arrayContaining(["dashboard.read", "accounting.close.read"]),
+    expect(getManagerActionCenterQuery).toHaveBeenCalledWith({
+      accessContext: expect.objectContaining({
+        orgId: "org-session",
+        userId: "user-session",
+        permissions: expect.arrayContaining(["dashboard.read", "accounting.close.read"]),
+      }),
     })
     expect(screen.getByRole("heading", { name: "Manager Action Center" })).toBeInTheDocument()
     expect(screen.getByRole("heading", { name: "Manager daily run sheet" })).toBeInTheDocument()
@@ -971,7 +985,7 @@ describe("authenticated dashboard command surface smoke", () => {
   })
 
   it("exposes Accounting Close loading and retryable error states inside the close command shell", () => {
-    ;(useCloseAssurance as jest.Mock).mockReturnValueOnce({
+    ;(useCloseAssurance as jest.Mock).mockReturnValue({
       data: null,
       isLoading: true,
       isFetching: true,
@@ -985,7 +999,7 @@ describe("authenticated dashboard command surface smoke", () => {
     cleanup()
 
     const refetch = jest.fn()
-    ;(useCloseAssurance as jest.Mock).mockReturnValueOnce({
+    ;(useCloseAssurance as jest.Mock).mockReturnValue({
       data: null,
       isLoading: false,
       isFetching: false,

@@ -145,7 +145,12 @@ export async function getAssuranceControlTowerData(
     db.workflowAssuranceAlertDelivery.count({
       where: {
         organizationId: input.organizationId,
-        status: WorkflowAssuranceAlertDeliveryStatus.FAILED,
+        status: {
+          in: [
+            WorkflowAssuranceAlertDeliveryStatus.FAILED,
+            WorkflowAssuranceAlertDeliveryStatus.DEAD_LETTER,
+          ],
+        },
       },
     }),
     db.workflowAssuranceIncident.count({

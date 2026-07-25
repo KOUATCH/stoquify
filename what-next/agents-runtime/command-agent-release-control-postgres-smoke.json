@@ -1,0 +1,61 @@
+{
+  "ok": true,
+  "packageId": "cmryyc5680003mac4n7ci35ea",
+  "state": "PILOT_CERTIFIED",
+  "activatedAt": null,
+  "approvalCount": 2,
+  "distinctApproverCount": 2,
+  "ownerCount": 6,
+  "certificationCount": 1,
+  "auditCount": 18,
+  "reconciliation": {
+    "scanned": 16,
+    "passed": 15,
+    "failed": 1,
+    "incidents": 1,
+    "suspended": 0,
+    "alertTransportReady": false,
+    "alertTransportReason": "webhook_url_missing"
+  },
+  "delivery": {
+    "ready": false,
+    "delivered": 0,
+    "retried": 0,
+    "failed": 0,
+    "deadLettered": 0,
+    "reason": "webhook_url_missing"
+  },
+  "incidentId": "cmryyout10004mas8mmotmrx3",
+  "autoSuspension": {
+    "state": "SUSPENDED",
+    "reason": "Automated control-plane suspension: RELEASE_APPROVALS_INCOMPLETE, RELEASE_OWNERS_INCOMPLETE, RELEASE_CERTIFICATION_INVALID, RELEASE_ALERT_TRANSPORT_UNHEALTHY",
+    "auditRecorded": true,
+    "globalDefinitionStatus": "ACTIVE",
+    "globalDefinitionRollout": "SHADOW",
+    "reconcilerSuspendedCount": 1,
+    "retirementState": "RETIRED",
+    "retirementAuditRecorded": true
+  },
+  "deadLetter": {
+    "state": "DEAD_LETTER",
+    "attemptCount": 5,
+    "nextAttemptAt": null,
+    "workerDeadLetteredCount": 1
+  },
+  "deadLetterRecovery": {
+    "sourceState": "DEAD_LETTER",
+    "recoveryState": "PENDING",
+    "recoveryAttemptCount": 0,
+    "replayed": true,
+    "sameRecoveryDelivery": true,
+    "auditRecorded": true
+  },
+  "idempotency": {
+    "approvalReplayed": true,
+    "certificationReplayed": true,
+    "conflictCode": "RELEASE_IDEMPOTENCY_CONFLICT",
+    "approvalCountAfterReplay": 2,
+    "certificationCountAfterReplay": 1
+  },
+  "activationBlocker": "RELEASE_RECONCILIATION_STALE"
+}

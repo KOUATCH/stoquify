@@ -128,6 +128,46 @@ describe("raw-error-boundary-gate", () => {
     )
   })
 
+  it("allows reviewed typed release-control rethrows", () => {
+    writeFile(
+      root,
+      "services/agents/agent-release-control.service.ts",
+      'export async function approve() { try { return null } catch (error) { if (error instanceof AgentReleaseControlError) throw error } }\n',
+    )
+
+    const result = scanRoot(root)
+
+    expect(result.summary.activeViolationCount).toBe(0)
+    expect(result.findings).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          allowed: true,
+          classification: "TYPED_APPLICATION_ERROR_RETHROW",
+        }),
+      ]),
+    )
+  })
+
+  it("allows reviewed typed reconciler invocation rethrows", () => {
+    writeFile(
+      root,
+      "services/agents/agent-reconciler-invocation.service.ts",
+      'export async function begin() { try { return null } catch (error) { if (error instanceof AgentReconcilerInvocationError) throw error } }\n',
+    )
+
+    const result = scanRoot(root)
+
+    expect(result.summary.activeViolationCount).toBe(0)
+    expect(result.findings).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          allowed: true,
+          classification: "TYPED_APPLICATION_ERROR_RETHROW",
+        }),
+      ]),
+    )
+  })
+
   it("renders report-mode migration guidance and supports baseline ratchets", () => {
     writeFile(
       root,

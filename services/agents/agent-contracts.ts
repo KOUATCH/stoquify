@@ -70,6 +70,7 @@ export type AgentToolExecutionResult = {
   output: unknown
   safeSummary: string
   evidence: AgentEvidenceRecord[]
+  redactionCount?: number
 }
 
 export type AgentToolInvocation = {
@@ -77,7 +78,7 @@ export type AgentToolInvocation = {
   input: Record<string, unknown>
 }
 
-export type AgentDeterministicRunStatus = "completed" | "failed" | "blocked"
+export type AgentDeterministicRunStatus = "running" | "completed" | "failed" | "blocked"
 
 export type AgentRunReceipt = {
   runId: string

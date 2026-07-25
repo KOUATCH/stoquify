@@ -386,6 +386,7 @@ model Organization {
   agentFeedback                           AgentFeedback[]
   agentCostLedger                         AgentCostLedger[]
   agentPolicyIncidents                    AgentPolicyIncident[]
+  agentActivationPackages                 AgentActivationPackage[]
 
   @@unique([slug])
   @@index([slug])
@@ -6408,8 +6409,8 @@ model WorkflowAssuranceCheckRun {
   definition        WorkflowAssuranceCheckDefinition @relation(fields: [definitionId], references: [id], onDelete: Restrict)
   checkKey          String
   definitionVersion Int
-  executionKey      String? @db.VarChar(200)
-  executionDigest   String? @db.VarChar(71)
+  executionKey      String?                          @db.VarChar(200)
+  executionDigest   String?                          @db.VarChar(71)
 
   runType      WorkflowAssuranceRunType
   runStatus    WorkflowAssuranceRunStatus     @default(RUNNING)
@@ -6500,7 +6501,6 @@ model WorkflowAssuranceCheckFinding {
   @@map("workflow_assurance_check_findings")
 }
 
-
 enum WorkflowAssuranceWorkflow {
   CASH_COMMAND
   RECEIVABLES
@@ -6518,6 +6518,7 @@ enum WorkflowAssuranceWorkflow {
   OFFLINE_POS
   SNAPSHOT_BI
   CROSS_MODULE
+  AGENT_RUNTIME
 }
 
 enum WorkflowAssuranceExecutionMode {
@@ -6668,11 +6669,16 @@ model WorkflowAssuranceAlertDelivery {
   message       String
   actionRoute   String?
 
-  deliveredAt   DateTime?
-  failedAt      DateTime?
-  failureCode   String?
-  failureReason String?
-  metadata      Json?
+  deliveredAt       DateTime?
+  failedAt          DateTime?
+  failureCode       String?
+  failureReason     String?
+  attemptCount      Int       @default(0)
+  nextAttemptAt     DateTime?
+  lockedAt          DateTime?
+  lockedBy          String?
+  externalReference String?
+  metadata          Json?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -6680,6 +6686,7 @@ model WorkflowAssuranceAlertDelivery {
   @@unique([organizationId, incidentId, channel, dedupeKey])
   @@index([organizationId, status, createdAt])
   @@index([organizationId, channel, status])
+  @@index([channel, status, nextAttemptAt])
   @@index([incidentId])
   @@map("workflow_assurance_alert_deliveries")
 }
@@ -6755,9 +6762,11 @@ enum WorkflowAssuranceAlertChannel {
 
 enum WorkflowAssuranceAlertDeliveryStatus {
   PENDING
+  PROCESSING
   DELIVERED
   SKIPPED
   FAILED
+  DEAD_LETTER
   SUPPRESSED
 }
 
@@ -6971,7 +6980,7 @@ model AgentDefinition {
   description        String
   ownerModuleSlug    String
   status             AgentDefinitionStatus @default(DRAFT)
-  rolloutMode        AgentRolloutMode       @default(INTERNAL)
+  rolloutMode        AgentRolloutMode      @default(INTERNAL)
   riskLevel          AgentRiskLevel
   defaultModelPolicy Json?
   allowedToolKeys    String[]              @default([])
@@ -7027,22 +7036,30 @@ model AgentRun {
   id                String           @id @default(cuid())
   organizationId    String
   organization      Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  actorId            String
+  actorId           String
   agentDefinitionId String?
   agentDefinition   AgentDefinition? @relation(fields: [agentDefinitionId], references: [id], onDelete: SetNull)
-  agentKey           String
-  status             AgentRunStatus  @default(PENDING)
-  sourceRoute        String
-  locale             String
-  currency           String
-  periodStart        DateTime?
-  periodEnd          DateTime?
-  correlationId      String          @unique
-  safeSummary        String?
-  failureCode        String?
-  startedAt          DateTime        @default(now())
-  completedAt        DateTime?
-  createdAt          DateTime        @default(now())
+  agentKey          String
+  skillKey          String?
+  skillVersion      Int?
+  promptHash        String?
+  status            AgentRunStatus   @default(PENDING)
+  sourceRoute       String
+  locale            String
+  currency          String
+  periodStart       DateTime?
+  periodEnd         DateTime?
+  correlationId     String
+  safeSummary       String?
+  failureCode       String?
+  durationMs        Int?
+  toolCount         Int              @default(0)
+  evidenceCount     Int              @default(0)
+  redactionCount    Int              @default(0)
+  startedAt         DateTime         @default(now())
+  completedAt       DateTime?
+  staleOutput       Boolean          @default(false)
+  createdAt         DateTime         @default(now())
 
   steps           AgentStep[]
   evidenceLinks   AgentEvidenceLink[]
@@ -7050,6 +7067,8 @@ model AgentRun {
   costs           AgentCostLedger[]
   policyIncidents AgentPolicyIncident[]
 
+  @@unique([organizationId, actorId, agentKey, correlationId])
+  @@unique([id, organizationId])
   @@index([organizationId, createdAt])
   @@index([actorId, createdAt])
   @@index([agentKey, status, createdAt])
@@ -7075,6 +7094,7 @@ model AgentStep {
   evidenceLinks AgentEvidenceLink[]
 
   @@unique([runId, stepNumber])
+  @@unique([id, runId])
   @@index([toolKey, status])
   @@map("agent_steps")
 }
@@ -7084,7 +7104,7 @@ model AgentEvidenceLink {
   runId          String
   run            AgentRun               @relation(fields: [runId], references: [id], onDelete: Cascade)
   stepId         String?
-  step           AgentStep?             @relation(fields: [stepId], references: [id], onDelete: SetNull)
+  step           AgentStep?             @relation(fields: [stepId, runId], references: [id, runId], onDelete: Cascade)
   subjectType    String
   subjectId      String
   sourceModule   String
@@ -7106,7 +7126,7 @@ model AgentEvidenceLink {
 model AgentFeedback {
   id             String       @id @default(cuid())
   runId          String
-  run            AgentRun     @relation(fields: [runId], references: [id], onDelete: Cascade)
+  run            AgentRun     @relation(fields: [runId, organizationId], references: [id, organizationId], onDelete: Cascade)
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   actorId        String
@@ -7119,6 +7139,7 @@ model AgentFeedback {
   correctionText String?
   createdAt      DateTime     @default(now())
 
+  @@unique([runId, actorId])
   @@index([runId])
   @@index([organizationId, actorId, createdAt])
   @@map("agent_feedback")
@@ -7127,17 +7148,17 @@ model AgentFeedback {
 model AgentCostLedger {
   id               String       @id @default(cuid())
   runId            String
-  run              AgentRun     @relation(fields: [runId], references: [id], onDelete: Cascade)
+  run              AgentRun     @relation(fields: [runId, organizationId], references: [id, organizationId], onDelete: Cascade)
   organizationId   String
   organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  modelProvider     String
-  modelName         String
-  promptTokens      Int          @default(0)
-  completionTokens  Int          @default(0)
-  estimatedCost     Decimal      @default(0) @db.Decimal(19, 6)
-  currency          String
-  budgetBucket      String?
-  createdAt         DateTime     @default(now())
+  modelProvider    String
+  modelName        String
+  promptTokens     Int          @default(0)
+  completionTokens Int          @default(0)
+  estimatedCost    Decimal      @default(0) @db.Decimal(19, 6)
+  currency         String
+  budgetBucket     String?
+  createdAt        DateTime     @default(now())
 
   @@index([runId])
   @@index([organizationId, createdAt])
@@ -7148,7 +7169,7 @@ model AgentCostLedger {
 model AgentPolicyIncident {
   id             String                      @id @default(cuid())
   runId          String?
-  run            AgentRun?                   @relation(fields: [runId], references: [id], onDelete: SetNull)
+  run            AgentRun?                   @relation(fields: [runId, organizationId], references: [id, organizationId], onDelete: Cascade)
   organizationId String
   organization   Organization                @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   actorId        String
@@ -7166,4 +7187,182 @@ model AgentPolicyIncident {
   @@index([organizationId, severity, status])
   @@index([actorId, createdAt])
   @@map("agent_policy_incidents")
+}
+
+enum AgentActivationState {
+  DRAFT
+  REVIEWED
+  APPROVED
+  PROVISIONED_INACTIVE
+  PILOT_CERTIFIED
+  ACTIVE_INTERNAL
+  SUSPENDED
+  RETIRED
+}
+
+enum AgentApprovalType {
+  PRODUCT
+  SECURITY
+}
+
+enum AgentApprovalDecision {
+  APPROVED
+  REJECTED
+  REVOKED
+}
+
+enum AgentOwnerResponsibility {
+  ROLLOUT
+  ROLLBACK
+  SUPPORT
+  PILOT
+  SECURITY_INCIDENT
+  ON_CALL_BACKUP
+}
+
+enum AgentCertificationResult {
+  PASSED
+  FAILED
+  INVALIDATED
+}
+
+enum AgentReconcilerInvocationStatus {
+  RUNNING
+  COMPLETED
+  COMPLETED_WITH_WARNINGS
+  FAILED
+}
+
+model AgentReconcilerInvocation {
+  id            String                          @id @default(cuid())
+  environment   String
+  scheduleKey   String                          @db.VarChar(100)
+  runId         String                          @db.VarChar(191)
+  requestHash   String                          @db.VarChar(71)
+  scheduledAt   DateTime
+  startedAt     DateTime
+  completedAt   DateTime?
+  status        AgentReconcilerInvocationStatus @default(RUNNING)
+  activeKey     String?                         @db.VarChar(100)
+  correlationId String                          @db.VarChar(191)
+  result        Json?
+  failureCode   String?                         @db.VarChar(100)
+  createdAt     DateTime                        @default(now())
+  updatedAt     DateTime                        @updatedAt
+
+  @@unique([environment, scheduleKey, runId], name: "agent_reconciler_invocation_identity")
+  @@unique([environment, activeKey], name: "agent_reconciler_active_lease")
+  @@index([environment, scheduleKey, scheduledAt], map: "agent_reconciler_invocation_schedule_idx")
+  @@index([environment, status, startedAt], map: "agent_reconciler_invocation_status_idx")
+  @@map("agent_reconciler_invocations")
+}
+
+model AgentActivationPackage {
+  id                  String               @id @default(cuid())
+  organizationId      String
+  organization        Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  agentKey            String
+  releaseVersion      String
+  environment         String
+  commitSha           String               @db.VarChar(64)
+  manifestHash        String               @db.VarChar(71)
+  manifest            Json
+  modelProviderPolicy Json
+  allowedRoleCodes    String[]             @default([])
+  activationStartsAt  DateTime
+  activationEndsAt    DateTime
+  residualRisks       Json?
+  state               AgentActivationState @default(DRAFT)
+  version             Int                  @default(1)
+  requestedById       String
+  activatedById       String?
+  activatedAt         DateTime?
+  suspendedAt         DateTime?
+  suspensionReason    String?
+  retiredAt           DateTime?
+  retiredById         String?
+  retirementReason    String?
+  lastReconciledAt    DateTime?
+  reconciliationState String?
+  alertTransportReady Boolean              @default(false)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+
+  approvals      AgentActivationApproval[]
+  owners         AgentActivationOwner[]
+  certifications AgentPilotCertification[]
+
+  @@unique([environment, agentKey, releaseVersion])
+  @@index([organizationId, agentKey, state])
+  @@index([organizationId, retiredAt])
+  @@index([environment, agentKey, state])
+  @@index([manifestHash])
+  @@map("agent_activation_packages")
+}
+
+model AgentActivationApproval {
+  id             String                 @id @default(cuid())
+  packageId      String
+  package        AgentActivationPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  idempotencyKey String?                @db.VarChar(191)
+  requestHash    String?                @db.VarChar(71)
+  approvalType   AgentApprovalType
+  decision       AgentApprovalDecision
+  approverId     String
+  evidenceHash   String                 @db.VarChar(71)
+  riskAcceptance Json?
+  decidedAt      DateTime
+  expiresAt      DateTime
+  revokedAt      DateTime?
+  createdAt      DateTime               @default(now())
+
+  @@unique([packageId, idempotencyKey])
+  @@index([packageId, approvalType, decision, expiresAt])
+  @@index([approverId, decidedAt])
+  @@map("agent_activation_approvals")
+}
+
+model AgentActivationOwner {
+  id                 String                   @id @default(cuid())
+  packageId          String
+  package            AgentActivationPackage   @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  responsibility     AgentOwnerResponsibility
+  primaryUserId      String
+  backupUserId       String?
+  escalationRouteRef String
+  runbookVersion     String
+  acceptedAt         DateTime?
+  validUntil         DateTime?
+  coverageStartsAt   DateTime
+  coverageEndsAt     DateTime
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
+
+  @@unique([packageId, responsibility])
+  @@index([primaryUserId, responsibility])
+  @@index([packageId, acceptedAt, validUntil])
+  @@map("agent_activation_owners")
+}
+
+model AgentPilotCertification {
+  id           String                   @id @default(cuid())
+  packageId    String
+  package      AgentActivationPackage   @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  idempotencyKey String?                @db.VarChar(191)
+  requestHash  String?                  @db.VarChar(71)
+  commitSha    String                   @db.VarChar(64)
+  manifestHash String                   @db.VarChar(71)
+  suiteVersion String
+  ciRunId      String
+  result       AgentCertificationResult
+  reportHash   String                   @db.VarChar(71)
+  passedAt     DateTime
+  expiresAt    DateTime
+  createdAt    DateTime                 @default(now())
+
+  @@unique([packageId, idempotencyKey])
+  @@unique([packageId, ciRunId])
+  @@index([packageId, result, expiresAt])
+  @@index([commitSha, manifestHash])
+  @@map("agent_pilot_certifications")
 }

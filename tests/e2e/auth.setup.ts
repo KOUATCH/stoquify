@@ -7,8 +7,14 @@ const managerAuthStatePath =
 const deniedAuthStatePath =
   process.env.PLAYWRIGHT_RBAC_DENIED_STORAGE_STATE ??
   "playwright/.auth/payroll-requester.json"
+const crossTenantAuthStatePath =
+  process.env.PLAYWRIGHT_AGENT_CROSS_TENANT_STORAGE_STATE ??
+  "playwright/.auth/command-agent-cross-tenant.json"
 const organizationId =
   process.env.AQSTOQFLOW_E2E_ORG_ID ?? "org_payroll_e2e_local"
+const crossTenantOrganizationId =
+  process.env.AQSTOQFLOW_AGENT_CROSS_TENANT_ORG_ID ??
+  "org_command_agent_cross_tenant_e2e"
 
 test.setTimeout(90_000)
 
@@ -20,6 +26,7 @@ async function createTenantAuthState(input: {
   authStatePath: string
   requiredPermissions: string[]
   forbiddenPermissions?: string[]
+  expectedOrganizationId?: string
 }) {
   if (existsSync(input.authStatePath)) rmSync(input.authStatePath)
 
@@ -61,7 +68,7 @@ async function createTenantAuthState(input: {
     input.label +
       " auth state resolved to organization " +
       (permissionsPayload.organizationId ?? "(missing)"),
-  ).toBe(organizationId)
+  ).toBe(input.expectedOrganizationId ?? organizationId)
 
   for (const permission of input.requiredPermissions) {
     expect(
@@ -129,5 +136,23 @@ test("creates an authenticated payroll requester without HRIS access", async ({
       "hris.self_service.read",
       "hris.self_service.request",
     ],
+  })
+})
+
+test("creates a second-tenant Command Agent isolation auth state", async ({
+  request,
+}) => {
+  await createTenantAuthState({
+    request,
+    label: "Command Agent cross-tenant operator",
+    email:
+      process.env.AQSTOQFLOW_AGENT_CROSS_TENANT_EMAIL ??
+      "command.agent.cross-tenant@stockflow.test",
+    password:
+      process.env.AQSTOQFLOW_AGENT_CROSS_TENANT_PASSWORD ??
+      "AgentCrossTenant@2026",
+    authStatePath: crossTenantAuthStatePath,
+    requiredPermissions: ["dashboard.read", "accounting.close.read"],
+    expectedOrganizationId: crossTenantOrganizationId,
   })
 })

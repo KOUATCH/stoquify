@@ -59,6 +59,7 @@ export const WORKFLOW_ASSURANCE_WORKFLOWS = [
   "offline_pos",
   "snapshot_bi",
   "cross_module",
+  "agent_runtime",
 ] as const
 
 export type WorkflowAssuranceResultStatus = (typeof WORKFLOW_ASSURANCE_RESULT_STATUSES)[number]

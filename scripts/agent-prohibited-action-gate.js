@@ -8,7 +8,13 @@ const agentsRoot = path.join(root, "services", "agents")
 const sourceExtensions = new Set([".ts", ".tsx", ".js", ".jsx"])
 const allowedDbFiles = new Set([
   "services/agents/agent-context.service.ts",
+  "services/agents/agent-definition.service.ts",
+  "services/agents/agent-feedback.service.ts",
+  "services/agents/agent-run-governance.service.ts",
   "services/agents/agent-runner.service.ts",
+  "services/agents/agent-release-control.service.ts",
+  "services/agents/agent-control-plane-reconciliation.service.ts",
+  "services/agents/agent-reconciler-invocation.service.ts",
 ])
 const allowedAgentDelegates = new Set([
   "agentDefinition",
@@ -20,6 +26,29 @@ const allowedAgentDelegates = new Set([
   "agentFeedback",
   "agentCostLedger",
   "agentPolicyIncident",
+])
+const reviewedControlPlaneDelegates = new Map([
+  [
+    "services/agents/agent-reconciler-invocation.service.ts",
+    new Set(["agentReconcilerInvocation"]),
+  ],
+  [
+    "services/agents/agent-release-control.service.ts",
+    new Set([
+      "agentActivationPackage",
+      "agentActivationApproval",
+      "agentActivationOwner",
+      "agentPilotCertification",
+      "agentDefinition",
+      "agentSkillDefinition",
+      "agentToolDefinition",
+      "auditLog",
+    ]),
+  ],
+  [
+    "services/agents/agent-control-plane-reconciliation.service.ts",
+    new Set(["workflowAssuranceCheckDefinition", "workflowAssuranceCheckRun"]),
+  ],
 ])
 const mutationOperations = new Set(["create", "createMany", "update", "updateMany", "upsert", "delete", "deleteMany"])
 const forbiddenServiceCalls = [
@@ -49,10 +78,15 @@ function main() {
       findings.push(`${file}: direct PrismaClient construction is prohibited.`)
     }
 
+    const reviewedDelegates = reviewedControlPlaneDelegates.get(file) ?? new Set()
     const calls = source.matchAll(/\b(?:db|tx)\.([A-Za-z_]\w*)\.([A-Za-z_]\w*)\s*\(/g)
     for (const match of calls) {
       const [, delegate, operation] = match
-      if (mutationOperations.has(operation) && !allowedAgentDelegates.has(delegate)) {
+      if (
+        mutationOperations.has(operation) &&
+        !allowedAgentDelegates.has(delegate) &&
+        !reviewedDelegates.has(delegate)
+      ) {
         findings.push(`${file}: prohibited business mutation ${delegate}.${operation}().`)
       }
       if (file.endsWith("agent-context.service.ts") && operation !== "findFirst") {

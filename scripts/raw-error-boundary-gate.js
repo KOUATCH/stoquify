@@ -233,6 +233,8 @@ function classifyFinding(file, pattern, context) {
 function isTypedApplicationErrorRethrow(context) {
   return (
     context.includes("error instanceof ApplicationError") ||
+    context.includes("error instanceof AgentReleaseControlError") ||
+    context.includes("error instanceof AgentReconcilerInvocationError") ||
     context.includes("error instanceof HistoryCursorError") ||
     context.includes("error instanceof BusinessRuleError") ||
     context.includes("error instanceof ForbiddenError") ||

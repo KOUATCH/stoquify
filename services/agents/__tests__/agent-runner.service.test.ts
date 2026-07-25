@@ -1,13 +1,17 @@
-jest.mock("server-only", () => ({}))
-jest.mock("@/prisma/db", () => ({ db: {} }))
+jest.mock("server-only", () => ({}));
+jest.mock("@/prisma/db", () => ({ db: {} }));
 
-import type { AgentExecutionContext, AgentToolDefinition } from "../agent-contracts"
+import type {
+  AgentExecutionContext,
+  AgentToolDefinition,
+} from "../agent-contracts";
+import { AgentExecutionControlError } from "../agent-execution-control.service";
 import {
   hashAgentPayload,
   runDeterministicAgent,
   type AgentRunStore,
-} from "../agent-runner.service"
-import { AgentToolRegistry } from "../agent-tool-registry.service"
+} from "../agent-runner.service";
+import { AgentToolRegistry } from "../agent-tool-registry.service";
 
 const TOOL: AgentToolDefinition = {
   key: "readTenantOperatingSnapshot",
@@ -20,15 +24,23 @@ const TOOL: AgentToolDefinition = {
   inputSchemaHash: "input:v1",
   outputSchemaHash: "output:v1",
   evidenceBehavior: "preserve evidence",
-}
+};
+
+const PROVENANCE = {
+  agentDefinitionId: "definition-1",
+  skillKey: "role-daily-brief",
+  skillVersion: 1,
+  promptHash: "sha256:prompt",
+} as const;
 
 describe("deterministic agent runner", () => {
   it("records context, authorized tool steps, evidence, and a completed run without a model", async () => {
-    const store = createStore()
+    const store = createStore();
     const receipt = await runDeterministicAgent(
       {
         context: context(),
         correlationId: "agent-run-1",
+        provenance: PROVENANCE,
         invocations: [{ toolKey: TOOL.key, input: { period: "today" } }],
         executeTool: async () => ({
           output: { status: "fresh", total: 3 },
@@ -54,7 +66,7 @@ describe("deterministic agent runner", () => {
         store,
         now: () => new Date("2026-07-22T12:00:00.000Z"),
       },
-    )
+    );
 
     expect(receipt).toMatchObject({
       runId: "run-1",
@@ -62,29 +74,35 @@ describe("deterministic agent runner", () => {
       completedStepCount: 2,
       evidenceLinkCount: 1,
       failureCode: null,
-    })
+    });
     expect(store.createStep).toHaveBeenNthCalledWith(
       1,
       expect.objectContaining({ kind: "CONTEXT", status: "COMPLETED" }),
-    )
+    );
     expect(store.completeStep).toHaveBeenCalledWith(
       expect.objectContaining({
         status: "COMPLETED",
         outputHash: expect.stringMatching(/^sha256:[a-f0-9]{64}$/),
       }),
-    )
-    expect(store.createPolicyIncident).not.toHaveBeenCalled()
-  })
+    );
+    expect(store.createRun).toHaveBeenCalledWith(
+      expect.objectContaining({ provenance: PROVENANCE }),
+    );
+    expect(store.createPolicyIncident).not.toHaveBeenCalled();
+  });
 
   it("blocks an unknown tool and records a policy incident without executing it", async () => {
-    const store = createStore()
-    const executeTool = jest.fn()
+    const store = createStore();
+    const executeTool = jest.fn();
 
     const receipt = await runDeterministicAgent(
       {
         context: context(),
         correlationId: "agent-run-2",
-        invocations: [{ toolKey: "postLedgerEntry", input: { amount: 50_000 } }],
+        provenance: PROVENANCE,
+        invocations: [
+          { toolKey: "postLedgerEntry", input: { amount: 50_000 } },
+        ],
         executeTool,
       },
       {
@@ -92,19 +110,59 @@ describe("deterministic agent runner", () => {
         store,
         now: () => new Date("2026-07-22T12:00:00.000Z"),
       },
-    )
+    );
 
-    expect(receipt).toMatchObject({ status: "blocked", failureCode: "UNKNOWN_TOOL" })
-    expect(executeTool).not.toHaveBeenCalled()
+    expect(receipt).toMatchObject({
+      status: "blocked",
+      failureCode: "UNKNOWN_TOOL",
+    });
+    expect(executeTool).not.toHaveBeenCalled();
     expect(store.createPolicyIncident).toHaveBeenCalledWith(
-      expect.objectContaining({ blockedToolKey: "postLedgerEntry", policyKey: "UNKNOWN_TOOL" }),
-    )
-  })
+      expect.objectContaining({
+        blockedToolKey: "postLedgerEntry",
+        policyKey: "UNKNOWN_TOOL",
+      }),
+    );
+  });
+
+  it("persists an explicit timeout failure code without leaking the tool error", async () => {
+    const store = createStore();
+    const receipt = await runDeterministicAgent(
+      {
+        context: context(),
+        correlationId: "agent-run-timeout",
+        provenance: PROVENANCE,
+        invocations: [{ toolKey: TOOL.key, input: {} }],
+        executeTool: async () => {
+          throw new AgentExecutionControlError(
+            "AGENT_TIMEOUT",
+            "private timeout detail",
+          );
+        },
+      },
+      {
+        registry: new AgentToolRegistry([TOOL]),
+        store,
+        now: () => new Date("2026-07-22T12:00:00.000Z"),
+      },
+    );
+
+    expect(receipt).toMatchObject({
+      status: "failed",
+      failureCode: "AGENT_TIMEOUT",
+    });
+    expect(receipt.safeSummary).not.toContain("private timeout detail");
+    expect(store.completeStep).toHaveBeenCalledWith(
+      expect.objectContaining({ status: "FAILED", errorCode: "AGENT_TIMEOUT" }),
+    );
+  });
 
   it("hashes equivalent object payloads deterministically", () => {
-    expect(hashAgentPayload({ b: 2, a: 1 })).toBe(hashAgentPayload({ a: 1, b: 2 }))
-  })
-})
+    expect(hashAgentPayload({ b: 2, a: 1 })).toBe(
+      hashAgentPayload({ a: 1, b: 2 }),
+    );
+  });
+});
 
 function createStore(): jest.Mocked<AgentRunStore> {
   return {
@@ -114,7 +172,7 @@ function createStore(): jest.Mocked<AgentRunStore> {
     createEvidence: jest.fn(async ({ evidence }) => evidence.length),
     createPolicyIncident: jest.fn(async () => undefined),
     completeRun: jest.fn(async () => undefined),
-  }
+  };
 }
 
 function context(): AgentExecutionContext {
@@ -153,5 +211,5 @@ function context(): AgentExecutionContext {
         evaluatedAt: "2026-07-22T12:00:00.000Z",
       },
     },
-  }
+  };
 }

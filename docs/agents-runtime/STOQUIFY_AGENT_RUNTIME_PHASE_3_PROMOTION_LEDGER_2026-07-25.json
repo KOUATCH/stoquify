@@ -1,0 +1,173 @@
+{
+  "schemaVersion": 1,
+  "ledgerId": "stoquify-agent-runtime-phase-3-promotion-2026-07-25",
+  "updatedAt": "2026-07-25T11:58:20.406Z",
+  "objective": "Promote the inactive Phase 2A Command Agent through a controlled Phase 2B pilot and into an explicitly authorized Phase 3 read-and-draft implementation.",
+  "overallStatus": "BLOCKED",
+  "activationAuthorized": false,
+  "phase3Authorized": false,
+  "currentPhase": "PHASE_2A_RELEASE_PREPARATION",
+  "freezeBaseline": {
+    "branch": "codex/service-boundary-burndown",
+    "headCommit": "ac30ee75314a0a2a2fcd6bd2ed65afb280aa0d5e",
+    "sourceTreeClean": false,
+    "trackedChanges": 66,
+    "untrackedEntries": 179,
+    "untrackedFiles": 191,
+    "proposedReleaseFiles": 207,
+    "outsideProposedReleaseFiles": 49,
+    "policy": "No additional Phase 2A product capability. Only verification, release-evidence remediation, and defects that prevent the controlled pilot may change."
+  },
+  "gateSnapshot": {
+    "phase2aStaticGate": "PASSED",
+    "focusedEvidenceSuites": 8,
+    "focusedEvidenceTests": 83,
+    "operationalReleaseStatus": "BLOCKED",
+    "operationalReleaseBlockers": 152,
+    "credentialRotationStatus": "BLOCKED",
+    "credentialRotationBlockers": 31,
+    "credentialClassesUnresolved": 15,
+    "enterpriseReleaseDecision": "REJECTED_NO_GO",
+    "statutoryBlockers": 2
+  },
+  "verificationSnapshot": {
+    "agentRuntimeGates": "PASSED",
+    "phase2aStaticGate": "PASSED",
+    "typecheck": "PASSED",
+    "prismaValidate": "PASSED",
+    "serviceBoundaryActiveViolations": 0,
+    "rawErrorBoundaryActiveFindings": 0,
+    "lintErrors": 0,
+    "lintWarnings": 4,
+    "jestSuitesPassed": 474,
+    "jestSuitesSkipped": 3,
+    "jestTestsPassed": 2862,
+    "jestTestsSkipped": 15,
+    "focusedOpenHandleDetection": "PASSED",
+    "fullJestWorkerExitWarning": true,
+    "diffCheckErrors": 0
+  },
+  "freezeCandidateManifest": {
+    "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_CANDIDATE_FILE_MANIFEST_2026-07-25.json",
+    "runtimeSourceTestFiles": 117,
+    "releaseEvidenceFiles": 90,
+    "totalFiles": 207,
+    "duplicatePaths": 0,
+    "hashMismatches": 0,
+    "sourceTreeClean": false
+  },
+  "steps": [
+    {
+      "id": 1,
+      "title": "Freeze Phase 2A repository functionality",
+      "status": "IN_PROGRESS",
+      "proofRequired": "Reviewed, clean source tree containing only the approved Phase 2A release scope.",
+      "currentEvidence": "Static and runtime gates pass. A 207-file SHA-256 candidate manifest validates with no duplicates or mismatches, but the source tree is not clean.",
+      "nextAction": "Review the candidate manifest against the 49 files outside its boundary, then create an exact clean release commit without including unrelated user work."
+    },
+    {
+      "id": 2,
+      "title": "Produce a clean immutable release and CI artifact",
+      "status": "BLOCKED",
+      "proofRequired": "Protected CI run, clean commit SHA, immutable artifact digest, browser certificate, deployment reference, and external CI attestation.",
+      "currentEvidence": "The release and CI fields in the operational register are unresolved.",
+      "nextAction": "Create and review a release commit, run protected CI, publish the inactive artifact, then run npm run agent:ci-release:evidence:apply."
+    },
+    {
+      "id": 3,
+      "title": "Record product and security approvals",
+      "status": "BLOCKED",
+      "proofRequired": "Distinct real directory identities and approvals bound to the frozen manifest, artifact, and evidence bundle.",
+      "currentEvidence": "Fourteen approval blockers remain.",
+      "nextAction": "Obtain both approvals from the authoritative governance system and run npm run agent:governance:evidence:apply."
+    },
+    {
+      "id": 4,
+      "title": "Assign six operational owner roles",
+      "status": "BLOCKED",
+      "proofRequired": "Primary and backup identities, accepted runbook, active coverage window, and escalation reference for every role.",
+      "currentEvidence": "All six roles exist structurally, but thirty-six owner evidence fields remain unresolved.",
+      "nextAction": "Record accepted assignments for ROLLOUT, ROLLBACK, SUPPORT, PILOT, SECURITY_INCIDENT, and ON_CALL_BACKUP."
+    },
+    {
+      "id": 5,
+      "title": "Deploy the reconciler and scheduler authority",
+      "status": "BLOCKED",
+      "proofRequired": "Five-minute managed schedule, bounded timeout, concurrency or lease control, failure alert, and independent deployment attestation.",
+      "currentEvidence": "Scheduler controls exist in code; no deployed authority evidence is configured.",
+      "nextAction": "Deploy the inactive pilot workload and scheduler evidence endpoint, then run npm run agent:scheduler:evidence:apply."
+    },
+    {
+      "id": 6,
+      "title": "Configure managed reconciler and scheduler evidence credentials",
+      "status": "BLOCKED",
+      "proofRequired": "Managed secret references and query-free HTTPS endpoints; no secret values in evidence.",
+      "currentEvidence": "Preflights stop at RECONCILER_BASE_URL_MISSING and SCHEDULER_EVIDENCE_URL_MISSING.",
+      "nextAction": "Configure the production-like environment through the deployment secret manager."
+    },
+    {
+      "id": 7,
+      "title": "Capture three consecutive reconciler windows",
+      "status": "BLOCKED",
+      "proofRequired": "Three completed, unique, five-minute windows plus healthy readiness, heartbeat, and invalid-auth rejection.",
+      "currentEvidence": "Zero completed windows are present.",
+      "nextAction": "Run the deployed schedule for at least three windows, then run npm run agent:reconciler:evidence:apply."
+    },
+    {
+      "id": 8,
+      "title": "Deploy and test production-like alerting",
+      "status": "BLOCKED",
+      "proofRequired": "HTTPS delivery, external request identity, SLO acknowledgement, retry, dead letter, recovery, escalation, and secret rotation.",
+      "currentEvidence": "Seventeen alerting blockers remain.",
+      "nextAction": "Exercise the real alert transport and run npm run agent:alert:evidence:apply."
+    },
+    {
+      "id": 9,
+      "title": "Complete credential rotation and revocation",
+      "status": "BLOCKED",
+      "proofRequired": "All configured classes rotated, workloads restarted, new versions verified, old versions revoked and rejected, with security approval.",
+      "currentEvidence": "Fifteen credential classes and thirty-one credential-gate blockers remain unresolved.",
+      "nextAction": "Complete the security runbook, then run npm run agent:credential-rotation:evidence:apply and npm run agent:credential-rotation:gate."
+    },
+    {
+      "id": 10,
+      "title": "Close statutory release evidence",
+      "status": "BLOCKED",
+      "proofRequired": "Source artifact hash verification and qualified expert approval.",
+      "currentEvidence": "Two statutory country-pack blockers remain.",
+      "nextAction": "Attach the verified source artifact and expert approval, then run npm run statutory:country-pack:gate."
+    },
+    {
+      "id": 11,
+      "title": "Rerun enterprise release gate 017",
+      "status": "EXECUTED_NO_GO",
+      "proofRequired": "Independent GO decision over one frozen evidence bundle.",
+      "currentEvidence": "The latest decision is REJECTED / NO-GO because high-authority evidence is incomplete.",
+      "nextAction": "Rerun only after steps 1 through 10 pass and the operational register is ready for independent review."
+    },
+    {
+      "id": 12,
+      "title": "Conduct controlled Phase 2B pilot",
+      "status": "NOT_STARTED",
+      "proofRequired": "Separately authorized activation, allowlisted tenants and roles, monitored operation, rollback exercise, support evidence, and no unresolved high-severity incident.",
+      "currentEvidence": "No package is active and no pilot has started.",
+      "nextAction": "After a gate-017 GO, conduct the protected activation ceremony and run the bounded pilot."
+    },
+    {
+      "id": 13,
+      "title": "Record explicit Phase 3 GO decision",
+      "status": "NOT_STARTED",
+      "proofRequired": "Product, security, finance-domain, and release authority acceptance of the Phase 2B exit report.",
+      "currentEvidence": "Phase 3 is not authorized.",
+      "nextAction": "Review pilot exit metrics and record a release-bound Phase 3 decision."
+    },
+    {
+      "id": 14,
+      "title": "Begin Phase 3 Cash/Reconciliation Agent",
+      "status": "NOT_STARTED",
+      "proofRequired": "Approved read-and-draft scope with no direct posting, payment, statutory filing, permission change, or direct Prisma business write.",
+      "currentEvidence": "Implementation is intentionally deferred.",
+      "nextAction": "After step 13, implement read tools, AgentActionDraft, evidence binding, and a non-executing reconciliation draft card."
+    }
+  ]
+}

@@ -1,6 +1,10 @@
 import type { SVGProps } from "react"
 import { render, screen } from "@testing-library/react"
 
+jest.mock("@/components/agents/AgentCommandPanel", () => ({
+  AgentCommandPanel: () => null,
+}))
+
 import type { DailyHabitDigestData } from "@/services/daily-habit/daily-habit-digest-contracts"
 import { DailyHabitDigestDashboard } from "../DailyHabitDigestDashboard"
 
