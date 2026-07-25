@@ -2,86 +2,69 @@
 
 **Date:** 2026-07-25  
 **Selected skill:** `017-aqstoqflow-enterprise-release-gate`  
+**Prerequisite reviewed:** `016-aqstoqflow-ai-copilot-guardrails`<br>
 **Active chunk:** Agent Runtime Phase 2A, deterministic read-only Command Agent  
 **Promotion target:** Controlled internal pilot review  
 **Decision:** `REJECTED / NO-GO - HIGH-AUTHORITY RELEASE EVIDENCE IS INCOMPLETE`  
-**Activation:** Not authorized and not attempted  
-**Phase 3:** Not authorized
+**Activation authorized:** No<br>
+**Phase 3 authorized:** No
 
 ## Executive Decision
 
-The enterprise release gate was rerun after the requested operational sequence:
+Skill 017 was rerun after the requested operational sequence and a fresh enterprise verification pass. The repository-owned authorized scope is complete at 37/37 requirements with zero repository blockers. The Phase 2A freeze gap is also closed: commit `85eb50ef792908ae1e3ecbe7bd34b6054c79cf52` is reproducibly bound to the 207-file historical manifest, with 207 files verified, zero missing or unexpected paths, zero content mismatches, and zero post-freeze Phase 2A runtime drift.
 
-```text
-npm run agent:reconciler:evidence:apply
-npm run agent:credential-rotation:gate
-npm run agent:operational-release:gate
-```
+Those results do not approve release. The current worktree has 94 changed files, protected clean-commit CI and immutable deployment evidence are absent, the reconciler endpoint is not configured, all 15 credential classes remain unresolved, and the operational register still has 152 blockers. Production-purpose secrets, the production PostgreSQL target, statutory source proof, governance approvals, owner assignments, scheduler authority, alert transport, and pilot evidence remain incomplete.
 
-All three commands failed closed for real missing evidence. The reconciler apply stopped before writing because no deployment base URL exists. The credential register remains blocked across all 15 credential classes. The operational register remains blocked and explicitly reports `activationAuthorized: false`.
-
-This rerun also closed one repository-owned gap discovered during review: Stoquify now has an authenticated, value-free scheduler control-plane attestation collector and a guarded scheduler-only register apply path. The operational gate now requires fresh, hash-bound deployment authority, invalid-auth proof, exact release binding, concurrency evidence, missing-configuration 503 proof, and failure-alert provenance. Its preflight fails closed on `SCHEDULER_EVIDENCE_URL_MISSING` and writes no partial artifact.
-
-Repository-controlled architecture, read-only authority, tenant/RBAC enforcement, typed error boundaries, migration safety, and test gates pass. Promotion is nevertheless rejected because skill 017 requires real governance, deployment, secret, database, statutory, alert, scheduler, and credential evidence. Local fixtures and generated references cannot substitute for those authorities.
+The Phase 2B entry gate is blocked on 19 of 23 checks, and the Phase 3 entry gate is blocked on 32 of 34 checks. The correct skill 017 decision is therefore still `REJECTED / NO-GO`. No package entered `ACTIVE_INTERNAL`; activation remains false/false/null; Phase 3 was neither authorized nor started.
 
 ## Requested Sequence Result
 
 | Command | Result |
 |---|---|
-| `npm run agent:reconciler:evidence:apply` | Failed closed: `RECONCILER_BASE_URL_MISSING`; no secret printed |
-| `npm run agent:credential-rotation:gate` | `BLOCKED`; 15 classes; 31 blockers; no secret printed |
-| `npm run agent:operational-release:gate` | `BLOCKED`; 152 blockers; ready for independent review false; activation false |
-| `npm run agent:scheduler:evidence:apply` | Failed closed: `SCHEDULER_EVIDENCE_URL_MISSING`; no partial artifact; activation false |
-The failed reconciler apply did not change the operational register:
-
-| Boundary | Verified state |
-|---|---|
-| Scheduler readiness hash | null |
-| Captured scheduler windows | 0 |
-| Credential register hash | null |
-| Operational status | `BLOCKED` |
-| Activation requested | false |
-| Activation authorized | false |
-| Activation timestamp | null |
-| Release activation timestamp | null |
+| `npm run agent:reconciler:evidence:apply` | Failed closed: `RECONCILER_BASE_URL_MISSING`; no register mutation; no secret output |
+| `npm run agent:credential-rotation:gate` | `BLOCKED`; 15 classes; 31 blockers; no secret output |
+| `npm run agent:operational-release:gate` | `BLOCKED`; 152 blockers; independent-review readiness false; activation false |
+| `npm run agent:phase2a:freeze:gate` | `FROZEN_COMMIT_VERIFIED`; 207/207 files; clean release false; activation false; Phase 3 false |
+| `npm run agent:phase2b:entry:gate` | `BLOCKED`; 4/23 checks passed; 19 blockers; no authority granted |
+| `npm run agent:phase3:entry:gate` | `BLOCKED`; 2/34 checks passed; 32 blockers; no authority granted |
 
 ## Required Context Reviewed
 
-- Skill 017 instructions and `references/chunk-blueprint.md`
-- Current graph architecture report: `graphify-out/GRAPH_REPORT.md`
-- Previous 016/017 rerun evidence
-- Current Agent Runtime operational and credential registers
-- Current assurance, deployment, collector, test, and browser evidence
-- Current branch, commit, and worktree state
+- Skill 017 instructions and universal Gate A through G language.
+- `docs/prompts/skills/AQSTOQFLOW_ORDERED_IMPLEMENTATION_CHUNKS_AND_SKILL_SUITE_2026-06-14.md`.
+- `docs/domains/accounting-close/OHADA_SMB_PLATFORM_TECHNICAL_SPEC_2026-06-14.md`.
+- `graphify-out/GRAPH_REPORT.md`, including tenant defense, RBAC, ledger-first, and service-boundary communities.
+- Current Agent Runtime schema, services, actions, UI, gates, migrations, collectors, tests, and evidence registers.
+- Current branch, frozen commit, worktree, and promotion ledger.
 
-The ordered implementation and technical specification files named by the skill were not present at their legacy paths. Their concepts remain visible in the graph report and current Agent Runtime reports.
+The skill's `references/chunk-blueprint.md` was present and reviewed. Its universal Gate A through G language agrees with the ordered implementation suite at the current repository path.
 
 ## Prerequisite Skill 016
 
-The preceding Phase 2A guardrail result remains satisfied for the implemented read-only boundary:
+The implemented Phase 2A boundary continues to satisfy the AI guardrail prerequisite:
 
 - one provider-free TypeScript-native runtime;
-- tenant and actor scope derived from trusted context;
+- tenant and actor scope derived from trusted server context;
 - RBAC and module authorization before tool execution;
-- no direct agent business-write path;
-- no posting, payment, filing, payroll, stock, close, approval, or permission authority;
-- evidence, freshness, redaction, audit, replay, and typed-error controls;
-- provider-free Phase 2A static ratchet passed;
-- tool-registry, prohibited-action, and release-control gates passed.
+- evidence binding, freshness, redaction, audit, replay, and typed-error controls;
+- no direct agent Prisma business write path;
+- no ledger posting, payment, filing, payroll, stock, close, approval, or permission authority;
+- no self-approval or self-activation;
+- activation and Phase 3 authority permanently false in the evidence controls.
 
-This prerequisite does not approve promotion. It proves only that the implemented assistant boundary remains appropriately constrained.
+Skill 016 constrains authority. It does not replace release approval.
 
-## Skill 017 Universal Gate Matrix
+## Universal Gate Matrix
 
 | Gate | Repository result | Promotion result |
 |---|---|---|
-| A. Architecture and context | Passed for the Phase 2A canonical service/action/UI boundary | Blocked by absence of an immutable release identity |
-| B. Tenant, RBAC, and module control | Passed | Passed for implemented scope |
-| C. Event and ledger integrity | Passed as read-only; no business event or posting authority exists | Passed for Phase 2A |
-| D. Error and notification contract | Typed/error boundaries passed locally | Blocked by absent production alert transport and ownership evidence |
-| E. UX completeness | Enabled-pilot desktop/mobile and degradation certification passed locally | Production-like rollout and rollback ownership remain unproven |
-| F. Evidence and observability | Local evidence contracts and fail-closed collectors passed | Blocked by real governance, scheduler, alert, credential, deployment, and acknowledgement evidence |
-| G. Verification | Repository checks passed | Blocked by dirty worktree and absence of protected clean-commit CI/deployment proof |
+| A. Architecture and context | Passed for canonical `services/agents`, protected actions, API worker, and embedded UI boundaries | Frozen source commit verified; clean release artifact still absent |
+| B. Tenant, RBAC, and module control | Passed for implemented scope | Passed for the inactive read-only package |
+| C. Event and ledger integrity | Passed as read-only; no accounting event or posting authority exists | Passed for Phase 2A scope |
+| D. Error and notification contract | Typed boundaries and static gates passed | Blocked by missing production alert transport, acknowledgement, and ownership evidence |
+| E. UX completeness | Local desktop/mobile and degradation certification contracts exist | Blocked by absence of artifact-bound protected CI and controlled-pilot evidence |
+| F. Evidence and observability | Fail-closed collectors and immutable evidence contracts pass | Blocked by real governance, scheduler, reconciler, alert, credential, deployment, and acknowledgement evidence |
+| G. Verification | Repository and focused verification pass | Promotion blocked by dirty worktree and missing high-authority evidence |
 
 ## Gates Passed
 
@@ -90,39 +73,55 @@ This prerequisite does not approve promotion. It proves only that the implemente
 | Agent tool registry | Passed; read-only and dependency-neutral |
 | Agent prohibited action | Passed; no business-write path in `services/agents` |
 | Agent release control | Passed |
-| Phase 2A static ratchet | Passed; narrow, read-only, provider-free |
-| Service boundary | Passed; 0 active violations |
-| Raw-error boundary | Passed; 0 active unsafe findings; 88 classified call sites |
+| Phase 2A static gate | Passed; narrow, read-only, provider-free |
+| Phase 2A frozen-commit gate | Passed; 207/207 files verified; zero runtime drift |
+| Authorized-scope requirements | 37/37 passed; 0 repository blockers; 6 external blockers |
 | TypeScript | Passed |
 | Prisma schema | Valid |
-| Local migration safety | 8/8 checks; 34 migrations; 0 destructive findings |
-| CI configuration readiness | 11/11 repository checks ready |
-| Full Jest evidence | 474 suites and 2,862 tests passed; 3 suites and 15 tests skipped |
-| Focused operational evidence | 8 suites and 83 tests passed; focused `--detectOpenHandles` clean |
-| Scheduler deployment collector | 9 focused tests passed; guarded scheduler-only apply and fail-closed preflight verified |
-| Secret values in gate output | None |
+| Service boundary | Passed; zero active violations |
+| Raw-error boundary | Passed; zero active unsafe findings; 88 classified call sites |
+| Lint | Passed with zero errors and four pre-existing warnings |
+| Full Jest | 477 suites and 2,886 tests passed; 3 suites and 15 tests skipped |
+| Focused agent and release bundle | 26 suites and 131 tests passed |
+| Release evidence structure | 11/11 checks passed; zero structural blockers |
+| Migration structure | 34 migrations; zero destructive SQL findings |
+| Secret output | No value printed or persisted by the gates |
 
-The full Jest process completed without the previously observed forced-worker-exit warning. The focused operational evidence suites did not expose an open handle.
+The full Jest run emitted the known forced-worker-exit warning after every executed test passed. This remains a teardown-quality issue, not a failed test or release approval.
+
+## Frozen Commit Evidence
+
+| Field | Result |
+|---|---|
+| Branch | `codex/service-boundary-burndown` |
+| Commit | `85eb50ef792908ae1e3ecbe7bd34b6054c79cf52` |
+| Parent / manifest base | `ac30ee75314a0a2a2fcd6bd2ed65afb280aa0d5e` |
+| Manifest candidates | 207 |
+| Commit candidates | 207 |
+| Exact blob matches | 175 |
+| Deterministic line-ending equivalents | 5 |
+| Unchanged Git clean-filter equivalents | 27 |
+| Missing paths / unexpected paths | 0 / 0 |
+| Content mismatches | 0 |
+| Post-freeze Phase 2A runtime drift | 0 |
+| Current tracked changes | 53 |
+| Current untracked entries / files | 33 / 41 |
+| Current worktree changes | 94 |
+| Evidence/control remediation | 75 |
+| Changes outside candidate scope | 19 |
+| Clean release ready | No |
+
+The freeze gate verifies the commit independently of current evidence remediation. It never rewrites the historical manifest and never treats the dirty worktree as an immutable release artifact.
 
 ## Gates Blocked
 
-### 1. Immutable Release Identity
+### 1. Clean Release And CI Identity
 
-Current Git state:
+The frozen commit is verified, but the current worktree has 53 tracked changes and 41 untracked files across 33 untracked entries. There is no protected clean-commit CI result, immutable artifact digest, artifact-bound browser certificate, deployment reference, branch-protection proof, or external CI attestation.
 
-```text
-branch: codex/service-boundary-burndown
-HEAD: ac30ee75314a0a2a2fcd6bd2ed65afb280aa0d5e
-tracked changes: 64
-untracked items: 182
-clean worktree: false
-```
+### 2. Operational Release Evidence
 
-The repository CI configuration is ready, but no protected clean-commit CI run, immutable artifact, deployed artifact digest, branch-protection evidence, or package certification bound to this worktree exists.
-
-### 2. Operational Evidence
-
-The operational register remains `BLOCKED` with 152 blockers:
+The register remains `BLOCKED` with 152 blockers:
 
 | Category | Count |
 |---|---:|
@@ -136,106 +135,78 @@ The operational register remains `BLOCKED` with 152 blockers:
 | Credential rotation | 5 |
 | **Total** | **152** |
 
-### 3. Scheduler Deployment
+### 3. Reconciler And Scheduler Deployment
 
-`agent:reconciler:evidence:apply` failed on `RECONCILER_BASE_URL_MISSING`. `agent:scheduler:evidence:apply` independently failed on `SCHEDULER_EVIDENCE_URL_MISSING`. No production-like reconciler endpoint, independent scheduler control-plane endpoint, managed evidence credential, three consecutive five-minute windows, readiness hash, heartbeat, deployment attestation, missing-configuration proof, or scheduler deployment identity was captured.
+The reconciler collector stopped on `RECONCILER_BASE_URL_MISSING`. No production-like endpoint, managed evidence credential, three consecutive five-minute windows, readiness hash, heartbeat, invalid-auth proof, missing-configuration proof, or independent scheduler deployment identity was captured.
 
-The new collector is deliberately narrow. A ready capture may update scheduler deployment metadata only; it cannot change readiness, successful windows, governance, approvals, owners, alerting, credential rotation, declared status, release activation, or the false/false/null activation boundary.
-### 4. Credential Classification and Rotation
+### 4. Credential Rotation
 
-The credential register remains:
+The credential register remains `BLOCKED` across 15 classes and 31 blockers. Security ownership, approval, authority attestation, rotation/revocation, workload restart, new-version proof, old-version rejection, and release binding remain absent.
 
-```text
-status: BLOCKED
-credential classes: 15
-unresolved classes: 15
-blockers: 31
-authority evidence hash: null
-release binding commit: null
-```
+### 5. Global Release Conditions
 
-No real security owner, approval, authority attestation, rotation/revocation sequence, workload restart, new-version verification, old-version rejection, or frozen-release binding is present.
+`npm run release:evidence:gate:release` has 11/11 structural checks passing and six release blockers:
 
-### 5. Production Secrets
+- `readiness:statutory-country-pack-production`;
+- `readiness:prisma-migration-deployment`;
+- `public_identity_hash_secret`;
+- `public_receipt_token_secret`;
+- `history_cursor_signing_secret`;
+- `production_database_target`.
 
-`npm run release:secrets:preflight:release` is blocked at 2/8 checks. Six checks remain open:
+### 6. Production Secrets
 
-- `PUBLIC_IDENTITY_ABUSE_HASH_SECRET` present and strong;
-- `AQSTOQFLOW_RECEIPT_TOKEN_SECRET` present and strong;
-- `AQSTOQFLOW_HISTORY_CURSOR_SECRET` present and strong.
+The release secret preflight remains 2/8. The three dedicated production-purpose secrets are absent and therefore cannot satisfy presence or strength checks. Distinctness and non-reuse rules pass. No value was printed.
 
-No secret value was printed or persisted.
+### 7. Production PostgreSQL Target
 
-### 6. Production Database Target
+The production migration preflight remains 7/8 with `deployment_target_is_safe` and `database_url_missing` blockers. The migration set itself has no destructive finding.
 
-`npm run prisma:migration:release:preflight` is blocked:
+### 8. Statutory Authority Evidence
 
-- `deployment_target_is_safe`;
-- `database_url_missing`.
+The country-pack production gate remains 10/12. `source_artifact_hash_verification` and `source_artifact_expert_approval` are missing. Static fail-closed behavior is not legal or statutory certification.
 
-The migration set itself remains structurally safe: 34 migrations and no destructive SQL finding.
+### 9. Phase 2B Entry
 
-### 7. Statutory Evidence
+The read-only Phase 2B gate passed only authorized-scope completeness, frozen-commit verification, the pre-activation boundary, and continued Phase 3 non-authorization. Nineteen checks are blocked, including the clean release, global release, secrets, database, statutory, credential, operational, promotion-point, and independent gate-017 conditions.
 
-`npm run statutory:country-pack:gate` remains 10/12:
+### 10. Phase 3 Entry
 
-- `source_artifact_hash_verification`;
-- `source_artifact_expert_approval`.
+The Phase 3 gate passed only authorized-scope completeness and frozen-commit verification. Thirty-two checks are blocked, including every Phase 2B pilot exit, immutable pilot binding, scope, observation, safety, operations, incident, approval, segregation-of-duties, recommendation, and explicit Phase 3 authority condition.
 
-This is a mandatory expert boundary. Passing static guards would not constitute legal or statutory certification.
+## Evidence Refreshed By This Rerun
 
-### 8. Release Evidence Index
+- Operational and credential readiness reports.
+- Authorized-scope requirements audit.
+- Phase 2A frozen-commit attestation.
+- Phase 2B and Phase 3 entry decision reports.
+- Release-secret, migration, statutory, and global release evidence.
+- Phase 3 promotion ledger.
+- Skill 017 Markdown/PDF report and its `what-next` mirror.
 
-`npm run release:evidence:gate:release` remains blocked:
-
-- structural: `readiness_json_is_parseable_and_clear`;
-- release secret provisioning;
-- production database target;
-- statutory country-pack source and expert evidence.
+No agent capability, business-write authority, activation path, pilot activation, or Phase 3 implementation was added.
 
 ## Verification Result
 
 `REJECTED / NO-GO`
 
-Skill 017 stops promotion because multiple HIGH authority invariants fail. The current package may remain `PILOT_CERTIFIED` and inactive, but it is not ready for independent review or internal activation.
-
-No package entered `ACTIVE_INTERNAL`. No activation field changed. No Phase 3 authority was granted.
-
-## Files Changed By This Rerun
-
-The review added release-evidence infrastructure only; it did not add agent authority or business-write behavior. Changed evidence-control files include:
-
-- scheduler deployment evidence collector and nine tests;
-- operational release gate and focused scheduler attestation test;
-- Phase 2A static ratchet;
-- package commands and environment contract;
-- operational register null placeholders;
-
-- credential rotation register Markdown;
-- operational release evidence Markdown;
-- CI release-readiness Markdown/JSON;
-- release secret preflight Markdown/JSON;
-- Prisma deployment-readiness Markdown/JSON;
-- statutory country-pack readiness Markdown/JSON;
-- OHADA leadership release evidence index Markdown/JSON;
-- this skill 017 rerun report in Markdown and PDF.
+The repository implementation and frozen-commit portions of promotion point 1 are verified. Independent review of that attestation, promotion point 2, and all high-authority operational points remain blocked. The package may remain inactive and locally certified, but it is not ready for independent release review, Phase 2B, activation, or Phase 3.
 
 ## Required Remediation Order
 
-1. Freeze and authorize a clean reviewed commit.
-2. Run protected CI and publish an immutable certified artifact.
-3. Apply the CI/release evidence capture.
-4. Record real product/security approvals and all six owner acceptances.
-5. Provision production-purpose secrets without exposing their values.
-6. Configure and verify the non-local production PostgreSQL target.
-7. Deploy the reconciler and alert paths with managed authentication.
-8. Apply independent scheduler control-plane deployment evidence, then capture three real reconciler windows, readiness, invalid-auth, missing-config, alert acknowledgement, escalation, and recovery evidence.
-9. Complete all 15 credential classifications and required rotation/revocation evidence.
-10. Attach the statutory source artifact hash and expert approval.
-11. Rerun the credential, operational, statutory, release-evidence, and skill 017 gates.
+1. Independently review and accept the frozen-commit attestation.
+2. Produce a clean reviewed release state and protected CI evidence bound to an immutable artifact.
+3. Record real product/security approvals and six complete owner assignments.
+4. Provision production-purpose secrets through the deployment secret manager.
+5. Configure and verify a non-local production PostgreSQL target.
+6. Deploy the reconciler, independent scheduler authority, and alert transport with managed authentication.
+7. Capture three real reconciler windows plus readiness, invalid-auth, missing-config, acknowledgement, escalation, and recovery evidence.
+8. Complete rotation, revocation, and rejection evidence for all 15 credential classes.
+9. Attach the statutory source artifact hash and qualified expert approval.
+10. Rerun the credential, operational, statutory, global release, freeze, and skill 017 gates over one immutable evidence bundle.
 
 ## Next Recommended Numbered Skill
 
 Remain on `017-aqstoqflow-enterprise-release-gate`.
 
-Do not advance to another numbered implementation skill and do not activate an agent until every HIGH blocker above is closed with real, immutable, independently reviewable evidence.
+Do not activate Phase 2A, conduct Phase 2B, or begin Phase 3 until every HIGH blocker is closed with real, immutable, independently reviewable evidence and a separate release decision grants authority.

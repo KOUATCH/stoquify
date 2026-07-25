@@ -1,0 +1,462 @@
+{
+  "schemaVersion": 1,
+  "auditId": "stoquify-agent-runtime-authorized-scope-requirements-2026-07-25",
+  "evaluatedAt": "2026-07-25T13:43:11.746Z",
+  "status": "AUTHORIZED_SCOPE_COMPLETE_EXTERNAL_BLOCKED",
+  "authorizedScope": [
+    "PHASE_0",
+    "PHASE_1",
+    "PHASE_2A"
+  ],
+  "authorizedScopeComplete": true,
+  "fullProgramComplete": false,
+  "activationAuthorized": false,
+  "phase3Authorized": false,
+  "summary": {
+    "requirements": 36,
+    "satisfied": 36,
+    "repositoryBlockers": 0,
+    "externalBlockers": 6,
+    "secretValuesPrinted": false
+  },
+  "phaseCounts": {
+    "PHASE_0": {
+      "total": 8,
+      "satisfied": 8,
+      "blocked": 0
+    },
+    "PHASE_1": {
+      "total": 13,
+      "satisfied": 13,
+      "blocked": 0
+    },
+    "PHASE_2A": {
+      "total": 12,
+      "satisfied": 12,
+      "blocked": 0
+    },
+    "PERMANENT": {
+      "total": 3,
+      "satisfied": 3,
+      "blocked": 0
+    }
+  },
+  "requirements": [
+    {
+      "id": "P0-01",
+      "phase": "PHASE_0",
+      "title": "One shared runtime and domain ownership",
+      "satisfied": true,
+      "evidencePaths": [
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_0_DESIGN_FREEZE_2026-07-22.md"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P0-02",
+      "phase": "PHASE_0",
+      "title": "MVP agents and pilot roles",
+      "satisfied": true,
+      "evidencePaths": [
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_0_DESIGN_FREEZE_2026-07-22.md"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P0-03",
+      "phase": "PHASE_0",
+      "title": "Risk taxonomy",
+      "satisfied": true,
+      "evidencePaths": [
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_0_DESIGN_FREEZE_2026-07-22.md"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P0-04",
+      "phase": "PHASE_0",
+      "title": "Permanent prohibited-action policy",
+      "satisfied": true,
+      "evidencePaths": [
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_0_DESIGN_FREEZE_2026-07-22.md"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P0-05",
+      "phase": "PHASE_0",
+      "title": "Read-only tool catalog with governance metadata",
+      "satisfied": true,
+      "evidencePaths": [
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_0_DESIGN_FREEZE_2026-07-22.md"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P0-06",
+      "phase": "PHASE_0",
+      "title": "Dependency order, rollout, rollback, and stop conditions",
+      "satisfied": true,
+      "evidencePaths": [
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_0_DESIGN_FREEZE_2026-07-22.md"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P0-07",
+      "phase": "PHASE_0",
+      "title": "Measurable Phase 1 acceptance criteria",
+      "satisfied": true,
+      "evidencePaths": [
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_0_DESIGN_FREEZE_2026-07-22.md"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P0-08",
+      "phase": "PHASE_0",
+      "title": "Phase 0/1 execution report",
+      "satisfied": true,
+      "evidencePaths": [
+        "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_0_1_EXECUTION_REPORT_2026-07-22.md"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P1-01",
+      "phase": "PHASE_1",
+      "title": "Agent governance persistence models",
+      "satisfied": true,
+      "evidencePaths": [
+        "prisma/schema.prisma"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P1-02",
+      "phase": "PHASE_1",
+      "title": "Additive runtime migrations and tenant consistency",
+      "satisfied": true,
+      "evidencePaths": [
+        "prisma/migrations/20260722143000_agent_runtime_phase_1_foundation/migration.sql",
+        "prisma/migrations/20260722150000_agent_runtime_tenant_consistency/migration.sql",
+        "prisma/migrations/20260722153000_agent_runtime_incident_cascade_consistency/migration.sql"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P1-03",
+      "phase": "PHASE_1",
+      "title": "Shared runtime contracts",
+      "satisfied": true,
+      "evidencePaths": [
+        "services/agents/agent-contracts.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P1-04",
+      "phase": "PHASE_1",
+      "title": "Trusted tenant, actor, and entitlement context",
+      "satisfied": true,
+      "evidencePaths": [
+        "services/agents/agent-context.service.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P1-05",
+      "phase": "PHASE_1",
+      "title": "Permission and entitlement guard before tool exposure",
+      "satisfied": true,
+      "evidencePaths": [
+        "services/agents/agent-policy.service.ts",
+        "services/agents/agent-tool-registry.service.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P1-06",
+      "phase": "PHASE_1",
+      "title": "Static read-only registry and prohibited-tool policy",
+      "satisfied": true,
+      "evidencePaths": [
+        "services/agents/tools/command-tools.ts",
+        "scripts/agent-tool-registry-gate.js",
+        "scripts/agent-prohibited-action-gate.js"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P1-07",
+      "phase": "PHASE_1",
+      "title": "Evidence binder and explicit no-evidence state",
+      "satisfied": true,
+      "evidencePaths": [
+        "services/agents/agent-evidence.service.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P1-08",
+      "phase": "PHASE_1",
+      "title": "Redaction before prompt and output",
+      "satisfied": true,
+      "evidencePaths": [
+        "services/agents/agent-redaction.service.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P1-09",
+      "phase": "PHASE_1",
+      "title": "Freshness evaluator",
+      "satisfied": true,
+      "evidencePaths": [
+        "services/agents/skills/freshness-evaluator.skill.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P1-10",
+      "phase": "PHASE_1",
+      "title": "Deterministic run and step logger without raw payload persistence",
+      "satisfied": true,
+      "evidencePaths": [
+        "services/agents/agent-runner.service.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P1-11",
+      "phase": "PHASE_1",
+      "title": "Feedback, cost, and policy-incident foundations",
+      "satisfied": true,
+      "evidencePaths": [
+        "prisma/schema.prisma",
+        "services/agents/agent-feedback.service.ts",
+        "services/agents/agent-metrics.service.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P1-12",
+      "phase": "PHASE_1",
+      "title": "Focused safety tests and runtime commands",
+      "satisfied": true,
+      "evidencePaths": [
+        "services/agents/__tests__/agent-context.service.test.ts",
+        "services/agents/__tests__/agent-tool-registry.service.test.ts",
+        "services/agents/__tests__/agent-evidence.service.test.ts",
+        "services/agents/__tests__/agent-redaction.service.test.ts",
+        "services/agents/__tests__/agent-runner.service.test.ts",
+        "package.json"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P1-13",
+      "phase": "PHASE_1",
+      "title": "Provider-free deterministic foundation",
+      "satisfied": true,
+      "evidencePaths": [
+        "package.json"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P2A-01",
+      "phase": "PHASE_2A",
+      "title": "Command Agent design freeze and disabled rollout",
+      "satisfied": true,
+      "evidencePaths": [
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_COMMAND_AGENT_DESIGN_FREEZE_2026-07-22.md"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P2A-02",
+      "phase": "PHASE_2A",
+      "title": "Role-aware Command Agent with one narrow read tool",
+      "satisfied": true,
+      "evidencePaths": [
+        "services/agents/command-agent.service.ts",
+        "services/agents/tools/command-tool-adapters.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P2A-03",
+      "phase": "PHASE_2A",
+      "title": "Versioned evidence-constrained Daily Brief skill",
+      "satisfied": true,
+      "evidencePaths": [
+        "services/agents/command-agent-contracts.ts",
+        "services/agents/skills/role-daily-brief.skill.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P2A-04",
+      "phase": "PHASE_2A",
+      "title": "Protected server action with handler-derived tenant scope",
+      "satisfied": true,
+      "evidencePaths": [
+        "actions/agents/command-agent.actions.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P2A-05",
+      "phase": "PHASE_2A",
+      "title": "Evidence and trust fields on material output",
+      "satisfied": true,
+      "evidencePaths": [
+        "services/agents/command-agent-contracts.ts",
+        "services/agents/agent-contracts.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P2A-06",
+      "phase": "PHASE_2A",
+      "title": "Embedded Daily Digest UI with safe states",
+      "satisfied": true,
+      "evidencePaths": [
+        "components/agents/AgentCommandPanel.tsx",
+        "components/daily-habit/DailyHabitDigestDashboard.tsx",
+        "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P2A-07",
+      "phase": "PHASE_2A",
+      "title": "Bounded user feedback persistence",
+      "satisfied": true,
+      "evidencePaths": [
+        "services/agents/agent-feedback.service.ts",
+        "actions/agents/command-agent.actions.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P2A-08",
+      "phase": "PHASE_2A",
+      "title": "Fail-closed rollout and kill switch",
+      "satisfied": true,
+      "evidencePaths": [
+        "services/agents/agent-rollout.service.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P2A-09",
+      "phase": "PHASE_2A",
+      "title": "Release, reconciliation, and rollback controls",
+      "satisfied": true,
+      "evidencePaths": [
+        "services/agents/agent-release-control.service.ts",
+        "services/agents/agent-execution-control.service.ts",
+        "services/agents/agent-reconciler-invocation.service.ts",
+        "app/api/internal/agents/reconcile-abandoned/route.ts",
+        "package.json"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P2A-10",
+      "phase": "PHASE_2A",
+      "title": "Focused, browser, and static verification surfaces",
+      "satisfied": true,
+      "evidencePaths": [
+        "services/agents/__tests__/command-agent.service.test.ts",
+        "actions/agents/__tests__/command-agent.actions.test.ts",
+        "components/agents/__tests__/AgentCommandPanel.test.tsx",
+        "tests/e2e/command-agent-enabled-pilot.spec.ts",
+        "tests/e2e/command-agent-kill-switch.spec.ts",
+        "package.json"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P2A-11",
+      "phase": "PHASE_2A",
+      "title": "Frozen commit attestation",
+      "satisfied": true,
+      "evidencePaths": [
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "P2A-12",
+      "phase": "PHASE_2A",
+      "title": "Phase 2A execution report",
+      "satisfied": true,
+      "evidencePaths": [
+        "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_COMMAND_AGENT_EXECUTION_REPORT_2026-07-22.md"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "BOUNDARY-01",
+      "phase": "PERMANENT",
+      "title": "No agent business-write authority",
+      "satisfied": true,
+      "evidencePaths": [
+        "package.json",
+        "scripts/agent-prohibited-action-gate.js"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "BOUNDARY-02",
+      "phase": "PERMANENT",
+      "title": "Activation remains unauthorized",
+      "satisfied": true,
+      "evidencePaths": [
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_OPERATIONAL_RELEASE_EVIDENCE_2026-07-25.json",
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json"
+      ],
+      "blockers": []
+    },
+    {
+      "id": "BOUNDARY-03",
+      "phase": "PERMANENT",
+      "title": "Phase 3 remains unauthorized and unstarted",
+      "satisfied": true,
+      "evidencePaths": [
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json",
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json",
+        "prisma/schema.prisma"
+      ],
+      "blockers": []
+    }
+  ],
+  "repositoryBlockers": [],
+  "externalBlockers": [
+    "EXTERNAL_PRODUCT_APPROVAL_NOT_RECORDED",
+    "EXTERNAL_SECURITY_APPROVAL_NOT_RECORDED",
+    "EXTERNAL_CLEAN_RELEASE_NOT_READY",
+    "EXTERNAL_CREDENTIAL_ROTATION_BLOCKED",
+    "EXTERNAL_OPERATIONAL_RELEASE_BLOCKED",
+    "EXTERNAL_PHASE3_GO_NOT_RECORDED"
+  ],
+  "authority": {
+    "operationalStatus": "BLOCKED",
+    "credentialStatus": "BLOCKED",
+    "promotionStatus": "BLOCKED",
+    "activationRequested": false,
+    "activationAuthorized": false,
+    "activatedAt": null,
+    "phase3Authorized": false
+  },
+  "safety": {
+    "businessWriteAuthorityAdded": false,
+    "activationAttempted": false,
+    "phase3Started": false,
+    "externalEvidenceFabricated": false,
+    "secretValuesPrinted": false
+  }
+}

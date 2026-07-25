@@ -1,0 +1,3133 @@
+{
+  "schemaVersion": 1,
+  "attestationId": "stoquify-agent-runtime-phase-2a-freeze-commit-2026-07-25",
+  "evaluatedAt": "2026-07-25T14:33:14.652Z",
+  "branch": "codex/service-boundary-burndown",
+  "headCommit": "85eb50ef792908ae1e3ecbe7bd34b6054c79cf52",
+  "parentCommit": "ac30ee75314a0a2a2fcd6bd2ed65afb280aa0d5e",
+  "manifestId": "stoquify-agent-runtime-phase-2a-freeze-candidate-2026-07-25",
+  "manifestBaseCommit": "ac30ee75314a0a2a2fcd6bd2ed65afb280aa0d5e",
+  "manifestReference": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_CANDIDATE_FILE_MANIFEST_2026-07-25.json",
+  "status": "FROZEN_COMMIT_VERIFIED",
+  "freezeVerified": true,
+  "cleanReleaseReady": false,
+  "activationAuthorized": false,
+  "phase3Authorized": false,
+  "sourceTreeClean": false,
+  "summary": {
+    "manifestFiles": 207,
+    "commitCandidateFiles": 207,
+    "missingPaths": 0,
+    "unexpectedPaths": 0,
+    "verifiedFiles": 207,
+    "contentMismatches": 0,
+    "exactBlobMatches": 175,
+    "lineEndingEquivalentMatches": 5,
+    "cleanFilterEquivalentMatches": 27,
+    "currentChanges": 100,
+    "evidenceControlChanges": 81,
+    "phase2aRuntimeDrift": 0,
+    "outsideCandidateChanges": 19,
+    "blockerCount": 0,
+    "secretValuesPrinted": false
+  },
+  "missingPaths": [],
+  "unexpectedPaths": [],
+  "fileVerification": [
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_ALERT_EVIDENCE_CAPTURE_RUNBOOK_2026-07-25.md",
+      "expectedSha256": "d8aa33d21c4940ea086443555b24bdfc1d3fb3e8d963ea7672a604dffefee728",
+      "expectedBytes": 5825,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 5825,
+        "committedSha256": "d8aa33d21c4940ea086443555b24bdfc1d3fb3e8d963ea7672a604dffefee728"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_ALERT_EVIDENCE_CAPTURE_RUNBOOK_2026-07-25.pdf",
+      "expectedSha256": "ae742add06769f8099c694aeed139d07e2694933a4c365f8de33eadad9013763",
+      "expectedBytes": 89481,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 89481,
+        "committedSha256": "ae742add06769f8099c694aeed139d07e2694933a4c365f8de33eadad9013763"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_CI_RELEASE_EVIDENCE_CAPTURE_RUNBOOK_2026-07-25.md",
+      "expectedSha256": "d276d67b4d93a998db7ddac42e9648b9f0189cbad127bcdbfd0a1b5666929b3f",
+      "expectedBytes": 6597,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 6597,
+        "committedSha256": "d276d67b4d93a998db7ddac42e9648b9f0189cbad127bcdbfd0a1b5666929b3f"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_CI_RELEASE_EVIDENCE_CAPTURE_RUNBOOK_2026-07-25.pdf",
+      "expectedSha256": "7c73e9a07fb2a83a768abf53234f551684d6c3a18bd673060770f3fa8a982175",
+      "expectedBytes": 74422,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 74422,
+        "committedSha256": "7c73e9a07fb2a83a768abf53234f551684d6c3a18bd673060770f3fa8a982175"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_CREDENTIAL_ROTATION_EVIDENCE_CAPTURE_RUNBOOK_2026-07-25.md",
+      "expectedSha256": "ee21e7a89c77cd74b770dafc744046564cd6e56cb7a913aaf5883a8ac3a4f0c5",
+      "expectedBytes": 8516,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 8516,
+        "committedSha256": "ee21e7a89c77cd74b770dafc744046564cd6e56cb7a913aaf5883a8ac3a4f0c5"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_CREDENTIAL_ROTATION_EVIDENCE_CAPTURE_RUNBOOK_2026-07-25.pdf",
+      "expectedSha256": "aa86b4eb2dccb4110d9537ee1fc42b2a34e1d86a407f21000973ae470db05c74",
+      "expectedBytes": 97324,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 97324,
+        "committedSha256": "aa86b4eb2dccb4110d9537ee1fc42b2a34e1d86a407f21000973ae470db05c74"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_GOVERNANCE_EVIDENCE_CAPTURE_RUNBOOK_2026-07-25.md",
+      "expectedSha256": "e4ee682d611cd6ea1c00084149124c434f606cf7cd343671b603c148c33c1e51",
+      "expectedBytes": 7527,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 7527,
+        "committedSha256": "e4ee682d611cd6ea1c00084149124c434f606cf7cd343671b603c148c33c1e51"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_GOVERNANCE_EVIDENCE_CAPTURE_RUNBOOK_2026-07-25.pdf",
+      "expectedSha256": "23f34f78a15f242cc534c9008e2b6770729b40135820bf220fa80d3f239a30ae",
+      "expectedBytes": 98140,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 98140,
+        "committedSha256": "23f34f78a15f242cc534c9008e2b6770729b40135820bf220fa80d3f239a30ae"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RECONCILER_DEPLOYMENT_CONTRACT_2026-07-24.md",
+      "expectedSha256": "b025d5362f6fc5f317e30e7a87f2b7ced62b78113f869c7cf14f1229842e77b0",
+      "expectedBytes": 12282,
+      "verification": {
+        "verified": true,
+        "method": "LINE_ENDING_EQUIVALENT",
+        "committedBytes": 12016,
+        "committedSha256": "f57bf6fa45c6f02b5574ab6710104d2c9bcd8a2b8db51077f305ed3c69cfd69b"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RECONCILER_DEPLOYMENT_CONTRACT_2026-07-24.pdf",
+      "expectedSha256": "d12e01eea4cbd9a8bade20ead18d88588f04b06201434355f02c3759f63c2015",
+      "expectedBytes": 117272,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 117272,
+        "committedSha256": "d12e01eea4cbd9a8bade20ead18d88588f04b06201434355f02c3759f63c2015"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RECONCILER_EVIDENCE_CAPTURE_RUNBOOK_2026-07-25.md",
+      "expectedSha256": "99489b8c91159c50ecb9559cb44528e0dccb92b04a04bf1f08df788b6675a7b7",
+      "expectedBytes": 5157,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 5157,
+        "committedSha256": "99489b8c91159c50ecb9559cb44528e0dccb92b04a04bf1f08df788b6675a7b7"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RECONCILER_EVIDENCE_CAPTURE_RUNBOOK_2026-07-25.pdf",
+      "expectedSha256": "677959416ca36730e6eca7b92f385f36bf4f62e1568cd09428a389018a1f2c7a",
+      "expectedBytes": 89537,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 89537,
+        "committedSha256": "677959416ca36730e6eca7b92f385f36bf4f62e1568cd09428a389018a1f2c7a"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_COMPLETE_ANALYSIS_AND_RECOMMENDATIONS_2026-07-22.pdf",
+      "expectedSha256": "82012521eb7317949a1a87de188a5c92fcabf296a5095b737bebb87e21b3d099",
+      "expectedBytes": 25116,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 25116,
+        "committedSha256": "82012521eb7317949a1a87de188a5c92fcabf296a5095b737bebb87e21b3d099"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_CREDENTIAL_ROTATION_REGISTER_2026-07-25.json",
+      "expectedSha256": "7c247a953ac8774fd74f5ec6b40b22aadfdf827dd1c07738ddd21d74a5f1f19d",
+      "expectedBytes": 5661,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 5661,
+        "committedSha256": "7c247a953ac8774fd74f5ec6b40b22aadfdf827dd1c07738ddd21d74a5f1f19d"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_CREDENTIAL_ROTATION_REGISTER_2026-07-25.md",
+      "expectedSha256": "ef34d906572617b02d4c8bcff26538cdfbe8046dc7397dc7c699f713b361d31a",
+      "expectedBytes": 5848,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 5848,
+        "committedSha256": "ef34d906572617b02d4c8bcff26538cdfbe8046dc7397dc7c699f713b361d31a"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_CREDENTIAL_ROTATION_REGISTER_2026-07-25.pdf",
+      "expectedSha256": "bd43894b09751de2b74f4f3fc0e74d0610b9dae792a73c998e58e7a6bf2ff038",
+      "expectedBytes": 130811,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 130811,
+        "committedSha256": "bd43894b09751de2b74f4f3fc0e74d0610b9dae792a73c998e58e7a6bf2ff038"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_MARKET_VALUE_IMPACT_ANALYSIS_2026-07-22.pdf",
+      "expectedSha256": "df15c05b386a0ca5b773257bbd8596a4b8d06b13d8537df0bf02de7f2c2d7584",
+      "expectedBytes": 9278,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 9278,
+        "committedSha256": "df15c05b386a0ca5b773257bbd8596a4b8d06b13d8537df0bf02de7f2c2d7584"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_OPERATIONAL_RELEASE_EVIDENCE_2026-07-25.json",
+      "expectedSha256": "c7786a98784cf9b24d422fd59b993d3d8207ab27127ae99fac8ed14c7427dfd0",
+      "expectedBytes": 6225,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 6225,
+        "committedSha256": "c7786a98784cf9b24d422fd59b993d3d8207ab27127ae99fac8ed14c7427dfd0"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_OPERATIONAL_RELEASE_EVIDENCE_2026-07-25.md",
+      "expectedSha256": "ec1a29261f997087a06fa31d365d2028ee56968fa15d0f9981740ca0854055d4",
+      "expectedBytes": 10038,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 10038,
+        "committedSha256": "ec1a29261f997087a06fa31d365d2028ee56968fa15d0f9981740ca0854055d4"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_OPERATIONAL_RELEASE_EVIDENCE_2026-07-25.pdf",
+      "expectedSha256": "f0f9622eb41fca13a2704a8f0879b3297c9de86cf54270baa3c9072d30a30a4e",
+      "expectedBytes": 124581,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 124581,
+        "committedSha256": "f0f9622eb41fca13a2704a8f0879b3297c9de86cf54270baa3c9072d30a30a4e"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_ALERT_EVIDENCE_CAPTURE_EXECUTION_REPORT_2026-07-25.md",
+      "expectedSha256": "8e4d4f95e7db1b5a2d3d11083edd8911eeb965e2c24dbb5fbcba2fc2303e30bf",
+      "expectedBytes": 6249,
+      "verification": {
+        "verified": true,
+        "method": "GIT_CLEAN_FILTER_EQUIVALENT",
+        "committedBytes": 6247,
+        "committedSha256": "0de5d8063bc2228cce97e461b74d76540644de37c0ae17edb9fadd27d82eeebb"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_ALERT_EVIDENCE_CAPTURE_EXECUTION_REPORT_2026-07-25.pdf",
+      "expectedSha256": "5a564ec655ce143fd1a8f815fc1f17fc12f00ccbab1a26262dfdd77732cc0924",
+      "expectedBytes": 88519,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 88519,
+        "committedSha256": "5a564ec655ce143fd1a8f815fc1f17fc12f00ccbab1a26262dfdd77732cc0924"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_CI_RELEASE_EVIDENCE_CAPTURE_EXECUTION_REPORT_2026-07-25.md",
+      "expectedSha256": "e6e04e6e56743b5af57fedcc572ad821940ce5fea14753643491455cc11a3f42",
+      "expectedBytes": 6178,
+      "verification": {
+        "verified": true,
+        "method": "GIT_CLEAN_FILTER_EQUIVALENT",
+        "committedBytes": 6173,
+        "committedSha256": "5a86cb532ff7a694e724d74d584e4271b47f08ab81ea059e14efda655b644d5e"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_CI_RELEASE_EVIDENCE_CAPTURE_EXECUTION_REPORT_2026-07-25.pdf",
+      "expectedSha256": "e99caf7ee1a83cc3089ae04130e5241cd5018ba2c4e398968e17defd340eb382",
+      "expectedBytes": 93514,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 93514,
+        "committedSha256": "e99caf7ee1a83cc3089ae04130e5241cd5018ba2c4e398968e17defd340eb382"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_COMMAND_AGENT_DESIGN_FREEZE_2026-07-22.md",
+      "expectedSha256": "ea208c8346fc5eebce20be388a9fcf4ea9d4d9718cdd93bf0e58705a985b5b9e",
+      "expectedBytes": 3743,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 3743,
+        "committedSha256": "ea208c8346fc5eebce20be388a9fcf4ea9d4d9718cdd93bf0e58705a985b5b9e"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_CREDENTIAL_ROTATION_EVIDENCE_CAPTURE_EXECUTION_REPORT_2026-07-25.md",
+      "expectedSha256": "b159dd4243958e0c6550a4819159b3a7f171f830254b1a581c726fbc80851126",
+      "expectedBytes": 6788,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 6788,
+        "committedSha256": "b159dd4243958e0c6550a4819159b3a7f171f830254b1a581c726fbc80851126"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_CREDENTIAL_ROTATION_EVIDENCE_CAPTURE_EXECUTION_REPORT_2026-07-25.pdf",
+      "expectedSha256": "51c35a3ad63f50a4de94a120d04a147057ce8dac992358406423a5279a9498a6",
+      "expectedBytes": 95728,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 95728,
+        "committedSha256": "51c35a3ad63f50a4de94a120d04a147057ce8dac992358406423a5279a9498a6"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_GOVERNANCE_EVIDENCE_CAPTURE_EXECUTION_REPORT_2026-07-25.md",
+      "expectedSha256": "a1e6403331df07f7093c3280cd0af35e95405a8c838e987075d1ad28c81cd395",
+      "expectedBytes": 6026,
+      "verification": {
+        "verified": true,
+        "method": "GIT_CLEAN_FILTER_EQUIVALENT",
+        "committedBytes": 6023,
+        "committedSha256": "7106f52966bb6f3e039ee3628d68a5c8b4e71ef92df2eb720e4e4754038bc663"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_GOVERNANCE_EVIDENCE_CAPTURE_EXECUTION_REPORT_2026-07-25.pdf",
+      "expectedSha256": "81b83949e6fa683b0bee8e3f70bb2d26403e79eb645c0a2be38c234d910ab881",
+      "expectedBytes": 96543,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 96543,
+        "committedSha256": "81b83949e6fa683b0bee8e3f70bb2d26403e79eb645c0a2be38c234d910ab881"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_GUARDRAIL_AND_ENTERPRISE_GATE_RERUN_2026-07-22.pdf",
+      "expectedSha256": "9eb8a295f039b7a6360a4fbca57f0b2176604ff556721c1a7daf9abe404f585d",
+      "expectedBytes": 17349,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 17349,
+        "committedSha256": "9eb8a295f039b7a6360a4fbca57f0b2176604ff556721c1a7daf9abe404f585d"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_OPERATIONAL_RELEASE_EVIDENCE_GATE_EXECUTION_REPORT_2026-07-25.md",
+      "expectedSha256": "7d927cd825b4bc9b1626fbf4b74f2a6236a0f75db89c64a4daad8ae54b1e36b5",
+      "expectedBytes": 9129,
+      "verification": {
+        "verified": true,
+        "method": "GIT_CLEAN_FILTER_EQUIVALENT",
+        "committedBytes": 9126,
+        "committedSha256": "11603c8b3c96b5cc13ffb35b45b9ca9f19c2dc11b80449bca1ebfb90959a9858"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_OPERATIONAL_RELEASE_EVIDENCE_GATE_EXECUTION_REPORT_2026-07-25.pdf",
+      "expectedSha256": "08b834614798449dcecf96dbfc5536e87acd9468d68f8f00c2000d8d52267f5c",
+      "expectedBytes": 110230,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 110230,
+        "committedSha256": "08b834614798449dcecf96dbfc5536e87acd9468d68f8f00c2000d8d52267f5c"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_RECONCILER_EVIDENCE_CAPTURE_EXECUTION_REPORT_2026-07-25.md",
+      "expectedSha256": "0f6ee9fb72dd6001eaba517afe137da62097b0b3e09097d2f4f65888604e73ca",
+      "expectedBytes": 7380,
+      "verification": {
+        "verified": true,
+        "method": "GIT_CLEAN_FILTER_EQUIVALENT",
+        "committedBytes": 7379,
+        "committedSha256": "8c7e23f6d987a8be4d2d0ce8f15c19f316ae3668e2dff388e26ed4ff1eb4fd11"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_RECONCILER_EVIDENCE_CAPTURE_EXECUTION_REPORT_2026-07-25.pdf",
+      "expectedSha256": "59950db082cd0c059d15cc9f1dab2a69c648d219c3293e41a2919ad48fc26136",
+      "expectedBytes": 100595,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 100595,
+        "committedSha256": "59950db082cd0c059d15cc9f1dab2a69c648d219c3293e41a2919ad48fc26136"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_RELEASE_CONTROL_HARDENING_EXECUTION_REPORT_2026-07-24.md",
+      "expectedSha256": "08713511cd860dab77e65f837f196adfc57f718bace490ac19f8323a9dc9492d",
+      "expectedBytes": 14802,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 14802,
+        "committedSha256": "08713511cd860dab77e65f837f196adfc57f718bace490ac19f8323a9dc9492d"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_RELEASE_CONTROL_HARDENING_EXECUTION_REPORT_2026-07-24.pdf",
+      "expectedSha256": "b24dd2ce6be2d17eeb9ddaee4e532f68badafc443af37f6b0419b36eefd4ffd9",
+      "expectedBytes": 19751,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 19751,
+        "committedSha256": "b24dd2ce6be2d17eeb9ddaee4e532f68badafc443af37f6b0419b36eefd4ffd9"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_SCHEDULER_DEPLOYMENT_EVIDENCE_CAPTURE_EXECUTION_REPORT_2026-07-25.md",
+      "expectedSha256": "2de00f54d819d6b7d5e8daaaf9c9f2236221952602a122cdacae85954053981d",
+      "expectedBytes": 4867,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 4867,
+        "committedSha256": "2de00f54d819d6b7d5e8daaaf9c9f2236221952602a122cdacae85954053981d"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_SCHEDULER_DEPLOYMENT_EVIDENCE_CAPTURE_EXECUTION_REPORT_2026-07-25.pdf",
+      "expectedSha256": "a94e8bfc932d60dc0ebdfc35cb7c07d4bbb2cabc638f30c9ad7959af4705f0d1",
+      "expectedBytes": 100823,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 100823,
+        "committedSha256": "a94e8bfc932d60dc0ebdfc35cb7c07d4bbb2cabc638f30c9ad7959af4705f0d1"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json",
+      "expectedSha256": "cbc7fa1c67d4a1ada52212230a8121726c28c34d8cca8272ef9c35776b27a177",
+      "expectedBytes": 8848,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 8848,
+        "committedSha256": "cbc7fa1c67d4a1ada52212230a8121726c28c34d8cca8272ef9c35776b27a177"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.md",
+      "expectedSha256": "37d1aa97efd8f499bfbf964b419dba919e92f66c671fb50eb2146affe9cbbb04",
+      "expectedBytes": 8450,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 8450,
+        "committedSha256": "37d1aa97efd8f499bfbf964b419dba919e92f66c671fb50eb2146affe9cbbb04"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_SKILL_017_ENTERPRISE_RELEASE_GATE_RERUN_2026-07-25.md",
+      "expectedSha256": "6e2748b2661b0d2f6aae47dfe443d32e8a086eebeda290b90769a795764abcfe",
+      "expectedBytes": 11801,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 11801,
+        "committedSha256": "6e2748b2661b0d2f6aae47dfe443d32e8a086eebeda290b90769a795764abcfe"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_SKILL_017_ENTERPRISE_RELEASE_GATE_RERUN_2026-07-25.pdf",
+      "expectedSha256": "a82b46de74baaeeff84c53349a229492840bad36a0e1806c06d41f7ce2c7b93d",
+      "expectedBytes": 121792,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 121792,
+        "committedSha256": "a82b46de74baaeeff84c53349a229492840bad36a0e1806c06d41f7ce2c7b93d"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_SKILLS_016_017_RERUN_REPORT_2026-07-25.md",
+      "expectedSha256": "05e7643e33963498f43afa9729d2423247a94213a8aa0af94b532f550ba75f0d",
+      "expectedBytes": 7394,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 7394,
+        "committedSha256": "05e7643e33963498f43afa9729d2423247a94213a8aa0af94b532f550ba75f0d"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_SKILLS_016_017_RERUN_REPORT_2026-07-25.pdf",
+      "expectedSha256": "698694080bebca2a3f0633a7dcbf3e8dc079666173b586fad00aabe81ae5ce18",
+      "expectedBytes": 76456,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 76456,
+        "committedSha256": "698694080bebca2a3f0633a7dcbf3e8dc079666173b586fad00aabe81ae5ce18"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_SCHEDULER_DEPLOYMENT_EVIDENCE_CAPTURE_RUNBOOK_2026-07-25.md",
+      "expectedSha256": "0b2f1b2120647128dcb62026c7fc2503d98218c41eec17abcbb74f6b05e9ddeb",
+      "expectedBytes": 6134,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 6134,
+        "committedSha256": "0b2f1b2120647128dcb62026c7fc2503d98218c41eec17abcbb74f6b05e9ddeb"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_SCHEDULER_DEPLOYMENT_EVIDENCE_CAPTURE_RUNBOOK_2026-07-25.pdf",
+      "expectedSha256": "294cc4aa942bbe49cf5127b6571729c1095268019e91285d25f3da283c504ef4",
+      "expectedBytes": 98344,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 98344,
+        "committedSha256": "294cc4aa942bbe49cf5127b6571729c1095268019e91285d25f3da283c504ef4"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_INTERNAL_ACTIVATION_GATE_BLOCKER_CLOSURE_AND_NEXT_STAGE_EXECUTION_PROMPT_2026-07-24.md",
+      "expectedSha256": "f295697a86f69aaec9b76aeb7c661f3943d0c159e43839fc652258b06606a928",
+      "expectedBytes": 18635,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 18635,
+        "committedSha256": "f295697a86f69aaec9b76aeb7c661f3943d0c159e43839fc652258b06606a928"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_INTERNAL_ACTIVATION_GATE_BLOCKER_CLOSURE_AND_NEXT_STAGE_EXECUTION_PROMPT_2026-07-24.pdf",
+      "expectedSha256": "d7bc2b2eee3ad3cec0e1cba4a40a86b45ae8b3b30d9ee8e3d160d6d821f6d3d4",
+      "expectedBytes": 159694,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 159694,
+        "committedSha256": "d7bc2b2eee3ad3cec0e1cba4a40a86b45ae8b3b30d9ee8e3d160d6d821f6d3d4"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_INTERNAL_ACTIVATION_GATE_BLOCKER_CLOSURE_AND_NEXT_STAGE_EXECUTION_REPORT_2026-07-24.md",
+      "expectedSha256": "1202bd124891f4106f3b2ffa0f5e2200933e98a273cdb946db2b6075d5228ddd",
+      "expectedBytes": 30611,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 30611,
+        "committedSha256": "1202bd124891f4106f3b2ffa0f5e2200933e98a273cdb946db2b6075d5228ddd"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_INTERNAL_ACTIVATION_GATE_BLOCKER_CLOSURE_AND_NEXT_STAGE_EXECUTION_REPORT_2026-07-24.pdf",
+      "expectedSha256": "e50620921d5e319c6921f40aa4de00b9ad757f9c3ca57ff1f10fd13329b20ac6",
+      "expectedBytes": 39245,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 39245,
+        "committedSha256": "e50620921d5e319c6921f40aa4de00b9ad757f9c3ca57ff1f10fd13329b20ac6"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_INTERNAL_ACTIVATION_GATE_BLOCKER_CLOSURE_AND_NEXT_STAGE_EXECUTION_REPORT_FINAL_2026-07-24.md",
+      "expectedSha256": "0ad2813ff0b3ed7bea7e846b10bcacd01f6779b4f078d9bfee679b570b26a4c3",
+      "expectedBytes": 44054,
+      "verification": {
+        "verified": true,
+        "method": "LINE_ENDING_EQUIVALENT",
+        "committedBytes": 43337,
+        "committedSha256": "436cf18b7fb500a1d930629510eafd1829481450eba840b0cced261697ad010b"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_INTERNAL_ACTIVATION_GATE_BLOCKER_CLOSURE_AND_NEXT_STAGE_EXECUTION_REPORT_FINAL_2026-07-24.pdf",
+      "expectedSha256": "2aeefcc43f9bf5e3e2517f76f2c5d3a3dd4ad5725b39535ab5bc1e201c5014b7",
+      "expectedBytes": 287702,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 287702,
+        "committedSha256": "2aeefcc43f9bf5e3e2517f76f2c5d3a3dd4ad5725b39535ab5bc1e201c5014b7"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_INTERNAL_ACTIVATION_GATE_REMEDIATION_AND_CONTROLLED_PILOT_READINESS_EXECUTION_PROMPT_2026-07-23.md",
+      "expectedSha256": "ca1b8be7647e45e6a43e020952495ab42a4991c6382cb8b1a549ed9861ff3220",
+      "expectedBytes": 14855,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 14855,
+        "committedSha256": "ca1b8be7647e45e6a43e020952495ab42a4991c6382cb8b1a549ed9861ff3220"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_INTERNAL_ACTIVATION_GATE_REMEDIATION_AND_CONTROLLED_PILOT_READINESS_EXECUTION_PROMPT_2026-07-23.pdf",
+      "expectedSha256": "7fef171d6a5b50a30163d6dceccf7c35d96a2a4a606b0b5aba01fec5208cfa23",
+      "expectedBytes": 24660,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 24660,
+        "committedSha256": "7fef171d6a5b50a30163d6dceccf7c35d96a2a4a606b0b5aba01fec5208cfa23"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_INTERNAL_ACTIVATION_GATE_REMEDIATION_AND_CONTROLLED_PILOT_READINESS_EXECUTION_REPORT_2026-07-24.md",
+      "expectedSha256": "1cab89903400774102b0423bce1d57de32fbe2dc9a05ee2f6bbc354a9dc09f3b",
+      "expectedBytes": 19591,
+      "verification": {
+        "verified": true,
+        "method": "GIT_CLEAN_FILTER_EQUIVALENT",
+        "committedBytes": 19590,
+        "committedSha256": "5a10184ec263d45bbdc20eb6a550682f8169379dd540ce464c844346b5af7ccf"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_INTERNAL_ACTIVATION_GATE_REMEDIATION_AND_CONTROLLED_PILOT_READINESS_EXECUTION_REPORT_2026-07-24.pdf",
+      "expectedSha256": "9f8a1faff04e4c77beb285ab5a34b869e0f4d393e84bfbf438b873e416838f0c",
+      "expectedBytes": 29712,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 29712,
+        "committedSha256": "9f8a1faff04e4c77beb285ab5a34b869e0f4d393e84bfbf438b873e416838f0c"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/command-agent-enabled-e2e-state.json",
+      "expectedSha256": "ea03d0a516c72800e45baa8fb80c230d8120750c24748d62f846f952889bad08",
+      "expectedBytes": 1030,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 1030,
+        "committedSha256": "ea03d0a516c72800e45baa8fb80c230d8120750c24748d62f846f952889bad08"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/command-agent-enabled-playwright.json",
+      "expectedSha256": "92c3c05e239615c963192176953f21f6e0d766879913788e22c5b710ffc82847",
+      "expectedBytes": 7393,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 7393,
+        "committedSha256": "92c3c05e239615c963192176953f21f6e0d766879913788e22c5b710ffc82847"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/command-agent-release-control-postgres-smoke.json",
+      "expectedSha256": "c7c364c064c218002388c0d95872b62e94eeddcf0c1874b90543d897147b4e58",
+      "expectedBytes": 1692,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 1692,
+        "committedSha256": "c7c364c064c218002388c0d95872b62e94eeddcf0c1874b90543d897147b4e58"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_NEXT_PHASE_ASSESSMENT_AND_ROADMAP_2026-07-22.md",
+      "expectedSha256": "6612fb22cc5ff5a620fe82a2dc0613d5981df883f8fefbe2b946ecbd2fe7d0d9",
+      "expectedBytes": 39784,
+      "verification": {
+        "verified": true,
+        "method": "GIT_CLEAN_FILTER_EQUIVALENT",
+        "committedBytes": 39783,
+        "committedSha256": "f1dbd49f7aa700e3f16835bd1b1ceb75f6aa09f7bda06915206f1cded38cbadc"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_0_1_EXECUTION_REPORT_2026-07-22.md",
+      "expectedSha256": "e3e87141bc7dc2a9ecf8b3da60e9aa2ad0fb23b48fb1189b7ab9058e0d6db5e0",
+      "expectedBytes": 12412,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 12412,
+        "committedSha256": "e3e87141bc7dc2a9ecf8b3da60e9aa2ad0fb23b48fb1189b7ab9058e0d6db5e0"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_ALERT_EVIDENCE_CAPTURE_EXECUTION_REPORT_2026-07-25.md",
+      "expectedSha256": "8e4d4f95e7db1b5a2d3d11083edd8911eeb965e2c24dbb5fbcba2fc2303e30bf",
+      "expectedBytes": 6249,
+      "verification": {
+        "verified": true,
+        "method": "GIT_CLEAN_FILTER_EQUIVALENT",
+        "committedBytes": 6247,
+        "committedSha256": "0de5d8063bc2228cce97e461b74d76540644de37c0ae17edb9fadd27d82eeebb"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_ALERT_EVIDENCE_CAPTURE_EXECUTION_REPORT_2026-07-25.pdf",
+      "expectedSha256": "bde13f19f9f86a0bd42d543136581b920b847c34d7d4bf55eb12f5644b20dfbf",
+      "expectedBytes": 88519,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 88519,
+        "committedSha256": "bde13f19f9f86a0bd42d543136581b920b847c34d7d4bf55eb12f5644b20dfbf"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_CI_RELEASE_EVIDENCE_CAPTURE_EXECUTION_REPORT_2026-07-25.md",
+      "expectedSha256": "e6e04e6e56743b5af57fedcc572ad821940ce5fea14753643491455cc11a3f42",
+      "expectedBytes": 6178,
+      "verification": {
+        "verified": true,
+        "method": "GIT_CLEAN_FILTER_EQUIVALENT",
+        "committedBytes": 6173,
+        "committedSha256": "5a86cb532ff7a694e724d74d584e4271b47f08ab81ea059e14efda655b644d5e"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_CI_RELEASE_EVIDENCE_CAPTURE_EXECUTION_REPORT_2026-07-25.pdf",
+      "expectedSha256": "e7fd25dba09b46cbe123ee0576095e7abfaa0ec73479423294c29548c5e4d7dc",
+      "expectedBytes": 93514,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 93514,
+        "committedSha256": "e7fd25dba09b46cbe123ee0576095e7abfaa0ec73479423294c29548c5e4d7dc"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_COMMAND_AGENT_EXECUTION_REPORT_2026-07-22.md",
+      "expectedSha256": "fa8429bc7a4ca71185077087855f047de7cb0087c0c4460f1fb07a059968dd9d",
+      "expectedBytes": 7414,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 7414,
+        "committedSha256": "fa8429bc7a4ca71185077087855f047de7cb0087c0c4460f1fb07a059968dd9d"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_CONTROLLED_PILOT_ASSURANCE_COMPLETION_REPORT_2026-07-24.md",
+      "expectedSha256": "5dd7099d34e505183f75734252226d493b73cbd5848eac356ee4f02d1543a31f",
+      "expectedBytes": 45300,
+      "verification": {
+        "verified": true,
+        "method": "LINE_ENDING_EQUIVALENT",
+        "committedBytes": 44568,
+        "committedSha256": "f7deda2020be5c8076d44a4d36ada867e2e8cd817f508760b6f4ae1f0c74b1d8"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_CONTROLLED_PILOT_ASSURANCE_COMPLETION_REPORT_2026-07-24.pdf",
+      "expectedSha256": "96832b2819a472f49b4f5bfa77f191bc416bf2ee4b29ab4c8cf77f40610983ea",
+      "expectedBytes": 229820,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 229820,
+        "committedSha256": "96832b2819a472f49b4f5bfa77f191bc416bf2ee4b29ab4c8cf77f40610983ea"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_CREDENTIAL_ROTATION_EVIDENCE_CAPTURE_EXECUTION_REPORT_2026-07-25.md",
+      "expectedSha256": "b159dd4243958e0c6550a4819159b3a7f171f830254b1a581c726fbc80851126",
+      "expectedBytes": 6788,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 6788,
+        "committedSha256": "b159dd4243958e0c6550a4819159b3a7f171f830254b1a581c726fbc80851126"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_CREDENTIAL_ROTATION_EVIDENCE_CAPTURE_EXECUTION_REPORT_2026-07-25.pdf",
+      "expectedSha256": "42fd6b4e46724f1d03ca949b87beccd5ab0f9151e044f1155218dd6e6414d39d",
+      "expectedBytes": 95728,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 95728,
+        "committedSha256": "42fd6b4e46724f1d03ca949b87beccd5ab0f9151e044f1155218dd6e6414d39d"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_ENTERPRISE_RELEASE_GATE_2026-07-22.md",
+      "expectedSha256": "7b72d430781ab11c05a0d663d9d14bfde068dea61bca250701fa96cf72be37fe",
+      "expectedBytes": 7896,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 7896,
+        "committedSha256": "7b72d430781ab11c05a0d663d9d14bfde068dea61bca250701fa96cf72be37fe"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_GOVERNANCE_EVIDENCE_CAPTURE_EXECUTION_REPORT_2026-07-25.md",
+      "expectedSha256": "a1e6403331df07f7093c3280cd0af35e95405a8c838e987075d1ad28c81cd395",
+      "expectedBytes": 6026,
+      "verification": {
+        "verified": true,
+        "method": "GIT_CLEAN_FILTER_EQUIVALENT",
+        "committedBytes": 6023,
+        "committedSha256": "7106f52966bb6f3e039ee3628d68a5c8b4e71ef92df2eb720e4e4754038bc663"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_GOVERNANCE_EVIDENCE_CAPTURE_EXECUTION_REPORT_2026-07-25.pdf",
+      "expectedSha256": "9cc00cdf428949562c8db62a288bd624a13f39ec3c7aa388ba465bc375d3274e",
+      "expectedBytes": 96543,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 96543,
+        "committedSha256": "9cc00cdf428949562c8db62a288bd624a13f39ec3c7aa388ba465bc375d3274e"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_GUARDRAIL_AND_ENTERPRISE_GATE_RERUN_2026-07-22.md",
+      "expectedSha256": "7a2728bc7845ddb4c27e67fbe92397a223756b967b9f4fa8c7cbf4d8b7090632",
+      "expectedBytes": 10840,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 10840,
+        "committedSha256": "7a2728bc7845ddb4c27e67fbe92397a223756b967b9f4fa8c7cbf4d8b7090632"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_OPERATIONAL_RELEASE_EVIDENCE_GATE_EXECUTION_REPORT_2026-07-25.md",
+      "expectedSha256": "7d927cd825b4bc9b1626fbf4b74f2a6236a0f75db89c64a4daad8ae54b1e36b5",
+      "expectedBytes": 9129,
+      "verification": {
+        "verified": true,
+        "method": "GIT_CLEAN_FILTER_EQUIVALENT",
+        "committedBytes": 9126,
+        "committedSha256": "11603c8b3c96b5cc13ffb35b45b9ca9f19c2dc11b80449bca1ebfb90959a9858"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_OPERATIONAL_RELEASE_EVIDENCE_GATE_EXECUTION_REPORT_2026-07-25.pdf",
+      "expectedSha256": "4cc710077a338463300b2493e1270deed740d23389e4815c7955f6ebc53c489e",
+      "expectedBytes": 110230,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 110230,
+        "committedSha256": "4cc710077a338463300b2493e1270deed740d23389e4815c7955f6ebc53c489e"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_RECONCILER_EVIDENCE_CAPTURE_EXECUTION_REPORT_2026-07-25.md",
+      "expectedSha256": "0f6ee9fb72dd6001eaba517afe137da62097b0b3e09097d2f4f65888604e73ca",
+      "expectedBytes": 7380,
+      "verification": {
+        "verified": true,
+        "method": "GIT_CLEAN_FILTER_EQUIVALENT",
+        "committedBytes": 7379,
+        "committedSha256": "8c7e23f6d987a8be4d2d0ce8f15c19f316ae3668e2dff388e26ed4ff1eb4fd11"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_RECONCILER_EVIDENCE_CAPTURE_EXECUTION_REPORT_2026-07-25.pdf",
+      "expectedSha256": "15d7354ef51e96632c8aaa5d653df5440d39822768a079c40a0a411beba57adc",
+      "expectedBytes": 100595,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 100595,
+        "committedSha256": "15d7354ef51e96632c8aaa5d653df5440d39822768a079c40a0a411beba57adc"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_RELEASE_CONTROL_HARDENING_EXECUTION_REPORT_2026-07-24.md",
+      "expectedSha256": "08713511cd860dab77e65f837f196adfc57f718bace490ac19f8323a9dc9492d",
+      "expectedBytes": 14802,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 14802,
+        "committedSha256": "08713511cd860dab77e65f837f196adfc57f718bace490ac19f8323a9dc9492d"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_RELEASE_CONTROL_HARDENING_EXECUTION_REPORT_2026-07-24.pdf",
+      "expectedSha256": "b24dd2ce6be2d17eeb9ddaee4e532f68badafc443af37f6b0419b36eefd4ffd9",
+      "expectedBytes": 19751,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 19751,
+        "committedSha256": "b24dd2ce6be2d17eeb9ddaee4e532f68badafc443af37f6b0419b36eefd4ffd9"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_SCHEDULER_DEPLOYMENT_EVIDENCE_CAPTURE_EXECUTION_REPORT_2026-07-25.md",
+      "expectedSha256": "3cacd7685739935e90d0a5e421ed3d9aceaaf1849a6993d9d1340f50c7e349b4",
+      "expectedBytes": 889,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 889,
+        "committedSha256": "3cacd7685739935e90d0a5e421ed3d9aceaaf1849a6993d9d1340f50c7e349b4"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_SCHEDULER_DEPLOYMENT_EVIDENCE_CAPTURE_EXECUTION_REPORT_2026-07-25.pdf",
+      "expectedSha256": "5a3dd5c6188d26ff70c484c50756f7ac630a9b1013fbbac504201a52e48d303e",
+      "expectedBytes": 73675,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 73675,
+        "committedSha256": "5a3dd5c6188d26ff70c484c50756f7ac630a9b1013fbbac504201a52e48d303e"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_SKILLS_016_017_RERUN_REPORT_2026-07-25.md",
+      "expectedSha256": "05e7643e33963498f43afa9729d2423247a94213a8aa0af94b532f550ba75f0d",
+      "expectedBytes": 7394,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 7394,
+        "committedSha256": "05e7643e33963498f43afa9729d2423247a94213a8aa0af94b532f550ba75f0d"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_POSTGRES_DEPLOYMENT_SMOKE_REPORT_2026-07-22.md",
+      "expectedSha256": "2f6f2dc0b6885fdc153c76143525216ca015e74026b02ed20133abbfea2d0405",
+      "expectedBytes": 3522,
+      "verification": {
+        "verified": true,
+        "method": "GIT_CLEAN_FILTER_EQUIVALENT",
+        "committedBytes": 3521,
+        "committedSha256": "09f2264e591589cce26318fcc2fb381919dfd31c29554aca9f6cf0c33a1c49c9"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_SKILL_017_ENTERPRISE_RELEASE_GATE_RERUN_2026-07-25.md",
+      "expectedSha256": "6e2748b2661b0d2f6aae47dfe443d32e8a086eebeda290b90769a795764abcfe",
+      "expectedBytes": 11801,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 11801,
+        "committedSha256": "6e2748b2661b0d2f6aae47dfe443d32e8a086eebeda290b90769a795764abcfe"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_SKILL_017_ENTERPRISE_RELEASE_GATE_RERUN_2026-07-25.pdf",
+      "expectedSha256": "96348017dc674d890e9ab831ee438c2f79c0d31ec26de6640c520554814c53f4",
+      "expectedBytes": 121792,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 121792,
+        "committedSha256": "96348017dc674d890e9ab831ee438c2f79c0d31ec26de6640c520554814c53f4"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_INTERNAL_ACTIVATION_GATE_UNBLOCKING_ANALYSIS_AND_EXECUTION_PLAN_2026-07-23.md",
+      "expectedSha256": "c7a3eb2236ac4abf58842ce5de3bdfea4ffb5cbe03ac997e12d990ffbc65e75b",
+      "expectedBytes": 55205,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 55205,
+        "committedSha256": "c7a3eb2236ac4abf58842ce5de3bdfea4ffb5cbe03ac997e12d990ffbc65e75b"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_INTERNAL_ACTIVATION_GATE_UNBLOCKING_ANALYSIS_AND_EXECUTION_PLAN_2026-07-23.pdf",
+      "expectedSha256": "70ec4a203c04fa701e184f522f4ed9f900a78d472b67e43d724b29b68980076a",
+      "expectedBytes": 74027,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 74027,
+        "committedSha256": "70ec4a203c04fa701e184f522f4ed9f900a78d472b67e43d724b29b68980076a"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_INTERNAL_ACTIVATION_GATE_UNBLOCKING_EXECUTION_PROMPT_2026-07-23.md",
+      "expectedSha256": "63867d726326b1be370e53bd771ee0b8362610d89b12cece719a63f9f5944ee1",
+      "expectedBytes": 8497,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 8497,
+        "committedSha256": "63867d726326b1be370e53bd771ee0b8362610d89b12cece719a63f9f5944ee1"
+      }
+    },
+    {
+      "category": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_INTERNAL_ACTIVATION_GATE_UNBLOCKING_EXECUTION_PROMPT_2026-07-23.pdf",
+      "expectedSha256": "e28a33f416d42a9bbbbc44487f9270ccefa1db2df908e144f199ddf4a888cfa4",
+      "expectedBytes": 14942,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 14942,
+        "committedSha256": "e28a33f416d42a9bbbbc44487f9270ccefa1db2df908e144f199ddf4a888cfa4"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "__tests__/authenticated-dashboard-command-surfaces.smoke.test.tsx",
+      "expectedSha256": "f0ef3662fcb2d08a773b3429f69dcd68e0c8356327daba45d87bf757ee458a8a",
+      "expectedBytes": 33368,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 33368,
+        "committedSha256": "f0ef3662fcb2d08a773b3429f69dcd68e0c8356327daba45d87bf757ee458a8a"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": ".env.example",
+      "expectedSha256": "e42d53d61abe72e574e0648183d78e0a279a4e43eef2ff19591f1d164ff46019",
+      "expectedBytes": 4218,
+      "verification": {
+        "verified": true,
+        "method": "GIT_CLEAN_FILTER_EQUIVALENT",
+        "committedBytes": 4131,
+        "committedSha256": "dbcdc060a6ef19c26f39081b15f1296044bdf3a486e99dc6040b96434bc9fd22"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": ".github/workflows/ci.yml",
+      "expectedSha256": "5f83591c383df59f6799ef0287f7b0783635900ee2d92414cbfca72800529a6b",
+      "expectedBytes": 4845,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 4845,
+        "committedSha256": "5f83591c383df59f6799ef0287f7b0783635900ee2d92414cbfca72800529a6b"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "actions/agents/__tests__/command-agent.actions.test.ts",
+      "expectedSha256": "7f39244b92018399b6974b898dc94d942d62f6a33b0ea9795ba23545aff3dbea",
+      "expectedBytes": 6283,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 6283,
+        "committedSha256": "7f39244b92018399b6974b898dc94d942d62f6a33b0ea9795ba23545aff3dbea"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "actions/agents/agent-release-control.actions.ts",
+      "expectedSha256": "f085e1aad88fc371898ba77638441471b73ffaa2cbed0adae5b678deb802d422",
+      "expectedBytes": 9996,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 9996,
+        "committedSha256": "f085e1aad88fc371898ba77638441471b73ffaa2cbed0adae5b678deb802d422"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "actions/agents/command-agent.actions.ts",
+      "expectedSha256": "b05139dfb0ccca4761e0b7293944aa49b8defe197ebbd6d90c3e6a06fe6a3d09",
+      "expectedBytes": 3725,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 3725,
+        "committedSha256": "b05139dfb0ccca4761e0b7293944aa49b8defe197ebbd6d90c3e6a06fe6a3d09"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "actions/assurance/__tests__/workflow-assurance-alert.actions.test.ts",
+      "expectedSha256": "ceec8526aa831a1171d9df531aba878b6849841b384e4f4ded0bf81750303917",
+      "expectedBytes": 2711,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 2711,
+        "committedSha256": "ceec8526aa831a1171d9df531aba878b6849841b384e4f4ded0bf81750303917"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "actions/assurance/workflow-assurance-alert.actions.ts",
+      "expectedSha256": "30c5a012b4b29282e18a37cfab1e90cb780d613c9ba428729b0a0601e54d5306",
+      "expectedBytes": 1255,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 1255,
+        "committedSha256": "30c5a012b4b29282e18a37cfab1e90cb780d613c9ba428729b0a0601e54d5306"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx",
+      "expectedSha256": "01c29efb496c83f24b4c16fc1bea9c65f2cd02e79c7dd211f459f25b9b1f08dc",
+      "expectedBytes": 2474,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 2474,
+        "committedSha256": "01c29efb496c83f24b4c16fc1bea9c65f2cd02e79c7dd211f459f25b9b1f08dc"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "app/api/internal/agents/reconcile-abandoned/__tests__/route.test.ts",
+      "expectedSha256": "b048705d189e9fea3a5ac672ab1ff16f59507f52a51bef3aa01158b30117cae5",
+      "expectedBytes": 8963,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 8963,
+        "committedSha256": "b048705d189e9fea3a5ac672ab1ff16f59507f52a51bef3aa01158b30117cae5"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "app/api/internal/agents/reconcile-abandoned/route.ts",
+      "expectedSha256": "4e9c71981c2b2c7eaae878884e3ddfca20fabfafa601718015693b8b73102ba7",
+      "expectedBytes": 7156,
+      "verification": {
+        "verified": true,
+        "method": "GIT_CLEAN_FILTER_EQUIVALENT",
+        "committedBytes": 7155,
+        "committedSha256": "77ea8589faab2c97bf3b1dac04836601feffdcdb44017ebc86642b8477346164"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "components/agents/__tests__/AgentCommandPanel.test.tsx",
+      "expectedSha256": "91e9f4c916e5ca2d07b5ee82c1c3ba839338a68e4477323c4b1288d2e6fa5e92",
+      "expectedBytes": 7488,
+      "verification": {
+        "verified": true,
+        "method": "GIT_CLEAN_FILTER_EQUIVALENT",
+        "committedBytes": 7487,
+        "committedSha256": "63da91a4451c2513a76c2c549f52ec81332ccb7ecd2c825df2af42ee76334616"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "components/agents/AgentCommandPanel.tsx",
+      "expectedSha256": "4cf7235ceb71d2f560368c315862d723f7ea37f1d7b48645bf98076ca69ef696",
+      "expectedBytes": 15865,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 15865,
+        "committedSha256": "4cf7235ceb71d2f560368c315862d723f7ea37f1d7b48645bf98076ca69ef696"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "components/daily-habit/__tests__/DailyHabitDigestDashboard.test.tsx",
+      "expectedSha256": "0b4c7684bc739d9e591b70bcaf558f1f14d4b534084128056f7b26b707210846",
+      "expectedBytes": 1958,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 1958,
+        "committedSha256": "0b4c7684bc739d9e591b70bcaf558f1f14d4b534084128056f7b26b707210846"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "components/daily-habit/DailyHabitDigestDashboard.tsx",
+      "expectedSha256": "b30b3f5a1c46f5828f4b17afb2ec70ba7a0126d5a75b2b3939f1e99c011a9bf7",
+      "expectedBytes": 12583,
+      "verification": {
+        "verified": true,
+        "method": "GIT_CLEAN_FILTER_EQUIVALENT",
+        "committedBytes": 12582,
+        "committedSha256": "475ee8e40260df2b6d1da7969d0732370d862d273fb07fb8256a0fe0afa94ba1"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "config/permissions.ts",
+      "expectedSha256": "4c2021b1d7e604e0947e897fe8b13e8b03989029c657c17cf1928d8edc590843",
+      "expectedBytes": 16206,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 16206,
+        "committedSha256": "4c2021b1d7e604e0947e897fe8b13e8b03989029c657c17cf1928d8edc590843"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "lib/security/rbac-permissions.ts",
+      "expectedSha256": "3bc1077aec789b19ea15d527d6963bec86a7238a26c08b029a3e35259761475f",
+      "expectedBytes": 23011,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 23011,
+        "committedSha256": "3bc1077aec789b19ea15d527d6963bec86a7238a26c08b029a3e35259761475f"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "package.json",
+      "expectedSha256": "5ec1bae1a307475b003c3f3d95cae63e1170b90d48a87bce09cf0ad17f8e8b00",
+      "expectedBytes": 23502,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 23502,
+        "committedSha256": "5ec1bae1a307475b003c3f3d95cae63e1170b90d48a87bce09cf0ad17f8e8b00"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "playwright.config.ts",
+      "expectedSha256": "b468bfb3f4719194f9c534fdedf8e6f1efb098c12cb1219b26cb3fc37374abda",
+      "expectedBytes": 5083,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 5083,
+        "committedSha256": "b468bfb3f4719194f9c534fdedf8e6f1efb098c12cb1219b26cb3fc37374abda"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "prisma/migrations/20260722150000_agent_runtime_tenant_consistency/migration.sql",
+      "expectedSha256": "60120afc396082326a0028d6b4f5be8c0056d92b2df53d9bc43c5d924e2cec5d",
+      "expectedBytes": 1485,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 1485,
+        "committedSha256": "60120afc396082326a0028d6b4f5be8c0056d92b2df53d9bc43c5d924e2cec5d"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "prisma/migrations/20260722153000_agent_runtime_incident_cascade_consistency/migration.sql",
+      "expectedSha256": "0b4b522a97016d0f3c314f2e6756be76cc6b9ea3937d17104a7bc38df256c146",
+      "expectedBytes": 430,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 430,
+        "committedSha256": "0b4b522a97016d0f3c314f2e6756be76cc6b9ea3937d17104a7bc38df256c146"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "prisma/migrations/20260722160000_agent_runtime_phase_2a_provenance/migration.sql",
+      "expectedSha256": "b17cfa95100676b20853918337b295859e3790fba99e07ba988936ca511c9831",
+      "expectedBytes": 427,
+      "verification": {
+        "verified": true,
+        "method": "GIT_CLEAN_FILTER_EQUIVALENT",
+        "committedBytes": 426,
+        "committedSha256": "30c35626bfd98f74408af3b27aeea5de05a1b537338680caa20cd245621a5361"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "prisma/migrations/20260722161000_agent_runtime_phase_2a_operational_controls/migration.sql",
+      "expectedSha256": "e6da3e097a6ec88d4015202be95fa06183a3f1051dd9d63d4a1b3ea0bd794d7c",
+      "expectedBytes": 84,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 84,
+        "committedSha256": "e6da3e097a6ec88d4015202be95fa06183a3f1051dd9d63d4a1b3ea0bd794d7c"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "prisma/migrations/20260722162000_agent_runtime_tenant_scoped_correlation/migration.sql",
+      "expectedSha256": "cd9373debc557762912be2b0185eb3c1e5a63be563ca7414ce928acc66d6fd0d",
+      "expectedBytes": 204,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 204,
+        "committedSha256": "cd9373debc557762912be2b0185eb3c1e5a63be563ca7414ce928acc66d6fd0d"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "prisma/migrations/20260723100000_agent_runtime_release_control/migration.sql",
+      "expectedSha256": "36cfeaca10404bdecb900e04b6c6059b3f0b1525742601c376d78f4edf158410",
+      "expectedBytes": 6341,
+      "verification": {
+        "verified": true,
+        "method": "GIT_CLEAN_FILTER_EQUIVALENT",
+        "committedBytes": 6340,
+        "committedSha256": "a3bf95ddf2e34ceccff6269b5b2cb7c89dabe38fe6e5f8a80a96d36b42fa327a"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "prisma/migrations/20260724100000_agent_runtime_release_hardening/migration.sql",
+      "expectedSha256": "1b49cff8f3465d4d82d8684f0f990843c9800a9371c178d0ac5066f317adfc60",
+      "expectedBytes": 542,
+      "verification": {
+        "verified": true,
+        "method": "GIT_CLEAN_FILTER_EQUIVALENT",
+        "committedBytes": 541,
+        "committedSha256": "a0cd051bd6c40cedaa1924fc4f9c1faac118f6c261cca493dd87d5bdcee5c112"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "prisma/migrations/20260724113000_agent_runtime_retirement_alert_dead_letter/migration.sql",
+      "expectedSha256": "e6e436d7b9b70a3dc4d1acdabff9309c68b3e55d0e74a74c3575a5f8e2f1f7e2",
+      "expectedBytes": 368,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 368,
+        "committedSha256": "e6e436d7b9b70a3dc4d1acdabff9309c68b3e55d0e74a74c3575a5f8e2f1f7e2"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "prisma/migrations/20260724193000_agent_reconciler_invocation_ledger/migration.sql",
+      "expectedSha256": "d152473fcdf0b5379ad2d18a18681d6597b7a21f654a395a4022ee9fb8c67b8a",
+      "expectedBytes": 1328,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 1328,
+        "committedSha256": "d152473fcdf0b5379ad2d18a18681d6597b7a21f654a395a4022ee9fb8c67b8a"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "prisma/schema.prisma",
+      "expectedSha256": "0ed42e2994b3142519f39b69633f93bdcf3014d0255557657c92695e801203c6",
+      "expectedBytes": 215457,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 215457,
+        "committedSha256": "0ed42e2994b3142519f39b69633f93bdcf3014d0255557657c92695e801203c6"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/__tests__/agent-alert-evidence-capture.test.js",
+      "expectedSha256": "838838fd692f878449caa3c5004f84cc8b40130a0480d466846698dcf74f4a52",
+      "expectedBytes": 10712,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 10712,
+        "committedSha256": "838838fd692f878449caa3c5004f84cc8b40130a0480d466846698dcf74f4a52"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/__tests__/agent-ci-release-evidence-capture.test.js",
+      "expectedSha256": "1227fa6ff73c02c3e7ced2c5dcbcc7816e63a3a3db558fb0193a222a78ffff8f",
+      "expectedBytes": 11924,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 11924,
+        "committedSha256": "1227fa6ff73c02c3e7ced2c5dcbcc7816e63a3a3db558fb0193a222a78ffff8f"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/__tests__/agent-credential-rotation-evidence-capture.test.js",
+      "expectedSha256": "d123772c8063ad8a26c0870865795dda6bdf31c34e3af6fc9da90bb529ebe6e0",
+      "expectedBytes": 15323,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 15323,
+        "committedSha256": "d123772c8063ad8a26c0870865795dda6bdf31c34e3af6fc9da90bb529ebe6e0"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/__tests__/agent-credential-rotation-gate.test.js",
+      "expectedSha256": "c7d1ae40c9232dd331e66e10a30163383179cd49d50b972cfa5a399bfd949f82",
+      "expectedBytes": 7334,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 7334,
+        "committedSha256": "c7d1ae40c9232dd331e66e10a30163383179cd49d50b972cfa5a399bfd949f82"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/__tests__/agent-enabled-pilot-browser-report.test.ts",
+      "expectedSha256": "0921b9c9de03aebd4a0d80c7dc40d7c1b0a21885ddc1499c0cb377851cfe83cc",
+      "expectedBytes": 3140,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 3140,
+        "committedSha256": "0921b9c9de03aebd4a0d80c7dc40d7c1b0a21885ddc1499c0cb377851cfe83cc"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/__tests__/agent-enabled-pilot-persistence-assurance.test.ts",
+      "expectedSha256": "a4783a10016acfe151aad283e999e0a2e2e4f909b35f5b29e876b63dcceed4d4",
+      "expectedBytes": 3437,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 3437,
+        "committedSha256": "a4783a10016acfe151aad283e999e0a2e2e4f909b35f5b29e876b63dcceed4d4"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/__tests__/agent-governance-evidence-capture.test.js",
+      "expectedSha256": "b83d00d7f49c7656533b7e60ff443cc05e4cb5dcdd80b22eef556b185e9198f5",
+      "expectedBytes": 12223,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 12223,
+        "committedSha256": "b83d00d7f49c7656533b7e60ff443cc05e4cb5dcdd80b22eef556b185e9198f5"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/__tests__/agent-operational-release-gate.test.js",
+      "expectedSha256": "6180365cd049e75d3f8ddda39fc16fba99e42b0ece4e6f1a3c25c92465ccd510",
+      "expectedBytes": 20299,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 20299,
+        "committedSha256": "6180365cd049e75d3f8ddda39fc16fba99e42b0ece4e6f1a3c25c92465ccd510"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/__tests__/agent-reconciler-evidence-capture.test.js",
+      "expectedSha256": "a397f9455f5d84333ded7a01afe152910f632531f8282df09899ca0bc11426db",
+      "expectedBytes": 9089,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 9089,
+        "committedSha256": "a397f9455f5d84333ded7a01afe152910f632531f8282df09899ca0bc11426db"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/__tests__/agent-reconciler-schedule.test.js",
+      "expectedSha256": "31358422db073ebef3d26698dbf1e55fd6b297e4d8e47e857e90cd90613d5adf",
+      "expectedBytes": 4401,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 4401,
+        "committedSha256": "31358422db073ebef3d26698dbf1e55fd6b297e4d8e47e857e90cd90613d5adf"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/__tests__/agent-scheduler-deployment-evidence-capture.test.js",
+      "expectedSha256": "aafeda0d0655b1b5e6d85f8c6a936959b6d4affeddf01bab84b8591adce8470a",
+      "expectedBytes": 12276,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 12276,
+        "committedSha256": "aafeda0d0655b1b5e6d85f8c6a936959b6d4affeddf01bab84b8591adce8470a"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/__tests__/raw-error-boundary-gate.test.js",
+      "expectedSha256": "c02196d56b090734d8b3f0ffc17d325e44be64bb26a82b3643292b3876f0f61d",
+      "expectedBytes": 6605,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 6605,
+        "committedSha256": "c02196d56b090734d8b3f0ffc17d325e44be64bb26a82b3643292b3876f0f61d"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/__tests__/release-evidence-ratchet.test.js",
+      "expectedSha256": "dcd4fcbfdcfce45d2d251ab55551b44e11db0499d21448d3a27ac9528ba179e8",
+      "expectedBytes": 8156,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 8156,
+        "committedSha256": "dcd4fcbfdcfce45d2d251ab55551b44e11db0499d21448d3a27ac9528ba179e8"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/__tests__/workflow-assurance-multi-finding-persistence-migration.test.js",
+      "expectedSha256": "020f51c91cf2e580ec19ac206be9896f3dd33195c3aeb375bd6c24e542360e4b",
+      "expectedBytes": 2863,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 2863,
+        "committedSha256": "020f51c91cf2e580ec19ac206be9896f3dd33195c3aeb375bd6c24e542360e4b"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/agent-alert-evidence-capture.js",
+      "expectedSha256": "e4fbde3d833c1f359698022e3d8f37635a5cf1f3b95cf4b9eeb3b97a6f001fb5",
+      "expectedBytes": 20627,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 20627,
+        "committedSha256": "e4fbde3d833c1f359698022e3d8f37635a5cf1f3b95cf4b9eeb3b97a6f001fb5"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/agent-ci-release-evidence-capture.js",
+      "expectedSha256": "52060c580c99a6ae0bfa80b747fd00a12890c99609baeefab38860ae2d938fa5",
+      "expectedBytes": 24792,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 24792,
+        "committedSha256": "52060c580c99a6ae0bfa80b747fd00a12890c99609baeefab38860ae2d938fa5"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/agent-credential-rotation-evidence-capture.js",
+      "expectedSha256": "c252410fee3d6b1b129eb166960807b5a03950a909ebe75c432fcbc78b385e0e",
+      "expectedBytes": 28565,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 28565,
+        "committedSha256": "c252410fee3d6b1b129eb166960807b5a03950a909ebe75c432fcbc78b385e0e"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/agent-credential-rotation-gate.js",
+      "expectedSha256": "58d5721c6b09cd9a3c73db8dd1e556a1fc1111629c145a1b1f2d8779166f5bf3",
+      "expectedBytes": 18187,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 18187,
+        "committedSha256": "58d5721c6b09cd9a3c73db8dd1e556a1fc1111629c145a1b1f2d8779166f5bf3"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/agent-enabled-pilot-browser-report.ts",
+      "expectedSha256": "5984b4adc8833c2c37247cf878943467aedca7b7dcc7e11eef2c0e4a468f151f",
+      "expectedBytes": 3181,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 3181,
+        "committedSha256": "5984b4adc8833c2c37247cf878943467aedca7b7dcc7e11eef2c0e4a468f151f"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/agent-enabled-pilot-e2e-bootstrap.ts",
+      "expectedSha256": "90eccb579c127ac0f60f34ef4f7b1c4b8d28620b0b1c63e05353683473a59c0d",
+      "expectedBytes": 10697,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 10697,
+        "committedSha256": "90eccb579c127ac0f60f34ef4f7b1c4b8d28620b0b1c63e05353683473a59c0d"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/agent-enabled-pilot-persistence-assurance.ts",
+      "expectedSha256": "4680c46bdd770bbdea619d364f52a39f6d1acd4ee47ca3e5734c229db61fdb21",
+      "expectedBytes": 2410,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 2410,
+        "committedSha256": "4680c46bdd770bbdea619d364f52a39f6d1acd4ee47ca3e5734c229db61fdb21"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/agent-governance-evidence-capture.js",
+      "expectedSha256": "3b301c1b0662ca9acc6bfab78742d0d17be859d039caef096b1b1164188c1520",
+      "expectedBytes": 25837,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 25837,
+        "committedSha256": "3b301c1b0662ca9acc6bfab78742d0d17be859d039caef096b1b1164188c1520"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/agent-operational-release-gate.js",
+      "expectedSha256": "f17d80aa356931080171cf50df73f04c1f8bdafb39a12b33347fdfce9e1e63d8",
+      "expectedBytes": 34601,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 34601,
+        "committedSha256": "f17d80aa356931080171cf50df73f04c1f8bdafb39a12b33347fdfce9e1e63d8"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/agent-phase2a-command-gate.js",
+      "expectedSha256": "2d15b89cfd0c9d127f638624e2d3ba86af1a90eb1f6afc0dfea64aeefa1426fa",
+      "expectedBytes": 15098,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 15098,
+        "committedSha256": "2d15b89cfd0c9d127f638624e2d3ba86af1a90eb1f6afc0dfea64aeefa1426fa"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/agent-phase2a-postgres-smoke.js",
+      "expectedSha256": "5d68671b41b2acaba591e0cc6abec38d1cba79b53b40cecdd318feb337f28e5d",
+      "expectedBytes": 4121,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 4121,
+        "committedSha256": "5d68671b41b2acaba591e0cc6abec38d1cba79b53b40cecdd318feb337f28e5d"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/agent-prohibited-action-gate.js",
+      "expectedSha256": "603d842f0f2bb73194936797e239778df89f54930d292f2ab2dccc49ad0c40c2",
+      "expectedBytes": 4184,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 4184,
+        "committedSha256": "603d842f0f2bb73194936797e239778df89f54930d292f2ab2dccc49ad0c40c2"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/agent-protected-data-fingerprint.ts",
+      "expectedSha256": "e56c7ed94ccfbc8830162a9a78b0eeba5c7cc5a34d9b539a3eff90369797d7e0",
+      "expectedBytes": 5142,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 5142,
+        "committedSha256": "e56c7ed94ccfbc8830162a9a78b0eeba5c7cc5a34d9b539a3eff90369797d7e0"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/agent-reconciler-evidence-capture.js",
+      "expectedSha256": "3373fcfd065406a722a6f3eee0e45ad4841d1613f660f0dbdd15a71a9a084648",
+      "expectedBytes": 16235,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 16235,
+        "committedSha256": "3373fcfd065406a722a6f3eee0e45ad4841d1613f660f0dbdd15a71a9a084648"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/agent-reconciler-postgres-smoke.ts",
+      "expectedSha256": "27cb7832ed4a5612b4a0e981d836e94e7c1b341ccbf1fbfd10d2bcdf506c2b06",
+      "expectedBytes": 5717,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 5717,
+        "committedSha256": "27cb7832ed4a5612b4a0e981d836e94e7c1b341ccbf1fbfd10d2bcdf506c2b06"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/agent-release-control-gate.js",
+      "expectedSha256": "cc02f73379bc9b770b2f6b45f524733bed32aeb25d9b5996ec5d66836ce22c63",
+      "expectedBytes": 8827,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 8827,
+        "committedSha256": "cc02f73379bc9b770b2f6b45f524733bed32aeb25d9b5996ec5d66836ce22c63"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/agent-release-control-postgres-smoke.ts",
+      "expectedSha256": "0feaf2737507ff9f3812b02e31d0b5eb24d6e884c75a4e847deaacf005d7e580",
+      "expectedBytes": 17639,
+      "verification": {
+        "verified": true,
+        "method": "GIT_CLEAN_FILTER_EQUIVALENT",
+        "committedBytes": 17637,
+        "committedSha256": "bcb84b4cc98c7a3c66facc9f3e0ed86c09c844a6009104e8c49dbf4b65b7cbfc"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/agent-runtime-phase-2a-provision.js",
+      "expectedSha256": "16d71d1493545615d09b32b3aafd342c00ec121b6f6ad27e7429b9a4d0415fcf",
+      "expectedBytes": 3732,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 3732,
+        "committedSha256": "16d71d1493545615d09b32b3aafd342c00ec121b6f6ad27e7429b9a4d0415fcf"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/agent-runtime-postgres-smoke.js",
+      "expectedSha256": "4d787a9d1961aaab93bceac6d14aabad262caecee07817d8b95a7b23424fd6de",
+      "expectedBytes": 11657,
+      "verification": {
+        "verified": true,
+        "method": "GIT_CLEAN_FILTER_EQUIVALENT",
+        "committedBytes": 11656,
+        "committedSha256": "68a5ec4c2931e1a530da3b4acf94345751937ea719646d2b6e1d6a12007576e0"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/agent-scheduler-deployment-evidence-capture.js",
+      "expectedSha256": "ee9274fb52e1d2b6414a97264d5adb0f77a74b43ff268fb9b6e9100e15f24d8c",
+      "expectedBytes": 28709,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 28709,
+        "committedSha256": "ee9274fb52e1d2b6414a97264d5adb0f77a74b43ff268fb9b6e9100e15f24d8c"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/raw-error-boundary-gate.js",
+      "expectedSha256": "ab8482083724d42ea0e6608c4f3ebf230e4d25d349d69078d1ad54ff6330db77",
+      "expectedBytes": 19254,
+      "verification": {
+        "verified": true,
+        "method": "LINE_ENDING_EQUIVALENT",
+        "committedBytes": 18708,
+        "committedSha256": "aea81c8b6f40967b50862e615239cc3cf3b8b6e2559094127f43eea02e33b2cf"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/release-evidence-ratchet.js",
+      "expectedSha256": "11684e2ebbb4964ed5ee58a780aa900f29e40953426541d8a08f3f9509efc610",
+      "expectedBytes": 19577,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 19577,
+        "committedSha256": "11684e2ebbb4964ed5ee58a780aa900f29e40953426541d8a08f3f9509efc610"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/run-agent-enabled-pilot-e2e.js",
+      "expectedSha256": "750a87bbb2a210fe51c159c36217866027b1a34b330dd92e907203b7700fd733",
+      "expectedBytes": 5683,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 5683,
+        "committedSha256": "750a87bbb2a210fe51c159c36217866027b1a34b330dd92e907203b7700fd733"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/run-agent-reconciler-postgres-smoke.js",
+      "expectedSha256": "8b94097e02c3985801c7654291f3123b7a5b3072007f6c21ea6b7907666e2b88",
+      "expectedBytes": 292,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 292,
+        "committedSha256": "8b94097e02c3985801c7654291f3123b7a5b3072007f6c21ea6b7907666e2b88"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/run-agent-reconciler-schedule.js",
+      "expectedSha256": "7967c860c283a7433a0c4b53dc4f674b44e278624822dabc875a2f5a265f3175",
+      "expectedBytes": 5307,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 5307,
+        "committedSha256": "7967c860c283a7433a0c4b53dc4f674b44e278624822dabc875a2f5a265f3175"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/run-agent-release-control-postgres-smoke.js",
+      "expectedSha256": "1d6d5ab93b021c738baa283457566a62cd3768049f0ec560d70a28296f8d38c5",
+      "expectedBytes": 298,
+      "verification": {
+        "verified": true,
+        "method": "GIT_CLEAN_FILTER_EQUIVALENT",
+        "committedBytes": 297,
+        "committedSha256": "c898588eb1ef18ad7c9658da939245ed5aa6bec75550d68e6dc1aab6b8e0ca50"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/seed-command-agent-cross-tenant-e2e-user.js",
+      "expectedSha256": "54f30ab99f3b6a2ec5d7a0a686664c5092fc3f076e42a8e2953bc41046d72a8e",
+      "expectedBytes": 7390,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 7390,
+        "committedSha256": "54f30ab99f3b6a2ec5d7a0a686664c5092fc3f076e42a8e2953bc41046d72a8e"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/server-only-node-shim.js",
+      "expectedSha256": "0891eabe12b619467a1364ce6ec20bf3fee134498bd84a98652848168ff24cee",
+      "expectedBytes": 256,
+      "verification": {
+        "verified": true,
+        "method": "GIT_CLEAN_FILTER_EQUIVALENT",
+        "committedBytes": 255,
+        "committedSha256": "0fb32ce172f838e44ebedaa24db309b574b4ba200d569aac61dfbe422ed98ada"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/__tests__/agent-control-plane-reconciliation.service.test.ts",
+      "expectedSha256": "73267e09eb6561a13b7d69b66b160f7f265c2b8653c2f5167fc8ec9fb48afcc1",
+      "expectedBytes": 2649,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 2649,
+        "committedSha256": "73267e09eb6561a13b7d69b66b160f7f265c2b8653c2f5167fc8ec9fb48afcc1"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/__tests__/agent-definition.service.test.ts",
+      "expectedSha256": "7207847c7a60a5cc014a8c532c884dc1bfd0a94a09dec31cc41e9b2184f33d3b",
+      "expectedBytes": 2334,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 2334,
+        "committedSha256": "7207847c7a60a5cc014a8c532c884dc1bfd0a94a09dec31cc41e9b2184f33d3b"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/__tests__/agent-execution-control.service.test.ts",
+      "expectedSha256": "561d128c8f10ab2b0db166c2265af9a44d7dd63e82234914fef40c643654dc78",
+      "expectedBytes": 1137,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 1137,
+        "committedSha256": "561d128c8f10ab2b0db166c2265af9a44d7dd63e82234914fef40c643654dc78"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/__tests__/agent-output-validator.service.test.ts",
+      "expectedSha256": "a8be8a0d84b5af2be9dce04ae3cc5a265a5110ae98703396b9713aff6a40b215",
+      "expectedBytes": 3272,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 3272,
+        "committedSha256": "a8be8a0d84b5af2be9dce04ae3cc5a265a5110ae98703396b9713aff6a40b215"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/__tests__/agent-reconciler-auth.service.test.ts",
+      "expectedSha256": "60ae8e484668fa12df4b33bbb288848ca3c48ee415f9e75330b12d3e6fd03e4d",
+      "expectedBytes": 1997,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 1997,
+        "committedSha256": "60ae8e484668fa12df4b33bbb288848ca3c48ee415f9e75330b12d3e6fd03e4d"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/__tests__/agent-reconciler-invocation.service.test.ts",
+      "expectedSha256": "2d22bc70f1ea76f2fa8108099211b914c8f47ec8d31bdaf5e9fead7b6d5904f9",
+      "expectedBytes": 6060,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 6060,
+        "committedSha256": "2d22bc70f1ea76f2fa8108099211b914c8f47ec8d31bdaf5e9fead7b6d5904f9"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/__tests__/agent-release-authorization.service.test.ts",
+      "expectedSha256": "9c7915c7fe31bff45e8883bc22aaf6199f6b79caa8e29b3828715e9b8d8fecf3",
+      "expectedBytes": 8195,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 8195,
+        "committedSha256": "9c7915c7fe31bff45e8883bc22aaf6199f6b79caa8e29b3828715e9b8d8fecf3"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/__tests__/agent-release-control.service.test.ts",
+      "expectedSha256": "73a38d595d54b893dec24aca87b92b1a44b0ffb508a90e05fb2ba7f20c2735ae",
+      "expectedBytes": 6445,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 6445,
+        "committedSha256": "73a38d595d54b893dec24aca87b92b1a44b0ffb508a90e05fb2ba7f20c2735ae"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/__tests__/agent-release-retirement.service.test.ts",
+      "expectedSha256": "3053c2cb88eca88c76244e047f76206b4f5db813c68ea3f40d106d3ef020c3ea",
+      "expectedBytes": 4999,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 4999,
+        "committedSha256": "3053c2cb88eca88c76244e047f76206b4f5db813c68ea3f40d106d3ef020c3ea"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/__tests__/agent-rollout.service.test.ts",
+      "expectedSha256": "f32ab2017671ad58f1a26c5ac31baaa38a68143ddaf607977f89a0e5c98524ec",
+      "expectedBytes": 1819,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 1819,
+        "committedSha256": "f32ab2017671ad58f1a26c5ac31baaa38a68143ddaf607977f89a0e5c98524ec"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/__tests__/agent-run-governance.service.test.ts",
+      "expectedSha256": "45cca77d4ddc1e7c6ec2aba777588a9ee2c63b3e7e0ed28b47312be10be78ae1",
+      "expectedBytes": 4849,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 4849,
+        "committedSha256": "45cca77d4ddc1e7c6ec2aba777588a9ee2c63b3e7e0ed28b47312be10be78ae1"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/__tests__/agent-runner.service.test.ts",
+      "expectedSha256": "748533f810abdfcc4e7c47cf036bcc6b451a4471f2e8ab88385508df77e238b3",
+      "expectedBytes": 6487,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 6487,
+        "committedSha256": "748533f810abdfcc4e7c47cf036bcc6b451a4471f2e8ab88385508df77e238b3"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/__tests__/command-agent-contracts.test.ts",
+      "expectedSha256": "5fa0c52a985b281c41d2dae49cd8a30cb0af1bd47d28cded75e649d79860d913",
+      "expectedBytes": 1130,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 1130,
+        "committedSha256": "5fa0c52a985b281c41d2dae49cd8a30cb0af1bd47d28cded75e649d79860d913"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/__tests__/command-agent.service.test.ts",
+      "expectedSha256": "dd82458cd36b09ed54ac54f416fbaac2af74690ad09fa7599bdea5af369d329c",
+      "expectedBytes": 4065,
+      "verification": {
+        "verified": true,
+        "method": "GIT_CLEAN_FILTER_EQUIVALENT",
+        "committedBytes": 4052,
+        "committedSha256": "3974f99b8b103a858dfb493a14366ea8e75e1c0b0c1db634fad99333d389f6ba"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/__tests__/command-tool-adapters.test.ts",
+      "expectedSha256": "0709afd5881663c31dfa1327b970cfccb4068ab2da2026c62be20c0db9e2ef3e",
+      "expectedBytes": 4695,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 4695,
+        "committedSha256": "0709afd5881663c31dfa1327b970cfccb4068ab2da2026c62be20c0db9e2ef3e"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/agent-contracts.ts",
+      "expectedSha256": "d21d32291a72842c2d676314d9fbc6d9420ad1cf1b0c7c7b00dda77370a1a6f4",
+      "expectedBytes": 2156,
+      "verification": {
+        "verified": true,
+        "method": "GIT_CLEAN_FILTER_EQUIVALENT",
+        "committedBytes": 2155,
+        "committedSha256": "d4557d3991e9f27938830acf58684b2af16dce64aa43f581ba5e5fbefaf785ad"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/agent-control-plane-reconciliation.service.ts",
+      "expectedSha256": "52ecdd89b0617534850e5789fe62a57ea1c811c70108a11d12a594fb1a0e3002",
+      "expectedBytes": 12222,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 12222,
+        "committedSha256": "52ecdd89b0617534850e5789fe62a57ea1c811c70108a11d12a594fb1a0e3002"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/agent-definition.service.ts",
+      "expectedSha256": "bdb72cee7a8138cb81d42b14cd35e94e7e104e1c5fcbbbc53edbacc6a2c60229",
+      "expectedBytes": 4372,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 4372,
+        "committedSha256": "bdb72cee7a8138cb81d42b14cd35e94e7e104e1c5fcbbbc53edbacc6a2c60229"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/agent-execution-control.service.ts",
+      "expectedSha256": "9c6d5627dd77b58be20096a8f9452d47918d7a477304eaf28847147dfdc53f9b",
+      "expectedBytes": 1577,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 1577,
+        "committedSha256": "9c6d5627dd77b58be20096a8f9452d47918d7a477304eaf28847147dfdc53f9b"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/agent-feedback.service.ts",
+      "expectedSha256": "f98bd2a978e702f502f05ed928ef2ecc24d353793ed7aef8bb178c66d0453fa4",
+      "expectedBytes": 1778,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 1778,
+        "committedSha256": "f98bd2a978e702f502f05ed928ef2ecc24d353793ed7aef8bb178c66d0453fa4"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/agent-metrics.service.ts",
+      "expectedSha256": "85171b9269b498e2a6867e790090bd81da7f80015d40b212193a95d45c980336",
+      "expectedBytes": 829,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 829,
+        "committedSha256": "85171b9269b498e2a6867e790090bd81da7f80015d40b212193a95d45c980336"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/agent-output-validator.service.ts",
+      "expectedSha256": "1ae68e7c11872d2fe7116d9036d3743425ff184c607fbb7358c63591f94dee1b",
+      "expectedBytes": 4005,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 4005,
+        "committedSha256": "1ae68e7c11872d2fe7116d9036d3743425ff184c607fbb7358c63591f94dee1b"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/agent-reconciler-auth.service.ts",
+      "expectedSha256": "2eaa0cd81d8a0edd693857ab9dca4847ade0d6a7ad132b956c485dd4b777e99b",
+      "expectedBytes": 1911,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 1911,
+        "committedSha256": "2eaa0cd81d8a0edd693857ab9dca4847ade0d6a7ad132b956c485dd4b777e99b"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/agent-reconciler-invocation.service.ts",
+      "expectedSha256": "7283a4765913f82a259f6385ab7f3157d4d2e1579fc9438cc9f5cfad6b320ece",
+      "expectedBytes": 14295,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 14295,
+        "committedSha256": "7283a4765913f82a259f6385ab7f3157d4d2e1579fc9438cc9f5cfad6b320ece"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/agent-release-contracts.ts",
+      "expectedSha256": "8734f75023bbcbca288ea415690a21b8290ac3b74847c5b2ed0dce4aaf1331e1",
+      "expectedBytes": 5318,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 5318,
+        "committedSha256": "8734f75023bbcbca288ea415690a21b8290ac3b74847c5b2ed0dce4aaf1331e1"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/agent-release-control.service.ts",
+      "expectedSha256": "6fcb4e95d34d8ee39f786839ea370b3474f350630bdda635de3ad21607ba3c00",
+      "expectedBytes": 34747,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 34747,
+        "committedSha256": "6fcb4e95d34d8ee39f786839ea370b3474f350630bdda635de3ad21607ba3c00"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/agent-rollout.service.ts",
+      "expectedSha256": "a49f7f75ae50e55ca2b92af11074948511d5c4faf0c7bf42dd68ff7da4016c28",
+      "expectedBytes": 2386,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 2386,
+        "committedSha256": "a49f7f75ae50e55ca2b92af11074948511d5c4faf0c7bf42dd68ff7da4016c28"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/agent-run-governance.service.ts",
+      "expectedSha256": "73bd6e3cce1fb4349b2cdc0652edbf130a74725bc03355beee94db4609268c33",
+      "expectedBytes": 3453,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 3453,
+        "committedSha256": "73bd6e3cce1fb4349b2cdc0652edbf130a74725bc03355beee94db4609268c33"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/agent-runner.service.ts",
+      "expectedSha256": "7c41d0f24874814d56cc7b4b94fb04d24716f4267798cd949e3bb1df5ab2c393",
+      "expectedBytes": 12169,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 12169,
+        "committedSha256": "7c41d0f24874814d56cc7b4b94fb04d24716f4267798cd949e3bb1df5ab2c393"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/command-agent-contracts.ts",
+      "expectedSha256": "5b6eb21bf12fdd830dfc934f899024332c348de798b5da86758993f19fa3f674",
+      "expectedBytes": 4513,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 4513,
+        "committedSha256": "5b6eb21bf12fdd830dfc934f899024332c348de798b5da86758993f19fa3f674"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/command-agent.service.ts",
+      "expectedSha256": "8c984589ba46e4982eeda26bf7e27abff226b25142e1b395651a90def867aa4a",
+      "expectedBytes": 7994,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 7994,
+        "committedSha256": "8c984589ba46e4982eeda26bf7e27abff226b25142e1b395651a90def867aa4a"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/skills/freshness-evaluator.skill.ts",
+      "expectedSha256": "8440bdedc029f81fef5e931c96a1642110e4dcb350e5ee663040db9f70c7b349",
+      "expectedBytes": 1671,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 1671,
+        "committedSha256": "8440bdedc029f81fef5e931c96a1642110e4dcb350e5ee663040db9f70c7b349"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/skills/role-daily-brief.skill.ts",
+      "expectedSha256": "dcc229cf83867f058f9379201a4baf8f99c44f725b288c9c14a7c2601d15c64e",
+      "expectedBytes": 1064,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 1064,
+        "committedSha256": "dcc229cf83867f058f9379201a4baf8f99c44f725b288c9c14a7c2601d15c64e"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/agents/tools/command-tool-adapters.ts",
+      "expectedSha256": "cae075b90091a9076c8cab8a4591a2ad7eca7182d4c00541d91fc492d1500ea9",
+      "expectedBytes": 9030,
+      "verification": {
+        "verified": true,
+        "method": "GIT_CLEAN_FILTER_EQUIVALENT",
+        "committedBytes": 9029,
+        "committedSha256": "178b7fd3d97c66a3cc41b58a79d754e9920c0468c2948f34c08927850f288efa"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/assurance/__tests__/assurance-alert-delivery.service.test.ts",
+      "expectedSha256": "bab71eec3cf38b93215985dc2b4387a7c8d1b2cb115bcb7f113b1222523fa436",
+      "expectedBytes": 5510,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 5510,
+        "committedSha256": "bab71eec3cf38b93215985dc2b4387a7c8d1b2cb115bcb7f113b1222523fa436"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/assurance/__tests__/assurance-alert-recovery.service.test.ts",
+      "expectedSha256": "ffa6c5df6fcff48c670029c4774e24b829a52abcd9031f2b3974b880cc18a4f0",
+      "expectedBytes": 6251,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 6251,
+        "committedSha256": "ffa6c5df6fcff48c670029c4774e24b829a52abcd9031f2b3974b880cc18a4f0"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/assurance/assurance-alert-delivery.service.ts",
+      "expectedSha256": "4d493cace8d244e8036d048dfc8b1dd34c63502b56f479cb2c71c3c3816af508",
+      "expectedBytes": 8384,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 8384,
+        "committedSha256": "4d493cace8d244e8036d048dfc8b1dd34c63502b56f479cb2c71c3c3816af508"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/assurance/assurance-alert-recovery.service.ts",
+      "expectedSha256": "f640ca6257d7ad3766698df78d2e1a41b9c9f5b7a0b22c630826d7995fa5d8d8",
+      "expectedBytes": 5768,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 5768,
+        "committedSha256": "f640ca6257d7ad3766698df78d2e1a41b9c9f5b7a0b22c630826d7995fa5d8d8"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/assurance/assurance-control-tower.service.ts",
+      "expectedSha256": "d24b4c8b3cdac924ef39f1a50a55093281459e4ca866c02845af6daa0564ef8d",
+      "expectedBytes": 14899,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 14899,
+        "committedSha256": "d24b4c8b3cdac924ef39f1a50a55093281459e4ca866c02845af6daa0564ef8d"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/assurance/assurance-incident-contracts.ts",
+      "expectedSha256": "fd1be970a1962d062a5b40d3087b9f42260ce9af74195292ee5319c2ef8d206e",
+      "expectedBytes": 5291,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 5291,
+        "committedSha256": "fd1be970a1962d062a5b40d3087b9f42260ce9af74195292ee5319c2ef8d206e"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/assurance/assurance-registry-contracts.ts",
+      "expectedSha256": "fc46b2d9962cfa739d9844d635c9086da391aedbff75810ee4c5ee70ed5b507b",
+      "expectedBytes": 41605,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 41605,
+        "committedSha256": "fc46b2d9962cfa739d9844d635c9086da391aedbff75810ee4c5ee70ed5b507b"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "services/assurance/assurance-registry.service.ts",
+      "expectedSha256": "0cdd8df1682376e5d3a644236e4bc70ea5a0751bc9544599d4e77c52f2500127",
+      "expectedBytes": 129463,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 129463,
+        "committedSha256": "0cdd8df1682376e5d3a644236e4bc70ea5a0751bc9544599d4e77c52f2500127"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "tests/e2e/auth.setup.ts",
+      "expectedSha256": "499a4fa6b084aab3d6c955232617ad84373f04730713423ad75cab950c77265d",
+      "expectedBytes": 4976,
+      "verification": {
+        "verified": true,
+        "method": "LINE_ENDING_EQUIVALENT",
+        "committedBytes": 4818,
+        "committedSha256": "ca9d00de84e6762857f49176e261171153de5cf2be9377fccc4836e13c1b405d"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "tests/e2e/command-agent-enabled-pilot.spec.ts",
+      "expectedSha256": "5e0b5fe461a8eeb3e894ef23cba8837b5100d21d75b2fcc97708dc8cbfd98321",
+      "expectedBytes": 4815,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 4815,
+        "committedSha256": "5e0b5fe461a8eeb3e894ef23cba8837b5100d21d75b2fcc97708dc8cbfd98321"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "tests/e2e/command-agent-kill-switch.spec.ts",
+      "expectedSha256": "f32060dfa4766886be13f2b06746ace50800096c0cf2e8ef60d201a9691c1afc",
+      "expectedBytes": 946,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 946,
+        "committedSha256": "f32060dfa4766886be13f2b06746ace50800096c0cf2e8ef60d201a9691c1afc"
+      }
+    },
+    {
+      "category": "RUNTIME_SOURCE_TEST",
+      "path": "tests/e2e/command-agent-release-degradation.spec.ts",
+      "expectedSha256": "0fd0bd03779617a76ed3c0e6bee9b2af47d719a6f62650d9b0ffd3c1f10519bf",
+      "expectedBytes": 7922,
+      "verification": {
+        "verified": true,
+        "method": "EXACT_COMMITTED_BLOB",
+        "committedBytes": 7922,
+        "committedSha256": "0fd0bd03779617a76ed3c0e6bee9b2af47d719a6f62650d9b0ffd3c1f10519bf"
+      }
+    }
+  ],
+  "currentChanges": [
+    {
+      "status": "M",
+      "path": "actions/brands/getOrgBrands.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "actions/categories/getOrgCategories.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "components/landing/connected-workflow.tsx",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "components/manager-action-center/__tests__/BranchDailyCloseReviewCommand.test.tsx",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RECONCILER_DEPLOYMENT_CONTRACT_2026-07-24.md",
+      "candidateCategory": "RELEASE_EVIDENCE_DOC",
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RECONCILER_DEPLOYMENT_CONTRACT_2026-07-24.pdf",
+      "candidateCategory": "RELEASE_EVIDENCE_DOC",
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_CREDENTIAL_ROTATION_REGISTER_2026-07-25.pdf",
+      "candidateCategory": "RELEASE_EVIDENCE_DOC",
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_OPERATIONAL_RELEASE_EVIDENCE_2026-07-25.pdf",
+      "candidateCategory": "RELEASE_EVIDENCE_DOC",
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json",
+      "candidateCategory": "RELEASE_EVIDENCE_DOC",
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.md",
+      "candidateCategory": "RELEASE_EVIDENCE_DOC",
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_SKILL_017_ENTERPRISE_RELEASE_GATE_RERUN_2026-07-25.md",
+      "candidateCategory": "RELEASE_EVIDENCE_DOC",
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_SKILL_017_ENTERPRISE_RELEASE_GATE_RERUN_2026-07-25.pdf",
+      "candidateCategory": "RELEASE_EVIDENCE_DOC",
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "package.json",
+      "candidateCategory": "RUNTIME_SOURCE_TEST",
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "scripts/__tests__/landing-public-content.test.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "scripts/__tests__/landing-refinement-content.test.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "scripts/__tests__/module-surface-inventory-item-ownership.test.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "scripts/agent-phase2a-command-gate.js",
+      "candidateCategory": "RUNTIME_SOURCE_TEST",
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "services/leakage/cash-shortage-policy.service.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/modules/__tests__/module-entitlement.service.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_CONTROLLED_PILOT_ASSURANCE_COMPLETION_REPORT_2026-07-24.md",
+      "candidateCategory": "RELEASE_EVIDENCE_DOC",
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_CONTROLLED_PILOT_ASSURANCE_COMPLETION_REPORT_2026-07-24.pdf",
+      "candidateCategory": "RELEASE_EVIDENCE_DOC",
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_SKILL_017_ENTERPRISE_RELEASE_GATE_RERUN_2026-07-25.md",
+      "candidateCategory": "RELEASE_EVIDENCE_DOC",
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_SKILL_017_ENTERPRISE_RELEASE_GATE_RERUN_2026-07-25.pdf",
+      "candidateCategory": "RELEASE_EVIDENCE_DOC",
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/api-route-guard-inventory.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/api-route-guard-inventory.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/ci-release-readiness.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/ci-release-readiness.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/ledger-close-truth-readiness.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/ledger-close-truth-readiness.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/offline-pos-fiscal-replay-readiness.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/offline-pos-fiscal-replay-readiness.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/payment-cash-truth-readiness.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/payment-cash-truth-readiness.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/payroll/payroll-immutability-runtime-check.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/payroll/payroll-immutability-runtime-check.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/prisma-migration-deployment-readiness.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/prisma-migration-deployment-readiness.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/public-identity-abuse-readiness.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/public-identity-abuse-readiness.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/purchasing-ap-consolidation-readiness.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/purchasing-ap-consolidation-readiness.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/release-secret-preflight.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/release-secret-preflight.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/report-trust-export-readiness.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/report-trust-export-readiness.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/role-based-operating-cockpit-readiness.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/role-based-operating-cockpit-readiness.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/settings-surface-classification.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/settings-surface-classification.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/skills-life-cycle/STOQUIFY_OHADA_LEADERSHIP_RELEASE_EVIDENCE_INDEX_2026-07-11.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/skills-life-cycle/stoquify-ohada-leadership-release-evidence-index-2026-07-11.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/statutory-country-pack-production-readiness.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/statutory-country-pack-production-readiness.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_AUTHORIZED_SCOPE_REQUIREMENTS_AUDIT_2026-07-25.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_AUTHORIZED_SCOPE_REQUIREMENTS_AUDIT_2026-07-25.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_AUTHORIZED_SCOPE_REQUIREMENTS_AUDIT_2026-07-25.pdf",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASED_EXECUTION_COMPLETION_AUDIT_2026-07-25.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASED_EXECUTION_COMPLETION_AUDIT_2026-07-25.pdf",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.pdf",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_ENTRY_DECISION_2026-07-25.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_ENTRY_DECISION_2026-07-25.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_PILOT_EXIT_REGISTER_2026-07-25.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_ENTRY_DECISION_2026-07-25.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_ENTRY_DECISION_2026-07-25.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.pdf",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_PROMOTION_GATE_CONTRACT_2026-07-25.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_RELEASE_EVIDENCE_CLASSIFICATION_HARDENING_EXECUTION_REPORT_2026-07-25.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_RELEASE_EVIDENCE_CLASSIFICATION_HARDENING_EXECUTION_REPORT_2026-07-25.pdf",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "docs/codex prompts/stoquify-codex-maximum-results-workflow.md",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/codex prompts/stoquify-codex-maximum-results-workflow.txt",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/stoquify ambitions/STOQUIFY_CODEX_ENTERPRISE_OPERATING_WORKFLOW_2026-07-24.md",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/stoquify ambitions/STOQUIFY_CODEX_ENTERPRISE_OPERATING_WORKFLOW_2026-07-24.pdf",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/stoquify ambitions/STOQUIFY_CODEX_ENTERPRISE_OPERATING_WORKFLOW_2026-07-24.txt",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/stoquify ambitions/STOQUIFY_ENTERPRISE_PROOF_DRIVEN_ARCHITECTURE_ASSESSMENT_2026-07-24.md",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/stoquify ambitions/STOQUIFY_ENTERPRISE_PROOF_DRIVEN_ARCHITECTURE_ASSESSMENT_2026-07-24.pdf",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/stoquify ambitions/STOQUIFY_ENTERPRISE_PROOF_DRIVEN_ARCHITECTURE_ASSESSMENT_2026-07-24.txt",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/stoquify ambitions/STOQUIFY_PROOF_DRIVEN_ENTERPRISE_TRANSFORMATION_PROGRAM_2026-07-24.pdf",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/stoquify ambitions/STOQUIFY_TRANSFORMATION_PROGRAM_PLATFORM_OUTCOMES_2026-07-24.pdf",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/__tests__/agent-phase-promotion-gate.test.js",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "scripts/__tests__/agent-phase2a-freeze-commit-gate.test.js",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "scripts/__tests__/agent-phased-execution-requirements-gate.test.js",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "scripts/agent-phase-promotion-gate.js",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "scripts/agent-phase2a-freeze-commit-gate.js",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "scripts/agent-phased-execution-requirements-gate.js",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_AUTHORIZED_SCOPE_REQUIREMENTS_AUDIT_2026-07-25.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_AUTHORIZED_SCOPE_REQUIREMENTS_AUDIT_2026-07-25.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_AUTHORIZED_SCOPE_REQUIREMENTS_AUDIT_2026-07-25.pdf",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASED_EXECUTION_COMPLETION_AUDIT_2026-07-25.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASED_EXECUTION_COMPLETION_AUDIT_2026-07-25.pdf",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_ENTRY_DECISION_2026-07-25.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_ENTRY_DECISION_2026-07-25.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_ENTRY_DECISION_2026-07-25.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_ENTRY_DECISION_2026-07-25.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_RELEASE_EVIDENCE_CLASSIFICATION_HARDENING_EXECUTION_REPORT_2026-07-25.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_RELEASE_EVIDENCE_CLASSIFICATION_HARDENING_EXECUTION_REPORT_2026-07-25.pdf",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/skills-life-cycle/STOQUIFY_OHADA_LEADERSHIP_RELEASE_EVIDENCE_INDEX_2026-07-11.pdf",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    }
+  ],
+  "blockers": [],
+  "safety": {
+    "historicalManifestRewritten": false,
+    "businessDataRead": false,
+    "businessWriteAuthorityAdded": false,
+    "activationAttempted": false,
+    "phase3Started": false,
+    "secretValuesPrinted": false
+  }
+}

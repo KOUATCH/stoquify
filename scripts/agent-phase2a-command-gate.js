@@ -23,6 +23,8 @@ const requiredFiles = [
   "scripts/run-agent-reconciler-schedule.js",
   "scripts/run-agent-reconciler-postgres-smoke.js",
   "scripts/agent-operational-release-gate.js",
+  "scripts/agent-phased-execution-requirements-gate.js",
+  "scripts/agent-phase2a-freeze-commit-gate.js",
   "scripts/agent-reconciler-evidence-capture.js",
   "scripts/agent-scheduler-deployment-evidence-capture.js",
   "scripts/agent-alert-evidence-capture.js",
@@ -36,6 +38,8 @@ const requiredFiles = [
   "scripts/__tests__/agent-ci-release-evidence-capture.test.js",
   "scripts/__tests__/agent-credential-rotation-evidence-capture.test.js",
   "scripts/__tests__/agent-operational-release-gate.test.js",
+  "scripts/__tests__/agent-phased-execution-requirements-gate.test.js",
+  "scripts/__tests__/agent-phase2a-freeze-commit-gate.test.js",
   "scripts/run-agent-enabled-pilot-e2e.js",
   "scripts/seed-command-agent-cross-tenant-e2e-user.js",
   "tests/e2e/command-agent-enabled-pilot.spec.ts",
@@ -44,6 +48,7 @@ const requiredFiles = [
   "prisma/migrations/20260722161000_agent_runtime_phase_2a_operational_controls/migration.sql",
   "prisma/migrations/20260724193000_agent_reconciler_invocation_ledger/migration.sql",
   "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_OPERATIONAL_RELEASE_EVIDENCE_2026-07-25.json",
+  "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_CANDIDATE_FILE_MANIFEST_2026-07-25.json",
 ];
 const prohibitedDependencies = [
   "ai",
@@ -117,6 +122,12 @@ function main() {
   const operationalReleaseGate = read(
     "scripts/agent-operational-release-gate.js",
   );
+  const phasedExecutionRequirementsGate = read(
+    "scripts/agent-phased-execution-requirements-gate.js",
+  );
+  const phase2aFreezeCommitGate = read(
+    "scripts/agent-phase2a-freeze-commit-gate.js",
+  );
   const reconcilerEvidenceCapture = read(
     "scripts/agent-reconciler-evidence-capture.js",
   );
@@ -142,6 +153,10 @@ function main() {
   if (
     !packageJson.scripts?.["agent:operational-release:report"] ||
     !packageJson.scripts?.["agent:operational-release:gate"] ||
+    !packageJson.scripts?.["agent:phased-execution:audit:report"] ||
+    !packageJson.scripts?.["agent:phased-execution:audit:gate"] ||
+    !packageJson.scripts?.["agent:phase2a:freeze:report"] ||
+    !packageJson.scripts?.["agent:phase2a:freeze:gate"] ||
     !packageJson.scripts?.["agent:reconciler:evidence:report"] ||
     !packageJson.scripts?.["agent:reconciler:evidence:gate"] ||
     !packageJson.scripts?.["agent:reconciler:evidence:apply"] ||
@@ -166,9 +181,25 @@ function main() {
     !packageJson.scripts?.["verify:release"]?.includes(
       "npm run agent:operational-release:gate",
     ) ||
+    !packageJson.scripts?.["verify:release"]?.includes(
+      "npm run agent:phased-execution:audit:gate",
+    ) ||
+    !packageJson.scripts?.["verify:release"]?.includes(
+      "npm run agent:phase2a:freeze:gate",
+    ) ||
     !operationalReleaseGate.includes("READY_FOR_INDEPENDENT_REVIEW") ||
     !operationalReleaseGate.includes("activationAuthorized: false") ||
     !operationalReleaseGate.includes("evaluateRotationRegister") ||
+    !phasedExecutionRequirementsGate.includes("authorizedScopeComplete") ||
+    !phasedExecutionRequirementsGate.includes("fullProgramComplete: false") ||
+    !phasedExecutionRequirementsGate.includes("activationAuthorized: false") ||
+    !phasedExecutionRequirementsGate.includes("phase3Authorized: false") ||
+    !phase2aFreezeCommitGate.includes("evaluateFreezeCommit") ||
+    !phase2aFreezeCommitGate.includes("activationAuthorized: false") ||
+    !phase2aFreezeCommitGate.includes("phase3Authorized: false") ||
+    !phase2aFreezeCommitGate.includes(
+      "STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_CANDIDATE_FILE_MANIFEST_2026-07-25.json",
+    ) ||
     !reconcilerEvidenceCapture.includes(
       "authorizationHeadersRetained: false",
     ) ||

@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import { hasRbacPermission } from "@/lib/security/rbac-permissions";
 import { db } from "@/prisma/db";
 import {
+  ApplicationError,
   BusinessRuleError,
   ConflictError,
   ForbiddenError,
@@ -197,7 +198,13 @@ async function runSerializable<T>(
           "Cash-shortage policy changed concurrently. Retry the command.",
         );
       }
-      throw error;
+      if (error instanceof ApplicationError) throw error;
+      throw new ApplicationError(
+        "INTERNAL_ERROR",
+        "Cash-shortage policy persistence failed.",
+        500,
+        false,
+      );
     }
   }
 

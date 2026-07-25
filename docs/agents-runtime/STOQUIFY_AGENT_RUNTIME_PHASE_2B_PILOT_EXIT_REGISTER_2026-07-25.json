@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "registerId": "stoquify-agent-runtime-phase-2b-pilot-exit-2026-07-25",
+  "declaredStatus": "NOT_STARTED",
+  "releaseBinding": {
+    "commitSha": null,
+    "artifactDigest": null,
+    "evidenceBundleHash": null
+  },
+  "pilot": {
+    "activationDecisionReference": null,
+    "allowlistedTenantScopeHash": null,
+    "allowlistedRoleScopeHash": null,
+    "startedAt": null,
+    "endedAt": null,
+    "observationWindowHours": 0,
+    "successfulRunCount": 0,
+    "failedRunCount": 0
+  },
+  "safety": {
+    "businessWriteAuthorityObserved": null,
+    "crossTenantViolationCount": null,
+    "prohibitedExecutionCount": null,
+    "secretExposureCount": null
+  },
+  "operations": {
+    "monitoringEvidenceReference": null,
+    "supportEvidenceReference": null,
+    "rollbackExercisePassed": false,
+    "rollbackExerciseReference": null,
+    "incidentEvidenceReference": null
+  },
+  "incidents": {
+    "criticalCount": null,
+    "highCount": null,
+    "unresolvedCount": null
+  },
+  "approvals": {
+    "product": {
+      "decision": "PENDING",
+      "actorDirectoryId": null,
+      "approvalReference": null,
+      "decidedAt": null
+    },
+    "security": {
+      "decision": "PENDING",
+      "actorDirectoryId": null,
+      "approvalReference": null,
+      "decidedAt": null
+    },
+    "financeDomain": {
+      "decision": "PENDING",
+      "actorDirectoryId": null,
+      "approvalReference": null,
+      "decidedAt": null
+    },
+    "release": {
+      "decision": "PENDING",
+      "actorDirectoryId": null,
+      "approvalReference": null,
+      "decidedAt": null
+    }
+  },
+  "phase3Recommendation": false,
+  "phase3Authorized": false,
+  "secretValuesPrinted": false
+}

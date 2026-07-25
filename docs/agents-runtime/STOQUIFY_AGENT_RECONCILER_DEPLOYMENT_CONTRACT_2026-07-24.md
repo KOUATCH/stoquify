@@ -174,8 +174,8 @@ Verified locally:
 - Focused alert, operational, and reconciler evidence regression passed: 3 suites and 32 tests.
 - Focused governance, operational, alert, and reconciler evidence regression passed: 4 suites and 44 tests.
 - Focused CI/release, governance, operational, alert, and reconciler evidence regression passed: 5 suites and 56 tests.
-- Focused scheduler-deployment, credential, CI/release, governance, operational, alert, and reconciler evidence regression passed: 8 suites and 83 tests.
-- Full repository regression passed: 474 suites and 2,862 tests, with 3 suites and 15 tests intentionally skipped. A focused eight-suite, 83-test `--detectOpenHandles` run was clean.
+- Focused release-index, scheduler-deployment, credential, CI/release, governance, operational, alert, and reconciler evidence regression passed: 9 suites and 88 tests.
+- Full repository regression passed: 474 suites and 2,863 tests, with 3 suites and 15 tests intentionally skipped. Jest emitted the known intermittent forced-worker-exit warning after completion; a focused nine-suite, 88-test `--detectOpenHandles` run was clean.
 - Full TypeScript validation passed.
 - Production build passed with an explicit 8 GB Node heap and valid post-build output.
 - PostgreSQL smoke rejected overlap and conflicting replay.

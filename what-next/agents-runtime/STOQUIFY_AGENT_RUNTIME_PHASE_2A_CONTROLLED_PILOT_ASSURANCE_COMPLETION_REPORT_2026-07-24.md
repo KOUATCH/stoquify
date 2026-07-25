@@ -37,6 +37,7 @@ The repository is now materially stronger. It has:
 - A provider-neutral governance evidence collector that rejects local E2E identities, binds real approvals and six-owner coverage to the frozen release, and patches governance fields only.
 - A provider-neutral CI/release evidence collector that binds clean CI, certified package proof, artifact, deployment, browser report, and allowlists into one immutable release identity.
 - A provider-neutral credential evidence collector that requires all 15 classes exactly once, rejects value-bearing evidence, binds a fresh security attestation to that frozen inactive release, and patches only the credential register and its operational hash/reference.
+- A hardened global release-evidence ratchet that separates malformed evidence from clear fail-closed readiness and retains every unresolved authority condition as a release blocker.
 
 The final local package is `PILOT_CERTIFIED`, but it is not activated. `activatedAt` remains null.
 
@@ -301,6 +302,22 @@ The collector performs an ephemeral invalid-auth probe and an authenticated quer
 
 A ready capture can update only the value-free credential register and the operational credential-rotation hash/reference binding. It cannot rotate a credential itself, change another operational evidence section, alter status, or authorize activation. Nine collector tests and eight credential-gate tests passed. The real preflight remains correctly blocked on `CREDENTIAL_EVIDENCE_URL_MISSING`; no credential event, identity, approval, or evidence artifact was fabricated.
 
+### 3.16 Global release-evidence classification hardening
+
+Implemented:
+
+- `scripts/release-evidence-ratchet.js`
+- `scripts/__tests__/release-evidence-ratchet.test.js`
+- Separate structural clarity and release-readiness predicates
+- Explicit readiness release blockers
+- Correct release-mode `blocked` status
+- `history_cursor_signing_secret` environment condition
+- Skill 017 no-go guidance in the generated index
+
+The prior synthesis treated every blocked readiness artifact as structurally malformed. The corrected contract accepts a blocked summary only when its status and counts are explicit and coherent, then retains it as a hard `readiness:<artifact-id>` release blocker. Malformed JSON, missing summaries, unknown statuses, impossible counts, and contradictory ready/blocker combinations remain structural failures.
+
+The current index passes all 11 structural checks and remains blocked by six real release conditions: statutory readiness, production database readiness, three production-purpose signing secrets, and the production database target. Five focused tests and the complete nine-suite, 88-test release/operational evidence bundle passed; focused open-handle detection was clean.
+
 ## 4. PostgreSQL Release-Control Evidence
 
 The final PostgreSQL smoke passed with:
@@ -343,10 +360,10 @@ The scheduler-ledger PostgreSQL smoke also passed:
 | Verification | Result |
 |---|---|
 | Focused error-boundary Jest | 24 suites, 99 tests passed |
-| Complete Jest | 474 suites passed, 3 skipped; 2,862 tests passed, 15 skipped |
+| Complete Jest | 474 suites passed, 3 skipped; 2,863 tests passed, 15 skipped |
 | Scheduler-focused Jest | 5 suites, 33 tests passed |
 | Credential-rotation gate Jest | 1 suite, 8 tests passed |
-| All focused operational-evidence Jest | 8 suites, 83 tests passed; `--detectOpenHandles` clean |
+| All focused release and operational evidence Jest | 9 suites, 88 tests passed; `--detectOpenHandles` clean |
 | Full TypeScript check | Passed |
 | Production build | Passed across the complete route tree with an explicit 8 GB Node heap; three existing image warnings |
 | Focused ESLint | Passed |
@@ -642,7 +659,7 @@ The final repository-controlled verification pass produced the following additio
 | Raw error-boundary fail gate | Passed; 0 active unsafe findings, 88 reviewed safe classifications |
 | Command action non-leakage regression | Passed; unexpected runtime details map to non-exposing `INTERNAL_ERROR` |
 | Focused runtime regression bundle | 24 suites, 99 tests passed |
-| Complete Jest run | 474 suites passed, 3 skipped; 2,862 tests passed, 15 skipped |
+| Complete Jest run | 474 suites passed, 3 skipped; 2,863 tests passed, 15 skipped; intermittent forced-worker-exit warning after completion |
 | Full TypeScript check | Passed |
 | Production build | Passed |
 | Agent runtime gates | Passed: read-only registry, prohibited-action boundary, release-control safeguards |
@@ -654,12 +671,12 @@ The final repository-controlled verification pass produced the following additio
 | Phase 2A PostgreSQL smoke | Passed: feedback uniqueness, cross-tenant rejection, provenance round trip |
 | Release-control PostgreSQL smoke | Passed: replay, conflict, drift suspension, retirement, dead-letter and recovery evidence |
 | Reconciler-ledger PostgreSQL smoke | Passed: overlap rejection, completed replay, conflicting replay rejection, stale-lease recovery, terminal failure, and zero active leases |
-| Credential-rotation register | 15 credential classes; value-free report generated; release gate blocked on 17 genuine security-evidence gaps |
+| Credential-rotation register | 15 credential classes; value-free report generated; release gate blocked on 31 genuine security-evidence gaps |
 | Operational release evidence | Value-free register generated; fail-closed on 152 real deployment/governance evidence gaps; activation authority always false |
 | CI release readiness | Ready, 11/11 checks |
 | Prisma migration safety | Ready, 8/8 checks; 34 migrations; zero destructive findings |
-| Release secret preflight | Conditional locally; six production-secret warnings, enforcement off |
-| Release evidence synthesis | Conditional; 10/11 structural checks and three release-only blockers |
+| Release secret preflight | Blocked in release mode; 2/8 checks ready and six production-secret blockers |
+| Release evidence synthesis | Blocked; 11/11 structural checks passed, zero structural blockers, and six explicit release blockers |
 | Statutory country-pack production gate | Blocked, 10/12; source artifact hash and expert approval are absent |
 
 The release-control smoke remained fail-closed: the final package was `PILOT_CERTIFIED`, never activated, alert transport was unavailable because no managed webhook was configured, and activation was rejected for stale reconciliation. Synthetic smoke identities and E2E ownership records are test evidence only.
@@ -700,6 +717,7 @@ Detailed ordered rerun: `docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_SKILLS_016_0
 - Reconciler readiness evidence collector, sanitized window contract, hash-bound scheduler patch, runbook, and focused tests
 - Machine-readable credential-rotation register, Markdown/PDF rendering, fail-closed validator, package commands, and focused tests
 - Unified operational release evidence register, validator, package/release wiring, Phase 2A ratchet, and focused tests
+- Global release-evidence structural/readiness classification hardening, history cursor secret condition, and five focused tests
 - Workflow Assurance alert delivery and cash-shortage persistence boundaries
 - Raw error-boundary policy gate and regression tests
 - Command Agent action non-leakage regression
