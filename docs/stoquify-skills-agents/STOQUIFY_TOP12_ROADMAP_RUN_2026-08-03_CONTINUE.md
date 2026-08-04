@@ -1,0 +1,5046 @@
+
+> STOQUIFY@0.1.0 roadmap:top12
+> node scripts/roadmap-top12-runner.js --skip-prisma
+
+{
+  "programmeId": "stoquify-top12-2026-08-02",
+  "status": "CONTROL_READY_EXECUTION_BLOCKED",
+  "controlReady": true,
+  "promotionReady": false,
+  "activationAuthorizedByGate": false,
+  "phase3AuthorizedByGate": false,
+  "control": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "summary": {
+      "capabilities": 12,
+      "foundations": 7,
+      "workItems": 63,
+      "completedWorkItems": 8,
+      "inProgressWorkItems": 1,
+      "externalInputBlockedWorkItems": 7
+    }
+  },
+  "baselineMismatches": [],
+  "phase2b": {
+    "status": "BLOCKED",
+    "checks": 23,
+    "passed": 2,
+    "blockers": 21
+  },
+  "externalInputs": {
+    "status": "EXTERNAL_INPUTS_REQUIRED",
+    "checks": 13,
+    "passed": 1,
+    "blockers": 102
+  }
+}
+{
+  "schemaVersion": 1,
+  "runId": "top12-eval-eb67635ebcbecfaf",
+  "generatedAt": "2026-08-03T14:35:58.155Z",
+  "status": "PRIORITIZATION_READY_NOT_EXECUTED",
+  "behavioralExecution": false,
+  "productionActivationAuthorized": false,
+  "source": {
+    "catalogPath": "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json",
+    "catalogHash": "sha256:fd04f5b662cde7b082ba03e4c78ea79aaf69ca21d39b99972268a3637fa1c255",
+    "schemaVersion": "1.0.0",
+    "executionStatus": "NOT_TESTED",
+    "totalCases": 999
+  },
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [
+      "SOURCE_CONTAINS_NOT_TESTED_CASES; harness prioritizes but does not certify behavior."
+    ],
+    "caseCount": 999
+  },
+  "prioritization": {
+    "requestedLimit": 150,
+    "selectedCaseCount": 150,
+    "policy": "deterministic-category-and-risk-tag-score-v1",
+    "summary": {
+      "byCategory": {
+        "adversarial": 103,
+        "evidence_trust": 7,
+        "access_control": 40
+      },
+      "byCapability": {
+        "S19": 11,
+        "S23": 11,
+        "S24": 11,
+        "S27": 11,
+        "stoquify-cash-reconciliation-agent": 11,
+        "stoquify-payroll-workforce-agent": 11,
+        "S15": 11,
+        "S08": 10,
+        "S01": 5,
+        "S02": 5,
+        "S03": 5,
+        "S04": 5,
+        "S05": 5,
+        "S06": 5,
+        "S07": 5,
+        "S09": 5,
+        "S10": 5,
+        "S11": 5,
+        "S12": 5,
+        "S13": 5,
+        "S14": 3
+      },
+      "byRiskTag": {
+        "FINANCIAL_OR_REGULATED": 66,
+        "NO_SIDE_EFFECT_REQUIRED": 150,
+        "PRIVACY_SECRET": 115,
+        "PROMPT_INJECTION": 103,
+        "REPLAY_IDEMPOTENCY": 11,
+        "STALE_OR_UNSUPPORTED_EVIDENCE": 12,
+        "TENANT_AUTHORIZATION": 45
+      }
+    },
+    "selectedCases": [
+      {
+        "rank": 1,
+        "caseId": "S19-adversarial-01",
+        "capabilityId": "S19",
+        "capability": "stoquify-cash-exception-triage",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 150,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 2,
+        "caseId": "S19-adversarial-02",
+        "capabilityId": "S19",
+        "capability": "stoquify-cash-exception-triage",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 150,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 3,
+        "caseId": "S19-adversarial-03",
+        "capabilityId": "S19",
+        "capability": "stoquify-cash-exception-triage",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 150,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 4,
+        "caseId": "S19-adversarial-04",
+        "capabilityId": "S19",
+        "capability": "stoquify-cash-exception-triage",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 150,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 5,
+        "caseId": "S19-adversarial-05",
+        "capabilityId": "S19",
+        "capability": "stoquify-cash-exception-triage",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 150,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 6,
+        "caseId": "S23-adversarial-01",
+        "capabilityId": "S23",
+        "capability": "stoquify-po-receipt-invoice-variance",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 150,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 7,
+        "caseId": "S23-adversarial-02",
+        "capabilityId": "S23",
+        "capability": "stoquify-po-receipt-invoice-variance",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 150,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 8,
+        "caseId": "S23-adversarial-03",
+        "capabilityId": "S23",
+        "capability": "stoquify-po-receipt-invoice-variance",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 150,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 9,
+        "caseId": "S23-adversarial-04",
+        "capabilityId": "S23",
+        "capability": "stoquify-po-receipt-invoice-variance",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 150,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 10,
+        "caseId": "S23-adversarial-05",
+        "capabilityId": "S23",
+        "capability": "stoquify-po-receipt-invoice-variance",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 150,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 11,
+        "caseId": "S24-adversarial-01",
+        "capabilityId": "S24",
+        "capability": "stoquify-supplier-commitment-payment-risk",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 150,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 12,
+        "caseId": "S24-adversarial-02",
+        "capabilityId": "S24",
+        "capability": "stoquify-supplier-commitment-payment-risk",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 150,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 13,
+        "caseId": "S24-adversarial-03",
+        "capabilityId": "S24",
+        "capability": "stoquify-supplier-commitment-payment-risk",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 150,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 14,
+        "caseId": "S24-adversarial-04",
+        "capabilityId": "S24",
+        "capability": "stoquify-supplier-commitment-payment-risk",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 150,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 15,
+        "caseId": "S24-adversarial-05",
+        "capabilityId": "S24",
+        "capability": "stoquify-supplier-commitment-payment-risk",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 150,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 16,
+        "caseId": "S27-adversarial-01",
+        "capabilityId": "S27",
+        "capability": "stoquify-payroll-readiness-variance",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 150,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 17,
+        "caseId": "S27-adversarial-02",
+        "capabilityId": "S27",
+        "capability": "stoquify-payroll-readiness-variance",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 150,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 18,
+        "caseId": "S27-adversarial-03",
+        "capabilityId": "S27",
+        "capability": "stoquify-payroll-readiness-variance",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 150,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 19,
+        "caseId": "S27-adversarial-04",
+        "capabilityId": "S27",
+        "capability": "stoquify-payroll-readiness-variance",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 150,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 20,
+        "caseId": "S27-adversarial-05",
+        "capabilityId": "S27",
+        "capability": "stoquify-payroll-readiness-variance",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 150,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 21,
+        "caseId": "stoquify-cash-reconciliation-agent-adversarial-01",
+        "capabilityId": "stoquify-cash-reconciliation-agent",
+        "capability": "stoquify-cash-reconciliation-agent",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 150,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 22,
+        "caseId": "stoquify-cash-reconciliation-agent-adversarial-02",
+        "capabilityId": "stoquify-cash-reconciliation-agent",
+        "capability": "stoquify-cash-reconciliation-agent",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 150,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 23,
+        "caseId": "stoquify-cash-reconciliation-agent-adversarial-03",
+        "capabilityId": "stoquify-cash-reconciliation-agent",
+        "capability": "stoquify-cash-reconciliation-agent",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 150,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 24,
+        "caseId": "stoquify-cash-reconciliation-agent-adversarial-04",
+        "capabilityId": "stoquify-cash-reconciliation-agent",
+        "capability": "stoquify-cash-reconciliation-agent",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 150,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 25,
+        "caseId": "stoquify-cash-reconciliation-agent-adversarial-05",
+        "capabilityId": "stoquify-cash-reconciliation-agent",
+        "capability": "stoquify-cash-reconciliation-agent",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 150,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 26,
+        "caseId": "stoquify-payroll-workforce-agent-adversarial-01",
+        "capabilityId": "stoquify-payroll-workforce-agent",
+        "capability": "stoquify-payroll-workforce-agent",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 150,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 27,
+        "caseId": "stoquify-payroll-workforce-agent-adversarial-02",
+        "capabilityId": "stoquify-payroll-workforce-agent",
+        "capability": "stoquify-payroll-workforce-agent",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 150,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 28,
+        "caseId": "stoquify-payroll-workforce-agent-adversarial-03",
+        "capabilityId": "stoquify-payroll-workforce-agent",
+        "capability": "stoquify-payroll-workforce-agent",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 150,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 29,
+        "caseId": "stoquify-payroll-workforce-agent-adversarial-04",
+        "capabilityId": "stoquify-payroll-workforce-agent",
+        "capability": "stoquify-payroll-workforce-agent",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 150,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 30,
+        "caseId": "stoquify-payroll-workforce-agent-adversarial-05",
+        "capabilityId": "stoquify-payroll-workforce-agent",
+        "capability": "stoquify-payroll-workforce-agent",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 150,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 31,
+        "caseId": "S15-adversarial-01",
+        "capabilityId": "S15",
+        "capability": "stoquify-offline-replay-awareness",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 145,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION",
+          "REPLAY_IDEMPOTENCY"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 32,
+        "caseId": "S15-adversarial-02",
+        "capabilityId": "S15",
+        "capability": "stoquify-offline-replay-awareness",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 145,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION",
+          "REPLAY_IDEMPOTENCY"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 33,
+        "caseId": "S15-adversarial-03",
+        "capabilityId": "S15",
+        "capability": "stoquify-offline-replay-awareness",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 145,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION",
+          "REPLAY_IDEMPOTENCY"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 34,
+        "caseId": "S15-adversarial-04",
+        "capabilityId": "S15",
+        "capability": "stoquify-offline-replay-awareness",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 145,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION",
+          "REPLAY_IDEMPOTENCY"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 35,
+        "caseId": "S15-adversarial-05",
+        "capabilityId": "S15",
+        "capability": "stoquify-offline-replay-awareness",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 145,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION",
+          "REPLAY_IDEMPOTENCY"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 36,
+        "caseId": "S19-stale-evidence-01",
+        "capabilityId": "S19",
+        "capability": "stoquify-cash-exception-triage",
+        "category": "evidence_trust",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 145,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "STALE_OR_UNSUPPORTED_EVIDENCE"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 37,
+        "caseId": "S23-stale-evidence-01",
+        "capabilityId": "S23",
+        "capability": "stoquify-po-receipt-invoice-variance",
+        "category": "evidence_trust",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 145,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "STALE_OR_UNSUPPORTED_EVIDENCE"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 38,
+        "caseId": "S24-stale-evidence-01",
+        "capabilityId": "S24",
+        "capability": "stoquify-supplier-commitment-payment-risk",
+        "category": "evidence_trust",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 145,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "STALE_OR_UNSUPPORTED_EVIDENCE"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 39,
+        "caseId": "S27-stale-evidence-01",
+        "capabilityId": "S27",
+        "capability": "stoquify-payroll-readiness-variance",
+        "category": "evidence_trust",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 145,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "STALE_OR_UNSUPPORTED_EVIDENCE"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 40,
+        "caseId": "stoquify-cash-reconciliation-agent-stale-evidence-01",
+        "capabilityId": "stoquify-cash-reconciliation-agent",
+        "capability": "stoquify-cash-reconciliation-agent",
+        "category": "evidence_trust",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 145,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "STALE_OR_UNSUPPORTED_EVIDENCE"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 41,
+        "caseId": "stoquify-payroll-workforce-agent-stale-evidence-01",
+        "capabilityId": "stoquify-payroll-workforce-agent",
+        "capability": "stoquify-payroll-workforce-agent",
+        "category": "evidence_trust",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 145,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "STALE_OR_UNSUPPORTED_EVIDENCE"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 42,
+        "caseId": "S19-access_control-01",
+        "capabilityId": "S19",
+        "capability": "stoquify-cash-exception-triage",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 143,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 43,
+        "caseId": "S19-access_control-02",
+        "capabilityId": "S19",
+        "capability": "stoquify-cash-exception-triage",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 143,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 44,
+        "caseId": "S19-access_control-03",
+        "capabilityId": "S19",
+        "capability": "stoquify-cash-exception-triage",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 143,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 45,
+        "caseId": "S19-access_control-04",
+        "capabilityId": "S19",
+        "capability": "stoquify-cash-exception-triage",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 143,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 46,
+        "caseId": "S19-access_control-05",
+        "capabilityId": "S19",
+        "capability": "stoquify-cash-exception-triage",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 143,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 47,
+        "caseId": "S23-access_control-01",
+        "capabilityId": "S23",
+        "capability": "stoquify-po-receipt-invoice-variance",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 143,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 48,
+        "caseId": "S23-access_control-02",
+        "capabilityId": "S23",
+        "capability": "stoquify-po-receipt-invoice-variance",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 143,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 49,
+        "caseId": "S23-access_control-03",
+        "capabilityId": "S23",
+        "capability": "stoquify-po-receipt-invoice-variance",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 143,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 50,
+        "caseId": "S23-access_control-04",
+        "capabilityId": "S23",
+        "capability": "stoquify-po-receipt-invoice-variance",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 143,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 51,
+        "caseId": "S23-access_control-05",
+        "capabilityId": "S23",
+        "capability": "stoquify-po-receipt-invoice-variance",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 143,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 52,
+        "caseId": "S24-access_control-01",
+        "capabilityId": "S24",
+        "capability": "stoquify-supplier-commitment-payment-risk",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 143,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 53,
+        "caseId": "S24-access_control-02",
+        "capabilityId": "S24",
+        "capability": "stoquify-supplier-commitment-payment-risk",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 143,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 54,
+        "caseId": "S24-access_control-03",
+        "capabilityId": "S24",
+        "capability": "stoquify-supplier-commitment-payment-risk",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 143,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 55,
+        "caseId": "S24-access_control-04",
+        "capabilityId": "S24",
+        "capability": "stoquify-supplier-commitment-payment-risk",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 143,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 56,
+        "caseId": "S24-access_control-05",
+        "capabilityId": "S24",
+        "capability": "stoquify-supplier-commitment-payment-risk",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 143,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 57,
+        "caseId": "S27-access_control-01",
+        "capabilityId": "S27",
+        "capability": "stoquify-payroll-readiness-variance",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 143,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 58,
+        "caseId": "S27-access_control-02",
+        "capabilityId": "S27",
+        "capability": "stoquify-payroll-readiness-variance",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 143,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 59,
+        "caseId": "S27-access_control-03",
+        "capabilityId": "S27",
+        "capability": "stoquify-payroll-readiness-variance",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 143,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 60,
+        "caseId": "S27-access_control-04",
+        "capabilityId": "S27",
+        "capability": "stoquify-payroll-readiness-variance",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 143,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 61,
+        "caseId": "S27-access_control-05",
+        "capabilityId": "S27",
+        "capability": "stoquify-payroll-readiness-variance",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 143,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 62,
+        "caseId": "stoquify-cash-reconciliation-agent-access_control-01",
+        "capabilityId": "stoquify-cash-reconciliation-agent",
+        "capability": "stoquify-cash-reconciliation-agent",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 143,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 63,
+        "caseId": "stoquify-cash-reconciliation-agent-access_control-02",
+        "capabilityId": "stoquify-cash-reconciliation-agent",
+        "capability": "stoquify-cash-reconciliation-agent",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 143,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 64,
+        "caseId": "stoquify-cash-reconciliation-agent-access_control-03",
+        "capabilityId": "stoquify-cash-reconciliation-agent",
+        "capability": "stoquify-cash-reconciliation-agent",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 143,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 65,
+        "caseId": "stoquify-cash-reconciliation-agent-access_control-04",
+        "capabilityId": "stoquify-cash-reconciliation-agent",
+        "capability": "stoquify-cash-reconciliation-agent",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 143,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 66,
+        "caseId": "stoquify-cash-reconciliation-agent-access_control-05",
+        "capabilityId": "stoquify-cash-reconciliation-agent",
+        "capability": "stoquify-cash-reconciliation-agent",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 143,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 67,
+        "caseId": "stoquify-payroll-workforce-agent-access_control-01",
+        "capabilityId": "stoquify-payroll-workforce-agent",
+        "capability": "stoquify-payroll-workforce-agent",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 143,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 68,
+        "caseId": "stoquify-payroll-workforce-agent-access_control-02",
+        "capabilityId": "stoquify-payroll-workforce-agent",
+        "capability": "stoquify-payroll-workforce-agent",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 143,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 69,
+        "caseId": "stoquify-payroll-workforce-agent-access_control-03",
+        "capabilityId": "stoquify-payroll-workforce-agent",
+        "capability": "stoquify-payroll-workforce-agent",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 143,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 70,
+        "caseId": "stoquify-payroll-workforce-agent-access_control-04",
+        "capabilityId": "stoquify-payroll-workforce-agent",
+        "capability": "stoquify-payroll-workforce-agent",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 143,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 71,
+        "caseId": "stoquify-payroll-workforce-agent-access_control-05",
+        "capabilityId": "stoquify-payroll-workforce-agent",
+        "capability": "stoquify-payroll-workforce-agent",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 143,
+        "riskTags": [
+          "FINANCIAL_OR_REGULATED",
+          "NO_SIDE_EFFECT_REQUIRED",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 72,
+        "caseId": "S08-access_control-01",
+        "capabilityId": "S08",
+        "capability": "stoquify-redaction-disclosure-policy",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 140,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 73,
+        "caseId": "S08-access_control-02",
+        "capabilityId": "S08",
+        "capability": "stoquify-redaction-disclosure-policy",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 140,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 74,
+        "caseId": "S08-access_control-03",
+        "capabilityId": "S08",
+        "capability": "stoquify-redaction-disclosure-policy",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 140,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 75,
+        "caseId": "S08-access_control-04",
+        "capabilityId": "S08",
+        "capability": "stoquify-redaction-disclosure-policy",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 140,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 76,
+        "caseId": "S08-access_control-05",
+        "capabilityId": "S08",
+        "capability": "stoquify-redaction-disclosure-policy",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 140,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 77,
+        "caseId": "S15-stale-evidence-01",
+        "capabilityId": "S15",
+        "capability": "stoquify-offline-replay-awareness",
+        "category": "evidence_trust",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 140,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "REPLAY_IDEMPOTENCY",
+          "STALE_OR_UNSUPPORTED_EVIDENCE"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 78,
+        "caseId": "S15-access_control-01",
+        "capabilityId": "S15",
+        "capability": "stoquify-offline-replay-awareness",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 138,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "REPLAY_IDEMPOTENCY",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 79,
+        "caseId": "S15-access_control-02",
+        "capabilityId": "S15",
+        "capability": "stoquify-offline-replay-awareness",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 138,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "REPLAY_IDEMPOTENCY",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 80,
+        "caseId": "S15-access_control-03",
+        "capabilityId": "S15",
+        "capability": "stoquify-offline-replay-awareness",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 138,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "REPLAY_IDEMPOTENCY",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 81,
+        "caseId": "S15-access_control-04",
+        "capabilityId": "S15",
+        "capability": "stoquify-offline-replay-awareness",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 138,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "REPLAY_IDEMPOTENCY",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 82,
+        "caseId": "S15-access_control-05",
+        "capabilityId": "S15",
+        "capability": "stoquify-offline-replay-awareness",
+        "category": "access_control",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 138,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "REPLAY_IDEMPOTENCY",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 83,
+        "caseId": "S01-adversarial-01",
+        "capabilityId": "S01",
+        "capability": "stoquify-trusted-context-resolver",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 84,
+        "caseId": "S01-adversarial-02",
+        "capabilityId": "S01",
+        "capability": "stoquify-trusted-context-resolver",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 85,
+        "caseId": "S01-adversarial-03",
+        "capabilityId": "S01",
+        "capability": "stoquify-trusted-context-resolver",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 86,
+        "caseId": "S01-adversarial-04",
+        "capabilityId": "S01",
+        "capability": "stoquify-trusted-context-resolver",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 87,
+        "caseId": "S01-adversarial-05",
+        "capabilityId": "S01",
+        "capability": "stoquify-trusted-context-resolver",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 88,
+        "caseId": "S02-adversarial-01",
+        "capabilityId": "S02",
+        "capability": "stoquify-permission-entitlement-guard",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 89,
+        "caseId": "S02-adversarial-02",
+        "capabilityId": "S02",
+        "capability": "stoquify-permission-entitlement-guard",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 90,
+        "caseId": "S02-adversarial-03",
+        "capabilityId": "S02",
+        "capability": "stoquify-permission-entitlement-guard",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 91,
+        "caseId": "S02-adversarial-04",
+        "capabilityId": "S02",
+        "capability": "stoquify-permission-entitlement-guard",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 92,
+        "caseId": "S02-adversarial-05",
+        "capabilityId": "S02",
+        "capability": "stoquify-permission-entitlement-guard",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION",
+          "TENANT_AUTHORIZATION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 93,
+        "caseId": "S03-adversarial-01",
+        "capabilityId": "S03",
+        "capability": "stoquify-evidence-grounded-retrieval",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 94,
+        "caseId": "S03-adversarial-02",
+        "capabilityId": "S03",
+        "capability": "stoquify-evidence-grounded-retrieval",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 95,
+        "caseId": "S03-adversarial-03",
+        "capabilityId": "S03",
+        "capability": "stoquify-evidence-grounded-retrieval",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 96,
+        "caseId": "S03-adversarial-04",
+        "capabilityId": "S03",
+        "capability": "stoquify-evidence-grounded-retrieval",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 97,
+        "caseId": "S03-adversarial-05",
+        "capabilityId": "S03",
+        "capability": "stoquify-evidence-grounded-retrieval",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 98,
+        "caseId": "S04-adversarial-01",
+        "capabilityId": "S04",
+        "capability": "stoquify-safe-action-planner",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 99,
+        "caseId": "S04-adversarial-02",
+        "capabilityId": "S04",
+        "capability": "stoquify-safe-action-planner",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 100,
+        "caseId": "S04-adversarial-03",
+        "capabilityId": "S04",
+        "capability": "stoquify-safe-action-planner",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 101,
+        "caseId": "S04-adversarial-04",
+        "capabilityId": "S04",
+        "capability": "stoquify-safe-action-planner",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 102,
+        "caseId": "S04-adversarial-05",
+        "capabilityId": "S04",
+        "capability": "stoquify-safe-action-planner",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 103,
+        "caseId": "S05-adversarial-01",
+        "capabilityId": "S05",
+        "capability": "stoquify-approval-step-up-coordinator",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 104,
+        "caseId": "S05-adversarial-02",
+        "capabilityId": "S05",
+        "capability": "stoquify-approval-step-up-coordinator",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 105,
+        "caseId": "S05-adversarial-03",
+        "capabilityId": "S05",
+        "capability": "stoquify-approval-step-up-coordinator",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 106,
+        "caseId": "S05-adversarial-04",
+        "capabilityId": "S05",
+        "capability": "stoquify-approval-step-up-coordinator",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 107,
+        "caseId": "S05-adversarial-05",
+        "capabilityId": "S05",
+        "capability": "stoquify-approval-step-up-coordinator",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 108,
+        "caseId": "S06-adversarial-01",
+        "capabilityId": "S06",
+        "capability": "stoquify-idempotent-tool-executor",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 109,
+        "caseId": "S06-adversarial-02",
+        "capabilityId": "S06",
+        "capability": "stoquify-idempotent-tool-executor",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 110,
+        "caseId": "S06-adversarial-03",
+        "capabilityId": "S06",
+        "capability": "stoquify-idempotent-tool-executor",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 111,
+        "caseId": "S06-adversarial-04",
+        "capabilityId": "S06",
+        "capability": "stoquify-idempotent-tool-executor",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 112,
+        "caseId": "S06-adversarial-05",
+        "capabilityId": "S06",
+        "capability": "stoquify-idempotent-tool-executor",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 113,
+        "caseId": "S07-adversarial-01",
+        "capabilityId": "S07",
+        "capability": "stoquify-agent-evidence-recorder",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 114,
+        "caseId": "S07-adversarial-02",
+        "capabilityId": "S07",
+        "capability": "stoquify-agent-evidence-recorder",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 115,
+        "caseId": "S07-adversarial-03",
+        "capabilityId": "S07",
+        "capability": "stoquify-agent-evidence-recorder",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 116,
+        "caseId": "S07-adversarial-04",
+        "capabilityId": "S07",
+        "capability": "stoquify-agent-evidence-recorder",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 117,
+        "caseId": "S07-adversarial-05",
+        "capabilityId": "S07",
+        "capability": "stoquify-agent-evidence-recorder",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 118,
+        "caseId": "S08-adversarial-01",
+        "capabilityId": "S08",
+        "capability": "stoquify-redaction-disclosure-policy",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 119,
+        "caseId": "S08-adversarial-02",
+        "capabilityId": "S08",
+        "capability": "stoquify-redaction-disclosure-policy",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 120,
+        "caseId": "S08-adversarial-03",
+        "capabilityId": "S08",
+        "capability": "stoquify-redaction-disclosure-policy",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 121,
+        "caseId": "S08-adversarial-04",
+        "capabilityId": "S08",
+        "capability": "stoquify-redaction-disclosure-policy",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 122,
+        "caseId": "S08-adversarial-05",
+        "capabilityId": "S08",
+        "capability": "stoquify-redaction-disclosure-policy",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 123,
+        "caseId": "S09-adversarial-01",
+        "capabilityId": "S09",
+        "capability": "stoquify-freshness-trust-evaluator",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION",
+          "STALE_OR_UNSUPPORTED_EVIDENCE"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 124,
+        "caseId": "S09-adversarial-02",
+        "capabilityId": "S09",
+        "capability": "stoquify-freshness-trust-evaluator",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION",
+          "STALE_OR_UNSUPPORTED_EVIDENCE"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 125,
+        "caseId": "S09-adversarial-03",
+        "capabilityId": "S09",
+        "capability": "stoquify-freshness-trust-evaluator",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION",
+          "STALE_OR_UNSUPPORTED_EVIDENCE"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 126,
+        "caseId": "S09-adversarial-04",
+        "capabilityId": "S09",
+        "capability": "stoquify-freshness-trust-evaluator",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION",
+          "STALE_OR_UNSUPPORTED_EVIDENCE"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 127,
+        "caseId": "S09-adversarial-05",
+        "capabilityId": "S09",
+        "capability": "stoquify-freshness-trust-evaluator",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION",
+          "STALE_OR_UNSUPPORTED_EVIDENCE"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 128,
+        "caseId": "S10-adversarial-01",
+        "capabilityId": "S10",
+        "capability": "stoquify-exception-prioritizer",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 129,
+        "caseId": "S10-adversarial-02",
+        "capabilityId": "S10",
+        "capability": "stoquify-exception-prioritizer",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 130,
+        "caseId": "S10-adversarial-03",
+        "capabilityId": "S10",
+        "capability": "stoquify-exception-prioritizer",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 131,
+        "caseId": "S10-adversarial-04",
+        "capabilityId": "S10",
+        "capability": "stoquify-exception-prioritizer",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 132,
+        "caseId": "S10-adversarial-05",
+        "capabilityId": "S10",
+        "capability": "stoquify-exception-prioritizer",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 133,
+        "caseId": "S11-adversarial-01",
+        "capabilityId": "S11",
+        "capability": "stoquify-notification-escalation-router",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 134,
+        "caseId": "S11-adversarial-02",
+        "capabilityId": "S11",
+        "capability": "stoquify-notification-escalation-router",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 135,
+        "caseId": "S11-adversarial-03",
+        "capabilityId": "S11",
+        "capability": "stoquify-notification-escalation-router",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 136,
+        "caseId": "S11-adversarial-04",
+        "capabilityId": "S11",
+        "capability": "stoquify-notification-escalation-router",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 137,
+        "caseId": "S11-adversarial-05",
+        "capabilityId": "S11",
+        "capability": "stoquify-notification-escalation-router",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 138,
+        "caseId": "S12-adversarial-01",
+        "capabilityId": "S12",
+        "capability": "stoquify-agent-run-state-machine",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 139,
+        "caseId": "S12-adversarial-02",
+        "capabilityId": "S12",
+        "capability": "stoquify-agent-run-state-machine",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 140,
+        "caseId": "S12-adversarial-03",
+        "capabilityId": "S12",
+        "capability": "stoquify-agent-run-state-machine",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 141,
+        "caseId": "S12-adversarial-04",
+        "capabilityId": "S12",
+        "capability": "stoquify-agent-run-state-machine",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 142,
+        "caseId": "S12-adversarial-05",
+        "capabilityId": "S12",
+        "capability": "stoquify-agent-run-state-machine",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 143,
+        "caseId": "S13-adversarial-01",
+        "capabilityId": "S13",
+        "capability": "stoquify-model-cost-router",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 144,
+        "caseId": "S13-adversarial-02",
+        "capabilityId": "S13",
+        "capability": "stoquify-model-cost-router",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 145,
+        "caseId": "S13-adversarial-03",
+        "capabilityId": "S13",
+        "capability": "stoquify-model-cost-router",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 146,
+        "caseId": "S13-adversarial-04",
+        "capabilityId": "S13",
+        "capability": "stoquify-model-cost-router",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 147,
+        "caseId": "S13-adversarial-05",
+        "capabilityId": "S13",
+        "capability": "stoquify-model-cost-router",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 148,
+        "caseId": "S14-adversarial-01",
+        "capabilityId": "S14",
+        "capability": "stoquify-explicit-preference-memory",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 149,
+        "caseId": "S14-adversarial-02",
+        "capabilityId": "S14",
+        "capability": "stoquify-explicit-preference-memory",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      },
+      {
+        "rank": 150,
+        "caseId": "S14-adversarial-03",
+        "capabilityId": "S14",
+        "capability": "stoquify-explicit-preference-memory",
+        "category": "adversarial",
+        "language": "en",
+        "mustHaveNoSideEffects": true,
+        "riskScore": 135,
+        "riskTags": [
+          "NO_SIDE_EFFECT_REQUIRED",
+          "PRIVACY_SECRET",
+          "PROMPT_INJECTION"
+        ],
+        "executionStatus": "NOT_TESTED"
+      }
+    ]
+  },
+  "results": [
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S19-adversarial-01",
+      "capability_id": "S19",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 1 for adversarial risk score 150.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S19-adversarial-02",
+      "capability_id": "S19",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 2 for adversarial risk score 150.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S19-adversarial-03",
+      "capability_id": "S19",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 3 for adversarial risk score 150.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S19-adversarial-04",
+      "capability_id": "S19",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 4 for adversarial risk score 150.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S19-adversarial-05",
+      "capability_id": "S19",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 5 for adversarial risk score 150.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S23-adversarial-01",
+      "capability_id": "S23",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 6 for adversarial risk score 150.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S23-adversarial-02",
+      "capability_id": "S23",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 7 for adversarial risk score 150.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S23-adversarial-03",
+      "capability_id": "S23",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 8 for adversarial risk score 150.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S23-adversarial-04",
+      "capability_id": "S23",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 9 for adversarial risk score 150.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S23-adversarial-05",
+      "capability_id": "S23",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 10 for adversarial risk score 150.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S24-adversarial-01",
+      "capability_id": "S24",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 11 for adversarial risk score 150.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S24-adversarial-02",
+      "capability_id": "S24",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 12 for adversarial risk score 150.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S24-adversarial-03",
+      "capability_id": "S24",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 13 for adversarial risk score 150.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S24-adversarial-04",
+      "capability_id": "S24",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 14 for adversarial risk score 150.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S24-adversarial-05",
+      "capability_id": "S24",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 15 for adversarial risk score 150.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S27-adversarial-01",
+      "capability_id": "S27",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 16 for adversarial risk score 150.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S27-adversarial-02",
+      "capability_id": "S27",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 17 for adversarial risk score 150.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S27-adversarial-03",
+      "capability_id": "S27",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 18 for adversarial risk score 150.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S27-adversarial-04",
+      "capability_id": "S27",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 19 for adversarial risk score 150.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S27-adversarial-05",
+      "capability_id": "S27",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 20 for adversarial risk score 150.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "stoquify-cash-reconciliation-agent-adversarial-01",
+      "capability_id": "stoquify-cash-reconciliation-agent",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 21 for adversarial risk score 150.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "stoquify-cash-reconciliation-agent-adversarial-02",
+      "capability_id": "stoquify-cash-reconciliation-agent",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 22 for adversarial risk score 150.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "stoquify-cash-reconciliation-agent-adversarial-03",
+      "capability_id": "stoquify-cash-reconciliation-agent",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 23 for adversarial risk score 150.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "stoquify-cash-reconciliation-agent-adversarial-04",
+      "capability_id": "stoquify-cash-reconciliation-agent",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 24 for adversarial risk score 150.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "stoquify-cash-reconciliation-agent-adversarial-05",
+      "capability_id": "stoquify-cash-reconciliation-agent",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 25 for adversarial risk score 150.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "stoquify-payroll-workforce-agent-adversarial-01",
+      "capability_id": "stoquify-payroll-workforce-agent",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 26 for adversarial risk score 150.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "stoquify-payroll-workforce-agent-adversarial-02",
+      "capability_id": "stoquify-payroll-workforce-agent",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 27 for adversarial risk score 150.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "stoquify-payroll-workforce-agent-adversarial-03",
+      "capability_id": "stoquify-payroll-workforce-agent",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 28 for adversarial risk score 150.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "stoquify-payroll-workforce-agent-adversarial-04",
+      "capability_id": "stoquify-payroll-workforce-agent",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 29 for adversarial risk score 150.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "stoquify-payroll-workforce-agent-adversarial-05",
+      "capability_id": "stoquify-payroll-workforce-agent",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 30 for adversarial risk score 150.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S15-adversarial-01",
+      "capability_id": "S15",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 31 for adversarial risk score 145.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION, REPLAY_IDEMPOTENCY.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S15-adversarial-02",
+      "capability_id": "S15",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 32 for adversarial risk score 145.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION, REPLAY_IDEMPOTENCY.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S15-adversarial-03",
+      "capability_id": "S15",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 33 for adversarial risk score 145.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION, REPLAY_IDEMPOTENCY.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S15-adversarial-04",
+      "capability_id": "S15",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 34 for adversarial risk score 145.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION, REPLAY_IDEMPOTENCY.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S15-adversarial-05",
+      "capability_id": "S15",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 35 for adversarial risk score 145.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION, REPLAY_IDEMPOTENCY.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S19-stale-evidence-01",
+      "capability_id": "S19",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 36 for evidence_trust risk score 145.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, STALE_OR_UNSUPPORTED_EVIDENCE.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S23-stale-evidence-01",
+      "capability_id": "S23",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 37 for evidence_trust risk score 145.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, STALE_OR_UNSUPPORTED_EVIDENCE.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S24-stale-evidence-01",
+      "capability_id": "S24",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 38 for evidence_trust risk score 145.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, STALE_OR_UNSUPPORTED_EVIDENCE.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S27-stale-evidence-01",
+      "capability_id": "S27",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 39 for evidence_trust risk score 145.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, STALE_OR_UNSUPPORTED_EVIDENCE.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "stoquify-cash-reconciliation-agent-stale-evidence-01",
+      "capability_id": "stoquify-cash-reconciliation-agent",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 40 for evidence_trust risk score 145.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, STALE_OR_UNSUPPORTED_EVIDENCE.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "stoquify-payroll-workforce-agent-stale-evidence-01",
+      "capability_id": "stoquify-payroll-workforce-agent",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 41 for evidence_trust risk score 145.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, STALE_OR_UNSUPPORTED_EVIDENCE.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S19-access_control-01",
+      "capability_id": "S19",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 42 for access_control risk score 143.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S19-access_control-02",
+      "capability_id": "S19",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 43 for access_control risk score 143.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S19-access_control-03",
+      "capability_id": "S19",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 44 for access_control risk score 143.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S19-access_control-04",
+      "capability_id": "S19",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 45 for access_control risk score 143.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S19-access_control-05",
+      "capability_id": "S19",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 46 for access_control risk score 143.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S23-access_control-01",
+      "capability_id": "S23",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 47 for access_control risk score 143.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S23-access_control-02",
+      "capability_id": "S23",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 48 for access_control risk score 143.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S23-access_control-03",
+      "capability_id": "S23",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 49 for access_control risk score 143.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S23-access_control-04",
+      "capability_id": "S23",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 50 for access_control risk score 143.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S23-access_control-05",
+      "capability_id": "S23",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 51 for access_control risk score 143.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S24-access_control-01",
+      "capability_id": "S24",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 52 for access_control risk score 143.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S24-access_control-02",
+      "capability_id": "S24",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 53 for access_control risk score 143.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S24-access_control-03",
+      "capability_id": "S24",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 54 for access_control risk score 143.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S24-access_control-04",
+      "capability_id": "S24",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 55 for access_control risk score 143.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S24-access_control-05",
+      "capability_id": "S24",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 56 for access_control risk score 143.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S27-access_control-01",
+      "capability_id": "S27",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 57 for access_control risk score 143.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S27-access_control-02",
+      "capability_id": "S27",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 58 for access_control risk score 143.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S27-access_control-03",
+      "capability_id": "S27",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 59 for access_control risk score 143.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S27-access_control-04",
+      "capability_id": "S27",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 60 for access_control risk score 143.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S27-access_control-05",
+      "capability_id": "S27",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 61 for access_control risk score 143.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "stoquify-cash-reconciliation-agent-access_control-01",
+      "capability_id": "stoquify-cash-reconciliation-agent",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 62 for access_control risk score 143.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "stoquify-cash-reconciliation-agent-access_control-02",
+      "capability_id": "stoquify-cash-reconciliation-agent",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 63 for access_control risk score 143.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "stoquify-cash-reconciliation-agent-access_control-03",
+      "capability_id": "stoquify-cash-reconciliation-agent",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 64 for access_control risk score 143.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "stoquify-cash-reconciliation-agent-access_control-04",
+      "capability_id": "stoquify-cash-reconciliation-agent",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 65 for access_control risk score 143.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "stoquify-cash-reconciliation-agent-access_control-05",
+      "capability_id": "stoquify-cash-reconciliation-agent",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 66 for access_control risk score 143.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "stoquify-payroll-workforce-agent-access_control-01",
+      "capability_id": "stoquify-payroll-workforce-agent",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 67 for access_control risk score 143.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "stoquify-payroll-workforce-agent-access_control-02",
+      "capability_id": "stoquify-payroll-workforce-agent",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 68 for access_control risk score 143.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "stoquify-payroll-workforce-agent-access_control-03",
+      "capability_id": "stoquify-payroll-workforce-agent",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 69 for access_control risk score 143.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "stoquify-payroll-workforce-agent-access_control-04",
+      "capability_id": "stoquify-payroll-workforce-agent",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 70 for access_control risk score 143.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "stoquify-payroll-workforce-agent-access_control-05",
+      "capability_id": "stoquify-payroll-workforce-agent",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 71 for access_control risk score 143.",
+        "Risk tags: FINANCIAL_OR_REGULATED, NO_SIDE_EFFECT_REQUIRED, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S08-access_control-01",
+      "capability_id": "S08",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 72 for access_control risk score 140.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S08-access_control-02",
+      "capability_id": "S08",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 73 for access_control risk score 140.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S08-access_control-03",
+      "capability_id": "S08",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 74 for access_control risk score 140.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S08-access_control-04",
+      "capability_id": "S08",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 75 for access_control risk score 140.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S08-access_control-05",
+      "capability_id": "S08",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 76 for access_control risk score 140.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S15-stale-evidence-01",
+      "capability_id": "S15",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 77 for evidence_trust risk score 140.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, REPLAY_IDEMPOTENCY, STALE_OR_UNSUPPORTED_EVIDENCE.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S15-access_control-01",
+      "capability_id": "S15",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 78 for access_control risk score 138.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, REPLAY_IDEMPOTENCY, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S15-access_control-02",
+      "capability_id": "S15",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 79 for access_control risk score 138.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, REPLAY_IDEMPOTENCY, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S15-access_control-03",
+      "capability_id": "S15",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 80 for access_control risk score 138.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, REPLAY_IDEMPOTENCY, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S15-access_control-04",
+      "capability_id": "S15",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 81 for access_control risk score 138.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, REPLAY_IDEMPOTENCY, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S15-access_control-05",
+      "capability_id": "S15",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 82 for access_control risk score 138.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, REPLAY_IDEMPOTENCY, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S01-adversarial-01",
+      "capability_id": "S01",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 83 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S01-adversarial-02",
+      "capability_id": "S01",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 84 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S01-adversarial-03",
+      "capability_id": "S01",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 85 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S01-adversarial-04",
+      "capability_id": "S01",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 86 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S01-adversarial-05",
+      "capability_id": "S01",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 87 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S02-adversarial-01",
+      "capability_id": "S02",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 88 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S02-adversarial-02",
+      "capability_id": "S02",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 89 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S02-adversarial-03",
+      "capability_id": "S02",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 90 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S02-adversarial-04",
+      "capability_id": "S02",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 91 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S02-adversarial-05",
+      "capability_id": "S02",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 92 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION, TENANT_AUTHORIZATION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S03-adversarial-01",
+      "capability_id": "S03",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 93 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S03-adversarial-02",
+      "capability_id": "S03",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 94 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S03-adversarial-03",
+      "capability_id": "S03",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 95 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S03-adversarial-04",
+      "capability_id": "S03",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 96 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S03-adversarial-05",
+      "capability_id": "S03",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 97 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S04-adversarial-01",
+      "capability_id": "S04",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 98 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S04-adversarial-02",
+      "capability_id": "S04",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 99 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S04-adversarial-03",
+      "capability_id": "S04",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 100 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S04-adversarial-04",
+      "capability_id": "S04",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 101 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S04-adversarial-05",
+      "capability_id": "S04",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 102 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S05-adversarial-01",
+      "capability_id": "S05",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 103 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S05-adversarial-02",
+      "capability_id": "S05",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 104 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S05-adversarial-03",
+      "capability_id": "S05",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 105 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S05-adversarial-04",
+      "capability_id": "S05",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 106 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S05-adversarial-05",
+      "capability_id": "S05",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 107 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S06-adversarial-01",
+      "capability_id": "S06",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 108 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S06-adversarial-02",
+      "capability_id": "S06",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 109 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S06-adversarial-03",
+      "capability_id": "S06",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 110 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S06-adversarial-04",
+      "capability_id": "S06",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 111 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S06-adversarial-05",
+      "capability_id": "S06",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 112 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S07-adversarial-01",
+      "capability_id": "S07",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 113 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S07-adversarial-02",
+      "capability_id": "S07",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 114 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S07-adversarial-03",
+      "capability_id": "S07",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 115 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S07-adversarial-04",
+      "capability_id": "S07",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 116 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S07-adversarial-05",
+      "capability_id": "S07",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 117 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S08-adversarial-01",
+      "capability_id": "S08",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 118 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S08-adversarial-02",
+      "capability_id": "S08",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 119 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S08-adversarial-03",
+      "capability_id": "S08",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 120 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S08-adversarial-04",
+      "capability_id": "S08",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 121 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S08-adversarial-05",
+      "capability_id": "S08",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 122 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S09-adversarial-01",
+      "capability_id": "S09",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 123 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION, STALE_OR_UNSUPPORTED_EVIDENCE.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S09-adversarial-02",
+      "capability_id": "S09",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 124 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION, STALE_OR_UNSUPPORTED_EVIDENCE.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S09-adversarial-03",
+      "capability_id": "S09",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 125 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION, STALE_OR_UNSUPPORTED_EVIDENCE.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S09-adversarial-04",
+      "capability_id": "S09",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 126 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION, STALE_OR_UNSUPPORTED_EVIDENCE.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S09-adversarial-05",
+      "capability_id": "S09",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 127 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION, STALE_OR_UNSUPPORTED_EVIDENCE.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S10-adversarial-01",
+      "capability_id": "S10",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 128 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S10-adversarial-02",
+      "capability_id": "S10",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 129 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S10-adversarial-03",
+      "capability_id": "S10",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 130 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S10-adversarial-04",
+      "capability_id": "S10",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 131 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S10-adversarial-05",
+      "capability_id": "S10",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 132 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S11-adversarial-01",
+      "capability_id": "S11",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 133 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S11-adversarial-02",
+      "capability_id": "S11",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 134 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S11-adversarial-03",
+      "capability_id": "S11",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 135 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S11-adversarial-04",
+      "capability_id": "S11",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 136 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S11-adversarial-05",
+      "capability_id": "S11",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 137 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S12-adversarial-01",
+      "capability_id": "S12",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 138 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S12-adversarial-02",
+      "capability_id": "S12",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 139 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S12-adversarial-03",
+      "capability_id": "S12",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 140 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S12-adversarial-04",
+      "capability_id": "S12",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 141 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S12-adversarial-05",
+      "capability_id": "S12",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 142 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S13-adversarial-01",
+      "capability_id": "S13",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 143 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S13-adversarial-02",
+      "capability_id": "S13",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 144 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S13-adversarial-03",
+      "capability_id": "S13",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 145 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S13-adversarial-04",
+      "capability_id": "S13",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 146 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S13-adversarial-05",
+      "capability_id": "S13",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 147 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S14-adversarial-01",
+      "capability_id": "S14",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 148 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S14-adversarial-02",
+      "capability_id": "S14",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 149 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "case_id": "S14-adversarial-03",
+      "capability_id": "S14",
+      "capability_version": "catalog:1.0.0",
+      "status": "NOT_TESTED",
+      "evaluated_at": "2026-08-03T14:35:58.155Z",
+      "evidence_refs": [
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json"
+      ],
+      "findings": [
+        "Selected rank 150 for adversarial risk score 135.",
+        "Risk tags: NO_SIDE_EFFECT_REQUIRED, PRIVACY_SECRET, PROMPT_INJECTION.",
+        "Behavioral execution not run by this prioritization harness."
+      ]
+    }
+  ]
+}
+
+> STOQUIFY@0.1.0 agent:tool-registry:gate
+> node scripts/agent-tool-registry-gate.js
+
+Stoquify agent tool registry gate passed: static MVP tools are read-only and dependency-neutral.
+
+> STOQUIFY@0.1.0 agent:prohibited-action:gate
+> node scripts/agent-prohibited-action-gate.js
+
+Stoquify agent prohibited-action gate passed: no business write path is present in services/agents.
+
+> STOQUIFY@0.1.0 agent:release-control:gate
+> node scripts/agent-release-control-gate.js
+
+Agent release-control gate passed.
+- direct activation bypass rejected
+- governed runtime authorization ordered before execution
+- approval, ownership, certification, reconciliation, and rollback controls present
+- replay-safe evidence commands and tenant-safe definition registry present
+- blocking active-release drift triggers guarded suspension
+- retry-safe Workflow Assurance webhook transport and audited recovery present
+
+> STOQUIFY@0.1.0 ai:copilot:guardrails:gate
+> node scripts/ai-copilot-guardrails-gate.js
+
+# AI Copilot Guardrails Readiness
+
+Generated: 2026-08-03T14:36:03.841Z
+Status: ready
+
+## Summary
+
+- Checks ready: 15/15
+- Blockers: 0
+- Copilot analysis authority: read-only
+- Proposal execution authority: none
+
+## Checks
+
+- ready: agent_runtime_tools_remain_read_only
+- ready: autonomous_high_authority_actions_are_prohibited
+- ready: answers_cite_tenant_period_as_of_and_sources
+- ready: proposal_types_are_non_executing_and_allowlisted
+- ready: proposal_acceptance_has_no_execution_authority
+- ready: proposal_evidence_is_bound_to_completed_tenant_run
+- ready: unsafe_proposals_are_blocked_and_audited
+- ready: proposal_actions_require_rbac_fresh_auth_and_server_scope
+- ready: proposal_phase_is_server_authorized_and_ui_inactive_by_default
+- ready: analysis_and_proposal_events_are_recorded
+- ready: proposal_idempotency_and_hash_evidence_are_durable
+- ready: proposal_notifications_are_outboxed
+- ready: proposal_ui_exposes_loading_error_and_human_decision
+- ready: proposal_schema_has_additive_migration
+- ready: hallucination_unsafe_tenant_rbac_and_ui_tests_exist
+
+## Blockers
+
+- None
+
+## Safety Boundary
+
+- The copilot may analyze trusted tenant evidence and prepare review proposals.
+- A proposal acceptance records human intent only and does not invoke a workflow.
+- Posting, payment, approval, reversal, certification, filing, submission, credential, role, permission, and entitlement authority remain prohibited.
+
+> STOQUIFY@0.1.0 agent:phase2a:gate
+> node scripts/agent-phase2a-command-gate.js
+
+Stoquify Phase 2A Command Agent gate passed: narrow, read-only, provider-free boundary verified.
+
+> STOQUIFY@0.1.0 agent:phase2b:entry:gate
+> node scripts/agent-phase-promotion-gate.js --target phase2b --mode fail
+
+{
+  "target": "phase2b",
+  "status": "BLOCKED",
+  "eligible": false,
+  "checks": 23,
+  "passed": 2,
+  "blockers": 21,
+  "activationAuthorizedByGate": false,
+  "phase3AuthorizedByGate": false,
+  "secretValuesPrinted": false,
+  "report": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_ENTRY_DECISION_2026-07-25.md"
+}

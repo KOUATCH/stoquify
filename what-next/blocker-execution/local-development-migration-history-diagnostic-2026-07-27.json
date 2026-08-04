@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0",
+  "generatedOn": "2026-07-27",
+  "databaseClassification": "LOCAL_DEVELOPMENT_ONLY",
+  "databaseName": "dbakesman",
+  "status": "RECONCILED_AND_QUARANTINED_FROM_RELEASE_EVIDENCE",
+  "mutationPerformed": false,
+  "unfinishedMigration": {
+    "name": "20260727110000_offline_pos_sync_foundation",
+    "startedAt": "2026-07-27T07:12:05.81Z",
+    "finishedAt": null,
+    "rolledBackAt": null,
+    "appliedStepsCount": 0,
+    "logPresent": true,
+    "logLength": 712,
+    "logSha256": "b747a379c7a35539c2af5af51be0389498e58c0cbb4bb3b5adf0780662a1459d",
+    "duplicatePOSOfflineDeviceStatusConfirmed": true
+  },
+  "selectedPreexistingObjects": [
+    "POSOfflineDeviceStatus",
+    "pos_offline_devices"
+  ],
+  "prismaStatusPending": [
+    "20260727143000_country_adapter_pilot_foundation",
+    "20260727170000_ai_copilot_proposal_guardrails"
+  ],
+  "decision": [
+    "Exclude dbakesman from release evidence",
+    "Do not resolve as applied without snapshot and full schema equivalence audit",
+    "Prefer separately authorized replacement development database and approved baseline",
+    "Use a separate approved production target for B03"
+  ],
+  "directHistoryGate": {
+    "command": "npm run prisma:migration:history:health",
+    "status": "BLOCKED_AS_EXPECTED",
+    "ready": 5,
+    "total": 8,
+    "completedRows": 38,
+    "unfinished": ["20260727110000_offline_pos_sync_foundation"],
+    "missing": [
+      "20260727110000_offline_pos_sync_foundation",
+      "20260727143000_country_adapter_pilot_foundation",
+      "20260727170000_ai_copilot_proposal_guardrails"
+    ],
+    "checksumMismatches": [
+      "20260619120000_backfill_purchase_receive_permission"
+    ],
+    "unknownSuccessful": [],
+    "duplicateSuccessful": [],
+    "lineEndingEquivalenceChecked": true,
+    "mutationPerformed": false,
+    "evidence": "what-next/prisma-migration-history-health.json"
+  }
+}

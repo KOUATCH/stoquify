@@ -14,6 +14,7 @@ import {
 import { db } from "@/prisma/db"
 import { recordBusinessEventInTx } from "@/services/events/business-event.service"
 import {
+  ApplicationError,
   BusinessRuleError,
   ConflictError,
   NotFoundError,
@@ -37,6 +38,14 @@ import {
 } from "./evidence.service"
 
 type DbClient = Prisma.TransactionClient | typeof db
+const FISCAL_SEQUENCE_ALLOCATION_ATTEMPTS = 2
+
+class FiscalSequenceTransitionConflict extends Error {
+  constructor() {
+    super("Fiscal sequence state changed during allocation.")
+    this.name = "FiscalSequenceTransitionConflict"
+  }
+}
 
 const fiscalDocumentInclude = {
   lines: { orderBy: { lineNumber: "asc" as const } },
@@ -46,6 +55,31 @@ const fiscalDocumentInclude = {
 
 function hasTransaction(client: DbClient): client is typeof db {
   return "$transaction" in client
+}
+
+function prismaErrorCode(error: unknown) {
+  return error && typeof error === "object" && "code" in error
+    ? String((error as { code?: unknown }).code ?? "")
+    : null
+}
+
+function mapFiscalSequenceError(error: unknown): ApplicationError {
+  if (
+    error instanceof FiscalSequenceTransitionConflict ||
+    ["P2002", "P2034"].includes(prismaErrorCode(error) ?? "")
+  ) {
+    return new ConflictError(
+      "Fiscal sequence changed during legal-number allocation; retry the operation.",
+    )
+  }
+  if (error instanceof ApplicationError) return error
+  return new ApplicationError(
+    "INTERNAL_ERROR",
+    "Fiscal sequence allocation could not be completed safely.",
+    500,
+    false,
+    { operation: "allocate_fiscal_sequence" },
+  )
 }
 
 function canonicalize(value: unknown): unknown {
@@ -146,9 +180,9 @@ export async function allocateFiscalSequenceNumber(
   const run = async (tx: Prisma.TransactionClient) => {
     const fiscalPeriodKey = input.fiscalPeriodKey || "ANNUAL"
     const scopeKey = input.scopeKey || "GLOBAL"
-    const sequence =
-      (await tx.fiscalSequence.findFirst({
-        where: {
+    const sequence = await tx.fiscalSequence.upsert({
+      where: {
+        organizationId_countryCode_documentType_fiscalYear_fiscalPeriodKey_scopeKey: {
           organizationId: input.organizationId,
           countryCode: input.countryCode,
           documentType: input.documentType,
@@ -156,30 +190,44 @@ export async function allocateFiscalSequenceNumber(
           fiscalPeriodKey,
           scopeKey,
         },
-      })) ||
-      (await tx.fiscalSequence.create({
-        data: {
-          organizationId: input.organizationId,
-          countryCode: input.countryCode,
-          documentType: input.documentType,
-          fiscalYear: input.fiscalYear,
-          fiscalPeriodKey,
-          scopeKey,
-          prefix: input.prefix ?? null,
-        },
-      }))
+      },
+      create: {
+        organizationId: input.organizationId,
+        countryCode: input.countryCode,
+        documentType: input.documentType,
+        fiscalYear: input.fiscalYear,
+        fiscalPeriodKey,
+        scopeKey,
+        prefix: input.prefix ?? null,
+      },
+      update: {},
+    })
 
     if (sequence.status !== FiscalSequenceStatus.ACTIVE) {
       throw new BusinessRuleError("Fiscal sequence is not active.")
     }
 
     const issuedNumber = sequence.nextNumber
-    const updated = await tx.fiscalSequence.update({
-      where: { id: sequence.id },
+    const issuedAt = new Date()
+    const transition = await tx.fiscalSequence.updateMany({
+      where: {
+        id: sequence.id,
+        organizationId: input.organizationId,
+        status: FiscalSequenceStatus.ACTIVE,
+        nextNumber: issuedNumber,
+      },
       data: {
         nextNumber: { increment: 1 },
         lastIssuedNumber: issuedNumber,
-        lastIssuedAt: new Date(),
+        lastIssuedAt: issuedAt,
+      },
+    })
+    if (transition.count !== 1) throw new FiscalSequenceTransitionConflict()
+
+    const updated = await tx.fiscalSequence.findFirstOrThrow({
+      where: {
+        id: sequence.id,
+        organizationId: input.organizationId,
       },
     })
     const legalNumber = `${sequence.prefix || ""}${String(issuedNumber).padStart(8, "0")}`
@@ -208,8 +256,27 @@ export async function allocateFiscalSequenceNumber(
     return { sequence: updated, issuedNumber, legalNumber }
   }
 
-  if (hasTransaction(client)) return client.$transaction(run)
-  return run(client)
+  if (hasTransaction(client)) {
+    for (let attempt = 0; attempt < FISCAL_SEQUENCE_ALLOCATION_ATTEMPTS; attempt += 1) {
+      try {
+        return await client.$transaction(run, {
+          isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+        })
+      } catch (error) {
+        const retryable =
+          error instanceof FiscalSequenceTransitionConflict ||
+          ["P2002", "P2034"].includes(prismaErrorCode(error) ?? "")
+        if (retryable && attempt + 1 < FISCAL_SEQUENCE_ALLOCATION_ATTEMPTS) continue
+        throw mapFiscalSequenceError(error)
+      }
+    }
+  }
+
+  try {
+    return await run(client)
+  } catch (error) {
+    throw mapFiscalSequenceError(error)
+  }
 }
 
 export async function createFiscalDocumentFromPostedSource(

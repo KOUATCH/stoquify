@@ -1,5 +1,6 @@
 const fs = require("fs")
 const path = require("path")
+const { writeGeneratedReportFile } = require("./generated-report-writer")
 
 const DEFAULT_JSON_OUT = "what-next/public-identity-abuse-readiness.json"
 const DEFAULT_MARKDOWN_OUT = "what-next/public-identity-abuse-readiness.md"
@@ -162,10 +163,8 @@ function renderMarkdown(report) {
 function writeReport(root, options, report) {
   const jsonTarget = path.resolve(root, options.jsonOut)
   const markdownTarget = path.resolve(root, options.out)
-  fs.mkdirSync(path.dirname(jsonTarget), { recursive: true })
-  fs.mkdirSync(path.dirname(markdownTarget), { recursive: true })
-  fs.writeFileSync(jsonTarget, JSON.stringify(report, null, 2) + String.fromCharCode(10), "utf8")
-  fs.writeFileSync(markdownTarget, renderMarkdown(report), "utf8")
+  writeGeneratedReportFile(jsonTarget, JSON.stringify(report, null, 2) + String.fromCharCode(10), "utf8")
+  writeGeneratedReportFile(markdownTarget, renderMarkdown(report), "utf8")
 }
 
 if (require.main === module) {

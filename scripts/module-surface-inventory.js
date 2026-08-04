@@ -1,6 +1,7 @@
 const fs = require("fs")
 const path = require("path")
 const { buildApiRouteGuardInventory } = require("./api-route-guard-inventory")
+const { writeGeneratedReportFile } = require("./generated-report-writer")
 
 const DEFAULT_JSON_OUT = "what-next/module-surface-inventory.json"
 const DEFAULT_MARKDOWN_OUT = "what-next/module-surface-inventory.md"
@@ -270,6 +271,18 @@ function extractPermission(source) {
   ])
 }
 
+function detectObserveOrEnforce(source) {
+  if (/mode:\s*["']enforce["']/.test(source)) return "enforce"
+  if (
+    /FinanceRouteAccess\s*\(/.test(source) &&
+    /module:\s*\{[\s\S]*?moduleSlug:\s*["'][^"']+["']/.test(source)
+  ) {
+    return "enforce"
+  }
+  if (/mode:\s*["']observe["']/.test(source)) return "observe"
+  return "report-only"
+}
+
 function detectGuard(source) {
   if (/FinanceRouteAccess\s*\(/.test(source)) return "FinanceRouteAccess"
   if (/protect(?:<[\s\S]*?>)?\s*\(/.test(source)) return "protect"
@@ -360,7 +373,7 @@ function createRecord(input, catalog) {
     moduleSlug,
     permission: input.permission || extractSurfacePermission(input.file, input.source || ""),
     guard: input.guard || detectSurfaceGuard(input.file, input.source || ""),
-    observeOrEnforce: input.observeOrEnforce || "report-only",
+    observeOrEnforce: input.observeOrEnforce || detectObserveOrEnforce(input.source || ""),
     dependencyGaps: dependencies || [],
     delegatedTo: input.delegatedTo || [],
     metadata: input.metadata || {},
@@ -951,10 +964,8 @@ function renderMarkdown(report) {
 function writeReport(root, args, report) {
   const jsonTarget = path.join(root, args.jsonOut)
   const markdownTarget = path.join(root, args.out)
-  fs.mkdirSync(path.dirname(jsonTarget), { recursive: true })
-  fs.mkdirSync(path.dirname(markdownTarget), { recursive: true })
-  fs.writeFileSync(jsonTarget, `${JSON.stringify(report, null, 2)}\n`, "utf8")
-  fs.writeFileSync(markdownTarget, renderMarkdown(report), "utf8")
+  writeGeneratedReportFile(jsonTarget, `${JSON.stringify(report, null, 2)}\n`, "utf8")
+  writeGeneratedReportFile(markdownTarget, renderMarkdown(report), "utf8")
 }
 
 if (require.main === module) {

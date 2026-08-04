@@ -44,6 +44,28 @@ describe("ui-route-smoke-gate", () => {
     ])
   })
 
+  it("registers the assurance incident detail route for mobile and desktop authenticated smoke evidence", () => {
+    const previousIncidentId = process.env.ASSURANCE_SMOKE_INCIDENT_ID
+    process.env.ASSURANCE_SMOKE_INCIDENT_ID = "incident_123"
+    jest.resetModules()
+    const { parseArgs: parseFreshArgs, selectedRoutes: selectedFreshRoutes } = require("../ui-route-smoke-gate")
+
+    const args = parseFreshArgs(["node", "script", "--route", "assurance-incident-detail"])
+
+    expect(selectedFreshRoutes(args)).toEqual([
+      {
+        id: "assurance-incident-detail",
+        path: "/en/dashboard/assurance/control-tower/incidents/incident_123",
+        surface: "Workflow Assurance incident detail",
+        requiresAuth: true,
+        viewports: ["mobile", "desktop"],
+      },
+    ])
+
+    if (previousIncidentId === undefined) delete process.env.ASSURANCE_SMOKE_INCIDENT_ID
+    else process.env.ASSURANCE_SMOKE_INCIDENT_ID = previousIncidentId
+    jest.resetModules()
+  })
   it("selects the complete bilingual public first-impression route set", () => {
     const args = parseArgs([
       "node",

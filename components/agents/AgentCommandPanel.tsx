@@ -19,6 +19,7 @@ import {
   runCommandAgentAction,
   submitCommandAgentFeedbackAction,
 } from "@/actions/agents/command-agent.actions";
+import { CopilotProposalControls } from "@/components/copilot/CopilotProposalControls";
 import { EvidenceGradeBadge } from "@/components/evidence/EvidenceGradeBadge";
 import { Button } from "@/components/ui/button";
 import {
@@ -40,6 +41,7 @@ type AgentCommandPanelProps = {
   periodStart: string;
   periodEnd: string;
   locale: "en" | "fr";
+  proposalDraftsEnabled?: boolean;
 };
 
 const copy = {
@@ -103,6 +105,7 @@ export function AgentCommandPanel({
   periodStart,
   periodEnd,
   locale,
+  proposalDraftsEnabled = false,
 }: AgentCommandPanelProps) {
   const t = copy[locale];
   const [result, setResult] = useState<CommandAgentRunResult | null>(null);
@@ -348,17 +351,30 @@ export function AgentCommandPanel({
                       {priority.evidenceIds.length} {t.evidence.toLowerCase()}
                     </p>
                   </div>
-                  <Button
-                    asChild
-                    size="sm"
-                    variant="outline"
-                    className="h-8 rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]"
-                  >
-                    <a href={priority.href}>
-                      <ExternalLink className="h-4 w-4" aria-hidden="true" />
-                      {t.open}
-                    </a>
-                  </Button>
+                  <div className="flex shrink-0 flex-col items-end gap-2">
+                    <Button
+                      asChild
+                      size="sm"
+                      variant="outline"
+                      className="h-8 rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]"
+                    >
+                      <a href={priority.href}>
+                        <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                        {t.open}
+                      </a>
+                    </Button>
+                    {proposalDraftsEnabled && brief.runId ? (
+                      <CopilotProposalControls
+                        runId={brief.runId}
+                        priority={priority}
+                        evidence={brief.evidence}
+                        periodStart={brief.provenance.periodStart}
+                        periodEnd={brief.provenance.periodEnd}
+                        asOf={brief.provenance.asOf}
+                        locale={locale}
+                      />
+                    ) : null}
+                  </div>
                 </li>
               ))}
             </ol>

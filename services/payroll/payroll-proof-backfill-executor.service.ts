@@ -11,7 +11,7 @@ import {
 import { db } from "../../prisma/db";
 import { BusinessRuleError } from "../_shared/action-errors";
 import { hashBusinessPayload } from "../events/business-event.service";
-import { getCountryPack } from "../regulatory/country-packs/registry";
+import { getCountryPack } from "../regulatory/regulatory-capability.service";
 import {
   resolvePayrollPaymentProviderAdapterContract,
   resolvePayrollPaymentSettlementLifecycleContract,

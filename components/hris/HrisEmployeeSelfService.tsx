@@ -9,6 +9,7 @@ import {
   UserRound,
 } from "lucide-react"
 
+import { HrisOperationalTimeRequestPanel } from "@/components/hris/HrisOperationalTimeRequestPanel"
 import type { HrisEmployeeSelfServiceResult } from "@/services/hris/self-service.service"
 
 type Props = {
@@ -141,6 +142,12 @@ export function HrisEmployeeSelfService({ model, payslipsHref, locale }: Props) 
         ) : null}
       </section>
 
+      <HrisOperationalTimeRequestPanel
+        requests={model.operationalTime.requests}
+        balances={model.operationalTime.balances}
+        enabled={model.capabilities.leaveRequest === "AVAILABLE"}
+      />
+
       <section aria-labelledby="requests-heading" className="border-t border-white/10 pt-4">
         <div className="flex items-center gap-2">
           <LockKeyhole className="h-4 w-4 text-slate-300" aria-hidden="true" />
@@ -148,8 +155,8 @@ export function HrisEmployeeSelfService({ model, payslipsHref, locale }: Props) 
         </div>
         <div className="mt-4 divide-y divide-white/10 border-y border-white/10 text-sm">
           <div className="flex items-center justify-between gap-4 py-3"><span className="text-slate-200">Payment destination change</span><span className="text-right text-amber-200">{model.capabilities.paymentDestinationRequest.canRequest ? "Evidence workflow required" : "Permission required"}</span></div>
-          <div className="flex items-center justify-between gap-4 py-3"><span className="text-slate-200">Leave request</span><span className="text-right text-slate-500">Not configured</span></div>
-          <div className="flex items-center justify-between gap-4 py-3"><span className="text-slate-200">Attendance correction</span><span className="text-right text-slate-500">Not configured</span></div>
+          <div className="flex items-center justify-between gap-4 py-3"><span className="text-slate-200">Leave request</span><span className="text-right text-emerald-200">Available above</span></div>
+          <div className="flex items-center justify-between gap-4 py-3"><span className="text-slate-200">Attendance correction</span><span className="text-right text-emerald-200">Available above</span></div>
           <div className="flex items-center justify-between gap-4 py-3"><span className="text-slate-200">Profile correction</span><span className="text-right text-slate-500">Not configured</span></div>
         </div>
       </section>

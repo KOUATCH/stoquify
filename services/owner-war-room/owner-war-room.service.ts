@@ -17,15 +17,23 @@ import type {
 } from "@/services/bi/bi-contracts"
 import type { EvidenceGrade, ProofTrailSubjectType } from "@/services/evidence/evidence-contracts"
 import { SUBJECT_PERMISSION_MAP } from "@/services/evidence/evidence-contracts"
+import { auditRbacDecision, RbacError } from "@/lib/security/rbac"
+import { hasRbacPermission } from "@/lib/security/rbac-permissions"
 import type { CommercialModuleSlug } from "@/services/modules/module-control-contracts"
-import { getModuleControlCenterData } from "@/services/modules/module-entitlement.service"
+import {
+  getModuleControlCenterData,
+  observeModuleAccess,
+} from "@/services/modules/module-entitlement.service"
+import { resolveTenantWideOperatingAuthority } from "@/services/operating-access/operating-access-scope-contracts"
 import { buildActionQueue } from "@/services/signals/action-queue.service"
 import type { ActionItem, BusinessSignal } from "@/services/signals/business-signal-contracts"
 import { buildBusinessSignalsFromSnapshots } from "@/services/signals/business-signal-rules.service"
 import { getCloseReadinessSnapshot } from "@/services/snapshots/close-readiness-snapshot.service"
 import { getInventoryCashSnapshot } from "@/services/snapshots/inventory-cash-snapshot.service"
+import { getInventoryLossSnapshot } from "@/services/snapshots/inventory-loss-snapshot.service"
 import { getPaymentTruthSnapshot } from "@/services/snapshots/payment-truth-snapshot.service"
 import type {
+  InventoryLossMetrics,
   SnapshotBlocker,
   SnapshotFreshness,
   SnapshotRedaction,
@@ -52,6 +60,8 @@ type OwnerWarRoomInput = {
   organizationId: string
   actorId?: string | null
   actorPermissions: readonly string[]
+  actorRoleCodes?: readonly string[]
+  isSuperUser?: boolean
   periodStart?: Date | string | null
   periodEnd?: Date | string | null
   maxAgeMinutes?: number | null
@@ -70,6 +80,8 @@ const OWNER_BRIEF_MAX_ACTIONS = 3
 const ONE_DAY_MS = 24 * 60 * 60 * 1000
 
 export async function getOwnerWarRoomData(input: OwnerWarRoomInput): Promise<OwnerWarRoomData> {
+  await requireOwnerWarRoomTenantAuthority(input)
+
   const scope = {
     organizationId: input.organizationId,
     periodStart: input.periodStart ?? null,
@@ -78,7 +90,7 @@ export async function getOwnerWarRoomData(input: OwnerWarRoomInput): Promise<Own
     now: input.now ?? null,
   }
 
-  const [paymentTruth, inventoryCash, closeReadiness, moduleControl] = await Promise.all([
+  const [paymentTruth, inventoryCash, closeReadiness, moduleControl, inventoryLoss] = await Promise.all([
     getPaymentTruthSnapshot(scope),
     getInventoryCashSnapshot(scope),
     getCloseReadinessSnapshot(scope),
@@ -88,6 +100,7 @@ export async function getOwnerWarRoomData(input: OwnerWarRoomInput): Promise<Own
       actorPermissions: input.actorPermissions,
       now: input.now ?? null,
     }),
+    loadOwnerWarRoomInventoryLoss(input),
   ])
   const tenantOperating = await getTenantOperatingSnapshotFromRelated(scope, {
     paymentTruth,
@@ -97,7 +110,13 @@ export async function getOwnerWarRoomData(input: OwnerWarRoomInput): Promise<Own
 
   const signals = buildBusinessSignalsFromSnapshots({
     organizationId: input.organizationId,
-    snapshots: [tenantOperating, paymentTruth, inventoryCash, closeReadiness],
+    snapshots: [
+      tenantOperating,
+      paymentTruth,
+      inventoryCash,
+      closeReadiness,
+      ...(inventoryLoss ? [inventoryLoss] : []),
+    ],
   })
   const actionQueue = buildActionQueue({
     organizationId: input.organizationId,
@@ -124,6 +143,85 @@ export async function getOwnerWarRoomData(input: OwnerWarRoomInput): Promise<Own
     actionQueue,
     moduleControl,
     proofSubjectIds,
+  })
+}
+
+async function requireOwnerWarRoomTenantAuthority(
+  input: OwnerWarRoomInput,
+): Promise<void> {
+  const actorId = input.actorId?.trim()
+  const hasDashboardPermission = hasRbacPermission(
+    input.actorPermissions,
+    "dashboard.read",
+  )
+  const authority =
+    actorId && hasDashboardPermission
+      ? resolveTenantWideOperatingAuthority({
+          isSuperUser: input.isSuperUser === true,
+          roleCodes: input.actorRoleCodes ?? [],
+        })
+      : null
+
+  if (actorId && hasDashboardPermission && authority) return
+
+  await auditRbacDecision({
+    ctx: actorId
+      ? {
+          userId: actorId,
+          orgId: input.organizationId,
+        }
+      : null,
+    permission: "dashboard.read",
+    result: "denied",
+    resource: "KontavaOwnerWarRoom",
+    reason: !actorId
+      ? "Missing actor identity"
+      : !hasDashboardPermission
+        ? "Missing permission"
+        : "Tenant-wide operating authority required",
+  })
+
+  throw new RbacError(
+    "Forbidden: Owner War Room requires tenant-wide operating authority",
+    "FORBIDDEN",
+    403,
+  )
+}
+
+async function loadOwnerWarRoomInventoryLoss(
+  input: OwnerWarRoomInput,
+): Promise<SnapshotResult<InventoryLossMetrics> | null> {
+  const actorId = input.actorId?.trim()
+  if (!actorId) return null
+  if (!hasRbacPermission(input.actorPermissions, "dashboard.read")) return null
+  if (!hasRbacPermission(input.actorPermissions, "inventory.levels.read")) return null
+
+  const authority = resolveTenantWideOperatingAuthority({
+    isSuperUser: input.isSuperUser === true,
+    roleCodes: input.actorRoleCodes ?? [],
+  })
+  if (!authority) return null
+
+  const access = await observeModuleAccess({
+    organizationId: input.organizationId,
+    userId: actorId,
+    actorPermissions: input.actorPermissions,
+    moduleSlug: "inventory",
+    surfaceType: "report",
+    surface: "owner-war-room.inventory-loss",
+    accessIntent: "read",
+    mode: "enforce",
+    audit: true,
+    now: input.now ?? null,
+  })
+  if (!access.allowed) return null
+
+  return getInventoryLossSnapshot({
+    organizationId: input.organizationId,
+    periodStart: input.periodStart ?? null,
+    periodEnd: input.periodEnd ?? null,
+    maxAgeMinutes: input.maxAgeMinutes ?? null,
+    now: input.now ?? null,
   })
 }
 
@@ -407,6 +505,7 @@ const ACTION_MODULE_BY_SIGNAL_TYPE: Record<ActionItem["signalType"], CommercialM
   refund_void_spike: "pos",
   stockout_risk: "inventory",
   dead_stock_cash_exposure: "inventory",
+  inventory_loss_review: "inventory",
   purchase_order_receiving_delay: "purchasing",
   payroll_exposure: "payroll",
   close_blocker: "close_assurance",

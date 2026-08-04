@@ -1,7 +1,7 @@
 {
   "summary": {
-    "generatedAt": "2026-07-22T07:58:16.046Z",
-    "mode": "warn",
+    "generatedAt": "2026-08-01T18:02:15.147Z",
+    "mode": "report",
     "sourceFiles": {
       "sidebar": true,
       "moduleCatalog": true,
@@ -11,28 +11,28 @@
       "apiRoutes": true,
       "apiGuardInventory": true
     },
-    "catalogCount": 20,
-    "recordCount": 367,
+    "catalogCount": 19,
+    "recordCount": 386,
     "bySurfaceType": {
-      "action": 127,
+      "action": 138,
       "api_evidence": 2,
-      "api": 10,
+      "api": 11,
       "export_evidence": 8,
       "export": 4,
       "layout": 10,
       "module_service": 3,
-      "navigation": 78,
-      "page": 119,
+      "navigation": 81,
+      "page": 123,
       "report_evidence": 3,
       "report": 3
     },
     "byClassification": {
       "not applicable: internal action response helper": 1,
-      "mapped": 335,
-      "enforcement candidate": 340,
+      "mapped": 352,
+      "enforcement candidate": 259,
+      "unmapped": 6,
       "delegated re-export": 7,
       "not applicable: public identity boundary": 1,
-      "unmapped": 5,
       "missing permission": 4,
       "not applicable: internal display helper": 1,
       "not applicable: cross-module session assurance": 1,
@@ -42,6 +42,7 @@
       "not applicable: public email verification": 1,
       "not_applicable_public_service": 1,
       "not_applicable_public": 4,
+      "review_required": 1,
       "not_applicable_session_claims": 1,
       "delegated_uploadthing_core": 1,
       "source_inherited_service": 11,
@@ -62,6 +63,20 @@
       "delegatedTo": [],
       "metadata": {},
       "classification": "not applicable: internal action response helper"
+    },
+    {
+      "file": "actions/accounting/accountant-access.actions.ts",
+      "surface": "accounting/accountant-access.actions.ts",
+      "surfaceType": "action",
+      "moduleApplicability": "required",
+      "moduleSlug": "accounting",
+      "permission": "accounting.close.accountant.invite",
+      "guard": "protect",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped, enforcement candidate"
     },
     {
       "file": "actions/accounting/accounts.actions.ts",
@@ -148,6 +163,48 @@
       "classification": "mapped, enforcement candidate"
     },
     {
+      "file": "actions/agents/agent-release-control.actions.ts",
+      "surface": "agents/agent-release-control.actions.ts",
+      "surfaceType": "action",
+      "moduleApplicability": "required",
+      "moduleSlug": null,
+      "permission": "agent.release.prepare",
+      "guard": "protect",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "unmapped, enforcement candidate"
+    },
+    {
+      "file": "actions/agents/command-agent.actions.ts",
+      "surface": "agents/command-agent.actions.ts",
+      "surfaceType": "action",
+      "moduleApplicability": "required",
+      "moduleSlug": "dashboard",
+      "permission": "dashboard.read",
+      "guard": "protect",
+      "observeOrEnforce": "enforce",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped"
+    },
+    {
+      "file": "actions/ai/copilot-proposal.actions.ts",
+      "surface": "ai/copilot-proposal.actions.ts",
+      "surfaceType": "action",
+      "moduleApplicability": "required",
+      "moduleSlug": "dashboard",
+      "permission": "dashboard.read",
+      "guard": "protect",
+      "observeOrEnforce": "enforce",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped"
+    },
+    {
       "file": "actions/analytics/analytics/financial-reports.ts",
       "surface": "analytics/analytics/financial-reports.ts",
       "surfaceType": "action",
@@ -222,6 +279,34 @@
       "classification": "mapped, enforcement candidate"
     },
     {
+      "file": "actions/assurance/pos-cash-shortage-resolution.actions.ts",
+      "surface": "assurance/pos-cash-shortage-resolution.actions.ts",
+      "surfaceType": "action",
+      "moduleApplicability": "required",
+      "moduleSlug": "pos",
+      "permission": "controls.manage",
+      "guard": "protect",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped, enforcement candidate"
+    },
+    {
+      "file": "actions/assurance/workflow-assurance-alert.actions.ts",
+      "surface": "assurance/workflow-assurance-alert.actions.ts",
+      "surfaceType": "action",
+      "moduleApplicability": "required",
+      "moduleSlug": "compliance",
+      "permission": "controls.manage",
+      "guard": "protect",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped, enforcement candidate"
+    },
+    {
       "file": "actions/assurance/workflow-assurance-control-tower.actions.ts",
       "surface": "assurance/workflow-assurance-control-tower.actions.ts",
       "surfaceType": "action",
@@ -285,11 +370,11 @@
       "moduleSlug": "inventory",
       "permission": "inventory.brands.read | inventory.brands.create | inventory.brands.update | inventory.brands.delete",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/brands/getOrgBrands.ts",
@@ -299,13 +384,13 @@
       "moduleSlug": "inventory",
       "permission": "inventory.brands.read | inventory.brands.create | inventory.brands.update | inventory.brands.delete",
       "guard": "delegated-re-export",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [
         "actions/brands/getBrandsAction.ts"
       ],
       "metadata": {},
-      "classification": "mapped, delegated re-export, enforcement candidate"
+      "classification": "mapped, delegated re-export"
     },
     {
       "file": "actions/categories/createBulkCategories.ts",
@@ -315,11 +400,11 @@
       "moduleSlug": "inventory",
       "permission": "inventory.categories.create",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/categories/createCategory.ts",
@@ -329,13 +414,13 @@
       "moduleSlug": "inventory",
       "permission": "inventory.categories.read | inventory.categories.create | inventory.categories.update | inventory.categories.delete",
       "guard": "delegated-re-export",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [
         "actions/categories/getCategoriesAction.ts"
       ],
       "metadata": {},
-      "classification": "mapped, delegated re-export, enforcement candidate"
+      "classification": "mapped, delegated re-export"
     },
     {
       "file": "actions/categories/getCategoriesAction.ts",
@@ -345,11 +430,11 @@
       "moduleSlug": "inventory",
       "permission": "inventory.categories.read | inventory.categories.create | inventory.categories.update | inventory.categories.delete",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/categories/getOrgCategories.ts",
@@ -359,13 +444,13 @@
       "moduleSlug": "inventory",
       "permission": "inventory.categories.read | inventory.categories.create | inventory.categories.update | inventory.categories.delete",
       "guard": "delegated-re-export",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [
         "actions/categories/getCategoriesAction.ts"
       ],
       "metadata": {},
-      "classification": "mapped, delegated re-export, enforcement candidate"
+      "classification": "mapped, delegated re-export"
     },
     {
       "file": "actions/compliance/compliance-center.actions.ts",
@@ -375,11 +460,25 @@
       "moduleSlug": "compliance",
       "permission": "compliance.documents.read",
       "guard": "protect",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
+    },
+    {
+      "file": "actions/compliance/country-adapter-pilot.actions.ts",
+      "surface": "compliance/country-adapter-pilot.actions.ts",
+      "surfaceType": "action",
+      "moduleApplicability": "required",
+      "moduleSlug": "compliance",
+      "permission": "compliance.adapters.manage",
+      "guard": "protect",
+      "observeOrEnforce": "enforce",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped"
     },
     {
       "file": "actions/customers/customer-management-actions.ts",
@@ -431,11 +530,11 @@
       "moduleSlug": "dashboard",
       "permission": "dashboard.read",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/end-of-day-close/branch-daily-close-completion.actions.ts",
@@ -445,11 +544,11 @@
       "moduleSlug": "dashboard",
       "permission": "dashboard.read",
       "guard": "protect",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/end-of-day-close/branch-daily-close-review.actions.ts",
@@ -459,11 +558,11 @@
       "moduleSlug": "dashboard",
       "permission": "branch.daily-close.review",
       "guard": "protect",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/end-of-day-close/branch-daily-close-sign-off.actions.ts",
@@ -473,11 +572,11 @@
       "moduleSlug": "dashboard",
       "permission": "branch.daily-close.sign",
       "guard": "protect",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/evidence/proof-trail.actions.ts",
@@ -564,12 +663,40 @@
       "classification": "mapped, enforcement candidate"
     },
     {
+      "file": "actions/hris/leave-balance.actions.ts",
+      "surface": "hris/leave-balance.actions.ts",
+      "surfaceType": "action",
+      "moduleApplicability": "required",
+      "moduleSlug": "payroll",
+      "permission": "hris.people.manage",
+      "guard": "protect",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped, enforcement candidate"
+    },
+    {
       "file": "actions/hris/lifecycle.actions.ts",
       "surface": "hris/lifecycle.actions.ts",
       "surfaceType": "action",
       "moduleApplicability": "required",
       "moduleSlug": "payroll",
       "permission": "hris.people.read",
+      "guard": "protect",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped, enforcement candidate"
+    },
+    {
+      "file": "actions/hris/operational-time.actions.ts",
+      "surface": "hris/operational-time.actions.ts",
+      "surfaceType": "action",
+      "moduleApplicability": "required",
+      "moduleSlug": "payroll",
+      "permission": "hris.self_service.read",
       "guard": "protect",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
@@ -620,6 +747,34 @@
       "classification": "mapped, enforcement candidate"
     },
     {
+      "file": "actions/inventory/inventoryLossControlActions.ts",
+      "surface": "inventory/inventoryLossControlActions.ts",
+      "surfaceType": "action",
+      "moduleApplicability": "required",
+      "moduleSlug": "inventory",
+      "permission": "inventory.stock.adjust",
+      "guard": "requirePermission",
+      "observeOrEnforce": "enforce",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped"
+    },
+    {
+      "file": "actions/inventory/inventoryLossReadActions.ts",
+      "surface": "inventory/inventoryLossReadActions.ts",
+      "surfaceType": "action",
+      "moduleApplicability": "required",
+      "moduleSlug": "inventory",
+      "permission": "inventory.levels.read",
+      "guard": "protect",
+      "observeOrEnforce": "enforce",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped"
+    },
+    {
       "file": "actions/inventory/inventoryMovementActions.ts",
       "surface": "inventory/inventoryMovementActions.ts",
       "surfaceType": "action",
@@ -627,11 +782,11 @@
       "moduleSlug": "inventory",
       "permission": "inventory.levels.read",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/inventory/inventoryMovementHistoryActions.ts",
@@ -641,11 +796,11 @@
       "moduleSlug": "inventory",
       "permission": "inventory.levels.read",
       "guard": "protect",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/inventory/inventoryMovementHistoryBackgroundExportActions.ts",
@@ -655,11 +810,11 @@
       "moduleSlug": "inventory",
       "permission": "reports.export",
       "guard": "protect",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/item-suppliers/addItemSuppliers.ts",
@@ -907,11 +1062,11 @@
       "moduleSlug": "settings",
       "permission": "locations.create",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/locations/deleteLocation.ts",
@@ -921,11 +1076,11 @@
       "moduleSlug": "settings",
       "permission": "locations.delete",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/locations/getOrgLocations.ts",
@@ -935,11 +1090,11 @@
       "moduleSlug": "settings",
       "permission": "locations.read",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/locations/location-management-actions.ts",
@@ -949,11 +1104,11 @@
       "moduleSlug": "settings",
       "permission": "locations.read",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/locations/updateLocationById.ts",
@@ -963,11 +1118,11 @@
       "moduleSlug": "settings",
       "permission": "locations.update",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/manager-action-center/manager-action-center.actions.ts",
@@ -977,11 +1132,11 @@
       "moduleSlug": "dashboard",
       "permission": "dashboard.read",
       "guard": "protect",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/modules/module-control.actions.ts",
@@ -1005,11 +1160,11 @@
       "moduleSlug": "settings",
       "permission": "system.organization.read",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/owner-war-room/owner-war-room.actions.ts",
@@ -1019,11 +1174,11 @@
       "moduleSlug": "dashboard",
       "permission": "dashboard.read",
       "guard": "protect",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/payments/reconciliation-workbench.actions.ts",
@@ -1033,11 +1188,11 @@
       "moduleSlug": "payment_reconciliation",
       "permission": "payments.reconciliation.read",
       "guard": "protect",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/payments/reconciliation.actions.ts",
@@ -1047,11 +1202,11 @@
       "moduleSlug": "payment_reconciliation",
       "permission": "payments.reconciliation.read",
       "guard": "protect",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/payroll/payroll-command-read-model.actions.ts",
@@ -1061,11 +1216,11 @@
       "moduleSlug": "payroll",
       "permission": "payroll.command.read",
       "guard": "protect",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/payroll/payroll-compensation.actions.ts",
@@ -1075,11 +1230,11 @@
       "moduleSlug": "payroll",
       "permission": "payroll.compensation.read",
       "guard": "protect",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/payroll/payroll-contract.actions.ts",
@@ -1089,11 +1244,11 @@
       "moduleSlug": "payroll",
       "permission": "payroll.contracts.read",
       "guard": "protect",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/payroll/payroll-control.actions.ts",
@@ -1103,11 +1258,11 @@
       "moduleSlug": "payroll",
       "permission": "payroll.read",
       "guard": "protect",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/payroll/payroll-country-pack-review-intake.actions.ts",
@@ -1117,11 +1272,11 @@
       "moduleSlug": "payroll",
       "permission": "payroll.runs.calculate",
       "guard": "protect",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/payroll/payroll-employee.actions.ts",
@@ -1131,11 +1286,11 @@
       "moduleSlug": "payroll",
       "permission": "payroll.employees.read",
       "guard": "protect",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/payroll/payroll-payment-evidence.actions.ts",
@@ -1145,11 +1300,11 @@
       "moduleSlug": "payroll",
       "permission": "payroll.payment_destination.read",
       "guard": "protect",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/payroll/payroll-payment-reconciliation.actions.ts",
@@ -1159,11 +1314,11 @@
       "moduleSlug": "payment_reconciliation",
       "permission": "payments.reconciliation.read",
       "guard": "protect",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/payroll/payroll-payslip-self-service.actions.ts",
@@ -1173,11 +1328,11 @@
       "moduleSlug": "payroll",
       "permission": "payroll.payslips.self.read",
       "guard": "protect",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/payroll/payroll-pilot-certification.actions.ts",
@@ -1187,11 +1342,11 @@
       "moduleSlug": "payroll",
       "permission": "payroll.command.read",
       "guard": "protect",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/payroll/payroll-register.actions.ts",
@@ -1201,11 +1356,11 @@
       "moduleSlug": "payroll",
       "permission": "payroll.reports.read",
       "guard": "protect",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/payroll/payroll-setup.actions.ts",
@@ -1215,11 +1370,11 @@
       "moduleSlug": "payroll",
       "permission": "payroll.runs.calculate",
       "guard": "protect",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/pos/cart.actions.ts",
@@ -1243,11 +1398,11 @@
       "moduleSlug": "pos",
       "permission": "pos.read | OPERATE_POS",
       "guard": "requireAnyPermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/pos/catalog.actions.ts",
@@ -1257,11 +1412,11 @@
       "moduleSlug": "pos",
       "permission": "pos.use",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/pos/drawer-dashboard.actions.ts",
@@ -1271,11 +1426,11 @@
       "moduleSlug": "pos",
       "permission": "finance.cash-drawer.read | finance.read",
       "guard": "requireAnyPermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/pos/receipt-token.actions.ts",
@@ -1285,11 +1440,11 @@
       "moduleSlug": "pos",
       "permission": "pos.receipts.revoke",
       "guard": "protect",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/pos/session.actions.ts",
@@ -1299,11 +1454,11 @@
       "moduleSlug": "pos",
       "permission": "pos.read",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/pos/sync.actions.ts",
@@ -1327,11 +1482,11 @@
       "moduleSlug": "pos",
       "permission": "pos.use",
       "guard": "protect",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/pos/terminal-management.actions.ts",
@@ -1341,11 +1496,11 @@
       "moduleSlug": "pos",
       "permission": "pos.session.start",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/purchaseOrderWorkflow/GoodsReceiptAndSummary.ts",
@@ -1413,11 +1568,11 @@
       "moduleSlug": "purchasing",
       "permission": "finance.reports.export | reports.export",
       "guard": "requireAnyPermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/roles/createRole.ts",
@@ -1427,11 +1582,11 @@
       "moduleSlug": "settings",
       "permission": "roles.create",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/roles/getOrgRoles.ts",
@@ -1441,11 +1596,11 @@
       "moduleSlug": "settings",
       "permission": "roles.read",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/roles/getRoleById.ts",
@@ -1455,11 +1610,11 @@
       "moduleSlug": "settings",
       "permission": "roles.read",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/roles/role-auth.ts",
@@ -1497,11 +1652,11 @@
       "moduleSlug": "settings",
       "permission": "roles.update",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/security/step-up-auth.actions.ts",
@@ -1553,11 +1708,11 @@
       "moduleSlug": "inventory",
       "permission": "inventory.items.create | inventory.items.update",
       "guard": "requireAnyPermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/storage/storage-config-actions.ts",
@@ -1567,11 +1722,11 @@
       "moduleSlug": "settings",
       "permission": "inventory.items.create | inventory.items.update | system.settings.read | system.settings.update",
       "guard": "requireAnyPermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/suppliers/getOrgSuppliers.ts",
@@ -1581,11 +1736,11 @@
       "moduleSlug": "purchasing",
       "permission": "purchases.suppliers.read",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/suppliers/itemSupplierActions.ts",
@@ -1623,11 +1778,11 @@
       "moduleSlug": "settings",
       "permission": "taxes.create",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/taxRate/getOrgTaxRates.ts",
@@ -1637,11 +1792,11 @@
       "moduleSlug": "settings",
       "permission": "taxes.read",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/taxRate/tax-rate-management-actions.ts",
@@ -1651,11 +1806,11 @@
       "moduleSlug": "settings",
       "permission": "taxes.read",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/units/deleteUnit.ts",
@@ -1665,11 +1820,11 @@
       "moduleSlug": "inventory",
       "permission": "inventory.units.delete",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/units/getOrgUnits.ts",
@@ -1679,11 +1834,11 @@
       "moduleSlug": "inventory",
       "permission": "inventory.units.read",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/units/unit-management-actions.ts",
@@ -1735,11 +1890,11 @@
       "moduleSlug": "settings",
       "permission": "users.delete",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/users/getOrgInvites.ts",
@@ -1749,11 +1904,11 @@
       "moduleSlug": "settings",
       "permission": "users.invite | users.read",
       "guard": "requireAnyPermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/users/getOrgUsers.ts",
@@ -1763,11 +1918,11 @@
       "moduleSlug": "settings",
       "permission": "users.read",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/users/getUserById.ts",
@@ -1777,11 +1932,11 @@
       "moduleSlug": "settings",
       "permission": "users.read",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/users/sendInvite.ts",
@@ -1791,11 +1946,11 @@
       "moduleSlug": "settings",
       "permission": "INVITATION_ROLE_GRANT_PERMISSIONS",
       "guard": "requireAllPermissions",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/users/sendResetLink.ts",
@@ -1819,11 +1974,11 @@
       "moduleSlug": "settings",
       "permission": "users.password.reset",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/users/verifyOtp.ts",
@@ -1946,6 +2101,35 @@
         "apiSurfaceKind": "api_route"
       },
       "classification": "not_applicable_public"
+    },
+    {
+      "file": "app/api/internal/agents/reconcile-abandoned/route.ts",
+      "surface": "/api/internal/agents/reconcile-abandoned",
+      "surfaceType": "api",
+      "moduleApplicability": "review_required",
+      "moduleSlug": null,
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {
+        "apiClassification": "unclassified",
+        "apiDataClass": "json response",
+        "apiEvidenceFor": null,
+        "apiIssues": [],
+        "apiMethods": [
+          "GET",
+          "POST"
+        ],
+        "apiModuleAccess": "none",
+        "apiModuleAccessIntent": null,
+        "apiModuleAccessMode": null,
+        "apiOrgSource": "none",
+        "apiResponseEnvelope": "NextResponse.json",
+        "apiSurfaceKind": "api_route"
+      },
+      "classification": "review_required"
     },
     {
       "file": "app/api/me/permissions/route.ts",
@@ -2388,7 +2572,7 @@
       "moduleSlug": "inventory",
       "permission": "reports.export",
       "guard": "protect",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {
@@ -2399,7 +2583,7 @@
         "reportExportKind": "export",
         "freshAuthEvidence": true
       },
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/payroll/payroll-register.actions.ts",
@@ -2409,7 +2593,7 @@
       "moduleSlug": "payroll",
       "permission": "payroll.exports.create",
       "guard": "protect",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {
@@ -2420,7 +2604,7 @@
         "reportExportKind": "export",
         "freshAuthEvidence": true
       },
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/customers/layout.tsx",
@@ -2634,7 +2818,35 @@
     },
     {
       "file": "config/sidebar.ts",
+      "surface": "/dashboard/accounting/accountant-access",
+      "surfaceType": "navigation",
+      "moduleApplicability": "required",
+      "moduleSlug": "accounting",
+      "permission": "accounting.close.accountant.invite",
+      "guard": "sidebar-permission-filter",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped, enforcement candidate"
+    },
+    {
+      "file": "config/sidebar.ts",
       "surface": "/dashboard/accounting/accountant-portal",
+      "surfaceType": "navigation",
+      "moduleApplicability": "required",
+      "moduleSlug": "accounting",
+      "permission": "accounting.audit.read",
+      "guard": "sidebar-permission-filter",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped, enforcement candidate"
+    },
+    {
+      "file": "config/sidebar.ts",
+      "surface": "/dashboard/accounting/accountant-portfolio",
       "surfaceType": "navigation",
       "moduleApplicability": "required",
       "moduleSlug": "accounting",
@@ -3043,7 +3255,7 @@
       "surface": "/dashboard/finance/reconciliation",
       "surfaceType": "navigation",
       "moduleApplicability": "required",
-      "moduleSlug": "finance",
+      "moduleSlug": "payment_reconciliation",
       "permission": "payments.reconciliation.read",
       "guard": "sidebar-permission-filter",
       "observeOrEnforce": "report-only",
@@ -3057,7 +3269,7 @@
       "surface": "/dashboard/finance/retail",
       "surfaceType": "navigation",
       "moduleApplicability": "required",
-      "moduleSlug": "finance",
+      "moduleSlug": "payment_reconciliation",
       "permission": "finance.dashboard.read",
       "guard": "sidebar-permission-filter",
       "observeOrEnforce": "report-only",
@@ -3071,7 +3283,7 @@
       "surface": "/dashboard/finance/sales",
       "surfaceType": "navigation",
       "moduleApplicability": "required",
-      "moduleSlug": "finance",
+      "moduleSlug": "payment_reconciliation",
       "permission": "sales.analytics.read",
       "guard": "sidebar-permission-filter",
       "observeOrEnforce": "report-only",
@@ -3085,7 +3297,7 @@
       "surface": "/dashboard/finance/stock-to-cash",
       "surfaceType": "navigation",
       "moduleApplicability": "required",
-      "moduleSlug": "finance",
+      "moduleSlug": "payment_reconciliation",
       "permission": "finance.read",
       "guard": "sidebar-permission-filter",
       "observeOrEnforce": "report-only",
@@ -3157,6 +3369,20 @@
       "moduleApplicability": "required",
       "moduleSlug": "inventory",
       "permission": "CREATE_ITEMS",
+      "guard": "sidebar-permission-filter",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped, enforcement candidate"
+    },
+    {
+      "file": "config/sidebar.ts",
+      "surface": "/dashboard/inventory/loss-control",
+      "surfaceType": "navigation",
+      "moduleApplicability": "required",
+      "moduleSlug": "inventory",
+      "permission": "inventory.levels.read",
       "guard": "sidebar-permission-filter",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
@@ -3697,8 +3923,36 @@
       "classification": "mapped, enforcement candidate"
     },
     {
+      "file": "app/[locale]/(dashboard)/dashboard/accounting/accountant-access/page.tsx",
+      "surface": "/dashboard/accounting/accountant-access",
+      "surfaceType": "page",
+      "moduleApplicability": "required",
+      "moduleSlug": "accounting",
+      "permission": "accounting.close.accountant.invite",
+      "guard": "checkPermission",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped, enforcement candidate"
+    },
+    {
       "file": "app/[locale]/(dashboard)/dashboard/accounting/accountant-portal/page.tsx",
       "surface": "/dashboard/accounting/accountant-portal",
+      "surfaceType": "page",
+      "moduleApplicability": "required",
+      "moduleSlug": "accounting",
+      "permission": "accounting.audit.read",
+      "guard": "checkPermission",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped, enforcement candidate"
+    },
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/accounting/accountant-portfolio/page.tsx",
+      "surface": "/dashboard/accounting/accountant-portfolio",
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "accounting",
@@ -3797,6 +4051,20 @@
     {
       "file": "app/[locale]/(dashboard)/dashboard/accounting/page.tsx",
       "surface": "/dashboard/accounting",
+      "surfaceType": "page",
+      "moduleApplicability": "required",
+      "moduleSlug": "accounting",
+      "permission": "accounting.reports.read",
+      "guard": "checkPermission",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped, enforcement candidate"
+    },
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/accounting/reports/financial-statements/page.tsx",
+      "surface": "/dashboard/accounting/reports/financial-statements",
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "accounting",
@@ -4208,11 +4476,11 @@
       "moduleSlug": "payment_reconciliation",
       "permission": "payments.reconciliation.read",
       "guard": "FinanceRouteAccess",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/finance/retail/page.tsx",
@@ -4439,6 +4707,20 @@
       "classification": "mapped, enforcement candidate"
     },
     {
+      "file": "app/[locale]/(dashboard)/dashboard/inventory/loss-control/page.tsx",
+      "surface": "/dashboard/inventory/loss-control",
+      "surfaceType": "page",
+      "moduleApplicability": "required",
+      "moduleSlug": "inventory",
+      "permission": "inventory.levels.read",
+      "guard": "checkPermission",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped, enforcement candidate"
+    },
+    {
       "file": "app/[locale]/(dashboard)/dashboard/inventory/movements/page.tsx",
       "surface": "/dashboard/inventory/movements",
       "surfaceType": "page",
@@ -4586,11 +4868,11 @@
       "moduleSlug": "settings",
       "permission": "communication.notifications.read",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/owner-war-room/page.tsx",
@@ -4628,11 +4910,11 @@
       "moduleSlug": "payroll",
       "permission": "payroll.payment_destination.read",
       "guard": "requireAnyPermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/payroll/compensation/page.tsx",
@@ -4642,11 +4924,11 @@
       "moduleSlug": "payroll",
       "permission": "payroll.compensation.read",
       "guard": "requireAnyPermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/payroll/contracts/page.tsx",
@@ -4656,11 +4938,11 @@
       "moduleSlug": "payroll",
       "permission": "payroll.contracts.read",
       "guard": "requireAnyPermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/payroll/declarations/page.tsx",
@@ -4670,11 +4952,11 @@
       "moduleSlug": "payroll",
       "permission": "payroll.command.read",
       "guard": "requireAnyPermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/payroll/employees/page.tsx",
@@ -4684,11 +4966,11 @@
       "moduleSlug": "payroll",
       "permission": "payroll.employees.read",
       "guard": "requireAnyPermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/payroll/page.tsx",
@@ -4698,11 +4980,11 @@
       "moduleSlug": "payroll",
       "permission": "payroll.command.read",
       "guard": "requireAnyPermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/payroll/payments/page.tsx",
@@ -4712,11 +4994,11 @@
       "moduleSlug": "payroll",
       "permission": "payments.reconciliation.read",
       "guard": "requireAnyPermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/payroll/payslips/page.tsx",
@@ -4726,11 +5008,11 @@
       "moduleSlug": "payroll",
       "permission": "payroll.payslips.self.read",
       "guard": "requireAnyPermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/payroll/register/page.tsx",
@@ -4740,11 +5022,11 @@
       "moduleSlug": "payroll",
       "permission": "payroll.reports.read",
       "guard": "requireAnyPermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/payroll/runs/page.tsx",
@@ -4754,11 +5036,11 @@
       "moduleSlug": "payroll",
       "permission": "payroll.command.read",
       "guard": "requireAnyPermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/payroll/setup/page.tsx",
@@ -4768,11 +5050,11 @@
       "moduleSlug": "payroll",
       "permission": "payroll.runs.calculate",
       "guard": "requireAnyPermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/people/[employeeId]/page.tsx",
@@ -4880,11 +5162,11 @@
       "moduleSlug": "purchasing",
       "permission": "purchases.orders.update",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/page.tsx",
@@ -4894,11 +5176,11 @@
       "moduleSlug": "purchasing",
       "permission": "purchases.orders.read",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/purchase-orders/new/page.tsx",
@@ -4908,11 +5190,11 @@
       "moduleSlug": "purchasing",
       "permission": "purchases.orders.create",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/purchase-orders/page.tsx",
@@ -4922,11 +5204,11 @@
       "moduleSlug": "purchasing",
       "permission": "purchases.orders.read",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/purchases/[id]/page.tsx",
@@ -4936,11 +5218,11 @@
       "moduleSlug": "purchasing",
       "permission": "purchases.orders.read",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/purchases/page.tsx",
@@ -4950,11 +5232,11 @@
       "moduleSlug": "purchasing",
       "permission": "purchases.orders.read",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/purchases/payables/history/page.tsx",
@@ -4964,11 +5246,11 @@
       "moduleSlug": "purchasing",
       "permission": "purchasing.ap.invoice.view",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx",
@@ -4978,11 +5260,11 @@
       "moduleSlug": "purchasing",
       "permission": "purchasing.ap.invoice.view",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/purchases/suppliers/[id]/edit/page.tsx",
@@ -4992,11 +5274,11 @@
       "moduleSlug": "purchasing",
       "permission": "purchases.suppliers.update",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/purchases/suppliers/[id]/page.tsx",
@@ -5006,11 +5288,11 @@
       "moduleSlug": "purchasing",
       "permission": "purchases.suppliers.read",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/purchases/suppliers/create/page.tsx",
@@ -5020,11 +5302,11 @@
       "moduleSlug": "purchasing",
       "permission": "purchases.suppliers.create",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/purchases/suppliers/page.tsx",
@@ -5034,11 +5316,11 @@
       "moduleSlug": "purchasing",
       "permission": "purchases.suppliers.read",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/sales/page.tsx",
@@ -5048,11 +5330,11 @@
       "moduleSlug": "sales",
       "permission": "sales.read",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/settings/appearance/page.tsx",
@@ -5314,11 +5596,11 @@
       "moduleSlug": "purchasing",
       "permission": "purchases.suppliers.update",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/suppliersSystem/[id]/page.tsx",
@@ -5328,11 +5610,11 @@
       "moduleSlug": "purchasing",
       "permission": "purchases.suppliers.read",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/suppliersSystem/new/page.tsx",
@@ -5342,11 +5624,11 @@
       "moduleSlug": "purchasing",
       "permission": "purchases.suppliers.create",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/suppliersSystem/page.tsx",
@@ -5356,11 +5638,11 @@
       "moduleSlug": "purchasing",
       "permission": "purchases.suppliers.read",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "services/accounting/close-assurance.service.ts",
@@ -5484,565 +5766,5 @@
       },
       "classification": "mapped, enforcement candidate"
     }
-  ],
-  "ratchet": {
-    "failed": false,
-    "baselineActiveGapCount": 55,
-    "currentActiveGapCount": 10,
-    "activeGapDelta": -45,
-    "baselineCounts": {
-      "MODULE_SURFACE_UNMAPPED": 34,
-      "MODULE_SURFACE_MISSING_PERMISSION": 16,
-      "MODULE_SURFACE_PROTECTED_GUARD_NONE": 5
-    },
-    "currentCounts": {
-      "MODULE_SURFACE_UNMAPPED": 5,
-      "MODULE_SURFACE_PROTECTED_GUARD_NONE": 1,
-      "MODULE_SURFACE_MISSING_PERMISSION": 4
-    },
-    "newFindings": [],
-    "resolvedFindings": [
-      {
-        "surfaceType": "action",
-        "surface": "_shared/safe-action-responses.ts",
-        "file": "actions/_shared/safe-action-responses.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "_shared/safe-action-responses.ts",
-        "file": "actions/_shared/safe-action-responses.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_MISSING_PERMISSION",
-        "reason": "Protected user-facing surface has no RBAC permission evidence."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "analytics/analytics/financial-reports.ts",
-        "file": "actions/analytics/analytics/financial-reports.ts",
-        "moduleSlug": "analytics",
-        "permission": null,
-        "guard": "none",
-        "classification": "mapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_MISSING_PERMISSION",
-        "reason": "Protected user-facing surface has no RBAC permission evidence."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "analytics/analytics/financial-reports.ts",
-        "file": "actions/analytics/analytics/financial-reports.ts",
-        "moduleSlug": "analytics",
-        "permission": null,
-        "guard": "none",
-        "classification": "mapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_PROTECTED_GUARD_NONE",
-        "reason": "Module-owned action or API surface has no detected server-side guard."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "analytics/get-sales-analytics.ts",
-        "file": "actions/analytics/get-sales-analytics.ts",
-        "moduleSlug": "analytics",
-        "permission": null,
-        "guard": "none",
-        "classification": "mapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_MISSING_PERMISSION",
-        "reason": "Protected user-facing surface has no RBAC permission evidence."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "analytics/get-sales-analytics.ts",
-        "file": "actions/analytics/get-sales-analytics.ts",
-        "moduleSlug": "analytics",
-        "permission": null,
-        "guard": "none",
-        "classification": "mapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_PROTECTED_GUARD_NONE",
-        "reason": "Module-owned action or API surface has no detected server-side guard."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "auth.ts",
-        "file": "actions/auth.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "auth.ts",
-        "file": "actions/auth.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_MISSING_PERMISSION",
-        "reason": "Protected user-facing surface has no RBAC permission evidence."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "brands/getOrgBrands.ts",
-        "file": "actions/brands/getOrgBrands.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "brands/getOrgBrands.ts",
-        "file": "actions/brands/getOrgBrands.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_MISSING_PERMISSION",
-        "reason": "Protected user-facing surface has no RBAC permission evidence."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "categories/createBulkCategories.ts",
-        "file": "actions/categories/createBulkCategories.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "categories/createBulkCategories.ts",
-        "file": "actions/categories/createBulkCategories.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_MISSING_PERMISSION",
-        "reason": "Protected user-facing surface has no RBAC permission evidence."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "categories/createCategory.ts",
-        "file": "actions/categories/createCategory.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "categories/createCategory.ts",
-        "file": "actions/categories/createCategory.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_MISSING_PERMISSION",
-        "reason": "Protected user-facing surface has no RBAC permission evidence."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "categories/getOrgCategories.ts",
-        "file": "actions/categories/getOrgCategories.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "categories/getOrgCategories.ts",
-        "file": "actions/categories/getOrgCategories.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_MISSING_PERMISSION",
-        "reason": "Protected user-facing surface has no RBAC permission evidence."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "item-suppliers/addItemSuppliers.ts",
-        "file": "actions/item-suppliers/addItemSuppliers.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "item-suppliers/addItemSuppliers.ts",
-        "file": "actions/item-suppliers/addItemSuppliers.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_MISSING_PERMISSION",
-        "reason": "Protected user-facing surface has no RBAC permission evidence."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "item-suppliers/getItemWithSuppliers.ts",
-        "file": "actions/item-suppliers/getItemWithSuppliers.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "item-suppliers/getItemWithSuppliers.ts",
-        "file": "actions/item-suppliers/getItemWithSuppliers.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_MISSING_PERMISSION",
-        "reason": "Protected user-facing surface has no RBAC permission evidence."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "item/items.ts",
-        "file": "actions/item/items.ts",
-        "moduleSlug": null,
-        "permission": "inventory.items.read",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "item/listItemsAction.ts",
-        "file": "actions/item/listItemsAction.ts",
-        "moduleSlug": null,
-        "permission": "inventory.items.read",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "itemsShow/createActionItem.ts",
-        "file": "actions/itemsShow/createActionItem.ts",
-        "moduleSlug": null,
-        "permission": "inventory.items.create",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "itemsShow/deleteItem.ts",
-        "file": "actions/itemsShow/deleteItem.ts",
-        "moduleSlug": null,
-        "permission": "inventory.items.delete",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "itemsShow/getBriefItemById.ts",
-        "file": "actions/itemsShow/getBriefItemById.ts",
-        "moduleSlug": null,
-        "permission": "inventory.items.read",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "itemsShow/getBriefOrgItems.ts",
-        "file": "actions/itemsShow/getBriefOrgItems.ts",
-        "moduleSlug": null,
-        "permission": "inventory.items.read",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "itemsShow/getOrgItems.ts",
-        "file": "actions/itemsShow/getOrgItems.ts",
-        "moduleSlug": null,
-        "permission": "inventory.items.read",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "itemsShow/getOrgItemsWithInventoryLevels.ts",
-        "file": "actions/itemsShow/getOrgItemsWithInventoryLevels.ts",
-        "moduleSlug": null,
-        "permission": "inventory.items.read",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "itemsShow/getOrgItemsWithInventoryLevelsLocation.ts",
-        "file": "actions/itemsShow/getOrgItemsWithInventoryLevelsLocation.ts",
-        "moduleSlug": null,
-        "permission": "inventory.items.read",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "itemsShow/updateItemBasicInfoById.ts",
-        "file": "actions/itemsShow/updateItemBasicInfoById.ts",
-        "moduleSlug": null,
-        "permission": "inventory.items.update",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "itemsShow/updateItemById.ts",
-        "file": "actions/itemsShow/updateItemById.ts",
-        "moduleSlug": null,
-        "permission": "inventory.items.update",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "itemsShow/updateItemItemDetailsById.ts",
-        "file": "actions/itemsShow/updateItemItemDetailsById.ts",
-        "moduleSlug": null,
-        "permission": "inventory.items.update",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "itemsShow/updateItemPricingById.ts",
-        "file": "actions/itemsShow/updateItemPricingById.ts",
-        "moduleSlug": null,
-        "permission": "inventory.items.update",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "itemsShow/updateItemRelationsById.ts",
-        "file": "actions/itemsShow/updateItemRelationsById.ts",
-        "moduleSlug": null,
-        "permission": "inventory.items.update",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "itemsShow/updateItemStockById.ts",
-        "file": "actions/itemsShow/updateItemStockById.ts",
-        "moduleSlug": null,
-        "permission": "inventory.items.update",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "payroll/payroll-country-pack-review-intake.actions.ts",
-        "file": "actions/payroll/payroll-country-pack-review-intake.actions.ts",
-        "moduleSlug": "payroll",
-        "permission": null,
-        "guard": "protect",
-        "classification": "mapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_MISSING_PERMISSION",
-        "reason": "Protected user-facing surface has no RBAC permission evidence."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "payroll/payroll-setup.actions.ts",
-        "file": "actions/payroll/payroll-setup.actions.ts",
-        "moduleSlug": "payroll",
-        "permission": null,
-        "guard": "protect",
-        "classification": "mapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_MISSING_PERMISSION",
-        "reason": "Protected user-facing surface has no RBAC permission evidence."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "purchaseOrderWorkflow/GoodsReceiptAndSummary.ts",
-        "file": "actions/purchaseOrderWorkflow/GoodsReceiptAndSummary.ts",
-        "moduleSlug": null,
-        "permission": "purchases.orders.read",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "signals/business-signals.actions.ts",
-        "file": "actions/signals/business-signals.actions.ts",
-        "moduleSlug": null,
-        "permission": "dashboard.read",
-        "guard": "protect",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "snapshots/snapshot.actions.ts",
-        "file": "actions/snapshots/snapshot.actions.ts",
-        "moduleSlug": null,
-        "permission": "dashboard.read",
-        "guard": "protect",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "suppliers/itemSupplierActions.ts",
-        "file": "actions/suppliers/itemSupplierActions.ts",
-        "moduleSlug": null,
-        "permission": "readonly string[]",
-        "guard": "none",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "suppliers/itemSupplierActions.ts",
-        "file": "actions/suppliers/itemSupplierActions.ts",
-        "moduleSlug": null,
-        "permission": "readonly string[]",
-        "guard": "none",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_PROTECTED_GUARD_NONE",
-        "reason": "Module-owned action or API surface has no detected server-side guard."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "suppliers/supplier-management-actions.ts",
-        "file": "actions/suppliers/supplier-management-actions.ts",
-        "moduleSlug": null,
-        "permission": ")) {\n      return error.message\n    }\n\n    if (\n      error.message.startsWith(",
-        "guard": "none",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "suppliers/supplier-management-actions.ts",
-        "file": "actions/suppliers/supplier-management-actions.ts",
-        "moduleSlug": null,
-        "permission": ")) {\n      return error.message\n    }\n\n    if (\n      error.message.startsWith(",
-        "guard": "none",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_PROTECTED_GUARD_NONE",
-        "reason": "Module-owned action or API surface has no detected server-side guard."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "units/unit-management-actions.ts",
-        "file": "actions/units/unit-management-actions.ts",
-        "moduleSlug": null,
-        "permission": "inventory.units.read",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      }
-    ],
-    "worsenedCategories": []
-  }
+  ]
 }

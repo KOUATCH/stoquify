@@ -2,6 +2,10 @@ import { render, screen } from "@testing-library/react"
 
 import { HrisEmployeeSelfService } from "../HrisEmployeeSelfService"
 
+jest.mock("@/components/hris/HrisOperationalTimeRequestPanel", () => ({
+  HrisOperationalTimeRequestPanel: () => <div>Operational time requests</div>,
+}))
+
 jest.mock("next/link", () => {
   const MockLink = ({ href, children, ...props }: { href: string; children: React.ReactNode }) => (
     <a href={href} {...props}>{children}</a>
@@ -84,6 +88,7 @@ function model() {
       },
       payrollReleaseStatus: "BLOCKED",
     },
+    operationalTime: { requests: [], balances: [] },
     capabilities: {
       payslips: { canRead: true, canExport: false, exportRequiresFreshAuth: true },
       paymentDestinationRequest: {

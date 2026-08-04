@@ -1,20 +1,20 @@
 # Statutory Country Pack Production Readiness Gate
 
-Generated: 2026-07-20T07:25:52.785Z
+Generated: 2026-08-01T17:00:19.212Z
 Mode: fail
 Status: blocked
 
 ## Summary
 
-- Checks ready: 10/12
-- Blockers: 2
+- Checks ready: 11/12
+- Blockers: 1
 
 ## Checks
 
 - ready: country_pack_provenance_schema
 - ready: published_effective_resolution
 - ready: publish_requires_reviewed_evidence
-- blocked: source_artifact_hash_verification
+- ready: source_artifact_hash_verification
 - blocked: source_artifact_expert_approval
 - ready: cameroon_automation_claim_blocked
 - ready: payroll_tax_fail_closed
@@ -26,8 +26,18 @@ Status: blocked
 
 ## Blockers
 
-- source_artifact_hash_verification
 - source_artifact_expert_approval
+
+## Source Evidence Diagnostics
+
+- Manifest: docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/manifest.json
+- Captured artifact hashes verified: 2/2
+- Pack source hashes declared / valid / bound: 7/7/7
+- Approval artifact verified: false
+- Qualified expert approval complete: false
+- Runtime CNPS capability status: SUPPORTED_DRAFT
+- Runtime CNPS verification status: SOURCE_CHECKED
+- Runtime CNPS authority binding promoted: false
 
 ## Safety
 

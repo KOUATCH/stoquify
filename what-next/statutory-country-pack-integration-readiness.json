@@ -1,0 +1,61 @@
+{
+  "summary": {
+    "generatedAt": "2026-08-01T17:39:02.033Z",
+    "mode": "fail",
+    "status": "READY_FOR_CORE_INTEGRATION",
+    "checkCount": 9,
+    "readyCount": 9,
+    "blockerCount": 0
+  },
+  "scope": {
+    "countryPackEvidenceRequired": false,
+    "expertApprovalRequired": false,
+    "regulatorSignatureRequired": false,
+    "productionActivationAllowed": false,
+    "liveAuthoritySubmissionAllowed": false
+  },
+  "checks": [
+    {
+      "id": "regulatory_decision_contract_present",
+      "ready": true
+    },
+    {
+      "id": "provisional_results_are_watermarked",
+      "ready": true
+    },
+    {
+      "id": "production_resolution_fails_closed",
+      "ready": true
+    },
+    {
+      "id": "production_deployment_overrides_requested_mode",
+      "ready": true
+    },
+    {
+      "id": "direct_country_pack_imports_are_gated",
+      "ready": true
+    },
+    {
+      "id": "sandbox_adapters_self_enforce",
+      "ready": true
+    },
+    {
+      "id": "live_authority_paths_remain_blocked",
+      "ready": true
+    },
+    {
+      "id": "certified_fiscal_evidence_is_database_immutable",
+      "ready": true
+    },
+    {
+      "id": "integration_and_promotion_commands_are_independent",
+      "ready": true
+    }
+  ],
+  "blockers": [],
+  "nonClaims": [
+    "Integration readiness is not country-pack development readiness.",
+    "Integration readiness is not statutory or production approval.",
+    "Country-pack development should separately run the evidence-bearing development gate."
+  ]
+}

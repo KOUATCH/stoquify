@@ -27,8 +27,13 @@ import type {
   PaymentReconciliationSignOffCommandCandidate,
   PaymentReconciliationSignOffCommandStateResult,
 } from "@/services/reconciliation/payment-reconciliation-sign-off-command-state-contracts"
+import type { ClientMissingCloseEvidenceRequestQueue } from "@/services/accounting/missing-close-evidence-request-queue-contracts"
 
-export type ManagerActionDueState = "overdue" | "due_today" | "due_soon" | "scheduled"
+export type ManagerActionDueState =
+  | "overdue"
+  | "due_today"
+  | "due_soon"
+  | "scheduled"
 
 export type ManagerActionRunSheetGroupId =
   | "overdue"
@@ -38,6 +43,22 @@ export type ManagerActionRunSheetGroupId =
   | "waiting"
   | "assigned"
   | "routine"
+export type ClientMissingProofActionCenterSource =
+  | {
+      state: "AVAILABLE"
+      queue: ClientMissingCloseEvidenceRequestQueue
+      reason: null
+    }
+  | {
+      state: "HIDDEN"
+      queue: null
+      reason: "RBAC_REQUIRED" | "MODULE_UNAVAILABLE"
+    }
+  | {
+      state: "UNAVAILABLE"
+      queue: null
+      reason: "SOURCE_READ_FAILED"
+    }
 
 type ManagerActionCenterActionBase = {
   id: string
@@ -62,7 +83,7 @@ type ManagerActionCenterActionBase = {
 
 export type ManagerActionCenterAction =
   | (ManagerActionCenterActionBase & {
-      origin: "SIGNAL" | "ASSURANCE"
+      origin: "SIGNAL" | "ASSURANCE" | "ACCOUNTANT_REQUEST"
       kind: "LINK"
       sourceCommand: null
     })
@@ -112,6 +133,7 @@ export type ManagerActionCenterData = {
   insights: BIInsight[]
   actionItems: ManagerActionCenterAction[]
   actionQueue: ActionQueueResult
+  clientMissingProofSource: ClientMissingProofActionCenterSource | null
   summary: ManagerActionCenterSummary
   assuranceIncidents: AssuranceControlTowerIncident[]
 }
@@ -131,4 +153,5 @@ export type ComposeManagerActionCenterInput = {
   assuranceIncidents?: AssuranceControlTowerIncident[]
   assuranceHiddenByPermission?: number
   paymentReconciliationSignOff?: PaymentReconciliationSignOffCommandStateResult | null
+  clientMissingProofSource?: ClientMissingProofActionCenterSource | null
 }

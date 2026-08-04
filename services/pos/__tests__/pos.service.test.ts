@@ -1,10 +1,4 @@
-import {
-  AccountingSourceType,
-  ComplianceAdapterEnvironment,
-  FiscalDocumentStatus,
-  FiscalDocumentType,
-  Prisma,
-} from "@prisma/client"
+import { Prisma } from "@prisma/client"
 
 jest.mock("@/prisma/db", () => ({
   db: {
@@ -334,11 +328,11 @@ describe("commitPOSSale accounting wiring", () => {
     mockTx.auditLog.create.mockResolvedValue({ id: "audit-1" })
     mockPostSale.mockResolvedValue({ id: "sale-je-1", entryNumber: "VT-20260610-0001", postingBatchId: "batch-1" })
     mockPostPayment.mockResolvedValue({ id: "payment-je-1", entryNumber: "BQ-20260610-0002" })
-    mockPostRefund.mockResolvedValue({ id: "refund-je-1", entryNumber: "RF-20260610-0001" })
-    mockPostVoid.mockResolvedValue({ id: "void-je-1", entryNumber: "VD-20260610-0001" })
+    mockPostRefund.mockResolvedValue({ id: "refund-je-1", entryNumber: "RF-20260610-0001", postingBatchId: "refund-batch-1" })
+    mockPostVoid.mockResolvedValue({ id: "void-je-1", entryNumber: "VD-20260610-0001", postingBatchId: "void-batch-1" })
     mockCreateFiscalDocumentFromPostedSource.mockResolvedValue({
       id: "fiscal-doc-1",
-      status: FiscalDocumentStatus.QUEUED,
+      status: "QUEUED",
       authorityChannel: "CM_DGI_E_SERVICES_PORTAL",
       submissions: [{ id: "submission-1", status: "PENDING" }],
     })
@@ -352,6 +346,12 @@ describe("commitPOSSale accounting wiring", () => {
     expect(result).toMatchObject({
       saleId: "sale-1",
       orderNumber: "POS-20260610-0001",
+      fiscalDocument: null,
+      fiscalization: {
+        requestId: "pos-sale:sale-1:fiscalization:v1",
+        status: "PENDING",
+        watermark: "NOT FOR STATUTORY USE",
+      },
       status: "COMPLETED",
       paymentStatus: "PAID",
       accountingMovements: {
@@ -387,40 +387,7 @@ describe("commitPOSSale accounting wiring", () => {
       }),
       mockTx,
     )
-    expect(mockCreateFiscalDocumentFromPostedSource).toHaveBeenCalledWith(
-      expect.objectContaining({
-        organizationId: "org-1",
-        createdById: "cashier-1",
-        documentType: FiscalDocumentType.POS_RECEIPT,
-        sourceType: AccountingSourceType.POS_SALE,
-        sourceId: "sale-1",
-        sourceNumber: "POS-20260610-0001",
-        countryCode: "CM",
-        currency: "XAF",
-        idempotencyKey: "pos-sale:sale-1:fiscal-document",
-        enqueueCertification: true,
-        authorityChannel: "CM_DGI_E_SERVICES_PORTAL",
-        adapterKey: "CM_DGI_SANDBOX",
-        adapterEnvironment: ComplianceAdapterEnvironment.SANDBOX,
-        lines: [
-          expect.objectContaining({
-            sourceLineId: "line-1",
-            itemId: "item-1",
-            description: "Fiscal item",
-            quantity: "2.000",
-            unitPrice: "50.00",
-            taxRateBps: 1800,
-            taxAmount: "18.00",
-            lineSubtotal: "100.00",
-            lineTotal: "118.00",
-          }),
-        ],
-      }),
-      mockTx,
-    )
-    expect(mockPostPayment.mock.invocationCallOrder[0]).toBeLessThan(
-      mockCreateFiscalDocumentFromPostedSource.mock.invocationCallOrder[0],
-    )
+    expect(mockCreateFiscalDocumentFromPostedSource).not.toHaveBeenCalled()
     expect(mockTx.salesOrder.update.mock.invocationCallOrder[0]).toBeLessThan(
       mockPostSale.mock.invocationCallOrder[0],
     )
@@ -493,22 +460,27 @@ describe("commitPOSSale accounting wiring", () => {
           sourceId: "sale-1",
           postingBatchId: "batch-1",
           payload: expect.objectContaining({
-            fiscalDocument: expect.objectContaining({
-              id: "fiscal-doc-1",
-              status: FiscalDocumentStatus.QUEUED,
-              authorityChannel: "CM_DGI_E_SERVICES_PORTAL",
-              submissionStatuses: ["PENDING"],
+            fiscalization: expect.objectContaining({
+              requestId: "pos-sale:sale-1:fiscalization:v1",
+              status: "PENDING",
+              watermark: "NOT FOR STATUTORY USE",
             }),
           }),
           outboxMessages: {
-            create: [
+            create: expect.arrayContaining([
               expect.objectContaining({
                 organizationId: "org-1",
                 channel: "NOTIFICATION",
                 eventName: "pos.sale.finalized",
                 idempotencyKey: "POS:pos-sale:sale-1:finalized:NOTIFICATION:pos.sale.finalized",
               }),
-            ],
+              expect.objectContaining({
+                organizationId: "org-1",
+                channel: "FISCALIZATION",
+                eventName: "pos.sale.fiscalization.requested",
+                idempotencyKey: "pos-sale:sale-1:fiscalization:v1",
+              }),
+            ]),
           },
         }),
         include: { outboxMessages: true },
@@ -518,6 +490,102 @@ describe("commitPOSSale accounting wiring", () => {
       salesOrderId: "sale-1",
       organizationId: "org-1",
     })
+  })
+
+  it("does not invalidate the sale when email receipt delivery throws write EOF", async () => {
+    mockSendReceipt.mockRejectedValueOnce(new Error("write EOF"))
+
+    const result = await commitPOSSale({
+      ...commitInput(),
+      receipt: {
+        channel: "EMAIL",
+        destination: "customer@example.test",
+        locale: "EN",
+      },
+    })
+
+    expect(result).toMatchObject({
+      saleId: "sale-1",
+      status: "COMPLETED",
+      delivery: {
+        channel: "EMAIL",
+        status: "FAILED",
+        message: "write EOF",
+      },
+    })
+    expect(mockSendReceipt).toHaveBeenCalledWith({
+      salesOrderId: "sale-1",
+      organizationId: "org-1",
+      userId: "cashier-1",
+      channel: "EMAIL",
+      destination: "customer@example.test",
+      locale: "EN",
+    })
+  })
+
+  it("does not invalidate the sale when WhatsApp receipt delivery throws provider unavailable", async () => {
+    mockSendReceipt.mockRejectedValueOnce(new Error("provider unavailable"))
+
+    const result = await commitPOSSale({
+      ...commitInput(),
+      receipt: {
+        channel: "WHATSAPP",
+        destination: "+237699000000",
+        locale: "EN",
+        whatsAppCustomerOptInConfirmed: true,
+      },
+    })
+
+    expect(result).toMatchObject({
+      saleId: "sale-1",
+      status: "COMPLETED",
+      delivery: {
+        channel: "WHATSAPP",
+        status: "FAILED",
+        message: "provider unavailable",
+      },
+    })
+    expect(mockSendReceipt).toHaveBeenCalledWith({
+      salesOrderId: "sale-1",
+      organizationId: "org-1",
+      userId: "cashier-1",
+      channel: "WHATSAPP",
+      destination: "+237699000000",
+      locale: "EN",
+      whatsAppCustomerOptInConfirmed: true,
+    })
+  })
+
+  it("rejects store credit before opening a transaction or producing sale effects", async () => {
+    const input = {
+      ...commitInput(),
+      tenders: [
+        {
+          method: "STORE_CREDIT" as const,
+          amount: 118,
+          reference: "UNVERIFIED-INSTRUMENT",
+        },
+      ],
+    }
+
+    await expect(commitPOSSale(input)).rejects.toThrow(
+      "Store credit tender is unavailable until an authoritative store-credit instrument ledger is implemented",
+    )
+
+    expect(mockDb.$transaction).not.toHaveBeenCalled()
+    expect(mockTx.salesOrder.updateMany).not.toHaveBeenCalled()
+    expect(mockTx.salesOrder.update).not.toHaveBeenCalled()
+    expect(mockTx.inventoryTransaction.create).not.toHaveBeenCalled()
+    expect(mockTx.customer.update).not.toHaveBeenCalled()
+    expect(mockTx.customerLedgerEntry.create).not.toHaveBeenCalled()
+    expect(mockTx.cashDrawerTransaction.create).not.toHaveBeenCalled()
+    expect(mockTx.payment.create).not.toHaveBeenCalled()
+    expect(mockTx.auditLog.create).not.toHaveBeenCalled()
+    expect(mockTx.businessEvent.create).not.toHaveBeenCalled()
+    expect(mockPostSale).not.toHaveBeenCalled()
+    expect(mockPostPayment).not.toHaveBeenCalled()
+    expect(mockGetSalesReceipt).not.toHaveBeenCalled()
+    expect(mockSendReceipt).not.toHaveBeenCalled()
   })
 
   it("does not return a committed sale or receipt when payment posting fails", async () => {
@@ -550,52 +618,55 @@ describe("commitPOSSale accounting wiring", () => {
     expectNoBusinessEvent("pos.sale.finalized")
   })
 
-  it("uses a stable tenant-scoped fiscal document idempotency key when the kernel returns an existing document", async () => {
-    mockCreateFiscalDocumentFromPostedSource.mockResolvedValueOnce({
-      id: "existing-fiscal-doc-1",
-      status: FiscalDocumentStatus.QUEUED,
-      authorityChannel: "CM_DGI_E_SERVICES_PORTAL",
-      submissions: [{ id: "existing-submission-1", status: "PENDING" }],
-    })
+  it("does not finalize audit, event, or receipt when sale posting lacks a batch", async () => {
+    mockPostSale.mockResolvedValueOnce({ id: "sale-je-1", entryNumber: "VT-20260610-0001", postingBatchId: null })
 
-    await commitPOSSale(commitInput())
-
-    expect(mockCreateFiscalDocumentFromPostedSource).toHaveBeenCalledTimes(1)
-    expect(mockCreateFiscalDocumentFromPostedSource.mock.calls[0][0]).toEqual(
-      expect.objectContaining({
-        organizationId: "org-1",
-        sourceType: AccountingSourceType.POS_SALE,
-        sourceId: "sale-1",
-        idempotencyKey: "pos-sale:sale-1:fiscal-document",
-      }),
+    await expect(commitPOSSale(commitInput())).rejects.toThrow(
+      "POS sale posting did not produce the required ledger posting batch.",
     )
-    expect(mockTx.businessEvent.create).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expect.objectContaining({
-          payload: expect.objectContaining({
-            fiscalDocument: expect.objectContaining({
-              id: "existing-fiscal-doc-1",
-              status: FiscalDocumentStatus.QUEUED,
-            }),
-          }),
-        }),
-      }),
-    )
-  })
-
-  it("rolls back the sale response and receipt when fiscal document creation fails", async () => {
-    mockCreateFiscalDocumentFromPostedSource.mockRejectedValueOnce(new Error("posted ledger source missing"))
-
-    await expect(commitPOSSale(commitInput())).rejects.toThrow("posted ledger source missing")
 
     expect(mockPostSale).toHaveBeenCalledTimes(1)
     expect(mockPostPayment).toHaveBeenCalledTimes(1)
-    expect(mockCreateFiscalDocumentFromPostedSource).toHaveBeenCalledTimes(1)
     expect(mockGetSalesReceipt).not.toHaveBeenCalled()
     expect(mockSendReceipt).not.toHaveBeenCalled()
     expectNoAuditAction("POS_SALE_POSTED")
     expectNoAuditAction("POS_SALE_COMMIT")
     expectNoBusinessEvent("pos.sale.finalized")
+  })
+
+  it("uses a stable tenant-scoped fiscalization request idempotency key", async () => {
+    await commitPOSSale(commitInput())
+
+    expect(mockTx.businessEvent.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          outboxMessages: {
+            create: expect.arrayContaining([
+              expect.objectContaining({
+                organizationId: "org-1",
+                channel: "FISCALIZATION",
+                idempotencyKey: "pos-sale:sale-1:fiscalization:v1",
+              }),
+            ]),
+          },
+        }),
+      }),
+    )
+  })
+
+  it("does not let country-pack or fiscal adapter failures roll back the completed sale", async () => {
+    mockCreateFiscalDocumentFromPostedSource.mockRejectedValueOnce(new Error("posted ledger source missing"))
+
+    await expect(commitPOSSale(commitInput())).resolves.toMatchObject({
+      saleId: "sale-1",
+      fiscalization: { status: "PENDING" },
+    })
+
+    expect(mockPostSale).toHaveBeenCalledTimes(1)
+    expect(mockPostPayment).toHaveBeenCalledTimes(1)
+    expect(mockCreateFiscalDocumentFromPostedSource).not.toHaveBeenCalled()
+    expect(mockGetSalesReceipt).toHaveBeenCalled()
+    expect(mockTx.businessEvent.create).toHaveBeenCalled()
   })
 
   it("blocks duplicate electronic provider references before capture", async () => {
@@ -650,6 +721,7 @@ describe("commitPOSSale accounting wiring", () => {
       paymentStatus: "REFUNDED",
       refundIds: ["refund-1"],
       refundJournalEntryIds: ["refund-je-1"],
+      refundPostingBatchIds: ["refund-batch-1"],
       totalRefunded: 118,
     })
     expect(mockTx.paymentRefund.create).toHaveBeenCalledWith(
@@ -703,6 +775,7 @@ describe("commitPOSSale accounting wiring", () => {
           action: "POS_SALE_REFUND",
           changes: expect.objectContaining({
             refundJournalEntryIds: ["refund-je-1"],
+            refundPostingBatchIds: ["refund-batch-1"],
           }),
         }),
       }),
@@ -716,10 +789,25 @@ describe("commitPOSSale accounting wiring", () => {
           idempotencyKey: "pos-refund:sale-1:refund-1",
           sourceType: "POS_REFUND",
           sourceId: "sale-1",
+          postingBatchId: "refund-batch-1",
         }),
         include: { outboxMessages: true },
       }),
     )
+  })
+
+  it("does not finalize refund audit or event when refund posting lacks a batch", async () => {
+    mockTx.salesOrder.findFirst.mockResolvedValue(completedSaleFixture())
+    mockPostRefund.mockResolvedValueOnce({ id: "refund-je-1", entryNumber: "RF-20260610-0001", postingBatchId: null })
+
+    await expect(refundPOSSale(correctionInput())).rejects.toThrow(
+      "POS refund posting refund-1 did not produce the required ledger posting batch.",
+    )
+
+    expect(mockTx.paymentRefund.create).toHaveBeenCalledTimes(1)
+    expect(mockPostRefund).toHaveBeenCalledTimes(1)
+    expectNoAuditAction("POS_SALE_REFUND")
+    expectNoBusinessEvent("pos.refund.issued")
   })
 
   it("does not finalize refund audit when refund posting fails", async () => {
@@ -760,6 +848,7 @@ describe("commitPOSSale accounting wiring", () => {
       status: "CANCELLED",
       paymentStatus: "CANCELLED",
       voidJournalEntryId: "void-je-1",
+      voidPostingBatchId: "void-batch-1",
     })
     expect(mockTx.payment.update).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -808,6 +897,7 @@ describe("commitPOSSale accounting wiring", () => {
           action: "POS_SALE_VOID",
           changes: expect.objectContaining({
             voidJournalEntryId: "void-je-1",
+            voidPostingBatchId: "void-batch-1",
           }),
         }),
       }),
@@ -821,10 +911,24 @@ describe("commitPOSSale accounting wiring", () => {
           idempotencyKey: "pos-void:sale-1:void-je-1",
           sourceType: "POS_VOID",
           sourceId: "sale-1",
+          postingBatchId: "void-batch-1",
         }),
         include: { outboxMessages: true },
       }),
     )
+  })
+
+  it("does not finalize void audit or event when void posting lacks a batch", async () => {
+    mockTx.salesOrder.findFirst.mockResolvedValue(completedSaleFixture())
+    mockPostVoid.mockResolvedValueOnce({ id: "void-je-1", entryNumber: "VD-20260610-0001", postingBatchId: null })
+
+    await expect(voidPOSSale(correctionInput("Wrong sale tendered"))).rejects.toThrow(
+      "POS void posting did not produce the required ledger posting batch.",
+    )
+
+    expect(mockPostVoid).toHaveBeenCalledTimes(1)
+    expectNoAuditAction("POS_SALE_VOID")
+    expectNoBusinessEvent("pos.sale.voided")
   })
 
   it("does not finalize void audit when void posting fails", async () => {

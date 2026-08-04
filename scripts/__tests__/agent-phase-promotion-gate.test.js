@@ -4,6 +4,7 @@ const {
   outputPaths,
   parseArgs,
   renderMarkdown,
+  writeWithRetry,
 } = require("../agent-phase-promotion-gate");
 
 describe("Agent phase promotion gate", () => {
@@ -20,6 +21,19 @@ describe("Agent phase promotion gate", () => {
     input.statutoryReadiness.summary.blockerCount = 2;
     input.credentialRegister.declaredStatus = "BLOCKED";
     input.operationalEvidence.declaredStatus = "BLOCKED";
+    input.credentialGateResult = {
+      ready: false,
+      status: "BLOCKED",
+      blockerCount: 1,
+      secretValuesPrinted: false,
+    };
+    input.operationalGateResult = {
+      ready: false,
+      status: "BLOCKED",
+      blockerCount: 1,
+      activationAuthorized: false,
+      secretValuesPrinted: false,
+    };
     input.promotionLedger.gateSnapshot.enterpriseReleaseDecision =
       "REJECTED_NO_GO";
     input.promotionLedger.steps[0].status =
@@ -57,6 +71,75 @@ describe("Agent phase promotion gate", () => {
         blockers: [],
       }),
     );
+  });
+
+  it("rejects a local skipped migration report even when its safety scan is ready", () => {
+    const input = readyInput();
+    input.migrationReadiness.deployment = {
+      environment: "local",
+      shouldDeploy: false,
+      databaseConfigured: false,
+      databaseTargetSafe: true,
+      blockers: [],
+    };
+    input.migrationReadiness.execution = {
+      attempted: false,
+      status: "skipped",
+    };
+
+    const result = evaluatePromotion(input, "phase2b");
+
+    expect(result.blockers).toContain("MIGRATION_TARGET_READY");
+  });
+
+  it("rejects non-release global and secret reports even when their summaries are ready", () => {
+    const input = readyInput();
+    input.releaseIndex.summary.releaseEnforced = false;
+    input.secretPreflight.summary.releaseEnforced = false;
+
+    const result = evaluatePromotion(input, "phase2b");
+
+    expect(result.blockers).toEqual(
+      expect.arrayContaining([
+        "GLOBAL_RELEASE_READY",
+        "PRODUCTION_SECRETS_READY",
+      ]),
+    );
+  });
+
+  it("rejects ready declarations when authoritative register evaluation is blocked", () => {
+    const input = readyInput();
+    input.credentialGateResult = {
+      ready: false,
+      status: "BLOCKED",
+      blockerCount: 1,
+      secretValuesPrinted: false,
+    };
+    input.operationalGateResult = {
+      ready: false,
+      status: "BLOCKED",
+      blockerCount: 1,
+      activationAuthorized: false,
+      secretValuesPrinted: false,
+    };
+
+    const result = evaluatePromotion(input, "phase2b");
+
+    expect(result.blockers).toEqual(
+      expect.arrayContaining([
+        "CREDENTIAL_ROTATION_READY",
+        "OPERATIONAL_RELEASE_READY",
+      ]),
+    );
+  });
+
+  it("rejects statutory summary readiness without bound source and approval evidence", () => {
+    const input = readyInput();
+    input.statutoryReadiness.sourceEvidence.hashesVerified = false;
+
+    const result = evaluatePromotion(input, "phase2b");
+
+    expect(result.blockers).toContain("STATUTORY_AUTHORITY_READY");
   });
 
   it("blocks Phase 2B if activation authority is pre-populated", () => {
@@ -141,6 +224,31 @@ describe("Agent phase promotion gate", () => {
     expect(markdown).toContain("Phase 3 authorized by gate:** No");
     expect(markdown).toContain("No authority was granted by this gate");
   });
+
+  it("retries transient evidence writes and preserves the final payload", () => {
+    const writes = [];
+    const delays = [];
+    const writer = jest.fn((target, value, encoding) => {
+      if (writer.mock.calls.length < 3) {
+        const error = new Error("transient write contention");
+        error.code = "EBUSY";
+        throw error;
+      }
+      writes.push({ target, value, encoding });
+    });
+
+    writeWithRetry("decision.json", "payload", {
+      attempts: 3,
+      writer,
+      sleeper: (milliseconds) => delays.push(milliseconds),
+    });
+
+    expect(writer).toHaveBeenCalledTimes(3);
+    expect(delays).toEqual([500, 1000]);
+    expect(writes).toEqual([
+      { target: "decision.json", value: "payload", encoding: "utf8" },
+    ]);
+  });
 });
 
 function readyInput() {
@@ -168,18 +276,61 @@ function readyInput() {
       summary: { contentMismatches: 0, phase2aRuntimeDrift: 0 },
     },
     releaseIndex: {
-      summary: { status: "ready", releaseBlockerCount: 0 },
+      summary: {
+        releaseEnforced: true,
+        status: "ready",
+        releaseBlockerCount: 0,
+        readinessReleaseBlockerCount: 0,
+        releaseConditionBlockerCount: 0,
+      },
     },
     secretPreflight: {
-      summary: { status: "ready", blockerCount: 0 },
+      summary: {
+        releaseEnforced: true,
+        status: "ready",
+        checkCount: 8,
+        readyCount: 8,
+        blockerCount: 0,
+        warningCount: 0,
+        secretValuePrinted: false,
+      },
+      checks: Array.from({ length: 8 }, () => ({ ready: true })),
     },
     migrationReadiness: {
       summary: { status: "ready", blockerCount: 0 },
+      deployment: {
+        environment: "production",
+        shouldDeploy: true,
+        databaseConfigured: true,
+        databaseTargetSafe: true,
+        blockers: [],
+      },
+      execution: {
+        attempted: false,
+        status: "pending",
+      },
     },
     statutoryReadiness: {
-      summary: { status: "ready", blockerCount: 0 },
+      summary: {
+        mode: "fail",
+        status: "ready",
+        checkCount: 12,
+        readyCount: 12,
+        blockerCount: 0,
+      },
+      sourceEvidence: {
+        hashesVerified: true,
+        approvalArtifactVerified: true,
+        expertApprovalComplete: true,
+      },
     },
     credentialRegister: { declaredStatus: "READY" },
+    credentialGateResult: {
+      ready: true,
+      status: "READY",
+      blockerCount: 0,
+      secretValuesPrinted: false,
+    },
     operationalEvidence: {
       declaredStatus: "READY_FOR_INDEPENDENT_REVIEW",
       activation: {
@@ -187,6 +338,13 @@ function readyInput() {
         authorized: false,
         activatedAt: null,
       },
+    },
+    operationalGateResult: {
+      ready: true,
+      status: "READY_FOR_INDEPENDENT_REVIEW",
+      blockerCount: 0,
+      activationAuthorized: false,
+      secretValuesPrinted: false,
     },
     promotionLedger: {
       activationAuthorized: false,

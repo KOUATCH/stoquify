@@ -3,6 +3,7 @@
 import { z } from "zod"
 
 import { protect } from "@/services/_shared/protect"
+import { getFinancialStatements } from "@/services/accounting/financial-statements.service"
 import {
   exportAccountingReport,
   getAccountingDashboardSummary,
@@ -22,6 +23,11 @@ const generalLedgerSchema = z.object({
   startDate: z.coerce.date().nullable().optional(),
   endDate: z.coerce.date().nullable().optional(),
 })
+
+const financialStatementsSchema = z.object({
+  periodId: z.string().trim().min(1).nullable().optional(),
+}).optional()
+
 
 const exportAccountingReportSchema = z.object({
   reportType: z.enum(["TRIAL_BALANCE", "GENERAL_LEDGER"]),
@@ -67,6 +73,21 @@ const getTrialBalanceProtected = protect<unknown, unknown>(
 export async function getTrialBalanceAction(input: unknown = {}) {
   return getTrialBalanceProtected(input)
 }
+const getFinancialStatementsProtected = protect<unknown, unknown>(
+  { permission: "accounting.reports.read", auditResource: "FinancialStatements" },
+  async (input, ctx) => {
+    const parsed = financialStatementsSchema.parse(input)
+    return getFinancialStatements({
+      organizationId: ctx.orgId,
+      periodId: parsed?.periodId,
+    })
+  },
+)
+
+export async function getFinancialStatementsAction(input: unknown = {}) {
+  return getFinancialStatementsProtected(input)
+}
+
 
 const getGeneralLedgerProtected = protect<unknown, unknown>(
   { permission: "accounting.reports.read", auditResource: "GeneralLedger" },

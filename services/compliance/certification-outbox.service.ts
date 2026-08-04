@@ -23,6 +23,7 @@ import {
 import { getComplianceAdapter } from "./adapters/registry"
 import type { AdapterConfigContext, CanonicalFiscalPayload } from "./adapter-contract"
 import { recordComplianceEvidenceOnce } from "./evidence.service"
+import { credentialReferenceSchema } from "./country-adapter-pilot.schemas"
 
 type DbClient = Prisma.TransactionClient | typeof db
 
@@ -642,13 +643,25 @@ export async function processComplianceSubmission(
     if (
       adapterConfig &&
       submission.environment !== ComplianceAdapterEnvironment.FAKE_SANDBOX &&
-      !adapterConfig.credentialReference
+      !credentialReferenceSchema.safeParse(adapterConfig.credentialReference).success
     ) {
       return failSubmission({
         status: ComplianceSubmissionStatus.FAILED,
         errorCode: "CREDENTIAL_CONFIGURATION_ERROR",
         message:
-          "Tenant compliance adapter credential reference is missing; secrets must remain outside country packs and logs.",
+          "Tenant compliance adapter credential reference is missing or is not an approved secret-manager URI; secrets must remain outside country packs and logs.",
+      })
+    }
+
+    if (
+      adapterConfig?.credentialExpiresAt &&
+      adapterConfig.credentialExpiresAt <= now
+    ) {
+      return failSubmission({
+        status: ComplianceSubmissionStatus.FAILED,
+        errorCode: "CREDENTIAL_CONFIGURATION_ERROR",
+        message:
+          "Tenant compliance adapter credentials have expired and must be rotated before submission.",
       })
     }
 

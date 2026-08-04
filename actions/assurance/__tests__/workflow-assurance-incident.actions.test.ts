@@ -94,7 +94,11 @@ describe("workflow assurance incident actions", () => {
 
   it("registers write and fresh-auth controls for risky incident actions", async () => {
     await acknowledgeWorkflowAssuranceIncidentAction({ incidentId: "incident-1" })
-    await resolveWorkflowAssuranceIncidentAction({ incidentId: "incident-1", note: "Fixed source evidence." })
+    await resolveWorkflowAssuranceIncidentAction({
+      incidentId: "incident-1",
+      note: "Fixed source evidence.",
+      currentSourceHash: "sha256-current-source",
+    })
     await suppressWorkflowAssuranceIncidentAction({
       incidentId: "incident-1",
       reason: "Accepted during provider outage.",

@@ -14,6 +14,7 @@ import {
   resolveWorkflowAssuranceIncidentAction,
   suppressWorkflowAssuranceIncidentAction,
 } from "@/actions/assurance/workflow-assurance-incident.actions"
+import { resolvePosCashShortageIncidentAction } from "@/actions/assurance/pos-cash-shortage-resolution.actions"
 import { useNotifications } from "@/components/notifications/NotificationProvider"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -117,6 +118,7 @@ const copy = {
 } as const
 
 const finalStatuses = new Set<AssuranceControlTowerIncident["status"]>(["resolved", "waived", "suppressed", "closed"])
+const POS_CASH_SHORTAGE_CHECK_KEY = "pos.closed_shift_cash_shortage.review"
 
 export function AssuranceIncidentAcknowledgeButton({
   incidentId,
@@ -185,6 +187,7 @@ export function AssuranceIncidentActions({ incident, waivers, locale }: Assuranc
   const canAcknowledge = incident.status === "open" || incident.status === "reopened"
   const canManageActive = incident.canManage && !isFinal
   const canReopen = incident.canManage && isFinal
+  const isPosCashShortageIncident = incident.checkKey === POS_CASH_SHORTAGE_CHECK_KEY
 
   async function handleAcknowledge() {
     setIsPending(true)
@@ -222,10 +225,18 @@ export function AssuranceIncidentActions({ incident, waivers, locale }: Assuranc
       }
 
       if (dialogAction === "resolve") {
-        const result = await resolveWorkflowAssuranceIncidentAction({
-          incidentId: incident.id,
-          note: trimmedNote || "Resolved from Workflow Assurance Control Tower.",
-        })
+        const result = isPosCashShortageIncident
+          ? await resolvePosCashShortageIncidentAction({
+              incidentId: incident.id,
+              currentSourceHash: incident.sourceHash,
+              resolutionNote: trimmedNote || "Resolved from Workflow Assurance Control Tower.",
+              resolutionEvidenceHash: evidenceHash.trim(),
+            })
+          : await resolveWorkflowAssuranceIncidentAction({
+              incidentId: incident.id,
+              note: trimmedNote || "Resolved from Workflow Assurance Control Tower.",
+              currentSourceHash: incident.sourceHash,
+            })
         if (!result.success) throw new Error(resultError(result))
       }
 
@@ -355,6 +366,12 @@ export function AssuranceIncidentActions({ incident, waivers, locale }: Assuranc
               {dialogAction === "resolve" || dialogAction === "approveWaiver" || dialogAction === "reopen" ? (
                 <Field label={t.note}>
                   <Textarea className={fieldClassName} value={note} onChange={(event) => setNote(event.target.value)} />
+                </Field>
+              ) : null}
+
+              {dialogAction === "resolve" && isPosCashShortageIncident ? (
+                <Field label={t.evidenceHash}>
+                  <Input className={fieldClassName} value={evidenceHash} onChange={(event) => setEvidenceHash(event.target.value)} minLength={12} required />
                 </Field>
               ) : null}
 

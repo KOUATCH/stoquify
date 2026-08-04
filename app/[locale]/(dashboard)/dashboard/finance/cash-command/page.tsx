@@ -35,11 +35,18 @@ export default async function CashCommandPage({
 }) {
   const { locale } = await params
   const resolvedLocale = pickLocale(locale)
-  let ctx: Awaited<ReturnType<typeof requireAnyPermission>>
+  let data: Awaited<ReturnType<typeof getCashCommandData>>
 
   try {
-    ctx = await requireAnyPermission(["finance.read", "dashboard.read"], {
+    const ctx = await requireAnyPermission(["finance.read", "dashboard.read"], {
       resource: "KontavaCashCommand",
+    })
+    data = await getCashCommandData({
+      organizationId: ctx.orgId,
+      actorId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      actorRoleCodes: ctx.roles.map((role) => role.code),
+      isSuperUser: ctx.isSuperUser,
     })
   } catch (error) {
     if (error instanceof RbacError) {
@@ -52,7 +59,7 @@ export default async function CashCommandPage({
           message={
             noActiveOrg
               ? "Refresh your session from the dashboard so Cash Command can load tenant-scoped evidence."
-              : "Cash Command requires finance or dashboard access. The denial was recorded by the RBAC guard."
+              : "This read-only tenant cash command requires administrator-wide operating authority. The denial was recorded by the RBAC guard."
           }
           primaryHref={localizePath("/dashboard", resolvedLocale)}
         />
@@ -61,12 +68,6 @@ export default async function CashCommandPage({
 
     throw error
   }
-
-  const data = await getCashCommandData({
-    organizationId: ctx.orgId,
-    actorId: ctx.userId,
-    actorPermissions: ctx.permissions,
-  })
 
   return (
     <CashCommandDashboard

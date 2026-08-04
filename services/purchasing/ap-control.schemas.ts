@@ -33,6 +33,12 @@ export const postSupplierInvoiceInputSchema = z.object({
   lines: z.array(supplierInvoiceLineInputSchema).min(1),
 })
 
+export const approveSupplierInvoiceInputSchema = z.object({
+  organizationId: idSchema,
+  supplierInvoiceId: idSchema,
+  approvedById: idSchema,
+})
+
 export const requestSupplierBankChangeInputSchema = z
   .object({
     organizationId: idSchema,
@@ -91,13 +97,16 @@ export const releaseSupplierPaymentInputSchema = z.object({
   notes: z.string().trim().max(1000).optional(),
   supplierId: idSchema.optional(),
   bankAccountId: idSchema.optional(),
-  method: z.enum(["CASH", "CARD", "MOBILE_MONEY", "BANK_TRANSFER", "CREDIT", "STORE_CREDIT", "CHEQUE", "MIXED"]).optional(),
+  method: z
+    .enum(["CASH", "CARD", "MOBILE_MONEY", "BANK_TRANSFER", "CREDIT", "STORE_CREDIT", "CHEQUE", "MIXED"])
+    .optional(),
   requestedById: idSchema.optional(),
   approvedById: idSchema.optional(),
   allocations: z.array(supplierPaymentAllocationInputSchema).optional(),
 })
 
 export type PostSupplierInvoiceInput = z.input<typeof postSupplierInvoiceInputSchema>
+export type ApproveSupplierInvoiceInput = z.input<typeof approveSupplierInvoiceInputSchema>
 export type RequestSupplierBankChangeInput = z.input<typeof requestSupplierBankChangeInputSchema>
 export type ApproveSupplierBankChangeInput = z.input<typeof approveSupplierBankChangeInputSchema>
 export type ApproveSupplierPaymentInput = z.input<typeof approveSupplierPaymentInputSchema>

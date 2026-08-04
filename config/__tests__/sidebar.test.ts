@@ -143,6 +143,7 @@ describe("sidebar finance reconciliation permissions", () => {
       expect.objectContaining({
         title: "Reconciliation",
         permission: "payments.reconciliation.read",
+        moduleSlug: "payment_reconciliation",
       }),
     )
   })
@@ -226,6 +227,25 @@ describe("sidebar HR and payroll visibility", () => {
     expect(filtered.find((link) => link.title === "HR & Payroll")?.dropdownMenu).toEqual([
       expect.objectContaining({ title: "Workforce", href: "/dashboard/people/team" }),
     ])
+  })
+})
+
+describe("sidebar inventory loss visibility", () => {
+  it("exposes the real loss-control route through inventory read authority", () => {
+    const inventory = sidebarLinks.find(
+      (link) => link.title === "Inventory",
+    )
+    const lossControl = inventory?.dropdownMenu?.find(
+      (item) =>
+        item.href === "/dashboard/inventory/loss-control",
+    )
+
+    expect(lossControl).toEqual(
+      expect.objectContaining({
+        title: "Loss Control",
+        permission: "inventory.levels.read",
+      }),
+    )
   })
 })
 

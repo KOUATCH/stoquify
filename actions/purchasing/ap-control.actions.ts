@@ -5,15 +5,17 @@ import { revalidatePath } from "next/cache"
 import { protect } from "@/services/_shared/protect"
 import {
   approveSupplierBankChangeWithControls,
+  approveSupplierInvoice,
   approveSupplierPaymentWithControls,
   getAPWorkbenchData,
-  postSupplierInvoice,
+  prepareSupplierInvoice,
   releaseSupplierPaymentWithControls,
   requestSupplierBankChange,
   type APWorkbenchData,
 } from "@/services/purchasing/ap-control.service"
 import {
   approveSupplierBankChangeInputSchema,
+  approveSupplierInvoiceInputSchema,
   approveSupplierPaymentInputSchema,
   postSupplierInvoiceInputSchema,
   releaseSupplierPaymentInputSchema,
@@ -50,7 +52,7 @@ export async function getAPWorkbenchAction(input: unknown = {}) {
   return getWorkbench(input)
 }
 
-const postInvoice = protect<unknown, Awaited<ReturnType<typeof postSupplierInvoice>>>(
+const prepareInvoice = protect<unknown, Awaited<ReturnType<typeof prepareSupplierInvoice>>>(
   {
     permission: "purchasing.ap.invoice.post",
     auditResource: "SupplierInvoice",
@@ -61,16 +63,40 @@ const postInvoice = protect<unknown, Awaited<ReturnType<typeof postSupplierInvoi
       ...asRecord(input),
       organizationId: ctx.orgId,
       createdById: ctx.userId,
+      approvedById: undefined,
+    })
+    const result = await prepareSupplierInvoice(parsed)
+    revalidateAPPaths()
+    return result
+  },
+)
+
+export async function prepareSupplierInvoiceAction(input: unknown) {
+  return prepareInvoice(input)
+}
+
+const approveAndPostInvoice = protect<unknown, Awaited<ReturnType<typeof approveSupplierInvoice>>>(
+  {
+    permission: "purchasing.ap.invoice.post",
+    auditResource: "SupplierInvoice",
+    freshAuth: true,
+    tenantGuard: "handler-derived",
+  },
+  async (input, ctx) => {
+    const raw = asRecord(input) as { supplierInvoiceId?: unknown }
+    const parsed = approveSupplierInvoiceInputSchema.parse({
+      organizationId: ctx.orgId,
+      supplierInvoiceId: raw.supplierInvoiceId,
       approvedById: ctx.userId,
     })
-    const result = await postSupplierInvoice(parsed)
+    const result = await approveSupplierInvoice(parsed)
     revalidateAPPaths()
     return result
   },
 )
 
 export async function postSupplierInvoiceAction(input: unknown) {
-  return postInvoice(input)
+  return approveAndPostInvoice(input)
 }
 
 const requestBankChange = protect<unknown, Awaited<ReturnType<typeof requestSupplierBankChange>>>(

@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "gates": [
+    "inventory:boundary:fail",
+    "inventory:valuation:truth:gate",
+    "service:boundary:fail",
+    "regulatory:boundary:fail",
+    "api:guard:inventory:fail",
+    "public-identity:abuse:gate",
+    "ledger:close-truth:gate",
+    "payment:cash-truth:gate",
+    "purchasing:ap:gate",
+    "ap:fraud-control:gate",
+    "offline:pos:replay:gate",
+    "country:adapter:pilot:gate",
+    "ai:copilot:guardrails:gate",
+    "statutory:country-pack:integration:gate",
+    "report:trust:export:gate",
+    "role:cockpit:gate",
+    "settings:surface:fail",
+    "workflow:assurance:runtime-check",
+    "receipt:token:config-gate",
+    "payroll:presence:gate",
+    "payroll:immutability:runtime",
+    "hard-delete:fail",
+    "regulatory:hardcode:fail",
+    "demo:trust:fail",
+    "error:boundary:fail",
+    "prisma:migration:safety:gate"
+  ]
+}

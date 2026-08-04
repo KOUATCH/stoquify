@@ -1,4 +1,7 @@
-import type { OperatingAccessContext } from "../operating-access-scope-contracts"
+import {
+  resolveTenantWideOperatingAuthority,
+  type OperatingAccessContext,
+} from "../operating-access-scope-contracts"
 import { resolveOperatingAccessScope } from "../operating-access-scope.service"
 
 function context(overrides: Partial<OperatingAccessContext> = {}): OperatingAccessContext {
@@ -33,6 +36,25 @@ function buildClient(
 }
 
 describe("operating access scope service", () => {
+  it("exports the normalized tenant-wide authority used by feed gates", () => {
+    expect(
+      resolveTenantWideOperatingAuthority({
+        isSuperUser: false,
+        roleCodes: [" manager ", " Administrator "],
+      }),
+    ).toEqual({
+      kind: "TENANT_WIDE",
+      basis: "RBAC_ROLE",
+      matchedRoleCode: "administrator",
+    })
+    expect(
+      resolveTenantWideOperatingAuthority({
+        isSuperUser: false,
+        roleCodes: ["owner", "manager"],
+      }),
+    ).toBeNull()
+  })
+
   it("grants tenant-wide scope to an authenticated super user", async () => {
     const client = buildClient()
 

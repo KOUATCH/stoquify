@@ -24,6 +24,12 @@ export function LandingHeader({ session }: LandingHeaderProps) {
 
         <div className="hidden items-center gap-3 xl:flex">
           <Link
+            href="/workflows"
+            className="body-text text-sm font-semibold text-[var(--color-text-secondary)] transition hover:text-[var(--color-text-primary)]"
+          >
+            {t("workflowAtlas")}
+          </Link>
+          <Link
             href="/"
             locale={targetLocale}
             aria-label={t("languageAria")}
@@ -60,6 +66,9 @@ export function LandingHeader({ session }: LandingHeaderProps) {
           <div className="absolute right-0 mt-3 w-64 rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-surface-panel)] p-3 shadow-2xl shadow-black/30">
             <div className="grid gap-1">
               <LandingSectionNavigation variant="mobile" />
+              <Link href="/workflows" className="rounded-md px-3 py-2.5 body-text text-sm text-[var(--color-text-secondary)] hover:bg-white/[0.07] hover:text-[var(--color-text-primary)]">
+                {t("workflowAtlas")}
+              </Link>
               <div className="my-2 h-px bg-[var(--color-border-subtle)]" />
               <Link href="/" locale={targetLocale} className="rounded-md px-3 py-2 data-text text-xs font-semibold text-[var(--color-text-secondary)] hover:bg-white/[0.07] hover:text-[var(--color-text-primary)]">
                 {t("languageLabel")}
@@ -79,3 +88,4 @@ export function LandingHeader({ session }: LandingHeaderProps) {
     </header>
   )
 }
+

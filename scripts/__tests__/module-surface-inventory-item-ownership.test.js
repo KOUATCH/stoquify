@@ -31,12 +31,13 @@ describe("inventory item action surface ownership", () => {
     expect(record.classification).not.toContain("unmapped")
   })
 
-  it("does not absorb the separate suppliers action namespace", () => {
+  it("keeps the separate suppliers action namespace owned by purchasing", () => {
     const record = report.records.find(
       (item) => item.surfaceType === "action" && item.file === "actions/suppliers/itemSupplierActions.ts",
     )
 
-    expect(record).toMatchObject({ moduleSlug: null })
-    expect(record.classification).toContain("unmapped")
+    expect(record).toMatchObject({ moduleSlug: "purchasing" })
+    expect(record.classification).toContain("mapped")
+    expect(record.classification).not.toContain("unmapped")
   })
 })

@@ -34,6 +34,7 @@ const EVIDENCE_CONTROL_PATHS = new Set([
   "scripts/__tests__/agent-phase2a-freeze-commit-gate.test.js",
   "scripts/__tests__/release-evidence-ratchet.test.js",
 ]);
+const SHARED_SEMANTIC_RUNTIME_PATHS = new Set(["prisma/schema.prisma"]);
 
 function parseArgs(argv = process.argv.slice(2)) {
   const options = {
@@ -60,6 +61,11 @@ function evaluateFreezeCommit(input) {
   const blockers = [];
   const manifestBlockers = validateManifest(input.manifest);
   blockers.push(...manifestBlockers);
+  const currentHead = input.currentHead || input.head || "";
+  const frozenCommitIsCurrentHead =
+    COMMIT_PATTERN.test(input.head || "") &&
+    COMMIT_PATTERN.test(currentHead) &&
+    input.head.toLowerCase() === currentHead.toLowerCase();
   const files = Array.isArray(input.manifest?.files)
     ? input.manifest.files
     : [];
@@ -79,6 +85,12 @@ function evaluateFreezeCommit(input) {
 
   if (!COMMIT_PATTERN.test(input.head || "")) {
     blockers.push("FREEZE_HEAD_COMMIT_INVALID");
+  }
+  if (!COMMIT_PATTERN.test(currentHead)) {
+    blockers.push("CURRENT_HEAD_COMMIT_INVALID");
+  }
+  if (input.frozenCommitAncestorOfCurrentHead === false) {
+    blockers.push("FROZEN_COMMIT_NOT_CURRENT_HEAD_ANCESTOR");
   }
   if (!COMMIT_PATTERN.test(input.parent || "")) {
     blockers.push("FREEZE_PARENT_COMMIT_INVALID");
@@ -104,14 +116,26 @@ function evaluateFreezeCommit(input) {
     status: String(change.status || "").trim() || "??",
     path: normalizePath(change.path),
   }));
-  const changedPathSet = new Set(currentChanges.map((change) => change.path));
+  const postFreezeCommittedChanges = (
+    input.postFreezeCommittedChanges || []
+  ).map((change) => ({
+    status: String(change.status || "").trim() || "COMMITTED",
+    path: normalizePath(change.path),
+  }));
+  const changedPathSet = new Set(
+    [...currentChanges, ...postFreezeCommittedChanges].map(
+      (change) => change.path,
+    ),
+  );
   const fileVerification = [];
   for (const file of files) {
     const path = normalizePath(file.path);
     const committed = getBuffer(input.committedContents, path);
+    const filteredCommitted = getBuffer(input.filteredCommittedContents, path);
     const current = getBuffer(input.currentFileContents, path);
     const verification = verifyCommittedFile({
       committed,
+      filteredCommitted,
       current,
       currentPathChanged: changedPathSet.has(path),
       expectedBytes: file.bytes,
@@ -136,14 +160,38 @@ function evaluateFreezeCommit(input) {
     return {
       ...change,
       candidateCategory: candidate?.category ?? null,
-      classification: classifyCurrentChange(change.path, candidate),
+      classification: classifyCurrentChange(change.path, candidate, {
+        baselineContent: getBuffer(input.committedContents, change.path),
+        currentContent: getBuffer(input.currentFileContents, change.path),
+      }),
     };
   });
-  const runtimeDrift = currentChangeClassification.filter(
+  const postFreezeCommittedClassification = postFreezeCommittedChanges.map(
+    (change) => {
+      const candidate = files.find(
+        (entry) => normalizePath(entry.path) === change.path,
+      );
+      return {
+        ...change,
+        candidateCategory: candidate?.category ?? null,
+        classification: classifyCurrentChange(change.path, candidate, {
+          baselineContent: getBuffer(input.committedContents, change.path),
+          currentContent: getBuffer(input.currentHeadContents, change.path),
+        }),
+      };
+    },
+  );
+  const worktreeRuntimeDrift = currentChangeClassification.filter(
     (entry) => entry.classification === "PHASE2A_RUNTIME_DRIFT",
   );
-  for (const entry of runtimeDrift) {
+  const committedRuntimeDrift = postFreezeCommittedClassification.filter(
+    (entry) => entry.classification === "PHASE2A_RUNTIME_DRIFT",
+  );
+  for (const entry of worktreeRuntimeDrift) {
     blockers.push(`POST_FREEZE_RUNTIME_DRIFT:${entry.path}`);
+  }
+  for (const entry of committedRuntimeDrift) {
+    blockers.push(`POST_FREEZE_COMMITTED_RUNTIME_DRIFT:${entry.path}`);
   }
 
   const uniqueBlockers = [...new Set(blockers)];
@@ -158,13 +206,18 @@ function evaluateFreezeCommit(input) {
     evaluatedAt: (input.now || new Date()).toISOString(),
     branch: input.branch || null,
     headCommit: input.head || null,
+    currentHeadCommit: currentHead || null,
+    frozenCommitIsCurrentHead,
+    frozenCommitAncestorOfCurrentHead:
+      input.frozenCommitAncestorOfCurrentHead !== false,
     parentCommit: input.parent || null,
     manifestId: input.manifest?.manifestId ?? null,
     manifestBaseCommit: input.manifest?.baseHeadCommit ?? null,
     manifestReference: input.manifestReference || DEFAULT_MANIFEST,
     status: ready ? "FROZEN_COMMIT_VERIFIED" : "BLOCKED",
     freezeVerified: ready,
-    cleanReleaseReady: ready && currentChanges.length === 0,
+    cleanReleaseReady:
+      ready && currentChanges.length === 0 && frozenCommitIsCurrentHead,
     activationAuthorized: false,
     phase3Authorized: false,
     sourceTreeClean: currentChanges.length === 0,
@@ -182,16 +235,29 @@ function evaluateFreezeCommit(input) {
       exactBlobMatches: verificationCounts.EXACT_COMMITTED_BLOB || 0,
       lineEndingEquivalentMatches:
         verificationCounts.LINE_ENDING_EQUIVALENT || 0,
+      filteredCommitEquivalentMatches:
+        verificationCounts.GIT_FILTERED_COMMIT_EQUIVALENT || 0,
       cleanFilterEquivalentMatches:
         verificationCounts.GIT_CLEAN_FILTER_EQUIVALENT || 0,
       currentChanges: currentChanges.length,
+      postFreezeCommittedChanges: postFreezeCommittedClassification.length,
       evidenceControlChanges: currentChangeClassification.filter(
         (entry) => entry.classification === "EVIDENCE_CONTROL_REMEDIATION",
       ).length,
-      phase2aRuntimeDrift: runtimeDrift.length,
+      committedEvidenceControlChanges: postFreezeCommittedClassification.filter(
+        (entry) => entry.classification === "EVIDENCE_CONTROL_REMEDIATION",
+      ).length,
+      worktreePhase2aRuntimeDrift: worktreeRuntimeDrift.length,
+      committedPhase2aRuntimeDrift: committedRuntimeDrift.length,
+      phase2aRuntimeDrift:
+        worktreeRuntimeDrift.length + committedRuntimeDrift.length,
       outsideCandidateChanges: currentChangeClassification.filter(
         (entry) => entry.classification === "OUTSIDE_CANDIDATE_SCOPE",
       ).length,
+      committedOutsideCandidateChanges:
+        postFreezeCommittedClassification.filter(
+          (entry) => entry.classification === "OUTSIDE_CANDIDATE_SCOPE",
+        ).length,
       blockerCount: uniqueBlockers.length,
       secretValuesPrinted: false,
     },
@@ -199,6 +265,7 @@ function evaluateFreezeCommit(input) {
     unexpectedPaths,
     fileVerification,
     currentChanges: currentChangeClassification,
+    postFreezeCommittedChanges: postFreezeCommittedClassification,
     blockers: uniqueBlockers,
     safety: {
       historicalManifestRewritten: false,
@@ -300,6 +367,20 @@ function verifyCommittedFile(input) {
       };
     }
   }
+  if (Buffer.isBuffer(input.filteredCommitted)) {
+    const filtered = describeBuffer(input.filteredCommitted);
+    if (
+      filtered.bytes === input.expectedBytes &&
+      filtered.sha256 === String(input.expectedSha256).toLowerCase()
+    ) {
+      return {
+        verified: true,
+        method: "GIT_FILTERED_COMMIT_EQUIVALENT",
+        committedBytes: exact.bytes,
+        committedSha256: exact.sha256,
+      };
+    }
+  }
   if (!input.currentPathChanged && Buffer.isBuffer(input.current)) {
     const current = describeBuffer(input.current);
     if (
@@ -322,11 +403,19 @@ function verifyCommittedFile(input) {
   };
 }
 
-function classifyCurrentChange(path, candidate) {
+function classifyCurrentChange(path, candidate, comparison = {}) {
   if (candidate?.category === "RELEASE_EVIDENCE_DOC") {
     return "EVIDENCE_CONTROL_REMEDIATION";
   }
   if (candidate?.category === "RUNTIME_SOURCE_TEST") {
+    if (SHARED_SEMANTIC_RUNTIME_PATHS.has(path)) {
+      return agentRuntimeSchemaChanged(
+        comparison.baselineContent,
+        comparison.currentContent,
+      )
+        ? "PHASE2A_RUNTIME_DRIFT"
+        : "OUTSIDE_CANDIDATE_SCOPE";
+    }
     return evidenceControlPath(path)
       ? "EVIDENCE_CONTROL_REMEDIATION"
       : "PHASE2A_RUNTIME_DRIFT";
@@ -350,6 +439,50 @@ function evidenceControlPath(path) {
   return false;
 }
 
+function agentRuntimeSchemaChanged(baselineContent, currentContent) {
+  if (!Buffer.isBuffer(baselineContent) || !Buffer.isBuffer(currentContent)) {
+    return true;
+  }
+  return (
+    extractAgentRuntimeSchema(baselineContent) !==
+    extractAgentRuntimeSchema(currentContent)
+  );
+}
+
+function extractAgentRuntimeSchema(content) {
+  const lines = content.toString("utf8").replace(/\r\n/g, "\n").split("\n");
+  const selected = [];
+  let inAgentBlock = false;
+
+  for (const line of lines) {
+    const declaration = line.match(/^\s*(?:model|enum)\s+(\w+)\s*\{/);
+    if (declaration) {
+      inAgentBlock = declaration[1].startsWith("Agent");
+    }
+
+    const normalized = normalizePrismaSchemaLine(line);
+    if (
+      normalized &&
+      (inAgentBlock ||
+        /\bAgent[A-Za-z0-9_]*\b|\bagent[A-Z][A-Za-z0-9_]*\b/.test(
+          normalized,
+        ))
+    ) {
+      selected.push(normalized);
+    }
+
+    if (inAgentBlock && /^\s*}\s*$/.test(line)) {
+      inAgentBlock = false;
+    }
+  }
+
+  return selected.join("\n");
+}
+
+function normalizePrismaSchemaLine(line) {
+  return line.replace(/\/\/.*$/, "").trim().replace(/\s+/g, " ");
+}
+
 function lineEndingVariants(buffer) {
   const text = buffer.toString("utf8");
   if (Buffer.from(text, "utf8").compare(buffer) !== 0) return [];
@@ -362,8 +495,20 @@ function lineEndingVariants(buffer) {
 }
 
 function collectGitEvidence(root, manifest) {
-  const head = runGitText(root, ["rev-parse", "HEAD"]).trim();
-  const parent = runGitText(root, ["rev-parse", "HEAD^"]).trim();
+  const currentHead = runGitText(root, ["rev-parse", "HEAD"]).trim();
+  const baseHead = String(manifest?.baseHeadCommit || "").trim();
+  const frozenCommitAncestorOfCurrentHead =
+    COMMIT_PATTERN.test(baseHead) &&
+    gitCommandSucceeds(root, [
+      "merge-base",
+      "--is-ancestor",
+      baseHead,
+      currentHead,
+    ]);
+  const head = frozenCommitAncestorOfCurrentHead
+    ? resolveFrozenCommit(root, baseHead, currentHead)
+    : currentHead;
+  const parent = runGitText(root, ["rev-parse", `${head}^`]).trim();
   const branch = runGitText(root, ["branch", "--show-current"]).trim();
   const commitPaths = runGitBuffer(root, [
     "diff-tree",
@@ -377,10 +522,20 @@ function collectGitEvidence(root, manifest) {
     .toString("utf8")
     .split("\0")
     .filter(Boolean);
+  const postFreezeCommittedChanges =
+    head.toLowerCase() === currentHead.toLowerCase()
+      ? []
+      : runGitBuffer(root, ["diff", "--name-only", "-z", head, currentHead])
+          .toString("utf8")
+          .split("\0")
+          .filter(Boolean)
+          .map((path) => ({ status: "COMMITTED", path }));
   const currentChanges = parsePorcelainStatus(
     runGitBuffer(root, ["status", "--porcelain=v1", "-z", "-uall"]),
   );
   const committedContents = new Map();
+  const currentHeadContents = new Map();
+  const filteredCommittedContents = new Map();
   const currentFileContents = new Map();
   for (const file of manifest.files || []) {
     const path = normalizePath(file.path);
@@ -388,9 +543,30 @@ function collectGitEvidence(root, manifest) {
       path,
       runGitBuffer(root, ["cat-file", "blob", `${head}:${path}`], true),
     );
+    filteredCommittedContents.set(
+      path,
+      runGitBuffer(
+        root,
+        ["cat-file", "--filters", `--path=${path}`, `${head}:${path}`],
+        true,
+      ),
+    );
     const currentPath = resolve(root, ...path.split("/"));
     if (existsSync(currentPath)) {
       currentFileContents.set(path, readFileSync(currentPath));
+    }
+    if (
+      SHARED_SEMANTIC_RUNTIME_PATHS.has(path) &&
+      postFreezeCommittedChanges.some((change) => change.path === path)
+    ) {
+      currentHeadContents.set(
+        path,
+        runGitBuffer(
+          root,
+          ["cat-file", "blob", `${currentHead}:${path}`],
+          true,
+        ),
+      );
     }
   }
   return {
@@ -399,9 +575,27 @@ function collectGitEvidence(root, manifest) {
     committedContents,
     currentChanges,
     currentFileContents,
+    currentHeadContents,
+    filteredCommittedContents,
+    currentHead,
+    frozenCommitAncestorOfCurrentHead,
     head,
     parent,
+    postFreezeCommittedChanges,
   };
+}
+
+function resolveFrozenCommit(root, baseHead, currentHead) {
+  const commits = runGitText(root, [
+    "rev-list",
+    "--first-parent",
+    "--reverse",
+    `${baseHead}..${currentHead}`,
+  ])
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+  return commits[0] || currentHead;
 }
 
 function parsePorcelainStatus(buffer) {
@@ -421,11 +615,11 @@ function renderMarkdown(result) {
   const lines = [
     "# Stoquify Agent Runtime Phase 2A Freeze Commit Attestation",
     "",
-    `**Evaluated:** ${result.evaluatedAt}  `,
-    `**Status:** \`${result.status}\`  `,
-    `**Freeze verified:** ${result.freezeVerified ? "Yes" : "No"}  `,
-    `**Clean release ready:** ${result.cleanReleaseReady ? "Yes" : "No"}  `,
-    "**Activation authorized:** No  ",
+    `**Evaluated:** ${result.evaluatedAt}<br>`,
+    `**Status:** \`${result.status}\`<br>`,
+    `**Freeze verified:** ${result.freezeVerified ? "Yes" : "No"}<br>`,
+    `**Clean release ready:** ${result.cleanReleaseReady ? "Yes" : "No"}<br>`,
+    "**Activation authorized:** No<br>",
     "**Phase 3 authorized:** No",
     "",
     "## Frozen Source",
@@ -433,7 +627,10 @@ function renderMarkdown(result) {
     "| Field | Value |",
     "|---|---|",
     `| Branch | \`${result.branch ?? "unresolved"}\` |`,
-    `| Commit | \`${result.headCommit ?? "unresolved"}\` |`,
+    `| Frozen commit | \`${result.headCommit ?? "unresolved"}\` |`,
+    `| Current HEAD | \`${result.currentHeadCommit ?? "unresolved"}\` |`,
+    `| Frozen commit is current HEAD | ${result.frozenCommitIsCurrentHead ? "Yes" : "No"} |`,
+    `| Frozen commit is current HEAD ancestor | ${result.frozenCommitAncestorOfCurrentHead ? "Yes" : "No"} |`,
     `| Parent | \`${result.parentCommit ?? "unresolved"}\` |`,
     `| Manifest base | \`${result.manifestBaseCommit ?? "unresolved"}\` |`,
     `| Manifest | \`${result.manifestReference}\` |`,
@@ -450,18 +647,24 @@ function renderMarkdown(result) {
     `| Content mismatches | ${result.summary.contentMismatches} |`,
     `| Exact committed blobs | ${result.summary.exactBlobMatches} |`,
     `| Line-ending equivalents | ${result.summary.lineEndingEquivalentMatches} |`,
+    `| Git filtered-commit equivalents | ${result.summary.filteredCommitEquivalentMatches} |`,
     `| Git clean-filter equivalents | ${result.summary.cleanFilterEquivalentMatches} |`,
     "",
     "## Post-Freeze Worktree",
     "",
     "| Classification | Count |",
     "|---|---:|",
-    `| Current changes | ${result.summary.currentChanges} |`,
-    `| Evidence/control remediation | ${result.summary.evidenceControlChanges} |`,
-    `| Phase 2A runtime drift | ${result.summary.phase2aRuntimeDrift} |`,
-    `| Outside candidate scope | ${result.summary.outsideCandidateChanges} |`,
+    `| Working-tree changes | ${result.summary.currentChanges} |`,
+    `| Working-tree evidence/control remediation | ${result.summary.evidenceControlChanges} |`,
+    `| Commits since freeze: changed paths | ${result.summary.postFreezeCommittedChanges} |`,
+    `| Commits since freeze: evidence/control paths | ${result.summary.committedEvidenceControlChanges} |`,
+    `| Working-tree Phase 2A runtime drift | ${result.summary.worktreePhase2aRuntimeDrift} |`,
+    `| Committed Phase 2A runtime drift | ${result.summary.committedPhase2aRuntimeDrift} |`,
+    `| Total Phase 2A runtime drift | ${result.summary.phase2aRuntimeDrift} |`,
+    `| Working-tree outside candidate scope | ${result.summary.outsideCandidateChanges} |`,
+    `| Commits since freeze: outside candidate scope | ${result.summary.committedOutsideCandidateChanges} |`,
     "",
-    "The frozen commit can be verified independently of the current dirty worktree. A dirty worktree still blocks clean release and CI evidence.",
+    "The historical frozen commit can be verified after HEAD advances. A different current HEAD or a dirty worktree still blocks clean release and CI evidence.",
     "",
     "## Blockers",
     "",
@@ -473,7 +676,7 @@ function renderMarkdown(result) {
     "",
     "- The historical candidate manifest is not rewritten.",
     "- Working-tree byte hashes are accepted only through an exact committed blob, a deterministic line-ending equivalent, or an unchanged checkout whose Git clean filter maps to the committed blob.",
-    "- Post-freeze Phase 2A runtime drift blocks this attestation; evidence-only and unrelated worktree changes remain visible.",
+    "- Post-freeze Phase 2A runtime drift blocks this attestation whether committed or still in the worktree; evidence-only and unrelated changes remain visible.",
     "- This attestation does not prove protected CI, deploy an artifact, activate an agent, or authorize Phase 3.",
     "",
   ];
@@ -482,6 +685,16 @@ function renderMarkdown(result) {
 
 function runGitText(root, args) {
   return runGitBuffer(root, args).toString("utf8");
+}
+
+function gitCommandSucceeds(root, args) {
+  const result = spawnSync("git", args, {
+    cwd: root,
+    encoding: null,
+    maxBuffer: 64 * 1024 * 1024,
+    windowsHide: true,
+  });
+  return result.status === 0;
 }
 
 function runGitBuffer(root, args, allowFailure = false) {
@@ -566,12 +779,15 @@ function main() {
         status: result.status,
         freezeVerified: result.freezeVerified,
         cleanReleaseReady: result.cleanReleaseReady,
-        headCommit: result.headCommit,
+        frozenCommit: result.headCommit,
+        currentHeadCommit: result.currentHeadCommit,
+        frozenCommitIsCurrentHead: result.frozenCommitIsCurrentHead,
         manifestFiles: result.summary.manifestFiles,
         verifiedFiles: result.summary.verifiedFiles,
         contentMismatches: result.summary.contentMismatches,
         phase2aRuntimeDrift: result.summary.phase2aRuntimeDrift,
         currentChanges: result.summary.currentChanges,
+        postFreezeCommittedChanges: result.summary.postFreezeCommittedChanges,
         activationAuthorized: false,
         phase3Authorized: false,
         secretValuesPrinted: false,
@@ -604,8 +820,10 @@ if (require.main === module) {
 }
 
 module.exports = {
+  agentRuntimeSchemaChanged,
   classifyCurrentChange,
   evaluateFreezeCommit,
+  extractAgentRuntimeSchema,
   parseArgs,
   parsePorcelainStatus,
   renderMarkdown,

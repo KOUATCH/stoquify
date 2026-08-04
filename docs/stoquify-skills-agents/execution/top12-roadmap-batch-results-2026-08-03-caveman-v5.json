@@ -1,0 +1,84 @@
+{
+  "commands": [
+    {
+      "status": "PASS",
+      "command": "node scripts/top12-programme-gate.js --mode report",
+      "exitCode": 0
+    },
+    {
+      "status": "PASS",
+      "command": "node scripts/top12-evaluation-harness.js --mode fail --limit 150 --out docs/stoquify-skills-agents/execution/TOP12_FND_010_EVALUATION_HARNESS_REPORT_2026-08-03-caveman-run.md --json-out docs/stoquify-skills-agents/execution/top12-evaluation-harness-run-2026-08-03-caveman.json",
+      "exitCode": 0
+    },
+    {
+      "status": "PASS",
+      "command": "npm run prisma:validate",
+      "exitCode": 0
+    },
+    {
+      "status": "PASS",
+      "command": "npm run agent:tool-registry:gate",
+      "exitCode": 0
+    },
+    {
+      "status": "PASS",
+      "command": "npm run agent:prohibited-action:gate",
+      "exitCode": 0
+    },
+    {
+      "status": "PASS",
+      "command": "npm run agent:release-control:gate",
+      "exitCode": 0
+    },
+    {
+      "status": "PASS",
+      "command": "npm run ai:copilot:guardrails:gate",
+      "exitCode": 0
+    },
+    {
+      "status": "PASS",
+      "command": "npm run agent:phase2a:gate",
+      "exitCode": 0
+    },
+    {
+      "status": "BLOCKED",
+      "command": "npm run agent:phase2b:entry:gate",
+      "exitCode": 1
+    },
+    {
+      "status": "BLOCKED",
+      "command": "npm run agent:phase3:entry:gate",
+      "exitCode": 1
+    },
+    {
+      "status": "BLOCKED",
+      "command": "node scripts/agent-external-input-readiness.js --mode fail --json-out docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUT_READINESS_2026-07-25.json --out docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUT_READINESS_2026-07-25.md",
+      "exitCode": 1
+    },
+    {
+      "status": "PASS",
+      "command": "npm test -- --runInBand scripts/__tests__/top12-programme-gate.test.js scripts/__tests__/top12-evaluation-harness.test.js",
+      "exitCode": 0
+    },
+    {
+      "status": "PASS",
+      "command": "npx eslint scripts/top12-evaluation-harness.js scripts/__tests__/top12-evaluation-harness.test.js scripts/top12-programme-gate.js scripts/__tests__/top12-programme-gate.test.js",
+      "exitCode": 0
+    },
+    {
+      "status": "PASS",
+      "command": "npm run typecheck",
+      "exitCode": 0
+    }
+  ],
+  "objective": "Stoquify Top12 programme roadmap execution batch",
+  "evidence": {
+    "evaluationJson": "docs/stoquify-skills-agents/execution/top12-evaluation-harness-run-2026-08-03-caveman.json",
+    "programmeGate": "docs/stoquify-skills-agents/execution/top12-programme-verification-2026-08-03.json",
+    "externalInput": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUT_READINESS_2026-07-25.json",
+    "evaluationReport": "docs/stoquify-skills-agents/execution/TOP12_FND_010_EVALUATION_HARNESS_REPORT_2026-08-03-caveman-run.md",
+    "phase3Decision": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_ENTRY_DECISION_2026-07-25.md",
+    "phase2bDecision": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_ENTRY_DECISION_2026-07-25.md"
+  },
+  "generatedAt": "2026-08-03T13:22:53.2470242+01:00"
+}

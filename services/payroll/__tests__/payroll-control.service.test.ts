@@ -1879,6 +1879,71 @@ describe("payroll control service", () => {
     expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
   });
 
+  it("blocks payroll calculation when active employees share an approved payment destination", async () => {
+    const tx = buildTx();
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
+    tx.organization.findFirst.mockResolvedValue({
+      country: "CM",
+      accountingSettings: {
+        countryPack: null,
+        taxRegime: null,
+        roundingMode: "HALF_UP",
+        roundingScale: 2,
+        payrollCnpsFamilyAllowanceSector: "GENERAL",
+        payrollCnpsOccupationalRiskGroup: "A",
+      },
+    });
+    tx.payrollRun.findFirst.mockResolvedValue(null);
+    tx.payrollPeriod.findFirst.mockResolvedValue(payrollPeriod);
+    tx.payrollEmployee.findMany.mockResolvedValue(
+      hrisReadyEmployees([
+        {
+          id: "employee-1",
+          displayName: "Ada Payroll",
+          paymentDestinationHash: "shared-destination-hash",
+          contracts: [
+            {
+              id: "contract-1",
+              baseSalary: new Prisma.Decimal("100000.00"),
+              currency: "XAF",
+            },
+          ],
+          attendanceSnapshots: [calculationAttendance({ id: "attendance-1" })],
+        },
+        {
+          id: "employee-2",
+          displayName: "Grace Payroll",
+          paymentDestinationHash: "shared-destination-hash",
+          contracts: [
+            {
+              id: "contract-2",
+              baseSalary: new Prisma.Decimal("120000.00"),
+              currency: "XAF",
+            },
+          ],
+          attendanceSnapshots: [
+            calculationAttendance({
+              id: "attendance-2",
+              sourceHash: "sha256:attendance-source-2",
+            }),
+          ],
+        },
+      ]),
+    );
+
+    await expect(
+      calculatePayrollRun({
+        organizationId: "org-1",
+        payrollPeriodId: "period-1",
+        preparedById: "preparer-1",
+        idempotencyKey: "calc-key-duplicate-destination",
+        runDate: "2026-06-30",
+      }),
+    ).rejects.toThrow("PAYROLL_INPUT_PAYMENT_DESTINATION_DUPLICATE");
+
+    expect(tx.payrollRun.create).not.toHaveBeenCalled();
+    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
+  });
   it("blocks payroll calculation when tenant rounding mode is not certified", async () => {
     const tx = buildTx();
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx));

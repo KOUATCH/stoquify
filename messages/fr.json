@@ -866,6 +866,17 @@
       "REQUIRES_CONFIGURATION": "Configuration requise",
       "REQUIRES_EXPERT_REVIEW": "Revue expert requise"
     },
+    "adapterHealthStatuses": {
+      "HEALTHY": "Sain",
+      "DEGRADED": "Degrade",
+      "BLOCKED": "Bloque",
+      "DISABLED": "Desactive"
+    },
+    "adapterReviewStatuses": {
+      "REQUIRES_EXPERT_REVIEW": "Revue expert requise",
+      "EXPERT_APPROVED": "Approuve par expert",
+      "REGULATOR_CONFIRMED": "Confirme par le regulateur"
+    },
     "environments": {
       "FAKE_SANDBOX": "Fake sandbox",
       "SANDBOX": "Sandbox",
@@ -883,16 +894,14 @@
       "capability": "Capacite",
       "credential": "Identifiant",
       "credentialPresent": "Configure",
-      "credentialMissing": "Non configure"
+      "credentialMissing": "Non configure",
+      "credentialExpires": "Expire le {date}",
+      "officialSpec": "Specification officielle",
+      "officialSpecMissing": "Non enregistree",
+      "review": "Revue independante",
+      "queue": "File ouverte",
+      "queueValue": "{count} element(s), plus ancien {age}s"
     }
-  },
-  "receiptPreview": {
-    "sendWhatsApp": "Envoyer par WhatsApp",
-    "whatsappSending": "Envoi du recu WhatsApp",
-    "whatsappQueuedTitle": "Recu WhatsApp mis en file",
-    "whatsappQueuedMessage": "La tentative d'envoi du recu a ete enregistree.",
-    "whatsappFailedTitle": "Echec du recu WhatsApp",
-    "whatsappFailedMessage": "Impossible d'envoyer le recu par WhatsApp."
   },
   "pos": {
     "shell": {
@@ -1046,7 +1055,15 @@
     },
     "receipt": {
       "options": "Options recu",
-      "destinationPlaceholder": "Destination recu : email, telephone ou numero WhatsApp",
+      "destination": "Destination recu",
+      "destinationRequired": "Saisissez une destination de recu avant d'encaisser.",
+      "destinationPlaceholders": {
+        "email": "Adresse email client",
+        "phone": "Numero telephone client",
+        "whatsapp": "Numero WhatsApp client, ex. +237699000000"
+      },
+      "whatsAppConsent": "Le client confirme vouloir recevoir ce recu par WhatsApp.",
+      "whatsAppConsentRequired": "Confirmez le consentement client avant l'envoi du recu WhatsApp.",
       "tokens": {
         "title": "Acces public au recu",
         "loading": "Verification des liens recu",
@@ -1177,6 +1194,179 @@
     },
     "hotkeys": "Ctrl/Cmd K recherche - F4 client - F8 reglement - Esc effacer"
   },
+  "landingPreview": {
+    "founderJourney": {
+      "meta": {
+        "title": "Aperçu du parcours fondateur Stoquify",
+        "description": "Aperçu conceptuel non indexé d'une expérience Stoquify allant du lancement à la croissance maîtrisée."
+      },
+      "previewBar": {
+        "status": "Aperçu conceptuel",
+        "aria": "Commandes de l'aperçu",
+        "currentLanding": "Page d'accueil actuelle",
+        "languageAria": "Ouvrir cet aperçu en anglais"
+      },
+      "hero": {
+        "category": "PDV, inventaire et contrôle prêt pour l'OHADA",
+        "brand": "Stoquify",
+        "promise": "Du premier encaissement à une croissance maîtrisée.",
+        "copy": "Construisez un dossier opérationnel commun pour les ventes, le stock, les achats, les paiements et la comptabilité, puis ajoutez les extensions réglementées lorsque leurs dépendances sont prêtes.",
+        "primaryCta": "Voir le parcours d'adoption",
+        "secondaryCta": "Examiner la preuve produit",
+        "evidenceLabel": "Commande de clôture d'agence",
+        "classification": "Preuve produit masquée",
+        "imageAlt": "Commande Stoquify masquée de clôture quotidienne d'agence avec preuves reliées aux sources"
+      },
+      "problem": {
+        "eyebrow": "l'écart de contrôle",
+        "title": "Une entreprise peut croître plus vite que son dossier opérationnel.",
+        "description": "Lorsque ventes, stock, trésorerie et comptabilité vivent dans des outils séparés, le fondateur porte lui-même toute l'explication. Stoquify vise à relier chaque décision au travail source qui la justifie.",
+        "signals": {
+          "sales": {
+            "title": "Ventes sans piste complète",
+            "copy": "Un passage en caisse doit encore expliquer le paiement, le reçu, le tiroir, le retour et la conséquence sur le stock."
+          },
+          "stock": {
+            "title": "Stock sans mouvement responsable",
+            "copy": "Une quantité doit rester liée à un site, un comptage, un transfert, une réception, un ajustement ou une vente."
+          },
+          "close": {
+            "title": "Clôture sans preuve source",
+            "copy": "Un journal ou un solde doit ramener à l'opération, au rôle responsable et à l'historique de validation."
+          }
+        }
+      },
+      "journey": {
+        "eyebrow": "du fondateur à la croissance maîtrisée",
+        "title": "Construisez le socle opérationnel en quatre étapes délibérées.",
+        "description": "Commencez par le travail qui crée le dossier. Ajoutez le contrôle financier et les extensions réglementées lorsque le parcours source est compris et prêt.",
+        "stageLabel": "Étape {number}",
+        "stages": {
+          "foundation": {
+            "title": "Structurer le modèle opérationnel",
+            "copy": "Définissez les sites, rôles, produits, prix, responsabilités de validation et premiers flux à maîtriser.",
+            "boundary": "Le périmètre, les responsabilités et les données sources sont confirmés pendant la découverte."
+          },
+          "operation": {
+            "title": "Exécuter les opérations essentielles",
+            "copy": "Réunissez ventes, PDV, inventaire, achats, reçus et encaissements dans un parcours relié aux sources.",
+            "boundary": "Les modules activés et la préparation du déploiement déterminent la mise en service."
+          },
+          "control": {
+            "title": "Établir le contrôle financier",
+            "copy": "Reliez preuves de paiement, rapprochement, journaux et comptabilité prête pour l'OHADA aux opérations d'origine.",
+            "boundary": "La maturité pays, comptable et prestataire est qualifiée avant activation."
+          },
+          "growth": {
+            "title": "Grandir avec une visibilité gouvernée",
+            "copy": "Étendez le pilotage multi-sites, le SIRH, la paie, la conformité et l'automatisation lorsque leurs prérequis sont prouvés.",
+            "boundary": "Les extensions conservent les contrôles d'habilitation, de validation, de confidentialité et de mise en service."
+          }
+        }
+      },
+      "proof": {
+        "eyebrow": "commande produit",
+        "title": "Examinez la preuve, pas une maquette décorative.",
+        "description": "Cette capture produit approuvée et masquée montre comment une décision de clôture d'agence peut porter l'état des sources, la responsabilité et le contexte de revue sans exposer de données client réelles.",
+        "imageAlt": "Preuve Stoquify masquée et en lecture seule de clôture quotidienne avec contexte de revue",
+        "caption": "Commande de clôture quotidienne et revue des preuves",
+        "classification": "Capture produit masquée",
+        "signals": {
+          "source": {
+            "title": "État relié aux sources",
+            "copy": "Les signaux opérationnels restent reliés au travail et aux dossiers qui les ont produits."
+          },
+          "owner": {
+            "title": "Responsabilité nommée",
+            "copy": "Le contexte de revue distingue le responsable de la prochaine action sans inventer de validation automatique."
+          },
+          "decision": {
+            "title": "Preuve prête pour la décision",
+            "copy": "La surface soutient la revue et le suivi tout en préservant la limite du contrôle sous-jacent."
+          }
+        }
+      },
+      "pathways": {
+        "eyebrow": "partir du travail réel",
+        "title": "Choisissez le résultat opérationnel avant la liste des modules.",
+        "description": "Chaque parcours commence par une responsabilité réelle de l'acheteur et se termine par une preuve révisable.",
+        "items": {
+          "retail": {
+            "job": "Exploitants commerce et PDV",
+            "title": "Rendre chaque vente d'agence responsable",
+            "outcome": "Reliez passage en caisse, règlement, reçu, tiroir et mouvement de stock dans un même parcours terrain.",
+            "proof": "Le PDV et la continuité dépendent des ventes, de l'inventaire et des contrôles appareils activés."
+          },
+          "inventory": {
+            "job": "Équipes inventaire et achats",
+            "title": "Expliquer le stock et les engagements fournisseurs",
+            "outcome": "Reliez mouvements, comptages, transferts, commandes, réceptions et dettes au travail responsable.",
+            "proof": "La valorisation et la préparation des dettes dépendent de dossiers sources complets."
+          },
+          "finance": {
+            "job": "Équipes finance et comptabilité",
+            "title": "Porter les opérations vers une clôture explicable",
+            "outcome": "Reliez preuves de paiement, rapprochement, journaux et comptabilité OHADA sans perdre la provenance.",
+            "proof": "La comptabilité et la clôture exigent une configuration revue et des périodes complètes."
+          },
+          "leadership": {
+            "job": "Direction multi-sites",
+            "title": "Voir où le contrôle demande une action",
+            "outcome": "Consultez signaux d'agence, travaux non résolus et responsabilités sans confondre tous les rôles dans un seul tableau.",
+            "proof": "La visibilité respecte le périmètre organisationnel, les autorisations et les parcours sources actifs."
+          }
+        }
+      },
+      "trust": {
+        "eyebrow": "le contrôle avant l'échelle",
+        "title": "La croissance doit approfondir la preuve, pas l'affaiblir.",
+        "description": "La promesse publique de Stoquify reste dans les contrôles que la plateforme peut prouver : traçabilité, accès limité et préparation OHADA qualifiée.",
+        "items": {
+          "traceability": {
+            "title": "Historique opérationnel traçable",
+            "copy": "Les événements importants conservent source, acteur, état et contexte de revue dans le parcours connecté.",
+            "boundary": "La qualité de la preuve dépend toujours d'une capture source complète."
+          },
+          "access": {
+            "title": "Accès et validation limités",
+            "copy": "Limites client, autorisations et validations contrôlées déterminent qui peut consulter ou agir.",
+            "boundary": "L'aperçu ne formule aucune certification ni promesse de risque nul."
+          },
+          "ohada": {
+            "title": "Préparation OHADA qualifiée",
+            "copy": "Le comportement comptable et statutaire reste séparé de la configuration pays revue par des experts.",
+            "boundary": "Les packs pays et adaptateurs prestataires doivent être prouvés avant usage en production."
+          }
+        }
+      },
+      "adoption": {
+        "eyebrow": "adoption qualifiée",
+        "title": "Passez du concept au déploiement sans prétendre que la configuration est instantanée.",
+        "description": "Un déploiement contrôlé confirme le travail opérationnel, les données, modules, dépendances pays, responsabilités et preuves d'acceptation avant extension.",
+        "steps": {
+          "discovery": {
+            "title": "Découvrir le travail opérationnel",
+            "copy": "Cartographiez agences, rôles, dossiers sources, écarts de contrôle et premier résultat à prouver."
+          },
+          "configuration": {
+            "title": "Configurer le parcours source",
+            "copy": "Confirmez données, autorisations, modules, imports, prestataires et maturité pays."
+          },
+          "pilot": {
+            "title": "Exécuter un pilote contrôlé",
+            "copy": "Formez les utilisateurs, observez le flux et recueillez preuves d'acceptation et d'exception."
+          },
+          "decision": {
+            "title": "Décider le déploiement",
+            "copy": "Approuvez la suite lorsque contrôles, limites de support et responsabilités sont compris."
+          }
+        },
+        "boundary": "Cet aperçu n'active aucun espace de travail. Le périmètre final, les dépendances, les services de mise en œuvre et les conditions commerciales restent qualifiés.",
+        "primaryCta": "Planifier un déploiement qualifié",
+        "secondaryCta": "Retourner à la page actuelle"
+      }
+    }
+  },
   "landing": {
     "header": {
       "homeAria": "Accueil Stoquify",
@@ -1184,6 +1374,7 @@
       "navAria": "Sections de la page d'accueil",
       "product": "Produit",
       "workflow": "Parcours",
+      "workflowAtlas": "Atlas",
       "platform": "Plateforme",
       "people": "Personnel et paie",
       "controls": "Contrôle quotidien",
@@ -1283,6 +1474,35 @@
       "eyebrow": "parcours publics",
       "title": "Choisissez d'abord le parcours opérationnel, puis ajoutez les modules contrôlés.",
       "description": "Stoquify devient plus clair quand l'acheteur part d'un travail réel : ventes en agence, stock, achats, trésorerie ou clôture OHADA. Conformité, SIRH, paie et automatisation étendent le dossier après compréhension du flux central.",
+      "founderJourney": {
+        "eyebrow": "pour les fondateurs en phase de démarrage",
+        "title": "Du premier encaissement à une croissance maîtrisée.",
+        "description": "Construisez le dossier opérationnel par étapes afin que ventes, stock, trésorerie et comptabilité restent explicables pendant la croissance.",
+        "stageLabel": "Étape {number}",
+        "cta": "Planifier votre déploiement",
+        "stages": {
+          "foundation": {
+            "title": "Structurer le modèle opérationnel",
+            "copy": "Définissez les sites, rôles, produits, prix, responsabilités de validation et premiers flux à maîtriser.",
+            "boundary": "Le périmètre et les données sources sont confirmés pendant la découverte."
+          },
+          "launch": {
+            "title": "Exécuter les opérations essentielles",
+            "copy": "Réunissez ventes, PDV, inventaire, achats, reçus et encaissements dans un parcours relié aux sources.",
+            "boundary": "Les modules activés et la préparation du déploiement déterminent la mise en service."
+          },
+          "control": {
+            "title": "Établir le contrôle financier",
+            "copy": "Reliez preuves de paiement, rapprochement, journaux et comptabilité prête pour l'OHADA aux opérations d'origine.",
+            "boundary": "La maturité pays et prestataire est qualifiée avant activation."
+          },
+          "growth": {
+            "title": "Grandir avec une visibilité gouvernée",
+            "copy": "Étendez le pilotage multi-sites, le SIRH, la paie, la conformité et l'automatisation lorsque leurs prérequis sont prouvés.",
+            "boundary": "Les extensions conservent les contrôles d'habilitation, de validation et de mise en service."
+          }
+        }
+      },
       "moduleLabel": "parcours",
       "modules": {
         "pos": {
@@ -1967,13 +2187,6 @@
           "requires": "Finance, comptabilité OHADA et adaptateur prestataire validé",
           "driver": "Connexions prestataires actives et périmètre de configuration qualifié"
         },
-        "production": {
-          "status": "bêta contrôlée",
-          "name": "Opérations de production",
-          "copy": "Reliez recettes, matières, lots, planification, coûts, rendement et rentabilité aux preuves d'inventaire.",
-          "requires": "Opérations essentielles et validation de maturité production",
-          "driver": "Sites opérationnels et périmètre d'implémentation"
-        },
         "intelligence": {
           "status": "extension ultérieure",
           "name": "Intelligence et croissance",
@@ -2046,39 +2259,532 @@
       "navAria": "Pied de page",
       "copyright": "Stoquify. Conçu pour des opérations OHADA disciplinées."
     },
-    "peopleToPay": {
-      "eyebrow": "du personnel à la paie",
-      "title": "Séparez la vérité RH de l'exécution de la paie, sans les déconnecter.",
-      "description": "Stoquify contient déjà un socle SIRH protégé par autorisations. Son rôle est explicite : le SIRH détient les données RH approuvées ; la paie consomme des données approuvées ; paiements, déclarations et comptabilité conservent leurs propres preuves.",
-      "stages": {
-        "people": {
-          "title": "Vérité RH du SIRH",
-          "copy": "Identité, organisation, contrats, rémunération, temps, congés, validations, libre-service et historique.",
-          "signal": "Dossiers délimités et masqués selon les droits"
+    "workflowAtlas": {
+      "eyebrow": "atlas des parcours",
+      "title": "Choisissez la responsabilité. Voyez les résultats pertinents. Suivez la preuve.",
+      "description": "Un guide opérationnel par responsabilité pour prospects et utilisateurs : choisissez une responsabilité, limitez les résultats au travail qu'elle peut influencer, examinez le parcours contrôlé, puis ouvrez l'espace protégé au moment d'agir.",
+      "roleLensLabel": "Vues par responsabilité opérationnelle",
+      "indexLabel": "Index des parcours",
+      "visibleCount": "{count} parcours affichés pour la vue choisie.",
+      "workflowLabel": "Parcours {number}",
+      "roleLabel": "Responsabilités",
+      "handoffLabel": "Passage opérationnel",
+      "stepsLabel": "Étapes du parcours",
+      "controlLabel": "Points de contrôle",
+      "evidenceLabel": "Preuves produites",
+      "protectedLabel": "Routes protégées de l'espace de travail",
+      "roles": {
+        "all": "Tous",
+        "owner": "Dirigeant",
+        "cashier": "Caissier",
+        "stock": "Stock",
+        "purchasing": "Achats/AP",
+        "hrPayroll": "RH/Paie",
+        "accountant": "Comptable",
+        "compliance": "Conformité",
+        "admin": "Admin"
+      },
+      "routeLabels": {
+        "pos": "PDV",
+        "sales": "Ventes",
+        "cashDrawer": "Tiroir caisse",
+        "reconciliation": "Rapprochement",
+        "inventory": "Inventaire",
+        "items": "Articles",
+        "movements": "Mouvements",
+        "transfers": "Transferts",
+        "stockToCash": "Stock vers trésorerie",
+        "purchases": "Achats",
+        "purchaseOrders": "Commandes achat",
+        "payables": "Dettes fournisseurs",
+        "suppliers": "Fournisseurs",
+        "customers": "Clients",
+        "receivables": "Créances",
+        "people": "Personnel",
+        "team": "Équipe",
+        "me": "Mon profil",
+        "payroll": "Paie",
+        "payrollRuns": "Cycles paie",
+        "payslips": "Bulletins",
+        "declarations": "Déclarations",
+        "payrollPayments": "Paiements paie",
+        "payrollRegister": "Registre paie",
+        "financePayments": "Paiements finance",
+        "accounting": "Comptabilité",
+        "journals": "Journaux",
+        "accountingClose": "Clôture comptable",
+        "accountingControl": "Contrôle comptable",
+        "assuranceControl": "Tour assurance",
+        "compliance": "Conformité",
+        "payrollSetup": "Réglages paie",
+        "taxRates": "Taux fiscaux",
+        "dailyDigest": "Synthèse jour",
+        "managerAction": "Centre manager",
+        "ownerWarRoom": "Salle dirigeant",
+        "settingsUsers": "Utilisateurs",
+        "settingsRoles": "Rôles",
+        "settingsModules": "Modules",
+        "settingsLocations": "Sites",
+        "settingsSecurity": "Sécurité"
+      },
+      "workflows": {
+        "sellToCash": {
+          "shortTitle": "Vendre et encaisser",
+          "title": "Vendre et encaisser",
+          "promise": "Le caissier passe de la caisse au reçu, au tiroir, à la revue du règlement et au rapprochement sans casser le récit.",
+          "handoff": "La vente crée des signaux de reçu, paiement, tiroir, stock et règlement que la comptabilité peut relire.",
+          "steps": {
+            "openSession": "Ouvrir la session PDV responsable",
+            "captureSale": "Saisir articles, remises, fiscalité et client",
+            "collectPayment": "Encaisser le moyen choisi et produire le reçu",
+            "closeDrawer": "Comparer le tiroir attendu et compté",
+            "reviewSettlement": "Envoyer les différences vers le rapprochement avant clôture"
+          },
+          "controls": {
+            "sessionOwner": "Session caissier nommée",
+            "receiptState": "État du reçu et des retours",
+            "paymentMethod": "Moyen de paiement et contexte prestataire",
+            "drawerVariance": "Revue des différences de tiroir"
+          },
+          "evidence": {
+            "sale": "Dossier de vente",
+            "receipt": "Preuve de reçu",
+            "drawerMovement": "Mouvement de tiroir",
+            "paymentProof": "Preuve de paiement"
+          },
+          "dailyUse": "À utiliser quand la caisse doit aller vite de la vente à l'argent justifiable.",
+          "nextAction": "Ouvrez le PDV, terminez la vente, puis vérifiez tiroir et signaux de rapprochement avant clôture du jour.",
+          "source": "Passage caisse",
+          "destination": "PDV et tiroir caisse"
         },
-        "payroll": {
-          "title": "Préparation de la paie",
-          "copy": "Les données RH approuvées deviennent des variables contrôlées sans permettre à la paie de réécrire le SIRH.",
-          "signal": "État de préparation et de validation"
+        "stockToSale": {
+          "shortTitle": "Stock vers vente",
+          "title": "Stock vers vente",
+          "promise": "Les équipes stock expliquent ce qui a bougé, où, pourquoi, et comment la vente ou la valeur a changé le dossier.",
+          "handoff": "Article, site, transfert, comptage et mouvement alimentent la disponibilité vente et la revue stock vers trésorerie.",
+          "steps": {
+            "defineItem": "Définir article, unité, catégorie, agence et fournisseur",
+            "receiveStock": "Recevoir le stock avec source et quantité prouvées",
+            "moveOrCount": "Enregistrer transfert, comptage, ajustement ou motif",
+            "sellItem": "Laisser le PDV consommer le stock avec contexte de vente",
+            "reviewValue": "Revoir valeur, différences et pression de réassort"
+          },
+          "controls": {
+            "locationScope": "Périmètre agence et site",
+            "movementReason": "Motif du mouvement et acteur",
+            "transferAcceptance": "Acceptation expédition et réception",
+            "valuationSignal": "Signal valeur et différence"
+          },
+          "evidence": {
+            "itemRecord": "Fiche article",
+            "movementSource": "Source du mouvement",
+            "locationActor": "Trace site et acteur",
+            "variance": "Preuve de différence"
+          },
+          "dailyUse": "À utiliser quand quantité, transfert, comptage ou vente doit expliquer la vérité stock.",
+          "nextAction": "Partez de l'inventaire, confirmez article et site, puis suivez le mouvement vers vente ou revue de valeur.",
+          "source": "Article ou mouvement",
+          "destination": "Inventaire"
         },
-        "proof": {
-          "title": "Paiements et déclarations",
-          "copy": "Bulletins, preuves de paiement, déclarations, état prestataire et exceptions restent distincts.",
-          "signal": "Preuves de résultat, paiement et autorité"
+        "procureToPay": {
+          "shortTitle": "Acheter à payer",
+          "title": "Acheter à payer",
+          "promise": "Achats et AP contrôlent les engagements avant que l'argent quitte l'entreprise.",
+          "handoff": "Identité fournisseur, commande, réception, facture, dette et préparation du paiement restent reliées.",
+          "steps": {
+            "qualifySupplier": "Qualifier identité fournisseur et conditions",
+            "raiseOrder": "Créer et approuver la commande achat",
+            "receiveGoods": "Réceptionner biens ou services contre la commande",
+            "confirmPayable": "Confirmer la dette et le solde ouvert",
+            "prepareRelease": "Préparer la sortie de paiement avec contexte réviseur"
+          },
+          "controls": {
+            "supplierIdentity": "Identité fournisseur et conditions",
+            "orderApproval": "Approbation commande achat",
+            "receivingState": "État de réception",
+            "payableReadiness": "Préparation dette fournisseur"
+          },
+          "evidence": {
+            "order": "Commande achat",
+            "receipt": "Réception marchandises",
+            "supplierBalance": "Solde fournisseur",
+            "payableProof": "Preuve dette fournisseur"
+          },
+          "dailyUse": "À utiliser avant que les engagements fournisseurs créent une pression de trésorerie non contrôlée.",
+          "nextAction": "Ouvrez les commandes achat, confirmez conditions et réception, puis avancez seulement les dettes prêtes.",
+          "source": "Engagement fournisseur",
+          "destination": "Commandes achat"
         },
-        "close": {
-          "title": "Comptabilité et clôture",
-          "copy": "Écritures de paie, dettes, rapprochements, corrections et assurance de clôture remontent aux sources.",
-          "signal": "Références comptables et contrôles de clôture"
+        "customerToCollection": {
+          "shortTitle": "Client à encaissement",
+          "title": "Client à encaissement",
+          "promise": "Ventes et finance suivent la valeur client au-delà de la facture, jusqu'aux encaissements, soldes, litiges et revue grand livre.",
+          "handoff": "Activité client et position financière partagent un chemin traçable de la commande au reçu et au rapprochement.",
+          "steps": {
+            "openCustomer": "Ouvrir ou mettre à jour le client",
+            "recordSale": "Enregistrer vente, commande ou facture",
+            "trackExposure": "Suivre exposition ouverte et échéance",
+            "collectMoney": "Encaisser et joindre la preuve de reçu",
+            "resolveDifference": "Résoudre les différences avant publication"
+          },
+          "controls": {
+            "customerScope": "Périmètre client et crédit",
+            "duePosition": "Position échue",
+            "collectionProof": "Preuve d'encaissement",
+            "reconciliationState": "État du rapprochement"
+          },
+          "evidence": {
+            "customerTrail": "Trace client",
+            "openItem": "Élément ouvert",
+            "receipt": "Preuve de reçu",
+            "ledgerReference": "Référence grand livre"
+          },
+          "dailyUse": "À utiliser quand un solde client doit être suivi au-delà de la vente initiale.",
+          "nextAction": "Ouvrez les créances, relisez la trace client, puis reliez preuve d'encaissement et rapprochement.",
+          "source": "Activité client",
+          "destination": "Créances"
+        },
+        "peopleToPay": {
+          "shortTitle": "Personnel à paie",
+          "title": "Du personnel à la paie, sans perdre le contrôle",
+          "promise": "Les faits SIRH deviennent entrées paie seulement après identité, contrat, présence, rémunération et préparation validés.",
+          "handoff": "Les dossiers personnel alimentent la paie, mais cycles, bulletins, paiements, déclarations et références comptables restent distincts.",
+          "steps": {
+            "confirmIdentity": "Confirmer identité salarié et périmètre organisation",
+            "approveContract": "Approuver contrat et base rémunération",
+            "captureTime": "Saisir présence, congés et exceptions",
+            "approveInputs": "Valider la préparation des entrées paie",
+            "runPayroll": "Calculer et approuver le cycle paie",
+            "publishPayslip": "Publier bulletin et preuve de paiement"
+          },
+          "controls": {
+            "identity": "Identité et périmètre",
+            "contract": "Contrat et rémunération approuvés",
+            "attendance": "Présence et exceptions revues",
+            "inputReadiness": "Porte de préparation paie",
+            "runApproval": "Approbation du cycle paie"
+          },
+          "evidence": {
+            "hrFact": "Fait RH approuvé",
+            "runResult": "Résultat de cycle",
+            "payslip": "Bulletin",
+            "paymentProof": "Preuve de paiement"
+          },
+          "dailyUse": "À utiliser comme guide principal SIRH vers paie en gardant la vérité RH séparée de l'exécution paie.",
+          "nextAction": "Commencez dans Personnel, vérifiez le fait RH approuvé, puis laissez la paie consommer seulement les entrées prêtes.",
+          "source": "Fait RH approuvé",
+          "destination": "Personnel et paie"
+        },
+        "payrollStatutoryProof": {
+          "shortTitle": "Preuve paie",
+          "title": "Paie vers preuve statutaire",
+          "promise": "Les sorties paie vont vers déclarations, paiements et comptabilité sans masquer preuve d'autorité ni état de correction.",
+          "handoff": "La paie approuvée devient déclaration, paiement, registre et preuve conformité.",
+          "steps": {
+            "lockRun": "Verrouiller le cycle paie approuvé",
+            "prepareDeclaration": "Préparer les chiffres de déclaration statutaire",
+            "attachAuthorityProof": "Joindre preuve autorité ou prestataire",
+            "releasePayment": "Libérer le paiement avec trace prouvable",
+            "postReference": "Porter la référence vers la revue comptable"
+          },
+          "controls": {
+            "declarationReadiness": "Préparation déclaration",
+            "authorityEvidence": "Preuve autorité",
+            "paymentTrace": "Trace paiement",
+            "correctionState": "État correction"
+          },
+          "evidence": {
+            "declarationPacket": "Dossier déclaration",
+            "paymentTrace": "Trace paiement",
+            "register": "Registre paie",
+            "ledgerReference": "Référence grand livre"
+          },
+          "dailyUse": "À utiliser quand une sortie paie doit devenir déclaration, paiement et preuve conformité.",
+          "nextAction": "Ouvrez les déclarations, confirmez le cycle approuvé, joignez preuve autorité et gardez la preuve paiement distincte.",
+          "source": "Cycle paie approuvé",
+          "destination": "Déclarations paie"
+        },
+        "paymentReconciliation": {
+          "shortTitle": "Rapprochement",
+          "title": "Rapprochement des paiements",
+          "promise": "La finance compare les paiements internes aux preuves banque ou prestataire et résout les différences avant la clôture.",
+          "handoff": "Paiements, preuves prestataire, éléments suspense et décisions réviseur restent reliés.",
+          "steps": {
+            "importEvidence": "Importer preuve banque ou prestataire",
+            "compareRecords": "Comparer paiements attendus et observés",
+            "assignSuspense": "Assigner les différences non résolues",
+            "approveResolution": "Approuver correspondance ou reclassement",
+            "retainProof": "Conserver le dossier de résolution"
+          },
+          "controls": {
+            "providerEvidence": "Preuve prestataire",
+            "statementImport": "Import relevé",
+            "matchDecision": "Décision de correspondance",
+            "reviewerSignoff": "Validation réviseur"
+          },
+          "evidence": {
+            "matchDecision": "Décision de correspondance",
+            "suspenseItem": "Élément suspense",
+            "providerProof": "Preuve prestataire",
+            "resolutionHistory": "Historique résolution"
+          },
+          "dailyUse": "À utiliser quand argent enregistré et preuve prestataire doivent s'accorder avant clôture.",
+          "nextAction": "Ouvrez le rapprochement, importez la preuve, assignez le suspense et conservez la décision réviseur.",
+          "source": "Paiement ou événement prestataire",
+          "destination": "Rapprochement"
+        },
+        "accountingCloseAssurance": {
+          "shortTitle": "Assurance clôture",
+          "title": "Assurance de clôture comptable",
+          "promise": "La comptabilité relit journaux liés aux sources, rapprochements, bloqueurs et décisions de clôture sans reconstruire les opérations.",
+          "handoff": "La preuve opérationnelle devient source journal, état bloqueur, historique réviseur et dossier de clôture.",
+          "steps": {
+            "linkSources": "Lier les sources opérationnelles au contexte comptable",
+            "postJournals": "Passer les journaux avec règle et réviseur",
+            "reconcileAccounts": "Rapprocher comptes et annexes",
+            "clearBlockers": "Lever bloqueurs ou orienter corrections",
+            "certifyClose": "Certifier la préparation de clôture"
+          },
+          "controls": {
+            "sourceLink": "Lien source",
+            "postingRule": "Règle de passage",
+            "blockerReview": "Revue bloqueur",
+            "certificationState": "État certification"
+          },
+          "evidence": {
+            "journalSource": "Source journal",
+            "closeBlocker": "Bloqueur clôture",
+            "reviewHistory": "Historique revue",
+            "closePack": "Dossier clôture"
+          },
+          "dailyUse": "À utiliser quand la comptabilité veut le chemin court de la source opérationnelle à la clôture défendable.",
+          "nextAction": "Ouvrez la clôture comptable, inspectez les journaux liés aux sources et levez les bloqueurs avant certification.",
+          "source": "Journal lié à une source",
+          "destination": "Clôture comptable"
+        },
+        "complianceCountryEvidence": {
+          "shortTitle": "Preuve pays",
+          "title": "Conformité et preuve pays",
+          "promise": "La conformité voit règles pays, état document fiscal, santé adaptateur et incertitude ouverte dans un chemin gouverné.",
+          "handoff": "Périmètre pack pays, provenance des règles, preuve fiscale et réponse adaptateur deviennent un état révisable.",
+          "steps": {
+            "scopeCountry": "Délimiter pays et obligation",
+            "applyRule": "Appliquer la source de règle pertinente",
+            "collectDocument": "Collecter preuve fiscale ou statutaire",
+            "reviewAdapter": "Revoir réponse adaptateur et limite",
+            "surfaceUncertainty": "Afficher l'incertitude ouverte pour revue"
+          },
+          "controls": {
+            "ruleProvenance": "Provenance règle",
+            "adapterState": "État adaptateur",
+            "documentStatus": "État document",
+            "openObligation": "Obligation ouverte"
+          },
+          "evidence": {
+            "complianceEvidence": "Preuve conformité",
+            "countryPackStatus": "État pack pays",
+            "authorityProof": "Preuve autorité",
+            "limitation": "Limite connue"
+          },
+          "dailyUse": "À utiliser quand règle, document fiscal ou limite pack pays doit rester visible.",
+          "nextAction": "Ouvrez la conformité, relisez la provenance de règle et affichez les obligations ouvertes sans cacher l'incertitude.",
+          "source": "Obligation pays",
+          "destination": "Centre conformité"
+        },
+        "ownerDailyControl": {
+          "shortTitle": "Contrôle jour",
+          "title": "Commande dirigeant et contrôle quotidien",
+          "promise": "Dirigeants et managers voient les exceptions à décider aujourd'hui et reviennent au parcours source derrière chaque signal.",
+          "handoff": "Signaux agence, approbations, preuves anciennes et sujets de clôture deviennent une file de décision.",
+          "steps": {
+            "scanSignals": "Lire les signaux agence et opérationnels",
+            "openException": "Ouvrir l'exception ou le bloqueur",
+            "assignOwner": "Assigner un responsable",
+            "decideToday": "Noter la décision ou la prochaine action",
+            "returnToSource": "Revenir au parcours source"
+          },
+          "controls": {
+            "exceptionQueue": "File exceptions",
+            "branchSignal": "Signal agence",
+            "approvalQueue": "File approbation",
+            "staleEvidence": "Marqueur de preuve ancienne"
+          },
+          "evidence": {
+            "decisionQueue": "File décision",
+            "sourceLink": "Lien parcours source",
+            "assuranceState": "État assurance",
+            "dailyClose": "Dossier clôture jour"
+          },
+          "dailyUse": "À utiliser comme premier arrêt quotidien du dirigeant pour les signaux à décider.",
+          "nextAction": "Ouvrez la synthèse jour, choisissez l'exception au risque opérationnel le plus fort et revenez à son parcours source.",
+          "source": "Signal opérationnel du jour",
+          "destination": "Synthèse jour"
+        },
+        "adminAccessControl": {
+          "shortTitle": "Accès et droits",
+          "title": "Admin et contrôle d'accès",
+          "promise": "Les admins séparent action, approbation, configuration et revue entre modules, sites et sécurité.",
+          "handoff": "Utilisateur, rôle, module, site et sécurité deviennent un accès effectif avec trace audit.",
+          "steps": {
+            "inviteUser": "Inviter ou mettre à jour l'utilisateur",
+            "setRole": "Définir rôle et frontière de permission",
+            "scopeModule": "Délimiter l'accès module",
+            "bindLocation": "Associer responsabilité de site",
+            "reviewSecurity": "Revoir politique sécurité et changements"
+          },
+          "controls": {
+            "invitationState": "État invitation",
+            "roleBoundary": "Frontière de rôle",
+            "moduleAccess": "Accès module",
+            "locationScope": "Périmètre site"
+          },
+          "evidence": {
+            "actorScope": "Périmètre acteur",
+            "effectiveAccess": "Accès effectif",
+            "auditTrail": "Trace audit",
+            "securityPolicy": "Politique sécurité"
+          },
+          "dailyUse": "À utiliser quand accès, rôle, site ou module doit changer sans brouiller la responsabilité.",
+          "nextAction": "Ouvrez les utilisateurs, confirmez le périmètre acteur, puis ajustez rôle ou module avec trace audit.",
+          "source": "Demande d'accès",
+          "destination": "Réglages utilisateurs"
+        },
+        "workflowAssuranceGates": {
+          "shortTitle": "Portes de mise en service",
+          "title": "Assurance parcours et portes de mise en service",
+          "promise": "Les opérations voient le parcours touché par incident, porte ou décision de mise en service avant d'étendre l'application des règles.",
+          "handoff": "Incidents, application module, portes release, préparation retour arrière et décisions restent reliés au parcours touché.",
+          "steps": {
+            "detectIncident": "Détecter l'incident ou le sujet de porte",
+            "nameImpact": "Nommer parcours et impact utilisateur",
+            "routeOwner": "Orienter responsabilité et action suivante",
+            "holdRelease": "Retenir ou ouvrir l'extension de mise en service",
+            "recordDecision": "Enregistrer la décision de porte"
+          },
+          "controls": {
+            "incidentRouting": "Routage incident",
+            "moduleEnforcement": "Application module",
+            "releaseGate": "Porte de mise en service",
+            "rollbackReadiness": "Préparation retour arrière"
+          },
+          "evidence": {
+            "incidentRecord": "Dossier incident",
+            "gateDecision": "Décision de porte",
+            "affectedWorkflow": "Parcours touché",
+            "releaseHistory": "Historique de mise en service"
+          },
+          "dailyUse": "À utiliser quand incident ou porte peut toucher plusieurs parcours ou la préparation de mise en service.",
+          "nextAction": "Ouvrez la tour assurance, nommez le parcours touché et consignez la décision de porte.",
+          "source": "Incident ou porte",
+          "destination": "Tour assurance"
         }
       },
-      "liveLabel": "socle implémenté",
-      "statusTitle": "Le cœur SIRH existe derrière des contrôles de rôle",
+      "dailyHubEyebrow": "lanceur quotidien",
+      "dailyHubTitle": "Choisissez le travail, puis suivez le chemin le plus sûr.",
+      "dailyHubBody": "L'atlas agit comme un manuel opérationnel par responsabilité : il explique la valeur au prospect, puis donne à l'utilisateur le chemin court, le contrôle, la preuve et la route protégée.",
+      "prospectLabel": "pour prospects",
+      "prospectTitle": "Comprendre la valeur avant la liste des modules.",
+      "prospectBody": "Partez du résultat recherché et voyez comment Stoquify relie travail, contrôle, preuve et clôture.",
+      "userLabel": "pour utilisateurs",
+      "userTitle": "Utiliser comme carte de raccourcis quotidiens.",
+      "userBody": "Choisissez votre responsabilité, sélectionnez un résultat pertinent, lisez l'action contrôlée suivante, puis ouvrez l'espace protégé.",
+      "roleHubLabel": "choisir la responsabilité",
+      "outcomeChooserLabel": "choisir un résultat pertinent",
+      "outcomeContext": "{count} résultats sont pertinents pour {role}. Cette vue publique organise le guide ; les droits de l'espace protégé décident toujours de l'accès.",
+      "outcomeOptionLabel": "{outcome}, {count, plural, one {# parcours} other {# parcours}}",
+      "selectionAnnouncement": "{count, plural, =0 {Aucun parcours ne correspond} one {# parcours correspond} other {# parcours correspondent}} à {role} et {outcome}.",
+      "selectionLabel": "vue opérationnelle active",
+      "selectedRoleLabel": "Responsabilité",
+      "selectedOutcomeLabel": "Résultat",
+      "recommendedLabel": "Guides",
+      "bestNextActionLabel": "Meilleure action suivante",
+      "mapLabel": "carte source vers preuve",
+      "sourceLabel": "Action source",
+      "controlPointLabel": "Point de contrôle",
+      "proofLabel": "Preuve",
+      "destinationLabel": "Destination espace de travail",
+      "quickLaunchLabel": "Raccourcis protégés",
+      "routeHelp": "Ces liens lancent le travail pour les utilisateurs connectés ; les droits du tableau de bord décident l'accès.",
+      "openProtected": "Ouvrir {route}",
+      "resetFilters": "Voir tous les parcours",
+      "noMatchesTitle": "Aucun guide ne correspond à cette vue exacte.",
+      "noMatchesBody": "Retirez un filtre ou revenez à tous les parcours pour trouver le chemin contrôlé le plus proche.",
+      "mapIndexLabel": "carte visuelle des parcours",
+      "mapIndexTitle": "Naviguez par résultat, pas par service.",
+      "mapIndexBody": "Chaque tuile ouvre un guide. L'utilisateur voit quoi faire, le prospect voit pourquoi le parcours compte, et tous gardent la preuve visible.",
+      "libraryLabel": "bibliothèque de guides",
+      "libraryTitle": "Le manuel opérationnel reste sous le lanceur.",
+      "libraryBody": "Utilisez les cartes détaillées pour former, expliquer le système à un acheteur ou choisir la route sûre pour un travail entre équipes.",
+      "fastPathLabel": "Chemin court et sûr",
+      "jumpToPlaybook": "Aller au guide {title}",
+      "outcomes": {
+        "all": "Tous les résultats",
+        "sell": "Vendre et encaisser",
+        "stock": "Réassortir ou expliquer le stock",
+        "buy": "Acheter et contrôler AP",
+        "collect": "Encaisser les clients",
+        "payPeople": "Payer le personnel",
+        "declare": "Déclarer les obligations paie",
+        "reconcile": "Rapprocher l'argent",
+        "close": "Clôturer les comptes",
+        "comply": "Traiter la conformité",
+        "decide": "Décider les exceptions du jour",
+        "administer": "Contrôler les accès",
+        "release": "Résoudre les portes"
+      }
+    },
+    "peopleToPay": {
+      "eyebrow": "du personnel à la paie, sans perdre le contrôle",
+      "title": "Transformez des données RH approuvées en une paie explicable.",
+      "description": "Stoquify rend chaque passage visible : le SIRH conserve le dossier RH de référence, la paie consomme des données approuvées, et les preuves de paiement, de déclaration et de comptabilisation restent reliées sans confondre les responsabilités.",
+      "flowLabel": "une chaîne contrôlée",
+      "flowSummary": "Le dossier source avance ; la responsabilité change, mais la preuve ne disparaît jamais.",
+      "flowAria": "Du dossier RH de référence à la paie, aux preuves de paiement et à la clôture comptable",
+      "stageLabel": "Étape {number}",
+      "ownerLabel": "Responsable",
+      "inputLabel": "Entrée",
+      "proofLabel": "Preuve produite",
+      "stages": {
+        "people": {
+          "title": "Dossier RH de référence",
+          "owner": "SIRH",
+          "copy": "Établissez les données du salarié que chaque décision de paie devra respecter.",
+          "input": "Identité, organisation, contrat, rémunération, temps, congés et validations",
+          "output": "Données RH approuvées et délimitées selon les droits",
+          "status": "Socle disponible"
+        },
+        "payroll": {
+          "title": "Variables de paie approuvées",
+          "owner": "Préparation de la paie",
+          "copy": "Préparez la période sans permettre à la paie de réécrire la source de vérité du SIRH.",
+          "input": "Données RH approuvées, contrôles de période et vérifications de préparation",
+          "output": "Jeu de variables de paie prêt à être revu",
+          "status": "Préparation contrôlée"
+        },
+        "proof": {
+          "title": "Payer et déclarer",
+          "owner": "Paie, prestataire et autorité",
+          "copy": "Distinguez les résultats de paie des preuves que les salaires ont été payés et les obligations déclarées.",
+          "input": "Cycle approuvé, bulletins, obligations de paiement et contexte déclaratif",
+          "output": "Preuves de paiement, déclaration, prestataire et exception",
+          "status": "Pays et prestataire requis"
+        },
+        "close": {
+          "title": "Comptabiliser et clôturer",
+          "owner": "Comptabilité et clôture",
+          "copy": "Portez les conséquences de la paie au grand livre sans perdre les sources RH et de paiement.",
+          "input": "Dettes de paie, preuves de paiement, corrections et état de rapprochement",
+          "output": "Références comptables, soldes rapprochés et preuves de clôture",
+          "status": "Contrôles comptables requis"
+        }
+      },
+      "liveLabel": "socle disponible",
+      "statusTitle": "Commencez par des dossiers RH contrôlés",
       "statusBody": "Le dépôt contient annuaire et profils, libre-service responsable et salarié, validations, historique, contrats, rémunération, temps et congés, preuves documentaires, organisation et préparation de la paie.",
-      "peopleCta": "Planifier le SIRH",
-      "payrollCta": "Planifier la paie",
-      "gatedLabel": "limite de mise en production",
-      "boundaryTitle": "La promotion sans restriction reste soumise aux preuves finales",
+      "peopleCta": "Planifier le socle RH",
+      "payrollCta": "Qualifier le déploiement paie",
+      "gatedLabel": "extension qualifiée",
+      "boundaryTitle": "La paie passe en production lorsque chaque dépendance est prouvée",
       "boundaryBody": "Les dernières preuves autorisent un pilote local contrôlé, pas une promesse de production générale. L'environnement final, les prestataires, les autorités, le déploiement et les contrôles de sortie restent à prouver."
     }
   },

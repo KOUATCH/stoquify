@@ -255,6 +255,42 @@ describe("workflow assurance registry service", () => {
     )
   })
 
+  it("does not execute the disabled POS cash-shortage runner registration when requested by check key", async () => {
+    mockDefinitions()
+    mockDb.workflowAssuranceCheckDefinition.findMany.mockResolvedValue([])
+
+    const result = await runWorkflowAssuranceRegistry({
+      organizationId: "org-1",
+      actorId: "user-1",
+      actorPermissions: ["pos.transactions.read"],
+      checkKey: "pos.closed_shift_cash_shortage.review",
+      runType: "manual",
+      recordedFromInclusive: "2026-07-27T00:00:00.000Z",
+      recordedThroughExclusive: "2026-07-28T00:00:00.000Z",
+    })
+
+    expect(mockDb.workflowAssuranceCheckDefinition.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          enabled: true,
+          checkKey: "pos.closed_shift_cash_shortage.review",
+        },
+      }),
+    )
+    expect(mockDb.businessEvent.count).not.toHaveBeenCalled()
+    expect(mockDb.workflowAssuranceCheckRun.create).not.toHaveBeenCalled()
+    expect(mockPersistExecution).not.toHaveBeenCalled()
+    expect(result.summary).toEqual({
+      total: 0,
+      passed: 0,
+      warning: 0,
+      failed: 0,
+      blocked: 0,
+      skipped: 0,
+      error: 0,
+      observeMode: true,
+    })
+  })
   it("persists one check run per enabled definition with normalized outcomes", async () => {
     mockDefinitions()
     mockDb.workflowAssuranceCheckDefinition.findMany.mockResolvedValue([
@@ -312,6 +348,11 @@ describe("workflow assurance registry service", () => {
       runType: "manual",
     })
 
+    expect(mockDb.workflowAssuranceCheckDefinition.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { enabled: true },
+      }),
+    )
     expect(result.summary).toEqual({
       total: 3,
       passed: 1,

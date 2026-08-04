@@ -2,19 +2,16 @@ import { betterAuth } from "better-auth"
 import { prismaAdapter } from "better-auth/adapters/prisma"
 import { db } from "@/prisma/db"
 import { logSecurityEvent, SecurityEventType } from "@/lib/security/audit-log"
+import { buildTrustedOrigins } from "@/lib/security/trusted-origins"
 
 const baseURL = process.env.NEXTAUTH_URL ?? process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000"
-const configuredTrustedOrigins = Array.from(
-  new Set(
-    [
-      baseURL,
-      process.env.NEXTAUTH_URL,
-      process.env.NEXT_PUBLIC_BASE_URL,
-      "http://localhost:3000",
-      "http://127.0.0.1:3000",
-    ].filter((origin): origin is string => Boolean(origin))
-  )
-)
+const configuredTrustedOrigins = buildTrustedOrigins([
+  baseURL,
+  process.env.NEXTAUTH_URL,
+  process.env.NEXT_PUBLIC_BASE_URL,
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+])
 const googleClientId = process.env.GOOGLE_CLIENT_ID
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET
 const socialProviders =
@@ -45,20 +42,6 @@ function getRequestAuditContext(ctx: any) {
   }
 }
 
-function getRequestOrigin(request?: Request) {
-  const host =
-    request?.headers.get("x-forwarded-host") ??
-    request?.headers.get("host")
-
-  if (!host) return null
-
-  const forwardedProto = request?.headers.get("x-forwarded-proto")
-  const proto =
-    forwardedProto ??
-    (host.startsWith("localhost") || host.startsWith("127.") ? "http" : "https")
-
-  return `${proto}://${host}`
-}
 
 export const auth = betterAuth({
   baseURL,
@@ -245,12 +228,7 @@ export const auth = betterAuth({
     },
   },
 
-  trustedOrigins: (request) => {
-    const requestOrigin = getRequestOrigin(request)
-    return requestOrigin
-      ? Array.from(new Set([...configuredTrustedOrigins, requestOrigin]))
-      : configuredTrustedOrigins
-  },
+  trustedOrigins: configuredTrustedOrigins,
 
   secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
 })

@@ -15,6 +15,7 @@ const allowedDbFiles = new Set([
   "services/agents/agent-release-control.service.ts",
   "services/agents/agent-control-plane-reconciliation.service.ts",
   "services/agents/agent-reconciler-invocation.service.ts",
+  "services/agents/portfolio/connector-inventory-read-model.service.ts",
 ])
 const allowedAgentDelegates = new Set([
   "agentDefinition",
@@ -121,3 +122,7 @@ function walk(directory) {
 }
 
 main()
+
+
+
+

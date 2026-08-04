@@ -2,13 +2,18 @@
 
 import { revalidatePath } from "next/cache"
 
-import { protect } from "@/services/_shared/protect"
+import {
+  FreshAuthRequiredError,
+  SESSION_ASSURANCE_LEVEL,
+} from "@/lib/security/auth-session"
+import { protect, type ProtectedActionContext } from "@/services/_shared/protect"
 import {
   approveCloseWaiver,
   assignCloseFinding,
   commentOnCloseFinding,
   getCloseAssuranceDashboard,
   getCloseEvidenceGraph,
+  requestMissingCloseEvidence,
   requestCloseWaiver,
   runCloseAssurance,
   updateAccountantReview,
@@ -17,6 +22,7 @@ import {
   type CloseAssuranceDashboardData,
   type CloseAssuranceFindingDto,
   type CloseEvidenceGraphDto,
+  type MissingCloseEvidenceRequestDto,
 } from "@/services/accounting/close-assurance.service"
 import {
   exportClosePack,
@@ -30,6 +36,7 @@ import {
   closeEvidenceGraphInputSchema,
   commentOnCloseFindingInputSchema,
   exportClosePackInputSchema,
+  requestMissingCloseEvidenceInputSchema,
   requestCloseWaiverInputSchema,
   updateAccountantReviewInputSchema,
 } from "@/services/accounting/close-assurance.schemas"
@@ -40,6 +47,7 @@ export type {
   CloseAssuranceDashboardData,
   CloseAssuranceFindingDto,
   CloseEvidenceGraphDto,
+  MissingCloseEvidenceRequestDto,
   ClosePackExportResult,
 }
 
@@ -124,6 +132,27 @@ export async function commentOnCloseFindingAction(input: unknown) {
   return addComment(input)
 }
 
+const requestMissingEvidence = protect<unknown, MissingCloseEvidenceRequestDto>(
+  {
+    permission: "accounting.close.evidence.request",
+    auditResource: "AccountantComment",
+    auditAllowed: true,
+  },
+  async (input, ctx) => {
+    const parsed = requestMissingCloseEvidenceInputSchema.parse(input)
+    const result = await requestMissingCloseEvidence(ctx.orgId, parsed, {
+      actorId: ctx.userId,
+      actorPermissions: ctx.permissions,
+    })
+    revalidateClosePaths(result.periodId)
+    return result
+  },
+)
+
+export async function requestMissingCloseEvidenceAction(input: unknown) {
+  return requestMissingEvidence(input)
+}
+
 const requestWaiver = protect<unknown, CloseAssuranceFindingDto>(
   { permission: "accounting.close.waiver.request", auditResource: "CloseAssuranceFinding", auditAllowed: true },
   async (input, ctx) => {
@@ -146,14 +175,19 @@ const approveWaiver = protect<unknown, CloseAssuranceFindingDto>(
     permission: "accounting.close.waiver.approve",
     auditResource: "CloseAssuranceFinding",
     auditAllowed: true,
-    freshAuth: true,
+    freshAuth: { maxAgeSeconds: 300 },
   },
   async (input, ctx) => {
+    const lastAuthAt = verifiedCloseFreshAuthTime(ctx)
     const parsed = approveCloseWaiverInputSchema.parse(input)
     const result = await approveCloseWaiver(ctx.orgId, parsed, {
       actorId: ctx.userId,
       actorPermissions: ctx.permissions,
-      lastAuthAt: Date.now(),
+      freshAuth: {
+        actorId: ctx.userId,
+        organizationId: ctx.orgId,
+        lastAuthAt,
+      },
     })
     revalidateClosePaths()
     return result
@@ -206,11 +240,12 @@ const exportCertifiedPack = protect<unknown, ClosePackExportResult>(
     freshAuth: { maxAgeSeconds: 300 },
   },
   async (input, ctx) => {
+    const lastAuthAt = verifiedCloseFreshAuthTime(ctx)
     const parsed = exportClosePackInputSchema.parse(input)
     const result = await exportClosePack(ctx.orgId, { ...parsed, mode: "CERTIFIED" }, {
       actorId: ctx.userId,
       actorPermissions: ctx.permissions,
-      lastAuthAt: new Date(),
+      lastAuthAt,
     })
     revalidateClosePaths(result.periodId)
     return result
@@ -219,4 +254,21 @@ const exportCertifiedPack = protect<unknown, ClosePackExportResult>(
 
 export async function exportCertifiedClosePackAction(input: unknown) {
   return exportCertifiedPack(input)
+}
+
+function verifiedCloseFreshAuthTime(ctx: ProtectedActionContext): Date {
+  const freshAuth = ctx.freshAuth
+  if (
+    !freshAuth ||
+    freshAuth.claims.userId !== ctx.userId ||
+    freshAuth.claims.tenantId !== ctx.orgId ||
+    freshAuth.claims.assuranceOrganizationId !== ctx.orgId ||
+    !Number.isFinite(freshAuth.claims.assuranceLevel) ||
+    freshAuth.claims.assuranceLevel < SESSION_ASSURANCE_LEVEL.PASSWORD ||
+    freshAuth.claims.lastAuthAt !== freshAuth.lastAuthAt.getTime()
+  ) {
+    throw new FreshAuthRequiredError()
+  }
+
+  return freshAuth.lastAuthAt
 }

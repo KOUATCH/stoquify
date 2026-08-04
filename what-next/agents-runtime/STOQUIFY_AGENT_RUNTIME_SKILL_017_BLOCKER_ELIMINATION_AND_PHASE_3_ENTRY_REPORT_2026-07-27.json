@@ -1,0 +1,1848 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-07-27T16:44:20.681Z",
+  "decision": "REJECTED_NO_GO",
+  "releasePosture": "DEVELOPMENT_CONTINUES_PILOT_AND_PRODUCTION_FAIL_CLOSED",
+  "authority": {
+    "activationAuthorized": false,
+    "phase3Authorized": false,
+    "grantedByReport": false,
+    "secretValuesPrinted": false
+  },
+  "counts": {
+    "enterpriseReady": 2,
+    "enterpriseTotal": 12,
+    "authorizedScopeSatisfied": 36,
+    "authorizedScopeTotal": 37,
+    "freezeVerified": 206,
+    "freezeTotal": 207,
+    "freezeMismatches": 1,
+    "freezeRuntimeDrift": 8,
+    "freezeCurrentChanges": 470,
+    "credentialBlockers": 31,
+    "operationalBlockers": 152,
+    "phase2bPassed": 2,
+    "phase2bChecks": 23,
+    "phase3Passed": 0,
+    "phase3Checks": 34,
+    "externalPassed": 1,
+    "externalChecks": 13,
+    "externalBlockers": 102,
+    "humanInterventions": 9
+  },
+  "rootCauseIds": [
+    "R01_PRODUCTION_DATABASE",
+    "R02_MANAGED_SECRETS",
+    "R03_STATUTORY_AUTHORITY",
+    "R04_RELEASE_AND_CI",
+    "R05_GOVERNANCE_AND_OWNERS",
+    "R06_SCHEDULER_AND_RECONCILER",
+    "R07_ALERT_LIFECYCLE",
+    "R08_CREDENTIAL_CEREMONY",
+    "R09_CLEAN_FREEZE",
+    "R10_GATE_017_AUTHORITY",
+    "R11_PHASE_2B_PILOT",
+    "R12_PHASE_3_AUTHORITY"
+  ],
+  "implementedFixes": [
+    {
+      "id": "FIX-01",
+      "files": [
+        "scripts/enterprise-release-blocker-status.js:289",
+        "scripts/__tests__/enterprise-release-blocker-status.test.js"
+      ],
+      "effect": "Canonical FROZEN_COMMIT_VERIFIED status enforced; generic READY rejected."
+    },
+    {
+      "id": "FIX-02",
+      "files": [
+        "scripts/agent-phase-promotion-gate.js:80",
+        "scripts/__tests__/agent-phase-promotion-gate.test.js"
+      ],
+      "effect": "Bounded evidence-write retry prevents transient contention from producing opaque gate failure."
+    }
+  ],
+  "raw": {
+    "enterpriseGroups": [
+      {
+        "id": "B01",
+        "title": "Application production build",
+        "ready": true,
+        "status": "READY",
+        "facts": [
+          "buildStatus=passed",
+          "buildExitCode=0"
+        ],
+        "blockers": [],
+        "nextAction": "Preserve and bind this evidence to the final candidate."
+      },
+      {
+        "id": "B02",
+        "title": "Payroll immutability runtime proof",
+        "ready": true,
+        "status": "READY",
+        "facts": [
+          "triggers=9/9",
+          "blockedMutations=14/14"
+        ],
+        "blockers": [],
+        "nextAction": "Preserve and bind this evidence to the final candidate."
+      },
+      {
+        "id": "B03",
+        "title": "Production database target and migration history",
+        "ready": false,
+        "status": "BLOCKED_EXTERNAL_CONFIG",
+        "facts": [
+          "preflight=8/9",
+          "history=5/8",
+          "historyTarget=local"
+        ],
+        "blockers": [
+          "deployment_target_is_safe",
+          "database_url_missing",
+          "remote_post_deploy_history_health_required"
+        ],
+        "nextAction": "Provision the approved production target, deploy, and pass direct history health."
+      },
+      {
+        "id": "B04",
+        "title": "Managed production release secrets",
+        "ready": false,
+        "status": "BLOCKED_EXTERNAL_CONFIG",
+        "facts": [
+          "secretChecks=2/8"
+        ],
+        "blockers": [
+          "public_identity_secret_present",
+          "public_identity_secret_strong",
+          "public_receipt_secret_present",
+          "public_receipt_secret_strong",
+          "history_cursor_secret_present",
+          "history_cursor_secret_strong"
+        ],
+        "nextAction": "Provision the three independent managed release secrets and rerun release preflight."
+      },
+      {
+        "id": "B05",
+        "title": "Cameroon source-artifact hash binding",
+        "ready": false,
+        "status": "REQUIRES_EXPERT_REVIEW",
+        "facts": [
+          "sourceHashes=0/7"
+        ],
+        "blockers": [
+          "source_artifact_hash_verification"
+        ],
+        "nextAction": "Return independently recomputed and checker-verified source hashes."
+      },
+      {
+        "id": "B06",
+        "title": "Cameroon qualified expert approval",
+        "ready": false,
+        "status": "REQUIRES_EXPERT_REVIEW",
+        "facts": [
+          "reviewChecks=4/12",
+          "approvalArtifactVerified=false"
+        ],
+        "blockers": [
+          "reviewer_identity_complete",
+          "review_window_complete",
+          "reviewer_recomputed_source_digests",
+          "fixture_family_decisions_complete",
+          "all_required_fixture_families_approved",
+          "final_decision_consistent",
+          "signed_approval_metadata_complete",
+          "signed_approval_artifact_verified",
+          "source_artifact_expert_approval"
+        ],
+        "nextAction": "Return the authentic signed expert decision and separate checker verification."
+      },
+      {
+        "id": "B07",
+        "title": "Credential rotation and revocation",
+        "ready": false,
+        "status": "BLOCKED_DEPENDENCY",
+        "facts": [
+          "credentialStatus=BLOCKED",
+          "credentialBlockers=31"
+        ],
+        "blockers": [
+          "authority:ENVIRONMENT_MISSING",
+          "authority:SOURCE_SYSTEM_REFERENCE_MISSING",
+          "authority:ATTESTATION_REFERENCE_MISSING",
+          "authority:ATTESTATION_DIGEST_MISSING",
+          "authority:ATTESTED_AT_MISSING",
+          "authority:EVIDENCE_SHA256_MISSING",
+          "authority:INVALID_AUTH_EVIDENCE_REFERENCE_MISSING",
+          "authority:ATTESTED_AT_INVALID_OR_STALE",
+          "releaseBinding:ENVIRONMENT_MISSING",
+          "releaseBinding:PACKAGE_ID_MISSING",
+          "releaseBinding:RELEASE_VERSION_MISSING",
+          "releaseBinding:COMMIT_SHA_MISSING",
+          "releaseBinding:ARTIFACT_DIGEST_MISSING",
+          "releaseBinding:DEPLOYMENT_REFERENCE_MISSING",
+          "primary-database-credential:SECURITY_CLASSIFICATION_UNRESOLVED",
+          "payroll-immutability-database-credential:SECURITY_CLASSIFICATION_UNRESOLVED",
+          "application-auth-signing-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+          "legacy-nextauth-signing-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+          "google-oauth-client-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+          "email-server-credential:SECURITY_CLASSIFICATION_UNRESOLVED",
+          "redis-connection-credential:SECURITY_CLASSIFICATION_UNRESOLVED",
+          "public-identity-hmac-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+          "public-receipt-signing-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+          "history-cursor-signing-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+          "payroll-destination-hmac-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+          "upload-provider-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+          "error-monitoring-dsn:SECURITY_CLASSIFICATION_UNRESOLVED",
+          "agent-reconciler-credential:SECURITY_CLASSIFICATION_UNRESOLVED",
+          "workflow-assurance-webhook-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+          "register:SECURITY_OWNER_MISSING",
+          "register:SECURITY_APPROVAL_REFERENCE_MISSING"
+        ],
+        "nextAction": "After stable managed references exist, complete all credential dispositions and evidence."
+      },
+      {
+        "id": "B08",
+        "title": "Operational release evidence",
+        "ready": false,
+        "status": "BLOCKED_DEPENDENCY",
+        "facts": [
+          "operationalStatus=BLOCKED",
+          "operationalBlockers=152"
+        ],
+        "blockers": [
+          "release:PACKAGE_ID_MISSING",
+          "release:RELEASE_VERSION_MISSING",
+          "release:DEPLOYMENT_REFERENCE_MISSING",
+          "release:ARTIFACT_REFERENCE_MISSING",
+          "release:PACKAGE_CERTIFICATION_REFERENCE_MISSING",
+          "release:PILOT_ALLOWLIST_REFERENCE_MISSING",
+          "release:ROLE_ALLOWLIST_REFERENCE_MISSING",
+          "release:COMMIT_SHA_INVALID",
+          "release:ARTIFACT_DIGEST_INVALID",
+          "release:PACKAGE_CERTIFICATION_HASH_INVALID",
+          "release:CI_EVIDENCE_HASH_INVALID",
+          "release:MANIFEST_HASH_INVALID",
+          "release:EVIDENCE_BUNDLE_HASH_INVALID",
+          "release:BROWSER_REPORT_HASH_INVALID",
+          "ci:STATUS_NOT_PASSED",
+          "ci:SOURCE_TREE_NOT_CLEAN",
+          "ci:RUN_REFERENCE_MISSING",
+          "ci:BRANCH_REFERENCE_MISSING",
+          "ci:ARTIFACT_REFERENCE_MISSING",
+          "ci:SOURCE_SYSTEM_REFERENCE_MISSING",
+          "ci:ATTESTATION_REFERENCE_MISSING",
+          "ci:INVALID_AUTH_EVIDENCE_REFERENCE_MISSING",
+          "ci:COMMIT_SHA_INVALID",
+          "ci:ARTIFACT_DIGEST_INVALID",
+          "ci:BROWSER_REPORT_HASH_INVALID",
+          "ci:ATTESTATION_DIGEST_INVALID",
+          "ci:EVIDENCE_HASH_INVALID",
+          "ci:COMPLETED_AT_INVALID",
+          "ci:ATTESTED_AT_INVALID",
+          "governance:SOURCE_SYSTEM_REFERENCE_MISSING",
+          "governance:ATTESTATION_REFERENCE_MISSING",
+          "governance:INVALID_AUTH_EVIDENCE_REFERENCE_MISSING",
+          "governance:ATTESTATION_DIGEST_INVALID",
+          "governance:EVIDENCE_HASH_INVALID",
+          "governance:ATTESTED_AT_INVALID",
+          "governance:PACKAGE_ID_MISSING",
+          "governance:RELEASE_VERSION_MISSING",
+          "governance:COMMIT_SHA_INVALID",
+          "governance:ARTIFACT_DIGEST_INVALID",
+          "governance:MANIFEST_HASH_INVALID",
+          "governance:EVIDENCE_BUNDLE_HASH_INVALID",
+          "approvals:PRODUCT_NOT_APPROVED",
+          "approvals:PRODUCT_ACTOR_INVALID",
+          "approvals:PRODUCT_REFERENCE_MISSING",
+          "approvals:PRODUCT_WINDOW_INVALID",
+          "approvals:PRODUCT_MANIFEST_HASH_INVALID",
+          "approvals:PRODUCT_ARTIFACT_DIGEST_INVALID",
+          "approvals:PRODUCT_EVIDENCE_BUNDLE_HASH_INVALID",
+          "approvals:SECURITY_NOT_APPROVED",
+          "approvals:SECURITY_ACTOR_INVALID",
+          "approvals:SECURITY_REFERENCE_MISSING",
+          "approvals:SECURITY_WINDOW_INVALID",
+          "approvals:SECURITY_MANIFEST_HASH_INVALID",
+          "approvals:SECURITY_ARTIFACT_DIGEST_INVALID",
+          "approvals:SECURITY_EVIDENCE_BUNDLE_HASH_INVALID",
+          "owners:ROLLOUT_PRIMARY_INVALID",
+          "owners:ROLLOUT_BACKUP_INVALID",
+          "owners:ROLLOUT_RUNBOOK_MISSING",
+          "owners:ROLLOUT_ESCALATION_REFERENCE_MISSING",
+          "owners:ROLLOUT_ACCEPTED_AT_INVALID",
+          "owners:ROLLOUT_WINDOW_INVALID",
+          "owners:ROLLBACK_PRIMARY_INVALID",
+          "owners:ROLLBACK_BACKUP_INVALID",
+          "owners:ROLLBACK_RUNBOOK_MISSING",
+          "owners:ROLLBACK_ESCALATION_REFERENCE_MISSING",
+          "owners:ROLLBACK_ACCEPTED_AT_INVALID",
+          "owners:ROLLBACK_WINDOW_INVALID",
+          "owners:SUPPORT_PRIMARY_INVALID",
+          "owners:SUPPORT_BACKUP_INVALID",
+          "owners:SUPPORT_RUNBOOK_MISSING",
+          "owners:SUPPORT_ESCALATION_REFERENCE_MISSING",
+          "owners:SUPPORT_ACCEPTED_AT_INVALID",
+          "owners:SUPPORT_WINDOW_INVALID",
+          "owners:PILOT_PRIMARY_INVALID",
+          "owners:PILOT_BACKUP_INVALID",
+          "owners:PILOT_RUNBOOK_MISSING",
+          "owners:PILOT_ESCALATION_REFERENCE_MISSING",
+          "owners:PILOT_ACCEPTED_AT_INVALID",
+          "owners:PILOT_WINDOW_INVALID",
+          "owners:SECURITY_INCIDENT_PRIMARY_INVALID",
+          "owners:SECURITY_INCIDENT_BACKUP_INVALID",
+          "owners:SECURITY_INCIDENT_RUNBOOK_MISSING",
+          "owners:SECURITY_INCIDENT_ESCALATION_REFERENCE_MISSING",
+          "owners:SECURITY_INCIDENT_ACCEPTED_AT_INVALID",
+          "owners:SECURITY_INCIDENT_WINDOW_INVALID",
+          "owners:ON_CALL_BACKUP_PRIMARY_INVALID",
+          "owners:ON_CALL_BACKUP_BACKUP_INVALID",
+          "owners:ON_CALL_BACKUP_RUNBOOK_MISSING",
+          "owners:ON_CALL_BACKUP_ESCALATION_REFERENCE_MISSING",
+          "owners:ON_CALL_BACKUP_ACCEPTED_AT_INVALID",
+          "owners:ON_CALL_BACKUP_WINDOW_INVALID",
+          "scheduler:PROVIDER_MISSING",
+          "scheduler:SCHEDULE_REFERENCE_MISSING",
+          "scheduler:WORKLOAD_REFERENCE_MISSING",
+          "scheduler:MANAGED_CREDENTIAL_REFERENCE_MISSING",
+          "scheduler:CONCURRENCY_EVIDENCE_REFERENCE_MISSING",
+          "scheduler:READINESS_EVIDENCE_REFERENCE_MISSING",
+          "scheduler:INVALID_AUTH_EVIDENCE_REFERENCE_MISSING",
+          "scheduler:MISSING_CONFIG_EVIDENCE_REFERENCE_MISSING",
+          "scheduler:FAILURE_ALERT_REFERENCE_MISSING",
+          "scheduler:DEPLOYMENT_SOURCE_SYSTEM_REFERENCE_MISSING",
+          "scheduler:DEPLOYMENT_ATTESTATION_REFERENCE_MISSING",
+          "scheduler:DEPLOYMENT_AUTHORITY_INVALID_AUTH_EVIDENCE_REFERENCE_MISSING",
+          "scheduler:READINESS_EVIDENCE_HASH_INVALID",
+          "scheduler:DEPLOYMENT_ATTESTATION_DIGEST_INVALID",
+          "scheduler:DEPLOYMENT_EVIDENCE_HASH_INVALID",
+          "scheduler:AUTH_TYPE_INVALID",
+          "scheduler:DEPLOYED_COMMIT_SHA_INVALID",
+          "scheduler:DEPLOYED_ARTIFACT_DIGEST_INVALID",
+          "scheduler:DEPLOYED_AT_INVALID",
+          "scheduler:DEPLOYMENT_ATTESTED_AT_INVALID",
+          "scheduler:READINESS_NOT_HEALTHY",
+          "scheduler:READINESS_CHECKED_AT_INVALID",
+          "scheduler:HEARTBEAT_NOT_FRESH",
+          "scheduler:WINDOW_1_RUN_ID_MISSING",
+          "scheduler:WINDOW_1_EVIDENCE_REFERENCE_MISSING",
+          "scheduler:WINDOW_1_NOT_COMPLETED",
+          "scheduler:WINDOW_1_SCHEDULED_AT_INVALID",
+          "scheduler:WINDOW_1_COMPLETED_AT_INVALID",
+          "scheduler:WINDOW_2_RUN_ID_MISSING",
+          "scheduler:WINDOW_2_EVIDENCE_REFERENCE_MISSING",
+          "scheduler:WINDOW_2_NOT_COMPLETED",
+          "scheduler:WINDOW_2_SCHEDULED_AT_INVALID",
+          "scheduler:WINDOW_2_COMPLETED_AT_INVALID",
+          "scheduler:WINDOW_3_RUN_ID_MISSING",
+          "scheduler:WINDOW_3_EVIDENCE_REFERENCE_MISSING",
+          "scheduler:WINDOW_3_NOT_COMPLETED",
+          "scheduler:WINDOW_3_SCHEDULED_AT_INVALID",
+          "scheduler:WINDOW_3_COMPLETED_AT_INVALID",
+          "scheduler:THREE_SUCCESS_WINDOWS_MISSING",
+          "alerting:TRANSPORT_NOT_HEALTHY",
+          "alerting:EVIDENCE_HASH_INVALID",
+          "alerting:TRANSPORT_REFERENCE_MISSING",
+          "alerting:MANAGED_SECRET_REFERENCE_MISSING",
+          "alerting:HTTPS_DELIVERY_REFERENCE_MISSING",
+          "alerting:EXTERNAL_REQUEST_REFERENCE_MISSING",
+          "alerting:ACKNOWLEDGEMENT_REFERENCE_MISSING",
+          "alerting:RETRY_EVIDENCE_REFERENCE_MISSING",
+          "alerting:DEAD_LETTER_EVIDENCE_REFERENCE_MISSING",
+          "alerting:RECOVERY_EVIDENCE_REFERENCE_MISSING",
+          "alerting:ESCALATION_EVIDENCE_REFERENCE_MISSING",
+          "alerting:SECRET_ROTATION_EVIDENCE_REFERENCE_MISSING",
+          "alerting:DELIVERED_AT_INVALID",
+          "alerting:ACKNOWLEDGED_AT_INVALID",
+          "alerting:ESCALATION_TESTED_AT_INVALID",
+          "alerting:ACKNOWLEDGER_IDENTITY_INVALID",
+          "alerting:ESCALATION_IDENTITY_INVALID",
+          "credentialRotation:REGISTER_HASH_INVALID",
+          "credentialRotation:SECURITY_APPROVAL_REFERENCE_MISSING",
+          "credentialRotation:EVIDENCE_HASH_INVALID",
+          "credentialRotation:ATTESTATION_REFERENCE_MISSING",
+          "credentialRotation:CREDENTIAL_REGISTER_BLOCKED"
+        ],
+        "nextAction": "Complete owner, scheduler, alert, CI, governance, and credential evidence."
+      },
+      {
+        "id": "B09",
+        "title": "Clean immutable release freeze",
+        "ready": false,
+        "status": "WAIT_FOR_STABLE_TREE",
+        "facts": [
+          "freezeStatus=BLOCKED",
+          "verifiedFiles=206/207",
+          "runtimeDrift=8"
+        ],
+        "blockers": [
+          "FREEZE_COMMIT_CONTENT_MISMATCH:components/agents/__tests__/AgentCommandPanel.test.tsx",
+          "POST_FREEZE_RUNTIME_DRIFT:actions/agents/__tests__/command-agent.actions.test.ts",
+          "POST_FREEZE_RUNTIME_DRIFT:actions/agents/command-agent.actions.ts",
+          "POST_FREEZE_RUNTIME_DRIFT:components/agents/AgentCommandPanel.tsx",
+          "POST_FREEZE_RUNTIME_DRIFT:components/agents/__tests__/AgentCommandPanel.test.tsx",
+          "POST_FREEZE_RUNTIME_DRIFT:prisma/schema.prisma",
+          "POST_FREEZE_RUNTIME_DRIFT:services/agents/__tests__/agent-output-validator.service.test.ts",
+          "POST_FREEZE_RUNTIME_DRIFT:services/agents/command-agent-contracts.ts",
+          "POST_FREEZE_RUNTIME_DRIFT:services/agents/skills/role-daily-brief.skill.ts"
+        ],
+        "nextAction": "After B01-B08 pass, cut a clean candidate and create a new immutable freeze."
+      },
+      {
+        "id": "B10",
+        "title": "Governance approvals and ownership",
+        "ready": false,
+        "status": "BLOCKED_DEPENDENCY",
+        "facts": [
+          "governanceBlockers=50",
+          "freezeReady=false"
+        ],
+        "blockers": [
+          "approvals:PRODUCT_NOT_APPROVED",
+          "approvals:PRODUCT_ACTOR_INVALID",
+          "approvals:PRODUCT_REFERENCE_MISSING",
+          "approvals:PRODUCT_WINDOW_INVALID",
+          "approvals:PRODUCT_MANIFEST_HASH_INVALID",
+          "approvals:PRODUCT_ARTIFACT_DIGEST_INVALID",
+          "approvals:PRODUCT_EVIDENCE_BUNDLE_HASH_INVALID",
+          "approvals:SECURITY_NOT_APPROVED",
+          "approvals:SECURITY_ACTOR_INVALID",
+          "approvals:SECURITY_REFERENCE_MISSING",
+          "approvals:SECURITY_WINDOW_INVALID",
+          "approvals:SECURITY_MANIFEST_HASH_INVALID",
+          "approvals:SECURITY_ARTIFACT_DIGEST_INVALID",
+          "approvals:SECURITY_EVIDENCE_BUNDLE_HASH_INVALID",
+          "owners:ROLLOUT_PRIMARY_INVALID",
+          "owners:ROLLOUT_BACKUP_INVALID",
+          "owners:ROLLOUT_RUNBOOK_MISSING",
+          "owners:ROLLOUT_ESCALATION_REFERENCE_MISSING",
+          "owners:ROLLOUT_ACCEPTED_AT_INVALID",
+          "owners:ROLLOUT_WINDOW_INVALID",
+          "owners:ROLLBACK_PRIMARY_INVALID",
+          "owners:ROLLBACK_BACKUP_INVALID",
+          "owners:ROLLBACK_RUNBOOK_MISSING",
+          "owners:ROLLBACK_ESCALATION_REFERENCE_MISSING",
+          "owners:ROLLBACK_ACCEPTED_AT_INVALID",
+          "owners:ROLLBACK_WINDOW_INVALID",
+          "owners:SUPPORT_PRIMARY_INVALID",
+          "owners:SUPPORT_BACKUP_INVALID",
+          "owners:SUPPORT_RUNBOOK_MISSING",
+          "owners:SUPPORT_ESCALATION_REFERENCE_MISSING",
+          "owners:SUPPORT_ACCEPTED_AT_INVALID",
+          "owners:SUPPORT_WINDOW_INVALID",
+          "owners:PILOT_PRIMARY_INVALID",
+          "owners:PILOT_BACKUP_INVALID",
+          "owners:PILOT_RUNBOOK_MISSING",
+          "owners:PILOT_ESCALATION_REFERENCE_MISSING",
+          "owners:PILOT_ACCEPTED_AT_INVALID",
+          "owners:PILOT_WINDOW_INVALID",
+          "owners:SECURITY_INCIDENT_PRIMARY_INVALID",
+          "owners:SECURITY_INCIDENT_BACKUP_INVALID",
+          "owners:SECURITY_INCIDENT_RUNBOOK_MISSING",
+          "owners:SECURITY_INCIDENT_ESCALATION_REFERENCE_MISSING",
+          "owners:SECURITY_INCIDENT_ACCEPTED_AT_INVALID",
+          "owners:SECURITY_INCIDENT_WINDOW_INVALID",
+          "owners:ON_CALL_BACKUP_PRIMARY_INVALID",
+          "owners:ON_CALL_BACKUP_BACKUP_INVALID",
+          "owners:ON_CALL_BACKUP_RUNBOOK_MISSING",
+          "owners:ON_CALL_BACKUP_ESCALATION_REFERENCE_MISSING",
+          "owners:ON_CALL_BACKUP_ACCEPTED_AT_INVALID",
+          "owners:ON_CALL_BACKUP_WINDOW_INVALID",
+          "clean_freeze_required_before_approval"
+        ],
+        "nextAction": "Bind real product/security approvals and six accepted owner assignments to the freeze."
+      },
+      {
+        "id": "B11",
+        "title": "Phase 2B entry",
+        "ready": false,
+        "status": "BLOCKED_DEPENDENCY",
+        "facts": [
+          "phase2b=2/23",
+          "eligible=false"
+        ],
+        "blockers": [
+          "AUTHORIZED_SCOPE_COMPLETE",
+          "FROZEN_COMMIT_VERIFIED",
+          "CLEAN_RELEASE_READY",
+          "GLOBAL_RELEASE_READY",
+          "PRODUCTION_SECRETS_READY",
+          "MIGRATION_TARGET_READY",
+          "STATUTORY_AUTHORITY_READY",
+          "CREDENTIAL_ROTATION_READY",
+          "OPERATIONAL_RELEASE_READY",
+          "PROMOTION_POINT_1_REVIEW_ACCEPTED",
+          "PROMOTION_POINT_2_COMPLETED",
+          "PROMOTION_POINT_3_COMPLETED",
+          "PROMOTION_POINT_4_COMPLETED",
+          "PROMOTION_POINT_5_COMPLETED",
+          "PROMOTION_POINT_6_COMPLETED",
+          "PROMOTION_POINT_7_COMPLETED",
+          "PROMOTION_POINT_8_COMPLETED",
+          "PROMOTION_POINT_9_COMPLETED",
+          "PROMOTION_POINT_10_COMPLETED",
+          "PROMOTION_POINT_11_APPROVED_GO",
+          "ENTERPRISE_GATE_017_GO"
+        ],
+        "nextAction": "After B01-B10 and gate 017 GO, rerun the 23-check entry gate."
+      },
+      {
+        "id": "B12",
+        "title": "Phase 3 production decision",
+        "ready": false,
+        "status": "NOT_STARTED",
+        "facts": [
+          "phase3=0/34",
+          "eligible=false"
+        ],
+        "blockers": [
+          "AUTHORIZED_SCOPE_COMPLETE",
+          "FROZEN_COMMIT_VERIFIED",
+          "CLEAN_RELEASE_READY",
+          "GLOBAL_RELEASE_READY",
+          "PRODUCTION_SECRETS_READY",
+          "MIGRATION_TARGET_READY",
+          "STATUTORY_AUTHORITY_READY",
+          "CREDENTIAL_ROTATION_READY",
+          "OPERATIONAL_RELEASE_READY",
+          "PROMOTION_POINT_1_REVIEW_ACCEPTED",
+          "PROMOTION_POINT_2_COMPLETED",
+          "PROMOTION_POINT_3_COMPLETED",
+          "PROMOTION_POINT_4_COMPLETED",
+          "PROMOTION_POINT_5_COMPLETED",
+          "PROMOTION_POINT_6_COMPLETED",
+          "PROMOTION_POINT_7_COMPLETED",
+          "PROMOTION_POINT_8_COMPLETED",
+          "PROMOTION_POINT_9_COMPLETED",
+          "PROMOTION_POINT_10_COMPLETED",
+          "PROMOTION_POINT_11_APPROVED_GO",
+          "ENTERPRISE_GATE_017_GO",
+          "PILOT_EXIT_STATUS_READY",
+          "PILOT_RELEASE_BINDING",
+          "PILOT_SCOPE_AND_ACTIVATION_EVIDENCE",
+          "PILOT_OBSERVATION_COMPLETE",
+          "PILOT_SAFETY_CLEAN",
+          "PILOT_OPERATIONS_EVIDENCE",
+          "PILOT_INCIDENTS_CLEAN",
+          "PILOT_EXIT_APPROVALS",
+          "PILOT_APPROVER_SEGREGATION",
+          "PILOT_PHASE3_RECOMMENDATION",
+          "PHASE2B_PILOT_COMPLETED",
+          "PHASE3_GO_APPROVED",
+          "PHASE3_AUTHORITY_RECORDED"
+        ],
+        "nextAction": "After a successful pilot, obtain the artifact-bound 34-check Phase 3 decision."
+      }
+    ],
+    "freezeBlockers": [
+      "FREEZE_COMMIT_CONTENT_MISMATCH:components/agents/__tests__/AgentCommandPanel.test.tsx",
+      "POST_FREEZE_RUNTIME_DRIFT:actions/agents/__tests__/command-agent.actions.test.ts",
+      "POST_FREEZE_RUNTIME_DRIFT:actions/agents/command-agent.actions.ts",
+      "POST_FREEZE_RUNTIME_DRIFT:components/agents/AgentCommandPanel.tsx",
+      "POST_FREEZE_RUNTIME_DRIFT:components/agents/__tests__/AgentCommandPanel.test.tsx",
+      "POST_FREEZE_RUNTIME_DRIFT:prisma/schema.prisma",
+      "POST_FREEZE_RUNTIME_DRIFT:services/agents/__tests__/agent-output-validator.service.test.ts",
+      "POST_FREEZE_RUNTIME_DRIFT:services/agents/command-agent-contracts.ts",
+      "POST_FREEZE_RUNTIME_DRIFT:services/agents/skills/role-daily-brief.skill.ts"
+    ],
+    "freezeRuntimeDriftPaths": [
+      "actions/agents/__tests__/command-agent.actions.test.ts",
+      "actions/agents/command-agent.actions.ts",
+      "components/agents/AgentCommandPanel.tsx",
+      "components/agents/__tests__/AgentCommandPanel.test.tsx",
+      "prisma/schema.prisma",
+      "services/agents/__tests__/agent-output-validator.service.test.ts",
+      "services/agents/command-agent-contracts.ts",
+      "services/agents/skills/role-daily-brief.skill.ts"
+    ],
+    "authorizedScopeIncomplete": [
+      {
+        "id": "P2A-11",
+        "phase": "PHASE_2A",
+        "title": "Frozen commit attestation",
+        "satisfied": false,
+        "evidencePaths": [
+          "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json"
+        ],
+        "blockers": [
+          "P2A-11:JSON_FIELD_MISMATCH:freezeAttestation:status",
+          "P2A-11:JSON_FIELD_MISMATCH:freezeAttestation:freezeVerified",
+          "P2A-11:JSON_FIELD_MISMATCH:freezeAttestation:summary.contentMismatches",
+          "P2A-11:JSON_FIELD_MISMATCH:freezeAttestation:summary.phase2aRuntimeDrift"
+        ]
+      }
+    ],
+    "credentialBlockers": [
+      "authority:ENVIRONMENT_MISSING",
+      "authority:SOURCE_SYSTEM_REFERENCE_MISSING",
+      "authority:ATTESTATION_REFERENCE_MISSING",
+      "authority:ATTESTATION_DIGEST_MISSING",
+      "authority:ATTESTED_AT_MISSING",
+      "authority:EVIDENCE_SHA256_MISSING",
+      "authority:INVALID_AUTH_EVIDENCE_REFERENCE_MISSING",
+      "authority:ATTESTED_AT_INVALID_OR_STALE",
+      "releaseBinding:ENVIRONMENT_MISSING",
+      "releaseBinding:PACKAGE_ID_MISSING",
+      "releaseBinding:RELEASE_VERSION_MISSING",
+      "releaseBinding:COMMIT_SHA_MISSING",
+      "releaseBinding:ARTIFACT_DIGEST_MISSING",
+      "releaseBinding:DEPLOYMENT_REFERENCE_MISSING",
+      "primary-database-credential:SECURITY_CLASSIFICATION_UNRESOLVED",
+      "payroll-immutability-database-credential:SECURITY_CLASSIFICATION_UNRESOLVED",
+      "application-auth-signing-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+      "legacy-nextauth-signing-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+      "google-oauth-client-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+      "email-server-credential:SECURITY_CLASSIFICATION_UNRESOLVED",
+      "redis-connection-credential:SECURITY_CLASSIFICATION_UNRESOLVED",
+      "public-identity-hmac-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+      "public-receipt-signing-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+      "history-cursor-signing-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+      "payroll-destination-hmac-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+      "upload-provider-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+      "error-monitoring-dsn:SECURITY_CLASSIFICATION_UNRESOLVED",
+      "agent-reconciler-credential:SECURITY_CLASSIFICATION_UNRESOLVED",
+      "workflow-assurance-webhook-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+      "register:SECURITY_OWNER_MISSING",
+      "register:SECURITY_APPROVAL_REFERENCE_MISSING"
+    ],
+    "credentialGroups": {
+      "authority": [
+        "authority:ENVIRONMENT_MISSING",
+        "authority:SOURCE_SYSTEM_REFERENCE_MISSING",
+        "authority:ATTESTATION_REFERENCE_MISSING",
+        "authority:ATTESTATION_DIGEST_MISSING",
+        "authority:ATTESTED_AT_MISSING",
+        "authority:EVIDENCE_SHA256_MISSING",
+        "authority:INVALID_AUTH_EVIDENCE_REFERENCE_MISSING",
+        "authority:ATTESTED_AT_INVALID_OR_STALE"
+      ],
+      "releaseBinding": [
+        "releaseBinding:ENVIRONMENT_MISSING",
+        "releaseBinding:PACKAGE_ID_MISSING",
+        "releaseBinding:RELEASE_VERSION_MISSING",
+        "releaseBinding:COMMIT_SHA_MISSING",
+        "releaseBinding:ARTIFACT_DIGEST_MISSING",
+        "releaseBinding:DEPLOYMENT_REFERENCE_MISSING"
+      ],
+      "primary-database-credential": [
+        "primary-database-credential:SECURITY_CLASSIFICATION_UNRESOLVED"
+      ],
+      "payroll-immutability-database-credential": [
+        "payroll-immutability-database-credential:SECURITY_CLASSIFICATION_UNRESOLVED"
+      ],
+      "application-auth-signing-secret": [
+        "application-auth-signing-secret:SECURITY_CLASSIFICATION_UNRESOLVED"
+      ],
+      "legacy-nextauth-signing-secret": [
+        "legacy-nextauth-signing-secret:SECURITY_CLASSIFICATION_UNRESOLVED"
+      ],
+      "google-oauth-client-secret": [
+        "google-oauth-client-secret:SECURITY_CLASSIFICATION_UNRESOLVED"
+      ],
+      "email-server-credential": [
+        "email-server-credential:SECURITY_CLASSIFICATION_UNRESOLVED"
+      ],
+      "redis-connection-credential": [
+        "redis-connection-credential:SECURITY_CLASSIFICATION_UNRESOLVED"
+      ],
+      "public-identity-hmac-secret": [
+        "public-identity-hmac-secret:SECURITY_CLASSIFICATION_UNRESOLVED"
+      ],
+      "public-receipt-signing-secret": [
+        "public-receipt-signing-secret:SECURITY_CLASSIFICATION_UNRESOLVED"
+      ],
+      "history-cursor-signing-secret": [
+        "history-cursor-signing-secret:SECURITY_CLASSIFICATION_UNRESOLVED"
+      ],
+      "payroll-destination-hmac-secret": [
+        "payroll-destination-hmac-secret:SECURITY_CLASSIFICATION_UNRESOLVED"
+      ],
+      "upload-provider-secret": [
+        "upload-provider-secret:SECURITY_CLASSIFICATION_UNRESOLVED"
+      ],
+      "error-monitoring-dsn": [
+        "error-monitoring-dsn:SECURITY_CLASSIFICATION_UNRESOLVED"
+      ],
+      "agent-reconciler-credential": [
+        "agent-reconciler-credential:SECURITY_CLASSIFICATION_UNRESOLVED"
+      ],
+      "workflow-assurance-webhook-secret": [
+        "workflow-assurance-webhook-secret:SECURITY_CLASSIFICATION_UNRESOLVED"
+      ],
+      "register": [
+        "register:SECURITY_OWNER_MISSING",
+        "register:SECURITY_APPROVAL_REFERENCE_MISSING"
+      ]
+    },
+    "operationalBlockers": [
+      "release:PACKAGE_ID_MISSING",
+      "release:RELEASE_VERSION_MISSING",
+      "release:DEPLOYMENT_REFERENCE_MISSING",
+      "release:ARTIFACT_REFERENCE_MISSING",
+      "release:PACKAGE_CERTIFICATION_REFERENCE_MISSING",
+      "release:PILOT_ALLOWLIST_REFERENCE_MISSING",
+      "release:ROLE_ALLOWLIST_REFERENCE_MISSING",
+      "release:COMMIT_SHA_INVALID",
+      "release:ARTIFACT_DIGEST_INVALID",
+      "release:PACKAGE_CERTIFICATION_HASH_INVALID",
+      "release:CI_EVIDENCE_HASH_INVALID",
+      "release:MANIFEST_HASH_INVALID",
+      "release:EVIDENCE_BUNDLE_HASH_INVALID",
+      "release:BROWSER_REPORT_HASH_INVALID",
+      "ci:STATUS_NOT_PASSED",
+      "ci:SOURCE_TREE_NOT_CLEAN",
+      "ci:RUN_REFERENCE_MISSING",
+      "ci:BRANCH_REFERENCE_MISSING",
+      "ci:ARTIFACT_REFERENCE_MISSING",
+      "ci:SOURCE_SYSTEM_REFERENCE_MISSING",
+      "ci:ATTESTATION_REFERENCE_MISSING",
+      "ci:INVALID_AUTH_EVIDENCE_REFERENCE_MISSING",
+      "ci:COMMIT_SHA_INVALID",
+      "ci:ARTIFACT_DIGEST_INVALID",
+      "ci:BROWSER_REPORT_HASH_INVALID",
+      "ci:ATTESTATION_DIGEST_INVALID",
+      "ci:EVIDENCE_HASH_INVALID",
+      "ci:COMPLETED_AT_INVALID",
+      "ci:ATTESTED_AT_INVALID",
+      "governance:SOURCE_SYSTEM_REFERENCE_MISSING",
+      "governance:ATTESTATION_REFERENCE_MISSING",
+      "governance:INVALID_AUTH_EVIDENCE_REFERENCE_MISSING",
+      "governance:ATTESTATION_DIGEST_INVALID",
+      "governance:EVIDENCE_HASH_INVALID",
+      "governance:ATTESTED_AT_INVALID",
+      "governance:PACKAGE_ID_MISSING",
+      "governance:RELEASE_VERSION_MISSING",
+      "governance:COMMIT_SHA_INVALID",
+      "governance:ARTIFACT_DIGEST_INVALID",
+      "governance:MANIFEST_HASH_INVALID",
+      "governance:EVIDENCE_BUNDLE_HASH_INVALID",
+      "approvals:PRODUCT_NOT_APPROVED",
+      "approvals:PRODUCT_ACTOR_INVALID",
+      "approvals:PRODUCT_REFERENCE_MISSING",
+      "approvals:PRODUCT_WINDOW_INVALID",
+      "approvals:PRODUCT_MANIFEST_HASH_INVALID",
+      "approvals:PRODUCT_ARTIFACT_DIGEST_INVALID",
+      "approvals:PRODUCT_EVIDENCE_BUNDLE_HASH_INVALID",
+      "approvals:SECURITY_NOT_APPROVED",
+      "approvals:SECURITY_ACTOR_INVALID",
+      "approvals:SECURITY_REFERENCE_MISSING",
+      "approvals:SECURITY_WINDOW_INVALID",
+      "approvals:SECURITY_MANIFEST_HASH_INVALID",
+      "approvals:SECURITY_ARTIFACT_DIGEST_INVALID",
+      "approvals:SECURITY_EVIDENCE_BUNDLE_HASH_INVALID",
+      "owners:ROLLOUT_PRIMARY_INVALID",
+      "owners:ROLLOUT_BACKUP_INVALID",
+      "owners:ROLLOUT_RUNBOOK_MISSING",
+      "owners:ROLLOUT_ESCALATION_REFERENCE_MISSING",
+      "owners:ROLLOUT_ACCEPTED_AT_INVALID",
+      "owners:ROLLOUT_WINDOW_INVALID",
+      "owners:ROLLBACK_PRIMARY_INVALID",
+      "owners:ROLLBACK_BACKUP_INVALID",
+      "owners:ROLLBACK_RUNBOOK_MISSING",
+      "owners:ROLLBACK_ESCALATION_REFERENCE_MISSING",
+      "owners:ROLLBACK_ACCEPTED_AT_INVALID",
+      "owners:ROLLBACK_WINDOW_INVALID",
+      "owners:SUPPORT_PRIMARY_INVALID",
+      "owners:SUPPORT_BACKUP_INVALID",
+      "owners:SUPPORT_RUNBOOK_MISSING",
+      "owners:SUPPORT_ESCALATION_REFERENCE_MISSING",
+      "owners:SUPPORT_ACCEPTED_AT_INVALID",
+      "owners:SUPPORT_WINDOW_INVALID",
+      "owners:PILOT_PRIMARY_INVALID",
+      "owners:PILOT_BACKUP_INVALID",
+      "owners:PILOT_RUNBOOK_MISSING",
+      "owners:PILOT_ESCALATION_REFERENCE_MISSING",
+      "owners:PILOT_ACCEPTED_AT_INVALID",
+      "owners:PILOT_WINDOW_INVALID",
+      "owners:SECURITY_INCIDENT_PRIMARY_INVALID",
+      "owners:SECURITY_INCIDENT_BACKUP_INVALID",
+      "owners:SECURITY_INCIDENT_RUNBOOK_MISSING",
+      "owners:SECURITY_INCIDENT_ESCALATION_REFERENCE_MISSING",
+      "owners:SECURITY_INCIDENT_ACCEPTED_AT_INVALID",
+      "owners:SECURITY_INCIDENT_WINDOW_INVALID",
+      "owners:ON_CALL_BACKUP_PRIMARY_INVALID",
+      "owners:ON_CALL_BACKUP_BACKUP_INVALID",
+      "owners:ON_CALL_BACKUP_RUNBOOK_MISSING",
+      "owners:ON_CALL_BACKUP_ESCALATION_REFERENCE_MISSING",
+      "owners:ON_CALL_BACKUP_ACCEPTED_AT_INVALID",
+      "owners:ON_CALL_BACKUP_WINDOW_INVALID",
+      "scheduler:PROVIDER_MISSING",
+      "scheduler:SCHEDULE_REFERENCE_MISSING",
+      "scheduler:WORKLOAD_REFERENCE_MISSING",
+      "scheduler:MANAGED_CREDENTIAL_REFERENCE_MISSING",
+      "scheduler:CONCURRENCY_EVIDENCE_REFERENCE_MISSING",
+      "scheduler:READINESS_EVIDENCE_REFERENCE_MISSING",
+      "scheduler:INVALID_AUTH_EVIDENCE_REFERENCE_MISSING",
+      "scheduler:MISSING_CONFIG_EVIDENCE_REFERENCE_MISSING",
+      "scheduler:FAILURE_ALERT_REFERENCE_MISSING",
+      "scheduler:DEPLOYMENT_SOURCE_SYSTEM_REFERENCE_MISSING",
+      "scheduler:DEPLOYMENT_ATTESTATION_REFERENCE_MISSING",
+      "scheduler:DEPLOYMENT_AUTHORITY_INVALID_AUTH_EVIDENCE_REFERENCE_MISSING",
+      "scheduler:READINESS_EVIDENCE_HASH_INVALID",
+      "scheduler:DEPLOYMENT_ATTESTATION_DIGEST_INVALID",
+      "scheduler:DEPLOYMENT_EVIDENCE_HASH_INVALID",
+      "scheduler:AUTH_TYPE_INVALID",
+      "scheduler:DEPLOYED_COMMIT_SHA_INVALID",
+      "scheduler:DEPLOYED_ARTIFACT_DIGEST_INVALID",
+      "scheduler:DEPLOYED_AT_INVALID",
+      "scheduler:DEPLOYMENT_ATTESTED_AT_INVALID",
+      "scheduler:READINESS_NOT_HEALTHY",
+      "scheduler:READINESS_CHECKED_AT_INVALID",
+      "scheduler:HEARTBEAT_NOT_FRESH",
+      "scheduler:WINDOW_1_RUN_ID_MISSING",
+      "scheduler:WINDOW_1_EVIDENCE_REFERENCE_MISSING",
+      "scheduler:WINDOW_1_NOT_COMPLETED",
+      "scheduler:WINDOW_1_SCHEDULED_AT_INVALID",
+      "scheduler:WINDOW_1_COMPLETED_AT_INVALID",
+      "scheduler:WINDOW_2_RUN_ID_MISSING",
+      "scheduler:WINDOW_2_EVIDENCE_REFERENCE_MISSING",
+      "scheduler:WINDOW_2_NOT_COMPLETED",
+      "scheduler:WINDOW_2_SCHEDULED_AT_INVALID",
+      "scheduler:WINDOW_2_COMPLETED_AT_INVALID",
+      "scheduler:WINDOW_3_RUN_ID_MISSING",
+      "scheduler:WINDOW_3_EVIDENCE_REFERENCE_MISSING",
+      "scheduler:WINDOW_3_NOT_COMPLETED",
+      "scheduler:WINDOW_3_SCHEDULED_AT_INVALID",
+      "scheduler:WINDOW_3_COMPLETED_AT_INVALID",
+      "scheduler:THREE_SUCCESS_WINDOWS_MISSING",
+      "alerting:TRANSPORT_NOT_HEALTHY",
+      "alerting:EVIDENCE_HASH_INVALID",
+      "alerting:TRANSPORT_REFERENCE_MISSING",
+      "alerting:MANAGED_SECRET_REFERENCE_MISSING",
+      "alerting:HTTPS_DELIVERY_REFERENCE_MISSING",
+      "alerting:EXTERNAL_REQUEST_REFERENCE_MISSING",
+      "alerting:ACKNOWLEDGEMENT_REFERENCE_MISSING",
+      "alerting:RETRY_EVIDENCE_REFERENCE_MISSING",
+      "alerting:DEAD_LETTER_EVIDENCE_REFERENCE_MISSING",
+      "alerting:RECOVERY_EVIDENCE_REFERENCE_MISSING",
+      "alerting:ESCALATION_EVIDENCE_REFERENCE_MISSING",
+      "alerting:SECRET_ROTATION_EVIDENCE_REFERENCE_MISSING",
+      "alerting:DELIVERED_AT_INVALID",
+      "alerting:ACKNOWLEDGED_AT_INVALID",
+      "alerting:ESCALATION_TESTED_AT_INVALID",
+      "alerting:ACKNOWLEDGER_IDENTITY_INVALID",
+      "alerting:ESCALATION_IDENTITY_INVALID",
+      "credentialRotation:REGISTER_HASH_INVALID",
+      "credentialRotation:SECURITY_APPROVAL_REFERENCE_MISSING",
+      "credentialRotation:EVIDENCE_HASH_INVALID",
+      "credentialRotation:ATTESTATION_REFERENCE_MISSING",
+      "credentialRotation:CREDENTIAL_REGISTER_BLOCKED"
+    ],
+    "operationalGroups": {
+      "release": [
+        "release:PACKAGE_ID_MISSING",
+        "release:RELEASE_VERSION_MISSING",
+        "release:DEPLOYMENT_REFERENCE_MISSING",
+        "release:ARTIFACT_REFERENCE_MISSING",
+        "release:PACKAGE_CERTIFICATION_REFERENCE_MISSING",
+        "release:PILOT_ALLOWLIST_REFERENCE_MISSING",
+        "release:ROLE_ALLOWLIST_REFERENCE_MISSING",
+        "release:COMMIT_SHA_INVALID",
+        "release:ARTIFACT_DIGEST_INVALID",
+        "release:PACKAGE_CERTIFICATION_HASH_INVALID",
+        "release:CI_EVIDENCE_HASH_INVALID",
+        "release:MANIFEST_HASH_INVALID",
+        "release:EVIDENCE_BUNDLE_HASH_INVALID",
+        "release:BROWSER_REPORT_HASH_INVALID"
+      ],
+      "ci": [
+        "ci:STATUS_NOT_PASSED",
+        "ci:SOURCE_TREE_NOT_CLEAN",
+        "ci:RUN_REFERENCE_MISSING",
+        "ci:BRANCH_REFERENCE_MISSING",
+        "ci:ARTIFACT_REFERENCE_MISSING",
+        "ci:SOURCE_SYSTEM_REFERENCE_MISSING",
+        "ci:ATTESTATION_REFERENCE_MISSING",
+        "ci:INVALID_AUTH_EVIDENCE_REFERENCE_MISSING",
+        "ci:COMMIT_SHA_INVALID",
+        "ci:ARTIFACT_DIGEST_INVALID",
+        "ci:BROWSER_REPORT_HASH_INVALID",
+        "ci:ATTESTATION_DIGEST_INVALID",
+        "ci:EVIDENCE_HASH_INVALID",
+        "ci:COMPLETED_AT_INVALID",
+        "ci:ATTESTED_AT_INVALID"
+      ],
+      "governance": [
+        "governance:SOURCE_SYSTEM_REFERENCE_MISSING",
+        "governance:ATTESTATION_REFERENCE_MISSING",
+        "governance:INVALID_AUTH_EVIDENCE_REFERENCE_MISSING",
+        "governance:ATTESTATION_DIGEST_INVALID",
+        "governance:EVIDENCE_HASH_INVALID",
+        "governance:ATTESTED_AT_INVALID",
+        "governance:PACKAGE_ID_MISSING",
+        "governance:RELEASE_VERSION_MISSING",
+        "governance:COMMIT_SHA_INVALID",
+        "governance:ARTIFACT_DIGEST_INVALID",
+        "governance:MANIFEST_HASH_INVALID",
+        "governance:EVIDENCE_BUNDLE_HASH_INVALID"
+      ],
+      "approvals": [
+        "approvals:PRODUCT_NOT_APPROVED",
+        "approvals:PRODUCT_ACTOR_INVALID",
+        "approvals:PRODUCT_REFERENCE_MISSING",
+        "approvals:PRODUCT_WINDOW_INVALID",
+        "approvals:PRODUCT_MANIFEST_HASH_INVALID",
+        "approvals:PRODUCT_ARTIFACT_DIGEST_INVALID",
+        "approvals:PRODUCT_EVIDENCE_BUNDLE_HASH_INVALID",
+        "approvals:SECURITY_NOT_APPROVED",
+        "approvals:SECURITY_ACTOR_INVALID",
+        "approvals:SECURITY_REFERENCE_MISSING",
+        "approvals:SECURITY_WINDOW_INVALID",
+        "approvals:SECURITY_MANIFEST_HASH_INVALID",
+        "approvals:SECURITY_ARTIFACT_DIGEST_INVALID",
+        "approvals:SECURITY_EVIDENCE_BUNDLE_HASH_INVALID"
+      ],
+      "owners": [
+        "owners:ROLLOUT_PRIMARY_INVALID",
+        "owners:ROLLOUT_BACKUP_INVALID",
+        "owners:ROLLOUT_RUNBOOK_MISSING",
+        "owners:ROLLOUT_ESCALATION_REFERENCE_MISSING",
+        "owners:ROLLOUT_ACCEPTED_AT_INVALID",
+        "owners:ROLLOUT_WINDOW_INVALID",
+        "owners:ROLLBACK_PRIMARY_INVALID",
+        "owners:ROLLBACK_BACKUP_INVALID",
+        "owners:ROLLBACK_RUNBOOK_MISSING",
+        "owners:ROLLBACK_ESCALATION_REFERENCE_MISSING",
+        "owners:ROLLBACK_ACCEPTED_AT_INVALID",
+        "owners:ROLLBACK_WINDOW_INVALID",
+        "owners:SUPPORT_PRIMARY_INVALID",
+        "owners:SUPPORT_BACKUP_INVALID",
+        "owners:SUPPORT_RUNBOOK_MISSING",
+        "owners:SUPPORT_ESCALATION_REFERENCE_MISSING",
+        "owners:SUPPORT_ACCEPTED_AT_INVALID",
+        "owners:SUPPORT_WINDOW_INVALID",
+        "owners:PILOT_PRIMARY_INVALID",
+        "owners:PILOT_BACKUP_INVALID",
+        "owners:PILOT_RUNBOOK_MISSING",
+        "owners:PILOT_ESCALATION_REFERENCE_MISSING",
+        "owners:PILOT_ACCEPTED_AT_INVALID",
+        "owners:PILOT_WINDOW_INVALID",
+        "owners:SECURITY_INCIDENT_PRIMARY_INVALID",
+        "owners:SECURITY_INCIDENT_BACKUP_INVALID",
+        "owners:SECURITY_INCIDENT_RUNBOOK_MISSING",
+        "owners:SECURITY_INCIDENT_ESCALATION_REFERENCE_MISSING",
+        "owners:SECURITY_INCIDENT_ACCEPTED_AT_INVALID",
+        "owners:SECURITY_INCIDENT_WINDOW_INVALID",
+        "owners:ON_CALL_BACKUP_PRIMARY_INVALID",
+        "owners:ON_CALL_BACKUP_BACKUP_INVALID",
+        "owners:ON_CALL_BACKUP_RUNBOOK_MISSING",
+        "owners:ON_CALL_BACKUP_ESCALATION_REFERENCE_MISSING",
+        "owners:ON_CALL_BACKUP_ACCEPTED_AT_INVALID",
+        "owners:ON_CALL_BACKUP_WINDOW_INVALID"
+      ],
+      "scheduler": [
+        "scheduler:PROVIDER_MISSING",
+        "scheduler:SCHEDULE_REFERENCE_MISSING",
+        "scheduler:WORKLOAD_REFERENCE_MISSING",
+        "scheduler:MANAGED_CREDENTIAL_REFERENCE_MISSING",
+        "scheduler:CONCURRENCY_EVIDENCE_REFERENCE_MISSING",
+        "scheduler:READINESS_EVIDENCE_REFERENCE_MISSING",
+        "scheduler:INVALID_AUTH_EVIDENCE_REFERENCE_MISSING",
+        "scheduler:MISSING_CONFIG_EVIDENCE_REFERENCE_MISSING",
+        "scheduler:FAILURE_ALERT_REFERENCE_MISSING",
+        "scheduler:DEPLOYMENT_SOURCE_SYSTEM_REFERENCE_MISSING",
+        "scheduler:DEPLOYMENT_ATTESTATION_REFERENCE_MISSING",
+        "scheduler:DEPLOYMENT_AUTHORITY_INVALID_AUTH_EVIDENCE_REFERENCE_MISSING",
+        "scheduler:READINESS_EVIDENCE_HASH_INVALID",
+        "scheduler:DEPLOYMENT_ATTESTATION_DIGEST_INVALID",
+        "scheduler:DEPLOYMENT_EVIDENCE_HASH_INVALID",
+        "scheduler:AUTH_TYPE_INVALID",
+        "scheduler:DEPLOYED_COMMIT_SHA_INVALID",
+        "scheduler:DEPLOYED_ARTIFACT_DIGEST_INVALID",
+        "scheduler:DEPLOYED_AT_INVALID",
+        "scheduler:DEPLOYMENT_ATTESTED_AT_INVALID",
+        "scheduler:READINESS_NOT_HEALTHY",
+        "scheduler:READINESS_CHECKED_AT_INVALID",
+        "scheduler:HEARTBEAT_NOT_FRESH",
+        "scheduler:WINDOW_1_RUN_ID_MISSING",
+        "scheduler:WINDOW_1_EVIDENCE_REFERENCE_MISSING",
+        "scheduler:WINDOW_1_NOT_COMPLETED",
+        "scheduler:WINDOW_1_SCHEDULED_AT_INVALID",
+        "scheduler:WINDOW_1_COMPLETED_AT_INVALID",
+        "scheduler:WINDOW_2_RUN_ID_MISSING",
+        "scheduler:WINDOW_2_EVIDENCE_REFERENCE_MISSING",
+        "scheduler:WINDOW_2_NOT_COMPLETED",
+        "scheduler:WINDOW_2_SCHEDULED_AT_INVALID",
+        "scheduler:WINDOW_2_COMPLETED_AT_INVALID",
+        "scheduler:WINDOW_3_RUN_ID_MISSING",
+        "scheduler:WINDOW_3_EVIDENCE_REFERENCE_MISSING",
+        "scheduler:WINDOW_3_NOT_COMPLETED",
+        "scheduler:WINDOW_3_SCHEDULED_AT_INVALID",
+        "scheduler:WINDOW_3_COMPLETED_AT_INVALID",
+        "scheduler:THREE_SUCCESS_WINDOWS_MISSING"
+      ],
+      "alerting": [
+        "alerting:TRANSPORT_NOT_HEALTHY",
+        "alerting:EVIDENCE_HASH_INVALID",
+        "alerting:TRANSPORT_REFERENCE_MISSING",
+        "alerting:MANAGED_SECRET_REFERENCE_MISSING",
+        "alerting:HTTPS_DELIVERY_REFERENCE_MISSING",
+        "alerting:EXTERNAL_REQUEST_REFERENCE_MISSING",
+        "alerting:ACKNOWLEDGEMENT_REFERENCE_MISSING",
+        "alerting:RETRY_EVIDENCE_REFERENCE_MISSING",
+        "alerting:DEAD_LETTER_EVIDENCE_REFERENCE_MISSING",
+        "alerting:RECOVERY_EVIDENCE_REFERENCE_MISSING",
+        "alerting:ESCALATION_EVIDENCE_REFERENCE_MISSING",
+        "alerting:SECRET_ROTATION_EVIDENCE_REFERENCE_MISSING",
+        "alerting:DELIVERED_AT_INVALID",
+        "alerting:ACKNOWLEDGED_AT_INVALID",
+        "alerting:ESCALATION_TESTED_AT_INVALID",
+        "alerting:ACKNOWLEDGER_IDENTITY_INVALID",
+        "alerting:ESCALATION_IDENTITY_INVALID"
+      ],
+      "credentialRotation": [
+        "credentialRotation:REGISTER_HASH_INVALID",
+        "credentialRotation:SECURITY_APPROVAL_REFERENCE_MISSING",
+        "credentialRotation:EVIDENCE_HASH_INVALID",
+        "credentialRotation:ATTESTATION_REFERENCE_MISSING",
+        "credentialRotation:CREDENTIAL_REGISTER_BLOCKED"
+      ]
+    },
+    "phase2bFailedChecks": [
+      {
+        "id": "AUTHORIZED_SCOPE_COMPLETE",
+        "title": "All authorized repository requirements pass",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_AUTHORIZED_SCOPE_REQUIREMENTS_AUDIT_2026-07-25.json"
+      },
+      {
+        "id": "FROZEN_COMMIT_VERIFIED",
+        "title": "Phase 2A frozen commit remains verified",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json"
+      },
+      {
+        "id": "CLEAN_RELEASE_READY",
+        "title": "Frozen release has clean release identity",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json"
+      },
+      {
+        "id": "GLOBAL_RELEASE_READY",
+        "title": "Global release evidence has no release blockers",
+        "evidencePath": "what-next/skills-life-cycle/stoquify-ohada-leadership-release-evidence-index-2026-07-11.json"
+      },
+      {
+        "id": "PRODUCTION_SECRETS_READY",
+        "title": "Production-purpose secret preflight is ready",
+        "evidencePath": "what-next/release-secret-preflight.json"
+      },
+      {
+        "id": "MIGRATION_TARGET_READY",
+        "title": "Migration and non-local database target are ready",
+        "evidencePath": "what-next/prisma-migration-deployment-readiness.json"
+      },
+      {
+        "id": "STATUTORY_AUTHORITY_READY",
+        "title": "Statutory source and expert evidence are ready",
+        "evidencePath": "what-next/statutory-country-pack-production-readiness.json"
+      },
+      {
+        "id": "CREDENTIAL_ROTATION_READY",
+        "title": "Credential rotation register is ready",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_CREDENTIAL_ROTATION_REGISTER_2026-07-25.json"
+      },
+      {
+        "id": "OPERATIONAL_RELEASE_READY",
+        "title": "Operational release is ready for independent review",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_OPERATIONAL_RELEASE_EVIDENCE_2026-07-25.json"
+      },
+      {
+        "id": "PROMOTION_POINT_1_REVIEW_ACCEPTED",
+        "title": "Promotion point 1 is REVIEW_ACCEPTED",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+      },
+      {
+        "id": "PROMOTION_POINT_2_COMPLETED",
+        "title": "Promotion point 2 is COMPLETED",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+      },
+      {
+        "id": "PROMOTION_POINT_3_COMPLETED",
+        "title": "Promotion point 3 is COMPLETED",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+      },
+      {
+        "id": "PROMOTION_POINT_4_COMPLETED",
+        "title": "Promotion point 4 is COMPLETED",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+      },
+      {
+        "id": "PROMOTION_POINT_5_COMPLETED",
+        "title": "Promotion point 5 is COMPLETED",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+      },
+      {
+        "id": "PROMOTION_POINT_6_COMPLETED",
+        "title": "Promotion point 6 is COMPLETED",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+      },
+      {
+        "id": "PROMOTION_POINT_7_COMPLETED",
+        "title": "Promotion point 7 is COMPLETED",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+      },
+      {
+        "id": "PROMOTION_POINT_8_COMPLETED",
+        "title": "Promotion point 8 is COMPLETED",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+      },
+      {
+        "id": "PROMOTION_POINT_9_COMPLETED",
+        "title": "Promotion point 9 is COMPLETED",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+      },
+      {
+        "id": "PROMOTION_POINT_10_COMPLETED",
+        "title": "Promotion point 10 is COMPLETED",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+      },
+      {
+        "id": "PROMOTION_POINT_11_APPROVED_GO",
+        "title": "Promotion point 11 is APPROVED_GO",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+      },
+      {
+        "id": "ENTERPRISE_GATE_017_GO",
+        "title": "Enterprise gate 017 records approved GO",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+      }
+    ],
+    "phase3FailedChecks": [
+      {
+        "id": "AUTHORIZED_SCOPE_COMPLETE",
+        "title": "All authorized repository requirements pass",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_AUTHORIZED_SCOPE_REQUIREMENTS_AUDIT_2026-07-25.json"
+      },
+      {
+        "id": "FROZEN_COMMIT_VERIFIED",
+        "title": "Phase 2A frozen commit remains verified",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json"
+      },
+      {
+        "id": "CLEAN_RELEASE_READY",
+        "title": "Frozen release has clean release identity",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json"
+      },
+      {
+        "id": "GLOBAL_RELEASE_READY",
+        "title": "Global release evidence has no release blockers",
+        "evidencePath": "what-next/skills-life-cycle/stoquify-ohada-leadership-release-evidence-index-2026-07-11.json"
+      },
+      {
+        "id": "PRODUCTION_SECRETS_READY",
+        "title": "Production-purpose secret preflight is ready",
+        "evidencePath": "what-next/release-secret-preflight.json"
+      },
+      {
+        "id": "MIGRATION_TARGET_READY",
+        "title": "Migration and non-local database target are ready",
+        "evidencePath": "what-next/prisma-migration-deployment-readiness.json"
+      },
+      {
+        "id": "STATUTORY_AUTHORITY_READY",
+        "title": "Statutory source and expert evidence are ready",
+        "evidencePath": "what-next/statutory-country-pack-production-readiness.json"
+      },
+      {
+        "id": "CREDENTIAL_ROTATION_READY",
+        "title": "Credential rotation register is ready",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_CREDENTIAL_ROTATION_REGISTER_2026-07-25.json"
+      },
+      {
+        "id": "OPERATIONAL_RELEASE_READY",
+        "title": "Operational release is ready for independent review",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_OPERATIONAL_RELEASE_EVIDENCE_2026-07-25.json"
+      },
+      {
+        "id": "PROMOTION_POINT_1_REVIEW_ACCEPTED",
+        "title": "Promotion point 1 is REVIEW_ACCEPTED",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+      },
+      {
+        "id": "PROMOTION_POINT_2_COMPLETED",
+        "title": "Promotion point 2 is COMPLETED",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+      },
+      {
+        "id": "PROMOTION_POINT_3_COMPLETED",
+        "title": "Promotion point 3 is COMPLETED",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+      },
+      {
+        "id": "PROMOTION_POINT_4_COMPLETED",
+        "title": "Promotion point 4 is COMPLETED",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+      },
+      {
+        "id": "PROMOTION_POINT_5_COMPLETED",
+        "title": "Promotion point 5 is COMPLETED",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+      },
+      {
+        "id": "PROMOTION_POINT_6_COMPLETED",
+        "title": "Promotion point 6 is COMPLETED",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+      },
+      {
+        "id": "PROMOTION_POINT_7_COMPLETED",
+        "title": "Promotion point 7 is COMPLETED",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+      },
+      {
+        "id": "PROMOTION_POINT_8_COMPLETED",
+        "title": "Promotion point 8 is COMPLETED",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+      },
+      {
+        "id": "PROMOTION_POINT_9_COMPLETED",
+        "title": "Promotion point 9 is COMPLETED",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+      },
+      {
+        "id": "PROMOTION_POINT_10_COMPLETED",
+        "title": "Promotion point 10 is COMPLETED",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+      },
+      {
+        "id": "PROMOTION_POINT_11_APPROVED_GO",
+        "title": "Promotion point 11 is APPROVED_GO",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+      },
+      {
+        "id": "ENTERPRISE_GATE_017_GO",
+        "title": "Enterprise gate 017 records approved GO",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+      },
+      {
+        "id": "PILOT_EXIT_STATUS_READY",
+        "title": "Pilot exit register is ready for Phase 3 review",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_PILOT_EXIT_REGISTER_2026-07-25.json"
+      },
+      {
+        "id": "PILOT_RELEASE_BINDING",
+        "title": "Pilot exit evidence is bound to commit, artifact, and evidence bundle",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_PILOT_EXIT_REGISTER_2026-07-25.json"
+      },
+      {
+        "id": "PILOT_SCOPE_AND_ACTIVATION_EVIDENCE",
+        "title": "Pilot has activation reference and hashed tenant/role scope",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_PILOT_EXIT_REGISTER_2026-07-25.json"
+      },
+      {
+        "id": "PILOT_OBSERVATION_COMPLETE",
+        "title": "Pilot has a bounded completed observation window and successful runs",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_PILOT_EXIT_REGISTER_2026-07-25.json"
+      },
+      {
+        "id": "PILOT_SAFETY_CLEAN",
+        "title": "Pilot records zero authority, tenant, execution, and secret violations",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_PILOT_EXIT_REGISTER_2026-07-25.json"
+      },
+      {
+        "id": "PILOT_OPERATIONS_EVIDENCE",
+        "title": "Pilot monitoring, support, rollback, and incident evidence are complete",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_PILOT_EXIT_REGISTER_2026-07-25.json"
+      },
+      {
+        "id": "PILOT_INCIDENTS_CLEAN",
+        "title": "Pilot has zero critical, high, and unresolved incidents",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_PILOT_EXIT_REGISTER_2026-07-25.json"
+      },
+      {
+        "id": "PILOT_EXIT_APPROVALS",
+        "title": "Product, security, finance-domain, and release approvals are complete",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_PILOT_EXIT_REGISTER_2026-07-25.json"
+      },
+      {
+        "id": "PILOT_APPROVER_SEGREGATION",
+        "title": "Pilot exit approvers are four distinct directory identities",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_PILOT_EXIT_REGISTER_2026-07-25.json"
+      },
+      {
+        "id": "PILOT_PHASE3_RECOMMENDATION",
+        "title": "Pilot exit register recommends Phase 3 without self-authorizing it",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_PILOT_EXIT_REGISTER_2026-07-25.json"
+      },
+      {
+        "id": "PHASE2B_PILOT_COMPLETED",
+        "title": "Promotion point 12 records completed Phase 2B pilot",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+      },
+      {
+        "id": "PHASE3_GO_APPROVED",
+        "title": "Promotion point 13 records approved Phase 3 GO",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+      },
+      {
+        "id": "PHASE3_AUTHORITY_RECORDED",
+        "title": "Authoritative promotion ledger records Phase 3 authority",
+        "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+      }
+    ],
+    "releaseBlockers": [
+      "readiness:statutory-country-pack-production",
+      "public_identity_hash_secret",
+      "public_receipt_token_secret",
+      "history_cursor_signing_secret",
+      "production_database_target"
+    ],
+    "humanInterventions": [
+      {
+        "id": "RELEASE_AND_CI",
+        "title": "Immutable release and protected CI evidence",
+        "owners": [
+          "ENGINEERING_RELEASE",
+          "QA",
+          "PLATFORM"
+        ],
+        "separation": "The release producer must not be the sole independent CI attester.",
+        "actions": [
+          "Select the reviewer-approved commit and build from a clean checkout.",
+          "Publish an inactive immutable artifact and bind its digest to the commit.",
+          "Run protected CI and enabled-pilot browser certification against that artifact.",
+          "Expose the signed, query-free CI evidence response through the managed evidence endpoint."
+        ],
+        "acceptedEvidence": "Commit SHA, artifact digest/reference, clean-tree result, CI run/reference, browser-report hash, deployment reference, source authority, attestation digest/timestamp, and invalid-auth rejection.",
+        "command": "npm run agent:ci-release:evidence:apply",
+        "downstream": "Operational release and Phase 2B entry",
+        "prefixes": [
+          "release:",
+          "ci:"
+        ],
+        "status": "HUMAN_INTERVENTION_REQUIRED",
+        "blockerCount": 29,
+        "blockers": [
+          "release:PACKAGE_ID_MISSING",
+          "release:RELEASE_VERSION_MISSING",
+          "release:DEPLOYMENT_REFERENCE_MISSING",
+          "release:ARTIFACT_REFERENCE_MISSING",
+          "release:PACKAGE_CERTIFICATION_REFERENCE_MISSING",
+          "release:PILOT_ALLOWLIST_REFERENCE_MISSING",
+          "release:ROLE_ALLOWLIST_REFERENCE_MISSING",
+          "release:COMMIT_SHA_INVALID",
+          "release:ARTIFACT_DIGEST_INVALID",
+          "release:PACKAGE_CERTIFICATION_HASH_INVALID",
+          "release:CI_EVIDENCE_HASH_INVALID",
+          "release:MANIFEST_HASH_INVALID",
+          "release:EVIDENCE_BUNDLE_HASH_INVALID",
+          "release:BROWSER_REPORT_HASH_INVALID",
+          "ci:STATUS_NOT_PASSED",
+          "ci:SOURCE_TREE_NOT_CLEAN",
+          "ci:RUN_REFERENCE_MISSING",
+          "ci:BRANCH_REFERENCE_MISSING",
+          "ci:ARTIFACT_REFERENCE_MISSING",
+          "ci:SOURCE_SYSTEM_REFERENCE_MISSING",
+          "ci:ATTESTATION_REFERENCE_MISSING",
+          "ci:INVALID_AUTH_EVIDENCE_REFERENCE_MISSING",
+          "ci:COMMIT_SHA_INVALID",
+          "ci:ARTIFACT_DIGEST_INVALID",
+          "ci:BROWSER_REPORT_HASH_INVALID",
+          "ci:ATTESTATION_DIGEST_INVALID",
+          "ci:EVIDENCE_HASH_INVALID",
+          "ci:COMPLETED_AT_INVALID",
+          "ci:ATTESTED_AT_INVALID"
+        ],
+        "interventionTreatment": [
+          "Capture through the named authoritative collector or signed decision system.",
+          "Bind to the exact release commit, artifact, manifest/evidence bundle, and environment.",
+          "Reject secrets, synthetic identities, self-approval, stale timestamps, hash mismatch, or changed release identity.",
+          "Rerun this intervention's narrow gate, then operational release, Phase 2B entry, and later Phase 3 entry as applicable.",
+          "Recapture expired evidence; retain the superseded reference in the authoritative audit system."
+        ]
+      },
+      {
+        "id": "GOVERNANCE_AND_OWNERS",
+        "title": "Product/security approval and operational ownership",
+        "owners": [
+          "PRODUCT",
+          "SECURITY",
+          "RELEASE_MANAGER"
+        ],
+        "separation": "Product and security approvers must be distinct real identities; every responsibility needs a different primary and backup.",
+        "actions": [
+          "Approve the same frozen commit, artifact, manifest, evidence bundle, and environment.",
+          "Assign primary and backup owners for rollout, rollback, support, pilot, security incident, and on-call backup.",
+          "Have each owner accept the current runbook and coverage window.",
+          "Publish value-free governance evidence from the authoritative directory/workflow system."
+        ],
+        "acceptedEvidence": "Directory identities, approval references and decisions, binding hashes, acceptance timestamps, coverage windows, escalation references, and independent authority attestation.",
+        "command": "npm run agent:governance:evidence:apply",
+        "downstream": "Operational release and enterprise gate 017",
+        "prefixes": [
+          "governance:",
+          "approval:",
+          "approvals:",
+          "owner:",
+          "owners:"
+        ],
+        "status": "HUMAN_INTERVENTION_REQUIRED",
+        "blockerCount": 62,
+        "blockers": [
+          "governance:SOURCE_SYSTEM_REFERENCE_MISSING",
+          "governance:ATTESTATION_REFERENCE_MISSING",
+          "governance:INVALID_AUTH_EVIDENCE_REFERENCE_MISSING",
+          "governance:ATTESTATION_DIGEST_INVALID",
+          "governance:EVIDENCE_HASH_INVALID",
+          "governance:ATTESTED_AT_INVALID",
+          "governance:PACKAGE_ID_MISSING",
+          "governance:RELEASE_VERSION_MISSING",
+          "governance:COMMIT_SHA_INVALID",
+          "governance:ARTIFACT_DIGEST_INVALID",
+          "governance:MANIFEST_HASH_INVALID",
+          "governance:EVIDENCE_BUNDLE_HASH_INVALID",
+          "approvals:PRODUCT_NOT_APPROVED",
+          "approvals:PRODUCT_ACTOR_INVALID",
+          "approvals:PRODUCT_REFERENCE_MISSING",
+          "approvals:PRODUCT_WINDOW_INVALID",
+          "approvals:PRODUCT_MANIFEST_HASH_INVALID",
+          "approvals:PRODUCT_ARTIFACT_DIGEST_INVALID",
+          "approvals:PRODUCT_EVIDENCE_BUNDLE_HASH_INVALID",
+          "approvals:SECURITY_NOT_APPROVED",
+          "approvals:SECURITY_ACTOR_INVALID",
+          "approvals:SECURITY_REFERENCE_MISSING",
+          "approvals:SECURITY_WINDOW_INVALID",
+          "approvals:SECURITY_MANIFEST_HASH_INVALID",
+          "approvals:SECURITY_ARTIFACT_DIGEST_INVALID",
+          "approvals:SECURITY_EVIDENCE_BUNDLE_HASH_INVALID",
+          "owners:ROLLOUT_PRIMARY_INVALID",
+          "owners:ROLLOUT_BACKUP_INVALID",
+          "owners:ROLLOUT_RUNBOOK_MISSING",
+          "owners:ROLLOUT_ESCALATION_REFERENCE_MISSING",
+          "owners:ROLLOUT_ACCEPTED_AT_INVALID",
+          "owners:ROLLOUT_WINDOW_INVALID",
+          "owners:ROLLBACK_PRIMARY_INVALID",
+          "owners:ROLLBACK_BACKUP_INVALID",
+          "owners:ROLLBACK_RUNBOOK_MISSING",
+          "owners:ROLLBACK_ESCALATION_REFERENCE_MISSING",
+          "owners:ROLLBACK_ACCEPTED_AT_INVALID",
+          "owners:ROLLBACK_WINDOW_INVALID",
+          "owners:SUPPORT_PRIMARY_INVALID",
+          "owners:SUPPORT_BACKUP_INVALID",
+          "owners:SUPPORT_RUNBOOK_MISSING",
+          "owners:SUPPORT_ESCALATION_REFERENCE_MISSING",
+          "owners:SUPPORT_ACCEPTED_AT_INVALID",
+          "owners:SUPPORT_WINDOW_INVALID",
+          "owners:PILOT_PRIMARY_INVALID",
+          "owners:PILOT_BACKUP_INVALID",
+          "owners:PILOT_RUNBOOK_MISSING",
+          "owners:PILOT_ESCALATION_REFERENCE_MISSING",
+          "owners:PILOT_ACCEPTED_AT_INVALID",
+          "owners:PILOT_WINDOW_INVALID",
+          "owners:SECURITY_INCIDENT_PRIMARY_INVALID",
+          "owners:SECURITY_INCIDENT_BACKUP_INVALID",
+          "owners:SECURITY_INCIDENT_RUNBOOK_MISSING",
+          "owners:SECURITY_INCIDENT_ESCALATION_REFERENCE_MISSING",
+          "owners:SECURITY_INCIDENT_ACCEPTED_AT_INVALID",
+          "owners:SECURITY_INCIDENT_WINDOW_INVALID",
+          "owners:ON_CALL_BACKUP_PRIMARY_INVALID",
+          "owners:ON_CALL_BACKUP_BACKUP_INVALID",
+          "owners:ON_CALL_BACKUP_RUNBOOK_MISSING",
+          "owners:ON_CALL_BACKUP_ESCALATION_REFERENCE_MISSING",
+          "owners:ON_CALL_BACKUP_ACCEPTED_AT_INVALID",
+          "owners:ON_CALL_BACKUP_WINDOW_INVALID"
+        ],
+        "interventionTreatment": [
+          "Capture through the named authoritative collector or signed decision system.",
+          "Bind to the exact release commit, artifact, manifest/evidence bundle, and environment.",
+          "Reject secrets, synthetic identities, self-approval, stale timestamps, hash mismatch, or changed release identity.",
+          "Rerun this intervention's narrow gate, then operational release, Phase 2B entry, and later Phase 3 entry as applicable.",
+          "Recapture expired evidence; retain the superseded reference in the authoritative audit system."
+        ]
+      },
+      {
+        "id": "SCHEDULER_DEPLOYMENT",
+        "title": "Managed scheduler and inactive reconciler deployment",
+        "owners": [
+          "PLATFORM",
+          "SRE",
+          "SECURITY"
+        ],
+        "separation": "The deployment owner supplies infrastructure proof; security independently approves workload identity and secret scope.",
+        "actions": [
+          "Deploy the inactive reconciler workload at the approved commit and artifact.",
+          "Create a five-minute managed schedule with bounded timeout and single-concurrency or lease protection.",
+          "Attach managed workload identity, readiness, missing-configuration, and failure-alert checks.",
+          "Expose a query-free HTTPS deployment evidence endpoint with invalid-auth rejection."
+        ],
+        "acceptedEvidence": "Provider schedule, workload and managed-secret references, concurrency proof, deployed commit/artifact, deployment attestation, readiness, failure-alert, and invalid-auth evidence.",
+        "command": "npm run agent:scheduler:evidence:apply",
+        "downstream": "Operational release",
+        "prefixes": [
+          "scheduler:"
+        ],
+        "status": "HUMAN_INTERVENTION_REQUIRED",
+        "blockerCount": 39,
+        "blockers": [
+          "scheduler:PROVIDER_MISSING",
+          "scheduler:SCHEDULE_REFERENCE_MISSING",
+          "scheduler:WORKLOAD_REFERENCE_MISSING",
+          "scheduler:MANAGED_CREDENTIAL_REFERENCE_MISSING",
+          "scheduler:CONCURRENCY_EVIDENCE_REFERENCE_MISSING",
+          "scheduler:READINESS_EVIDENCE_REFERENCE_MISSING",
+          "scheduler:INVALID_AUTH_EVIDENCE_REFERENCE_MISSING",
+          "scheduler:MISSING_CONFIG_EVIDENCE_REFERENCE_MISSING",
+          "scheduler:FAILURE_ALERT_REFERENCE_MISSING",
+          "scheduler:DEPLOYMENT_SOURCE_SYSTEM_REFERENCE_MISSING",
+          "scheduler:DEPLOYMENT_ATTESTATION_REFERENCE_MISSING",
+          "scheduler:DEPLOYMENT_AUTHORITY_INVALID_AUTH_EVIDENCE_REFERENCE_MISSING",
+          "scheduler:READINESS_EVIDENCE_HASH_INVALID",
+          "scheduler:DEPLOYMENT_ATTESTATION_DIGEST_INVALID",
+          "scheduler:DEPLOYMENT_EVIDENCE_HASH_INVALID",
+          "scheduler:AUTH_TYPE_INVALID",
+          "scheduler:DEPLOYED_COMMIT_SHA_INVALID",
+          "scheduler:DEPLOYED_ARTIFACT_DIGEST_INVALID",
+          "scheduler:DEPLOYED_AT_INVALID",
+          "scheduler:DEPLOYMENT_ATTESTED_AT_INVALID",
+          "scheduler:READINESS_NOT_HEALTHY",
+          "scheduler:READINESS_CHECKED_AT_INVALID",
+          "scheduler:HEARTBEAT_NOT_FRESH",
+          "scheduler:WINDOW_1_RUN_ID_MISSING",
+          "scheduler:WINDOW_1_EVIDENCE_REFERENCE_MISSING",
+          "scheduler:WINDOW_1_NOT_COMPLETED",
+          "scheduler:WINDOW_1_SCHEDULED_AT_INVALID",
+          "scheduler:WINDOW_1_COMPLETED_AT_INVALID",
+          "scheduler:WINDOW_2_RUN_ID_MISSING",
+          "scheduler:WINDOW_2_EVIDENCE_REFERENCE_MISSING",
+          "scheduler:WINDOW_2_NOT_COMPLETED",
+          "scheduler:WINDOW_2_SCHEDULED_AT_INVALID",
+          "scheduler:WINDOW_2_COMPLETED_AT_INVALID",
+          "scheduler:WINDOW_3_RUN_ID_MISSING",
+          "scheduler:WINDOW_3_EVIDENCE_REFERENCE_MISSING",
+          "scheduler:WINDOW_3_NOT_COMPLETED",
+          "scheduler:WINDOW_3_SCHEDULED_AT_INVALID",
+          "scheduler:WINDOW_3_COMPLETED_AT_INVALID",
+          "scheduler:THREE_SUCCESS_WINDOWS_MISSING"
+        ],
+        "interventionTreatment": [
+          "Capture through the named authoritative collector or signed decision system.",
+          "Bind to the exact release commit, artifact, manifest/evidence bundle, and environment.",
+          "Reject secrets, synthetic identities, self-approval, stale timestamps, hash mismatch, or changed release identity.",
+          "Rerun this intervention's narrow gate, then operational release, Phase 2B entry, and later Phase 3 entry as applicable.",
+          "Recapture expired evidence; retain the superseded reference in the authoritative audit system."
+        ]
+      },
+      {
+        "id": "RECONCILER_WINDOWS",
+        "title": "Three consecutive reconciliation windows",
+        "owners": [
+          "SRE",
+          "RECONCILIATION_OWNER"
+        ],
+        "separation": "The operator runs the workload; the reconciliation owner reviews the resulting evidence.",
+        "actions": [
+          "Observe at least three unique consecutive five-minute production-like windows.",
+          "Confirm successful completion, fresh readiness and heartbeat, lease/concurrency safety, and invalid-auth rejection.",
+          "Publish only value-free run and evidence references."
+        ],
+        "acceptedEvidence": "Unique run IDs, schedule/completion timestamps, completed status, evidence references, readiness hash, heartbeat validity, and invalid-auth proof.",
+        "command": "npm run agent:reconciler:evidence:apply",
+        "downstream": "Operational release",
+        "prefixes": [
+          "scheduler:WINDOW",
+          "scheduler:READINESS",
+          "scheduler:HEARTBEAT"
+        ],
+        "status": "HUMAN_INTERVENTION_REQUIRED",
+        "blockerCount": 20,
+        "blockers": [
+          "scheduler:READINESS_EVIDENCE_REFERENCE_MISSING",
+          "scheduler:READINESS_EVIDENCE_HASH_INVALID",
+          "scheduler:READINESS_NOT_HEALTHY",
+          "scheduler:READINESS_CHECKED_AT_INVALID",
+          "scheduler:HEARTBEAT_NOT_FRESH",
+          "scheduler:WINDOW_1_RUN_ID_MISSING",
+          "scheduler:WINDOW_1_EVIDENCE_REFERENCE_MISSING",
+          "scheduler:WINDOW_1_NOT_COMPLETED",
+          "scheduler:WINDOW_1_SCHEDULED_AT_INVALID",
+          "scheduler:WINDOW_1_COMPLETED_AT_INVALID",
+          "scheduler:WINDOW_2_RUN_ID_MISSING",
+          "scheduler:WINDOW_2_EVIDENCE_REFERENCE_MISSING",
+          "scheduler:WINDOW_2_NOT_COMPLETED",
+          "scheduler:WINDOW_2_SCHEDULED_AT_INVALID",
+          "scheduler:WINDOW_2_COMPLETED_AT_INVALID",
+          "scheduler:WINDOW_3_RUN_ID_MISSING",
+          "scheduler:WINDOW_3_EVIDENCE_REFERENCE_MISSING",
+          "scheduler:WINDOW_3_NOT_COMPLETED",
+          "scheduler:WINDOW_3_SCHEDULED_AT_INVALID",
+          "scheduler:WINDOW_3_COMPLETED_AT_INVALID"
+        ],
+        "interventionTreatment": [
+          "Capture through the named authoritative collector or signed decision system.",
+          "Bind to the exact release commit, artifact, manifest/evidence bundle, and environment.",
+          "Reject secrets, synthetic identities, self-approval, stale timestamps, hash mismatch, or changed release identity.",
+          "Rerun this intervention's narrow gate, then operational release, Phase 2B entry, and later Phase 3 entry as applicable.",
+          "Recapture expired evidence; retain the superseded reference in the authoritative audit system."
+        ]
+      },
+      {
+        "id": "ALERT_LIFECYCLE",
+        "title": "Production-like alert lifecycle",
+        "owners": [
+          "SRE",
+          "SECURITY_INCIDENT",
+          "ON_CALL_BACKUP"
+        ],
+        "separation": "The primary incident owner acknowledges; the named backup receives the independently tested escalation.",
+        "actions": [
+          "Trigger a controlled failure through the real HTTPS alert transport.",
+          "Acknowledge within the declared SLO and prove retry, dead-letter, recovery, and escalation.",
+          "Rotate the alert secret and prove old-version rejection."
+        ],
+        "acceptedEvidence": "Transport and managed-secret references, delivery/request identity, acknowledgement identity/timestamp, retry, dead-letter, recovery, escalation, and rotation references.",
+        "command": "npm run agent:alert:evidence:apply",
+        "downstream": "Operational release",
+        "prefixes": [
+          "alert:",
+          "alerting:"
+        ],
+        "status": "HUMAN_INTERVENTION_REQUIRED",
+        "blockerCount": 17,
+        "blockers": [
+          "alerting:TRANSPORT_NOT_HEALTHY",
+          "alerting:EVIDENCE_HASH_INVALID",
+          "alerting:TRANSPORT_REFERENCE_MISSING",
+          "alerting:MANAGED_SECRET_REFERENCE_MISSING",
+          "alerting:HTTPS_DELIVERY_REFERENCE_MISSING",
+          "alerting:EXTERNAL_REQUEST_REFERENCE_MISSING",
+          "alerting:ACKNOWLEDGEMENT_REFERENCE_MISSING",
+          "alerting:RETRY_EVIDENCE_REFERENCE_MISSING",
+          "alerting:DEAD_LETTER_EVIDENCE_REFERENCE_MISSING",
+          "alerting:RECOVERY_EVIDENCE_REFERENCE_MISSING",
+          "alerting:ESCALATION_EVIDENCE_REFERENCE_MISSING",
+          "alerting:SECRET_ROTATION_EVIDENCE_REFERENCE_MISSING",
+          "alerting:DELIVERED_AT_INVALID",
+          "alerting:ACKNOWLEDGED_AT_INVALID",
+          "alerting:ESCALATION_TESTED_AT_INVALID",
+          "alerting:ACKNOWLEDGER_IDENTITY_INVALID",
+          "alerting:ESCALATION_IDENTITY_INVALID"
+        ],
+        "interventionTreatment": [
+          "Capture through the named authoritative collector or signed decision system.",
+          "Bind to the exact release commit, artifact, manifest/evidence bundle, and environment.",
+          "Reject secrets, synthetic identities, self-approval, stale timestamps, hash mismatch, or changed release identity.",
+          "Rerun this intervention's narrow gate, then operational release, Phase 2B entry, and later Phase 3 entry as applicable.",
+          "Recapture expired evidence; retain the superseded reference in the authoritative audit system."
+        ]
+      },
+      {
+        "id": "CREDENTIAL_ROTATION",
+        "title": "Credential classification, rotation, and revocation",
+        "owners": [
+          "SECURITY",
+          "PLATFORM",
+          "WORKLOAD_OWNERS"
+        ],
+        "separation": "A real security owner approves the ceremony; workload owners verify restart and new-version behavior.",
+        "actions": [
+          "Classify all 15 credential classes as rotated/revoked, test-only, or confirmed absent.",
+          "For present credentials, rotate in the managed secret store, restart dependants, verify the new version, revoke the old version, and prove rejection.",
+          "Publish a release-bound security attestation without credential values."
+        ],
+        "acceptedEvidence": "Disposition, secret-manager reference, owner identity, ordered rotation/restart/verification/revocation timestamps, evidence reference, security approval, and authority attestation.",
+        "command": "npm run agent:credential-rotation:evidence:apply && npm run agent:credential-rotation:gate",
+        "downstream": "Operational release and Phase 2B entry",
+        "prefixes": [],
+        "status": "HUMAN_INTERVENTION_REQUIRED",
+        "blockerCount": 31,
+        "blockers": [
+          "authority:ENVIRONMENT_MISSING",
+          "authority:SOURCE_SYSTEM_REFERENCE_MISSING",
+          "authority:ATTESTATION_REFERENCE_MISSING",
+          "authority:ATTESTATION_DIGEST_MISSING",
+          "authority:ATTESTED_AT_MISSING",
+          "authority:EVIDENCE_SHA256_MISSING",
+          "authority:INVALID_AUTH_EVIDENCE_REFERENCE_MISSING",
+          "authority:ATTESTED_AT_INVALID_OR_STALE",
+          "releaseBinding:ENVIRONMENT_MISSING",
+          "releaseBinding:PACKAGE_ID_MISSING",
+          "releaseBinding:RELEASE_VERSION_MISSING",
+          "releaseBinding:COMMIT_SHA_MISSING",
+          "releaseBinding:ARTIFACT_DIGEST_MISSING",
+          "releaseBinding:DEPLOYMENT_REFERENCE_MISSING",
+          "primary-database-credential:SECURITY_CLASSIFICATION_UNRESOLVED",
+          "payroll-immutability-database-credential:SECURITY_CLASSIFICATION_UNRESOLVED",
+          "application-auth-signing-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+          "legacy-nextauth-signing-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+          "google-oauth-client-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+          "email-server-credential:SECURITY_CLASSIFICATION_UNRESOLVED",
+          "redis-connection-credential:SECURITY_CLASSIFICATION_UNRESOLVED",
+          "public-identity-hmac-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+          "public-receipt-signing-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+          "history-cursor-signing-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+          "payroll-destination-hmac-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+          "upload-provider-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+          "error-monitoring-dsn:SECURITY_CLASSIFICATION_UNRESOLVED",
+          "agent-reconciler-credential:SECURITY_CLASSIFICATION_UNRESOLVED",
+          "workflow-assurance-webhook-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+          "register:SECURITY_OWNER_MISSING",
+          "register:SECURITY_APPROVAL_REFERENCE_MISSING"
+        ],
+        "interventionTreatment": [
+          "Capture through the named authoritative collector or signed decision system.",
+          "Bind to the exact release commit, artifact, manifest/evidence bundle, and environment.",
+          "Reject secrets, synthetic identities, self-approval, stale timestamps, hash mismatch, or changed release identity.",
+          "Rerun this intervention's narrow gate, then operational release, Phase 2B entry, and later Phase 3 entry as applicable.",
+          "Recapture expired evidence; retain the superseded reference in the authoritative audit system."
+        ]
+      },
+      {
+        "id": "STATUTORY_AND_RELEASE_PREFLIGHT",
+        "title": "Statutory authority and global release preflight",
+        "owners": [
+          "OHADA_DOMAIN_REVIEWER",
+          "DATABASE_OWNER",
+          "SECURITY",
+          "RELEASE_MANAGER"
+        ],
+        "separation": "Qualified statutory approval must be independent of the code author; production target and secret readiness require their designated owners.",
+        "actions": [
+          "Verify the statutory source artifact hash and obtain qualified expert approval.",
+          "Provision the non-local migration target and production-purpose secret references.",
+          "Resolve the global release evidence index without replacing external proof with local fixtures."
+        ],
+        "acceptedEvidence": "Verified source hash, signed expert approval, migration target evidence, managed-secret preflight, and release evidence index with zero blockers.",
+        "command": "npm run statutory:country-pack:gate && npm run prisma:migration:release:preflight && npm run release:secrets:preflight:release && npm run release:evidence:gate:release",
+        "downstream": "Phase 2B entry and enterprise gate 017",
+        "promotionChecks": [
+          "GLOBAL_RELEASE_READY",
+          "PRODUCTION_SECRETS_READY",
+          "MIGRATION_TARGET_READY",
+          "STATUTORY_AUTHORITY_READY"
+        ],
+        "status": "HUMAN_INTERVENTION_REQUIRED",
+        "blockerCount": 4,
+        "blockers": [
+          "GLOBAL_RELEASE_READY",
+          "PRODUCTION_SECRETS_READY",
+          "MIGRATION_TARGET_READY",
+          "STATUTORY_AUTHORITY_READY"
+        ],
+        "interventionTreatment": [
+          "Capture through the named authoritative collector or signed decision system.",
+          "Bind to the exact release commit, artifact, manifest/evidence bundle, and environment.",
+          "Reject secrets, synthetic identities, self-approval, stale timestamps, hash mismatch, or changed release identity.",
+          "Rerun this intervention's narrow gate, then operational release, Phase 2B entry, and later Phase 3 entry as applicable.",
+          "Recapture expired evidence; retain the superseded reference in the authoritative audit system."
+        ]
+      },
+      {
+        "id": "ENTERPRISE_REVIEW",
+        "title": "Independent enterprise release decision",
+        "owners": [
+          "ENTERPRISE_RELEASE_AUTHORITY"
+        ],
+        "separation": "The reviewing authority must be independent from agent execution and cannot waive missing critical evidence silently.",
+        "actions": [
+          "Review one immutable evidence bundle after all narrow gates pass.",
+          "Record APPROVED_GO or REJECTED_NO_GO with release binding, conditions, and expiry.",
+          "Keep activation as a separate protected ceremony."
+        ],
+        "acceptedEvidence": "Signed release-bound gate-017 decision, reviewer identity, timestamp, conditions, and immutable evidence-bundle reference.",
+        "command": "Rerun 017-aqstoqflow-enterprise-release-gate",
+        "downstream": "Phase 2B activation review",
+        "promotionChecks": [
+          "ENTERPRISE_GATE_017_GO"
+        ],
+        "status": "HUMAN_INTERVENTION_REQUIRED",
+        "blockerCount": 1,
+        "blockers": [
+          "ENTERPRISE_GATE_017_GO"
+        ],
+        "interventionTreatment": [
+          "Capture through the named authoritative collector or signed decision system.",
+          "Bind to the exact release commit, artifact, manifest/evidence bundle, and environment.",
+          "Reject secrets, synthetic identities, self-approval, stale timestamps, hash mismatch, or changed release identity.",
+          "Rerun this intervention's narrow gate, then operational release, Phase 2B entry, and later Phase 3 entry as applicable.",
+          "Recapture expired evidence; retain the superseded reference in the authoritative audit system."
+        ]
+      },
+      {
+        "id": "PHASE_2B_PILOT",
+        "title": "Controlled Phase 2B pilot and exit certification",
+        "owners": [
+          "PILOT",
+          "PRODUCT",
+          "SECURITY",
+          "FINANCE_DOMAIN",
+          "RELEASE"
+        ],
+        "separation": "Activation needs separate authorization; the four exit approvers must be distinct identities.",
+        "actions": [
+          "After gate-017 GO, conduct the protected activation ceremony for allowlisted tenants and roles only.",
+          "Observe a bounded pilot with monitoring, support, rollback exercise, and incident handling.",
+          "Record safety counters and obtain four distinct pilot-exit approvals."
+        ],
+        "acceptedEvidence": "Activation decision, hashed tenant/role scopes, observation window, run counts, zero prohibited authority/tenant/secret violations, operations evidence, incidents, and four approvals.",
+        "command": "npm run agent:phase3:entry:report",
+        "downstream": "Phase 3 read-and-draft eligibility",
+        "phase": "phase3",
+        "status": "HUMAN_INTERVENTION_REQUIRED",
+        "blockerCount": 34,
+        "blockers": [
+          "AUTHORIZED_SCOPE_COMPLETE",
+          "FROZEN_COMMIT_VERIFIED",
+          "CLEAN_RELEASE_READY",
+          "GLOBAL_RELEASE_READY",
+          "PRODUCTION_SECRETS_READY",
+          "MIGRATION_TARGET_READY",
+          "STATUTORY_AUTHORITY_READY",
+          "CREDENTIAL_ROTATION_READY",
+          "OPERATIONAL_RELEASE_READY",
+          "PROMOTION_POINT_1_REVIEW_ACCEPTED",
+          "PROMOTION_POINT_2_COMPLETED",
+          "PROMOTION_POINT_3_COMPLETED",
+          "PROMOTION_POINT_4_COMPLETED",
+          "PROMOTION_POINT_5_COMPLETED",
+          "PROMOTION_POINT_6_COMPLETED",
+          "PROMOTION_POINT_7_COMPLETED",
+          "PROMOTION_POINT_8_COMPLETED",
+          "PROMOTION_POINT_9_COMPLETED",
+          "PROMOTION_POINT_10_COMPLETED",
+          "PROMOTION_POINT_11_APPROVED_GO",
+          "ENTERPRISE_GATE_017_GO",
+          "PILOT_EXIT_STATUS_READY",
+          "PILOT_RELEASE_BINDING",
+          "PILOT_SCOPE_AND_ACTIVATION_EVIDENCE",
+          "PILOT_OBSERVATION_COMPLETE",
+          "PILOT_SAFETY_CLEAN",
+          "PILOT_OPERATIONS_EVIDENCE",
+          "PILOT_INCIDENTS_CLEAN",
+          "PILOT_EXIT_APPROVALS",
+          "PILOT_APPROVER_SEGREGATION",
+          "PILOT_PHASE3_RECOMMENDATION",
+          "PHASE2B_PILOT_COMPLETED",
+          "PHASE3_GO_APPROVED",
+          "PHASE3_AUTHORITY_RECORDED"
+        ],
+        "interventionTreatment": [
+          "Capture through the named authoritative collector or signed decision system.",
+          "Bind to the exact release commit, artifact, manifest/evidence bundle, and environment.",
+          "Reject secrets, synthetic identities, self-approval, stale timestamps, hash mismatch, or changed release identity.",
+          "Rerun this intervention's narrow gate, then operational release, Phase 2B entry, and later Phase 3 entry as applicable.",
+          "Recapture expired evidence; retain the superseded reference in the authoritative audit system."
+        ]
+      }
+    ]
+  },
+  "evidencePaths": {
+    "enterprise": "what-next/enterprise-release-blocker-status.json",
+    "freeze": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json",
+    "audit": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_AUTHORIZED_SCOPE_REQUIREMENTS_AUDIT_2026-07-25.json",
+    "credential": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_CREDENTIAL_ROTATION_REGISTER_2026-07-25.json",
+    "operational": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_OPERATIONAL_RELEASE_EVIDENCE_2026-07-25.json",
+    "phase2b": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_ENTRY_DECISION_2026-07-25.json",
+    "phase3": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_ENTRY_DECISION_2026-07-25.json",
+    "external": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUT_READINESS_2026-07-25.json",
+    "human": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_HUMAN_INTERVENTION_PLAN_2026-07-25.json",
+    "releaseIndex": "what-next/skills-life-cycle/stoquify-ohada-leadership-release-evidence-index-2026-07-11.json"
+  },
+  "verification": {
+    "skill016": "15/15 READY",
+    "focusedTests": "20/20 passed direct serial Jest with open-handle detection",
+    "scopedEslint": "passed",
+    "nodeSyntax": "passed",
+    "typecheck": "INCONCLUSIVE: process terminated after about six minutes without compiler diagnostic",
+    "enterpriseGate": "expected exit 1; BLOCKED 2/12",
+    "githubProviderOperations": "excluded by instruction"
+  }
+}

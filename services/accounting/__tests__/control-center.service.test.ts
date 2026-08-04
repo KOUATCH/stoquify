@@ -7,11 +7,13 @@ jest.mock("@/prisma/db", () => ({
     accountingPeriod: { findMany: jest.fn() },
     ledgerAuditEvent: { findMany: jest.fn() },
     auditLog: { findMany: jest.fn() },
+    businessEventOutbox: { groupBy: jest.fn(), findFirst: jest.fn() },
   },
 }))
 
 import {
   AccountingSourceType,
+  BusinessOutboxStatus,
   PostingRuleAmountSource,
   PostingRuleLineSide,
 } from "@prisma/client"
@@ -32,6 +34,7 @@ const mockDb = db as unknown as {
   accountingPeriod: { findMany: jest.Mock }
   ledgerAuditEvent: { findMany: jest.Mock }
   auditLog: { findMany: jest.Mock }
+  businessEventOutbox: { groupBy: jest.Mock; findFirst: jest.Mock }
 }
 
 const now = new Date("2026-06-11T12:00:00.000Z")
@@ -153,6 +156,8 @@ describe("accounting control center read model", () => {
         createdAt: new Date("2026-06-11T10:00:00.000Z"),
       },
     ])
+    mockDb.businessEventOutbox.groupBy.mockResolvedValue([])
+    mockDb.businessEventOutbox.findFirst.mockResolvedValue(null)
     mockDb.auditLog.findMany.mockResolvedValue([
       {
         id: "control-event-1",
@@ -179,6 +184,16 @@ describe("accounting control center read model", () => {
 
     expect(result.status).toBe("ready_to_lock")
     expect(result.summary.blockerCount).toBe(0)
+    expect(result.businessEventOutbox.status).toBe("ok")
+    expect(result.businessEventOutbox.openCount).toBe(0)
+    expect(result.checklist).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "business-event-outbox",
+          status: "ok",
+        }),
+      ]),
+    )
     expect(result.setupLock.canLock).toBe(true)
     expect(result.summary.mappingReadyCount).toBe(REQUIRED_ACCOUNTING_MAPPINGS.length)
     expect(result.summary.postingRuleReadyCount).toBe(REQUIRED_READY_POSTING_PURPOSES.length)
@@ -199,6 +214,84 @@ describe("accounting control center read model", () => {
     )
   })
 
+
+  it("keeps delayed outbox messages visible as operational warnings", async () => {
+    mockDb.businessEventOutbox.groupBy.mockResolvedValue([
+      { status: BusinessOutboxStatus.FAILED, _count: { _all: 2 } },
+      { status: BusinessOutboxStatus.DEFERRED, _count: { _all: 1 } },
+    ])
+    mockDb.businessEventOutbox.findFirst.mockResolvedValue({
+      availableAt: new Date("2026-06-11T08:00:00.000Z"),
+      status: BusinessOutboxStatus.FAILED,
+      eventName: "pos.receipt.whatsapp.requested",
+    })
+
+    const result = await getAccountingControlCenterData(
+      "org-1",
+      { actorPermissions: ["accounting.setup.manage"] },
+      now,
+    )
+
+    expect(result.status).toBe("ready_to_lock")
+    expect(result.setupLock.canLock).toBe(true)
+    expect(result.summary.warningCount).toBe(1)
+    expect(result.businessEventOutbox).toEqual(
+      expect.objectContaining({
+        status: "warning",
+        failed: 2,
+        deferred: 1,
+        openCount: 3,
+        warningCount: 1,
+        oldestOpenStatus: BusinessOutboxStatus.FAILED,
+        oldestOpenEventName: "pos.receipt.whatsapp.requested",
+      }),
+    )
+    expect(result.checklist).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "business-event-outbox",
+          status: "warning",
+          blockerCount: 1,
+        }),
+      ]),
+    )
+  })
+
+  it("blocks setup locking when business event outbox messages are dead-lettered", async () => {
+    mockDb.businessEventOutbox.groupBy.mockResolvedValue([
+      { status: BusinessOutboxStatus.DEAD_LETTER, _count: { _all: 1 } },
+    ])
+    mockDb.businessEventOutbox.findFirst.mockResolvedValue({
+      availableAt: new Date("2026-06-11T07:30:00.000Z"),
+      status: BusinessOutboxStatus.DEAD_LETTER,
+      eventName: "pos.receipt.whatsapp.requested",
+    })
+
+    const result = await getAccountingControlCenterData(
+      "org-1",
+      { actorPermissions: ["accounting.setup.manage"] },
+      now,
+    )
+
+    expect(result.status).toBe("blocked")
+    expect(result.setupLock.canLock).toBe(false)
+    expect(result.businessEventOutbox).toEqual(
+      expect.objectContaining({
+        status: "blocked",
+        deadLetter: 1,
+        openCount: 1,
+        blockerCount: 1,
+      }),
+    )
+    expect(result.blockers).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "business-event-outbox-dead-letter",
+          category: "operational",
+        }),
+      ]),
+    )
+  })
   it("reports locked/setup-ready state without enabling another setup lock", async () => {
     mockDb.organizationAccountingSettings.findUnique.mockResolvedValue(lockedSettings())
 

@@ -8,12 +8,17 @@ import { AccountingPageShell } from "../_components/accounting-ui"
 
 type AccountantPortalPageProps = {
   params: Promise<{ locale?: Locale }>
+  searchParams?: Promise<{ clientOrganizationId?: string }>
 }
 
-export default async function AccountantPortalPage({ params }: AccountantPortalPageProps) {
+export default async function AccountantPortalPage({ params, searchParams }: AccountantPortalPageProps) {
   await checkPermission("accounting.audit.read")
 
-  const portalResponse = await getAccountantPortalAction({ limit: 12 })
+  const query = await searchParams
+  const portalResponse = await getAccountantPortalAction({
+    limit: 12,
+    clientOrganizationId: query?.clientOrganizationId,
+  })
   const portal = portalResponse.success ? portalResponse.data : null
   const { locale = "en" } = await params
 

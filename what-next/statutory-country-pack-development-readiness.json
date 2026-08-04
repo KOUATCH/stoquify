@@ -1,11 +1,11 @@
 {
   "summary": {
-    "generatedAt": "2026-07-20T07:26:27.400Z",
+    "generatedAt": "2026-08-01T17:39:54.481Z",
     "mode": "fail",
-    "status": "READY_FOR_DEVELOPMENT_TESTING",
+    "status": "BLOCKED_FOR_DEVELOPMENT_TESTING",
     "checkCount": 11,
-    "readyCount": 11,
-    "blockerCount": 0
+    "readyCount": 10,
+    "blockerCount": 1
   },
   "scope": {
     "environmentClass": "DEVELOPMENT_AND_SANDBOX_ONLY",
@@ -19,14 +19,13 @@
     "manifestPresent": true,
     "artifactsVerified": true,
     "productionUseDisabled": true,
-    "legalNonClaimsPreserved": true,
+    "legalNonClaimsPreserved": false,
     "artifactCount": 2,
     "manifestRef": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/manifest.json"
   },
   "productionGate": {
     "status": "blocked",
     "blockers": [
-      "source_artifact_hash_verification",
       "source_artifact_expert_approval"
     ]
   },
@@ -45,7 +44,7 @@
     },
     {
       "id": "legal_and_approval_non_claims_preserved",
-      "ready": true
+      "ready": false
     },
     {
       "id": "cameroon_production_automation_claim_blocked",
@@ -76,5 +75,7 @@
       "ready": true
     }
   ],
-  "blockers": []
+  "blockers": [
+    "legal_and_approval_non_claims_preserved"
+  ]
 }

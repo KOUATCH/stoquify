@@ -1,10 +1,15 @@
 import { z } from "zod"
 
 import { CAMEROON_PAYMENT_PROVIDER_CODES } from "@/services/regulatory/country-packs/cameroon.constants"
+import {
+  RECEIPT_CHANNELS,
+  receiptChannelRequiresDestination,
+  type ReceiptChannel as ReceiptChannelContract,
+} from "./receipt-channels"
 
 export const posLocationListSchema = z.object({})
 
-export const receiptChannelSchema = z.enum(["PRINT", "EMAIL", "SMS", "WHATSAPP", "NONE"])
+export const receiptChannelSchema = z.enum(RECEIPT_CHANNELS)
 export const receiptLocaleSchema = z.enum(["EN", "FR"])
 
 export const posTerminalListSchema = z.object({
@@ -91,11 +96,42 @@ export const posTenderSchema = z.object({
   bankName: z.string().trim().max(120).optional(),
 })
 
+const receiptDestinationSchema = z.string().trim().max(320, "Receipt destination cannot exceed 320 characters").optional()
+
+function validateReceiptDestination(
+  value: { channel: ReceiptChannelContract; destination?: string; whatsAppCustomerOptInConfirmed?: boolean },
+  ctx: z.RefinementCtx,
+) {
+  if (!receiptChannelRequiresDestination(value.channel)) return
+
+  if (!value.destination?.trim()) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["destination"],
+      message:
+        value.channel === "EMAIL"
+          ? "Email receipt destination is required"
+          : value.channel === "WHATSAPP"
+            ? "WhatsApp receipt destination is required"
+            : "SMS receipt destination is required",
+    })
+  }
+
+  if (value.channel === "WHATSAPP" && value.whatsAppCustomerOptInConfirmed !== true) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["whatsAppCustomerOptInConfirmed"],
+      message: "WhatsApp receipt delivery requires explicit customer consent",
+    })
+  }
+}
+
 export const commitSaleReceiptSchema = z.object({
   channel: receiptChannelSchema.default("NONE"),
-  destination: z.string().trim().min(1).optional(),
+  destination: receiptDestinationSchema,
   locale: receiptLocaleSchema.optional(),
-})
+  whatsAppCustomerOptInConfirmed: z.boolean().optional(),
+}).superRefine(validateReceiptDestination)
 
 export const commitSaleSchema = z.object({
   salesOrderId: z.string().min(1, "Cart is required"),
@@ -140,14 +176,19 @@ export const getSalesReceiptSchema = salesReceiptBaseSchema.extend({
 
 export const sendReceiptSchema = salesReceiptBaseSchema.extend({
   channel: receiptChannelSchema,
-  destination: z.string().trim().min(1).optional(),
+  destination: receiptDestinationSchema,
   locale: receiptLocaleSchema.optional(),
-})
+  whatsAppCustomerOptInConfirmed: z.boolean().optional(),
+}).superRefine(validateReceiptDestination)
 
-export const sendReceiptServiceSchema = sendReceiptSchema.extend({
+export const sendReceiptServiceSchema = salesReceiptBaseSchema.extend({
+  channel: receiptChannelSchema,
+  destination: receiptDestinationSchema,
+  locale: receiptLocaleSchema.optional(),
+  whatsAppCustomerOptInConfirmed: z.boolean().optional(),
   organizationId: z.string().min(1, "Organization is required"),
   userId: z.string().min(1, "User is required"),
-})
+}).superRefine(validateReceiptDestination)
 
 export const listPublicReceiptAccessTokensActionSchema = z.object({
   organizationId: z.string().trim().min(1).optional(),

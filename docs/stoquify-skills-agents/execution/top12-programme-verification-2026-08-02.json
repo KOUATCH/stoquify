@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "programmeId": "stoquify-top12-2026-08-02",
+  "evaluatedAt": "2026-08-02T21:33:08+01:00",
+  "repositoryHeadObserved": "5dc78f2c007c51e151342de08be34b72994839bb",
+  "cleanReleaseClaimed": false,
+  "status": "CONTROL_READY_EXECUTION_BLOCKED",
+  "activationAuthorizedByGate": false,
+  "phase3AuthorizedByGate": false,
+  "checks": [
+    {
+      "command": "node scripts/top12-programme-gate.js --mode report",
+      "status": "PASS",
+      "result": "CONTROL_READY_EXECUTION_BLOCKED; controlReady=true; 12 capabilities, 7 foundations, 63 WBS items, 8 complete, 1 in progress, 7 external-input blocked; phase2b blocked 2/23; external inputs 1/13."
+    },
+    {
+      "command": "npm test -- --runInBand scripts/__tests__/top12-programme-gate.test.js",
+      "status": "PASS",
+      "result": "1 suite, 6 tests."
+    },
+    {
+      "command": "npm test -- --runInBand scripts/__tests__/top12-evaluation-harness.test.js",
+      "status": "PASS",
+      "result": "1 suite, 6 tests."
+    },
+    {
+      "command": "node scripts/top12-evaluation-harness.js --mode fail --limit 150 --out docs/stoquify-skills-agents/execution/TOP12_FND_010_EVALUATION_HARNESS_REPORT_2026-08-02.md --json-out docs/stoquify-skills-agents/execution/top12-evaluation-harness-run-2026-08-02.json",
+      "status": "PASS",
+      "result": "999-case catalog valid; selected 150 highest-risk NOT_TESTED cases; no behavioral execution or activation claim."
+    },
+    {
+      "command": "npm test -- --runInBand services/agents/portfolio/__tests__/connector-health.service.test.ts services/agents/portfolio/__tests__/connector-inventory-read-model.service.test.ts services/agents/portfolio/__tests__/evidence-trust.contracts.test.ts",
+      "status": "PASS",
+      "result": "3 suites, 20 tests."
+    },
+    {
+      "command": "npx eslint services/agents/portfolio/connector-health.service.ts services/agents/portfolio/connector-inventory-read-model.service.ts services/agents/portfolio/__tests__/connector-health.service.test.ts services/agents/portfolio/__tests__/connector-inventory-read-model.service.test.ts",
+      "status": "PASS",
+      "result": "No scoped C08-002 lint diagnostics."
+    },
+    {
+      "command": "npx eslint scripts/top12-evaluation-harness.js scripts/__tests__/top12-evaluation-harness.test.js",
+      "status": "PASS",
+      "result": "No scoped FND-010 lint diagnostics."
+    },
+    {
+      "command": "npm run typecheck",
+      "status": "PASS",
+      "result": "tsc --noEmit --pretty false."
+    },
+    {
+      "command": "npm run prisma:validate",
+      "status": "PASS",
+      "result": "Prisma schema valid."
+    }
+  ],
+  "promotion": {
+    "phase2b": {
+      "status": "BLOCKED",
+      "checks": 23,
+      "passed": 2,
+      "blockers": 21
+    },
+    "externalInputs": {
+      "status": "EXTERNAL_INPUTS_REQUIRED",
+      "checks": 13,
+      "passed": 1,
+      "blockers": 102
+    },
+    "productionActivation": "BLOCKED",
+    "phase3Authority": "UNAUTHORIZED"
+  },
+  "safety": {
+    "externalMessageSent": false,
+    "financialMutationAttempted": false,
+    "productionActivationAttempted": false,
+    "authorityFabricated": false,
+    "secretValuePrinted": false
+  }
+}

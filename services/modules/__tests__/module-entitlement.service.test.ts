@@ -53,6 +53,28 @@ describe("module entitlement service", () => {
     )
   })
 
+  it("keeps the core dashboard entitled under enforcement without requested modules", () => {
+    const decision = evaluateModuleEntitlement({
+      organizationId: "org-1",
+      moduleSlug: "dashboard",
+      requestedModules: [],
+      surfaceType: "action",
+      surface: "agent:command-agent:daily-digest",
+      accessIntent: "read",
+      actorPermissions: ["dashboard.read"],
+      mode: "enforce",
+    })
+
+    expect(decision.allowed).toBe(true)
+    expect(decision.result).toBe("allow")
+    expect(decision.entitlement).toEqual(
+      expect.objectContaining({
+        moduleSlug: "dashboard",
+        status: "system_default",
+      }),
+    )
+  })
+
   it("keeps observe mode allowed while marking non-entitled modules as would-block even for wildcard RBAC", () => {
     const decision = evaluateModuleEntitlement({
       organizationId: "org-1",

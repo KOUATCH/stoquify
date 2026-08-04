@@ -361,7 +361,7 @@ async function resolveHealedIncident(organizationId: string, sourceId: string) {
         in: ["OPEN", "ACKNOWLEDGED", "ASSIGNED", "IN_PROGRESS", "REOPENED"],
       },
     },
-    select: { id: true },
+    select: { id: true, sourceHash: true },
   });
   if (!incident) return;
   await resolveWorkflowAssuranceIncident({
@@ -369,6 +369,7 @@ async function resolveHealedIncident(organizationId: string, sourceId: string) {
     incidentId: incident.id,
     actorId: null,
     note: "Agent runtime controls reconciled successfully.",
+    currentSourceHash: incident.sourceHash,
   });
 }
 

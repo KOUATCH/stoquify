@@ -19,6 +19,43 @@ export type TenantWideOperatingAuthority = {
   matchedRoleCode: string | null
 }
 
+const TENANT_WIDE_OPERATING_ROLE_CODES = new Set([
+  "admin",
+  "administrator",
+  "super_admin",
+])
+
+export function resolveTenantWideOperatingAuthority(input: {
+  isSuperUser: boolean
+  roleCodes: readonly string[]
+}): TenantWideOperatingAuthority | null {
+  if (input.isSuperUser) {
+    return {
+      kind: "TENANT_WIDE",
+      basis: "RBAC_SUPER_USER",
+      matchedRoleCode: null,
+    }
+  }
+
+  const matchedRoleCode = Array.from(
+    new Set(
+      input.roleCodes
+        .map((roleCode) => roleCode.trim().toLowerCase())
+        .filter(Boolean),
+    ),
+  )
+    .sort()
+    .find((roleCode) => TENANT_WIDE_OPERATING_ROLE_CODES.has(roleCode))
+
+  return matchedRoleCode
+    ? {
+        kind: "TENANT_WIDE",
+        basis: "RBAC_ROLE",
+        matchedRoleCode,
+      }
+    : null
+}
+
 export type LocationOperatingAuthority = {
   kind: "LOCATION_RESPONSIBILITY"
   basis: "Location.managerId"

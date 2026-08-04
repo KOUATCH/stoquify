@@ -27,11 +27,11 @@ function writeReadyFixture(root) {
     "export async function replayPendingOfflineSaleEnvelope", 'event.status !== "PENDING_REPLAY"',
     'event.device.status !== "ACTIVE"', 'blockerCode: "OFFLINE_REPLAY_DEVICE_INACTIVE"',
     'conflictType: "DEVICE_REVOKED"', "findCompletedReplayOutcome({", "commitPOSSale({", "completedAfterRetry",
-    "async function ingestBatchInTx", "assertTerminalScope(tx,", "organizationId: context.organizationId",
+    "OfflineSyncErrorCode createPublicKey verifySignature( offlineEventSignatureIsValid", "async function ingestBatchInTx", "assertTerminalScope(tx,", "requiresActiveCashierSession(parsed.events)", "sessionId: parsed.sessionId", "assertActiveCashierSession status: \"ACTIVE\" userId: input.userId", "organizationId: context.organizationId",
     "terminalId: parsed.terminalId", "locationId: parsed.locationId", 'device.status !== "ACTIVE"',
     'conflictType: "DEVICE_REVOKED"', 'status: "REJECTED"', "IDEMPOTENCY_PAYLOAD_MISMATCH",
-    "SEQUENCE_DUPLICATE_MISMATCH", "SEQUENCE_GAP", "HASH_CHAIN_FORK",
-    'status: conflictType ? "QUARANTINED" : "PENDING_REPLAY"', "async function refreshCertificate",
+    "SEQUENCE_DUPLICATE_MISMATCH", "SEQUENCE_GAP", "HASH_CHAIN_FORK", 'conflictType = "SIGNATURE_INVALID"', 'conflictType = "OFFLINE_POLICY_EXPIRED"', 'conflictType = "STALE_REFERENCE_SNAPSHOT"',
+    'status: conflictType ? "QUARANTINED" : "PENDING_REPLAY"', "stalePolicyDeviceCount", 'code: "OFFLINE_POLICY_EXPIRED"', "async function refreshCertificate",
   ].join("\n"))
   write(root, "services/pos/receipt.service.ts", "BLOCKED_UNTIL_CERTIFIED")
   write(root, "services/assurance/assurance-registry.service.ts", [
@@ -40,6 +40,10 @@ function writeReadyFixture(root) {
     '"offline_pos.replayed_event_proof.required"',
   ].join("\n"))
   write(root, "package.json", '{"scripts":{"offline:pos:replay:gate":"node gate","policy:gates":"npm run offline:pos:replay:gate"}}')
+  write(root, "actions/pos/sync.actions.ts", "withOfflineActionContract ok: true as const ok: false as const ProtectedActionResponse errorCode: offlineActionErrorCode(result)")
+  write(root, "prisma/schema.prisma", "model POSOfflineDevice model POSOfflineSyncBatch model POSOfflineEvent model POSOfflineSyncConflict model POSOfflineSyncCertificate signingPublicKeyPem policyExpiresAt policySnapshotHash sourceSnapshotHash")
+  write(root, "prisma/migrations/20260727110000_offline_pos_sync_foundation/migration.sql", 'CREATE TABLE "pos_offline_devices" CREATE TABLE "pos_offline_events" CREATE TABLE "pos_offline_sync_conflicts" organizationId_deviceId_deviceSeq_key organizationId_idempotencyKey_key')
+  write(root, "components/pos/offline/OfflineSyncStatusStrip.tsx", "stalePolicyCount t.stalePolicy")
 }
 
 describe("offline POS fiscal replay gate", () => {
@@ -47,7 +51,7 @@ describe("offline POS fiscal replay gate", () => {
     const root = makeTempRepo()
     writeReadyFixture(root)
     const report = buildOfflinePOSReplayReadiness(root, { mode: "fail" })
-    expect(report.summary).toMatchObject({ status: "ready", readyCount: 10, blockerCount: 0 })
+    expect(report.summary).toMatchObject({ status: "ready", readyCount: 16, blockerCount: 0 })
     expect(gateResultForReport(report, "fail").exitCode).toBe(0)
   })
 

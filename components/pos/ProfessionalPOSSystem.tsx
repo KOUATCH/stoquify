@@ -36,6 +36,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import type { ButtonProps } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Progress } from "@/components/ui/progress"
@@ -47,6 +48,13 @@ import { OfflineSyncStatusStrip } from "@/components/pos/offline/OfflineSyncStat
 import { ReceiptTokenHistoryPanel, type ReceiptTokenSaleSearchItem } from "@/components/pos/ReceiptTokenHistoryPanel"
 import { ReceiptTokenControlStrip, type ReceiptTokenControlItem } from "@/components/pos/ReceiptTokenControlStrip"
 import { cn } from "@/lib/utils"
+import {
+  RECEIPT_CHANNEL_UI_ORDER,
+  normalizeReceiptDestination,
+  receiptChannelRequiresDestination,
+  receiptDestinationKind,
+  type ReceiptChannel,
+} from "@/services/pos/receipt-channels"
 import {
   useActivePOSCart,
   useActivePOSShift,
@@ -69,7 +77,7 @@ import {
 type ActionResponse<T> = { success: true; data: T; error: null } | { success: false; data: null; error: string }
 
 type TenderMethod = "CASH" | "CARD" | "MOBILE_MONEY" | "BANK_TRANSFER" | "STORE_CREDIT" | "ON_ACCOUNT"
-type ReceiptChannel = "PRINT" | "EMAIL" | "SMS" | "WHATSAPP" | "NONE"
+
 type CatalogView = "all" | "favorites" | "recent"
 
 type CommitSaleResult = {
@@ -286,7 +294,7 @@ function toErrorMessage(error: unknown, fallback: string) {
 }
 
 const tenderMethods: TenderMethod[] = ["CASH", "CARD", "MOBILE_MONEY", "BANK_TRANSFER", "STORE_CREDIT", "ON_ACCOUNT"]
-const receiptChannels: ReceiptChannel[] = ["NONE", "PRINT", "EMAIL", "SMS", "WHATSAPP"]
+const receiptChannels = RECEIPT_CHANNEL_UI_ORDER
 const posSurfaceClass =
   "dashboard-glass-panel overflow-hidden rounded-lg text-[var(--dash-text)]"
 const posPanelClass =
@@ -360,6 +368,7 @@ export default function ProfessionalPOSSystem() {
   const [tenderLines, setTenderLines] = useState<TenderLineState[]>(() => [createTenderLine()])
   const [receiptChannel, setReceiptChannel] = useState<ReceiptChannel>("NONE")
   const [receiptDestination, setReceiptDestination] = useState("")
+  const [whatsAppCustomerOptInConfirmed, setWhatsAppCustomerOptInConfirmed] = useState(false)
   const [lastSale, setLastSale] = useState<CommitSaleResult | null>(null)
   const [receiptHistorySearchDraft, setReceiptHistorySearchDraft] = useState("")
   const [receiptHistorySearchQuery, setReceiptHistorySearchQuery] = useState<string | null>(null)
@@ -582,6 +591,16 @@ export default function ProfessionalPOSSystem() {
   const quickCashAmounts = useMemo(() => cashTenderOptions(cartTotal), [cartTotal])
   const isTenderShort = hasCartLines && balancePreview > 0
   const isAccountTenderMissingCustomer = tenderLines.some((line) => line.method === "ON_ACCOUNT") && !selectedCustomer
+  const isWhatsAppReceiptChannel = receiptChannel === "WHATSAPP"
+  const receiptDestinationRequired = receiptChannelRequiresDestination(receiptChannel)
+  const receiptDestinationPlaceholder = receiptDestinationRequired
+    ? t(`receipt.destinationPlaceholders.${isWhatsAppReceiptChannel ? "whatsapp" : receiptDestinationKind(receiptChannel)}`)
+    : ""
+  const receiptBlocker = receiptDestinationRequired && receiptDestination.trim().length === 0
+    ? t("receipt.destinationRequired")
+    : isWhatsAppReceiptChannel && !whatsAppCustomerOptInConfirmed
+      ? t("receipt.whatsAppConsentRequired")
+      : null
   let tenderBlocker: string | null = null
   if (isAccountTenderMissingCustomer) {
     tenderBlocker = t("tender.customerRequired")
@@ -590,7 +609,8 @@ export default function ProfessionalPOSSystem() {
   } else if (isTenderShort) {
     tenderBlocker = t("tender.shortPayment", { amount: money.format(balancePreview) })
   }
-  const canCommitSale = hasCartLines && !commitSale.isPending && tenderPreview.totalTendered > 0 && !tenderBlocker
+  const saleBlocker = tenderBlocker || receiptBlocker
+  const canCommitSale = hasCartLines && !commitSale.isPending && tenderPreview.totalTendered > 0 && !saleBlocker
   const currentCustomerLabel = selectedCustomer?.name || cart?.customer?.name || t("cart.walkIn")
   const onAccountAmountPreview = tenderPreview.tenders
     .filter((line) => line.method === "ON_ACCOUNT")
@@ -867,10 +887,20 @@ export default function ProfessionalPOSSystem() {
     }
   }
 
+  function selectReceiptChannel(channel: ReceiptChannel) {
+    if (receiptDestinationKind(channel) !== receiptDestinationKind(receiptChannel)) {
+      setReceiptDestination("")
+    }
+    if (channel !== "WHATSAPP") {
+      setWhatsAppCustomerOptInConfirmed(false)
+    }
+    setReceiptChannel(channel)
+  }
+
   async function handleCommitSale() {
     if (!cart || !activeShift) return
     if (!canCommitSale) {
-      notifications.warning(t("notifications.saleBlockedTitle"), tenderBlocker || t("notifications.saleBlockedMessage"), { category: "pos" })
+      notifications.warning(t("notifications.saleBlockedTitle"), saleBlocker || t("notifications.saleBlockedMessage"), { category: "pos" })
       return
     }
 
@@ -897,8 +927,9 @@ export default function ProfessionalPOSSystem() {
         tenders: tenderPreview.tenders,
         receipt: {
           channel: receiptChannel,
-          destination: receiptDestination || undefined,
+          destination: normalizeReceiptDestination(receiptChannel, receiptDestination),
           locale: locale === "fr" ? "FR" : "EN",
+          whatsAppCustomerOptInConfirmed: isWhatsAppReceiptChannel ? whatsAppCustomerOptInConfirmed : undefined,
         },
       })
       const error = actionError(response)
@@ -913,6 +944,7 @@ export default function ProfessionalPOSSystem() {
       setTenderLines([createTenderLine()])
       setReceiptChannel("NONE")
       setReceiptDestination("")
+      setWhatsAppCustomerOptInConfirmed(false)
       setSelectedCustomerId("")
       searchRef.current?.focus()
       notifications.success(
@@ -1982,20 +2014,40 @@ export default function ProfessionalPOSSystem() {
                           variant="outline"
                           size="sm"
                           className={cn("min-w-0 px-2", receiptChannel === channel ? posButtonActiveClass : posButtonClass)}
-                          onClick={() => setReceiptChannel(channel)}
+                          onClick={() => selectReceiptChannel(channel)}
                           title={t(`receipt.channels.${channel}`)}
                         >
                           <span className="truncate">{t(`receipt.channels.${channel}`)}</span>
                         </POSButton>
                       ))}
                     </div>
-                    {receiptChannel !== "NONE" ? (
-                      <Input
-                        value={receiptDestination}
-                        onChange={(event) => setReceiptDestination(event.target.value)}
-                        placeholder={t("receipt.destinationPlaceholder")}
-                        className={cn("mt-2", posFieldClass)}
-                      />
+                    {receiptDestinationRequired ? (
+                      <label className={cn("mt-2", posLabelClass)}>
+                        {t("receipt.destination")}
+                        <Input
+                          value={receiptDestination}
+                          onChange={(event) => setReceiptDestination(event.target.value)}
+                          placeholder={receiptDestinationPlaceholder}
+                          aria-invalid={Boolean(receiptBlocker)}
+                          className={cn("mt-1", posFieldClass)}
+                        />
+                      </label>
+                    ) : null}
+                    {isWhatsAppReceiptChannel ? (
+                      <label className="mt-2 flex items-start gap-2 rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.36)] px-3 py-2 text-xs leading-5 text-[var(--dash-text-soft)]">
+                        <Checkbox
+                          checked={whatsAppCustomerOptInConfirmed}
+                          onCheckedChange={(checked) => setWhatsAppCustomerOptInConfirmed(checked === true)}
+                          aria-label={t("receipt.whatsAppConsent")}
+                          className="mt-0.5"
+                        />
+                        <span>{t("receipt.whatsAppConsent")}</span>
+                      </label>
+                    ) : null}
+                    {receiptBlocker ? (
+                      <div role="alert" className="mt-2 rounded-lg border border-[var(--dash-warning)]/25 bg-[var(--dash-warning-soft)] px-3 py-2 text-xs font-medium text-[#ffe4a8]">
+                        {receiptBlocker}
+                      </div>
                     ) : null}
                   </div>
                   </div>
@@ -2016,9 +2068,9 @@ export default function ProfessionalPOSSystem() {
                       <div className="mt-1 font-semibold">{money.format(changePreview)}</div>
                     </div>
                   </div>
-                  {tenderBlocker ? (
+                  {saleBlocker ? (
                     <div className="mt-2 rounded-lg border border-[var(--dash-warning)]/25 bg-[var(--dash-warning-soft)] px-3 py-2 text-xs font-medium text-[#ffe4a8]">
-                      {tenderBlocker}
+                      {saleBlocker}
                     </div>
                   ) : null}
                   <POSButton

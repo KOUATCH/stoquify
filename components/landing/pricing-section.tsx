@@ -6,7 +6,6 @@ import {
   ArrowRight,
   BarChart3,
   Boxes,
-  Building2,
   Check,
   CircleDollarSign,
   Landmark,
@@ -38,7 +37,6 @@ const adoptionPaths = [
 const extensions = [
   { key: "retail", icon: ShoppingCart },
   { key: "reconciliation", icon: ScanLine },
-  { key: "production", icon: Building2 },
   { key: "intelligence", icon: BarChart3 },
 ] as const
 

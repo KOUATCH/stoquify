@@ -3,7 +3,7 @@ const path = require("path")
 
 const root = path.resolve(__dirname, "../..")
 const pathKeys = ["operations", "finance", "people"]
-const extensionKeys = ["retail", "reconciliation", "production", "intelligence"]
+const extensionKeys = ["retail", "reconciliation", "intelligence"]
 const driverKeys = ["platform", "retail", "people", "regulated"]
 const serviceKeys = ["onboarding", "country", "providers", "assurance"]
 
@@ -78,7 +78,6 @@ describe("landing packages and adoption contract", () => {
     expect(en.landing.pricing.paths.finance.dependency).toContain("Finance and accounting")
     expect(en.landing.pricing.paths.people.dependency).toContain("Country")
     expect(en.landing.pricing.extensions.intelligence.copy).toContain("does not hold")
-    expect(en.landing.pricing.extensions.production.status).toBe("controlled beta")
     expect(strategy).toContain("package catalog is still a proposal")
     expect(strategy).toContain("provider events must never directly grant or revoke runtime access")
   })

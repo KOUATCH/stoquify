@@ -71,6 +71,7 @@ describe("POS offline sync actions", () => {
     })
 
     expect(result.success).toBe(true)
+    expect(result.ok).toBe(true)
     expect(mockGetDashboard).toHaveBeenCalledWith({
       organizationId: "org-session",
       locationId: "loc-1",
@@ -154,6 +155,8 @@ describe("POS offline sync actions", () => {
       data: null,
       error: "Forbidden",
       status: 403,
+      ok: false,
+      errorCode: "FORBIDDEN",
     })
     expect(mockIngestBatch).not.toHaveBeenCalled()
   })

@@ -1,5 +1,6 @@
 const fs = require("fs")
 const path = require("path")
+const { writeGeneratedReportFile } = require("./generated-report-writer")
 
 const DEFAULT_JSON_OUT = "what-next/ap-fraud-control-readiness.json"
 const DEFAULT_MARKDOWN_OUT = "what-next/ap-fraud-control-readiness.md"
@@ -56,6 +57,7 @@ function buildAPFraudControlReadiness(root = process.cwd(), options = {}) {
   const actionTests = readFile(root, "actions/purchasing/__tests__/ap-control.actions.test.ts")
   const serviceTests = readFile(root, "services/purchasing/__tests__/ap-control.service.test.ts")
   const sensitiveActionTests = readFile(root, "services/controls/__tests__/sensitive-action.service.test.ts")
+  const packageJson = readFile(root, "package.json")
 
   const checks = [
     makeCheck({
@@ -253,7 +255,24 @@ function buildAPFraudControlReadiness(root = process.cwd(), options = {}) {
         "Supplier payment approval must remain a dedicated fresh-auth boundary before release hardening can be trusted.",
       ],
       recommendation: "Add a separate supplier payment approval workflow before hard-enforcing full payment maker-approver-releaser separation.",
-    }),  ]
+    }),
+    makeCheck({
+      id: "ap-fraud-control.policy-gate-wiring",
+      title: "AP fraud-control readiness runs as a fail-mode policy gate",
+      risk: "critical",
+      files: ["package.json"],
+      ready: includesAll(packageJson, [
+        '"ap:fraud-control:gate"',
+        "npm run ap:fraud-control:gate",
+      ]),
+      evidence: [
+        "Fail-mode AP fraud-control gate is available as an npm script.",
+        "The release policy path runs the AP fraud-control gate after the purchasing/AP gate.",
+      ],
+      missing: ["AP fraud-control checks are not wired into the fail-mode policy path."],
+      recommendation: "Wire ap:fraud-control:gate into policy:gates directly after purchasing:ap:gate.",
+    }),
+  ]
 
   const summary = {
     generatedAt: new Date().toISOString(),
@@ -271,7 +290,7 @@ function renderMarkdown(report) {
   const lines = [
     "# AP Fraud Control Readiness Inventory",
     "",
-    "Report mode: this inventory is read-only and does not enable hard enforcement.",
+    "Report mode is read-only; fail mode blocks critical gaps.",
     "",
     "## Summary",
     "",
@@ -305,10 +324,8 @@ function renderMarkdown(report) {
 function writeReport(root, args, report) {
   const jsonTarget = path.join(root, args.jsonOut)
   const markdownTarget = path.join(root, args.out)
-  fs.mkdirSync(path.dirname(jsonTarget), { recursive: true })
-  fs.mkdirSync(path.dirname(markdownTarget), { recursive: true })
-  fs.writeFileSync(jsonTarget, `${JSON.stringify(report, null, 2)}\n`, "utf8")
-  fs.writeFileSync(markdownTarget, renderMarkdown(report), "utf8")
+  writeGeneratedReportFile(jsonTarget, `${JSON.stringify(report, null, 2)}\n`, "utf8")
+  writeGeneratedReportFile(markdownTarget, renderMarkdown(report), "utf8")
 }
 
 if (require.main === module) {

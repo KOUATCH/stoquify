@@ -28,7 +28,6 @@ import {
   PaymentStatus,
   POSSessionStatus,
   PrismaClient,
-  ProductionBatchStatus,
   PurchaseOrderStatus,
   RefundStatus,
   SalesOrderStatus,
@@ -63,6 +62,7 @@ const REGISTER_WORKFLOW_OWNER_PASSWORD = "RegisterOwner@2026";
 const REGISTER_WORKFLOW_PENDING_PASSWORD = "PendingVerify@2026";
 const REGISTER_WORKFLOW_MODULES = [
   "POS",
+  "Sales",
   "Inventory",
   "Accounting",
   "Payment reconciliation",
@@ -445,7 +445,7 @@ const ROLE_DEFINITIONS = [
     nameEn: "Inventory Manager",
     nameFr: "Responsable inventaire",
     description:
-      "Inventory catalog, stock levels, transfers, adjustments, and production stock.",
+      "Inventory catalog, stock levels, transfers, adjustments, and stock controls.",
     permissions: permissionsContaining(
       "INVENTORY",
       "ITEM",
@@ -456,9 +456,6 @@ const ROLE_DEFINITIONS = [
       "TRANSFER",
       "ADJUST",
       "SERIAL",
-      "RECIPE",
-      "PRODUCTION",
-      "RAW_MATERIAL",
       "GOODS",
     ),
     email: "inventory.manager@stockflow.test",
@@ -752,9 +749,6 @@ const deleteOrder: Array<[string, SeedDelegate]> = [
   ["StockTransferLine", prisma.stockTransferLine],
   ["StockTransfer", prisma.stockTransfer],
   ["InventoryTransaction", prisma.inventoryTransaction],
-  ["ProductionBatch", prisma.productionBatch],
-  ["RecipeIngredient", prisma.recipeIngredient],
-  ["Recipe", prisma.recipe],
   ["SerialNumber", prisma.serialNumber],
   ["ItemSupplier", prisma.itemSupplier],
   ["InventoryLevel", prisma.inventoryLevel],
@@ -2439,60 +2433,7 @@ async function seedReportingAndCash() {
   });
 }
 
-async function seedProductionAndStockMovement() {
-  await prisma.recipe.createMany({
-    data: seedIndexes.map((index) => ({
-      id: id("recipe", index),
-      nameEn: `Seed Recipe ${pad(index)}`,
-      nameFr: `Recette de test ${pad(index)}`,
-      outputItemId: id("item", index),
-      outputQuantity: qty(10 + index),
-      laborCost: money(2_000 + index * 150),
-      overheadCost: money(1_000 + index * 75),
-      version: 1,
-      isActive: true,
-      notes: `Recipe seed ${pad(index)}`,
-      organizationId: orgId(),
-      updatedAt: day(index),
-    })),
-  });
-
-  await prisma.recipeIngredient.createMany({
-    data: seedIndexes.map((index) => ({
-      id: id("recipe_ingredient", index),
-      recipeId: id("recipe", index),
-      itemId: id("item", (index % COUNT) + 1),
-      quantity: qty(1 + index / 10),
-      wastePercent: money(index % 5),
-      notes: `Recipe ingredient ${pad(index)}`,
-      updatedAt: day(index),
-    })),
-  });
-
-  await prisma.productionBatch.createMany({
-    data: seedIndexes.map((index) => ({
-      id: id("production_batch", index),
-      batchNumber: orgScopedNumber("PROD", index),
-      recipeId: id("recipe", index),
-      plannedQuantity: qty(30 + index),
-      actualQuantity: qty(index % 4 === 0 ? 0 : 28 + index),
-      status: [
-        ProductionBatchStatus.PLANNED,
-        ProductionBatchStatus.IN_PROGRESS,
-        ProductionBatchStatus.COMPLETED,
-      ][index % 3],
-      startedAt: day(index),
-      completedAt: index % 3 === 2 ? day(index + 1) : null,
-      totalInputCost: money(20_000 + index * 750),
-      unitCost: money(800 + index * 30),
-      notes: `Production batch ${pad(index)}`,
-      locationId: id("location", index),
-      organizationId: orgId(),
-      createdById: id("user", index),
-      updatedAt: day(index),
-    })),
-  });
-
+async function seedStockMovement() {
   await prisma.stockAdjustment.createMany({
     data: seedIndexes.map((index) => ({
       id: id("stock_adjustment", index),
@@ -2674,7 +2615,7 @@ async function seedOrgDataset(context: OrgSeedContext) {
     await seedAccountingEntries();
     await seedFinanceAndLedgers();
     await seedReportingAndCash();
-    await seedProductionAndStockMovement();
+    await seedStockMovement();
     await seedAuditAndInvites();
   });
 }

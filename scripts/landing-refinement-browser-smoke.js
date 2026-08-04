@@ -6,7 +6,7 @@ const path = require("path")
 const VIEWPORTS = {
   mobile: { width: 390, height: 844, expectedSlides: 1 },
   tablet: { width: 834, height: 1112, expectedSlides: 2 },
-  desktop: { width: 1440, height: 1100, expectedSlides: 3 },
+  desktop: { width: 1440, height: 1100, expectedSlides: 4 },
 }
 
 function parseArgs(argv) {
@@ -111,12 +111,12 @@ async function inspectLanding(browser, args, locale, viewportName) {
     const workflowScreenshotPath = path.join(args.screenshotsDir, "workflow-" + locale + "-" + viewportName + ".png")
     await workflow.screenshot({ path: workflowScreenshotPath })
 
-    const hrisModule = page.locator('[data-operations-module="hris"]')
-    await hrisModule.waitFor({ state: "visible", timeout: args.timeoutMs })
-    const hrisHref = await hrisModule.getAttribute("href")
-
     const peopleToPay = page.locator("[data-people-to-pay]")
     await peopleToPay.waitFor({ state: "visible", timeout: args.timeoutMs })
+    const peopleToPayId = await peopleToPay.getAttribute("id")
+    const protectedPeopleLinkCount = await peopleToPay
+      .locator('a[href*="/dashboard/people"], a[href*="/dashboard/payroll"]')
+      .count()
     const peopleToPayTextLength = ((await peopleToPay.textContent()) || "").trim().length
     let peopleToPayScreenshot = null
     if (viewportName === "desktop") {
@@ -145,14 +145,14 @@ async function inspectLanding(browser, args, locale, viewportName) {
     await dailyControl.screenshot({ path: dailyScreenshotPath })
 
     const horizontalOverflow = await hasHorizontalOverflow(page)
-    const localizedPeoplePath = "/" + locale + "/dashboard/people"
     const ok =
       workflowSlideCount === 17 &&
       visibleWorkflowSlides === viewport.expectedSlides &&
       workflowBefore !== workflowAfter &&
       workflowControlCount === 17 &&
       workflowTouchAction.includes("pan-y") &&
-      Boolean(hrisHref && hrisHref.includes(localizedPeoplePath)) &&
+      peopleToPayId === "people-to-pay" &&
+      protectedPeopleLinkCount === 0 &&
       peopleToPayTextLength > 300 &&
       dailyTabCount === 7 &&
       dailyBefore === "true" &&
@@ -176,7 +176,8 @@ async function inspectLanding(browser, args, locale, viewportName) {
         screenshot: relativePath(args, workflowScreenshotPath),
       },
       hris: {
-        moduleHref: hrisHref,
+        sectionId: peopleToPayId,
+        protectedPeopleLinkCount,
         peopleToPayTextLength,
         peopleToPayScreenshot,
       },

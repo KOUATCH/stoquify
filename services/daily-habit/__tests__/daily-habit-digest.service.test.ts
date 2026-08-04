@@ -16,16 +16,25 @@ jest.mock("@/services/snapshots/close-readiness-snapshot.service", () => ({
 jest.mock("@/services/snapshots/tenant-operating-snapshot.service", () => ({
   getTenantOperatingSnapshotFromRelated: jest.fn(),
 }))
+jest.mock("@/services/snapshots/inventory-loss-snapshot.service", () => ({
+  getInventoryLossSnapshot: jest.fn(),
+}))
+jest.mock("@/services/modules/module-entitlement.service", () => ({
+  observeModuleAccess: jest.fn(),
+}))
 
 import { db } from "@/prisma/db"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import { getCloseReadinessSnapshot } from "@/services/snapshots/close-readiness-snapshot.service"
 import { getInventoryCashSnapshot } from "@/services/snapshots/inventory-cash-snapshot.service"
+import { getInventoryLossSnapshot } from "@/services/snapshots/inventory-loss-snapshot.service"
 import { getPaymentTruthSnapshot } from "@/services/snapshots/payment-truth-snapshot.service"
 import { getTenantOperatingSnapshotFromRelated } from "@/services/snapshots/tenant-operating-snapshot.service"
 import type {
   CloseReadinessMetrics,
   InventoryCashMetrics,
   PaymentTruthMetrics,
+  InventoryLossMetrics,
   SnapshotKind,
   SnapshotResult,
   TenantOperatingMetrics,
@@ -33,6 +42,8 @@ import type {
 import { composeDailyHabitDigestData, getDailyHabitDigestData } from "../daily-habit-digest.service"
 
 const generatedAt = "2026-07-11T08:00:00.000Z"
+const mockObserveModuleAccess = observeModuleAccess as jest.Mock
+const mockGetInventoryLossSnapshot = getInventoryLossSnapshot as jest.Mock
 
 const paymentMetrics: PaymentTruthMetrics = {
   providerAccountCount: 0,
@@ -61,6 +72,28 @@ const inventoryMetrics: InventoryCashMetrics = {
   periodTransactionCount: 0,
   periodAdjustmentCount: 0,
   periodTransferCount: 0,
+}
+
+const inventoryLossMetrics: InventoryLossMetrics = {
+  lossLineCount: 2,
+  adjustmentCount: 1,
+  totalLossValue: 45000,
+  currency: "XAF",
+  countVarianceLineCount: 0,
+  damagedLineCount: 2,
+  expiredLineCount: 0,
+  recordedTheftCategoryLineCount: 0,
+  writeOffLineCount: 0,
+  evidenceCoveredLineCount: 2,
+  evidenceCoveragePercent: 100,
+  valuationCoveredLineCount: 2,
+  valuationCoveragePercent: 100,
+  approvalAttributedLineCount: 2,
+  approvalCoveragePercent: 100,
+  missingEvidenceLineCount: 0,
+  missingValuationLineCount: 0,
+  missingApprovalAttributionLineCount: 0,
+  sourceTruncated: false,
 }
 
 const closeMetrics: CloseReadinessMetrics = {
@@ -145,6 +178,7 @@ function snapshot<T>(kind: SnapshotKind, metrics: T): SnapshotResult<T> {
 const paymentTruth = snapshot("payment.truth", paymentMetrics)
 const inventoryCash = snapshot("inventory.cash", inventoryMetrics)
 const closeReadiness = snapshot("close.readiness", closeMetrics)
+const inventoryLoss = snapshot("inventory.loss", inventoryLossMetrics)
 const tenantOperating = snapshot("tenant.operating", tenantMetrics)
 
 function compose(actorPermissions: string[], actorRoleCodes: string[]) {
@@ -162,7 +196,26 @@ function compose(actorPermissions: string[], actorRoleCodes: string[]) {
   })
 }
 
+function mockDailyHabitSources() {
+  ;(db.organization.findFirst as jest.Mock).mockResolvedValue({
+    name: "Atelier OHADA",
+    currency: "xaf",
+  })
+  ;(getPaymentTruthSnapshot as jest.Mock).mockResolvedValue(paymentTruth)
+  ;(getInventoryCashSnapshot as jest.Mock).mockResolvedValue(inventoryCash)
+  ;(getCloseReadinessSnapshot as jest.Mock).mockResolvedValue(closeReadiness)
+  ;(getTenantOperatingSnapshotFromRelated as jest.Mock).mockResolvedValue(
+    tenantOperating,
+  )
+}
+
 describe("Daily Habit Digest role cockpit", () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+    mockObserveModuleAccess.mockResolvedValue({ allowed: true })
+    mockGetInventoryLossSnapshot.mockResolvedValue(inventoryLoss)
+  })
+
   it("shows only the stockkeeper workspace for an inventory-only warehouse role", () => {
     const result = compose(["inventory.read"], ["WAREHOUSE_MANAGER"])
 
@@ -201,6 +254,113 @@ describe("Daily Habit Digest role cockpit", () => {
       where: { id: "org-1", isActive: true, deletedAt: null },
       select: { name: true, currency: true },
     })
+    expect(mockObserveModuleAccess).not.toHaveBeenCalled()
+    expect(mockGetInventoryLossSnapshot).not.toHaveBeenCalled()
     expect(result).toMatchObject({ organizationName: "Atelier OHADA", currency: "XAF" })
+  })
+
+  it("loads one tenant Inventory Loss action for an entitled administrator", async () => {
+    mockDailyHabitSources()
+    const actorPermissions = [
+      "dashboard.read",
+      "inventory.levels.read",
+    ]
+
+    const result = await getDailyHabitDigestData({
+      organizationId: "org-1",
+      actorId: "user-1",
+      actorPermissions,
+      actorRoleCodes: [" Administrator "],
+      isSuperUser: false,
+      periodStart: "2026-07-11",
+      periodEnd: "2026-07-11",
+      now: generatedAt,
+    })
+
+    expect(mockObserveModuleAccess).toHaveBeenCalledTimes(1)
+    expect(mockObserveModuleAccess).toHaveBeenCalledWith({
+      organizationId: "org-1",
+      userId: "user-1",
+      actorPermissions,
+      moduleSlug: "inventory",
+      surfaceType: "report",
+      surface: "daily-habit-digest.inventory-loss",
+      accessIntent: "read",
+      mode: "enforce",
+      audit: true,
+      now: generatedAt,
+    })
+    expect(mockGetInventoryLossSnapshot).toHaveBeenCalledWith({
+      organizationId: "org-1",
+      periodStart: "2026-07-11",
+      periodEnd: "2026-07-11",
+      now: generatedAt,
+    })
+    expect(result.actionQueue.summary).toMatchObject({ total: 1 })
+    expect(
+      result.digests.find((digest) => digest.id === "owner-morning")?.actions,
+    ).toEqual([
+      expect.objectContaining({
+        href: "/dashboard/inventory/losses",
+        requiredPermission: "inventory.levels.read",
+      }),
+    ])
+    expect(result).not.toHaveProperty("inventoryLoss")
+  })
+
+  it("does not load tenant loss evidence for a location-responsibility role", async () => {
+    mockDailyHabitSources()
+
+    const result = await getDailyHabitDigestData({
+      organizationId: "org-1",
+      actorId: "manager-1",
+      actorPermissions: ["dashboard.read", "inventory.levels.read"],
+      actorRoleCodes: ["manager"],
+      isSuperUser: false,
+      now: generatedAt,
+    })
+
+    expect(mockObserveModuleAccess).not.toHaveBeenCalled()
+    expect(mockGetInventoryLossSnapshot).not.toHaveBeenCalled()
+    expect(result.actionQueue.summary).toMatchObject({ total: 0 })
+  })
+
+  it("does not evaluate inventory entitlement without Inventory Loss RBAC", async () => {
+    mockDailyHabitSources()
+
+    await getDailyHabitDigestData({
+      organizationId: "org-1",
+      actorId: "admin-1",
+      actorPermissions: ["dashboard.read"],
+      actorRoleCodes: ["admin"],
+      isSuperUser: false,
+      now: generatedAt,
+    })
+
+    expect(mockObserveModuleAccess).not.toHaveBeenCalled()
+    expect(mockGetInventoryLossSnapshot).not.toHaveBeenCalled()
+  })
+
+  it("keeps existing digests available when inventory entitlement denies", async () => {
+    mockDailyHabitSources()
+    mockObserveModuleAccess.mockResolvedValue({ allowed: false })
+
+    const result = await getDailyHabitDigestData({
+      organizationId: "org-1",
+      actorId: "admin-1",
+      actorPermissions: ["dashboard.read", "inventory.levels.read"],
+      actorRoleCodes: ["admin"],
+      isSuperUser: false,
+      now: generatedAt,
+    })
+
+    expect(mockObserveModuleAccess).toHaveBeenCalledTimes(1)
+    expect(mockGetInventoryLossSnapshot).not.toHaveBeenCalled()
+    expect(result.digests.map((digest) => digest.id)).toEqual([
+      "owner-morning",
+      "stockkeeper-stock",
+      "end-of-day",
+    ])
+    expect(result.actionQueue.summary).toMatchObject({ total: 0 })
   })
 })

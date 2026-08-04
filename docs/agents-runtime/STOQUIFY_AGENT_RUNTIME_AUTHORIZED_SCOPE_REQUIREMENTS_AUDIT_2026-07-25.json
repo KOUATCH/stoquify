@@ -1,21 +1,21 @@
 {
   "schemaVersion": 1,
   "auditId": "stoquify-agent-runtime-authorized-scope-requirements-2026-07-25",
-  "evaluatedAt": "2026-07-25T14:28:31.741Z",
-  "status": "AUTHORIZED_SCOPE_COMPLETE_EXTERNAL_BLOCKED",
+  "evaluatedAt": "2026-07-27T16:19:14.118Z",
+  "status": "BLOCKED_REPOSITORY_REQUIREMENTS",
   "authorizedScope": [
     "PHASE_0",
     "PHASE_1",
     "PHASE_2A"
   ],
-  "authorizedScopeComplete": true,
+  "authorizedScopeComplete": false,
   "fullProgramComplete": false,
   "activationAuthorized": false,
   "phase3Authorized": false,
   "summary": {
     "requirements": 37,
-    "satisfied": 37,
-    "repositoryBlockers": 0,
+    "satisfied": 36,
+    "repositoryBlockers": 4,
     "externalBlockers": 6,
     "secretValuesPrinted": false
   },
@@ -32,8 +32,8 @@
     },
     "PHASE_2A": {
       "total": 13,
-      "satisfied": 13,
-      "blocked": 0
+      "satisfied": 12,
+      "blocked": 1
     },
     "PERMANENT": {
       "total": 3,
@@ -383,11 +383,16 @@
       "id": "P2A-11",
       "phase": "PHASE_2A",
       "title": "Frozen commit attestation",
-      "satisfied": true,
+      "satisfied": false,
       "evidencePaths": [
         "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json"
       ],
-      "blockers": []
+      "blockers": [
+        "P2A-11:JSON_FIELD_MISMATCH:freezeAttestation:status",
+        "P2A-11:JSON_FIELD_MISMATCH:freezeAttestation:freezeVerified",
+        "P2A-11:JSON_FIELD_MISMATCH:freezeAttestation:summary.contentMismatches",
+        "P2A-11:JSON_FIELD_MISMATCH:freezeAttestation:summary.phase2aRuntimeDrift"
+      ]
     },
     {
       "id": "P2A-12",
@@ -448,7 +453,12 @@
       "blockers": []
     }
   ],
-  "repositoryBlockers": [],
+  "repositoryBlockers": [
+    "P2A-11:JSON_FIELD_MISMATCH:freezeAttestation:status",
+    "P2A-11:JSON_FIELD_MISMATCH:freezeAttestation:freezeVerified",
+    "P2A-11:JSON_FIELD_MISMATCH:freezeAttestation:summary.contentMismatches",
+    "P2A-11:JSON_FIELD_MISMATCH:freezeAttestation:summary.phase2aRuntimeDrift"
+  ],
   "externalBlockers": [
     "EXTERNAL_PRODUCT_APPROVAL_NOT_RECORDED",
     "EXTERNAL_SECURITY_APPROVAL_NOT_RECORDED",

@@ -10,15 +10,21 @@ jest.mock("@/services/hris/time-leave.service", () => ({
   getOwnHrisTimeLeaveAttendanceStatus: jest.fn(),
 }))
 
+jest.mock("@/services/hris/operational-time.service", () => ({
+  getOwnOperationalTime: jest.fn(),
+}))
+
 import { getOwnHrisEmployeeProfile } from "@/services/hris/employee.service"
 import { getOwnHrisPaymentDestinationStatus } from "@/services/hris/payment-destination.service"
 import { getOwnHrisTimeLeaveAttendanceStatus } from "@/services/hris/time-leave.service"
+import { getOwnOperationalTime } from "@/services/hris/operational-time.service"
 
 import { getHrisEmployeeSelfService } from "../self-service.service"
 
 const mockOwnProfile = getOwnHrisEmployeeProfile as jest.Mock
 const mockOwnPayment = getOwnHrisPaymentDestinationStatus as jest.Mock
 const mockOwnAttendance = getOwnHrisTimeLeaveAttendanceStatus as jest.Mock
+const mockOwnOperationalTime = getOwnOperationalTime as jest.Mock
 
 function ownProfile() {
   return {
@@ -70,6 +76,7 @@ describe("HRIS employee self-service read model", () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockOwnProfile.mockResolvedValue(ownProfile())
+    mockOwnOperationalTime.mockResolvedValue({ requests: [], balances: [] })
     mockOwnPayment.mockResolvedValue({
       employee: {
         id: "private-employee-id",

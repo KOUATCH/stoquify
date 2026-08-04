@@ -1,15 +1,18 @@
 {
   "schemaVersion": 1,
   "attestationId": "stoquify-agent-runtime-phase-2a-freeze-commit-2026-07-25",
-  "evaluatedAt": "2026-07-25T14:33:14.652Z",
+  "evaluatedAt": "2026-07-27T16:18:51.227Z",
   "branch": "codex/service-boundary-burndown",
   "headCommit": "85eb50ef792908ae1e3ecbe7bd34b6054c79cf52",
+  "currentHeadCommit": "5dc78f2c007c51e151342de08be34b72994839bb",
+  "frozenCommitIsCurrentHead": false,
+  "frozenCommitAncestorOfCurrentHead": true,
   "parentCommit": "ac30ee75314a0a2a2fcd6bd2ed65afb280aa0d5e",
   "manifestId": "stoquify-agent-runtime-phase-2a-freeze-candidate-2026-07-25",
   "manifestBaseCommit": "ac30ee75314a0a2a2fcd6bd2ed65afb280aa0d5e",
   "manifestReference": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_CANDIDATE_FILE_MANIFEST_2026-07-25.json",
-  "status": "FROZEN_COMMIT_VERIFIED",
-  "freezeVerified": true,
+  "status": "BLOCKED",
+  "freezeVerified": false,
   "cleanReleaseReady": false,
   "activationAuthorized": false,
   "phase3Authorized": false,
@@ -19,16 +22,22 @@
     "commitCandidateFiles": 207,
     "missingPaths": 0,
     "unexpectedPaths": 0,
-    "verifiedFiles": 207,
-    "contentMismatches": 0,
+    "verifiedFiles": 206,
+    "contentMismatches": 1,
     "exactBlobMatches": 175,
     "lineEndingEquivalentMatches": 5,
-    "cleanFilterEquivalentMatches": 27,
-    "currentChanges": 100,
-    "evidenceControlChanges": 81,
-    "phase2aRuntimeDrift": 0,
-    "outsideCandidateChanges": 19,
-    "blockerCount": 0,
+    "filteredCommitEquivalentMatches": 0,
+    "cleanFilterEquivalentMatches": 26,
+    "currentChanges": 470,
+    "postFreezeCommittedChanges": 52,
+    "evidenceControlChanges": 169,
+    "committedEvidenceControlChanges": 51,
+    "worktreePhase2aRuntimeDrift": 8,
+    "committedPhase2aRuntimeDrift": 0,
+    "phase2aRuntimeDrift": 8,
+    "outsideCandidateChanges": 293,
+    "committedOutsideCandidateChanges": 1,
+    "blockerCount": 9,
     "secretValuesPrinted": false
   },
   "missingPaths": [],
@@ -1252,8 +1261,8 @@
       "expectedSha256": "91e9f4c916e5ca2d07b5ee82c1c3ba839338a68e4477323c4b1288d2e6fa5e92",
       "expectedBytes": 7488,
       "verification": {
-        "verified": true,
-        "method": "GIT_CLEAN_FILTER_EQUIVALENT",
+        "verified": false,
+        "method": "CONTENT_MISMATCH",
         "committedBytes": 7487,
         "committedSha256": "63da91a4451c2513a76c2c549f52ec81332ccb7ecd2c825df2af42ee76334616"
       }
@@ -2522,6 +2531,30 @@
   "currentChanges": [
     {
       "status": "M",
+      "path": "actions/accounting/__tests__/data-trust.actions.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "actions/accounting/data-trust.actions.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "actions/agents/__tests__/command-agent.actions.test.ts",
+      "candidateCategory": "RUNTIME_SOURCE_TEST",
+      "classification": "PHASE2A_RUNTIME_DRIFT"
+    },
+    {
+      "status": "M",
+      "path": "actions/agents/command-agent.actions.ts",
+      "candidateCategory": "RUNTIME_SOURCE_TEST",
+      "classification": "PHASE2A_RUNTIME_DRIFT"
+    },
+    {
+      "status": "M",
       "path": "actions/brands/getOrgBrands.ts",
       "candidateCategory": null,
       "classification": "OUTSIDE_CANDIDATE_SCOPE"
@@ -2534,7 +2567,109 @@
     },
     {
       "status": "M",
+      "path": "actions/payroll/payroll-country-pack-review-intake.actions.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "actions/pos/__tests__/sync.actions.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "actions/pos/sync.actions.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "actions/purchasing/__tests__/ap-control.actions.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "actions/purchasing/ap-control.actions.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/accountant-portal/__tests__/page.test.tsx",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/accountant-portal/page.tsx",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "components/agents/AgentCommandPanel.tsx",
+      "candidateCategory": "RUNTIME_SOURCE_TEST",
+      "classification": "PHASE2A_RUNTIME_DRIFT"
+    },
+    {
+      "status": "M",
+      "path": "components/agents/__tests__/AgentCommandPanel.test.tsx",
+      "candidateCategory": "RUNTIME_SOURCE_TEST",
+      "classification": "PHASE2A_RUNTIME_DRIFT"
+    },
+    {
+      "status": "M",
+      "path": "components/compliance/ComplianceCenterDashboard.tsx",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "components/hris/HrisEmployeeSelfService.tsx",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "components/hris/HrisManagerSelfService.tsx",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "components/hris/__tests__/HrisEmployeeSelfService.test.tsx",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "components/hris/__tests__/HrisManagerSelfService.test.tsx",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
       "path": "components/landing/connected-workflow.tsx",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "components/landing/operations-map.tsx",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "components/landing/people-to-pay.tsx",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "components/landing/pricing-section.tsx",
       "candidateCategory": null,
       "classification": "OUTSIDE_CANDIDATE_SCOPE"
     },
@@ -2546,14 +2681,38 @@
     },
     {
       "status": "M",
-      "path": "docs/agents-runtime/STOQUIFY_AGENT_RECONCILER_DEPLOYMENT_CONTRACT_2026-07-24.md",
-      "candidateCategory": "RELEASE_EVIDENCE_DOC",
+      "path": "components/pos/offline/OfflineSyncStatusStrip.tsx",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "components/ui/groups/inventory/ItemForm2.tsx",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "config/sidebar.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_AUTHORIZED_SCOPE_REQUIREMENTS_AUDIT_2026-07-25.json",
+      "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
       "status": "M",
-      "path": "docs/agents-runtime/STOQUIFY_AGENT_RECONCILER_DEPLOYMENT_CONTRACT_2026-07-24.pdf",
-      "candidateCategory": "RELEASE_EVIDENCE_DOC",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_AUTHORIZED_SCOPE_REQUIREMENTS_AUDIT_2026-07-25.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_AUTHORIZED_SCOPE_REQUIREMENTS_AUDIT_2026-07-25.pdf",
+      "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
@@ -2570,6 +2729,60 @@
     },
     {
       "status": "M",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASED_EXECUTION_COMPLETION_AUDIT_2026-07-25.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASED_EXECUTION_COMPLETION_AUDIT_2026-07-25.pdf",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.pdf",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_ENTRY_DECISION_2026-07-25.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_ENTRY_DECISION_2026-07-25.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_ENTRY_DECISION_2026-07-25.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_ENTRY_DECISION_2026-07-25.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
       "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json",
       "candidateCategory": "RELEASE_EVIDENCE_DOC",
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
@@ -2578,6 +2791,12 @@
       "status": "M",
       "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.md",
       "candidateCategory": "RELEASE_EVIDENCE_DOC",
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.pdf",
+      "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
@@ -2594,9 +2813,69 @@
     },
     {
       "status": "M",
+      "path": "lib/permissions.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "messages/en.json",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "messages/fr.json",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
       "path": "package.json",
       "candidateCategory": "RUNTIME_SOURCE_TEST",
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "prisma/comprehensive-seed.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "D",
+      "path": "prisma/production-seed.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "prisma/schema.prisma",
+      "candidateCategory": "RUNTIME_SOURCE_TEST",
+      "classification": "PHASE2A_RUNTIME_DRIFT"
+    },
+    {
+      "status": "M",
+      "path": "prisma/seed.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "scripts/__tests__/agent-phase-promotion-gate.test.js",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "scripts/__tests__/agent-phase2a-freeze-commit-gate.test.js",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "scripts/__tests__/landing-packages-content.test.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
     },
     {
       "status": "M",
@@ -2618,13 +2897,241 @@
     },
     {
       "status": "M",
-      "path": "scripts/agent-phase2a-command-gate.js",
-      "candidateCategory": "RUNTIME_SOURCE_TEST",
+      "path": "scripts/__tests__/offline-pos-fiscal-replay-gate.test.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "scripts/__tests__/payment-cash-truth-gate.test.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "scripts/__tests__/policy-gates.test.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "scripts/__tests__/prisma-production-migration-gate.test.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "scripts/__tests__/purchasing-ap-consolidation-gate.test.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "scripts/__tests__/report-trust-export-gate.test.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "scripts/__tests__/statutory-country-pack-development-gate.test.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "scripts/__tests__/statutory-country-pack-production-gate.test.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "scripts/__tests__/with-payroll-immutability-test-db.test.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "scripts/agent-phase-promotion-gate.js",
+      "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
       "status": "M",
-      "path": "services/leakage/cash-shortage-policy.service.ts",
+      "path": "scripts/agent-phase2a-freeze-commit-gate.js",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "D",
+      "path": "scripts/export_bakery_recipe_data.py",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "D",
+      "path": "scripts/generate_bakery_recipe_book.py",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "scripts/offline-pos-fiscal-replay-gate.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "scripts/payment-cash-truth-gate.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "scripts/prisma-production-migration-gate.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "scripts/purchasing-ap-consolidation-gate.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "scripts/report-trust-export-gate.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "scripts/statutory-country-pack-development-gate.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "scripts/statutory-country-pack-production-gate.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/accounting/__tests__/data-trust.service.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/accounting/data-trust.schemas.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/accounting/data-trust.service.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/agents/__tests__/agent-output-validator.service.test.ts",
+      "candidateCategory": "RUNTIME_SOURCE_TEST",
+      "classification": "PHASE2A_RUNTIME_DRIFT"
+    },
+    {
+      "status": "M",
+      "path": "services/agents/command-agent-contracts.ts",
+      "candidateCategory": "RUNTIME_SOURCE_TEST",
+      "classification": "PHASE2A_RUNTIME_DRIFT"
+    },
+    {
+      "status": "M",
+      "path": "services/agents/skills/role-daily-brief.skill.ts",
+      "candidateCategory": "RUNTIME_SOURCE_TEST",
+      "classification": "PHASE2A_RUNTIME_DRIFT"
+    },
+    {
+      "status": "M",
+      "path": "services/compliance/__tests__/compliance-center.service.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/compliance/certification-outbox.service.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/compliance/compliance-center.service.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/compliance/country-pack-hooks.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/compliance/fiscal-document.service.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/compliance/index.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/events/business-event.schemas.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/hris/__tests__/manager-self-service.service.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/hris/__tests__/self-service.service.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/hris/manager-self-service.service.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/hris/self-service.service.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/inventory/__tests__/inventory-projection-rebuild.service.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/inventory/inventory-projection-rebuild.service.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/location/location.service.ts",
       "candidateCategory": null,
       "classification": "OUTSIDE_CANDIDATE_SCOPE"
     },
@@ -2636,14 +3143,206 @@
     },
     {
       "status": "M",
-      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_CONTROLLED_PILOT_ASSURANCE_COMPLETION_REPORT_2026-07-24.md",
-      "candidateCategory": "RELEASE_EVIDENCE_DOC",
+      "path": "services/modules/module-catalog.service.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/modules/module-control-contracts.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/payroll/__tests__/payroll-completion.service.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/payroll/__tests__/payroll-control.service.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/payroll/compensation.service.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/payroll/payroll-control.service.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/payroll/payroll-proof-backfill-executor.service.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/payroll/payroll-setup-readiness.service.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/pos/__tests__/offline-sync.service.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/pos/__tests__/pos.service.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/pos/offline-sync.schemas.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/pos/offline-sync.service.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/pos/pos.service.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/pos/receipt.service.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/purchasing/__tests__/ap-control.service.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/purchasing/ap-control.schemas.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/purchasing/ap-control.service.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/reconciliation/__tests__/payment-suspense-workflow.service.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/reconciliation/payment-reconciliation-certification.service.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/reconciliation/payment-suspense-workflow.service.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "services/regulatory/index.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "D",
+      "path": "types/production.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "M",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_AUTHORIZED_SCOPE_REQUIREMENTS_AUDIT_2026-07-25.json",
+      "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
       "status": "M",
-      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_CONTROLLED_PILOT_ASSURANCE_COMPLETION_REPORT_2026-07-24.pdf",
-      "candidateCategory": "RELEASE_EVIDENCE_DOC",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_AUTHORIZED_SCOPE_REQUIREMENTS_AUDIT_2026-07-25.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_AUTHORIZED_SCOPE_REQUIREMENTS_AUDIT_2026-07-25.pdf",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASED_EXECUTION_COMPLETION_AUDIT_2026-07-25.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASED_EXECUTION_COMPLETION_AUDIT_2026-07-25.pdf",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_ENTRY_DECISION_2026-07-25.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_ENTRY_DECISION_2026-07-25.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_ENTRY_DECISION_2026-07-25.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_ENTRY_DECISION_2026-07-25.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.md",
+      "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
@@ -2696,6 +3395,24 @@
     },
     {
       "status": "M",
+      "path": "what-next/module-surface-inventory.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/module-surface-inventory.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/module-system/execution-status.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
       "path": "what-next/offline-pos-fiscal-replay-readiness.json",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
@@ -2715,6 +3432,42 @@
     {
       "status": "M",
       "path": "what-next/payment-cash-truth-readiness.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/payroll/accounting-close-development-readiness.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/payroll/accounting-close-development-readiness.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/payroll/migration-backfill-development-readiness.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/payroll/migration-backfill-development-readiness.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/payroll/payments-declarations-development-readiness.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/payroll/payments-declarations-development-readiness.md",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
@@ -2828,6 +3581,18 @@
     },
     {
       "status": "M",
+      "path": "what-next/statutory-country-pack-development-readiness.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/statutory-country-pack-development-readiness.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
       "path": "what-next/statutory-country-pack-production-readiness.json",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
@@ -2839,106 +3604,406 @@
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
-      "status": "??",
-      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_AUTHORIZED_SCOPE_REQUIREMENTS_AUDIT_2026-07-25.json",
+      "status": "M",
+      "path": "what-next/statutory-country-pack-review-preflight.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "M",
+      "path": "what-next/statutory-country-pack-review-preflight.md",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
       "status": "??",
-      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_AUTHORIZED_SCOPE_REQUIREMENTS_AUDIT_2026-07-25.md",
+      "path": "actions/accounting/__tests__/accountant-access.actions.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "actions/accounting/accountant-access.actions.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "actions/ai/__tests__/copilot-proposal.actions.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "actions/ai/copilot-proposal.actions.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "actions/compliance/__tests__/country-adapter-pilot.actions.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "actions/compliance/country-adapter-pilot.actions.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "actions/hris/leave-balance.actions.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "actions/hris/operational-time.actions.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/accountant-access/page.tsx",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/accountant-portfolio/page.tsx",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "app/[locale]/(home)/landing-preview/founder-journey/page.tsx",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "components/accounting/AccountantAccessManager.tsx",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "components/accounting/AccountantPortfolio.tsx",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "components/copilot/CopilotProposalControls.tsx",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "components/copilot/__tests__/CopilotProposalControls.test.tsx",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "components/hris/HrisOperationalTimeApprovalPanel.tsx",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "components/hris/HrisOperationalTimeRequestPanel.tsx",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "components/hris/__tests__/HrisOperationalTimePanels.test.tsx",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "components/landing-preview/founder-journey/founder-journey-preview.tsx",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "components/landing-preview/founder-journey/preview-bar.tsx",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "components/landing-preview/founder-journey/preview-hero.tsx",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "components/landing-preview/founder-journey/preview-sections.tsx",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/CNPS-Contribution-Scale-official-2025.jpg",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/CNPS-Employer-Obligations-current-2026-07-26.html",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/CNPS-Official-FAQ-Decree-2016-072.pdf",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/CNPS-Statistical-Yearbook-2025.pdf",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/authoritative-source-supplement-2026-07-26.json",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package-manifest.json",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package/FIELD_MAPPING.md",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package/POST_SIGNATURE_RUNBOOK.md",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package/README.md",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package/REGULATOR_CONFIRMATION_REQUEST_DRAFT.md",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package/SIGNATURE_VERIFICATION_PROCEDURE.md",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package/evidence-index.json",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package/expert-review-checklist.md",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package/fixture-review-workbook.template.json",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package/maker-checker-approval.template.json",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package/review-decision.return.template.json",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package/reviewer-qualification-conflict.template.json",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package/source-hash-verification.template.json",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUTS_2026-07-25.json",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
       "status": "??",
-      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_AUTHORIZED_SCOPE_REQUIREMENTS_AUDIT_2026-07-25.pdf",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUTS_OPERATOR_RUNBOOK_2026-07-25.md",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
       "status": "??",
-      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASED_EXECUTION_COMPLETION_AUDIT_2026-07-25.md",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUTS_OPERATOR_RUNBOOK_2026-07-25.pdf",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
       "status": "??",
-      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASED_EXECUTION_COMPLETION_AUDIT_2026-07-25.pdf",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUT_READINESS_2026-07-25.json",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
       "status": "??",
-      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUT_READINESS_2026-07-25.md",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
       "status": "??",
-      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.md",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUT_READINESS_2026-07-25.pdf",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
       "status": "??",
-      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.pdf",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_GATE_UNBLOCKING_EXECUTION_PROMPT_2026-07-25.md",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
       "status": "??",
-      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_ENTRY_DECISION_2026-07-25.json",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_GATE_UNBLOCKING_EXECUTION_PROMPT_2026-07-25.pdf",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
       "status": "??",
-      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_ENTRY_DECISION_2026-07-25.md",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_HUMAN_INTERVENTION_PLAN_2026-07-25.json",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
       "status": "??",
-      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_PILOT_EXIT_REGISTER_2026-07-25.json",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_HUMAN_INTERVENTION_PLAN_2026-07-25.md",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
       "status": "??",
-      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_ENTRY_DECISION_2026-07-25.json",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_HUMAN_INTERVENTION_PLAN_2026-07-25.pdf",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
       "status": "??",
-      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_ENTRY_DECISION_2026-07-25.md",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_ENTRY_DECISION_2026-07-25.pdf",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
       "status": "??",
-      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.pdf",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_ENTRY_DECISION_2026-07-25.pdf",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
       "status": "??",
-      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_PROMOTION_GATE_CONTRACT_2026-07-25.md",
+      "path": "docs/blockers/ENTERPRISE_RELEASE_BLOCKER_RESOLUTION_PLANNING_PROMPT_2026-07-27.pdf",
       "candidateCategory": null,
-      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
     },
     {
       "status": "??",
-      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_RELEASE_EVIDENCE_CLASSIFICATION_HARDENING_EXECUTION_REPORT_2026-07-25.md",
+      "path": "docs/blockers/ENTERPRISE_RELEASE_BLOCKER_STATUS_2026-07-27.pdf",
       "candidateCategory": null,
-      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
     },
     {
       "status": "??",
-      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_RELEASE_EVIDENCE_CLASSIFICATION_HARDENING_EXECUTION_REPORT_2026-07-25.pdf",
+      "path": "docs/blockers/ENTERPRISE_RELEASE_BLOCKER_UNBLOCKING_EXECUTION_PLAN_2026-07-27.md",
       "candidateCategory": null,
-      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/blockers/ENTERPRISE_RELEASE_BLOCKER_UNBLOCKING_EXECUTION_PLAN_2026-07-27.pdf",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/blockers/ENTERPRISE_RELEASE_EXTERNAL_WORKSTREAM_HANDOFF_2026-07-27.md",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/blockers/ENTERPRISE_RELEASE_EXTERNAL_WORKSTREAM_HANDOFF_2026-07-27.pdf",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/blockers/ENTERPRISE_RELEASE_UNBLOCKING_EXECUTION_REGISTER_2026-07-27.md",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/blockers/ENTERPRISE_RELEASE_UNBLOCKING_EXECUTION_REGISTER_2026-07-27.pdf",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/blockers/enterprise-release-blocker-register-2026-07-27.json",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/blockers/enterprise-release-external-evidence-intake-2026-07-27.json",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/blockers/enterprise-release-external-workstream-handoff-2026-07-27.json",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/blockers/enterprise-release-unblocking-execution-state-2026-07-27.json",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
     },
     {
       "status": "??",
@@ -2949,6 +4014,186 @@
     {
       "status": "??",
       "path": "docs/codex prompts/stoquify-codex-maximum-results-workflow.txt",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/country-pack/CAMEROON_CNPS_AUTHORITATIVE_EVIDENCE_RESEARCH_PROMPT_2026-07-26.md",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/country-pack/CAMEROON_CNPS_AUTHORITATIVE_EVIDENCE_RESEARCH_PROMPT_2026-07-26.pdf",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/country-pack/CAMEROON_CNPS_AUTHORITATIVE_EVIDENCE_RESEARCH_REPORT_2026-07-26.md",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/country-pack/CAMEROON_CNPS_AUTHORITATIVE_EVIDENCE_RESEARCH_REPORT_2026-07-26.pdf",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/country-pack/CAMEROON_CNPS_EXTERNAL_REVIEW_AND_SIGNATURE_ENABLEMENT_IMPLEMENTATION_2026-07-26.md",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/country-pack/CAMEROON_CNPS_EXTERNAL_REVIEW_AND_SIGNATURE_ENABLEMENT_IMPLEMENTATION_2026-07-26.pdf",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/country-pack/CAMEROON_CNPS_EXTERNAL_REVIEW_AND_SIGNATURE_ENABLEMENT_PROMPT_2026-07-26.pdf",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/country-pack/CAMEROON_COUNTRY_PACK_EVIDENCE_AND_APPROVAL_READINESS_REPORT_2026-07-26.md",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/country-pack/CAMEROON_COUNTRY_PACK_EVIDENCE_AND_APPROVAL_READINESS_REPORT_2026-07-26.pdf",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/country-pack/CAMEROON_COUNTRY_PACK_EVIDENCE_AUDIT_PROMPT_2026-07-26.md",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/country-pack/CAMEROON_COUNTRY_PACK_EVIDENCE_AUDIT_PROMPT_2026-07-26.pdf",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/country-pack/COUNTRY_PACK_DECOUPLING_ASSESSMENT_2026-07-26.md",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/country-pack/COUNTRY_PACK_DECOUPLING_ASSESSMENT_2026-07-26.pdf",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/country-pack/COUNTRY_PACK_DECOUPLING_TARGET_ARCHITECTURE_PROMPT_2026-07-26.md",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/country-pack/COUNTRY_PACK_REGULATORY_ISOLATION_ENTERPRISE_RELEASE_GATE_2026-07-26.md",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/country-pack/COUNTRY_PACK_REGULATORY_ISOLATION_IMPLEMENTATION_2026-07-26.md",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/country-pack/COUNTRY_PACK_REGULATORY_ISOLATION_TARGET_ARCHITECTURE_2026-07-26.md",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/country-pack/COUNTRY_PACK_REGULATORY_ISOLATION_TARGET_ARCHITECTURE_2026-07-26.pdf",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/country-pack/COUNTRY_PACK_STAGED_ASSURANCE_AND_DEVELOPMENT_DECOUPLING_PROMPT_2026-07-26.pdf",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/country-pack/COUNTRY_PACK_STAGED_ASSURANCE_AND_DEVELOPMENT_DECOUPLING_REPORT_2026-07-26.md",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/domains/compliance/CAMEROON_DGI_COUNTRY_ADAPTER_PILOT_OPERATIONS_RUNBOOK_2026-07-27.md",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/landing page/STOQUIFY_EARLY_STAGE_FOUNDER_LANDING_EXECUTION_PROMPT_2026-07-27.pdf",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/landing page/STOQUIFY_LANDING_FOUNDER_JOURNEY_EXECUTION_REPORT_2026-07-27.pdf",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/landing-page/STOQUIFY_EARLY_STAGE_FOUNDER_LANDING_EXECUTION_PROMPT_2026-07-27.md",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/landing-page/STOQUIFY_EARLY_STAGE_FOUNDER_LANDING_EXECUTION_PROMPT_2026-07-27.pdf",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/landing-page/STOQUIFY_LANDING_FOUNDER_PREVIEW_EVALUATION_REPORT_2026-07-27.pdf",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/panging-page/STOQUIFY_BREAKTHROUGH_LANDING_EXPERIENCE_EXECUTION_PROMPT_2026-07-27.md",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/panging-page/STOQUIFY_BREAKTHROUGH_LANDING_EXPERIENCE_EXECUTION_PROMPT_2026-07-27.pdf",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/panging-page/STOQUIFY_BREAKTHROUGH_LANDING_EXPERIENCE_RESEARCH_REPORT_2026-07-27.md",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "docs/panging-page/STOQUIFY_BREAKTHROUGH_LANDING_EXPERIENCE_RESEARCH_REPORT_2026-07-27.pdf",
       "candidateCategory": null,
       "classification": "OUTSIDE_CANDIDATE_SCOPE"
     },
@@ -3002,126 +4247,1434 @@
     },
     {
       "status": "??",
+      "path": "prisma/migrations/20260726143000_regulatory_isolation_outbox/migration.sql",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "prisma/migrations/20260726190000_retire_production_bom_capability/migration.sql",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "prisma/migrations/20260726213000_hris_operational_time_management/migration.sql",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "prisma/migrations/20260727090000_accountant_access_portfolio/migration.sql",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "prisma/migrations/20260727110000_offline_pos_sync_foundation/migration.sql",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "prisma/migrations/20260727143000_country_adapter_pilot_foundation/migration.sql",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "prisma/migrations/20260727170000_ai_copilot_proposal_guardrails/migration.sql",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/__pycache__/generate_landing_innovation_pdfs.cpython-312.pyc",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/__tests__/agent-external-input-readiness.test.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/__tests__/agent-external-input-security-hardening.test.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/__tests__/agent-human-intervention-plan.test.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/__tests__/ai-copilot-guardrails-gate.test.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/__tests__/country-adapter-pilot-gate.test.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/__tests__/enterprise-release-blocker-status.test.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/__tests__/enterprise-release-external-evidence-intake.test.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/__tests__/fiscalization-worker.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/__tests__/inventory-valuation-truth-gate.test.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/__tests__/landing-founder-journey.test.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/__tests__/landing-founder-preview.test.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/__tests__/payroll-presence-readiness-gate.test.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/__tests__/people-to-pay-landing.test.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/__tests__/prisma-migration-history-health-check.test.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/__tests__/regulatory-boundary-gate.test.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/__tests__/run-policy-gates-integration.test.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/__tests__/statutory-country-pack-integration-gate.test.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/__tests__/statutory-country-pack-review-package.test.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/agent-external-input-readiness.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/agent-human-intervention-plan.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/ai-copilot-guardrails-gate.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/country-adapter-pilot-gate.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/enterprise-release-blocker-status.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/enterprise-release-external-evidence-intake.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/fiscalization-worker.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/generate_landing_innovation_pdfs.py",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/inventory-valuation-truth-gate.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/landing-founder-journey-browser-smoke.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/landing-founder-preview-browser-smoke.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/payroll-presence-readiness-gate.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/people-to-pay-browser-smoke.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/policy-gates-integration-contract.json",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/prisma-migration-history-health-check.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/regulatory-boundary-gate.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/reset-payroll-immutability-test-db.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/run-policy-gates-integration.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/sql/payroll-immutability-runtime-test-triggers.sql",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/statutory-country-pack-integration-gate.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "scripts/statutory-country-pack-review-package.js",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "services/accounting/__tests__/accountant-access.service.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "services/accounting/accountant-access.schemas.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "services/accounting/accountant-access.service.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "services/ai/__tests__/copilot-proposal-release.service.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "services/ai/__tests__/copilot-proposal.service.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "services/ai/copilot-proposal-release.service.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "services/ai/copilot-proposal.schemas.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "services/ai/copilot-proposal.service.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "services/compliance/__tests__/country-adapter-pilot.service.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "services/compliance/__tests__/fiscal-sequence.service.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "services/compliance/__tests__/fiscalization-outbox.service.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "services/compliance/__tests__/fiscalization-outbox.worker.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "services/compliance/country-adapter-pilot.schemas.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "services/compliance/country-adapter-pilot.service.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "services/compliance/fiscalization-outbox.service.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "services/hris/__tests__/leave-balance.service.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "services/hris/__tests__/operational-time.service.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "services/hris/leave-balance.service.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "services/hris/operational-time.service.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "services/reconciliation/__tests__/payment-suspense-ledger.service.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "services/reconciliation/payment-suspense-ledger.service.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "services/regulatory/__tests__/regulatory-capability.service.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "services/regulatory/adapters/published-country-pack.adapter.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "services/regulatory/ports/regulatory-capability.port.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "services/regulatory/regulatory-capability.service.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "services/regulatory/runtime/__tests__/regulatory-runtime-class.test.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "services/regulatory/runtime/regulatory-runtime-class.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/AQSTOQFLOW_014_OFFLINE_POS_SYNC_ARCHITECT_BUILDER_EXECUTION_REPORT_2026-07-27.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/AQSTOQFLOW_015_COUNTRY_ADAPTER_PILOT_EXECUTION_REPORT_2026-07-27.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/AQSTOQFLOW_016_AI_COPILOT_GUARDRAILS_EXECUTION_REPORT_2026-07-27.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/AQSTOQFLOW_017_ENTERPRISE_RELEASE_GATE_EXECUTION_REPORT_2026-07-27.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/AQSTOQFLOW_SKILL_007_POS_LEDGER_CONTROLS_COMPLETION_2026-07-26.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/AQSTOQFLOW_SKILL_008_COMPLIANCE_CENTER_EXECUTION_2026-07-26.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/AQSTOQFLOW_SKILL_009_PAYMENT_RECONCILIATION_MOAT_EXECUTION_2026-07-26.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/AQSTOQFLOW_SKILL_009_SUSPENSE_LEDGER_RESOLUTION_2026-07-26.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/AQSTOQFLOW_SKILL_010_INVENTORY_VALUATION_KERNEL_EXECUTION_2026-07-26.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/AQSTOQFLOW_SKILL_011_PURCHASING_AP_CONTROLS_EXECUTION_2026-07-26.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/AQSTOQFLOW_SKILL_013_DATA_TRUST_ACCOUNTANT_PORTAL_EXECUTION_2026-07-27.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/AQSTOQFLOW_SKILL_017_ENTERPRISE_RELEASE_GATE_DEFERRED_2026-07-26.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/CAMEROON_CNPS_EXTERNAL_REVIEW_NEXT_ACTIONS_2026-07-26.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/COUNTRY_PACK_STAGED_ASSURANCE_IMPLEMENTATION_FOLLOW_UP_2026-07-26.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/PRODUCTION_BOM_CAPABILITY_RETIREMENT_2026-07-26.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.pdf",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ai-copilot-guardrails-readiness.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ai-copilot-guardrails-readiness.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ai-copilot-prisma-migration-readiness.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ai-copilot-prisma-migration-readiness.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ap-fraud-control-readiness.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ap-fraud-control-readiness.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/blocker-execution/local-development-migration-history-diagnostic-2026-07-27.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/blocker-execution/local-development-migration-history-diagnostic-2026-07-27.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/blocker-execution/prisma-migration-production-preflight-2026-07-27.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/blocker-execution/prisma-migration-production-preflight-2026-07-27.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/build-diagnostics/enterprise-unblocking-b01/summary.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/build-diagnostics/enterprise-unblocking-b01/summary.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/country-adapter-pilot-readiness.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/country-adapter-pilot-readiness.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/enterprise-release-blocker-status.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/enterprise-release-blocker-status.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/enterprise-release-external-evidence-intake-readiness.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/enterprise-release-external-evidence-intake-readiness.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/inventory-valuation-truth-readiness.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/inventory-valuation-truth-readiness.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/payroll/AQSTOQFLOW_HRIS_PAYROLL_SELF_SERVICE_2026-07-26.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/payroll/AQSTOQFLOW_HRIS_PAYROLL_TIME_LEAVE_ATTENDANCE_2026-07-26.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/payroll/AQSTOQFLOW_SKILL_012_OPERATIONAL_TIME_MANAGEMENT_COMPLETION_2026-07-26.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/payroll/AQSTOQFLOW_SKILL_012_PAYROLL_PRESENCE_ENGINE_EXECUTION_2026-07-26.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/payroll/payroll-presence-readiness.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/payroll/payroll-presence-readiness.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/prisma-migration-history-health.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/prisma-migration-history-health.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/skill-013-report-trust-export-readiness.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/skill-013-report-trust-export-readiness.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/skill-014-offline-pos-fiscal-replay-readiness.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/skill-014-offline-pos-fiscal-replay-readiness.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/skill-017-country-pack-production-readiness.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/skill-017-country-pack-production-readiness.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/skill-017-country-pack-review-preflight.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/skill-017-country-pack-review-preflight.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/skill-017-enterprise-release-evidence-index.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/skill-017-enterprise-release-evidence-index.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/skill-017-payment-cash-truth-readiness.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/skill-017-payment-cash-truth-readiness.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/skill-017-prisma-migration-release-readiness.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/skill-017-prisma-migration-release-readiness.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/skill-017-public-identity-release-readiness.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/skill-017-public-identity-release-readiness.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/skill-017-release-secret-preflight.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/skill-017-release-secret-preflight.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/skill-017-role-based-operating-cockpit-readiness.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/skill-017-role-based-operating-cockpit-readiness.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/statutory-country-pack-integration-readiness.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/statutory-country-pack-integration-readiness.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/landing-founder-journey/2026-07-27/STOQUIFY_LANDING_FOUNDER_JOURNEY_EXECUTION_REPORT_2026-07-27.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/landing-founder-journey/2026-07-27/browser-evidence.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/landing-founder-journey/2026-07-27/screenshots/founder-journey-en-desktop.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/landing-founder-journey/2026-07-27/screenshots/founder-journey-en-mobile.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/landing-founder-journey/2026-07-27/screenshots/founder-journey-en-tablet.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/landing-founder-journey/2026-07-27/screenshots/founder-journey-fr-desktop.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/landing-founder-journey/2026-07-27/screenshots/founder-journey-fr-mobile.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/landing-founder-journey/2026-07-27/screenshots/founder-journey-fr-tablet.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/landing-founder-preview/2026-07-27/STOQUIFY_LANDING_FOUNDER_PREVIEW_EVALUATION_REPORT_2026-07-27.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/landing-founder-preview/2026-07-27/baseline/current-landing-hashes-after.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/landing-founder-preview/2026-07-27/baseline/current-landing-hashes-before.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/landing-founder-preview/2026-07-27/baseline/current-landing-routes.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/landing-founder-preview/2026-07-27/baseline/screenshots/public-home-desktop.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/landing-founder-preview/2026-07-27/baseline/screenshots/public-home-fr-desktop.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/landing-founder-preview/2026-07-27/baseline/screenshots/public-home-fr-mobile.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/landing-founder-preview/2026-07-27/baseline/screenshots/public-home-mobile.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/landing-founder-preview/2026-07-27/comparison/browser-evidence.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/landing-founder-preview/2026-07-27/comparison/screenshots/current-en-desktop.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/landing-founder-preview/2026-07-27/comparison/screenshots/current-en-mobile.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/landing-founder-preview/2026-07-27/comparison/screenshots/current-en-tablet.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/landing-founder-preview/2026-07-27/comparison/screenshots/current-fr-desktop.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/landing-founder-preview/2026-07-27/comparison/screenshots/current-fr-mobile.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/landing-founder-preview/2026-07-27/comparison/screenshots/current-fr-tablet.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/landing-founder-preview/2026-07-27/comparison/screenshots/preview-en-desktop.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/landing-founder-preview/2026-07-27/comparison/screenshots/preview-en-mobile.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/landing-founder-preview/2026-07-27/comparison/screenshots/preview-en-tablet.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/landing-founder-preview/2026-07-27/comparison/screenshots/preview-fr-desktop.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/landing-founder-preview/2026-07-27/comparison/screenshots/preview-fr-mobile.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/landing-founder-preview/2026-07-27/comparison/screenshots/preview-fr-tablet.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/people-to-pay-refinement/2026-07-27/baseline/browser-evidence.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/people-to-pay-refinement/2026-07-27/baseline/screenshots/before-en-desktop.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/people-to-pay-refinement/2026-07-27/baseline/screenshots/before-en-mobile.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/people-to-pay-refinement/2026-07-27/baseline/screenshots/before-en-tablet.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/people-to-pay-refinement/2026-07-27/baseline/screenshots/before-fr-desktop.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/people-to-pay-refinement/2026-07-27/baseline/screenshots/before-fr-mobile.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/people-to-pay-refinement/2026-07-27/baseline/screenshots/before-fr-tablet.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/people-to-pay-refinement/2026-07-27/baseline/source-baseline.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/people-to-pay-refinement/2026-07-27/comparison/browser-evidence.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/people-to-pay-refinement/2026-07-27/comparison/screenshots/after-en-desktop.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/people-to-pay-refinement/2026-07-27/comparison/screenshots/after-en-mobile.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/people-to-pay-refinement/2026-07-27/comparison/screenshots/after-en-tablet.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/people-to-pay-refinement/2026-07-27/comparison/screenshots/after-fr-desktop.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/people-to-pay-refinement/2026-07-27/comparison/screenshots/after-fr-mobile.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "??",
+      "path": "what-next/ui-ux/people-to-pay-refinement/2026-07-27/comparison/screenshots/after-fr-tablet.png",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    }
+  ],
+  "postFreezeCommittedChanges": [
+    {
+      "status": "COMMITTED",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RECONCILER_DEPLOYMENT_CONTRACT_2026-07-24.md",
+      "candidateCategory": "RELEASE_EVIDENCE_DOC",
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RECONCILER_DEPLOYMENT_CONTRACT_2026-07-24.pdf",
+      "candidateCategory": "RELEASE_EVIDENCE_DOC",
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_AUTHORIZED_SCOPE_REQUIREMENTS_AUDIT_2026-07-25.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_AUTHORIZED_SCOPE_REQUIREMENTS_AUDIT_2026-07-25.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_AUTHORIZED_SCOPE_REQUIREMENTS_AUDIT_2026-07-25.pdf",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_CREDENTIAL_ROTATION_REGISTER_2026-07-25.pdf",
+      "candidateCategory": "RELEASE_EVIDENCE_DOC",
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_OPERATIONAL_RELEASE_EVIDENCE_2026-07-25.pdf",
+      "candidateCategory": "RELEASE_EVIDENCE_DOC",
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASED_EXECUTION_COMPLETION_AUDIT_2026-07-25.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASED_EXECUTION_COMPLETION_AUDIT_2026-07-25.pdf",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.pdf",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_ENTRY_DECISION_2026-07-25.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_ENTRY_DECISION_2026-07-25.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_PILOT_EXIT_REGISTER_2026-07-25.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_ENTRY_DECISION_2026-07-25.json",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_ENTRY_DECISION_2026-07-25.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json",
+      "candidateCategory": "RELEASE_EVIDENCE_DOC",
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.md",
+      "candidateCategory": "RELEASE_EVIDENCE_DOC",
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.pdf",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_PROMOTION_GATE_CONTRACT_2026-07-25.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_RELEASE_EVIDENCE_CLASSIFICATION_HARDENING_EXECUTION_REPORT_2026-07-25.md",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_RELEASE_EVIDENCE_CLASSIFICATION_HARDENING_EXECUTION_REPORT_2026-07-25.pdf",
+      "candidateCategory": null,
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_SKILL_017_ENTERPRISE_RELEASE_GATE_RERUN_2026-07-25.md",
+      "candidateCategory": "RELEASE_EVIDENCE_DOC",
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
+      "path": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_SKILL_017_ENTERPRISE_RELEASE_GATE_RERUN_2026-07-25.pdf",
+      "candidateCategory": "RELEASE_EVIDENCE_DOC",
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
+      "path": "package.json",
+      "candidateCategory": "RUNTIME_SOURCE_TEST",
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
       "path": "scripts/__tests__/agent-phase-promotion-gate.test.js",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
-      "status": "??",
+      "status": "COMMITTED",
       "path": "scripts/__tests__/agent-phase2a-freeze-commit-gate.test.js",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
-      "status": "??",
+      "status": "COMMITTED",
       "path": "scripts/__tests__/agent-phased-execution-requirements-gate.test.js",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
-      "status": "??",
+      "status": "COMMITTED",
       "path": "scripts/agent-phase-promotion-gate.js",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
-      "status": "??",
+      "status": "COMMITTED",
+      "path": "scripts/agent-phase2a-command-gate.js",
+      "candidateCategory": "RUNTIME_SOURCE_TEST",
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
       "path": "scripts/agent-phase2a-freeze-commit-gate.js",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
-      "status": "??",
+      "status": "COMMITTED",
       "path": "scripts/agent-phased-execution-requirements-gate.js",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
-      "status": "??",
+      "status": "COMMITTED",
+      "path": "services/leakage/cash-shortage-policy.service.ts",
+      "candidateCategory": null,
+      "classification": "OUTSIDE_CANDIDATE_SCOPE"
+    },
+    {
+      "status": "COMMITTED",
       "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_AUTHORIZED_SCOPE_REQUIREMENTS_AUDIT_2026-07-25.json",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
-      "status": "??",
+      "status": "COMMITTED",
       "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_AUTHORIZED_SCOPE_REQUIREMENTS_AUDIT_2026-07-25.md",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
-      "status": "??",
+      "status": "COMMITTED",
       "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_AUTHORIZED_SCOPE_REQUIREMENTS_AUDIT_2026-07-25.pdf",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
-      "status": "??",
+      "status": "COMMITTED",
       "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASED_EXECUTION_COMPLETION_AUDIT_2026-07-25.md",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
-      "status": "??",
+      "status": "COMMITTED",
       "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASED_EXECUTION_COMPLETION_AUDIT_2026-07-25.pdf",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
-      "status": "??",
+      "status": "COMMITTED",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_CONTROLLED_PILOT_ASSURANCE_COMPLETION_REPORT_2026-07-24.md",
+      "candidateCategory": "RELEASE_EVIDENCE_DOC",
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_CONTROLLED_PILOT_ASSURANCE_COMPLETION_REPORT_2026-07-24.pdf",
+      "candidateCategory": "RELEASE_EVIDENCE_DOC",
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
       "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_ENTRY_DECISION_2026-07-25.json",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
-      "status": "??",
+      "status": "COMMITTED",
       "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_ENTRY_DECISION_2026-07-25.md",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
-      "status": "??",
+      "status": "COMMITTED",
       "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_ENTRY_DECISION_2026-07-25.json",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
-      "status": "??",
+      "status": "COMMITTED",
       "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_ENTRY_DECISION_2026-07-25.md",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
-      "status": "??",
+      "status": "COMMITTED",
       "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
-      "status": "??",
+      "status": "COMMITTED",
       "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.md",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
-      "status": "??",
+      "status": "COMMITTED",
       "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_RELEASE_EVIDENCE_CLASSIFICATION_HARDENING_EXECUTION_REPORT_2026-07-25.md",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
-      "status": "??",
+      "status": "COMMITTED",
       "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_RELEASE_EVIDENCE_CLASSIFICATION_HARDENING_EXECUTION_REPORT_2026-07-25.pdf",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     },
     {
-      "status": "??",
+      "status": "COMMITTED",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_SKILL_017_ENTERPRISE_RELEASE_GATE_RERUN_2026-07-25.md",
+      "candidateCategory": "RELEASE_EVIDENCE_DOC",
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
+      "path": "what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_SKILL_017_ENTERPRISE_RELEASE_GATE_RERUN_2026-07-25.pdf",
+      "candidateCategory": "RELEASE_EVIDENCE_DOC",
+      "classification": "EVIDENCE_CONTROL_REMEDIATION"
+    },
+    {
+      "status": "COMMITTED",
       "path": "what-next/skills-life-cycle/STOQUIFY_OHADA_LEADERSHIP_RELEASE_EVIDENCE_INDEX_2026-07-11.pdf",
       "candidateCategory": null,
       "classification": "EVIDENCE_CONTROL_REMEDIATION"
     }
   ],
-  "blockers": [],
+  "blockers": [
+    "FREEZE_COMMIT_CONTENT_MISMATCH:components/agents/__tests__/AgentCommandPanel.test.tsx",
+    "POST_FREEZE_RUNTIME_DRIFT:actions/agents/__tests__/command-agent.actions.test.ts",
+    "POST_FREEZE_RUNTIME_DRIFT:actions/agents/command-agent.actions.ts",
+    "POST_FREEZE_RUNTIME_DRIFT:components/agents/AgentCommandPanel.tsx",
+    "POST_FREEZE_RUNTIME_DRIFT:components/agents/__tests__/AgentCommandPanel.test.tsx",
+    "POST_FREEZE_RUNTIME_DRIFT:prisma/schema.prisma",
+    "POST_FREEZE_RUNTIME_DRIFT:services/agents/__tests__/agent-output-validator.service.test.ts",
+    "POST_FREEZE_RUNTIME_DRIFT:services/agents/command-agent-contracts.ts",
+    "POST_FREEZE_RUNTIME_DRIFT:services/agents/skills/role-daily-brief.skill.ts"
+  ],
   "safety": {
     "historicalManifestRewritten": false,
     "businessDataRead": false,

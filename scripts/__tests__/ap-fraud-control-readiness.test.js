@@ -138,13 +138,23 @@ function writeCompleteFixture(root) {
     it("rejects mutated supplier payment idempotency replays before release side effects", () => {})
     `,
   )
+  writeFile(
+    root,
+    "package.json",
+    JSON.stringify({
+      scripts: {
+        "ap:fraud-control:gate": "node scripts/ap-fraud-control-readiness.js --mode fail",
+        "policy:gates": "npm run purchasing:ap:gate && npm run ap:fraud-control:gate",
+      },
+    }),
+  )
 }
 describe("ap fraud control readiness", () => {
   it("reports the current repo supplier payment approval boundary as ready in report mode", () => {
     const report = buildAPFraudControlReadiness(process.cwd(), { mode: "report" })
     const approval = report.checks.find((check) => check.id === "supplier-payment-approval.action-boundary")
 
-    expect(report.summary.totalChecks).toBe(8)
+    expect(report.summary.totalChecks).toBe(9)
     expect(report.summary.gaps).toBe(0)
     expect(report.summary.criticalGaps).toBe(0)
     expect(approval).toMatchObject({
@@ -163,6 +173,19 @@ describe("ap fraud control readiness", () => {
 
     expect(report.summary.gaps).toBe(0)
     expect(report.checks.every((check) => check.status === "ready")).toBe(true)
+  })
+
+  it("marks policy gate wiring as a critical gap when missing", () => {
+    const root = makeTempRepo()
+    writeCompleteFixture(root)
+    writeFile(root, "package.json", JSON.stringify({ scripts: {} }))
+
+    const report = buildAPFraudControlReadiness(root, { mode: "fail" })
+    const wiring = report.checks.find((check) => check.id === "ap-fraud-control.policy-gate-wiring")
+
+    expect(report.summary.gaps).toBe(1)
+    expect(report.summary.criticalGaps).toBe(1)
+    expect(wiring).toMatchObject({ risk: "critical", status: "gap" })
   })
 
   it("parses report output arguments", () => {

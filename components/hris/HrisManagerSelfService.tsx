@@ -10,6 +10,7 @@ import {
 } from "lucide-react"
 
 import { localizePath } from "@/i18n/routing"
+import { HrisOperationalTimeApprovalPanel } from "@/components/hris/HrisOperationalTimeApprovalPanel"
 import type { HrisManagerSelfServiceResult } from "@/services/hris/manager-self-service.service"
 import type { Locale } from "@/types/bilingual"
 
@@ -150,6 +151,8 @@ export function HrisManagerSelfService({ model, approvalsHref, locale }: Props) 
         )}
       </section>
 
+      <HrisOperationalTimeApprovalPanel requests={model.operationalTime.requests} />
+
       <section aria-labelledby="pending-heading">
         <div className="mb-3 flex items-center gap-2">
           <ClipboardCheck className="h-4 w-4 text-emerald-200" aria-hidden="true" />
@@ -188,7 +191,7 @@ export function HrisManagerSelfService({ model, approvalsHref, locale }: Props) 
         <div className="mt-4 divide-y divide-white/10 border-y border-white/10 text-sm">
           <div className="flex items-center justify-between gap-4 py-3"><span className="text-slate-200">Approval decisions</span><span className={model.capabilities.approvalDecisions.available ? "text-emerald-200" : "text-amber-200"}>{model.capabilities.approvalDecisions.available ? "Authorized items only" : "HR admin authority required"}</span></div>
           <div className="flex items-center justify-between gap-4 py-3"><span className="text-slate-200">Reporting-line workflows</span><span className="text-right text-slate-500">Not modeled</span></div>
-          <div className="flex items-center justify-between gap-4 py-3"><span className="text-slate-200">Leave requests</span><span className="text-right text-slate-500">Not configured</span></div>
+          <div className="flex items-center justify-between gap-4 py-3"><span className="text-slate-200">Leave, overtime and corrections</span><span className="text-right text-emerald-200">Operational</span></div>
           <div className="flex items-center justify-between gap-4 py-3"><span className="text-slate-200">Onboarding and offboarding tasks</span><span className="text-right text-slate-500">Not configured</span></div>
           <div className="flex items-center justify-between gap-4 py-3"><span className="text-slate-200">Raw documents</span><span className="text-right text-slate-500">Excluded</span></div>
         </div>

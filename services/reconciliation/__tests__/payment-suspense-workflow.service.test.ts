@@ -1,7 +1,7 @@
 import { ExceptionSeverity, PaymentDirection, SuspenseStatus, SuspenseType, Prisma } from "@prisma/client"
 
 import { db } from "@/prisma/db"
-import { createLedgerPostingBatch } from "@/services/accounting/posting.service"
+import { postPaymentSuspenseToLedger } from "../payment-suspense-ledger.service"
 
 import {
   approveSuspensePosting,
@@ -39,8 +39,8 @@ jest.mock("@/prisma/db", () => ({
   },
 }))
 
-jest.mock("@/services/accounting/posting.service", () => ({
-  createLedgerPostingBatch: jest.fn(),
+jest.mock("../payment-suspense-ledger.service", () => ({
+  postPaymentSuspenseToLedger: jest.fn(),
 }))
 
 const mockedDb = db as unknown as {
@@ -56,7 +56,7 @@ const mockedDb = db as unknown as {
   closeRun: { findMany: jest.Mock; findFirst: jest.Mock; update: jest.Mock }
   closePackExport: { findFirst: jest.Mock; update: jest.Mock }
 }
-const mockedCreateLedgerPostingBatch = createLedgerPostingBatch as jest.Mock
+const mockedPostPaymentSuspenseToLedger = postPaymentSuspenseToLedger as jest.Mock
 
 function amount(value: number | string) {
   return new Prisma.Decimal(value)
@@ -134,7 +134,11 @@ describe("payment suspense workflow service", () => {
     mockedDb.closeRun.update.mockResolvedValue({ id: "close-run-1" })
     mockedDb.closePackExport.findFirst.mockResolvedValue(null)
     mockedDb.closePackExport.update.mockResolvedValue({ id: "close-pack-export-1" })
-    mockedCreateLedgerPostingBatch.mockResolvedValue({ id: "batch-1" })
+    mockedPostPaymentSuspenseToLedger.mockResolvedValue({
+      ledgerBatch: { id: "batch-1", status: "POSTED" },
+      journalEntry: { id: "journal-1", status: "POSTED" },
+      replayed: false,
+    })
   })
 
   it("assigns a suspense item and delivers an in-app notification", async () => {
@@ -191,7 +195,7 @@ describe("payment suspense workflow service", () => {
       }),
     ).rejects.toThrow(/independent approval/i)
 
-    expect(mockedCreateLedgerPostingBatch).not.toHaveBeenCalled()
+    expect(mockedPostPaymentSuspenseToLedger).not.toHaveBeenCalled()
   })
 
   it("approves proposed suspense posting with independent checker evidence", async () => {
@@ -228,14 +232,19 @@ describe("payment suspense workflow service", () => {
       inboxItemId: "inbox-1",
       correlationId: "corr-approve",
     })
-    expect(mockedCreateLedgerPostingBatch).toHaveBeenCalledWith(
+    expect(mockedPostPaymentSuspenseToLedger).toHaveBeenCalledWith(
       expect.objectContaining({
         organizationId: "org-1",
-        sourceId: "suspense-1",
+        suspenseItemId: "suspense-1",
+        suspenseLedgerAccountId: "account-47",
+        actorId: "checker-1",
       }),
       mockedDb,
     )
     expect(mockedDb.paymentReconciliationInboxItem.upsert).toHaveBeenCalled()
+    expect(mockedDb.$transaction).toHaveBeenCalledWith(expect.any(Function), {
+      isolationLevel: "Serializable",
+    })
     expect(mockedDb.businessEvent.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
@@ -262,5 +271,38 @@ describe("payment suspense workflow service", () => {
         }),
       }),
     )
+  })
+  it("does not mark suspense posted when ledger posting fails", async () => {
+    mockedDb.suspenseItem.findFirst.mockResolvedValue(
+      suspense({
+        status: SuspenseStatus.RESOLUTION_PROPOSED,
+        metadata: {
+          reclassification: {
+            proposedById: "maker-1",
+            targetType: SuspenseType.UNKNOWN_CREDIT,
+            reason: "Bank line needs suspense handling",
+          },
+        },
+      }),
+    )
+    mockedPostPaymentSuspenseToLedger.mockRejectedValue(
+      new Error("No active posting rule found for PAYMENT_SUSPENSE/SUSPENSE_RECLASSIFICATION"),
+    )
+
+    await expect(
+      approveSuspensePosting({
+        organizationId: "org-1",
+        suspenseItemId: "suspense-1",
+        approvedById: "checker-1",
+        control: {
+          actorPermissions: ["payments.reconciliation.suspense.post"],
+          lastAuthAt: new Date("2026-06-14T12:00:00Z"),
+          now: new Date("2026-06-14T12:00:00Z"),
+        },
+      }),
+    ).rejects.toThrow(/No active posting rule/i)
+
+    expect(mockedDb.suspenseItem.update).not.toHaveBeenCalled()
+    expect(mockedDb.paymentReconciliationInboxItem.upsert).not.toHaveBeenCalled()
   })
 })

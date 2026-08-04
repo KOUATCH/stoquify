@@ -19,6 +19,11 @@ jest.mock("@/actions/agents/command-agent.actions", () => ({
   submitCommandAgentFeedbackAction: jest.fn(),
 }))
 
+jest.mock("@/actions/ai/copilot-proposal.actions", () => ({
+  createCopilotProposalAction: jest.fn(),
+  decideCopilotProposalAction: jest.fn(),
+}))
+
 import { AgentCommandPanel } from "../AgentCommandPanel"
 
 const actions = jest.requireMock("@/actions/agents/command-agent.actions") as {
@@ -102,6 +107,14 @@ describe("AgentCommandPanel", () => {
           }],
           limitations: [],
           redactionNotices: [],
+          provenance: {
+            tenantId: "org-1",
+            tenantName: "Tenant One",
+            periodStart: "2026-07-22T00:00:00.000Z",
+            periodEnd: "2026-07-22T23:59:59.999Z",
+            asOf: "2026-07-22T12:00:00.000Z",
+            sourceCount: 1,
+          },
           runId: "cm00000000000000000000001",
         },
       },
@@ -127,6 +140,9 @@ describe("AgentCommandPanel", () => {
       "href",
       "/dashboard/manager-action-center",
     )
+    expect(
+      screen.queryByRole("button", { name: /prepare proposal/i }),
+    ).not.toBeInTheDocument()
     expect(screen.getByRole("button", { name: "Unsafe" })).toBeInTheDocument()
     expect(actions.runCommandAgentAction).toHaveBeenCalledWith(expect.objectContaining({
       digestId: "manager-run-sheet",
@@ -176,6 +192,14 @@ describe("AgentCommandPanel", () => {
           }],
           limitations: ["Payment truth is stale."],
           redactionNotices: ["Person-level values were redacted."],
+          provenance: {
+            tenantId: "org-1",
+            tenantName: "Tenant One",
+            periodStart: "2026-07-22T00:00:00.000Z",
+            periodEnd: "2026-07-22T23:59:59.999Z",
+            asOf: "2026-07-22T12:00:00.000Z",
+            sourceCount: 1,
+          },
           runId: "cm00000000000000000000001",
         },
       },

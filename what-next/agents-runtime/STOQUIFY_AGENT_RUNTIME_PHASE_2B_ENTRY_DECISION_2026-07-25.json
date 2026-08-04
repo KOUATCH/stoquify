@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "decisionId": "stoquify-agent-runtime-phase2b-entry-2026-07-25",
-  "evaluatedAt": "2026-07-25T14:30:06.486Z",
+  "evaluatedAt": "2026-07-27T07:11:34.053Z",
   "target": "phase2b",
   "status": "BLOCKED",
   "eligible": false,
@@ -10,21 +10,21 @@
   "recordedPhase3AuthorityPresent": false,
   "summary": {
     "checks": 23,
-    "passed": 4,
-    "blockers": 19,
+    "passed": 2,
+    "blockers": 21,
     "secretValuesPrinted": false
   },
   "checks": [
     {
       "id": "AUTHORIZED_SCOPE_COMPLETE",
       "title": "All authorized repository requirements pass",
-      "passed": true,
+      "passed": false,
       "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_AUTHORIZED_SCOPE_REQUIREMENTS_AUDIT_2026-07-25.json"
     },
     {
       "id": "FROZEN_COMMIT_VERIFIED",
       "title": "Phase 2A frozen commit remains verified",
-      "passed": true,
+      "passed": false,
       "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json"
     },
     {
@@ -155,6 +155,8 @@
     }
   ],
   "blockers": [
+    "AUTHORIZED_SCOPE_COMPLETE",
+    "FROZEN_COMMIT_VERIFIED",
     "CLEAN_RELEASE_READY",
     "GLOBAL_RELEASE_READY",
     "PRODUCTION_SECRETS_READY",

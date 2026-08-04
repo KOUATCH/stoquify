@@ -6,6 +6,7 @@ import { hasAnyRbacPermission } from "@/lib/security/rbac-permissions"
 import { ForbiddenError } from "@/services/_shared/action-errors"
 import { getHrisApprovalInbox } from "@/services/hris/approval-inbox.service"
 import { getHrisEmployeeDirectory } from "@/services/hris/employee.service"
+import { getManagedOperationalTimeInbox } from "@/services/hris/operational-time.service"
 
 const READ_PERMISSIONS = ["hris.people.read", "hris.people.manage"] as const
 
@@ -47,9 +48,10 @@ export async function getHrisManagerSelfService(input: HrisManagerSelfServiceInp
   const parsed = managerSelfServiceInputSchema.parse(input)
   assertManagerReadPermission(parsed.actorPermissions)
 
-  const [directory, inbox] = await Promise.all([
+  const [directory, inbox, operationalTime] = await Promise.all([
     getHrisEmployeeDirectory(parsed),
     getHrisApprovalInbox(parsed),
+    getManagedOperationalTimeInbox(parsed),
   ])
 
   const allowedEmployeeIds = new Set(directory.employees.map((employee) => employee.id))
@@ -140,6 +142,14 @@ export async function getHrisManagerSelfService(input: HrisManagerSelfServiceInp
     },
     workforce,
     approvals,
+    operationalTime: {
+      requests: operationalTime.requests.map((request) => ({
+        ...request,
+        periodStart: request.periodStart.toISOString(),
+        periodEnd: request.periodEnd.toISOString(),
+        requestedAt: request.requestedAt.toISOString(),
+      })),
+    },
     capabilities: {
       approvalDecisions: {
         available: approvals.some((item) => item.decision.eligible),
@@ -150,8 +160,16 @@ export async function getHrisManagerSelfService(input: HrisManagerSelfServiceInp
         reasonCode: "REPORTING_LINE_AUTHORITY_NOT_MODELED",
       },
       leaveRequests: {
-        available: false as const,
-        reasonCode: "LEAVE_LEDGER_NOT_CONFIGURED",
+        available: true as const,
+        pendingCount: operationalTime.requests.filter((item) => item.type === "LEAVE").length,
+      },
+      overtimeRequests: {
+        available: true as const,
+        pendingCount: operationalTime.requests.filter((item) => item.type === "OVERTIME").length,
+      },
+      attendanceCorrections: {
+        available: true as const,
+        pendingCount: operationalTime.requests.filter((item) => item.type === "ATTENDANCE_CORRECTION").length,
       },
       onboardingOffboardingTasks: {
         available: false as const,

@@ -1,6 +1,7 @@
 import type {
   BranchOperatingMetrics,
   CloseReadinessMetrics,
+  InventoryLossMetrics,
   PaymentTruthMetrics,
   SnapshotResult,
   TenantOperatingMetrics,
@@ -388,7 +389,193 @@ describe("Kontava business signal rules", () => {
       ]),
     );
   });
+
+  it("creates a provenance-linked non-causal review signal from complete loss evidence", () => {
+    const [signal] = buildBusinessSignalsFromSnapshots({
+      organizationId: "org-1",
+      snapshots: [inventoryLossSnapshot()],
+      now: "2026-06-20T08:00:00.000Z",
+    });
+    const [updatedSignal] = buildBusinessSignalsFromSnapshots({
+      organizationId: "org-1",
+      snapshots: [
+        inventoryLossSnapshot(
+          {},
+          {
+            sourceHash: "hash-inventory-loss-updated",
+            generatedAt: "2026-06-21T08:00:00.000Z",
+          },
+        ),
+      ],
+      now: "2026-06-21T08:00:00.000Z",
+    });
+
+    expect(signal).toMatchObject({
+      signalType: "inventory_loss_review",
+      moduleSlug: "inventory",
+      sourceModule: "inventory",
+      sourceSnapshotKind: "inventory.loss",
+      sourceHash: "hash-inventory-loss",
+      subjectType: "inventory.loss",
+      subjectId: "loc-1:recorded-loss",
+      severity: "medium",
+      severityScore: 50,
+      assignedRole: "manager",
+      requiredPermission: "inventory.levels.read",
+      actionPath: "/dashboard/inventory/losses",
+      evidenceGrade: "operational",
+      payload: {
+        lossLineCount: 2,
+        adjustmentCount: 1,
+        totalLossValue: 250,
+        currency: "XAF",
+        countVarianceLineCount: 1,
+        damagedLineCount: 1,
+        expiredLineCount: 0,
+        recordedTheftCategoryLineCount: 0,
+        writeOffLineCount: 0,
+        evidenceCoveragePercent: 100,
+        valuationCoveragePercent: 100,
+        approvalCoveragePercent: 100,
+        missingEvidenceLineCount: 0,
+        missingValuationLineCount: 0,
+        missingApprovalAttributionLineCount: 0,
+        sourceTruncated: false,
+      },
+    });
+    expect(signal.detail).toContain("does not identify who caused the loss");
+    expect(signal.redactions).toEqual([
+      expect.objectContaining({
+        policy: "INVENTORY_LOSS_EVIDENCE_REDACTION",
+      }),
+    ]);
+    expect(updatedSignal.id).toBe(signal.id);
+    expect(updatedSignal.dedupeKey).toBe(signal.dedupeKey);
+    expect(updatedSignal.sourceHash).toBe("hash-inventory-loss-updated");
+  });
+
+  it.each([
+    ["source truncation", { sourceTruncated: true }],
+    ["missing proof", { missingEvidenceLineCount: 1 }],
+    ["source-recorded theft category", { recordedTheftCategoryLineCount: 1 }],
+    ["ten recorded lines", { lossLineCount: 10 }],
+  ] satisfies Array<[string, Partial<InventoryLossMetrics>]>)(
+    "raises %s to high-priority review without assigning blame",
+    (label, metrics) => {
+      const truncated = metrics.sourceTruncated === true;
+      const blocker = {
+        id: `inventory-loss-${label.replace(/[^a-z]+/g, "-")}`,
+        severity: (truncated ? "high" : "medium") as "high" | "medium",
+        gate: "inventory_loss_evidence",
+        title: "Inventory loss evidence needs review",
+        detail: "Recorded evidence is incomplete.",
+        sourceTables: ["stock_adjustment_lines"],
+      };
+      const [signal] = buildBusinessSignalsFromSnapshots({
+        organizationId: "org-1",
+        snapshots: [
+          inventoryLossSnapshot(metrics, {
+            status: truncated ? "blocked" : "partial",
+            uiState: truncated ? "blocked" : "partial",
+            evidenceGrade: truncated ? "blocked" : "raw",
+            blockers: [blocker],
+          }),
+        ],
+        now: "2026-06-20T08:00:00.000Z",
+      });
+
+      expect(signal).toMatchObject({
+        signalType: "inventory_loss_review",
+        severity: "high",
+        evidenceGrade: truncated ? "blocked" : "raw",
+        blockers: [expect.objectContaining({ id: blocker.id })],
+      });
+      expect(signal.detail).toContain("does not identify who caused the loss");
+    },
+  );
+
+  it("does not create a review signal for a complete zero-record snapshot", () => {
+    const signals = buildBusinessSignalsFromSnapshots({
+      organizationId: "org-1",
+      snapshots: [
+        inventoryLossSnapshot({
+          lossLineCount: 0,
+          adjustmentCount: 0,
+          totalLossValue: 0,
+          countVarianceLineCount: 0,
+          damagedLineCount: 0,
+          expiredLineCount: 0,
+          recordedTheftCategoryLineCount: 0,
+          writeOffLineCount: 0,
+          evidenceCoveredLineCount: 0,
+          valuationCoveredLineCount: 0,
+          approvalAttributedLineCount: 0,
+        }),
+      ],
+      now: "2026-06-20T08:00:00.000Z",
+    });
+
+    expect(signals).toEqual([]);
+  });
 });
+
+function inventoryLossSnapshot(
+  metricOverrides: Partial<InventoryLossMetrics> = {},
+  snapshotOverrides: Partial<SnapshotResult<InventoryLossMetrics>> = {},
+): SnapshotResult<InventoryLossMetrics> {
+  return {
+    kind: "inventory.loss",
+    organizationId: "org-1",
+    locationId: "loc-1",
+    periodStart: "2026-06-01T00:00:00.000Z",
+    periodEnd: "2026-06-20T23:59:59.999Z",
+    status: "fresh",
+    uiState: "redacted",
+    evidenceGrade: "operational",
+    freshness: {
+      generatedAt: "2026-06-20T08:00:00.000Z",
+      sourceMaxUpdatedAt: null,
+      maxAgeMinutes: 1440,
+      stale: false,
+      staleReason: null,
+    },
+    sourceHash: "hash-inventory-loss",
+    generatedAt: "2026-06-20T08:00:00.000Z",
+    sourceModules: ["inventory"],
+    metrics: {
+      lossLineCount: 2,
+      adjustmentCount: 1,
+      totalLossValue: 250,
+      currency: "XAF",
+      countVarianceLineCount: 1,
+      damagedLineCount: 1,
+      expiredLineCount: 0,
+      recordedTheftCategoryLineCount: 0,
+      writeOffLineCount: 0,
+      evidenceCoveredLineCount: 2,
+      evidenceCoveragePercent: 100,
+      valuationCoveredLineCount: 2,
+      valuationCoveragePercent: 100,
+      approvalAttributedLineCount: 2,
+      approvalCoveragePercent: 100,
+      missingEvidenceLineCount: 0,
+      missingValuationLineCount: 0,
+      missingApprovalAttributionLineCount: 0,
+      sourceTruncated: false,
+      ...metricOverrides,
+    },
+    blockers: [],
+    redactions: [
+      {
+        id: "inventory-loss-evidence-hashes-redacted",
+        field: "records.evidence.*Hash",
+        reason: "Source evidence hashes remain server-side.",
+        policy: "INVENTORY_LOSS_EVIDENCE_REDACTION",
+      },
+    ],
+    ...snapshotOverrides,
+  };
+}
 
 function branchOperatingSnapshot(
   metricOverrides: Partial<BranchOperatingMetrics> = {},

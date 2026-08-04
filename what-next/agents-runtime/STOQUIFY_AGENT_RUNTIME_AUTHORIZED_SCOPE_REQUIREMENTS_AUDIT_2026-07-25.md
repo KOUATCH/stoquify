@@ -1,8 +1,8 @@
 # Stoquify Agent Runtime Authorized-Scope Requirements Audit
 
-**Evaluated:** 2026-07-25T13:43:11.746Z<br>
-**Status:** `AUTHORIZED_SCOPE_COMPLETE_EXTERNAL_BLOCKED`<br>
-**Authorized scope complete:** Yes<br>
+**Evaluated:** 2026-07-27T07:11:17.116Z<br>
+**Status:** `BLOCKED_REPOSITORY_REQUIREMENTS`<br>
+**Authorized scope complete:** No<br>
 **Full phased program complete:** No<br>
 **Activation authorized:** No<br>
 **Phase 3 authorized:** No
@@ -15,9 +15,9 @@ This gate proves repository-owned requirements for Phase 0, Phase 1, and the ina
 
 | Measure | Result |
 |---|---:|
-| Requirements | 36 |
+| Requirements | 37 |
 | Satisfied | 36 |
-| Repository blockers | 0 |
+| Repository blockers | 4 |
 | External blockers | 6 |
 
 ## Phase Counts
@@ -26,7 +26,7 @@ This gate proves repository-owned requirements for Phase 0, Phase 1, and the ina
 |---|---:|---:|---:|
 | PHASE_0 | 8 | 8 | 0 |
 | PHASE_1 | 13 | 13 | 0 |
-| PHASE_2A | 12 | 12 | 0 |
+| PHASE_2A | 12 | 13 | 1 |
 | PERMANENT | 3 | 3 | 0 |
 
 ## Requirement Matrix
@@ -64,15 +64,19 @@ This gate proves repository-owned requirements for Phase 0, Phase 1, and the ina
 | P2A-08 | PHASE_2A | Fail-closed rollout and kill switch | Passed | services/agents/agent-rollout.service.ts |
 | P2A-09 | PHASE_2A | Release, reconciliation, and rollback controls | Passed | services/agents/agent-release-control.service.ts, services/agents/agent-execution-control.service.ts, services/agents/agent-reconciler-invocation.service.ts, app/api/internal/agents/reconcile-abandoned/route.ts, package.json |
 | P2A-10 | PHASE_2A | Focused, browser, and static verification surfaces | Passed | services/agents/__tests__/command-agent.service.test.ts, actions/agents/__tests__/command-agent.actions.test.ts, components/agents/__tests__/AgentCommandPanel.test.tsx, tests/e2e/command-agent-enabled-pilot.spec.ts, tests/e2e/command-agent-kill-switch.spec.ts, package.json |
-| P2A-11 | PHASE_2A | Frozen commit attestation | Passed | docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json |
+| P2A-11 | PHASE_2A | Frozen commit attestation | Blocked | docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json |
 | P2A-12 | PHASE_2A | Phase 2A execution report | Passed | what-next/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_COMMAND_AGENT_EXECUTION_REPORT_2026-07-22.md |
+| P2A-13 | PHASE_2A | Executable Phase 2B and Phase 3 entry gates | Passed | scripts/agent-phase-promotion-gate.js, scripts/__tests__/agent-phase-promotion-gate.test.js, docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_PILOT_EXIT_REGISTER_2026-07-25.json, docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_PROMOTION_GATE_CONTRACT_2026-07-25.md, package.json |
 | BOUNDARY-01 | PERMANENT | No agent business-write authority | Passed | package.json, scripts/agent-prohibited-action-gate.js |
 | BOUNDARY-02 | PERMANENT | Activation remains unauthorized | Passed | docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_OPERATIONAL_RELEASE_EVIDENCE_2026-07-25.json, docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json |
 | BOUNDARY-03 | PERMANENT | Phase 3 remains unauthorized and unstarted | Passed | docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json, docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json, prisma/schema.prisma |
 
 ## Repository Blockers
 
-- None within the authorized repository scope.
+- `P2A-11:JSON_FIELD_MISMATCH:freezeAttestation:status`
+- `P2A-11:JSON_FIELD_MISMATCH:freezeAttestation:freezeVerified`
+- `P2A-11:JSON_FIELD_MISMATCH:freezeAttestation:summary.contentMismatches`
+- `P2A-11:JSON_FIELD_MISMATCH:freezeAttestation:summary.phase2aRuntimeDrift`
 
 ## External Authority Blockers
 
@@ -93,4 +97,4 @@ This gate proves repository-owned requirements for Phase 0, Phase 1, and the ina
 
 ## Decision
 
-The authorized repository scope is complete. The full phased program remains incomplete and blocked on external authority evidence; no activation or Phase 3 work is authorized.
+The authorized repository scope has unresolved implementation requirements. Correct them before requesting external approval or advancing.

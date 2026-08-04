@@ -7,10 +7,15 @@ import {
   type AccountantTrustPackExport,
 } from "@/services/accounting/data-trust.service"
 import {
+  FreshAuthRequiredError,
+  SESSION_ASSURANCE_LEVEL,
+} from "@/lib/security/auth-session"
+import { resolveAccountantClientAccess } from "@/services/accounting/accountant-access.service"
+import {
   accountantPortalInputSchema,
   exportAccountantTrustPackInputSchema,
 } from "@/services/accounting/data-trust.schemas"
-import { protect } from "@/services/_shared/protect"
+import { protect, type ProtectedActionContext } from "@/services/_shared/protect"
 
 export type { AccountantPortalData, AccountantTrustPackExport }
 
@@ -26,8 +31,14 @@ const getPortal = protect<unknown, AccountantPortalData>(
   },
   async (input, ctx) => {
     const parsed = accountantPortalInputSchema.parse(asRecord(input))
+    const access = await resolveAccountantClientAccess({
+      homeOrganizationId: ctx.orgId,
+      clientOrganizationId: parsed?.clientOrganizationId,
+      accountantUserId: ctx.userId,
+      capability: "READ",
+    })
     return getAccountantPortalData({
-      organizationId: ctx.orgId,
+      organizationId: access.organizationId,
       periodId: parsed?.periodId,
       startDate: parsed?.startDate,
       endDate: parsed?.endDate,
@@ -47,12 +58,19 @@ const exportTrustPack = protect<unknown, AccountantTrustPackExport>(
     freshAuth: { maxAgeSeconds: 300 },
   },
   async (input, ctx) => {
+    const lastAuthAt = verifiedFreshAuthTime(ctx)
     const parsed = exportAccountantTrustPackInputSchema.parse(asRecord(input))
+    const access = await resolveAccountantClientAccess({
+      homeOrganizationId: ctx.orgId,
+      clientOrganizationId: parsed?.clientOrganizationId,
+      accountantUserId: ctx.userId,
+      capability: "EXPORT",
+    })
     return exportAccountantTrustPack({
-      organizationId: ctx.orgId,
+      organizationId: access.organizationId,
       exportedById: ctx.userId,
       actorPermissions: ctx.permissions,
-      lastAuthAt: new Date(),
+      lastAuthAt,
       periodId: parsed?.periodId,
       startDate: parsed?.startDate,
       endDate: parsed?.endDate,
@@ -64,4 +82,21 @@ const exportTrustPack = protect<unknown, AccountantTrustPackExport>(
 
 export async function exportAccountantTrustPackAction(input: unknown = {}) {
   return exportTrustPack(input)
+}
+
+function verifiedFreshAuthTime(ctx: ProtectedActionContext): Date {
+  const freshAuth = ctx.freshAuth
+  if (
+    !freshAuth ||
+    freshAuth.claims.userId !== ctx.userId ||
+    freshAuth.claims.tenantId !== ctx.orgId ||
+    freshAuth.claims.assuranceOrganizationId !== ctx.orgId ||
+    !Number.isFinite(freshAuth.claims.assuranceLevel) ||
+    freshAuth.claims.assuranceLevel < SESSION_ASSURANCE_LEVEL.PASSWORD ||
+    freshAuth.claims.lastAuthAt !== freshAuth.lastAuthAt.getTime()
+  ) {
+    throw new FreshAuthRequiredError()
+  }
+
+  return freshAuth.lastAuthAt
 }

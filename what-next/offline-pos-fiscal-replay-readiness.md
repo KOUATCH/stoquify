@@ -1,12 +1,12 @@
 # Offline POS Fiscal Replay Readiness Gate
 
-Generated: 2026-07-20T03:58:04.235Z
+Generated: 2026-08-01T17:15:58.212Z
 Mode: fail
 Status: ready
 
 ## Summary
 
-- Checks ready: 10/10
+- Checks ready: 16/16
 - Blockers: 0
 
 ## Checks
@@ -21,6 +21,12 @@ Status: ready
 - ready: exact_once_pos_finalization_and_recovery
 - ready: receipt_fiscal_and_replay_evidence
 - ready: assurance_and_policy_wiring
+- ready: durable_offline_schema_migration
+- ready: active_cashier_session_scope
+- ready: cryptographic_device_signature_verification
+- ready: policy_expiry_and_reference_snapshot_quarantine
+- ready: stable_offline_action_discriminant
+- ready: expired_policy_operator_visibility
 
 ## Blockers
 

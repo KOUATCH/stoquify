@@ -52,8 +52,10 @@ export default async function DailyHabitDigestPage({
 
   const data = await getDailyHabitDigestData({
     organizationId: ctx.orgId,
+    actorId: ctx.userId,
     actorPermissions: ctx.permissions,
     actorRoleCodes: ctx.roles.map((role) => role.code),
+    isSuperUser: ctx.isSuperUser,
   })
   const commandAgentAccess = resolveCommandAgentRollout({
     organizationId: ctx.orgId,

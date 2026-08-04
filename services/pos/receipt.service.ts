@@ -5,6 +5,8 @@ import {
   type Prisma,
 } from "@prisma/client"
 import { db } from "@/prisma/db"
+import { queueWhatsAppReceiptDeliveryInTx } from "@/services/communication/whatsapp-receipt-outbox.service"
+import { sendWhatsAppReceipt } from "@/services/communication/whatsapp-receipt.provider"
 import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
 import { moneyToNumber } from "./money"
 import {
@@ -15,6 +17,11 @@ import {
   type ReceiptLocale,
   type SendReceiptServiceInput,
 } from "./pos.schemas"
+import {
+  normalizeReceiptDestination,
+  receiptDeliveryProviderMethod,
+  type DeliverableReceiptChannel,
+} from "./receipt-channels"
 import {
   assertPublicReceiptAccessToken,
   issuePublicReceiptAccessToken,
@@ -27,6 +34,7 @@ export type ReceiptLegalDeliveryStatus =
   | "CERTIFIED"
   | "ALLOWED_WITH_STATUS"
   | "BLOCKED_UNTIL_CERTIFIED"
+  | "PENDING_REGULATORY_PROCESSING"
   | "REQUIRES_EXPERT_REVIEW"
 
 export type ReceiptCertificationStatus = {
@@ -49,6 +57,8 @@ export type ReceiptCertificationStatus = {
   legalDeliveryStatus: ReceiptLegalDeliveryStatus
   legalDeliveryBlocked: boolean
   legalDeliveryBlockReason: string | null
+  fiscalizationRequestId?: string | null
+  regulatoryProcessingStatus?: string
 }
 
 export type SalesReceiptPayload = {
@@ -116,6 +126,7 @@ export type ReceiptDeliveryResult = {
   status: ReceiptDeliveryStatus
   destination?: string
   providerReference?: string
+  destinationHash?: string
   retryable: boolean
   message: string
   digitalReceiptUrl: string
@@ -125,6 +136,8 @@ export type ReceiptDeliveryProviderInput = {
   receipt: SalesReceiptPayload
   destination?: string
   locale: ReceiptLocale
+  organizationId: string
+  userId: string
 }
 
 export interface ReceiptDeliveryProvider {
@@ -148,11 +161,11 @@ class StubReceiptDeliveryProvider implements ReceiptDeliveryProvider {
   }
 
   async sendWhatsAppReceipt(input: ReceiptDeliveryProviderInput): Promise<ReceiptDeliveryResult> {
-    return this.pending("WHATSAPP", input)
+    return sendWhatsAppReceipt(input)
   }
 
   private async pending(
-    channel: Exclude<ReceiptChannel, "NONE">,
+    channel: DeliverableReceiptChannel,
     input: ReceiptDeliveryProviderInput,
   ): Promise<ReceiptDeliveryResult> {
     return {
@@ -184,15 +197,6 @@ function digitalReceiptUrl(salesOrderId: string, receiptToken?: string | null) {
     : `/digital-receipt/${encodedSalesOrderId}${tokenQuery}`
 }
 
-function normalizePhoneNumber(raw?: string | null) {
-  if (!raw) return null
-  const trimmed = raw.trim()
-  const digits = trimmed.replace(/[^\d]/g, "")
-
-  if (digits.length < 8) return null
-  return `+${digits}`
-}
-
 function tenderLabel(method: string) {
   return method === "CREDIT" ? "ON_ACCOUNT" : method
 }
@@ -210,11 +214,20 @@ function certificationPolicyValue(
   return typeof value === "string" ? value : null
 }
 
-function emptyReceiptCertificationStatus(): ReceiptCertificationStatus {
+function emptyReceiptCertificationStatus(
+  request?: {
+    id: string
+    status: string
+    lastErrorMessage: string | null
+  } | null,
+): ReceiptCertificationStatus {
+  const pending = Boolean(request)
   return {
     fiscalDocumentId: null,
     documentType: null,
-    fiscalDocumentStatus: "NOT_CREATED",
+    fiscalDocumentStatus: pending
+      ? "PENDING_REGULATORY_PROCESSING"
+      : "NOT_CREATED",
     submissionId: null,
     submissionStatus: null,
     authorityChannel: null,
@@ -228,9 +241,13 @@ function emptyReceiptCertificationStatus(): ReceiptCertificationStatus {
     countryCode: null,
     countryPackVersion: null,
     countryPackVerificationStatus: null,
-    legalDeliveryStatus: "NOT_CREATED",
+    legalDeliveryStatus: pending
+      ? "PENDING_REGULATORY_PROCESSING"
+      : "NOT_CREATED",
     legalDeliveryBlocked: false,
-    legalDeliveryBlockReason: null,
+    legalDeliveryBlockReason: request?.lastErrorMessage ?? null,
+    fiscalizationRequestId: request?.id ?? null,
+    regulatoryProcessingStatus: request?.status ?? "NOT_REQUESTED",
   }
 }
 
@@ -296,7 +313,32 @@ async function getReceiptCertificationStatus(
     orderBy: { createdAt: "desc" },
   })
 
-  if (!fiscalDocument) return emptyReceiptCertificationStatus()
+  if (!fiscalDocument) {
+    if (!("businessEventOutbox" in db)) {
+      return emptyReceiptCertificationStatus()
+    }
+
+    const request = await db.businessEventOutbox.findFirst({
+      where: {
+        organizationId,
+        channel: "FISCALIZATION",
+        businessEvent: {
+          is: {
+            sourceType: "POS_SALE",
+            sourceId: salesOrderId,
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        status: true,
+        lastErrorMessage: true,
+      },
+    })
+
+    return emptyReceiptCertificationStatus(request)
+  }
 
   const submission = fiscalDocument.submissions[0] ?? null
   const legalDelivery = resolveReceiptLegalDeliveryStatus({
@@ -554,6 +596,7 @@ async function recordDeliveryAudit(
         status: result.status,
         destination: result.destination,
         providerReference: result.providerReference,
+        destinationHash: result.destinationHash,
         retryable: result.retryable,
         message: result.message,
         orderNumber: receipt.receipt.orderNumber,
@@ -617,31 +660,29 @@ export async function sendReceipt(
     throw new BusinessRuleError(result.message)
   }
 
-  const destination = input.channel === "WHATSAPP"
-    ? normalizePhoneNumber(input.destination || receipt.receipt.customerPhone) || undefined
-    : input.destination
+  const destination = normalizeReceiptDestination(input.channel, input.destination)
 
-  if (input.channel === "WHATSAPP" && !destination) {
-    const result: ReceiptDeliveryResult = {
-      channel: "WHATSAPP",
-      status: "FAILED",
-      retryable: false,
-      message: "A valid customer phone number is required for WhatsApp receipt delivery.",
-      digitalReceiptUrl: receipt.digitalReceiptUrl,
-    }
-    await recordDeliveryAudit(input, receipt, result)
-    throw new BusinessRuleError(result.message)
+  if (input.channel === "WHATSAPP") {
+    return db.$transaction((tx) =>
+      queueWhatsAppReceiptDeliveryInTx(tx, {
+        receipt,
+        destination,
+        locale,
+        organizationId: input.organizationId,
+        userId: input.userId,
+      }),
+    )
   }
 
-  const providerInput = { receipt, destination, locale }
-  const result =
-    input.channel === "WHATSAPP"
-      ? await provider.sendWhatsAppReceipt(providerInput)
-      : input.channel === "SMS"
-        ? await provider.sendSmsReceipt(providerInput)
-        : input.channel === "EMAIL"
-          ? await provider.sendEmailReceipt(providerInput)
-          : await provider.sendPrintReceipt(providerInput)
+  const providerInput = {
+    receipt,
+    destination,
+    locale,
+    organizationId: input.organizationId,
+    userId: input.userId,
+  }
+  const providerMethod = receiptDeliveryProviderMethod(input.channel)
+  const result = await provider[providerMethod](providerInput)
 
   await recordDeliveryAudit(input, receipt, result)
   return result

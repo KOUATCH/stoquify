@@ -24,6 +24,9 @@ function mockPrismaClient() {
       findFirst: jest.fn(),
       update: jest.fn(),
     },
+    user: {
+      findFirst: jest.fn(),
+    },
     auditLog: {
       create: jest.fn(),
     },
@@ -41,7 +44,9 @@ import {
 } from "../assurance-registry-contracts"
 import {
   approveWorkflowAssuranceWaiver,
+  assignWorkflowAssuranceIncident,
   requestWorkflowAssuranceWaiver,
+  reopenWorkflowAssuranceIncident,
   resolveWorkflowAssuranceIncident,
   upsertWorkflowAssuranceIncidentFromResult,
 } from "../assurance-incident.service"
@@ -65,6 +70,9 @@ const mockDb = db as unknown as {
     findFirst: jest.Mock
     update: jest.Mock
   }
+  user: {
+    findFirst: jest.Mock
+  }
   auditLog: {
     create: jest.Mock
   }
@@ -76,6 +84,7 @@ describe("workflow assurance incident service", () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockDb.$transaction.mockImplementation((handler) => handler(mockDb))
+    mockDb.user.findFirst.mockResolvedValue({ id: "user-2" })
   })
 
   it("creates a durable incident with event, alert delivery, and audit history", async () => {
@@ -588,6 +597,7 @@ describe("workflow assurance incident service", () => {
       incidentId: "incident-1",
       actorId: "user-1",
       note: "Source links repaired.",
+      currentSourceHash: "hash-1",
     })
 
     expect(incident.status).toBe("resolved")
@@ -598,6 +608,63 @@ describe("workflow assurance incident service", () => {
     )
   })
 
+  it("requires current source hash confirmation before resolving an incident", async () => {
+    const open = incidentRecord({ id: "incident-1", status: "OPEN", sourceHash: "hash-current" })
+    mockDb.workflowAssuranceIncident.findFirst.mockResolvedValue(open)
+
+    await expect(
+      resolveWorkflowAssuranceIncident({
+        organizationId: "org-1",
+        incidentId: "incident-1",
+        actorId: "user-1",
+        note: "Reviewed stale evidence.",
+        currentSourceHash: "hash-stale",
+      }),
+    ).rejects.toThrow(/source changed before resolution/i)
+
+    expect(mockDb.workflowAssuranceIncident.update).not.toHaveBeenCalled()
+    expect(mockDb.workflowAssuranceIncidentEvent.create).not.toHaveBeenCalled()
+  })
+
+  it("blocks lifecycle transitions that are not legal from the current status", async () => {
+    const open = incidentRecord({ id: "incident-1", status: "OPEN" })
+    mockDb.workflowAssuranceIncident.findFirst.mockResolvedValue(open)
+
+    await expect(
+      reopenWorkflowAssuranceIncident({
+        organizationId: "org-1",
+        incidentId: "incident-1",
+        actorId: "user-1",
+      }),
+    ).rejects.toThrow(/transition is not allowed/i)
+
+    expect(mockDb.workflowAssuranceIncident.update).not.toHaveBeenCalled()
+  })
+
+  it("validates assignment owner is active and belongs to the incident tenant", async () => {
+    const open = incidentRecord({ id: "incident-1", status: "OPEN" })
+    mockDb.workflowAssuranceIncident.findFirst.mockResolvedValue(open)
+    mockDb.user.findFirst.mockResolvedValue(null)
+
+    await expect(
+      assignWorkflowAssuranceIncident({
+        organizationId: "org-1",
+        incidentId: "incident-1",
+        actorId: "user-1",
+        ownerId: "foreign-or-inactive-user",
+      }),
+    ).rejects.toThrow(/active user in the same organization/i)
+
+    expect(mockDb.user.findFirst).toHaveBeenCalledWith({
+      where: {
+        id: "foreign-or-inactive-user",
+        organizationId: "org-1",
+        isActive: true,
+      },
+      select: { id: true },
+    })
+    expect(mockDb.workflowAssuranceIncident.update).not.toHaveBeenCalled()
+  })
   it("enforces maker-checker on waiver approval", async () => {
     const open = incidentRecord({ id: "incident-1", status: "OPEN" })
     mockDb.workflowAssuranceIncident.findFirst.mockResolvedValue(open)

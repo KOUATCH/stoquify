@@ -1,11 +1,11 @@
 {
   "summary": {
-    "generatedAt": "2026-07-20T07:25:52.785Z",
+    "generatedAt": "2026-08-01T17:00:19.212Z",
     "mode": "fail",
     "status": "blocked",
     "checkCount": 12,
-    "readyCount": 10,
-    "blockerCount": 2
+    "readyCount": 11,
+    "blockerCount": 1
   },
   "checks": [
     {
@@ -22,7 +22,7 @@
     },
     {
       "id": "source_artifact_hash_verification",
-      "ready": false
+      "ready": true
     },
     {
       "id": "source_artifact_expert_approval",
@@ -57,8 +57,25 @@
       "ready": true
     }
   ],
+  "sourceEvidence": {
+    "manifestFound": true,
+    "manifestPath": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/manifest.json",
+    "artifactCount": 2,
+    "verifiedArtifactCount": 2,
+    "artifactHashesVerified": true,
+    "declaredSourceHashCount": 7,
+    "validDeclaredSourceHashCount": 7,
+    "boundDeclaredSourceHashCount": 7,
+    "hashesVerified": true,
+    "approvalArtifactVerified": false,
+    "expertApprovalComplete": false
+  },
+  "runtimeAuthority": {
+    "capabilityStatus": "SUPPORTED_DRAFT",
+    "verificationStatus": "SOURCE_CHECKED",
+    "authoritative": false
+  },
   "blockers": [
-    "source_artifact_hash_verification",
     "source_artifact_expert_approval"
   ]
 }

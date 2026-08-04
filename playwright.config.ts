@@ -13,6 +13,9 @@ const enabledPilotCertification =
 const transactionHistoryAuthStatePath =
   process.env.PLAYWRIGHT_TRANSACTION_HISTORY_STORAGE_STATE ??
   "playwright/.auth/transaction-history.json";
+const inventoryLossAuthStatePath =
+  process.env.PLAYWRIGHT_INVENTORY_LOSS_STORAGE_STATE ??
+  "playwright/.auth/inventory-loss.json";
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -63,6 +66,10 @@ export default defineConfig({
     {
       name: "transaction-history-auth-setup",
       testMatch: /transaction-history-auth\.setup\.ts/,
+    },
+    {
+      name: "inventory-loss-auth-setup",
+      testMatch: /inventory-loss-auth\.setup\.ts/,
     },
     {
       name: "payroll-authenticated-smoke",
@@ -156,6 +163,15 @@ export default defineConfig({
       use: {
         ...devices["Desktop Chrome"],
         storageState: transactionHistoryAuthStatePath,
+      },
+    },
+    {
+      name: "inventory-loss-authenticated-release",
+      testMatch: /inventory-loss-authenticated-release\.spec\.ts/,
+      dependencies: ["inventory-loss-auth-setup"],
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: inventoryLossAuthStatePath,
       },
     },
   ],

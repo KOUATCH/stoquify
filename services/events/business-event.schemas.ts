@@ -18,6 +18,7 @@ export const businessOutboxChannelSchema = z.enum([
   "AUTHORITY_SUBMISSION",
   "RECEIPT_PRINT",
   "SYNC_ACK",
+  "FISCALIZATION",
   "REPORT_EXPORT",
 ])
 

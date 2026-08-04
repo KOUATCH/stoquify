@@ -13,7 +13,7 @@ jest.mock("@/prisma/db", () => {
       findMany: jest.fn(),
     },
     ledgerPostingBatch: { count: jest.fn() },
-    businessEvent: { count: jest.fn() },
+    businessEvent: { count: jest.fn(), findUnique: jest.fn(), create: jest.fn(), update: jest.fn() },
     providerAccount: { count: jest.fn(), findMany: jest.fn() },
     statementFile: { count: jest.fn() },
     statementLine: { count: jest.fn() },
@@ -73,7 +73,7 @@ const mockDb = db as unknown as {
     findMany: jest.Mock;
   };
   ledgerPostingBatch: { count: jest.Mock };
-  businessEvent: { count: jest.Mock };
+  businessEvent: { count: jest.Mock; findUnique: jest.Mock; create: jest.Mock; update: jest.Mock };
   providerAccount: { count: jest.Mock; findMany: jest.Mock };
   statementFile: { count: jest.Mock };
   statementLine: { count: jest.Mock };
@@ -138,6 +138,8 @@ function seedCleanTrustData() {
     .mockResolvedValueOnce(0)
     .mockResolvedValueOnce(0);
   mockDb.businessEvent.count.mockResolvedValue(0);
+  mockDb.businessEvent.findUnique.mockResolvedValue(null);
+  mockDb.businessEvent.create.mockImplementation(({ data }) => ({ id: "event-export-1", ...data, outboxMessages: [] }));
   mockDb.paymentException.count
     .mockResolvedValueOnce(0)
     .mockResolvedValueOnce(0);

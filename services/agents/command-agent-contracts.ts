@@ -67,6 +67,16 @@ export const commandDailyBriefSchema = z
     evidence: z.array(commandAgentEvidenceSchema).min(1).max(12),
     limitations: z.array(z.string().min(1).max(300)).max(12),
     redactionNotices: z.array(z.string().min(1).max(300)).max(12),
+    provenance: z
+      .object({
+        tenantId: z.string().min(1).max(191),
+        tenantName: z.string().min(1).max(180).nullable(),
+        periodStart: z.string().datetime(),
+        periodEnd: z.string().datetime(),
+        asOf: z.string().datetime(),
+        sourceCount: z.number().int().min(1).max(12),
+      })
+      .strict(),
     runId: z.string().nullable(),
   })
   .strict()

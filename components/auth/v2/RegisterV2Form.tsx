@@ -63,6 +63,7 @@ const pains = [
 
 const modules = [
   "POS",
+  "Sales",
   "Inventory",
   "Accounting",
   "Payment reconciliation",
@@ -242,7 +243,7 @@ export function RegisterV2Form({ locale }: { locale: Locale }) {
       primaryPain: pains[0],
       setupRole: "owner",
       firstBranchName: "Main branch",
-      requestedModules: ["POS", "Inventory", "Accounting", "Payment reconciliation"],
+      requestedModules: ["POS", "Sales", "Inventory", "Accounting", "Payment reconciliation"],
       assistedSetupRequested: params.get("intent") === "assisted" || params.get("intent") === "enterprise",
       onboardingSource: "aqstoqflow-register-v2",
       termsAccepted: false,

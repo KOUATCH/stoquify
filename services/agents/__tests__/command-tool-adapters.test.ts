@@ -21,6 +21,26 @@ describe("readRoleDailyDigest", () => {
     expect(result.output.priorities[0].evidenceIds).toEqual([result.output.evidence[0].id])
   })
 
+  it("passes trusted actor authority evidence to the digest service", async () => {
+    const loadDigest = jest.fn().mockResolvedValue(digestData())
+
+    await readRoleDailyDigest(
+      { digestId: "manager-run-sheet" },
+      context(),
+      { loadDigest },
+    )
+
+    expect(loadDigest).toHaveBeenCalledWith({
+      organizationId: "org-pilot",
+      actorId: "user-1",
+      actorPermissions: ["dashboard.read"],
+      actorRoleCodes: ["manager"],
+      isSuperUser: false,
+      periodStart: null,
+      periodEnd: null,
+    })
+  })
+
   it("does not reveal whether a digest hidden from the role exists", async () => {
     await expect(
       readRoleDailyDigest(

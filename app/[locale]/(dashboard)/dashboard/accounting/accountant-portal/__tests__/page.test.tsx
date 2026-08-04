@@ -75,7 +75,7 @@ describe("AccountantPortalPage", () => {
     render(await AccountantPortalPage({ params }))
 
     expect(mockCheckPermission).toHaveBeenCalledWith("accounting.audit.read")
-    expect(mockGetAccountantPortalAction).toHaveBeenCalledWith({ limit: 12 })
+    expect(mockGetAccountantPortalAction).toHaveBeenCalledWith({ limit: 12, clientOrganizationId: undefined })
     expect(screen.getByRole("heading", { name: "Accountant Portal" })).toBeInTheDocument()
     expect(screen.getByText("Ledger evidence ready")).toBeInTheDocument()
     expect(screen.getByText("Locale: fr")).toBeInTheDocument()
@@ -100,7 +100,7 @@ describe("AccountantPortalPage", () => {
     render(await AccountantPortalPage({ params }))
 
     expect(mockCheckPermission).toHaveBeenCalledWith("accounting.audit.read")
-    expect(mockGetAccountantPortalAction).toHaveBeenCalledWith({ limit: 12 })
+    expect(mockGetAccountantPortalAction).toHaveBeenCalledWith({ limit: 12, clientOrganizationId: undefined })
     expect(screen.getByText("Accountant portal unavailable")).toBeInTheDocument()
   })
 })

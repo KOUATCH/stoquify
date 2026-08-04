@@ -7,6 +7,7 @@ import {
   ForbiddenError,
 } from "@/services/_shared/action-errors";
 import { protect } from "@/services/_shared/protect";
+import { recordBusinessEvent } from "@/services/events/business-event.service";
 import { AgentDefinitionError } from "@/services/agents/agent-definition.service";
 import { recordCommandAgentFeedback } from "@/services/agents/agent-feedback.service";
 import { AgentReleaseControlError } from "@/services/agents/agent-release-control.service";
@@ -34,7 +35,7 @@ const commandAgentAction = protect<unknown, CommandAgentRunResult>(
       mode: "enforce",
     },
   },
-  async (input) => {
+  async (input, ctx) => {
     const parsed = commandAgentRequestSchema.safeParse(input);
     if (!parsed.success) {
       throw new ApplicationError(
@@ -44,7 +45,25 @@ const commandAgentAction = protect<unknown, CommandAgentRunResult>(
       );
     }
     try {
-      return await runCommandAgent(parsed.data);
+      const result = await runCommandAgent(parsed.data);
+      await recordBusinessEvent({
+        organizationId: ctx.orgId,
+        eventType: "AI_ANALYSIS_REQUESTED",
+        eventSource: "INTERNAL",
+        idempotencyKey: `ai-analysis-requested:${parsed.data.requestId}`,
+        actorId: ctx.userId,
+        sourceType: "AgentRun",
+        sourceId: result.receipt.runId,
+        payload: {
+          requestId: parsed.data.requestId,
+          digestId: parsed.data.digestId,
+          periodStart: parsed.data.periodStart ?? null,
+          periodEnd: parsed.data.periodEnd ?? null,
+          executionAuthority: "READ_ONLY",
+        },
+        outboxMessages: [],
+      });
+      return result;
     } catch (error) {
       if (
         error instanceof CommandAgentExecutionError &&

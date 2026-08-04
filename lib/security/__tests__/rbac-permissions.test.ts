@@ -70,6 +70,20 @@ describe("rbac permission compatibility", () => {
     expect(hasRbacPermission(["accounting.reports.read"], "VIEW_FINANCIAL_REPORTS")).toBe(true)
   })
 
+  it("registers missing-proof requests as explicit high-risk accounting authority", () => {
+    expect(isKnownPermission("accounting.close.evidence.request")).toBe(true)
+    expect(permissionRisk("accounting.close.evidence.request")).toBe("high")
+    expect(
+      hasRbacPermission(
+        ["MANAGE_FINANCIAL_CONTROLS"],
+        "accounting.close.evidence.request",
+      ),
+    ).toBe(true)
+    expect(
+      hasRbacPermission(["*"], "accounting.close.evidence.request"),
+    ).toBe(false)
+  })
+
   it("does not let reconciliation run permission imply certified evidence powers", () => {
     expect(hasRbacPermission(["payments.reconciliation.run"], "payments.reconciliation.import")).toBe(false)
     expect(hasRbacPermission(["payments.reconciliation.run"], "payments.reconciliation.sign")).toBe(false)

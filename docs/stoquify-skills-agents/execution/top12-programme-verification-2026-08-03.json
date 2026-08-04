@@ -1,0 +1,598 @@
+{
+  "schemaVersion": 1,
+  "programmeId": "stoquify-top12-2026-08-02",
+  "evaluatedAt": "2026-08-03T14:01:19+01:00",
+  "repositoryHeadObserved": "5dc78f2c007c51e151342de08be34b72994839bb",
+  "cleanReleaseClaimed": false,
+  "status": "CONTROL_READY_EXECUTION_BLOCKED",
+  "activationAuthorizedByGate": false,
+  "phase3AuthorizedByGate": false,
+  "checks": [
+    {
+      "command": "node scripts/top12-programme-gate.js --mode report",
+      "status": "PASS",
+      "result": "CONTROL_GATE_STATUS:CONTROL_READY_EXECUTION_BLOCKED; controlReady=True; capabilities=12; foundations=7; workItems=63; completed=8; inProgress=1; externalInputBlocked=7"
+    },
+    {
+      "command": "node scripts/top12-evaluation-harness.js --mode fail --limit 150 --out docs/stoquify-skills-agents/execution/TOP12_FND_010_EVALUATION_HARNESS_REPORT_2026-08-03-caveman-run.md --json-out docs/stoquify-skills-agents/execution/top12-evaluation-harness-run-2026-08-03-caveman.json",
+      "status": "PASS",
+      "result": "Evaluation catalog valid; selected 150 highest-risk cases; status PRIORITIZATION_READY_NOT_EXECUTED"
+    },
+    {
+      "command": "npm test -- --runInBand scripts/__tests__/top12-programme-gate.test.js scripts/__tests__/top12-evaluation-harness.test.js",
+      "status": "PASS",
+      "result": "2 suites, 12 tests."
+    },
+    {
+      "command": "npm run agent:tool-registry:gate",
+      "status": "PASS",
+      "result": "Agent tools are read-only and dependency-neutral"
+    },
+    {
+      "command": "npm run agent:prohibited-action:gate",
+      "status": "PASS",
+      "result": "No business write path present in services/agents"
+    },
+    {
+      "command": "npm run agent:release-control:gate",
+      "status": "PASS",
+      "result": "Release-control gate passed"
+    },
+    {
+      "command": "npm run ai:copilot:guardrails:gate",
+      "status": "PASS",
+      "result": "AI copilot checks ready 15/15, blockers 0"
+    },
+    {
+      "command": "npm run agent:phase2a:gate",
+      "status": "PASS",
+      "result": "Phase 2A Command Agent gate passed"
+    },
+    {
+      "command": "npm run agent:phase2b:entry:gate",
+      "status": "FAIL",
+      "result": "BLOCKED (/                       passed, AUTHORIZED_SCOPE_COMPLETE FROZEN_COMMIT_VERIFIED CLEAN_RELEASE_READY GLOBAL_RELEASE_READY PRODUCTION_SECRETS_READY MIGRATION_TARGET_READY STATUTORY_AUTHORITY_READY CREDENTIAL_ROTATION_READY OPERATIONAL_RELEASE_READY PROMOTION_POINT_1_REVIEW_ACCEPTED PROMOTION_POINT_2_COMPLETED PROMOTION_POINT_3_COMPLETED PROMOTION_POINT_4_COMPLETED PROMOTION_POINT_5_COMPLETED PROMOTION_POINT_6_COMPLETED PROMOTION_POINT_7_COMPLETED PROMOTION_POINT_8_COMPLETED PROMOTION_POINT_9_COMPLETED PROMOTION_POINT_10_COMPLETED PROMOTION_POINT_11_APPROVED_GO ENTERPRISE_GATE_017_GO blockers)"
+    },
+    {
+      "command": "npm run agent:phase3:entry:gate",
+      "status": "FAIL",
+      "result": "BLOCKED (/                                  passed, AUTHORIZED_SCOPE_COMPLETE FROZEN_COMMIT_VERIFIED CLEAN_RELEASE_READY GLOBAL_RELEASE_READY PRODUCTION_SECRETS_READY MIGRATION_TARGET_READY STATUTORY_AUTHORITY_READY CREDENTIAL_ROTATION_READY OPERATIONAL_RELEASE_READY PROMOTION_POINT_1_REVIEW_ACCEPTED PROMOTION_POINT_2_COMPLETED PROMOTION_POINT_3_COMPLETED PROMOTION_POINT_4_COMPLETED PROMOTION_POINT_5_COMPLETED PROMOTION_POINT_6_COMPLETED PROMOTION_POINT_7_COMPLETED PROMOTION_POINT_8_COMPLETED PROMOTION_POINT_9_COMPLETED PROMOTION_POINT_10_COMPLETED PROMOTION_POINT_11_APPROVED_GO ENTERPRISE_GATE_017_GO PILOT_EXIT_STATUS_READY PILOT_RELEASE_BINDING PILOT_SCOPE_AND_ACTIVATION_EVIDENCE PILOT_OBSERVATION_COMPLETE PILOT_SAFETY_CLEAN PILOT_OPERATIONS_EVIDENCE PILOT_INCIDENTS_CLEAN PILOT_EXIT_APPROVALS PILOT_APPROVER_SEGREGATION PILOT_PHASE3_RECOMMENDATION PHASE2B_PILOT_COMPLETED PHASE3_GO_APPROVED PHASE3_AUTHORITY_RECORDED blockers)"
+    },
+    {
+      "command": "node scripts/agent-external-input-readiness.js --mode fail --json-out docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUT_READINESS_2026-07-25.json --out docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUT_READINESS_2026-07-25.md",
+      "status": "FAIL",
+      "result": "EXTERNAL_INPUTS_REQUIRED (/            , RELEASE_IDENTITY:PACKAGE_ID_MISSING RELEASE_IDENTITY:RELEASE_VERSION_MISSING RELEASE_IDENTITY:COMMIT_SHA_INVALID RELEASE_IDENTITY:ARTIFACT_DIGEST_INVALID RELEASE_IDENTITY:MANIFEST_HASH_INVALID RELEASE_IDENTITY:EVIDENCE_BUNDLE_HASH_INVALID RELEASE_IDENTITY:BROWSER_REPORT_HASH_INVALID RELEASE_IDENTITY:ARTIFACT_REFERENCE_INVALID RELEASE_IDENTITY:DEPLOYMENT_REFERENCE_INVALID RELEASE_IDENTITY:PILOT_ALLOWLIST_REFERENCE_INVALID RELEASE_IDENTITY:ROLE_ALLOWLIST_REFERENCE_INVALID PRODUCT_SECURITY_APPROVALS:PRODUCT_NOT_APPROVED PRODUCT_SECURITY_APPROVALS:PRODUCT_IDENTITY_INVALID PRODUCT_SECURITY_APPROVALS:PRODUCT_REFERENCE_INVALID PRODUCT_SECURITY_APPROVALS:PRODUCT_DECIDED_AT_INVALID PRODUCT_SECURITY_APPROVALS:PRODUCT_EXPIRES_AT_INVALID PRODUCT_SECURITY_APPROVALS:SECURITY_NOT_APPROVED PRODUCT_SECURITY_APPROVALS:SECURITY_IDENTITY_INVALID PRODUCT_SECURITY_APPROVALS:SECURITY_REFERENCE_INVALID PRODUCT_SECURITY_APPROVALS:SECURITY_DECIDED_AT_INVALID PRODUCT_SECURITY_APPROVALS:SECURITY_EXPIRES_AT_INVALID OPERATIONAL_OWNERS:ROLLOUT_PRIMARY_INVALID OPERATIONAL_OWNERS:ROLLOUT_BACKUP_INVALID OPERATIONAL_OWNERS:ROLLOUT_RUNBOOK_NOT_ACCEPTED OPERATIONAL_OWNERS:ROLLOUT_ACCEPTED_AT_INVALID OPERATIONAL_OWNERS:ROLLOUT_COVERAGE_START_INVALID OPERATIONAL_OWNERS:ROLLOUT_COVERAGE_END_INVALID OPERATIONAL_OWNERS:ROLLOUT_ESCALATION_REFERENCE_INVALID OPERATIONAL_OWNERS:ROLLBACK_PRIMARY_INVALID OPERATIONAL_OWNERS:ROLLBACK_BACKUP_INVALID OPERATIONAL_OWNERS:ROLLBACK_RUNBOOK_NOT_ACCEPTED OPERATIONAL_OWNERS:ROLLBACK_ACCEPTED_AT_INVALID OPERATIONAL_OWNERS:ROLLBACK_COVERAGE_START_INVALID OPERATIONAL_OWNERS:ROLLBACK_COVERAGE_END_INVALID OPERATIONAL_OWNERS:ROLLBACK_ESCALATION_REFERENCE_INVALID OPERATIONAL_OWNERS:SUPPORT_PRIMARY_INVALID OPERATIONAL_OWNERS:SUPPORT_BACKUP_INVALID OPERATIONAL_OWNERS:SUPPORT_RUNBOOK_NOT_ACCEPTED OPERATIONAL_OWNERS:SUPPORT_ACCEPTED_AT_INVALID OPERATIONAL_OWNERS:SUPPORT_COVERAGE_START_INVALID OPERATIONAL_OWNERS:SUPPORT_COVERAGE_END_INVALID OPERATIONAL_OWNERS:SUPPORT_ESCALATION_REFERENCE_INVALID OPERATIONAL_OWNERS:PILOT_PRIMARY_INVALID OPERATIONAL_OWNERS:PILOT_BACKUP_INVALID OPERATIONAL_OWNERS:PILOT_RUNBOOK_NOT_ACCEPTED OPERATIONAL_OWNERS:PILOT_ACCEPTED_AT_INVALID OPERATIONAL_OWNERS:PILOT_COVERAGE_START_INVALID OPERATIONAL_OWNERS:PILOT_COVERAGE_END_INVALID OPERATIONAL_OWNERS:PILOT_ESCALATION_REFERENCE_INVALID OPERATIONAL_OWNERS:SECURITY_INCIDENT_PRIMARY_INVALID OPERATIONAL_OWNERS:SECURITY_INCIDENT_BACKUP_INVALID OPERATIONAL_OWNERS:SECURITY_INCIDENT_RUNBOOK_NOT_ACCEPTED OPERATIONAL_OWNERS:SECURITY_INCIDENT_ACCEPTED_AT_INVALID OPERATIONAL_OWNERS:SECURITY_INCIDENT_COVERAGE_START_INVALID OPERATIONAL_OWNERS:SECURITY_INCIDENT_COVERAGE_END_INVALID OPERATIONAL_OWNERS:SECURITY_INCIDENT_ESCALATION_REFERENCE_INVALID OPERATIONAL_OWNERS:ON_CALL_BACKUP_PRIMARY_INVALID OPERATIONAL_OWNERS:ON_CALL_BACKUP_BACKUP_INVALID OPERATIONAL_OWNERS:ON_CALL_BACKUP_RUNBOOK_NOT_ACCEPTED OPERATIONAL_OWNERS:ON_CALL_BACKUP_ACCEPTED_AT_INVALID OPERATIONAL_OWNERS:ON_CALL_BACKUP_COVERAGE_START_INVALID OPERATIONAL_OWNERS:ON_CALL_BACKUP_COVERAGE_END_INVALID OPERATIONAL_OWNERS:ON_CALL_BACKUP_ESCALATION_REFERENCE_INVALID ENDPOINT_CI:HTTPS_QUERY_FREE_URL_REQUIRED ENDPOINT_CI:MANAGED_SECRET_REFERENCE_INVALID ENDPOINT_CI:SOURCE_SYSTEM_REFERENCE_INVALID ENDPOINT_GOVERNANCE:HTTPS_QUERY_FREE_URL_REQUIRED ENDPOINT_GOVERNANCE:MANAGED_SECRET_REFERENCE_INVALID ENDPOINT_GOVERNANCE:SOURCE_SYSTEM_REFERENCE_INVALID ENDPOINT_SCHEDULER:HTTPS_QUERY_FREE_URL_REQUIRED ENDPOINT_SCHEDULER:MANAGED_SECRET_REFERENCE_INVALID ENDPOINT_SCHEDULER:SOURCE_SYSTEM_REFERENCE_INVALID ENDPOINT_RECONCILER:HTTPS_QUERY_FREE_URL_REQUIRED ENDPOINT_RECONCILER:MANAGED_SECRET_REFERENCE_INVALID ENDPOINT_RECONCILER:SOURCE_SYSTEM_REFERENCE_INVALID ENDPOINT_ALERT:HTTPS_QUERY_FREE_URL_REQUIRED ENDPOINT_ALERT:MANAGED_SECRET_REFERENCE_INVALID ENDPOINT_ALERT:SOURCE_SYSTEM_REFERENCE_INVALID ENDPOINT_CREDENTIAL:HTTPS_QUERY_FREE_URL_REQUIRED ENDPOINT_CREDENTIAL:MANAGED_SECRET_REFERENCE_INVALID ENDPOINT_CREDENTIAL:SOURCE_SYSTEM_REFERENCE_INVALID MANAGED_CREDENTIALS:WORKLOAD_IDENTITY_REFERENCE_INVALID MANAGED_CREDENTIALS:COLLECTOR_IDENTITY_REFERENCE_INVALID MANAGED_CREDENTIALS:ROTATION_AUTHORITY_REFERENCE_INVALID MANAGED_CREDENTIALS:CREDENTIAL_INVENTORY_REFERENCE_INVALID MANAGED_CREDENTIALS:SECRET_MANAGER_NAMESPACE_REFERENCE_INVALID STATUTORY_APPROVAL:DECISION_NOT_APPROVED STATUTORY_APPROVAL:REVIEWER_IDENTITY_INVALID STATUTORY_APPROVAL:QUALIFICATION_REFERENCE_INVALID STATUTORY_APPROVAL:SOURCE_ARTIFACT_HASH_INVALID STATUTORY_APPROVAL:APPROVAL_ARTIFACT_REFERENCE_INVALID STATUTORY_APPROVAL:APPROVAL_ARTIFACT_HASH_INVALID STATUTORY_APPROVAL:REVIEWED_AT_INVALID PHASE_2B_PILOT_AUTHORITY:COHORT_REFERENCE_INVALID PHASE_2B_PILOT_AUTHORITY:SUPPORT_COVERAGE_REFERENCE_INVALID PHASE_2B_PILOT_AUTHORITY:ROLLBACK_PLAN_REFERENCE_INVALID PHASE_2B_PILOT_AUTHORITY:ACTIVATION_DECISION_REFERENCE_INVALID PHASE_2B_PILOT_AUTHORITY:TENANT_SCOPE_HASH_INVALID PHASE_2B_PILOT_AUTHORITY:ROLE_SCOPE_HASH_INVALID PHASE_2B_PILOT_AUTHORITY:ACTIVATION_AUTHORITY_IDENTITY_INVALID PHASE_2B_PILOT_AUTHORITY:ACTIVATION_DECISION_NOT_APPROVED PHASE_2B_PILOT_AUTHORITY:ACTIVATION_DECIDED_AT_INVALID blockers)"
+    },
+    {
+      "command": "npm test -- --runInBand services/agents/portfolio/__tests__/connector-inventory-read-model.service.ts services/agents/portfolio/__tests__/connector-health.service.test.ts services/agents/portfolio/__tests__/evidence-trust.contracts.test.ts",
+      "status": "PASS",
+      "result": "2 suites, 14 tests."
+    },
+    {
+      "command": "npx eslint scripts/top12-evaluation-harness.js scripts/__tests__/top12-evaluation-harness.test.js scripts/top12-programme-gate.js scripts/__tests__/top12-programme-gate.test.js",
+      "status": "PASS",
+      "result": "No lint diagnostics"
+    },
+    {
+      "command": "npx eslint services/agents/portfolio/connector-health.service.ts services/agents/portfolio/connector-inventory-read-model.service.ts services/agents/portfolio/__tests__/connector-health.service.test.ts services/agents/portfolio/__tests__/connector-inventory-read-model.service.test.ts",
+      "status": "PASS",
+      "result": "No lint diagnostics"
+    },
+    {
+      "command": "npm run prisma:validate",
+      "status": "PASS",
+      "result": "Prisma schema valid"
+    },
+    {
+      "command": "npm run typecheck",
+      "status": "PASS",
+      "result": "TypeScript noEmit no errors"
+    }
+  ],
+  "promotion": {
+    "phase3Authority": "UNAUTHORIZED",
+    "externalInputs": {
+      "passed": null,
+      "status": "EXTERNAL_INPUTS_REQUIRED",
+      "checks": [
+        {
+          "id": "RELEASE_IDENTITY",
+          "title": "Deployment target and immutable artifact details",
+          "owner": "ENGINEERING_RELEASE",
+          "ready": false,
+          "blockers": [
+            "PACKAGE_ID_MISSING",
+            "RELEASE_VERSION_MISSING",
+            "COMMIT_SHA_INVALID",
+            "ARTIFACT_DIGEST_INVALID",
+            "MANIFEST_HASH_INVALID",
+            "EVIDENCE_BUNDLE_HASH_INVALID",
+            "BROWSER_REPORT_HASH_INVALID",
+            "ARTIFACT_REFERENCE_INVALID",
+            "DEPLOYMENT_REFERENCE_INVALID",
+            "PILOT_ALLOWLIST_REFERENCE_INVALID",
+            "ROLE_ALLOWLIST_REFERENCE_INVALID"
+          ],
+          "nextCommand": "npm run agent:ci-release:evidence:apply"
+        },
+        {
+          "id": "PRODUCT_SECURITY_APPROVALS",
+          "title": "Product and Security approver identities",
+          "owner": "PRODUCT_AND_SECURITY",
+          "ready": false,
+          "blockers": [
+            "PRODUCT_NOT_APPROVED",
+            "PRODUCT_IDENTITY_INVALID",
+            "PRODUCT_REFERENCE_INVALID",
+            "PRODUCT_DECIDED_AT_INVALID",
+            "PRODUCT_EXPIRES_AT_INVALID",
+            "SECURITY_NOT_APPROVED",
+            "SECURITY_IDENTITY_INVALID",
+            "SECURITY_REFERENCE_INVALID",
+            "SECURITY_DECIDED_AT_INVALID",
+            "SECURITY_EXPIRES_AT_INVALID"
+          ],
+          "nextCommand": "npm run agent:governance:evidence:apply"
+        },
+        {
+          "id": "OPERATIONAL_OWNERS",
+          "title": "Six primary and backup operational-owner assignments",
+          "owner": "RELEASE_MANAGER",
+          "ready": false,
+          "blockers": [
+            "ROLLOUT_PRIMARY_INVALID",
+            "ROLLOUT_BACKUP_INVALID",
+            "ROLLOUT_RUNBOOK_NOT_ACCEPTED",
+            "ROLLOUT_ACCEPTED_AT_INVALID",
+            "ROLLOUT_COVERAGE_START_INVALID",
+            "ROLLOUT_COVERAGE_END_INVALID",
+            "ROLLOUT_ESCALATION_REFERENCE_INVALID",
+            "ROLLBACK_PRIMARY_INVALID",
+            "ROLLBACK_BACKUP_INVALID",
+            "ROLLBACK_RUNBOOK_NOT_ACCEPTED",
+            "ROLLBACK_ACCEPTED_AT_INVALID",
+            "ROLLBACK_COVERAGE_START_INVALID",
+            "ROLLBACK_COVERAGE_END_INVALID",
+            "ROLLBACK_ESCALATION_REFERENCE_INVALID",
+            "SUPPORT_PRIMARY_INVALID",
+            "SUPPORT_BACKUP_INVALID",
+            "SUPPORT_RUNBOOK_NOT_ACCEPTED",
+            "SUPPORT_ACCEPTED_AT_INVALID",
+            "SUPPORT_COVERAGE_START_INVALID",
+            "SUPPORT_COVERAGE_END_INVALID",
+            "SUPPORT_ESCALATION_REFERENCE_INVALID",
+            "PILOT_PRIMARY_INVALID",
+            "PILOT_BACKUP_INVALID",
+            "PILOT_RUNBOOK_NOT_ACCEPTED",
+            "PILOT_ACCEPTED_AT_INVALID",
+            "PILOT_COVERAGE_START_INVALID",
+            "PILOT_COVERAGE_END_INVALID",
+            "PILOT_ESCALATION_REFERENCE_INVALID",
+            "SECURITY_INCIDENT_PRIMARY_INVALID",
+            "SECURITY_INCIDENT_BACKUP_INVALID",
+            "SECURITY_INCIDENT_RUNBOOK_NOT_ACCEPTED",
+            "SECURITY_INCIDENT_ACCEPTED_AT_INVALID",
+            "SECURITY_INCIDENT_COVERAGE_START_INVALID",
+            "SECURITY_INCIDENT_COVERAGE_END_INVALID",
+            "SECURITY_INCIDENT_ESCALATION_REFERENCE_INVALID",
+            "ON_CALL_BACKUP_PRIMARY_INVALID",
+            "ON_CALL_BACKUP_BACKUP_INVALID",
+            "ON_CALL_BACKUP_RUNBOOK_NOT_ACCEPTED",
+            "ON_CALL_BACKUP_ACCEPTED_AT_INVALID",
+            "ON_CALL_BACKUP_COVERAGE_START_INVALID",
+            "ON_CALL_BACKUP_COVERAGE_END_INVALID",
+            "ON_CALL_BACKUP_ESCALATION_REFERENCE_INVALID"
+          ],
+          "nextCommand": "npm run agent:governance:evidence:apply"
+        },
+        {
+          "id": "ENDPOINT_CI",
+          "title": "ci evidence HTTPS endpoint and managed collector credential",
+          "owner": "ENGINEERING_RELEASE",
+          "ready": false,
+          "blockers": [
+            "HTTPS_QUERY_FREE_URL_REQUIRED",
+            "MANAGED_SECRET_REFERENCE_INVALID",
+            "SOURCE_SYSTEM_REFERENCE_INVALID"
+          ],
+          "nextCommand": "npm run agent:ci-release:evidence:apply"
+        },
+        {
+          "id": "ENDPOINT_GOVERNANCE",
+          "title": "governance evidence HTTPS endpoint and managed collector credential",
+          "owner": "PRODUCT_AND_SECURITY",
+          "ready": false,
+          "blockers": [
+            "HTTPS_QUERY_FREE_URL_REQUIRED",
+            "MANAGED_SECRET_REFERENCE_INVALID",
+            "SOURCE_SYSTEM_REFERENCE_INVALID"
+          ],
+          "nextCommand": "npm run agent:governance:evidence:apply"
+        },
+        {
+          "id": "ENDPOINT_SCHEDULER",
+          "title": "scheduler evidence HTTPS endpoint and managed collector credential",
+          "owner": "PLATFORM_SRE",
+          "ready": false,
+          "blockers": [
+            "HTTPS_QUERY_FREE_URL_REQUIRED",
+            "MANAGED_SECRET_REFERENCE_INVALID",
+            "SOURCE_SYSTEM_REFERENCE_INVALID"
+          ],
+          "nextCommand": "npm run agent:scheduler:evidence:apply"
+        },
+        {
+          "id": "ENDPOINT_RECONCILER",
+          "title": "reconciler evidence HTTPS endpoint and managed collector credential",
+          "owner": "PLATFORM_SRE",
+          "ready": false,
+          "blockers": [
+            "HTTPS_QUERY_FREE_URL_REQUIRED",
+            "MANAGED_SECRET_REFERENCE_INVALID",
+            "SOURCE_SYSTEM_REFERENCE_INVALID"
+          ],
+          "nextCommand": "npm run agent:reconciler:evidence:apply"
+        },
+        {
+          "id": "ENDPOINT_ALERT",
+          "title": "alert evidence HTTPS endpoint and managed collector credential",
+          "owner": "SECURITY_INCIDENT_AND_SRE",
+          "ready": false,
+          "blockers": [
+            "HTTPS_QUERY_FREE_URL_REQUIRED",
+            "MANAGED_SECRET_REFERENCE_INVALID",
+            "SOURCE_SYSTEM_REFERENCE_INVALID"
+          ],
+          "nextCommand": "npm run agent:alert:evidence:apply"
+        },
+        {
+          "id": "ENDPOINT_CREDENTIAL",
+          "title": "credential evidence HTTPS endpoint and managed collector credential",
+          "owner": "SECURITY",
+          "ready": false,
+          "blockers": [
+            "HTTPS_QUERY_FREE_URL_REQUIRED",
+            "MANAGED_SECRET_REFERENCE_INVALID",
+            "SOURCE_SYSTEM_REFERENCE_INVALID"
+          ],
+          "nextCommand": "npm run agent:credential-rotation:evidence:apply"
+        },
+        {
+          "id": "MANAGED_CREDENTIALS",
+          "title": "Managed workload and collector identities",
+          "owner": "SECURITY_AND_PLATFORM",
+          "ready": false,
+          "blockers": [
+            "WORKLOAD_IDENTITY_REFERENCE_INVALID",
+            "COLLECTOR_IDENTITY_REFERENCE_INVALID",
+            "ROTATION_AUTHORITY_REFERENCE_INVALID",
+            "CREDENTIAL_INVENTORY_REFERENCE_INVALID",
+            "SECRET_MANAGER_NAMESPACE_REFERENCE_INVALID"
+          ],
+          "nextCommand": "npm run agent:credential-rotation:evidence:apply"
+        },
+        {
+          "id": "STATUTORY_APPROVAL",
+          "title": "Qualified statutory reviewer approval",
+          "owner": "OHADA_DOMAIN_REVIEWER",
+          "ready": false,
+          "blockers": [
+            "DECISION_NOT_APPROVED",
+            "REVIEWER_IDENTITY_INVALID",
+            "QUALIFICATION_REFERENCE_INVALID",
+            "SOURCE_ARTIFACT_HASH_INVALID",
+            "APPROVAL_ARTIFACT_REFERENCE_INVALID",
+            "APPROVAL_ARTIFACT_HASH_INVALID",
+            "REVIEWED_AT_INVALID"
+          ],
+          "nextCommand": "npm run statutory:country-pack:gate"
+        },
+        {
+          "id": "PHASE_2B_PILOT_AUTHORITY",
+          "title": "Phase 2B pilot cohort and activation authority",
+          "owner": "PILOT_AND_RELEASE_AUTHORITY",
+          "ready": false,
+          "blockers": [
+            "COHORT_REFERENCE_INVALID",
+            "SUPPORT_COVERAGE_REFERENCE_INVALID",
+            "ROLLBACK_PLAN_REFERENCE_INVALID",
+            "ACTIVATION_DECISION_REFERENCE_INVALID",
+            "TENANT_SCOPE_HASH_INVALID",
+            "ROLE_SCOPE_HASH_INVALID",
+            "ACTIVATION_AUTHORITY_IDENTITY_INVALID",
+            "ACTIVATION_DECISION_NOT_APPROVED",
+            "ACTIVATION_DECIDED_AT_INVALID"
+          ],
+          "nextCommand": "npm run agent:phase2b:entry:gate"
+        },
+        {
+          "id": "SAFETY_BOUNDARY",
+          "title": "Inactive pre-promotion safety boundary",
+          "owner": "ENTERPRISE_RELEASE_AUTHORITY",
+          "ready": true,
+          "blockers": [],
+          "nextCommand": "npm run agent:runtime:gates"
+        }
+      ],
+      "blockers": [
+        "RELEASE_IDENTITY:PACKAGE_ID_MISSING",
+        "RELEASE_IDENTITY:RELEASE_VERSION_MISSING",
+        "RELEASE_IDENTITY:COMMIT_SHA_INVALID",
+        "RELEASE_IDENTITY:ARTIFACT_DIGEST_INVALID",
+        "RELEASE_IDENTITY:MANIFEST_HASH_INVALID",
+        "RELEASE_IDENTITY:EVIDENCE_BUNDLE_HASH_INVALID",
+        "RELEASE_IDENTITY:BROWSER_REPORT_HASH_INVALID",
+        "RELEASE_IDENTITY:ARTIFACT_REFERENCE_INVALID",
+        "RELEASE_IDENTITY:DEPLOYMENT_REFERENCE_INVALID",
+        "RELEASE_IDENTITY:PILOT_ALLOWLIST_REFERENCE_INVALID",
+        "RELEASE_IDENTITY:ROLE_ALLOWLIST_REFERENCE_INVALID",
+        "PRODUCT_SECURITY_APPROVALS:PRODUCT_NOT_APPROVED",
+        "PRODUCT_SECURITY_APPROVALS:PRODUCT_IDENTITY_INVALID",
+        "PRODUCT_SECURITY_APPROVALS:PRODUCT_REFERENCE_INVALID",
+        "PRODUCT_SECURITY_APPROVALS:PRODUCT_DECIDED_AT_INVALID",
+        "PRODUCT_SECURITY_APPROVALS:PRODUCT_EXPIRES_AT_INVALID",
+        "PRODUCT_SECURITY_APPROVALS:SECURITY_NOT_APPROVED",
+        "PRODUCT_SECURITY_APPROVALS:SECURITY_IDENTITY_INVALID",
+        "PRODUCT_SECURITY_APPROVALS:SECURITY_REFERENCE_INVALID",
+        "PRODUCT_SECURITY_APPROVALS:SECURITY_DECIDED_AT_INVALID",
+        "PRODUCT_SECURITY_APPROVALS:SECURITY_EXPIRES_AT_INVALID",
+        "OPERATIONAL_OWNERS:ROLLOUT_PRIMARY_INVALID",
+        "OPERATIONAL_OWNERS:ROLLOUT_BACKUP_INVALID",
+        "OPERATIONAL_OWNERS:ROLLOUT_RUNBOOK_NOT_ACCEPTED",
+        "OPERATIONAL_OWNERS:ROLLOUT_ACCEPTED_AT_INVALID",
+        "OPERATIONAL_OWNERS:ROLLOUT_COVERAGE_START_INVALID",
+        "OPERATIONAL_OWNERS:ROLLOUT_COVERAGE_END_INVALID",
+        "OPERATIONAL_OWNERS:ROLLOUT_ESCALATION_REFERENCE_INVALID",
+        "OPERATIONAL_OWNERS:ROLLBACK_PRIMARY_INVALID",
+        "OPERATIONAL_OWNERS:ROLLBACK_BACKUP_INVALID",
+        "OPERATIONAL_OWNERS:ROLLBACK_RUNBOOK_NOT_ACCEPTED",
+        "OPERATIONAL_OWNERS:ROLLBACK_ACCEPTED_AT_INVALID",
+        "OPERATIONAL_OWNERS:ROLLBACK_COVERAGE_START_INVALID",
+        "OPERATIONAL_OWNERS:ROLLBACK_COVERAGE_END_INVALID",
+        "OPERATIONAL_OWNERS:ROLLBACK_ESCALATION_REFERENCE_INVALID",
+        "OPERATIONAL_OWNERS:SUPPORT_PRIMARY_INVALID",
+        "OPERATIONAL_OWNERS:SUPPORT_BACKUP_INVALID",
+        "OPERATIONAL_OWNERS:SUPPORT_RUNBOOK_NOT_ACCEPTED",
+        "OPERATIONAL_OWNERS:SUPPORT_ACCEPTED_AT_INVALID",
+        "OPERATIONAL_OWNERS:SUPPORT_COVERAGE_START_INVALID",
+        "OPERATIONAL_OWNERS:SUPPORT_COVERAGE_END_INVALID",
+        "OPERATIONAL_OWNERS:SUPPORT_ESCALATION_REFERENCE_INVALID",
+        "OPERATIONAL_OWNERS:PILOT_PRIMARY_INVALID",
+        "OPERATIONAL_OWNERS:PILOT_BACKUP_INVALID",
+        "OPERATIONAL_OWNERS:PILOT_RUNBOOK_NOT_ACCEPTED",
+        "OPERATIONAL_OWNERS:PILOT_ACCEPTED_AT_INVALID",
+        "OPERATIONAL_OWNERS:PILOT_COVERAGE_START_INVALID",
+        "OPERATIONAL_OWNERS:PILOT_COVERAGE_END_INVALID",
+        "OPERATIONAL_OWNERS:PILOT_ESCALATION_REFERENCE_INVALID",
+        "OPERATIONAL_OWNERS:SECURITY_INCIDENT_PRIMARY_INVALID",
+        "OPERATIONAL_OWNERS:SECURITY_INCIDENT_BACKUP_INVALID",
+        "OPERATIONAL_OWNERS:SECURITY_INCIDENT_RUNBOOK_NOT_ACCEPTED",
+        "OPERATIONAL_OWNERS:SECURITY_INCIDENT_ACCEPTED_AT_INVALID",
+        "OPERATIONAL_OWNERS:SECURITY_INCIDENT_COVERAGE_START_INVALID",
+        "OPERATIONAL_OWNERS:SECURITY_INCIDENT_COVERAGE_END_INVALID",
+        "OPERATIONAL_OWNERS:SECURITY_INCIDENT_ESCALATION_REFERENCE_INVALID",
+        "OPERATIONAL_OWNERS:ON_CALL_BACKUP_PRIMARY_INVALID",
+        "OPERATIONAL_OWNERS:ON_CALL_BACKUP_BACKUP_INVALID",
+        "OPERATIONAL_OWNERS:ON_CALL_BACKUP_RUNBOOK_NOT_ACCEPTED",
+        "OPERATIONAL_OWNERS:ON_CALL_BACKUP_ACCEPTED_AT_INVALID",
+        "OPERATIONAL_OWNERS:ON_CALL_BACKUP_COVERAGE_START_INVALID",
+        "OPERATIONAL_OWNERS:ON_CALL_BACKUP_COVERAGE_END_INVALID",
+        "OPERATIONAL_OWNERS:ON_CALL_BACKUP_ESCALATION_REFERENCE_INVALID",
+        "ENDPOINT_CI:HTTPS_QUERY_FREE_URL_REQUIRED",
+        "ENDPOINT_CI:MANAGED_SECRET_REFERENCE_INVALID",
+        "ENDPOINT_CI:SOURCE_SYSTEM_REFERENCE_INVALID",
+        "ENDPOINT_GOVERNANCE:HTTPS_QUERY_FREE_URL_REQUIRED",
+        "ENDPOINT_GOVERNANCE:MANAGED_SECRET_REFERENCE_INVALID",
+        "ENDPOINT_GOVERNANCE:SOURCE_SYSTEM_REFERENCE_INVALID",
+        "ENDPOINT_SCHEDULER:HTTPS_QUERY_FREE_URL_REQUIRED",
+        "ENDPOINT_SCHEDULER:MANAGED_SECRET_REFERENCE_INVALID",
+        "ENDPOINT_SCHEDULER:SOURCE_SYSTEM_REFERENCE_INVALID",
+        "ENDPOINT_RECONCILER:HTTPS_QUERY_FREE_URL_REQUIRED",
+        "ENDPOINT_RECONCILER:MANAGED_SECRET_REFERENCE_INVALID",
+        "ENDPOINT_RECONCILER:SOURCE_SYSTEM_REFERENCE_INVALID",
+        "ENDPOINT_ALERT:HTTPS_QUERY_FREE_URL_REQUIRED",
+        "ENDPOINT_ALERT:MANAGED_SECRET_REFERENCE_INVALID",
+        "ENDPOINT_ALERT:SOURCE_SYSTEM_REFERENCE_INVALID",
+        "ENDPOINT_CREDENTIAL:HTTPS_QUERY_FREE_URL_REQUIRED",
+        "ENDPOINT_CREDENTIAL:MANAGED_SECRET_REFERENCE_INVALID",
+        "ENDPOINT_CREDENTIAL:SOURCE_SYSTEM_REFERENCE_INVALID",
+        "MANAGED_CREDENTIALS:WORKLOAD_IDENTITY_REFERENCE_INVALID",
+        "MANAGED_CREDENTIALS:COLLECTOR_IDENTITY_REFERENCE_INVALID",
+        "MANAGED_CREDENTIALS:ROTATION_AUTHORITY_REFERENCE_INVALID",
+        "MANAGED_CREDENTIALS:CREDENTIAL_INVENTORY_REFERENCE_INVALID",
+        "MANAGED_CREDENTIALS:SECRET_MANAGER_NAMESPACE_REFERENCE_INVALID",
+        "STATUTORY_APPROVAL:DECISION_NOT_APPROVED",
+        "STATUTORY_APPROVAL:REVIEWER_IDENTITY_INVALID",
+        "STATUTORY_APPROVAL:QUALIFICATION_REFERENCE_INVALID",
+        "STATUTORY_APPROVAL:SOURCE_ARTIFACT_HASH_INVALID",
+        "STATUTORY_APPROVAL:APPROVAL_ARTIFACT_REFERENCE_INVALID",
+        "STATUTORY_APPROVAL:APPROVAL_ARTIFACT_HASH_INVALID",
+        "STATUTORY_APPROVAL:REVIEWED_AT_INVALID",
+        "PHASE_2B_PILOT_AUTHORITY:COHORT_REFERENCE_INVALID",
+        "PHASE_2B_PILOT_AUTHORITY:SUPPORT_COVERAGE_REFERENCE_INVALID",
+        "PHASE_2B_PILOT_AUTHORITY:ROLLBACK_PLAN_REFERENCE_INVALID",
+        "PHASE_2B_PILOT_AUTHORITY:ACTIVATION_DECISION_REFERENCE_INVALID",
+        "PHASE_2B_PILOT_AUTHORITY:TENANT_SCOPE_HASH_INVALID",
+        "PHASE_2B_PILOT_AUTHORITY:ROLE_SCOPE_HASH_INVALID",
+        "PHASE_2B_PILOT_AUTHORITY:ACTIVATION_AUTHORITY_IDENTITY_INVALID",
+        "PHASE_2B_PILOT_AUTHORITY:ACTIVATION_DECISION_NOT_APPROVED",
+        "PHASE_2B_PILOT_AUTHORITY:ACTIVATION_DECIDED_AT_INVALID"
+      ]
+    },
+    "productionActivation": "BLOCKED",
+    "phase2b": {
+      "passed": null,
+      "status": "BLOCKED",
+      "checks": [
+        {
+          "id": "AUTHORIZED_SCOPE_COMPLETE",
+          "title": "All authorized repository requirements pass",
+          "passed": false,
+          "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_AUTHORIZED_SCOPE_REQUIREMENTS_AUDIT_2026-07-25.json"
+        },
+        {
+          "id": "FROZEN_COMMIT_VERIFIED",
+          "title": "Phase 2A frozen commit remains verified",
+          "passed": false,
+          "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json"
+        },
+        {
+          "id": "CLEAN_RELEASE_READY",
+          "title": "Frozen release has clean release identity",
+          "passed": false,
+          "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json"
+        },
+        {
+          "id": "GLOBAL_RELEASE_READY",
+          "title": "Global release evidence has no release blockers",
+          "passed": false,
+          "evidencePath": "what-next/skills-life-cycle/stoquify-ohada-leadership-release-evidence-index-2026-07-11.json"
+        },
+        {
+          "id": "PRODUCTION_SECRETS_READY",
+          "title": "Production-purpose secret preflight is ready",
+          "passed": false,
+          "evidencePath": "what-next/release-secret-preflight.json"
+        },
+        {
+          "id": "MIGRATION_TARGET_READY",
+          "title": "Migration and non-local database target are ready",
+          "passed": false,
+          "evidencePath": "what-next/prisma-migration-deployment-readiness.json"
+        },
+        {
+          "id": "STATUTORY_AUTHORITY_READY",
+          "title": "Statutory source and expert evidence are ready",
+          "passed": false,
+          "evidencePath": "what-next/statutory-country-pack-production-readiness.json"
+        },
+        {
+          "id": "CREDENTIAL_ROTATION_READY",
+          "title": "Credential rotation register is ready",
+          "passed": false,
+          "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_CREDENTIAL_ROTATION_REGISTER_2026-07-25.json"
+        },
+        {
+          "id": "OPERATIONAL_RELEASE_READY",
+          "title": "Operational release is ready for independent review",
+          "passed": false,
+          "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_OPERATIONAL_RELEASE_EVIDENCE_2026-07-25.json"
+        },
+        {
+          "id": "PROMOTION_POINT_1_REVIEW_ACCEPTED",
+          "title": "Promotion point 1 is REVIEW_ACCEPTED",
+          "passed": false,
+          "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+        },
+        {
+          "id": "PROMOTION_POINT_2_COMPLETED",
+          "title": "Promotion point 2 is COMPLETED",
+          "passed": false,
+          "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+        },
+        {
+          "id": "PROMOTION_POINT_3_COMPLETED",
+          "title": "Promotion point 3 is COMPLETED",
+          "passed": false,
+          "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+        },
+        {
+          "id": "PROMOTION_POINT_4_COMPLETED",
+          "title": "Promotion point 4 is COMPLETED",
+          "passed": false,
+          "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+        },
+        {
+          "id": "PROMOTION_POINT_5_COMPLETED",
+          "title": "Promotion point 5 is COMPLETED",
+          "passed": false,
+          "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+        },
+        {
+          "id": "PROMOTION_POINT_6_COMPLETED",
+          "title": "Promotion point 6 is COMPLETED",
+          "passed": false,
+          "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+        },
+        {
+          "id": "PROMOTION_POINT_7_COMPLETED",
+          "title": "Promotion point 7 is COMPLETED",
+          "passed": false,
+          "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+        },
+        {
+          "id": "PROMOTION_POINT_8_COMPLETED",
+          "title": "Promotion point 8 is COMPLETED",
+          "passed": false,
+          "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+        },
+        {
+          "id": "PROMOTION_POINT_9_COMPLETED",
+          "title": "Promotion point 9 is COMPLETED",
+          "passed": false,
+          "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+        },
+        {
+          "id": "PROMOTION_POINT_10_COMPLETED",
+          "title": "Promotion point 10 is COMPLETED",
+          "passed": false,
+          "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+        },
+        {
+          "id": "PROMOTION_POINT_11_APPROVED_GO",
+          "title": "Promotion point 11 is APPROVED_GO",
+          "passed": false,
+          "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+        },
+        {
+          "id": "ENTERPRISE_GATE_017_GO",
+          "title": "Enterprise gate 017 records approved GO",
+          "passed": false,
+          "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+        },
+        {
+          "id": "PRE_ACTIVATION_BOUNDARY",
+          "title": "Activation remains a separate false/false/null ceremony",
+          "passed": true,
+          "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_OPERATIONAL_RELEASE_EVIDENCE_2026-07-25.json"
+        },
+        {
+          "id": "PHASE3_REMAINS_UNAUTHORIZED",
+          "title": "Phase 3 remains unauthorized before the pilot",
+          "passed": true,
+          "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+        }
+      ],
+      "blockers": [
+        "AUTHORIZED_SCOPE_COMPLETE",
+        "FROZEN_COMMIT_VERIFIED",
+        "CLEAN_RELEASE_READY",
+        "GLOBAL_RELEASE_READY",
+        "PRODUCTION_SECRETS_READY",
+        "MIGRATION_TARGET_READY",
+        "STATUTORY_AUTHORITY_READY",
+        "CREDENTIAL_ROTATION_READY",
+        "OPERATIONAL_RELEASE_READY",
+        "PROMOTION_POINT_1_REVIEW_ACCEPTED",
+        "PROMOTION_POINT_2_COMPLETED",
+        "PROMOTION_POINT_3_COMPLETED",
+        "PROMOTION_POINT_4_COMPLETED",
+        "PROMOTION_POINT_5_COMPLETED",
+        "PROMOTION_POINT_6_COMPLETED",
+        "PROMOTION_POINT_7_COMPLETED",
+        "PROMOTION_POINT_8_COMPLETED",
+        "PROMOTION_POINT_9_COMPLETED",
+        "PROMOTION_POINT_10_COMPLETED",
+        "PROMOTION_POINT_11_APPROVED_GO",
+        "ENTERPRISE_GATE_017_GO"
+      ]
+    }
+  },
+  "safety": {
+    "authorityFabricated": false,
+    "financialMutationAttempted": false,
+    "productionActivationAttempted": false,
+    "secretValuePrinted": false,
+    "externalMessageSent": false
+  }
+}

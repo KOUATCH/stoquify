@@ -16,6 +16,7 @@ import {
   ShieldAlert,
   ShieldCheck,
   TableProperties,
+  Workflow,
   XCircle,
   type LucideIcon,
 } from "lucide-react"
@@ -84,6 +85,17 @@ const copy = {
     setupLockDescription: "Critical action governed by the sensitive-action control plane.",
     controlPlaneTitle: "Control plane status",
     controlPlaneDescription: "Latest ledger audit and sensitive-action decisions for accounting operations.",
+    eventOutboxTitle: "Business event outbox",
+    eventOutboxDescription: "Operational delivery health for evidence-producing business events.",
+    eventOutboxOpen: "Open messages",
+    eventOutboxHealthy: "No delayed or dead-lettered messages.",
+    eventOutboxOldest: "Oldest open",
+    eventOutboxEvent: "Event",
+    pending: "Pending",
+    lockedQueue: "Locked",
+    deferred: "Deferred",
+    failed: "Failed",
+    deadLetter: "Dead letter",
     ledgerEvents: "Ledger events",
     controlEvents: "Control events",
     deniedEvents: "Denied",
@@ -158,6 +170,17 @@ const copy = {
     setupLockDescription: "Action critique gouvernee par le plan de controle des actions sensibles.",
     controlPlaneTitle: "Statut du plan de controle",
     controlPlaneDescription: "Derniers audits comptables et decisions d'actions sensibles.",
+    eventOutboxTitle: "Boite d'envoi des evenements metier",
+    eventOutboxDescription: "Sante operationnelle des evenements metier qui produisent des preuves.",
+    eventOutboxOpen: "Messages ouverts",
+    eventOutboxHealthy: "Aucun message retarde ou en rejet definitif.",
+    eventOutboxOldest: "Plus ancien ouvert",
+    eventOutboxEvent: "Evenement",
+    pending: "En attente",
+    lockedQueue: "Verrouille",
+    deferred: "Reporte",
+    failed: "Echoue",
+    deadLetter: "Rejet definitif",
     ledgerEvents: "Audits ledger",
     controlEvents: "Controles",
     deniedEvents: "Refuses",
@@ -478,6 +501,8 @@ export function AccountingControlCenter({
 
       <ControlPlaneStatusPanel data={data} locale={locale} />
 
+      <BusinessEventOutboxPanel data={data} locale={locale} />
+
       <div className="grid min-w-0 gap-5 xl:grid-cols-2">
         <AccountMappingsPanel data={data} locale={locale} />
         <DefaultJournalsPanel data={data} locale={locale} />
@@ -485,6 +510,75 @@ export function AccountingControlCenter({
 
       <PostingRulesStatusTable data={data} locale={locale} />
     </div>
+  )
+}
+
+export function BusinessEventOutboxPanel({
+  data,
+  locale = "en",
+}: {
+  data: AccountingControlCenterData
+  locale?: Locale
+}) {
+  const t = copy[locale]
+  const outbox = data.businessEventOutbox
+  const counts = [
+    { label: t.pending, value: outbox.pending, tone: "info" as const },
+    { label: t.lockedQueue, value: outbox.locked, tone: "brand" as const },
+    { label: t.deferred, value: outbox.deferred, tone: "warning" as const },
+    { label: t.failed, value: outbox.failed, tone: "danger" as const },
+    { label: t.deadLetter, value: outbox.deadLetter, tone: "danger" as const },
+  ]
+  const countTones = {
+    brand: "border-[var(--dash-brand)] bg-[var(--dash-brand-soft)] text-[var(--dash-brand-strong)]",
+    info: "border-[var(--dash-info)] bg-[var(--dash-info-soft)] text-[var(--dash-info)]",
+    warning: "border-[var(--dash-warning)] bg-[var(--dash-warning-soft)] text-[var(--dash-warning)]",
+    danger: "border-[var(--dash-danger)] bg-[var(--dash-danger-soft)] text-[var(--dash-danger)]",
+  } as const
+
+  return (
+    <Panel
+      title={t.eventOutboxTitle}
+      description={t.eventOutboxDescription}
+      actions={
+        <Badge variant="outline" className={cn("rounded-md", statusClass(outbox.status))}>
+          {statusLabel(outbox.status, locale)}
+        </Badge>
+      }
+    >
+      <div data-testid="accounting-business-event-outbox-panel" className="grid gap-3 p-4 lg:grid-cols-[0.85fr_1.15fr]">
+        <div className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.28)] p-4">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-xs font-semibold uppercase text-[var(--dash-text-faint)]">{t.eventOutboxOpen}</p>
+              <p data-testid="accounting-business-event-outbox-open-count" className="mt-2 text-2xl font-semibold text-[var(--dash-text)]">
+                {outbox.openCount}
+              </p>
+            </div>
+            <span className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-lg", statusClass(outbox.status))}>
+              <Workflow className="h-5 w-5" />
+            </span>
+          </div>
+          <p className="mt-3 text-sm leading-5 text-[var(--dash-text-soft)]">
+            {outbox.oldestOpenAt ? `${t.eventOutboxOldest}: ${formatDate(outbox.oldestOpenAt, locale)}` : t.eventOutboxHealthy}
+          </p>
+          {outbox.oldestOpenEventName ? (
+            <p className="mt-2 break-words text-xs leading-5 text-[var(--dash-text-faint)]">
+              {t.eventOutboxEvent}: {outbox.oldestOpenEventName}
+            </p>
+          ) : null}
+        </div>
+
+        <div className="grid gap-2 sm:grid-cols-5">
+          {counts.map((item) => (
+            <div key={item.label} className={cn("rounded-lg border px-3 py-3", countTones[item.tone])}>
+              <p className="text-xs font-semibold uppercase">{item.label}</p>
+              <p className="mt-2 text-xl font-semibold">{item.value}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </Panel>
   )
 }
 

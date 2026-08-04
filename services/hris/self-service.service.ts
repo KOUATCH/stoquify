@@ -6,6 +6,7 @@ import { hasAnyRbacPermission, hasRbacPermission } from "@/lib/security/rbac-per
 import { ForbiddenError } from "@/services/_shared/action-errors"
 import { getOwnHrisEmployeeProfile } from "@/services/hris/employee.service"
 import { getOwnHrisPaymentDestinationStatus } from "@/services/hris/payment-destination.service"
+import { getOwnOperationalTime } from "@/services/hris/operational-time.service"
 import { getOwnHrisTimeLeaveAttendanceStatus } from "@/services/hris/time-leave.service"
 
 const SELF_SERVICE_READ_PERMISSIONS = [
@@ -42,11 +43,12 @@ export async function getHrisEmployeeSelfService(
   }
 
   const profile = await getOwnHrisEmployeeProfile(parsed)
-  const [paymentStatus, attendanceStatus] = await Promise.all([
+  const [paymentStatus, attendanceStatus, operationalTime] = await Promise.all([
     profile.employee.status === "ACTIVE"
       ? getOwnHrisPaymentDestinationStatus(parsed)
       : Promise.resolve(null),
     getOwnHrisTimeLeaveAttendanceStatus({ ...parsed, limit: 1 }),
+    getOwnOperationalTime({ ...parsed, limit: 20 }),
   ])
   const latestAttendance = attendanceStatus.snapshots[0] ?? null
   const payment = paymentStatus?.employee ?? null
@@ -120,7 +122,15 @@ export async function getHrisEmployeeSelfService(
           payrollReleaseStatus: payment.payrollReleaseReadiness.status,
         }
       : null,
-    capabilities: {
+    operationalTime: {
+      balances: operationalTime.balances,
+      requests: operationalTime.requests.map((request) => ({
+        ...request,
+        periodStart: request.periodStart.toISOString(),
+        periodEnd: request.periodEnd.toISOString(),
+        requestedAt: request.requestedAt.toISOString(),
+      })),
+    },    capabilities: {
       payslips: {
         canRead: hasRbacPermission(
           parsed.actorPermissions,
@@ -140,8 +150,24 @@ export async function getHrisEmployeeSelfService(
         freshAuthRequired: true,
         uiStatus: "EVIDENCE_WORKFLOW_REQUIRED" as const,
       },
-      leaveRequest: "NOT_CONFIGURED" as const,
-      attendanceCorrectionRequest: "NOT_CONFIGURED" as const,
+      leaveRequest: hasRbacPermission(
+        parsed.actorPermissions,
+        "hris.self_service.request",
+      )
+        ? "AVAILABLE" as const
+        : "PERMISSION_REQUIRED" as const,
+      overtimeRequest: hasRbacPermission(
+        parsed.actorPermissions,
+        "hris.self_service.request",
+      )
+        ? "AVAILABLE" as const
+        : "PERMISSION_REQUIRED" as const,
+      attendanceCorrectionRequest: hasRbacPermission(
+        parsed.actorPermissions,
+        "hris.self_service.request",
+      )
+        ? "AVAILABLE" as const
+        : "PERMISSION_REQUIRED" as const,
       profileCorrectionRequest: "NOT_CONFIGURED" as const,
     },
     dataOwnership: HRIS_EMPLOYEE_SELF_SERVICE_OWNERSHIP,

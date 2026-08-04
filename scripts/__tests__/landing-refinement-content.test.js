@@ -68,7 +68,7 @@ describe("landing workflow, HRIS, and daily-control refinement", () => {
     expect(workflow).toContain('from "embla-carousel-react"')
     expect(workflow).toContain("flex-[0_0_100%]")
     expect(workflow).toContain("sm:flex-[0_0_50%]")
-    expect(workflow).toContain("xl:flex-[0_0_33.333%]")
+    expect(workflow).toContain("lg:flex-[0_0_25%]")
     expect(workflow).toContain('aria-roledescription="carousel"')
     expect(workflow).toContain('aria-roledescription="slide"')
     expect(workflow).toContain("data-workflow-next")
@@ -76,11 +76,9 @@ describe("landing workflow, HRIS, and daily-control refinement", () => {
     expect(workflow).not.toContain("Autoplay")
   })
 
-  it("presents HRIS as a linked, controlled foundation rather than an unrestricted claim", () => {
-    expect(operations).toContain('key: "hris"')
-    expect(operations).toContain('href: "/dashboard/people"')
-    expect(en.landing.operations.modules.hris.meta).toBe("controlled foundation")
-    expect(fr.landing.operations.modules.hris.meta).toBe("socle contrôlé")
+  it("presents HRIS as a controlled pilot without exposing protected routes publicly", () => {
+    expect(operations).not.toContain('key: "hris"')
+    expect(operations).not.toContain('/dashboard/')
     expect(en.landing.peopleToPay.boundaryBody).toContain("controlled local pilot")
     expect(fr.landing.peopleToPay.boundaryBody).toContain("pilote local contrôlé")
     expect(peopleToPay).toContain("data-people-to-pay")

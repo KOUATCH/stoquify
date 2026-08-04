@@ -1,12 +1,12 @@
 # Payment Cash Truth Readiness Gate
 
-Generated: 2026-07-20T03:57:57.625Z
+Generated: 2026-08-01T17:53:25.538Z
 Mode: fail
 Status: ready
 
 ## Summary
 
-- Checks ready: 10/10
+- Checks ready: 12/12
 - Blockers: 0
 
 ## Checks
@@ -17,10 +17,12 @@ Status: ready
 - ready: deterministic_source_hash
 - ready: signoff_rechecks_provider_readiness
 - ready: certificate_binds_source_manifest
+- ready: suspense_posting_reconciles_to_posted_ledger
 - ready: export_recomputes_live_source_hash
 - ready: drift_invalidation_commits_before_error
 - ready: scheduled_assurance_recomputes_source_evidence
 - ready: policy_gate_wiring
+- ready: durable_payment_reconciliation_schema_migration
 
 ## Blockers
 

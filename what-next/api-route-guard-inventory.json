@@ -1,17 +1,18 @@
 {
   "summary": {
-    "generatedAt": "2026-07-20T03:57:48.040Z",
+    "generatedAt": "2026-08-01T16:59:37.281Z",
     "mode": "fail",
-    "routeCount": 10,
+    "routeCount": 11,
     "supportEvidenceCount": 2,
-    "evidenceFileCount": 12,
+    "evidenceFileCount": 13,
     "bySurfaceKind": {
-      "api_route": 10,
+      "api_route": 11,
       "guard_evidence": 2
     },
     "byClassification": {
       "public-intentional": 2,
       "public-auth-provider": 1,
+      "unclassified": 1,
       "authenticated": 1,
       "public-receipt-lookup": 1,
       "tenant-scoped": 5,
@@ -19,11 +20,12 @@
       "public-receipt-service-evidence": 1
     },
     "byModuleAccess": {
-      "none": 7,
+      "none": 8,
       "enforced": 5
     },
     "byModuleApplicability": {
       "not_applicable_public": 4,
+      "review_required": 1,
       "not_applicable_session_claims": 1,
       "required": 5,
       "delegated_uploadthing_core": 1,
@@ -86,6 +88,34 @@
         "bounded response"
       ],
       "responseEnvelope": "unknown",
+      "issues": []
+    },
+    {
+      "file": "app/api/internal/agents/reconcile-abandoned/route.ts",
+      "surfaceKind": "api_route",
+      "evidenceFor": null,
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "classification": "unclassified",
+      "guard": "none",
+      "orgSource": "none",
+      "permission": null,
+      "moduleAccess": "none",
+      "moduleSlug": null,
+      "moduleAccessIntent": null,
+      "moduleAccessMode": null,
+      "moduleAccessAudit": null,
+      "expectedModuleSlug": null,
+      "moduleApplicability": "review_required",
+      "moduleApplicabilityReason": "No deterministic module mapping in report mode.",
+      "returnedDataClass": "json response",
+      "negativeCases": [
+        "unauthenticated",
+        "safe error response"
+      ],
+      "responseEnvelope": "NextResponse.json",
       "issues": []
     },
     {

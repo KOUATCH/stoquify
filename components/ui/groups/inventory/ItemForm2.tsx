@@ -141,7 +141,7 @@ export const ItemForm2 = ({ form, itemImageUrl, setItemImageUrl, organizationId 
                   />
                 </div>
               </FormControl>
-              <FormDescription>Purchase or production cost in XAF</FormDescription>
+              <FormDescription>Purchase cost in XAF</FormDescription>
               <FormMessage />
             </FormItem>
           )}

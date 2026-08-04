@@ -7,6 +7,7 @@ import {
   PaymentExceptionStatus,
   PaymentExceptionType,
   PaymentTransactionState,
+  Prisma,
   PostingRuleAmountSource,
   PostingRuleLineSide,
   SupplierBankAccountStatus,
@@ -20,17 +21,16 @@ import { createLedgerPostingBatch, linkAccountingSource } from "@/services/accou
 import { getOpenPeriodForDate } from "@/services/accounting/periods.service"
 import { getActivePostingRule } from "@/services/accounting/posting-rules.service"
 import { BusinessRuleError, ConflictError } from "@/services/_shared/action-errors"
-import {
-  markBusinessEventAppliedInTx,
-  recordBusinessEventInTx,
-} from "@/services/events/business-event.service"
+import { markBusinessEventAppliedInTx, recordBusinessEventInTx } from "@/services/events/business-event.service"
 
 import {
   approveSupplierBankChange,
   approveSupplierBankChangeWithControls,
+  approveSupplierInvoice,
   approveSupplierPayment,
   approveSupplierPaymentWithControls,
   postSupplierInvoice,
+  prepareSupplierInvoice,
   releaseSupplierPayment,
   releaseSupplierPaymentWithControls,
 } from "../ap-control.service"
@@ -96,6 +96,7 @@ function buildTx() {
       findMany: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
+      updateMany: jest.fn(),
     },
     threeWayMatch: {
       create: jest.fn(),
@@ -281,12 +282,21 @@ function invoicePostingRule() {
 beforeEach(() => {
   jest.clearAllMocks()
   mockedCreateLedgerPostingBatch.mockResolvedValue({ id: "batch-1" })
-  mockedRecordPostedJournalCloseInvalidation.mockResolvedValue({ invalidatedCount: 0, results: [] })
+  mockedRecordPostedJournalCloseInvalidation.mockResolvedValue({
+    invalidatedCount: 0,
+    results: [],
+  })
   mockedLinkAccountingSource.mockResolvedValue({ id: "source-link-1" })
   mockedGetOpenPeriodForDate.mockResolvedValue({ id: "period-1" })
   mockedGetActivePostingRule.mockResolvedValue(null)
-  mockedRecordBusinessEventInTx.mockResolvedValue({ event: { id: "event-1" }, created: true })
-  mockedMarkBusinessEventAppliedInTx.mockResolvedValue({ id: "event-1", status: "APPLIED" })
+  mockedRecordBusinessEventInTx.mockResolvedValue({
+    event: { id: "event-1" },
+    created: true,
+  })
+  mockedMarkBusinessEventAppliedInTx.mockResolvedValue({
+    id: "event-1",
+    status: "APPLIED",
+  })
 })
 
 describe("ap-control.service", () => {
@@ -294,10 +304,18 @@ describe("ap-control.service", () => {
     const tx = buildTx()
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
     tx.supplier.findFirst.mockResolvedValue(supplier)
-    tx.purchaseOrder.findFirst.mockResolvedValue({ id: "po-1", status: "RECEIVED" })
+    tx.purchaseOrder.findFirst.mockResolvedValue({
+      id: "po-1",
+      status: "RECEIVED",
+    })
     tx.goodsReceiptLine.findFirst.mockResolvedValue(mockReceiptLine())
-    tx.supplierInvoiceLine.aggregate.mockResolvedValue({ _sum: { quantity: "0.000" } })
-    tx.supplierInvoice.findFirst.mockResolvedValue({ id: "invoice-existing", invoiceNumber: "INV-001" })
+    tx.supplierInvoiceLine.aggregate.mockResolvedValue({
+      _sum: { quantity: "0.000" },
+    })
+    tx.supplierInvoice.findFirst.mockResolvedValue({
+      id: "invoice-existing",
+      invoiceNumber: "INV-001",
+    })
 
     await expect(
       postSupplierInvoice({
@@ -328,12 +346,17 @@ describe("ap-control.service", () => {
     const tx = buildTx()
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
     tx.supplier.findFirst.mockResolvedValue(supplier)
-    tx.purchaseOrder.findFirst.mockResolvedValue({ id: "po-1", status: "RECEIVED" })
+    tx.purchaseOrder.findFirst.mockResolvedValue({
+      id: "po-1",
+      status: "RECEIVED",
+    })
     tx.goodsReceiptLine.findFirst.mockResolvedValue({
       ...mockReceiptLine(),
       receivedQuantity: "5.000",
     })
-    tx.supplierInvoiceLine.aggregate.mockResolvedValue({ _sum: { quantity: "4.000" } })
+    tx.supplierInvoiceLine.aggregate.mockResolvedValue({
+      _sum: { quantity: "4.000" },
+    })
 
     await expect(
       postSupplierInvoice({
@@ -359,6 +382,169 @@ describe("ap-control.service", () => {
     expect(tx.supplierInvoice.create).not.toHaveBeenCalled()
   })
 
+  it("prepares matched invoice evidence without supplier or accounting ledger effects", async () => {
+    const tx = buildTx()
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
+    tx.supplier.findFirst.mockResolvedValue(supplier)
+    tx.purchaseOrder.findFirst.mockResolvedValue({
+      id: "po-1",
+      status: "RECEIVED",
+    })
+    tx.goodsReceiptLine.findFirst.mockResolvedValue(mockReceiptLine())
+    tx.supplierInvoiceLine.aggregate.mockResolvedValue({
+      _sum: { quantity: "0.000" },
+    })
+    tx.supplierInvoice.findFirst.mockResolvedValue(null)
+    tx.supplierInvoice.create.mockResolvedValue({
+      id: "invoice-prepared",
+      invoiceNumber: "INV-PREPARED",
+      status: "MATCHED",
+      lines: [{ id: "invoice-line-1" }],
+    })
+    tx.threeWayMatch.create.mockResolvedValue({
+      id: "match-prepared",
+      status: "MATCHED",
+    })
+
+    const result = await prepareSupplierInvoice({
+      organizationId: "org-1",
+      supplierId: "supplier-1",
+      purchaseOrderId: "po-1",
+      invoiceNumber: "INV-PREPARED",
+      invoiceDate: "2026-06-15",
+      createdById: "maker-1",
+      lines: [
+        {
+          purchaseOrderLineId: "po-line-1",
+          goodsReceiptLineId: "gr-line-1",
+          itemId: "item-1",
+          description: "Received stock",
+          quantity: "2.000",
+          unitCost: "100.00",
+        },
+      ],
+    })
+
+    expect(result.ledgerStatus).toBe("PENDING_APPROVAL")
+    expect(tx.supplierInvoice.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          status: "MATCHED",
+          createdById: "maker-1",
+          approvedById: null,
+          postedAt: null,
+        }),
+      }),
+    )
+    expect(tx.supplier.update).not.toHaveBeenCalled()
+    expect(tx.supplierLedgerEntry.create).not.toHaveBeenCalled()
+    expect(mockedCreateLedgerPostingBatch).not.toHaveBeenCalled()
+    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled()
+  })
+
+  it("rejects a supplier invoice when maker and approver are the same actor", async () => {
+    await expect(
+      postSupplierInvoice({
+        organizationId: "org-1",
+        supplierId: "supplier-1",
+        invoiceNumber: "INV-SELF",
+        invoiceDate: "2026-06-15",
+        createdById: "actor-1",
+        approvedById: "actor-1",
+        lines: [
+          {
+            goodsReceiptLineId: "gr-line-1",
+            description: "Received stock",
+            quantity: "1.000",
+            unitCost: "100.00",
+          },
+        ],
+      }),
+    ).rejects.toThrow("independent approver")
+
+    expect(mockDb.$transaction).not.toHaveBeenCalled()
+  })
+
+  it("atomically approves a prepared invoice and creates ledger and audit evidence as a separate checker", async () => {
+    const tx = buildTx()
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
+    const preparedInvoice = {
+      id: "invoice-prepared",
+      organizationId: "org-1",
+      supplierId: "supplier-1",
+      purchaseOrderId: "po-1",
+      invoiceNumber: "INV-PREPARED",
+      invoiceDate: new Date("2026-06-15T00:00:00.000Z"),
+      status: "MATCHED",
+      subtotal: new Prisma.Decimal("200.00"),
+      taxAmount: new Prisma.Decimal("0.00"),
+      total: new Prisma.Decimal("200.00"),
+      currency: "XAF",
+      documentHash: "sha256:prepared-document",
+      createdById: "maker-1",
+      approvedById: null,
+      ledgerPostingBatchId: null,
+      postedBusinessEventId: null,
+      metadata: { gate: "011-purchasing-ap-controls" },
+      lines: [{ id: "invoice-line-1" }],
+      threeWayMatches: [{ id: "match-prepared", status: "MATCHED" }],
+      supplier,
+    }
+    tx.supplierInvoice.findFirst.mockResolvedValue(preparedInvoice)
+    tx.supplierInvoice.updateMany.mockResolvedValue({ count: 1 })
+    tx.ledgerPostingBatch.update.mockResolvedValue({
+      id: "batch-1",
+      status: LedgerPostingBatchStatus.FAILED,
+    })
+    tx.supplierInvoice.update.mockResolvedValue({
+      ...preparedInvoice,
+      status: "POSTED",
+      approvedById: "checker-1",
+      ledgerPostingBatchId: "batch-1",
+      postedBusinessEventId: "event-1",
+    })
+
+    const result = await approveSupplierInvoice({
+      organizationId: "org-1",
+      supplierInvoiceId: "invoice-prepared",
+      approvedById: "checker-1",
+    })
+
+    expect(result.ledgerStatus).toBe("BLOCKED_PENDING_RULES")
+    expect(tx.supplierInvoice.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          id: "invoice-prepared",
+          status: "MATCHED",
+          approvedById: null,
+        }),
+        data: expect.objectContaining({
+          status: "POSTED",
+          approvedById: "checker-1",
+        }),
+      }),
+    )
+    expect(tx.supplierLedgerEntry.create).toHaveBeenCalled()
+    expect(mockedRecordBusinessEventInTx).toHaveBeenCalledWith(
+      tx,
+      expect.objectContaining({
+        eventType: "purchase.supplier_invoice.posted",
+        actorId: "checker-1",
+        payload: expect.objectContaining({
+          makerId: "maker-1",
+          approverId: "checker-1",
+        }),
+      }),
+    )
+    expect(tx.auditLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          action: "SUPPLIER_INVOICE_APPROVED_AND_POSTED",
+          userId: "checker-1",
+        }),
+      }),
+    )
+  })
   it("rejects self-approval for supplier bank changes", async () => {
     const tx = buildTx()
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
@@ -616,7 +802,12 @@ describe("ap-control.service", () => {
   it("blocks supplier payment allocations above invoice outstanding balance", async () => {
     const tx = buildTx()
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
-    tx.supplierPayment.findFirst.mockResolvedValue(approvedSupplierPayment({ amount: "10.00", allocations: [{ id: "alloc-1", supplierInvoiceId: "invoice-1", amount: "10.00" }] }))
+    tx.supplierPayment.findFirst.mockResolvedValue(
+      approvedSupplierPayment({
+        amount: "10.00",
+        allocations: [{ id: "alloc-1", supplierInvoiceId: "invoice-1", amount: "10.00" }],
+      }),
+    )
     tx.supplier.findFirst.mockResolvedValue(supplier)
     tx.supplierBankAccount.findFirst.mockResolvedValue({
       id: "bank-1",
@@ -649,9 +840,14 @@ describe("ap-control.service", () => {
     const tx = buildTx()
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
     tx.supplier.findFirst.mockResolvedValue(supplier)
-    tx.purchaseOrder.findFirst.mockResolvedValue({ id: "po-1", status: "RECEIVED" })
+    tx.purchaseOrder.findFirst.mockResolvedValue({
+      id: "po-1",
+      status: "RECEIVED",
+    })
     tx.goodsReceiptLine.findFirst.mockResolvedValue(mockReceiptLine())
-    tx.supplierInvoiceLine.aggregate.mockResolvedValue({ _sum: { quantity: "0.000" } })
+    tx.supplierInvoiceLine.aggregate.mockResolvedValue({
+      _sum: { quantity: "0.000" },
+    })
     tx.supplierInvoice.findFirst.mockResolvedValue(null)
     tx.supplierInvoice.create.mockResolvedValue({
       id: "invoice-1",
@@ -659,7 +855,10 @@ describe("ap-control.service", () => {
       lines: [{ id: "invoice-line-1" }],
     })
     tx.threeWayMatch.create.mockResolvedValue({ id: "match-1" })
-    tx.ledgerPostingBatch.update.mockResolvedValue({ id: "batch-1", status: LedgerPostingBatchStatus.FAILED })
+    tx.ledgerPostingBatch.update.mockResolvedValue({
+      id: "batch-1",
+      status: LedgerPostingBatchStatus.FAILED,
+    })
     tx.supplierInvoice.update.mockResolvedValue({
       id: "invoice-1",
       ledgerPostingBatchId: "batch-1",
@@ -709,7 +908,9 @@ describe("ap-control.service", () => {
       expect.objectContaining({
         data: expect.objectContaining({
           status: LedgerPostingBatchStatus.FAILED,
-          metadata: expect.objectContaining({ blockerCode: "AP_POSTING_RULE_REVIEW" }),
+          metadata: expect.objectContaining({
+            blockerCode: "AP_POSTING_RULE_REVIEW",
+          }),
         }),
       }),
     )
@@ -733,9 +934,14 @@ describe("ap-control.service", () => {
       accountingSettings: { countryPack: null, taxRegime: null },
     })
     tx.supplier.findFirst.mockResolvedValue(supplier)
-    tx.purchaseOrder.findFirst.mockResolvedValue({ id: "po-1", status: "RECEIVED" })
+    tx.purchaseOrder.findFirst.mockResolvedValue({
+      id: "po-1",
+      status: "RECEIVED",
+    })
     tx.goodsReceiptLine.findFirst.mockResolvedValue(mockReceiptLine())
-    tx.supplierInvoiceLine.aggregate.mockResolvedValue({ _sum: { quantity: "0.000" } })
+    tx.supplierInvoiceLine.aggregate.mockResolvedValue({
+      _sum: { quantity: "0.000" },
+    })
     tx.supplierInvoice.findFirst.mockResolvedValue(null)
     tx.supplierInvoice.create.mockResolvedValue({
       id: "invoice-1",
@@ -744,8 +950,15 @@ describe("ap-control.service", () => {
     })
     tx.threeWayMatch.create.mockResolvedValue({ id: "match-1" })
     tx.chartOfAccount.findMany.mockResolvedValue(apMappedAccounts)
-    tx.journal.findFirst.mockResolvedValue({ id: "journal-ac", code: "AC", type: JournalType.PURCHASE })
-    tx.ledgerPostingBatch.update.mockResolvedValue({ id: "batch-1", status: LedgerPostingBatchStatus.POSTED })
+    tx.journal.findFirst.mockResolvedValue({
+      id: "journal-ac",
+      code: "AC",
+      type: JournalType.PURCHASE,
+    })
+    tx.ledgerPostingBatch.update.mockResolvedValue({
+      id: "batch-1",
+      status: LedgerPostingBatchStatus.POSTED,
+    })
     tx.journalEntry.create.mockResolvedValue({ id: "journal-entry-1" })
     tx.supplierInvoice.update.mockResolvedValue({
       id: "invoice-1",
@@ -788,9 +1001,21 @@ describe("ap-control.service", () => {
           sourceId: "invoice-1",
           lines: expect.objectContaining({
             create: expect.arrayContaining([
-              expect.objectContaining({ accountId: "acct-inventory", debit: expect.any(Object), credit: expect.any(Object) }),
-              expect.objectContaining({ accountId: "acct-input_vat", debit: expect.any(Object), credit: expect.any(Object) }),
-              expect.objectContaining({ accountId: "acct-accounts_payable", debit: expect.any(Object), credit: expect.any(Object) }),
+              expect.objectContaining({
+                accountId: "acct-inventory",
+                debit: expect.any(Object),
+                credit: expect.any(Object),
+              }),
+              expect.objectContaining({
+                accountId: "acct-input_vat",
+                debit: expect.any(Object),
+                credit: expect.any(Object),
+              }),
+              expect.objectContaining({
+                accountId: "acct-accounts_payable",
+                debit: expect.any(Object),
+                credit: expect.any(Object),
+              }),
             ]),
           }),
         }),
@@ -886,9 +1111,14 @@ describe("ap-control.service", () => {
       accountingSettings: { countryPack: null, taxRegime: null },
     })
     tx.supplier.findFirst.mockResolvedValue(supplier)
-    tx.purchaseOrder.findFirst.mockResolvedValue({ id: "po-1", status: "RECEIVED" })
+    tx.purchaseOrder.findFirst.mockResolvedValue({
+      id: "po-1",
+      status: "RECEIVED",
+    })
     tx.goodsReceiptLine.findFirst.mockResolvedValue(mockReceiptLine())
-    tx.supplierInvoiceLine.aggregate.mockResolvedValue({ _sum: { quantity: "0.000" } })
+    tx.supplierInvoiceLine.aggregate.mockResolvedValue({
+      _sum: { quantity: "0.000" },
+    })
     tx.supplierInvoice.findFirst.mockResolvedValue(null)
     tx.supplierInvoice.create.mockResolvedValue({
       id: "invoice-rollback",
@@ -897,8 +1127,15 @@ describe("ap-control.service", () => {
     })
     tx.threeWayMatch.create.mockResolvedValue({ id: "match-rollback" })
     tx.chartOfAccount.findMany.mockResolvedValue(apMappedAccounts)
-    tx.journal.findFirst.mockResolvedValue({ id: "journal-ac", code: "AC", type: JournalType.PURCHASE })
-    tx.ledgerPostingBatch.update.mockResolvedValue({ id: "batch-rollback", status: LedgerPostingBatchStatus.POSTED })
+    tx.journal.findFirst.mockResolvedValue({
+      id: "journal-ac",
+      code: "AC",
+      type: JournalType.PURCHASE,
+    })
+    tx.ledgerPostingBatch.update.mockResolvedValue({
+      id: "batch-rollback",
+      status: LedgerPostingBatchStatus.POSTED,
+    })
     tx.journalEntry.create.mockRejectedValue(new Error("journal failed"))
 
     await expect(
@@ -951,7 +1188,10 @@ describe("ap-control.service", () => {
         currency: "XAF",
       },
     ])
-    tx.ledgerPostingBatch.update.mockResolvedValue({ id: "batch-1", status: LedgerPostingBatchStatus.FAILED })
+    tx.ledgerPostingBatch.update.mockResolvedValue({
+      id: "batch-1",
+      status: LedgerPostingBatchStatus.FAILED,
+    })
     tx.supplierPayment.update
       .mockResolvedValueOnce({
         ...approvedSupplierPayment({

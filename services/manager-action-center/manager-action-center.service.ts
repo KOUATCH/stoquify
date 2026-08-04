@@ -1,21 +1,34 @@
 import "server-only"
 
+import { hasRbacPermission } from "@/lib/security/rbac-permissions"
 import { ForbiddenError } from "@/services/_shared/action-errors"
-import { createActionLinkFromActionItem, createSignalInsight, createSnapshotKpi, normalizeSnapshotFreshness } from "@/services/bi/bi-evidence-adapter.service"
-import type { BICommandBrief, BIKpiCard, BIKpiState } from "@/services/bi/bi-contracts"
+import {
+  createActionLinkFromActionItem,
+  createSignalInsight,
+  createSnapshotKpi,
+  normalizeSnapshotFreshness,
+} from "@/services/bi/bi-evidence-adapter.service"
+import type {
+  BICommandBrief,
+  BIKpiCard,
+  BIKpiState,
+} from "@/services/bi/bi-contracts"
 import { evidenceGradeToBITrustState } from "@/services/bi/bi-contracts"
 import { getAssuranceControlTowerData } from "@/services/assurance/assurance-control-tower.service"
 import type { AssuranceControlTowerIncident } from "@/services/assurance/assurance-control-tower-contracts"
 import type { EvidenceGrade } from "@/services/evidence/evidence-contracts"
+import {
+  CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE,
+  type ClientMissingCloseEvidenceRequest,
+  type ClientMissingCloseEvidenceRequestQueueBlocker,
+} from "@/services/accounting/missing-close-evidence-request-queue-contracts"
+import { getClientMissingCloseEvidenceRequestQueue } from "@/services/accounting/missing-close-evidence-request-queue.service"
 import type { CommercialModuleSlug } from "@/services/modules/module-control-contracts"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import type { AllowedOperatingAccessScope } from "@/services/operating-access/operating-access-scope-contracts"
 import { resolveOperatingAccessScope } from "@/services/operating-access/operating-access-scope.service"
-import {
-  PAYMENT_RECONCILIATION_SIGN_OFF_COMMAND_STATE,
-} from "@/services/reconciliation/payment-reconciliation-sign-off-command-state-contracts"
-import {
-  getPaymentReconciliationSignOffCommandState,
-} from "@/services/reconciliation/payment-reconciliation-sign-off-command-state.service"
+import { PAYMENT_RECONCILIATION_SIGN_OFF_COMMAND_STATE } from "@/services/reconciliation/payment-reconciliation-sign-off-command-state-contracts"
+import { getPaymentReconciliationSignOffCommandState } from "@/services/reconciliation/payment-reconciliation-sign-off-command-state.service"
 import { buildActionQueue } from "@/services/signals/action-queue.service"
 import type {
   ActionItem,
@@ -25,11 +38,17 @@ import type {
 import { buildBusinessSignalsFromSnapshots } from "@/services/signals/business-signal-rules.service"
 import { getCloseReadinessSnapshot } from "@/services/snapshots/close-readiness-snapshot.service"
 import { getInventoryCashSnapshot } from "@/services/snapshots/inventory-cash-snapshot.service"
+import { getInventoryLossSnapshot } from "@/services/snapshots/inventory-loss-snapshot.service"
 import { getPaymentTruthSnapshot } from "@/services/snapshots/payment-truth-snapshot.service"
-import type { SnapshotResult, TenantOperatingMetrics } from "@/services/snapshots/snapshot-contracts"
+import type {
+  SnapshotResult,
+  SnapshotScopeInput,
+  TenantOperatingMetrics,
+} from "@/services/snapshots/snapshot-contracts"
 import { getTenantOperatingSnapshotFromRelated } from "@/services/snapshots/tenant-operating-snapshot.service"
 
 import type {
+  ClientMissingProofActionCenterSource,
   ComposeManagerActionCenterInput,
   ManagerActionCenterAction,
   ManagerActionCenterData,
@@ -56,12 +75,14 @@ const RUN_SHEET_GROUPS: Array<{
   {
     id: "overdue",
     title: "Overdue now",
-    detail: "Actions already past their due time. Handle these before routine work.",
+    detail:
+      "Actions already past their due time. Handle these before routine work.",
   },
   {
     id: "critical",
     title: "Critical pressure",
-    detail: "Critical or high-risk actions that can block cash, stock, close, or control trust.",
+    detail:
+      "Critical or high-risk actions that can block cash, stock, close, or control trust.",
   },
   {
     id: "due_today",
@@ -71,22 +92,26 @@ const RUN_SHEET_GROUPS: Array<{
   {
     id: "blocked",
     title: "Blocked",
-    detail: "Actions with evidence, workflow, or source-data blockers that need manager routing.",
+    detail:
+      "Actions with evidence, workflow, or source-data blockers that need manager routing.",
   },
   {
     id: "waiting",
     title: "Waiting soon",
-    detail: "Actions approaching their due window or waiting on another operating role.",
+    detail:
+      "Actions approaching their due window or waiting on another operating role.",
   },
   {
     id: "assigned",
     title: "Assigned",
-    detail: "Actions already routed to a responsible role and waiting for completion.",
+    detail:
+      "Actions already routed to a responsible role and waiting for completion.",
   },
   {
     id: "routine",
     title: "Routine watch",
-    detail: "Lower-pressure actions that remain visible after urgent work is handled.",
+    detail:
+      "Lower-pressure actions that remain visible after urgent work is handled.",
   },
 ]
 
@@ -95,7 +120,9 @@ export async function getManagerActionCenterData(
 ): Promise<ManagerActionCenterData> {
   const access = await resolveOperatingAccessScope(input.accessContext)
   if (!access.allowed) {
-    throw new ForbiddenError("Manager Action Center is not available for this account.")
+    throw new ForbiddenError(
+      "Manager Action Center is not available for this account.",
+    )
   }
 
   return getManagerActionCenterDataFromResolvedAccess(input, access)
@@ -109,7 +136,9 @@ export async function getManagerActionCenterDataFromResolvedAccess(
     access.organizationId !== input.accessContext.orgId ||
     access.actorId !== input.accessContext.userId
   ) {
-    throw new ForbiddenError("Manager Action Center operating scope evidence is inconsistent.")
+    throw new ForbiddenError(
+      "Manager Action Center operating scope evidence is inconsistent.",
+    )
   }
   if (
     access.scope.kind !== "TENANT" ||
@@ -136,6 +165,8 @@ export async function getManagerActionCenterDataFromResolvedAccess(
     closeReadiness,
     assuranceControlTower,
     paymentReconciliationSignOff,
+    inventoryLoss,
+    clientMissingProofSource,
   ] = await Promise.all([
     getPaymentTruthSnapshot(scope),
     getInventoryCashSnapshot(scope),
@@ -149,6 +180,17 @@ export async function getManagerActionCenterDataFromResolvedAccess(
       accessContext: input.accessContext,
       now: input.now ?? null,
     }),
+    getAuthorizedInventoryLossSnapshot({
+      scope,
+      actorId: access.actorId,
+      actorPermissions,
+    }),
+    getClientMissingProofActionCenterSource({
+      organizationId,
+      actorId: access.actorId,
+      actorPermissions,
+      now: input.now ?? null,
+    }),
   ])
   const tenantOperating = await getTenantOperatingSnapshotFromRelated(scope, {
     paymentTruth,
@@ -158,7 +200,13 @@ export async function getManagerActionCenterDataFromResolvedAccess(
 
   const signals = buildBusinessSignalsFromSnapshots({
     organizationId,
-    snapshots: [tenantOperating, paymentTruth, inventoryCash, closeReadiness],
+    snapshots: [
+      tenantOperating,
+      paymentTruth,
+      inventoryCash,
+      closeReadiness,
+      ...(inventoryLoss ? [inventoryLoss] : []),
+    ],
   })
   const actionQueue = buildActionQueue({
     organizationId,
@@ -179,24 +227,60 @@ export async function getManagerActionCenterDataFromResolvedAccess(
     actionQueue,
     assuranceIncidents: assuranceControlTower.incidents,
     paymentReconciliationSignOff,
+    clientMissingProofSource,
     assuranceHiddenByPermission: assuranceControlTower.hiddenByPermission,
   })
+}
+
+async function getAuthorizedInventoryLossSnapshot(input: {
+  scope: SnapshotScopeInput
+  actorId: string
+  actorPermissions: readonly string[]
+}) {
+  if (!hasRbacPermission(input.actorPermissions, "inventory.levels.read"))
+    return null
+
+  const access = await observeModuleAccess({
+    organizationId: input.scope.organizationId,
+    userId: input.actorId,
+    actorPermissions: input.actorPermissions,
+    moduleSlug: "inventory",
+    surfaceType: "page",
+    surface: "manager-action-center.inventory-loss",
+    accessIntent: "read",
+    mode: "enforce",
+    audit: true,
+    now: input.scope.now,
+  })
+
+  if (!access.allowed) return null
+
+  return getInventoryLossSnapshot(input.scope)
 }
 
 export function composeManagerActionCenterData(
   input: ComposeManagerActionCenterInput,
 ): ManagerActionCenterData {
-  const { tenantOperating, paymentTruth, inventoryCash, closeReadiness } = input.snapshots
+  const { tenantOperating, paymentTruth, inventoryCash, closeReadiness } =
+    input.snapshots
   const now = new Date(input.generatedAt)
   const assuranceActions = (input.assuranceIncidents ?? []).map((incident) =>
     managerActionFromAssuranceIncident(incident, now),
   )
-  const sourceCommandActions =
-    managerActionsFromPaymentReconciliationSignOff(
-      input.paymentReconciliationSignOff ?? null,
-      now,
-    )
-  const additionalActions = [...assuranceActions, ...sourceCommandActions]
+  const sourceCommandActions = managerActionsFromPaymentReconciliationSignOff(
+    input.paymentReconciliationSignOff ?? null,
+    now,
+  )
+  const clientMissingProofActions = managerActionsFromClientMissingProof(
+    input.clientMissingProofSource ?? null,
+    now,
+    input.organizationId,
+  )
+  const additionalActions = [
+    ...assuranceActions,
+    ...sourceCommandActions,
+    ...clientMissingProofActions,
+  ]
   const summary = summarizeManagerActions(
     input.actionQueue,
     now,
@@ -236,12 +320,15 @@ export function composeManagerActionCenterData(
       managerKpi({
         id: "manager-open-actions",
         title: "Open manager actions",
-        detail: "Permission-filtered work from trusted business signals and source-owned workflows.",
+        detail:
+          "Permission-filtered work from trusted business signals and source-owned workflows.",
         value: summary.total,
         unit: "actions",
         snapshot: tenantOperating,
         href: "/dashboard/manager-action-center",
-        evidenceGrade: strongestEvidenceGrade(actionItems.map((item) => item.evidenceGrade)),
+        evidenceGrade: strongestEvidenceGrade(
+          actionItems.map((item) => item.evidenceGrade),
+        ),
         state: queueState(summary),
         blockers: actionItems.flatMap((item) => item.blockers),
         redactions: actionItems.flatMap((item) => item.redactions),
@@ -249,17 +336,28 @@ export function composeManagerActionCenterData(
       managerKpi({
         id: "manager-critical-actions",
         title: "Critical pressure",
-        detail: "Critical or high-severity actions that should be handled before routine work.",
+        detail:
+          "Critical or high-severity actions that should be handled before routine work.",
         value: summary.critical + summary.high,
         unit: "actions",
         snapshot: paymentTruth,
         href: "/dashboard/finance/payments",
         evidenceGrade: strongestEvidenceGrade(
           actionItems
-            .filter((item) => item.severity === "critical" || item.severity === "high")
+            .filter(
+              (item) =>
+                item.severity === "critical" || item.severity === "high",
+            )
             .map((item) => item.evidenceGrade),
         ),
-        state: summary.critical > 0 ? "blocked" : summary.high > 0 ? "partial" : summary.total > 0 ? "ready" : "empty",
+        state:
+          summary.critical > 0
+            ? "blocked"
+            : summary.high > 0
+              ? "partial"
+              : summary.total > 0
+                ? "ready"
+                : "empty",
         blockers: paymentTruth.blockers,
         redactions: paymentTruth.redactions,
         moduleSlug: "payment_reconciliation",
@@ -268,12 +366,20 @@ export function composeManagerActionCenterData(
       managerKpi({
         id: "manager-stock-work",
         title: "Stock and supplier work",
-        detail: "Inventory, purchase order, stockout, and supplier actions visible to this manager.",
-        value: countRoleActions(input.actionQueue, ["stockkeeper", "purchasing"]),
+        detail:
+          "Inventory, purchase order, stockout, and supplier actions visible to this manager.",
+        value: countRoleActions(input.actionQueue, [
+          "stockkeeper",
+          "purchasing",
+        ]),
         unit: "actions",
         snapshot: inventoryCash,
         href: "/dashboard/inventory/stock",
-        state: inventoryCash.blockers.length ? "blocked" : inventoryCash.freshness.stale ? "stale" : "ready",
+        state: inventoryCash.blockers.length
+          ? "blocked"
+          : inventoryCash.freshness.stale
+            ? "stale"
+            : "ready",
         moduleSlug: "inventory",
         requiredPermission: "inventory.read",
       }),
@@ -281,29 +387,34 @@ export function composeManagerActionCenterData(
       managerKpi({
         id: "manager-hidden-actions",
         title: "Hidden by permission",
-        detail: "Signals the server withheld because this user lacks the required role permission.",
+        detail:
+          "Signals the server withheld because this user lacks the required role permission.",
         value: summary.hiddenByPermission,
         unit: "actions",
         snapshot: closeReadiness,
         href: "/dashboard/settings/roles",
-        evidenceGrade: summary.hiddenByPermission > 0 ? "operational" : closeReadiness.evidenceGrade,
+        evidenceGrade:
+          summary.hiddenByPermission > 0
+            ? "operational"
+            : closeReadiness.evidenceGrade,
         state: summary.hiddenByPermission > 0 ? "permission_denied" : "ready",
         moduleSlug: "administration",
         requiredPermission: "users.read",
       }),
     ],
-    insights: input.actionQueue.signals.slice(0, 8).map((signal) => createSignalInsight({ signal })),
+    insights: input.actionQueue.signals
+      .slice(0, 8)
+      .map((signal) => createSignalInsight({ signal })),
     actionItems,
     actionQueue: input.actionQueue,
     summary,
+    clientMissingProofSource: input.clientMissingProofSource ?? null,
     assuranceIncidents: input.assuranceIncidents ?? [],
   }
 }
 
 async function getSafePaymentReconciliationSignOffCommandState(
-  input: Parameters<
-    typeof getPaymentReconciliationSignOffCommandState
-  >[0],
+  input: Parameters<typeof getPaymentReconciliationSignOffCommandState>[0],
 ) {
   try {
     return await getPaymentReconciliationSignOffCommandState(input)
@@ -348,7 +459,10 @@ function buildManagerCommandBrief(input: {
     tenantOperating.evidenceGrade,
     ...input.actionItems.map((item) => item.evidenceGrade),
   ])
-  const freshness = normalizeSnapshotFreshness(tenantOperating.freshness, tenantOperating.status)
+  const freshness = normalizeSnapshotFreshness(
+    tenantOperating.freshness,
+    tenantOperating.status,
+  )
   const blockers = input.actionItems.flatMap((item) => item.blockers)
   const redactions = input.actionItems.flatMap((item) => item.redactions)
 
@@ -385,7 +499,12 @@ function buildManagerCommandBrief(input: {
       organizationId: input.input.organizationId,
       reviewerId: null,
       reviewerRole: "manager",
-      state: state === "blocked" ? "blocked" : state === "stale" || state === "partial" ? "stale" : "not_started",
+      state:
+        state === "blocked"
+          ? "blocked"
+          : state === "stale" || state === "partial"
+            ? "stale"
+            : "not_started",
       reviewedAt: null,
       previousReviewedAt: null,
       nextReviewDueAt: null,
@@ -400,17 +519,26 @@ function buildManagerBriefSummary(summary: ManagerActionCenterSummary) {
 }
 
 function buildManagerBriefConclusion(summary: ManagerActionCenterSummary) {
-  if (summary.overdue > 0) return "Start with overdue work before the operating day drifts further out of control."
-  if (summary.critical > 0 || summary.high > 0) return "Handle critical pressure before scanning routine KPIs."
-  if (summary.blocked > 0) return "Clear blockers first so assigned teams can complete their work."
-  if (summary.hiddenByPermission > 0) return "Some work is withheld by server-side permissions; use visible actions only."
-  if (summary.total > 0) return "Work the run sheet from top to bottom, then review routine signals."
+  if (summary.overdue > 0)
+    return "Start with overdue work before the operating day drifts further out of control."
+  if (summary.critical > 0 || summary.high > 0)
+    return "Handle critical pressure before scanning routine KPIs."
+  if (summary.blocked > 0)
+    return "Clear blockers first so assigned teams can complete their work."
+  if (summary.hiddenByPermission > 0)
+    return "Some work is withheld by server-side permissions; use visible actions only."
+  if (summary.total > 0)
+    return "Work the run sheet from top to bottom, then review routine signals."
   return "No manager action is visible for this tenant and permission set right now."
 }
 
-function buildRunSheetGroups(actionItems: ManagerActionCenterAction[]): ManagerActionRunSheetGroup[] {
+function buildRunSheetGroups(
+  actionItems: ManagerActionCenterAction[],
+): ManagerActionRunSheetGroup[] {
   return RUN_SHEET_GROUPS.map((group) => {
-    const actions = actionItems.filter((item) => runSheetGroupForAction(item) === group.id)
+    const actions = actionItems.filter(
+      (item) => runSheetGroupForAction(item) === group.id,
+    )
     return {
       ...group,
       count: actions.length,
@@ -420,10 +548,13 @@ function buildRunSheetGroups(actionItems: ManagerActionCenterAction[]): ManagerA
   })
 }
 
-function runSheetGroupForAction(item: ManagerActionCenterAction): ManagerActionRunSheetGroupId {
+function runSheetGroupForAction(
+  item: ManagerActionCenterAction,
+): ManagerActionRunSheetGroupId {
   if (item.dueState === "overdue") return "overdue"
   if (item.blockers.length > 0) return "blocked"
-  if (item.severity === "critical" || item.severity === "high") return "critical"
+  if (item.severity === "critical" || item.severity === "high")
+    return "critical"
   if (item.dueState === "due_today") return "due_today"
   if (item.status === "assigned") return "assigned"
   if (item.dueState === "due_soon") return "waiting"
@@ -435,7 +566,8 @@ function runSheetGroupState(
   actions: readonly ManagerActionCenterAction[],
 ): BIKpiState {
   if (actions.length === 0) return "empty"
-  if (id === "overdue" || id === "critical" || id === "blocked") return "blocked"
+  if (id === "overdue" || id === "critical" || id === "blocked")
+    return "blocked"
   if (id === "waiting" || id === "assigned") return "partial"
   return "ready"
 }
@@ -478,7 +610,9 @@ function managerKpi(input: {
   }
 }
 
-function managerPayrollForecastKpi(snapshot: SnapshotResult<TenantOperatingMetrics>): BIKpiCard {
+function managerPayrollForecastKpi(
+  snapshot: SnapshotResult<TenantOperatingMetrics>,
+): BIKpiCard {
   const forecast = snapshot.metrics.payrollFinanceForecast
   const blocked = !forecast.authoritative || forecast.blockerCodes.length > 0
   const blockers = payrollForecastBlockers(snapshot)
@@ -503,7 +637,8 @@ function managerPayrollForecastKpi(snapshot: SnapshotResult<TenantOperatingMetri
       {
         id: "manager-payroll-forecast-person-level-redacted",
         field: "payroll.personLevelAmounts",
-        reason: "Manager action center exposes aggregate payroll forecast obligations only; person-level payroll values stay inside payroll.",
+        reason:
+          "Manager action center exposes aggregate payroll forecast obligations only; person-level payroll values stay inside payroll.",
         policy: "KONTAVA_SENSITIVE_PAYROLL_EVIDENCE",
       },
     ]),
@@ -512,20 +647,37 @@ function managerPayrollForecastKpi(snapshot: SnapshotResult<TenantOperatingMetri
   })
 }
 
-function payrollForecastBlockers(snapshot: SnapshotResult<TenantOperatingMetrics>): BIKpiCard["blockers"] {
-  return snapshot.blockers.filter((blocker) => blocker.gate === "payroll_finance_forecast")
+function payrollForecastBlockers(
+  snapshot: SnapshotResult<TenantOperatingMetrics>,
+): BIKpiCard["blockers"] {
+  return snapshot.blockers.filter(
+    (blocker) => blocker.gate === "payroll_finance_forecast",
+  )
 }
 
 function payrollForecastRouteFor(blockerCodes: readonly string[]) {
   if (blockerCodes.some((code) => code.includes("DECLARATION"))) {
-    return { href: "/dashboard/payroll/declarations", requiredPermission: "payroll.declarations.manage" }
+    return {
+      href: "/dashboard/payroll/declarations",
+      requiredPermission: "payroll.declarations.manage",
+    }
   }
 
-  if (blockerCodes.some((code) => code.includes("PAYMENT") || code.includes("PROVIDER"))) {
-    return { href: "/dashboard/payroll/payments", requiredPermission: "payroll.payments.reconcile" }
+  if (
+    blockerCodes.some(
+      (code) => code.includes("PAYMENT") || code.includes("PROVIDER"),
+    )
+  ) {
+    return {
+      href: "/dashboard/payroll/payments",
+      requiredPermission: "payroll.payments.reconcile",
+    }
   }
 
-  return { href: "/dashboard/payroll/register", requiredPermission: "payroll.runs.review" }
+  return {
+    href: "/dashboard/payroll/register",
+    requiredPermission: "payroll.runs.review",
+  }
 }
 
 function uniqueById<T extends { id: string }>(items: T[]): T[] {
@@ -592,7 +744,12 @@ function managerActionFromAssuranceIncident(
     dueState: dueState(dueAt, now),
     evidenceGrade: incident.evidenceGrade,
     trustState: evidenceGradeToBITrustState(incident.evidenceGrade),
-    state: incident.redactions.length > 0 ? "redacted" : incident.blockers.length > 0 ? "blocked" : "ready",
+    state:
+      incident.redactions.length > 0
+        ? "redacted"
+        : incident.blockers.length > 0
+          ? "blocked"
+          : "ready",
     blockers: incident.blockers,
     redactions: incident.redactions,
     actionLink: {
@@ -607,15 +764,211 @@ function managerActionFromAssuranceIncident(
   }
 }
 
+function managerActionsFromClientMissingProof(
+  source: ClientMissingProofActionCenterSource | null,
+  now: Date,
+  organizationId: string,
+): ManagerActionCenterAction[] {
+  if (!source || source.state === "HIDDEN") return []
+  if (source.state === "UNAVAILABLE") {
+    return [managerActionFromUnavailableClientMissingProof(now, organizationId)]
+  }
 
+  return [
+    ...source.queue.requests.map((request) =>
+      managerActionFromClientMissingProofRequest(request, now),
+    ),
+    ...source.queue.blockers.map((blocker) =>
+      managerActionFromClientMissingProofBlocker(
+        blocker,
+        source.queue.generatedAt,
+        source.queue.source.sourceTables,
+        now,
+      ),
+    ),
+  ]
+}
+
+function managerActionFromClientMissingProofRequest(
+  request: ClientMissingCloseEvidenceRequest,
+  now: Date,
+): ManagerActionCenterAction {
+  const severity = missingProofSeverity(request.finding.severity)
+
+  return {
+    origin: "ACCOUNTANT_REQUEST",
+    kind: "LINK",
+    sourceCommand: null,
+    id: `accountant-missing-proof:${request.requestId}`,
+    signalId: `accountant-missing-proof:${request.findingId}`,
+    title: `Missing proof: ${request.finding.title}`,
+    nextStep: request.requestText,
+    actionPath: request.actionPath,
+    requiredPermission: request.requiredPermission,
+    status: "assigned",
+    severity,
+    severityScore: missingProofSeverityScore(request.finding.severity),
+    assignedRole: "manager",
+    dueAt: request.dueAt,
+    dueState: dueState(request.dueAt, now),
+    evidenceGrade: "operational",
+    trustState: evidenceGradeToBITrustState("operational"),
+    state: "redacted",
+    blockers: [],
+    redactions: [missingProofMetadataRedaction(request.requestId)],
+    actionLink: {
+      id: `accountant-missing-proof:${request.requestId}:open`,
+      label: "Open close evidence request",
+      href: request.actionPath,
+      requiredPermission: request.requiredPermission,
+      moduleSlug: "close_assurance",
+      disabled: false,
+      disabledReason: null,
+    },
+  }
+}
+function managerActionFromClientMissingProofBlocker(
+  blocker: ClientMissingCloseEvidenceRequestQueueBlocker,
+  generatedAt: string,
+  sourceTables: readonly string[],
+  now: Date,
+): ManagerActionCenterAction {
+  const actionPath =
+    CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE.actionPathPrefix
+
+  return {
+    origin: "ACCOUNTANT_REQUEST",
+    kind: "LINK",
+    sourceCommand: null,
+    id: `accountant-missing-proof-blocker:${blocker.requestId}`,
+    signalId: blocker.id,
+    title: "Missing-proof request evidence needs review",
+    nextStep: blocker.detail,
+    actionPath,
+    requiredPermission:
+      CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE.readPermission,
+    status: "open",
+    severity: "high",
+    severityScore: 80,
+    assignedRole: "accountant",
+    dueAt: generatedAt,
+    dueState: dueState(generatedAt, now),
+    evidenceGrade: "blocked",
+    trustState: evidenceGradeToBITrustState("blocked"),
+    state: "blocked",
+    blockers: [
+      {
+        id: blocker.id,
+        severity: "high",
+        gate: "client_missing_proof_request",
+        title: "Missing-proof request evidence is invalid",
+        detail: blocker.detail,
+        sourceTables: [...sourceTables],
+        nextAction:
+          "Open Close & Assurance and repair the stored request evidence.",
+      },
+    ],
+    redactions: [missingProofMetadataRedaction(blocker.requestId)],
+    actionLink: {
+      id: `accountant-missing-proof-blocker:${blocker.requestId}:open`,
+      label: "Open close evidence requests",
+      href: actionPath,
+      requiredPermission:
+        CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE.readPermission,
+      moduleSlug: "close_assurance",
+      disabled: false,
+      disabledReason: null,
+    },
+  }
+}
+function managerActionFromUnavailableClientMissingProof(
+  now: Date,
+  organizationId: string,
+): ManagerActionCenterAction {
+  const actionPath =
+    CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE.actionPathPrefix
+
+  return {
+    origin: "ACCOUNTANT_REQUEST",
+    kind: "LINK",
+    sourceCommand: null,
+    id: `accountant-missing-proof-source:${organizationId}`,
+    signalId: `accountant-missing-proof-source:${organizationId}`,
+    title: "Missing-proof request source unavailable",
+    nextStep:
+      "Retry the action center. If unavailable state persists, review the Close & Assurance Center.",
+    actionPath,
+    requiredPermission:
+      CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE.readPermission,
+    status: "open",
+    severity: "high",
+    severityScore: 80,
+    assignedRole: "manager",
+    dueAt: now.toISOString(),
+    dueState: "due_today",
+    evidenceGrade: "blocked",
+    trustState: evidenceGradeToBITrustState("blocked"),
+    state: "blocked",
+    blockers: [
+      {
+        id: `accountant-missing-proof-source:${organizationId}:unavailable`,
+        severity: "high",
+        gate: "client_missing_proof_request",
+        title: "Missing-proof request source unavailable",
+        detail: "The source-owned missing-proof queue could not be read.",
+        sourceTables: [
+          ...CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE.sourceTables,
+        ],
+        nextAction: "Retry the action center, then inspect Close & Assurance.",
+      },
+    ],
+    redactions: [],
+    actionLink: {
+      id: `accountant-missing-proof-source:${organizationId}:open`,
+      label: "Open Close & Assurance Center",
+      href: actionPath,
+      requiredPermission:
+        CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE.readPermission,
+      moduleSlug: "close_assurance",
+      disabled: false,
+      disabledReason: null,
+    },
+  }
+}
+
+function missingProofMetadataRedaction(requestId: string) {
+  return {
+    id: `accountant-missing-proof:${requestId}:metadata-redaction`,
+    field: "accountantComment.metadata",
+    reason: "Raw missing-proof request metadata remains server-side.",
+    policy: CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE.redaction,
+  }
+}
+
+function missingProofSeverity(
+  value: ClientMissingCloseEvidenceRequest["finding"]["severity"],
+): BusinessSignalSeverity {
+  if (value === "CRITICAL") return "critical"
+  if (value === "HIGH") return "high"
+  if (value === "MEDIUM") return "medium"
+  if (value === "LOW") return "low"
+  return "info"
+}
+
+function missingProofSeverityScore(
+  value: ClientMissingCloseEvidenceRequest["finding"]["severity"],
+) {
+  if (value === "CRITICAL") return 100
+  if (value === "HIGH") return 80
+  if (value === "MEDIUM") return 60
+  if (value === "LOW") return 40
+  return 20
+}
 function managerActionsFromPaymentReconciliationSignOff(
   state: ComposeManagerActionCenterInput["paymentReconciliationSignOff"],
   now: Date,
 ): ManagerActionCenterAction[] {
-  if (
-    !state ||
-    (state.state !== "AVAILABLE" && state.state !== "READ_ONLY")
-  ) {
+  if (!state || (state.state !== "AVAILABLE" && state.state !== "READ_ONLY")) {
     return []
   }
 
@@ -632,7 +985,8 @@ function managerActionsFromPaymentReconciliationSignOff(
           title: "Reconciliation sign-off is read-only",
           detail: paymentReconciliationReadOnlyDetail(state.reason),
           sourceTables: ["reconciliation_runs"],
-          nextAction: "Open payment reconciliation to review current evidence and access.",
+          nextAction:
+            "Open payment reconciliation to review current evidence and access.",
         },
       ]
   const base = {
@@ -655,7 +1009,7 @@ function managerActionsFromPaymentReconciliationSignOff(
     dueState: dueState(candidate.periodEnd, now),
     evidenceGrade,
     trustState: evidenceGradeToBITrustState(evidenceGrade),
-    state: isAvailable ? "ready" as const : "permission_denied" as const,
+    state: isAvailable ? ("ready" as const) : ("permission_denied" as const),
     blockers,
     redactions: [],
     actionLink: {
@@ -664,8 +1018,7 @@ function managerActionsFromPaymentReconciliationSignOff(
       href: candidate.actionPath,
       requiredPermission:
         PAYMENT_RECONCILIATION_SIGN_OFF_COMMAND_STATE.readPermission,
-      moduleSlug:
-        PAYMENT_RECONCILIATION_SIGN_OFF_COMMAND_STATE.moduleSlug,
+      moduleSlug: PAYMENT_RECONCILIATION_SIGN_OFF_COMMAND_STATE.moduleSlug,
       disabled: false,
       disabledReason: null,
     },
@@ -707,13 +1060,16 @@ function summarizeManagerActions(
   assuranceHiddenByPermission = 0,
 ): ManagerActionCenterSummary {
   const actionItems = [
-    ...actionQueue.actionItems.map((item) => managerActionFromItem(item, "dashboard", now)),
+    ...actionQueue.actionItems.map((item) =>
+      managerActionFromItem(item, "dashboard", now),
+    ),
     ...additionalActions,
   ]
 
   return {
     total: actionItems.length,
-    dueToday: actionItems.filter((item) => item.dueState === "due_today").length,
+    dueToday: actionItems.filter((item) => item.dueState === "due_today")
+      .length,
     open: actionItems.filter((item) => item.status === "open").length,
     assigned: actionItems.filter((item) => item.status === "assigned").length,
     stale: actionQueue.summary.stale,
@@ -723,22 +1079,30 @@ function summarizeManagerActions(
     redacted: actionItems.filter((item) => item.redactions.length > 0).length,
     blocked: actionItems.filter((item) => item.blockers.length > 0).length,
     overdue: actionItems.filter((item) => item.dueState === "overdue").length,
-    hiddenByPermission: actionQueue.filteredOutCount + assuranceHiddenByPermission,
+    hiddenByPermission:
+      actionQueue.filteredOutCount + assuranceHiddenByPermission,
   }
 }
 
 function sortActionItems(left: ActionItem, right: ActionItem) {
-  const severityDelta = SEVERITY_RANK[right.severity] - SEVERITY_RANK[left.severity]
+  const severityDelta =
+    SEVERITY_RANK[right.severity] - SEVERITY_RANK[left.severity]
   if (severityDelta !== 0) return severityDelta
-  const dueDelta = new Date(left.dueAt).getTime() - new Date(right.dueAt).getTime()
+  const dueDelta =
+    new Date(left.dueAt).getTime() - new Date(right.dueAt).getTime()
   if (dueDelta !== 0) return dueDelta
   return right.severityScore - left.severityScore
 }
 
-function sortManagerActions(left: ManagerActionCenterAction, right: ManagerActionCenterAction) {
-  const severityDelta = SEVERITY_RANK[right.severity] - SEVERITY_RANK[left.severity]
+function sortManagerActions(
+  left: ManagerActionCenterAction,
+  right: ManagerActionCenterAction,
+) {
+  const severityDelta =
+    SEVERITY_RANK[right.severity] - SEVERITY_RANK[left.severity]
   if (severityDelta !== 0) return severityDelta
-  const dueDelta = new Date(left.dueAt).getTime() - new Date(right.dueAt).getTime()
+  const dueDelta =
+    new Date(left.dueAt).getTime() - new Date(right.dueAt).getTime()
   if (dueDelta !== 0) return dueDelta
   return right.severityScore - left.severityScore
 }
@@ -751,25 +1115,40 @@ function actionState(item: ActionItem): BIKpiState {
 }
 
 function queueState(summary: ManagerActionCenterSummary): BIKpiState {
-  if (summary.total === 0 && summary.hiddenByPermission > 0) return "permission_denied"
+  if (summary.total === 0 && summary.hiddenByPermission > 0)
+    return "permission_denied"
   if (summary.total === 0) return "empty"
   if (summary.blocked > 0 || summary.critical > 0) return "blocked"
-  if (summary.stale > 0 || summary.expired > 0 || summary.hiddenByPermission > 0) return "partial"
+  if (
+    summary.stale > 0 ||
+    summary.expired > 0 ||
+    summary.hiddenByPermission > 0
+  )
+    return "partial"
   return "ready"
 }
 
-function countRoleActions(actionQueue: ActionQueueResult, roles: readonly string[]) {
-  return actionQueue.actionItems.filter((item) => roles.includes(item.assignedRole)).length
+function countRoleActions(
+  actionQueue: ActionQueueResult,
+  roles: readonly string[],
+) {
+  return actionQueue.actionItems.filter((item) =>
+    roles.includes(item.assignedRole),
+  ).length
 }
 
-function assuranceSeverityToBusinessSeverity(value: AssuranceControlTowerIncident["severity"]): BusinessSignalSeverity {
+function assuranceSeverityToBusinessSeverity(
+  value: AssuranceControlTowerIncident["severity"],
+): BusinessSignalSeverity {
   if (value === "blocking" || value === "compliance_critical") return "critical"
   if (value === "high") return "high"
   if (value === "warning") return "medium"
   return "low"
 }
 
-function assuranceSeverityScore(value: AssuranceControlTowerIncident["severity"]) {
+function assuranceSeverityScore(
+  value: AssuranceControlTowerIncident["severity"],
+) {
   if (value === "compliance_critical") return 100
   if (value === "blocking") return 96
   if (value === "high") return 84
@@ -777,7 +1156,9 @@ function assuranceSeverityScore(value: AssuranceControlTowerIncident["severity"]
   return 38
 }
 
-function ownerRoleToSignalRole(value: string): ManagerActionCenterAction["assignedRole"] {
+function ownerRoleToSignalRole(
+  value: string,
+): ManagerActionCenterAction["assignedRole"] {
   if (/accountant/i.test(value)) return "accountant"
   if (/finance/i.test(value)) return "finance"
   if (/inventory|stock/i.test(value)) return "stockkeeper"
@@ -820,4 +1201,49 @@ function normalizeNow(value: Date | string | null | undefined) {
     if (!Number.isNaN(parsed.getTime())) return parsed
   }
   return new Date()
+}
+
+async function getClientMissingProofActionCenterSource(input: {
+  organizationId: string
+  actorId: string
+  actorPermissions: readonly string[]
+  now: Date | string | null
+}): Promise<ClientMissingProofActionCenterSource> {
+  if (
+    !hasRbacPermission(
+      input.actorPermissions,
+      CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE.readPermission,
+    )
+  ) {
+    return { state: "HIDDEN", queue: null, reason: "RBAC_REQUIRED" }
+  }
+
+  try {
+    const access = await observeModuleAccess({
+      organizationId: input.organizationId,
+      userId: input.actorId,
+      actorPermissions: input.actorPermissions,
+      moduleSlug: "close_assurance",
+      surfaceType: "page",
+      surface: "manager-action-center.client-missing-proof",
+      accessIntent: "read",
+      mode: "enforce",
+      audit: true,
+      now: input.now,
+    })
+
+    if (!access.allowed) {
+      return { state: "HIDDEN", queue: null, reason: "MODULE_UNAVAILABLE" }
+    }
+
+    const queue = await getClientMissingCloseEvidenceRequestQueue({
+      organizationId: input.organizationId,
+      actorId: input.actorId,
+      actorPermissions: input.actorPermissions,
+    })
+
+    return { state: "AVAILABLE", queue, reason: null }
+  } catch {
+    return { state: "UNAVAILABLE", queue: null, reason: "SOURCE_READ_FAILED" }
+  }
 }

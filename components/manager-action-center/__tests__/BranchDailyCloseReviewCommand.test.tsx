@@ -74,7 +74,7 @@ describe("BranchDailyCloseReviewCommand", () => {
 
     expect(await screen.findByRole("status")).toHaveTextContent("already recorded")
     expect(mockRefresh).toHaveBeenCalledTimes(1)
-    expect(screen.getByRole("button", { name: "Review started" })).toBeDisabled()
+    expect(await screen.findByRole("button", { name: "Review started" })).toBeDisabled()
   })
 
   it("retains the same idempotency key across a safe retry", async () => {

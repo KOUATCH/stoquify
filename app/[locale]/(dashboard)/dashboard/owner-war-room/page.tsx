@@ -35,12 +35,19 @@ export default async function OwnerWarRoomPage({
 }) {
   const { locale } = await params
   const resolvedLocale = pickLocale(locale)
-  let ctx: Awaited<ReturnType<typeof requirePermission>>
+  let data: Awaited<ReturnType<typeof getOwnerWarRoomData>>
 
   try {
-    ctx = await requirePermission("dashboard.read", {
+    const ctx = await requirePermission("dashboard.read", {
       resource: "KontavaOwnerWarRoom",
       auditAllowed: true,
+    })
+    data = await getOwnerWarRoomData({
+      organizationId: ctx.orgId,
+      actorId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      actorRoleCodes: ctx.roles.map((role) => role.code),
+      isSuperUser: ctx.isSuperUser,
     })
   } catch (error) {
     if (error instanceof RbacError) {
@@ -53,7 +60,7 @@ export default async function OwnerWarRoomPage({
           message={
             noActiveOrg
               ? "Refresh your session from the dashboard so the command center can load tenant-scoped evidence."
-              : "This read-only command center requires dashboard access. The denial was recorded by the RBAC guard."
+              : "This read-only tenant command center requires administrator-wide operating authority. The denial was recorded by the RBAC guard."
           }
           primaryHref={localizePath("/dashboard", resolvedLocale)}
         />
@@ -62,12 +69,6 @@ export default async function OwnerWarRoomPage({
 
     throw error
   }
-
-  const data = await getOwnerWarRoomData({
-    organizationId: ctx.orgId,
-    actorId: ctx.userId,
-    actorPermissions: ctx.permissions,
-  })
 
   return (
     <OwnerWarRoomDashboard

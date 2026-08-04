@@ -41,15 +41,20 @@ import {
   markBusinessEventAppliedInTx,
   recordBusinessEventInTx,
 } from "@/services/events/business-event.service"
-import { resolveRegulatoryParameter, type RegulatoryResolutionResult } from "@/services/regulatory/country-packs/resolve"
+import {
+  resolveRegulatoryParameter,
+  type RegulatoryResolutionResult,
+} from "@/services/regulatory/regulatory-capability.service"
 
 import {
   approveSupplierBankChangeInputSchema,
+  approveSupplierInvoiceInputSchema,
   approveSupplierPaymentInputSchema,
   postSupplierInvoiceInputSchema,
   releaseSupplierPaymentInputSchema,
   requestSupplierBankChangeInputSchema,
   type ApproveSupplierBankChangeInput,
+  type ApproveSupplierInvoiceInput,
   type ApproveSupplierPaymentInput,
   type PostSupplierInvoiceInput,
   type ReleaseSupplierPaymentInput,
@@ -99,7 +104,11 @@ type APCountryPackStatus = {
 }
 
 type APPostingStatus = {
-  ledgerBatch: { id: string; status?: LedgerPostingBatchStatus | null; errorMessage?: string | null }
+  ledgerBatch: {
+    id: string
+    status?: LedgerPostingBatchStatus | null
+    errorMessage?: string | null
+  }
   ledgerStatus: "POSTED" | "BLOCKED_PENDING_RULES"
   blockerCode?: string | null
   blockerMessage?: string | null
@@ -271,11 +280,7 @@ async function loadSupplierBankChangeApprovalSubject(
   })
 }
 
-async function loadSupplierPaymentControlSubject(
-  client: DbClient,
-  organizationId: string,
-  supplierPaymentId: string,
-) {
+async function loadSupplierPaymentControlSubject(client: DbClient, organizationId: string, supplierPaymentId: string) {
   return client.supplierPayment.findFirst({
     where: {
       id: supplierPaymentId,
@@ -539,7 +544,10 @@ async function resolveAPCountryPackStatus(
       },
     })
   } catch (error) {
-    const regulatoryError = error as { regulatoryCode?: string; message?: string }
+    const regulatoryError = error as {
+      regulatoryCode?: string
+      message?: string
+    }
     return {
       countryPackStatus: "UNRESOLVED",
       countryCode,
@@ -727,8 +735,12 @@ async function createAPLedgerPosting(
     amountSource: PostingRuleAmountSource
   }>
 
-  const debitTotal = postingLines.reduce((total, line) => total.plus(line.debit), new Prisma.Decimal(0)).toDecimalPlaces(2)
-  const creditTotal = postingLines.reduce((total, line) => total.plus(line.credit), new Prisma.Decimal(0)).toDecimalPlaces(2)
+  const debitTotal = postingLines
+    .reduce((total, line) => total.plus(line.debit), new Prisma.Decimal(0))
+    .toDecimalPlaces(2)
+  const creditTotal = postingLines
+    .reduce((total, line) => total.plus(line.credit), new Prisma.Decimal(0))
+    .toDecimalPlaces(2)
 
   if (postingLines.length < 2 || !debitTotal.eq(creditTotal) || debitTotal.lte(0)) {
     const message = `AP posting rule ${rule.code} did not produce a balanced non-zero journal entry.`
@@ -879,16 +891,21 @@ async function createAPLedgerPosting(
     },
   })
 
-  await recordPostedJournalCloseInvalidationInTx(tx, input.organizationId, {
-    journalEntryId: journalEntry.id,
-    periodId: input.periodId,
-    entryDate: input.sourceDate,
-    correlationId: postedBatch.id,
-    staleReason: "Purchasing/AP journal posting changed certified close evidence.",
-  }, {
-    actorId: input.actorId,
-    now,
-  })
+  await recordPostedJournalCloseInvalidationInTx(
+    tx,
+    input.organizationId,
+    {
+      journalEntryId: journalEntry.id,
+      periodId: input.periodId,
+      entryDate: input.sourceDate,
+      correlationId: postedBatch.id,
+      staleReason: "Purchasing/AP journal posting changed certified close evidence.",
+    },
+    {
+      actorId: input.actorId,
+      now,
+    },
+  )
 
   return {
     ledgerBatch: postedBatch,
@@ -944,10 +961,7 @@ async function queueOutboundSupplierPaymentReconciliation(
         organizationId: input.organizationId,
         ledgerPostingBatchId: input.ledgerPostingBatchId,
         direction: PaymentDirection.OUTBOUND,
-        state:
-          input.ledgerStatus === "POSTED"
-            ? PaymentTransactionState.PENDING
-            : PaymentTransactionState.SUSPENSE,
+        state: input.ledgerStatus === "POSTED" ? PaymentTransactionState.PENDING : PaymentTransactionState.SUSPENSE,
         amount: input.amount,
         currencyCode: input.currency,
         providerReference: input.paymentNumber,
@@ -971,8 +985,7 @@ async function queueOutboundSupplierPaymentReconciliation(
     input.ledgerStatus === "POSTED"
       ? PaymentExceptionType.MISSING_STATEMENT_LINE
       : PaymentExceptionType.SUSPENSE_POSTING_BLOCKED
-  const reconciliationStatus =
-    input.ledgerStatus === "POSTED" ? "AWAITING_STATEMENT_MATCH" : "LEDGER_BLOCKED"
+  const reconciliationStatus = input.ledgerStatus === "POSTED" ? "AWAITING_STATEMENT_MATCH" : "LEDGER_BLOCKED"
 
   const paymentException =
     (await tx.paymentException.findFirst({
@@ -980,7 +993,9 @@ async function queueOutboundSupplierPaymentReconciliation(
         organizationId: input.organizationId,
         paymentTransactionId: paymentTransaction.id,
         type: exceptionType,
-        status: { notIn: [PaymentExceptionStatus.RESOLVED, PaymentExceptionStatus.DISMISSED] },
+        status: {
+          notIn: [PaymentExceptionStatus.RESOLVED, PaymentExceptionStatus.DISMISSED],
+        },
       },
     })) ||
     (await tx.paymentException.create({
@@ -1064,11 +1079,7 @@ async function nextAPJournalEntryNumber(
   return `${datedPrefix}-${String(count + 1).padStart(4, "0")}`
 }
 
-async function assertSupplier(
-  tx: Prisma.TransactionClient,
-  organizationId: string,
-  supplierId: string,
-) {
+async function assertSupplier(tx: Prisma.TransactionClient, organizationId: string, supplierId: string) {
   const supplier = await tx.supplier.findFirst({
     where: {
       id: supplierId,
@@ -1123,7 +1134,9 @@ async function buildInvoiceLinePlans(
         goodsReceipt: {
           organizationId: input.organizationId,
           deletedAt: null,
-          status: { in: [GoodsReceiptStatus.RECEIVED, GoodsReceiptStatus.COMPLETED] },
+          status: {
+            in: [GoodsReceiptStatus.RECEIVED, GoodsReceiptStatus.COMPLETED],
+          },
         },
         purchaseOrderLine: {
           purchaseOrder: {
@@ -1167,7 +1180,9 @@ async function buildInvoiceLinePlans(
     }
 
     if (line.purchaseOrderLineId && line.purchaseOrderLineId !== receiptLine.purchaseOrderLineId) {
-      throw new BusinessRuleError("Supplier invoice line purchase order evidence does not match the goods receipt line.")
+      throw new BusinessRuleError(
+        "Supplier invoice line purchase order evidence does not match the goods receipt line.",
+      )
     }
 
     if (line.itemId && line.itemId !== receiptLine.itemId) {
@@ -1194,7 +1209,9 @@ async function buildInvoiceLinePlans(
 
     const priceVariance = unitCost.minus(decimal2(receiptLine.unitCost)).times(quantity).toDecimalPlaces(2)
     if (!priceVariance.eq(0)) {
-      throw new BusinessRuleError("Supplier invoice unit cost does not match goods receipt cost; create a match exception before posting.")
+      throw new BusinessRuleError(
+        "Supplier invoice unit cost does not match goods receipt cost; create a match exception before posting.",
+      )
     }
 
     const lineSubtotal = quantity.times(unitCost).toDecimalPlaces(2)
@@ -1241,10 +1258,18 @@ export async function getAPWorkbenchData(
     ledgerBlockers,
   ] = await Promise.all([
     client.supplierInvoice.count({
-      where: { organizationId, deletedAt: null, status: SupplierInvoiceStatus.POSTED },
+      where: {
+        organizationId,
+        deletedAt: null,
+        status: SupplierInvoiceStatus.POSTED,
+      },
     }),
     client.supplierInvoice.count({
-      where: { organizationId, deletedAt: null, status: SupplierInvoiceStatus.PAYMENT_PENDING },
+      where: {
+        organizationId,
+        deletedAt: null,
+        status: SupplierInvoiceStatus.PAYMENT_PENDING,
+      },
     }),
     client.threeWayMatch.count({
       where: { organizationId, status: ThreeWayMatchStatus.EXCEPTION },
@@ -1253,27 +1278,39 @@ export async function getAPWorkbenchData(
       where: { organizationId, status: SupplierBankChangeStatus.PENDING },
     }),
     client.supplierPayment.count({
-      where: { organizationId, deletedAt: null, status: SupplierPaymentStatus.RELEASED },
+      where: {
+        organizationId,
+        deletedAt: null,
+        status: SupplierPaymentStatus.RELEASED,
+      },
     }),
     client.ledgerPostingBatch.count({
       where: {
         organizationId,
-        status: { in: [LedgerPostingBatchStatus.PENDING, LedgerPostingBatchStatus.FAILED] },
-        sourceType: { in: [AccountingSourceType.SUPPLIER_INVOICE, AccountingSourceType.SUPPLIER_PAYMENT] },
+        status: {
+          in: [LedgerPostingBatchStatus.PENDING, LedgerPostingBatchStatus.FAILED],
+        },
+        sourceType: {
+          in: [AccountingSourceType.SUPPLIER_INVOICE, AccountingSourceType.SUPPLIER_PAYMENT],
+        },
       },
     }),
     client.paymentException.count({
       where: {
         organizationId,
         sourceType: "SUPPLIER_PAYMENT",
-        status: { notIn: [PaymentExceptionStatus.RESOLVED, PaymentExceptionStatus.DISMISSED] },
+        status: {
+          notIn: [PaymentExceptionStatus.RESOLVED, PaymentExceptionStatus.DISMISSED],
+        },
       },
     }),
     client.supplierInvoice.findMany({
       where: {
         organizationId,
         deletedAt: null,
-        status: { in: [SupplierInvoiceStatus.POSTED, SupplierInvoiceStatus.PAYMENT_PENDING, SupplierInvoiceStatus.DISPUTED] },
+        status: {
+          in: [SupplierInvoiceStatus.POSTED, SupplierInvoiceStatus.PAYMENT_PENDING, SupplierInvoiceStatus.DISPUTED],
+        },
       },
       orderBy: [{ invoiceDate: "desc" }, { createdAt: "desc" }],
       take: limit,
@@ -1305,7 +1342,11 @@ export async function getAPWorkbenchData(
       },
     }),
     client.supplierPayment.findMany({
-      where: { organizationId, deletedAt: null, status: SupplierPaymentStatus.RELEASED },
+      where: {
+        organizationId,
+        deletedAt: null,
+        status: SupplierPaymentStatus.RELEASED,
+      },
       orderBy: [{ paymentDate: "desc" }, { createdAt: "desc" }],
       take: limit,
       select: {
@@ -1324,8 +1365,12 @@ export async function getAPWorkbenchData(
     client.ledgerPostingBatch.findMany({
       where: {
         organizationId,
-        status: { in: [LedgerPostingBatchStatus.PENDING, LedgerPostingBatchStatus.FAILED] },
-        sourceType: { in: [AccountingSourceType.SUPPLIER_INVOICE, AccountingSourceType.SUPPLIER_PAYMENT] },
+        status: {
+          in: [LedgerPostingBatchStatus.PENDING, LedgerPostingBatchStatus.FAILED],
+        },
+        sourceType: {
+          in: [AccountingSourceType.SUPPLIER_INVOICE, AccountingSourceType.SUPPLIER_PAYMENT],
+        },
       },
       orderBy: { createdAt: "asc" },
       take: limit,
@@ -1349,8 +1394,16 @@ export async function getAPWorkbenchData(
   const [receiptLedgerBatches, paymentTransactions, paymentExceptions] = await Promise.all([
     ledgerBatchIds.length
       ? client.ledgerPostingBatch.findMany({
-          where: { organizationId, id: { in: Array.from(new Set(ledgerBatchIds)) } },
-          select: { id: true, status: true, errorMessage: true, metadata: true },
+          where: {
+            organizationId,
+            id: { in: Array.from(new Set(ledgerBatchIds)) },
+          },
+          select: {
+            id: true,
+            status: true,
+            errorMessage: true,
+            metadata: true,
+          },
         })
       : Promise.resolve([]),
     releasedPaymentIds.length
@@ -1369,17 +1422,27 @@ export async function getAPWorkbenchData(
             organizationId,
             sourceType: "SUPPLIER_PAYMENT",
             sourceId: { in: releasedPaymentIds },
-            status: { notIn: [PaymentExceptionStatus.RESOLVED, PaymentExceptionStatus.DISMISSED] },
+            status: {
+              notIn: [PaymentExceptionStatus.RESOLVED, PaymentExceptionStatus.DISMISSED],
+            },
           },
           orderBy: { createdAt: "desc" },
-          select: { id: true, sourceId: true, type: true, status: true, metadata: true },
+          select: {
+            id: true,
+            sourceId: true,
+            type: true,
+            status: true,
+            metadata: true,
+          },
         })
       : Promise.resolve([]),
   ])
 
   const ledgerBatchById = new Map(receiptLedgerBatches.map((batch) => [batch.id, batch]))
   const paymentTransactionBySourceId = new Map(
-    paymentTransactions.filter((transaction) => transaction.sourceId).map((transaction) => [transaction.sourceId!, transaction]),
+    paymentTransactions
+      .filter((transaction) => transaction.sourceId)
+      .map((transaction) => [transaction.sourceId!, transaction]),
   )
   const paymentExceptionBySourceId = new Map(
     paymentExceptions.filter((exception) => exception.sourceId).map((exception) => [exception.sourceId!, exception]),
@@ -1393,7 +1456,8 @@ export async function getAPWorkbenchData(
   }
 
   const ledgerBlockerCodeFor = (batchId: string | null, metadata: unknown) =>
-    metadataString(metadata, "ledgerBlockerCode") || metadataString(ledgerBatchById.get(batchId ?? "")?.metadata, "blockerCode")
+    metadataString(metadata, "ledgerBlockerCode") ||
+    metadataString(ledgerBatchById.get(batchId ?? "")?.metadata, "blockerCode")
 
   const ledgerBlockerMessageFor = (batchId: string | null, metadata: unknown) =>
     metadataString(metadata, "ledgerBlockerMessage") || ledgerBatchById.get(batchId ?? "")?.errorMessage || null
@@ -1479,6 +1543,12 @@ export async function getAPWorkbenchData(
 
 export async function postSupplierInvoice(input: PostSupplierInvoiceInput, client: DbClient = db) {
   const parsed = postSupplierInvoiceInputSchema.parse(input)
+  if (!parsed.createdById) {
+    throw new BusinessRuleError("Supplier invoice preparation requires an authenticated maker.")
+  }
+  if (parsed.approvedById && parsed.approvedById === parsed.createdById) {
+    throw new BusinessRuleError("Supplier invoice posting requires an independent approver.")
+  }
   const invoiceDate = parseDate(parsed.invoiceDate)
   const dueDate = parsed.dueDate ? parseDate(parsed.dueDate) : undefined
   const currency = normalizeCurrency(parsed.currency)
@@ -1541,8 +1611,13 @@ export async function postSupplierInvoice(input: PostSupplierInvoiceInput, clien
       })
 
       if (!purchaseOrder) throw new NotFoundError("Purchase order not found for this supplier.")
-      if (purchaseOrder.status === PurchaseOrderStatus.DRAFT || purchaseOrder.status === PurchaseOrderStatus.CANCELLED) {
-        throw new BusinessRuleError("Supplier invoices can only be posted against approved or received purchase orders.")
+      if (
+        purchaseOrder.status === PurchaseOrderStatus.DRAFT ||
+        purchaseOrder.status === PurchaseOrderStatus.CANCELLED
+      ) {
+        throw new BusinessRuleError(
+          "Supplier invoices can only be posted against approved or received purchase orders.",
+        )
       }
     }
 
@@ -1553,8 +1628,12 @@ export async function postSupplierInvoice(input: PostSupplierInvoiceInput, clien
       lines: parsed.lines,
     })
 
-    const subtotal = linePlans.reduce((total, line) => total.plus(line.lineSubtotal), new Prisma.Decimal(0)).toDecimalPlaces(2)
-    const taxAmount = linePlans.reduce((total, line) => total.plus(line.taxAmount), new Prisma.Decimal(0)).toDecimalPlaces(2)
+    const subtotal = linePlans
+      .reduce((total, line) => total.plus(line.lineSubtotal), new Prisma.Decimal(0))
+      .toDecimalPlaces(2)
+    const taxAmount = linePlans
+      .reduce((total, line) => total.plus(line.taxAmount), new Prisma.Decimal(0))
+      .toDecimalPlaces(2)
     const total = subtotal.plus(taxAmount).toDecimalPlaces(2)
     if (total.lte(0)) throw new BusinessRuleError("Supplier invoice total must be greater than zero.")
 
@@ -1578,7 +1657,10 @@ export async function postSupplierInvoice(input: PostSupplierInvoiceInput, clien
         organizationId: parsed.organizationId,
         deletedAt: null,
         OR: [
-          { supplierId: parsed.supplierId, invoiceNumber: parsed.invoiceNumber.trim() },
+          {
+            supplierId: parsed.supplierId,
+            invoiceNumber: parsed.invoiceNumber.trim(),
+          },
           { duplicateFingerprint: fingerprint },
         ],
       },
@@ -1609,7 +1691,7 @@ export async function postSupplierInvoice(input: PostSupplierInvoiceInput, clien
         invoiceNumber: parsed.invoiceNumber.trim(),
         invoiceDate,
         dueDate: dueDate ?? null,
-        status: SupplierInvoiceStatus.POSTED,
+        status: parsed.approvedById ? SupplierInvoiceStatus.POSTED : SupplierInvoiceStatus.MATCHED,
         subtotal,
         taxAmount,
         discount: new Prisma.Decimal(0),
@@ -1621,8 +1703,8 @@ export async function postSupplierInvoice(input: PostSupplierInvoiceInput, clien
         documentHash,
         evidenceHash: parsed.evidenceHash ?? prefixedHash(evidencePayload),
         createdById: parsed.createdById ?? null,
-        approvedById: parsed.approvedById ?? parsed.createdById ?? null,
-        postedAt: invoiceDate,
+        approvedById: parsed.approvedById ?? null,
+        postedAt: parsed.approvedById ? invoiceDate : null,
         notes: parsed.notes ?? null,
         metadata: safeJson({
           gate: "011-purchasing-ap-controls",
@@ -1666,7 +1748,7 @@ export async function postSupplierInvoice(input: PostSupplierInvoiceInput, clien
         goodsReceiptId: distinctGoodsReceiptIds.length === 1 ? distinctGoodsReceiptIds[0] : null,
         status: ThreeWayMatchStatus.MATCHED,
         matchedAt: invoiceDate,
-        matchedById: parsed.approvedById ?? parsed.createdById ?? null,
+        matchedById: parsed.createdById,
         toleranceAmount: new Prisma.Decimal(0),
         varianceAmount: new Prisma.Decimal(0),
         quantityVariance: new Prisma.Decimal(0),
@@ -1683,6 +1765,33 @@ export async function postSupplierInvoice(input: PostSupplierInvoiceInput, clien
         }),
       },
     })
+
+    if (!parsed.approvedById) {
+      await writeAudit(tx, {
+        organizationId: parsed.organizationId,
+        entityType: "SupplierInvoice",
+        entityId: invoice.id,
+        action: "SUPPLIER_INVOICE_PREPARED",
+        actorId: parsed.createdById,
+        changes: {
+          after: {
+            supplierId: supplier.id,
+            invoiceNumber: invoice.invoiceNumber,
+            total: total.toFixed(2),
+            threeWayMatchId: match.id,
+            status: SupplierInvoiceStatus.MATCHED,
+          },
+        },
+      })
+
+      return {
+        supplierInvoice: invoice,
+        threeWayMatch: match,
+        postingBatchId: null,
+        businessEventId: null,
+        ledgerStatus: "PENDING_APPROVAL" as const,
+      }
+    }
 
     const balanceAfter = decimal2(supplier.currentBalance).plus(total).toDecimalPlaces(2)
     await tx.supplier.update({
@@ -1849,6 +1958,267 @@ export async function postSupplierInvoice(input: PostSupplierInvoiceInput, clien
   })
 }
 
+export async function prepareSupplierInvoice(input: PostSupplierInvoiceInput, client: DbClient = db) {
+  return postSupplierInvoice({ ...input, approvedById: undefined }, client)
+}
+
+export async function approveSupplierInvoice(input: ApproveSupplierInvoiceInput, client: DbClient = db) {
+  const parsed = approveSupplierInvoiceInputSchema.parse(input)
+
+  return inTransaction(client, async (tx) => {
+    const invoice = await tx.supplierInvoice.findFirst({
+      where: {
+        id: parsed.supplierInvoiceId,
+        organizationId: parsed.organizationId,
+        deletedAt: null,
+      },
+      include: {
+        lines: true,
+        threeWayMatches: true,
+        supplier: {
+          select: {
+            id: true,
+            name: true,
+            currentBalance: true,
+            isActive: true,
+          },
+        },
+      },
+    })
+
+    if (!invoice) throw new NotFoundError("Supplier invoice not found for this organization.")
+    if (!invoice.createdById) throw new BusinessRuleError("Supplier invoice is missing maker evidence.")
+    if (invoice.createdById === parsed.approvedById) {
+      throw new BusinessRuleError("Supplier invoice posting requires an independent approver.")
+    }
+
+    if (
+      invoice.status === SupplierInvoiceStatus.POSTED ||
+      invoice.status === SupplierInvoiceStatus.PAYMENT_PENDING ||
+      invoice.status === SupplierInvoiceStatus.PAID
+    ) {
+      if (invoice.approvedById !== parsed.approvedById) {
+        throw new ConflictError("Supplier invoice was already approved by another actor.")
+      }
+      return {
+        supplierInvoice: invoice,
+        threeWayMatch: invoice.threeWayMatches[0] ?? null,
+        postingBatchId: invoice.ledgerPostingBatchId,
+        businessEventId: invoice.postedBusinessEventId,
+        ledgerStatus: metadataString(invoice.metadata, "ledgerStatus") ?? "POSTED",
+      }
+    }
+
+    if (invoice.status !== SupplierInvoiceStatus.MATCHED) {
+      throw new BusinessRuleError("Only matched supplier invoices can be approved and posted.")
+    }
+    const match = invoice.threeWayMatches.find((candidate) => candidate.status === ThreeWayMatchStatus.MATCHED)
+    if (!match) throw new BusinessRuleError("Supplier invoice requires matched three-way evidence before posting.")
+    if (!invoice.supplier.isActive) throw new BusinessRuleError("Supplier is inactive.")
+
+    const claim = await tx.supplierInvoice.updateMany({
+      where: {
+        id: invoice.id,
+        organizationId: parsed.organizationId,
+        status: SupplierInvoiceStatus.MATCHED,
+        approvedById: null,
+        deletedAt: null,
+      },
+      data: {
+        status: SupplierInvoiceStatus.POSTED,
+        approvedById: parsed.approvedById,
+        postedAt: invoice.invoiceDate,
+      },
+    })
+    if (claim.count !== 1) {
+      throw new ConflictError("Supplier invoice approval was already claimed; reload before retrying.")
+    }
+
+    const period = await getOpenPeriodForDate(parsed.organizationId, invoice.invoiceDate, tx)
+    const countryPackStatus = await resolveAPCountryPackStatus(tx, {
+      organizationId: parsed.organizationId,
+      documentDate: invoice.invoiceDate,
+      taxAmount: invoice.taxAmount,
+      purpose: "SUPPLIER_INVOICE",
+    })
+    const documentHash =
+      invoice.documentHash ??
+      prefixedHash({
+        invoiceId: invoice.id,
+        supplierId: invoice.supplierId,
+        invoiceNumber: invoice.invoiceNumber,
+        total: invoice.total.toFixed(2),
+        currency: invoice.currency,
+      })
+
+    const balanceAfter = decimal2(invoice.supplier.currentBalance).plus(invoice.total).toDecimalPlaces(2)
+    await tx.supplier.update({
+      where: { id: invoice.supplier.id },
+      data: { currentBalance: balanceAfter },
+    })
+    await tx.supplierLedgerEntry.create({
+      data: {
+        organizationId: parsed.organizationId,
+        supplierId: invoice.supplier.id,
+        entryDate: invoice.invoiceDate,
+        type: LedgerEntryType.PURCHASE,
+        debit: invoice.total,
+        credit: new Prisma.Decimal(0),
+        balanceAfter,
+        description: `Supplier invoice ${invoice.invoiceNumber}`,
+        referenceType: "SUPPLIER_INVOICE",
+        referenceId: invoice.id,
+      },
+    })
+
+    const postingResult = await createAPLedgerPosting(tx, {
+      organizationId: parsed.organizationId,
+      periodId: period.id,
+      sourceType: AccountingSourceType.SUPPLIER_INVOICE,
+      sourceId: invoice.id,
+      sourceNumber: invoice.invoiceNumber,
+      sourceDate: invoice.invoiceDate,
+      postingPurpose: AccountingPostingPurpose.SUPPLIER_INVOICE,
+      actorId: parsed.approvedById,
+      supplierId: invoice.supplier.id,
+      currency: invoice.currency,
+      journalType: JournalType.PURCHASE,
+      journalPrefix: "APINV",
+      memo: `Supplier invoice ${invoice.invoiceNumber}`,
+      documentHash,
+      amounts: {
+        sourceAmount: invoice.total,
+        netAmount: invoice.subtotal,
+        grossAmount: invoice.total,
+        taxAmount: invoice.taxAmount,
+        costAmount: invoice.subtotal,
+      },
+      blockerCode: "AP_POSTING_RULE_REVIEW",
+      blockerMessage: "Supplier invoice AP posting requires configured SYSCOHADA purchase/input VAT/AP rules.",
+      metadata: {
+        invoiceNumber: invoice.invoiceNumber,
+        supplierId: invoice.supplier.id,
+        total: invoice.total.toFixed(2),
+        currency: invoice.currency,
+        countryPackStatus: countryPackStatus.countryPackStatus,
+        countryPackVersion: countryPackStatus.countryPackVersion,
+        countryPackResolutionHash: countryPackStatus.countryPackResolutionHash,
+        taxTreatmentStatus: countryPackStatus.taxTreatmentStatus,
+        withholdingTreatmentStatus: countryPackStatus.withholdingTreatmentStatus,
+      },
+    })
+    const ledgerBatch = postingResult.ledgerBatch
+
+    const eventResult = await recordBusinessEventInTx(tx, {
+      organizationId: parsed.organizationId,
+      eventType: "purchase.supplier_invoice.posted",
+      eventSource: "INTERNAL",
+      schemaVersion: 1,
+      idempotencyKey: `supplier-invoice:${invoice.id}:posted`,
+      payload: {
+        invoiceId: invoice.id,
+        supplierId: invoice.supplier.id,
+        purchaseOrderId: invoice.purchaseOrderId,
+        invoiceNumber: invoice.invoiceNumber,
+        total: invoice.total.toFixed(2),
+        currency: invoice.currency,
+        threeWayMatchId: match.id,
+        ledgerPostingBatchId: ledgerBatch.id,
+        journalEntryId: postingResult.journalEntryId ?? null,
+        ledgerStatus: postingResult.ledgerStatus,
+        makerId: invoice.createdById,
+        approverId: parsed.approvedById,
+      },
+      occurredAt: invoice.invoiceDate,
+      actorId: parsed.approvedById,
+      sourceType: AccountingSourceType.SUPPLIER_INVOICE,
+      sourceId: invoice.id,
+      postingBatchId: ledgerBatch.id,
+      documentHash,
+      metadata: {
+        ledgerStatus: postingResult.ledgerStatus,
+        blockerCode: postingResult.blockerCode ?? null,
+        countryPackStatus: countryPackStatus.countryPackStatus,
+        countryPackVersion: countryPackStatus.countryPackVersion,
+        countryPackResolutionHash: countryPackStatus.countryPackResolutionHash,
+        gate: "011-purchasing-ap-controls",
+        makerCheckerVerified: true,
+      },
+      outboxMessages: [
+        {
+          channel: "NOTIFICATION",
+          eventName: "supplier_invoice.posted",
+          destination: "accounting",
+          payload: {
+            severity: postingResult.ledgerStatus === "POSTED" ? "info" : "warning",
+            invoiceId: invoice.id,
+            supplierId: invoice.supplier.id,
+            total: invoice.total.toFixed(2),
+            ledgerStatus: postingResult.ledgerStatus,
+            blockerCode: postingResult.blockerCode ?? null,
+          },
+        },
+      ],
+    })
+
+    await markBusinessEventAppliedInTx(tx, parsed.organizationId, eventResult.event.id)
+    const postedInvoice = await tx.supplierInvoice.update({
+      where: { id: invoice.id },
+      data: {
+        ledgerPostingBatchId: ledgerBatch.id,
+        postedBusinessEventId: eventResult.event.id,
+        metadata: safeJson({
+          ...asRecord(invoice.metadata),
+          ledgerStatus: postingResult.ledgerStatus,
+          ledgerBlockerCode: postingResult.blockerCode ?? null,
+          ledgerBlockerMessage: postingResult.blockerMessage ?? null,
+          journalEntryId: postingResult.journalEntryId ?? null,
+          accountingSourceLinkId: postingResult.accountingSourceLinkId ?? null,
+          countryPackStatus: countryPackStatus.countryPackStatus,
+          countryCode: countryPackStatus.countryCode,
+          countryPackVersion: countryPackStatus.countryPackVersion,
+          countryPackResolutionHash: countryPackStatus.countryPackResolutionHash,
+          taxTreatmentStatus: countryPackStatus.taxTreatmentStatus,
+          withholdingTreatmentStatus: countryPackStatus.withholdingTreatmentStatus,
+          operatorActionRequired: countryPackStatus.operatorActionRequired,
+          countryPackErrorCode: countryPackStatus.errorCode ?? null,
+          countryPackErrorMessage: countryPackStatus.errorMessage ?? null,
+          makerCheckerVerified: true,
+        }),
+      },
+      include: { lines: true, threeWayMatches: true },
+    })
+
+    await writeAudit(tx, {
+      organizationId: parsed.organizationId,
+      entityType: "SupplierInvoice",
+      entityId: invoice.id,
+      action: "SUPPLIER_INVOICE_APPROVED_AND_POSTED",
+      actorId: parsed.approvedById,
+      changes: {
+        before: {
+          status: SupplierInvoiceStatus.MATCHED,
+          createdById: invoice.createdById,
+        },
+        after: {
+          status: SupplierInvoiceStatus.POSTED,
+          approvedById: parsed.approvedById,
+          ledgerPostingBatchId: ledgerBatch.id,
+          businessEventId: eventResult.event.id,
+          ledgerStatus: postingResult.ledgerStatus,
+        },
+      },
+    })
+
+    return {
+      supplierInvoice: postedInvoice,
+      threeWayMatch: match,
+      postingBatchId: ledgerBatch.id,
+      businessEventId: eventResult.event.id,
+      ledgerStatus: postingResult.ledgerStatus,
+    }
+  })
+}
 export async function requestSupplierBankChange(input: RequestSupplierBankChangeInput, client: DbClient = db) {
   const parsed = requestSupplierBankChangeInputSchema.parse(input)
 
@@ -1936,7 +2306,9 @@ export async function requestSupplierBankChange(input: RequestSupplierBankChange
       entityId: change.id,
       action: "SUPPLIER_BANK_CHANGE_REQUESTED",
       actorId: parsed.requestedById,
-      changes: { after: { supplierId: supplier.id, changeHash: change.changeHash } },
+      changes: {
+        after: { supplierId: supplier.id, changeHash: change.changeHash },
+      },
     })
 
     return { bankChangeRequest: change, businessEventId: eventResult.event.id }
@@ -2051,11 +2423,18 @@ export async function approveSupplierBankChange(input: ApproveSupplierBankChange
       actorId: parsed.approvedById,
       changes: {
         before: { status: SupplierBankChangeStatus.PENDING },
-        after: { status: SupplierBankChangeStatus.APPROVED, bankAccountId: bankAccount.id },
+        after: {
+          status: SupplierBankChangeStatus.APPROVED,
+          bankAccountId: bankAccount.id,
+        },
       },
     })
 
-    return { bankChangeRequest: approvedChange, bankAccount, businessEventId: eventResult.event.id }
+    return {
+      bankChangeRequest: approvedChange,
+      bankAccount,
+      businessEventId: eventResult.event.id,
+    }
   })
 }
 
@@ -2173,7 +2552,9 @@ export async function approveSupplierPayment(input: ApproveSupplierPaymentInput,
         organizationId: parsed.organizationId,
         supplierId: parsed.supplierId,
         deletedAt: null,
-        status: { in: [SupplierInvoiceStatus.POSTED, SupplierInvoiceStatus.PAYMENT_PENDING] },
+        status: {
+          in: [SupplierInvoiceStatus.POSTED, SupplierInvoiceStatus.PAYMENT_PENDING],
+        },
       },
     })
 
@@ -2271,7 +2652,9 @@ export async function approveSupplierPayment(input: ApproveSupplierPaymentInput,
       eventType: "supplier.payment.approved",
       eventSource: "INTERNAL",
       schemaVersion: 1,
-      idempotencyKey: parsed.idempotencyKey ? `${parsed.idempotencyKey}:approved` : `supplier-payment-approved:${payment.id}`,
+      idempotencyKey: parsed.idempotencyKey
+        ? `${parsed.idempotencyKey}:approved`
+        : `supplier-payment-approved:${payment.id}`,
       payload: {
         supplierPaymentId: payment.id,
         supplierId: supplier.id,
@@ -2325,7 +2708,11 @@ export async function approveSupplierPayment(input: ApproveSupplierPaymentInput,
       },
     })
 
-    return { supplierPayment: payment, businessEventId: eventResult.event.id, approvalStatus: "APPROVED" as const }
+    return {
+      supplierPayment: payment,
+      businessEventId: eventResult.event.id,
+      approvalStatus: "APPROVED" as const,
+    }
   })
 }
 
@@ -2388,7 +2775,10 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
         })
       : null
 
-    if (approvedPayment.status === SupplierPaymentStatus.RELEASED || approvedPayment.status === SupplierPaymentStatus.POSTED) {
+    if (
+      approvedPayment.status === SupplierPaymentStatus.RELEASED ||
+      approvedPayment.status === SupplierPaymentStatus.POSTED
+    ) {
       assertIdempotencyPayloadMatches(
         approvedPayment.metadata,
         releaseIdempotencyPayloadHash,
@@ -2495,7 +2885,9 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
         organizationId: parsed.organizationId,
         supplierId: approvedPayment.supplierId,
         deletedAt: null,
-        status: { in: [SupplierInvoiceStatus.POSTED, SupplierInvoiceStatus.PAYMENT_PENDING] },
+        status: {
+          in: [SupplierInvoiceStatus.POSTED, SupplierInvoiceStatus.PAYMENT_PENDING],
+        },
       },
     })
 
@@ -2631,7 +3023,8 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
       },
       conditionContext: { paymentMethod: method },
       blockerCode: "SUPPLIER_PAYMENT_POSTING_REVIEW",
-      blockerMessage: "Supplier payment release requires configured SYSCOHADA AP settlement posting and reconciliation rules.",
+      blockerMessage:
+        "Supplier payment release requires configured SYSCOHADA AP settlement posting and reconciliation rules.",
       metadata: {
         paymentNumber: payment.paymentNumber,
         supplierId: supplier.id,

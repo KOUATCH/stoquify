@@ -36,6 +36,7 @@ import {
 } from "@/services/payments/payment-reconciliation.service"
 import { addMoney, moneyToNumber, moneyToString, subtractMoney, toDecimal } from "./money"
 import { getSalesReceipt, sendReceipt, type ReceiptDeliveryResult, type SalesReceiptPayload } from "./receipt.service"
+import { normalizeReceiptDestination } from "./receipt-channels"
 import {
   activeCartSchema,
   activePOSSessionSchema,
@@ -74,6 +75,15 @@ type TenderAllocation = {
   amount: Prisma.Decimal
   tenderedAmount: Prisma.Decimal
   changeGiven: Prisma.Decimal
+}
+
+const STORE_CREDIT_TENDER_UNAVAILABLE_MESSAGE =
+  "Store credit tender is unavailable until an authoritative store-credit instrument ledger is implemented"
+
+function assertSupportedSaleTenders(tenders: POSTenderInput[]) {
+  if (tenders.some((tender) => tender.method === "STORE_CREDIT")) {
+    throw new BusinessRuleError(STORE_CREDIT_TENDER_UNAVAILABLE_MESSAGE)
+  }
 }
 
 type POSSaleForFiscalDocument = {
@@ -405,6 +415,13 @@ function allocateTenders(tenders: POSTenderInput[], total: Prisma.Decimal) {
 
 function cleanJson(input: Record<string, unknown>): Prisma.JsonObject {
   return Object.fromEntries(Object.entries(input).filter(([, value]) => value !== undefined)) as Prisma.JsonObject
+}
+
+function requireLedgerPostingBatchId(value: string | null | undefined, context: string) {
+  const postingBatchId = value?.trim()
+  if (postingBatchId) return postingBatchId
+
+  throw new BusinessRuleError(`${context} did not produce the required ledger posting batch.`)
 }
 
 const POS_SHIFT_CLOSED_EVENT_TYPE = "pos.shift.closed"
@@ -1688,12 +1705,19 @@ export type CommitPOSSaleResult = {
     status: string
     authorityChannel: string | null
   } | null
+  fiscalization?: {
+    requestId: string
+    status: "PENDING"
+    authoritative: false
+    watermark: "NOT FOR STATUTORY USE"
+  }
   receipt: SalesReceiptPayload
   delivery: ReceiptDeliveryResult | null
 }
 
 export async function commitPOSSale(rawInput: UserScoped) {
   const input = commitSaleSchema.parse(rawInput)
+  assertSupportedSaleTenders(input.tenders)
 
   const committed = await db.$transaction(async (tx) => {
     const sale = await tx.salesOrder.findFirst({
@@ -2087,13 +2111,18 @@ export async function commitPOSSale(rawInput: UserScoped) {
       throw new BusinessRuleError("Finance journal is not balanced")
     }
 
-    const fiscalDocument = await createPOSFiscalDocumentInTx(tx, {
-      sale,
-      organizationId: rawInput.organizationId,
-      actorId: rawInput.userId,
-      locationId: input.locationId,
-      terminalId: input.terminalId,
-      issueDate: now,
+    const postingBatchId = requireLedgerPostingBatchId(
+      saleJournalEntry.postingBatchId,
+      "POS sale posting",
+    )
+    const fiscalizationRequestId = `pos-sale:${sale.id}:fiscalization:v1`
+    const fiscalizationIssueAt = now.toISOString()
+    const fiscalizationSourcePayloadHash = hashBusinessPayload({
+      salesOrderId: sale.id,
+      orderNumber: sale.orderNumber,
+      total: toFiscalDecimal(sale.total),
+      postingBatchId,
+      issueAt: fiscalizationIssueAt,
     })
 
     await tx.auditLog.create({
@@ -2110,8 +2139,8 @@ export async function commitPOSSale(rawInput: UserScoped) {
           saleJournalEntryNumber: saleJournalEntry.entryNumber,
           paymentJournalEntryIds: paymentJournalEntries.map((entry) => entry.id),
           paymentJournalEntryNumbers: paymentJournalEntries.map((entry) => entry.entryNumber),
-          fiscalDocumentId: fiscalDocument?.id ?? null,
-          fiscalDocumentStatus: fiscalDocument?.status ?? null,
+          fiscalizationRequestId,
+          fiscalizationStatus: "PENDING",
           entries: journalEntries.map((entry) => ({
             account: entry.account,
             debit: moneyToString(entry.debit),
@@ -2136,8 +2165,8 @@ export async function commitPOSSale(rawInput: UserScoped) {
           amountPaid: moneyToString(amountPaid),
           onAccountAmount: moneyToString(onAccountAmount),
           changeDue: moneyToString(changeDue),
-          fiscalDocumentId: fiscalDocument?.id ?? null,
-          fiscalDocumentStatus: fiscalDocument?.status ?? null,
+          fiscalizationRequestId,
+          fiscalizationStatus: "PENDING",
         }),
       },
     })
@@ -2167,14 +2196,12 @@ export async function commitPOSSale(rawInput: UserScoped) {
         paymentJournalEntryIds: paymentJournalEntries.map((entry) => entry.id),
         capturedPaymentIds,
         inventoryTransactionIds,
-        fiscalDocument: fiscalDocument
-          ? {
-              id: fiscalDocument.id,
-              status: fiscalDocument.status,
-              authorityChannel: fiscalDocument.authorityChannel,
-              submissionStatuses: fiscalDocument.submissions.map((submission) => submission.status),
-            }
-          : null,
+        fiscalization: {
+          requestId: fiscalizationRequestId,
+          status: "PENDING",
+          authoritative: false,
+          watermark: "NOT FOR STATUTORY USE",
+        },
       }),
       outboxMessages: [
         {
@@ -2184,8 +2211,25 @@ export async function commitPOSSale(rawInput: UserScoped) {
             salesOrderId: sale.id,
             orderNumber: sale.orderNumber,
             amountPaid: moneyToString(amountPaid),
-            fiscalDocumentId: fiscalDocument?.id ?? null,
-            fiscalDocumentStatus: fiscalDocument?.status ?? null,
+            fiscalizationRequestId,
+            fiscalizationStatus: "PENDING",
+          },
+        },
+        {
+          channel: "FISCALIZATION",
+          eventName: "pos.sale.fiscalization.requested",
+          idempotencyKey: fiscalizationRequestId,
+          maxAttempts: 10,
+          payload: {
+            organizationId: rawInput.organizationId,
+            salesOrderId: sale.id,
+            orderNumber: sale.orderNumber,
+            actorId: rawInput.userId,
+            locationId: input.locationId,
+            terminalId: input.terminalId,
+            postingBatchId,
+            issueAt: fiscalizationIssueAt,
+            sourcePayloadHash: fiscalizationSourcePayloadHash,
           },
         },
       ],
@@ -2218,13 +2262,13 @@ export async function commitPOSSale(rawInput: UserScoped) {
         totalDebits: moneyToNumber(totalDebits),
         totalCredits: moneyToNumber(totalCredits),
       },
-      fiscalDocument: fiscalDocument
-        ? {
-            id: fiscalDocument.id,
-            status: fiscalDocument.status,
-            authorityChannel: fiscalDocument.authorityChannel,
-          }
-        : null,
+      fiscalDocument: null,
+      fiscalization: {
+        requestId: fiscalizationRequestId,
+        status: "PENDING" as const,
+        authoritative: false as const,
+        watermark: "NOT FOR STATUTORY USE" as const,
+      },
     }
   })
 
@@ -2241,8 +2285,9 @@ export async function commitPOSSale(rawInput: UserScoped) {
         organizationId: rawInput.organizationId,
         userId: rawInput.userId,
         channel: input.receipt.channel,
-        destination: input.receipt.destination,
+        destination: normalizeReceiptDestination(input.receipt.channel, input.receipt.destination),
         locale: input.receipt.locale,
+        whatsAppCustomerOptInConfirmed: input.receipt.whatsAppCustomerOptInConfirmed,
       })
     } catch (error) {
       delivery = {
@@ -2266,6 +2311,7 @@ export async function commitPOSSale(rawInput: UserScoped) {
     changeDue: moneyToNumber(committed.changeDue),
     accountingMovements: committed.accountingMovements,
     fiscalDocument: committed.fiscalDocument,
+    fiscalization: committed.fiscalization,
     receipt,
     delivery,
   } satisfies CommitPOSSaleResult
@@ -2321,6 +2367,7 @@ export type RefundPOSSaleResult = {
   paymentStatus: string
   refundIds: string[]
   refundJournalEntryIds: string[]
+  refundPostingBatchIds: string[]
   totalRefunded: number
 }
 
@@ -2330,6 +2377,7 @@ export type VoidPOSSaleResult = {
   status: string
   paymentStatus: string
   voidJournalEntryId: string
+  voidPostingBatchId: string
 }
 
 function activeCorrectionPayments(sale: CorrectionSale) {
@@ -2727,6 +2775,9 @@ export async function refundPOSSale(rawInput: UserScoped) {
         ),
       )
     }
+    const refundPostingBatchIds = refundJournalEntries.map((entry, index) =>
+      requireLedgerPostingBatchId(entry.postingBatchId, `POS refund posting ${refundIds[index]}`),
+    )
 
     await tx.auditLog.create({
       data: {
@@ -2741,6 +2792,7 @@ export async function refundPOSSale(rawInput: UserScoped) {
           drawerId,
           refundIds,
           refundJournalEntryIds: refundJournalEntries.map((entry) => entry.id),
+          refundPostingBatchIds,
           restockCost: moneyToString(restockCost),
           totalRefunded: moneyToString(totalRefundable),
         }),
@@ -2757,6 +2809,7 @@ export async function refundPOSSale(rawInput: UserScoped) {
       registerId: input.terminalId,
       sourceType: "POS_REFUND",
       sourceId: sale.id,
+      postingBatchId: refundPostingBatchIds[0],
       payload: cleanJson({
         salesOrderId: sale.id,
         orderNumber: sale.orderNumber,
@@ -2766,6 +2819,7 @@ export async function refundPOSSale(rawInput: UserScoped) {
         drawerId,
         refundIds,
         refundJournalEntryIds: refundJournalEntries.map((entry) => entry.id),
+        refundPostingBatchIds,
         restockCost: moneyToString(restockCost),
         totalRefunded: moneyToString(totalRefundable),
       }),
@@ -2789,6 +2843,7 @@ export async function refundPOSSale(rawInput: UserScoped) {
       paymentStatus: PaymentStatus.REFUNDED,
       refundIds,
       refundJournalEntryIds: refundJournalEntries.map((entry) => entry.id),
+      refundPostingBatchIds,
       totalRefunded: moneyToNumber(totalRefundable),
     } satisfies RefundPOSSaleResult
   })
@@ -2907,6 +2962,10 @@ export async function voidPOSSale(rawInput: UserScoped) {
       },
       tx,
     )
+    const voidPostingBatchId = requireLedgerPostingBatchId(
+      voidJournalEntry.postingBatchId,
+      "POS void posting",
+    )
 
     await tx.auditLog.create({
       data: {
@@ -2920,6 +2979,7 @@ export async function voidPOSSale(rawInput: UserScoped) {
           reason: input.reason,
           drawerId,
           voidJournalEntryId: voidJournalEntry.id,
+          voidPostingBatchId,
           restockCost: moneyToString(restockCost),
         }),
       },
@@ -2935,6 +2995,7 @@ export async function voidPOSSale(rawInput: UserScoped) {
       registerId: input.terminalId,
       sourceType: "POS_VOID",
       sourceId: sale.id,
+      postingBatchId: voidPostingBatchId,
       payload: cleanJson({
         salesOrderId: sale.id,
         orderNumber: sale.orderNumber,
@@ -2943,6 +3004,7 @@ export async function voidPOSSale(rawInput: UserScoped) {
         reason: input.reason,
         drawerId,
         voidJournalEntryId: voidJournalEntry.id,
+        voidPostingBatchId,
         restockCost: moneyToString(restockCost),
       }),
       outboxMessages: [
@@ -2964,7 +3026,7 @@ export async function voidPOSSale(rawInput: UserScoped) {
       status: SalesOrderStatus.CANCELLED,
       paymentStatus: PaymentStatus.CANCELLED,
       voidJournalEntryId: voidJournalEntry.id,
+      voidPostingBatchId,
     } satisfies VoidPOSSaleResult
   })
 }
-

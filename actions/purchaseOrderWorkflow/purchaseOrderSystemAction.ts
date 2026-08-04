@@ -76,7 +76,6 @@ async function scopedOrg(
 }
 
 function permissionForBulkStatus(status: PurchaseOrderStatus) {
-  if (status === "APPROVED") return "purchases.orders.approve"
   if (status === "CANCELLED") return "purchases.orders.cancel"
   return "purchases.orders.update"
 }
@@ -274,6 +273,12 @@ export async function bulkUpdatePurchaseOrderStatus(params: {
   toStatus: PurchaseOrderStatus
   reason?: string
 }): Promise<PurchaseOrderResponse<{ updated: string[]; failed: { id: string; error: string }[] }>> {
+  if (params.toStatus === "APPROVED") {
+    throw new BusinessRuleError(
+      "Purchase orders cannot be approved in bulk. Use the canonical approval workflow for each order.",
+    )
+  }
+
   const { orgId } = await scopedOrg(params.organizationId, permissionForBulkStatus(params.toStatus), {
     auditAllowed: true,
   })

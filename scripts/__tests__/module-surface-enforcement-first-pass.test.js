@@ -20,6 +20,7 @@ describe("module surface first enforcement pass", () => {
     ["/dashboard/inventory/items/new", "inventory.items.create"],
     ["/dashboard/inventory/items/[id]/others", "inventory.items.read"],
     ["/dashboard/inventory/items/[id]/suppliers", "inventory.items.read"],
+    ["/dashboard/inventory/loss-control", "inventory.levels.read"],
     ["/dashboard/inventory/movements", "inventory.levels.read"],
     ["/dashboard/inventory/transfers", "TRANSFERS_READ"],
     ["/dashboard/inventory/brands", "inventory.brands.read"],

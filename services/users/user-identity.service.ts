@@ -102,7 +102,7 @@ function addDetail(target: Record<string, unknown>, key: string, value: unknown)
   target[key] = value
 }
 
-const REGISTER_MODULE_DEFAULTS = ["POS", "Inventory", "Accounting", "Payment reconciliation", "Payroll"]
+const REGISTER_MODULE_DEFAULTS = ["POS", "Sales", "Inventory", "Accounting", "Payment reconciliation", "Payroll"]
 
 function normalizeRequestedModules(value?: string[] | null) {
   const modules = (value?.length ? value : REGISTER_MODULE_DEFAULTS)
@@ -110,7 +110,14 @@ function normalizeRequestedModules(value?: string[] | null) {
     .filter((module): module is string => Boolean(module))
     .map((module) => module.slice(0, 80))
 
-  return [...new Set(modules)].slice(0, 12)
+  const uniqueModules = [...new Set(modules)]
+  const posIndex = uniqueModules.findIndex((module) => module.toLowerCase() === "pos")
+  const hasSales = uniqueModules.some((module) => module.toLowerCase() === "sales")
+  if (posIndex >= 0 && !hasSales) {
+    uniqueModules.splice(posIndex + 1, 0, "Sales")
+  }
+
+  return uniqueModules.slice(0, 12)
 }
 
 function normalizeRegistrationOnboarding(data: RegisterUserProps): RegisterWorkflowData["onboarding"] {

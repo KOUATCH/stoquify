@@ -18,6 +18,8 @@ jest.mock("../receipt.service", () => ({
   getSalesReceipt: jest.fn(),
 }))
 
+import { generateKeyPairSync, sign } from "crypto"
+
 import { db } from "@/prisma/db"
 import { hashBusinessPayload } from "@/services/events/business-event.service"
 import { commitPOSSale } from "../pos.service"
@@ -43,6 +45,7 @@ const mockGetSalesReceipt = getSalesReceipt as jest.Mock
 
 const mockTx = {
   pOSStation: { findFirst: jest.fn() },
+  pOSSession: { findFirst: jest.fn() },
   pOSOfflineDevice: { findFirst: jest.fn(), update: jest.fn() },
   pOSOfflineSyncBatch: { create: jest.fn(), update: jest.fn() },
   pOSOfflineEvent: { findUnique: jest.fn(), create: jest.fn(), update: jest.fn(), count: jest.fn() },
@@ -276,6 +279,7 @@ describe("offline POS sync service", () => {
     mockGetSalesReceipt.mockReset()
     mockGetSalesReceipt.mockResolvedValue(receiptFixture())
     mockTx.pOSStation.findFirst.mockResolvedValue({ id: "terminal-1" })
+    mockTx.pOSSession.findFirst.mockResolvedValue({ id: "session-1" })
     mockTx.pOSOfflineDevice.findFirst.mockResolvedValue(activeDevice)
     mockTx.pOSOfflineSyncBatch.create.mockResolvedValue({
       id: "batch-1",
@@ -338,6 +342,7 @@ describe("offline POS sync service", () => {
       deviceId: "device-1",
       terminalId: "terminal-1",
       locationId: "loc-1",
+      sessionId: "session-1",
       events: [event],
     })
 
@@ -387,6 +392,7 @@ describe("offline POS sync service", () => {
       deviceId: "device-1",
       terminalId: "terminal-1",
       locationId: "loc-1",
+      sessionId: "session-1",
       events: [event],
     })
 
@@ -418,6 +424,7 @@ describe("offline POS sync service", () => {
       deviceId: "device-1",
       terminalId: "terminal-1",
       locationId: "loc-1",
+      sessionId: "session-1",
       events: [event],
     })
 
@@ -439,6 +446,7 @@ describe("offline POS sync service", () => {
       deviceId: "device-1",
       terminalId: "terminal-1",
       locationId: "loc-1",
+      sessionId: "session-1",
       events: [event],
     })
 
@@ -474,6 +482,7 @@ describe("offline POS sync service", () => {
       deviceId: "device-1",
       terminalId: "terminal-1",
       locationId: "loc-1",
+      sessionId: "session-1",
       events: [event],
     })
 
@@ -510,6 +519,7 @@ describe("offline POS sync service", () => {
       deviceId: "device-1",
       terminalId: "terminal-1",
       locationId: "loc-1",
+      sessionId: "session-1",
       events: [event],
     })
 
@@ -994,5 +1004,137 @@ describe("offline POS sync service", () => {
         severity: "critical",
       }),
     ])
+  })
+  it("rejects economic offline events without an active cashier session", async () => {
+    const event = buildEvent({ seq: 1 })
+
+    await expect(ingestOfflineSyncBatch({
+      organizationId: "org-1",
+      userId: "user-1",
+      deviceId: "device-1",
+      terminalId: "terminal-1",
+      locationId: "loc-1",
+      events: [event],
+    })).rejects.toThrow(/active cashier session/i)
+
+    expect(mockTx.pOSOfflineSyncBatch.create).not.toHaveBeenCalled()
+  })
+
+  it("quarantines an event with an invalid enrolled-device signature", async () => {
+    const { publicKey } = generateKeyPairSync("rsa", { modulusLength: 2048 })
+    mockTx.pOSOfflineDevice.findFirst.mockResolvedValue({
+      ...activeDevice,
+      signingPublicKeyPem: publicKey.export({ format: "pem", type: "spki" }).toString(),
+    })
+    const event = buildEvent({ seq: 1 })
+
+    const result = await ingestOfflineSyncBatch({
+      organizationId: "org-1",
+      userId: "user-1",
+      deviceId: "device-1",
+      terminalId: "terminal-1",
+      locationId: "loc-1",
+      sessionId: "session-1",
+      events: [event],
+    })
+
+    expect(result.conflictCount).toBe(1)
+    expect(mockTx.pOSOfflineEvent.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          status: "QUARANTINED",
+          blockerCode: "SIGNATURE_INVALID",
+        }),
+      }),
+    )
+  })
+
+  it("accepts a correctly signed event from the enrolled device key", async () => {
+    const { publicKey, privateKey } = generateKeyPairSync("rsa", { modulusLength: 2048 })
+    mockTx.pOSOfflineDevice.findFirst.mockResolvedValue({
+      ...activeDevice,
+      signingPublicKeyPem: publicKey.export({ format: "pem", type: "spki" }).toString(),
+    })
+    const event = buildEvent({ seq: 1 })
+    event.signature = sign("sha256", Buffer.from(event.entryHash, "utf8"), privateKey).toString("base64")
+
+    const result = await ingestOfflineSyncBatch({
+      organizationId: "org-1",
+      userId: "user-1",
+      deviceId: "device-1",
+      terminalId: "terminal-1",
+      locationId: "loc-1",
+      sessionId: "session-1",
+      events: [event],
+    })
+
+    expect(result.acceptedCount).toBe(1)
+    expect(result.conflictCount).toBe(0)
+  })
+
+  it("quarantines expired policies and stale reference snapshots", async () => {
+    const event = buildEvent({ seq: 1 })
+    mockTx.pOSOfflineDevice.findFirst.mockResolvedValueOnce({
+      ...activeDevice,
+      policyExpiresAt: new Date("2026-01-01T00:00:00.000Z"),
+    })
+
+    const expired = await ingestOfflineSyncBatch({
+      organizationId: "org-1",
+      userId: "user-1",
+      deviceId: "device-1",
+      terminalId: "terminal-1",
+      locationId: "loc-1",
+      sessionId: "session-1",
+      events: [event],
+    })
+    expect(expired.conflicts[0]).toMatchObject({ conflictType: "OFFLINE_POLICY_EXPIRED" })
+
+    resetMockTx()
+    mockTx.pOSStation.findFirst.mockResolvedValue({ id: "terminal-1" })
+    mockTx.pOSSession.findFirst.mockResolvedValue({ id: "session-1" })
+    mockTx.pOSOfflineDevice.findFirst.mockResolvedValue({
+      ...activeDevice,
+      sourceSnapshotHash: "source-snapshot-current",
+    })
+    mockTx.pOSOfflineSyncBatch.create.mockResolvedValue({ id: "batch-2" })
+    mockTx.pOSOfflineEvent.findUnique.mockResolvedValue(null)
+    mockTx.pOSOfflineEvent.create.mockImplementation(async ({ data }) => ({
+      id: "offline-event-stale",
+      ...data,
+      createdAt: new Date(),
+    }))
+    mockTx.pOSOfflineEvent.count.mockResolvedValue(0)
+    mockTx.pOSOfflineSyncConflict.count.mockResolvedValue(0)
+    mockTx.pOSOfflineSyncConflict.create.mockImplementation(async ({ data }) => ({
+      id: "conflict-stale",
+      ...data,
+      eventId: data.eventId ?? null,
+      expectedSequence: data.expectedSequence ?? null,
+      actualSequence: data.actualSequence ?? null,
+      status: "OPEN",
+      createdAt: new Date(),
+    }))
+    mockTx.pOSOfflineDevice.update.mockImplementation(async ({ data }) => ({ ...activeDevice, ...data }))
+    mockTx.pOSOfflineSyncCertificate.upsert.mockImplementation(async ({ create }) => ({
+      id: "certificate-stale",
+      ...create,
+      updatedAt: new Date(),
+    }))
+    mockTx.pOSOfflineSyncBatch.update.mockResolvedValue({ id: "batch-2" })
+    mockTx.businessEvent.findUnique.mockResolvedValue(null)
+    mockTx.businessEvent.create.mockResolvedValue({ id: "event-conflict", outboxMessages: [] })
+    mockTx.auditLog.create.mockResolvedValue({ id: "audit-stale" })
+
+    const stale = await ingestOfflineSyncBatch({
+      organizationId: "org-1",
+      userId: "user-1",
+      deviceId: "device-1",
+      terminalId: "terminal-1",
+      locationId: "loc-1",
+      sessionId: "session-1",
+      events: [event],
+    })
+    expect(stale.conflicts[0]).toMatchObject({ conflictType: "STALE_REFERENCE_SNAPSHOT" })
   })
 })

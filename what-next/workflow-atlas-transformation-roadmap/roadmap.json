@@ -1,0 +1,252 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-07-30T00:00:00+02:00",
+  "program": "Stoquify Workflow Atlas transformation",
+  "decision": "retain_reshape_split",
+  "implementationRun": false,
+  "launchPosture": {
+    "publicGuide": "conditional_go_after_phases_0_2",
+    "authenticatedProjection": "no_go_until_phases_3_4_pass"
+  },
+  "governingReport": "docs/workflow-atlas/STOQUIFY_WORKFLOW_ATLAS_VALUE_EVALUATION_2026-07-30.md",
+  "outputs": {
+    "roadmapMarkdown": "docs/workflow-atlas/STOQUIFY_WORKFLOW_ATLAS_TRANSFORMATION_ROADMAP_2026-07-30.md",
+    "roadmapPdf": "docs/workflow-atlas/STOQUIFY_WORKFLOW_ATLAS_TRANSFORMATION_ROADMAP_2026-07-30.pdf",
+    "evidenceRegister": "what-next/workflow-atlas-transformation-roadmap/evidence-register.md",
+    "riskRegister": "what-next/workflow-atlas-transformation-roadmap/risk-register.md",
+    "phasePromptDirectory": "what-next/workflow-atlas-transformation-roadmap/phase-prompts"
+  },
+  "baseline": {
+    "publicRoles": 8,
+    "publicOutcomes": 12,
+    "workflows": 12,
+    "uniqueDestinations": 41,
+    "savedBrowserChecks": 4,
+    "savedScreenshots": 8,
+    "focusedSuites": 3,
+    "focusedTests": 12,
+    "moduleProgramState": "stage_01_security_prerequisites_in_progress",
+    "broadModuleEnforcement": "no_go"
+  },
+  "invariants": [
+    "Public role and outcome selections are discovery metadata only.",
+    "Authenticated projection accepts no public role or outcome input.",
+    "Route hiding and sidebar filtering are not enforcement.",
+    "Page and action/API authorization repeat after navigation.",
+    "Permission, scope, entitlement, and data readiness remain separate.",
+    "Denied results suppress sensitive counts and entitlement detail.",
+    "HRIS, payroll administration, and self-service remain separate scopes.",
+    "Fresh authentication and maker-checker remain on sensitive actions.",
+    "Live work state is supplied only by an owning domain service.",
+    "Existing command centers remain execution surfaces."
+  ],
+  "criticalPath": [
+    "phase_0",
+    "module_stage_01_security_prerequisites",
+    "module_stages_02_05_policy_registry_entitlement",
+    "module_stages_06_09_provisioning_guard_contract",
+    "phase_3",
+    "phase_4",
+    "phase_5",
+    "phase_6",
+    "phase_7"
+  ],
+  "publicLane": [
+    "phase_0",
+    "phase_1",
+    "phase_2",
+    "public_release_decision"
+  ],
+  "phases": [
+    {
+      "id": "phase_0",
+      "name": "Governance and baseline",
+      "status": "ready",
+      "owners": ["Product", "Security", "Platform Architecture", "QA/Release"],
+      "dependsOn": [],
+      "deliverables": [
+        "Signed retain/reshape/split decision",
+        "No-public-role-authorization invariant",
+        "Baseline inventory and named control owners",
+        "Separate public and authenticated launch checklists"
+      ],
+      "exitCriteria": [
+        "All P0 risks have owners",
+        "Public and authenticated lanes are tracked separately"
+      ],
+      "prompt": "what-next/workflow-atlas-transformation-roadmap/phase-prompts/phase-00-governance-baseline.md"
+    },
+    {
+      "id": "phase_1",
+      "name": "Public promise and information architecture",
+      "status": "planned",
+      "owners": ["Product", "Content", "UI/UX", "Frontend", "Localization"],
+      "dependsOn": ["phase_0"],
+      "deliverables": [
+        "Correct EN/FR promise",
+        "Six journey families",
+        "Primary owner and collaborator semantics",
+        "Progressive detail without repeated cards"
+      ],
+      "exitCriteria": [
+        "No live-work or access-awareness overclaim",
+        "At least 4 of 5 participants identify owner, control, evidence, and destination"
+      ],
+      "prompt": "what-next/workflow-atlas-transformation-roadmap/phase-prompts/phase-01-public-promise-ia.md"
+    },
+    {
+      "id": "phase_2",
+      "name": "Public data, tests, and release evidence",
+      "status": "planned",
+      "owners": ["Frontend", "QA", "Accessibility", "Localization"],
+      "dependsOn": ["phase_1"],
+      "deliverables": [
+        "Stable journey and destination IDs",
+        "Route-existence and registry-drift gates",
+        "Bilingual multi-browser smoke evidence",
+        "Accessibility and human visual evidence"
+      ],
+      "exitCriteria": [
+        "Focused gates pass",
+        "Zero serious or critical accessibility findings",
+        "Zero browser errors, overflow, or clipped text"
+      ],
+      "prompt": "what-next/workflow-atlas-transformation-roadmap/phase-prompts/phase-02-public-data-tests.md"
+    },
+    {
+      "id": "phase_3",
+      "name": "Entitlement, scope, and destination policy foundation",
+      "status": "blocked",
+      "owners": ["Identity/Security", "Module Control Plane", "Platform Navigation", "Domain Owners"],
+      "dependsOn": [
+        "phase_0",
+        "module_stage_01_security_prerequisites",
+        "module_stages_02_09"
+      ],
+      "blockers": [
+        "Durable entitlement truth is not complete",
+        "Broad module enforcement is no-go",
+        "Canonical destination policy does not exist"
+      ],
+      "deliverables": [
+        "Server-only destination policy for all 41 destinations",
+        "Durable entitlement and generalized scope",
+        "Canonical guard and normalized states",
+        "Zero Atlas-path registry gaps"
+      ],
+      "exitCriteria": [
+        "Every policy evaluates before protected reads",
+        "Page and action/API authorization agree",
+        "Module release gate approves bounded shadow use"
+      ],
+      "prompt": "what-next/workflow-atlas-transformation-roadmap/phase-prompts/phase-03-entitlement-access-registry.md"
+    },
+    {
+      "id": "phase_4",
+      "name": "Authenticated shadow and pilot",
+      "status": "blocked",
+      "owners": ["Dashboard", "Daily Digest", "Security", "QA", "Product Analytics"],
+      "dependsOn": ["phase_3", "telemetry_privacy_approval"],
+      "deliverables": [
+        "Daily Digest shadow projection",
+        "Feature flag, cohort, policy version, and kill switch",
+        "Positive and negative persona matrix",
+        "Repeated destination and action authorization evidence"
+      ],
+      "exitCriteria": [
+        "Authorized destination success is at least 98 percent",
+        "One-sided 95 percent lower bound is at least 97 percent",
+        "Zero tenant, scope, permission, entitlement, hidden-state, or sensitive-count defects",
+        "Public-role tampering cannot change output"
+      ],
+      "prompt": "what-next/workflow-atlas-transformation-roadmap/phase-prompts/phase-04-authenticated-pilot.md"
+    },
+    {
+      "id": "phase_5",
+      "name": "Measurement and role validation",
+      "status": "blocked",
+      "owners": ["Product", "Analytics", "Customer Success", "UX Research", "Domain Owners"],
+      "dependsOn": ["phase_4"],
+      "deliverables": [
+        "Privacy-approved value telemetry",
+        "Public comprehension funnel",
+        "Authenticated task outcome analysis",
+        "Role-family and support review"
+      ],
+      "exitCriteria": [
+        "Event completeness is at least 95 percent",
+        "Median time-to-action improves by at least 15 percent with interval excluding zero",
+        "Repeat use exists in at least three role families"
+      ],
+      "prompt": "what-next/workflow-atlas-transformation-roadmap/phase-prompts/phase-05-measurement-validation.md"
+    },
+    {
+      "id": "phase_6",
+      "name": "Controlled rollout and rollback",
+      "status": "blocked",
+      "owners": ["Release Management", "SRE", "Security", "Product", "Support"],
+      "dependsOn": ["phase_5_expand_decision"],
+      "deliverables": [
+        "Cohort rollout manifest",
+        "SLOs and error budget",
+        "Support runbook",
+        "Rehearsed rollback"
+      ],
+      "exitCriteria": [
+        "Security thresholds remain perfect",
+        "Rollback works without weakening underlying guards"
+      ],
+      "prompt": "what-next/workflow-atlas-transformation-roadmap/phase-prompts/phase-06-rollout-rollback.md"
+    },
+    {
+      "id": "phase_7",
+      "name": "Final release and risk decision",
+      "status": "blocked",
+      "owners": ["Product Council", "Security", "Release Management", "Domain Owners"],
+      "dependsOn": ["phase_6"],
+      "deliverables": [
+        "Final gate packet",
+        "Residual risk acceptance",
+        "Public and authenticated release decisions",
+        "Dedicated-route decision"
+      ],
+      "exitCriteria": [
+        "No critical or high invariant is open",
+        "Evidence is fresh and reproducible",
+        "Decision states exactly what is approved"
+      ],
+      "prompt": "what-next/workflow-atlas-transformation-roadmap/phase-prompts/phase-07-final-release.md"
+    }
+  ],
+  "provisionalGates": {
+    "publicComprehension": "at_least_4_of_5",
+    "eventCompletenessPercent": 95,
+    "authorizedDestinationSuccessPercent": 98,
+    "authorizedDestinationLowerBoundPercent": 97,
+    "timeToActionImprovementPercent": 15,
+    "minimumRepeatRoleFamilies": 3,
+    "securityDefects": 0,
+    "permissionDeadEnds": 0,
+    "seriousAccessibilityFindings": 0
+  },
+  "killConditions": [
+    "Cross-tenant or wrong-location disclosure",
+    "Hidden count or sensitive state disclosure",
+    "Destination policy disagrees with page or action authorization",
+    "Enforce decision depends on legacy entitlement fallback",
+    "Stale or revoked session receives projected work",
+    "Public role tampering changes projection output",
+    "Authorized destination success falls below 98 percent",
+    "Projection duplicates existing navigation without measurable benefit"
+  ],
+  "nonGoals": [
+    "Application code implementation in this roadmap run",
+    "New workflow or assignment engine",
+    "Dedicated dashboard workflows route during pilot",
+    "Broad module enforcement",
+    "New authenticated theme",
+    "Replacement of existing command centers",
+    "Analytics before privacy governance",
+    "Unrelated cleanup, commit, push, or deployment"
+  ]
+}

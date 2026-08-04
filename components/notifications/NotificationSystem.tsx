@@ -53,7 +53,7 @@ export type NotificationCategory =
 
 export type NotificationSeverity = "info" | "success" | "warning" | "error" | "critical"
 export type NotificationDeliveryState = "queued" | "sent" | "delivered" | "read" | "failed" | "dismissed"
-export type NotificationChannel = "in_app" | "email" | "sms" | "whatsapp" | "push"
+export type NotificationChannel = "in_app" | "email" | "sms" | "push"
 
 export interface NotificationData {
   id: string
@@ -481,3 +481,4 @@ function NotificationCard({
     </div>
   )
 }
+

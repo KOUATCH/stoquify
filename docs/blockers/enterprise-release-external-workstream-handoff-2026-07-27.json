@@ -1,0 +1,121 @@
+{
+  "schemaVersion": "1.0",
+  "preparedOn": "2026-07-27",
+  "sourcePlan": "docs/blockers/ENTERPRISE_RELEASE_BLOCKER_UNBLOCKING_EXECUTION_PLAN_2026-07-27.md",
+  "engineeringTranche": "READY_24_OF_24",
+  "releasePosture": "DEVELOPMENT_CONTINUES_PILOT_AND_PRODUCTION_FAIL_CLOSED",
+  "workstreams": [
+    {
+      "id": "B03",
+      "status": "AWAITING_AUTHORIZED_OWNER_AND_TARGET",
+      "accountableRole": "platform_database_owner",
+      "assignee": null,
+      "blockers": ["deployment_target_is_safe", "database_url_missing"],
+      "evidence": "what-next/blocker-execution/prisma-migration-production-preflight-2026-07-27.json",
+      "acceptance": [
+        "databaseConfigured=true",
+        "databaseTargetSafe=true",
+        "41 migrations accounted for",
+        "deploy, direct history health, and status exit 0",
+        "history health 8/8 with no unfinished, missing, checksum-mismatched, unknown, or duplicate successful migrations",
+        "backup and restore-test references retained"
+      ],
+      "postDeployHistoryCommand": "npm run prisma:migration:history:health"
+    },
+    {
+      "id": "B04",
+      "status": "AWAITING_MANAGED_SECRET_PROVISIONING",
+      "accountableRole": "security_platform_owner",
+      "assignee": null,
+      "blockers": [
+        "PUBLIC_IDENTITY_ABUSE_HASH_SECRET absent",
+        "AQSTOQFLOW_RECEIPT_TOKEN_SECRET absent",
+        "AQSTOQFLOW_HISTORY_CURSOR_SECRET absent"
+      ],
+      "evidence": "what-next/release-secret-preflight.json",
+      "acceptance": [
+        "8/8 release secret checks",
+        "purpose-specific values are distinct",
+        "no auth-secret reuse",
+        "no secret values printed or committed"
+      ]
+    },
+    {
+      "id": "B05_B06",
+      "status": "READY_FOR_EXTERNAL_DISPATCH",
+      "accountableRoles": [
+        "compliance_legal_owner",
+        "qualified_independent_reviewer",
+        "separate_authorized_checker"
+      ],
+      "assignees": [],
+      "blockers": [
+        "source_artifact_hash_verification",
+        "source_artifact_expert_approval"
+      ],
+      "dispatch": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/QUALIFIED_REVIEW_DISPATCH_2026-07-20.md",
+      "acceptance": [
+        "review preflight 12/12",
+        "production country-pack gate 12/12",
+        "authentic signed artifact",
+        "separate checker verification"
+      ]
+    },
+    {
+      "id": "B07",
+      "status": "WAIT_FOR_B03_B04_AND_STABLE_DEPLOYMENT",
+      "accountableRole": "security_authority_and_service_owners",
+      "assignee": null,
+      "blockerCount": 31,
+      "credentialClassCount": 15,
+      "register": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_CREDENTIAL_ROTATION_REGISTER_2026-07-25.md",
+      "acceptance": [
+        "15/15 credential classes resolved",
+        "obsolete credentials rejected",
+        "artifact-bound security approval"
+      ]
+    },
+    {
+      "id": "B08",
+      "status": "OWNER_ASSIGNMENT_CAN_START_PLATFORM_EXECUTION_WAITS",
+      "accountableRole": "release_manager_and_six_operational_roles",
+      "assignee": null,
+      "blockerCount": 152,
+      "activationAuthorized": false,
+      "register": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_OPERATIONAL_RELEASE_EVIDENCE_2026-07-25.md",
+      "acceptance": [
+        "152/152 checks",
+        "six primary and backup owner acceptances",
+        "three scheduler windows",
+        "complete alert lifecycle",
+        "activationAuthorized remains false before ceremony"
+      ]
+    }
+  ],
+  "prohibitedContent": [
+    "secret values",
+    "database URLs",
+    "authorization headers",
+    "invented identities",
+    "invented approvals",
+    "invented signatures"
+  ],
+  "downstreamGates": {
+    "freeze": {
+      "status": "BLOCKED_ACTIVE_DEVELOPMENT_TREE",
+      "manifestVerified": 206,
+      "manifestTotal": 207,
+      "runtimeDrift": 8,
+      "currentChanges": 406,
+      "activationAuthorized": false
+    },
+    "phase2b": {
+      "status": "BLOCKED",
+      "passed": 2,
+      "total": 23,
+      "blockers": 21,
+      "eligible": false
+    },
+    "instruction": "Do not freeze or request gate-017 approval until B03-B08 pass and release-affecting changes stop."
+  }
+}

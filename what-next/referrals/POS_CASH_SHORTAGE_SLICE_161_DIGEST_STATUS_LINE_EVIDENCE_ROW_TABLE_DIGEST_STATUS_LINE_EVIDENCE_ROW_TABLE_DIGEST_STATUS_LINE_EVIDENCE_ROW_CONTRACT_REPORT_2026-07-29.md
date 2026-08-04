@@ -1,0 +1,52 @@
+# POS Cash-Shortage Slice 161 Digest Status-Line Evidence-Row Table Digest Status-Line Evidence-Row Table Digest Status-Line Evidence-Row Contract Report
+
+Date: 2026-07-29
+
+## Outcome
+
+Slice 161 added a read-only evidence-row helper over the certified Slice 160 status-line descriptor.
+
+## Files Changed
+
+- `services/leakage/pos-cash-shortage-production-activation-preflight.ts`
+- `services/leakage/__tests__/pos-cash-shortage-production-activation-preflight.test.ts`
+- `what-next/referrals/REFERRAL_WAR_ROOM_STATUS.md`
+- `what-next/referrals/REFERRAL_WAR_ROOM_PHASE_3_SLICE_161_SELECTION_REPORT_2026-07-29.md`
+
+## Contract
+
+The new evidence row returns:
+
+- a deterministic evidence label,
+- the upstream status-line status,
+- row count,
+- blocked and satisfied requirement counts,
+- the upstream status-line text as `summary`,
+- `activationAuthorized: false`.
+
+## Verification
+
+- Focused Jest: `npm test -- --runInBand services/leakage/__tests__/pos-cash-shortage-production-activation-preflight.test.ts`
+  - Result: 1 suite passed, 268 tests passed.
+- Related leakage preflight bundle: `npm test -- --runInBand services/leakage/__tests__/pos-cash-shortage-production-activation-preflight.test.ts services/leakage/__tests__/pos-cash-shortage-production-policy-readiness-preflight.test.ts services/leakage/__tests__/pos-cash-shortage-scheduler-policy-preflight.test.ts services/leakage/__tests__/pos-cash-shortage-resolution-readiness-preflight.test.ts`
+  - Result: 4 suites passed, 338 tests passed.
+- Typecheck: `npm run typecheck`
+  - Result: passed.
+- Scoped ESLint: `npx eslint services/leakage/pos-cash-shortage-production-activation-preflight.ts services/leakage/__tests__/pos-cash-shortage-production-activation-preflight.test.ts`
+  - Result: passed.
+- Authority scan: `rg -n "CHECK_RUNNERS|scheduleWorkflow|cron|router|createSafeAction|recordWorkflowAssuranceIncident|transitionWorkflowAssuranceIncident|db\.|prisma|migrate|migration|activationAuthorized: true|WhatsApp|copilot|AI" services\leakage\pos-cash-shortage-production-activation-preflight.ts`
+  - Result: no matches.
+- Focused trailing-whitespace check on touched Slice 161 files:
+  - Result: no matches.
+- Focused `git diff --check` on touched Slice 161 files:
+  - Result: passed with the existing CRLF warning on `what-next/referrals/REFERRAL_WAR_ROOM_STATUS.md`.
+
+## Product Authority
+
+No detector, worker, scheduler, route, action, incident command, alert, rollback, browser certification, AI, WhatsApp, database, Prisma, migration, fixture, or UI behavior was added.
+
+`activationAuthorized` remains `false`.
+
+## Residual Risk
+
+The activation surface remains intentionally blocked until real browser certification, source-owned truth evidence, and release authorization are separately selected and certified.

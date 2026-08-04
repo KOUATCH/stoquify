@@ -1,6 +1,7 @@
 # Stoquify Agent Runtime Phase 3 Promotion Ledger
 
 **Date:** 2026-07-25  
+**Last local rerun:** 2026-07-27<br>
 **Current phase:** Phase 2A release preparation  
 **Overall status:** `BLOCKED`  
 **Activation authorized:** No  
@@ -8,114 +9,100 @@
 
 ## Purpose
 
-This ledger is the authoritative execution map from the inactive Phase 2A Command Agent through a controlled Phase 2B pilot and into an explicitly authorized Phase 3 Cash/Reconciliation Agent. It does not create approvals, name owners, activate a package, or authorize Phase 3.
+This is the authoritative execution map from the inactive Phase 2A Command Agent through a controlled Phase 2B pilot and into an explicitly authorized Phase 3 Cash/Reconciliation Agent. It records evidence and blockers; it cannot approve, activate, or promote a phase.
 
 ## Freeze Baseline
 
 | Field | Current value |
 |---|---|
 | Branch | `codex/service-boundary-burndown` |
-| Frozen HEAD | `85eb50ef792908ae1e3ecbe7bd34b6054c79cf52` |
-| Frozen parent | `ac30ee75314a0a2a2fcd6bd2ed65afb280aa0d5e` |
-| Frozen commit attestation | `FROZEN_COMMIT_VERIFIED` |
-| Manifest files verified | 207/207 |
-| Missing or unexpected commit paths | 0 |
-| Content mismatches | 0 |
-| Post-freeze Phase 2A runtime drift | 0 |
-| Current source tree clean | No |
-| Current changed entries | 94 |
-| Current tracked changes | 53 |
-| Current untracked entries / files | 33 / 41 |
-| Evidence/control changes | 75 |
-| Changes outside candidate scope | 19 |
+| Historical candidate | `85eb50ef792908ae1e3ecbe7bd34b6054c79cf52` |
+| Current HEAD | `5dc78f2c007c51e151342de08be34b72994839bb` |
+| Historical candidate is current HEAD / ancestor | No / Yes |
+| Attestation | `BLOCKED` |
+| Manifest verified | 206/207 |
+| Missing / unexpected paths | 0 / 0 |
+| Historical content mismatches | 1 |
+| Current Phase 2A runtime drift | 8 |
+| Current worktree changes | 381 |
+| Evidence/control changes | 148 |
+| Outside-candidate changes | 225 |
 | Clean release ready | No |
-| Activation / Phase 3 | No / No |
 
-The exact freeze result is recorded in `STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json`. It independently verifies the historical candidate manifest against the committed path set and committed content. The current dirty worktree is visible but is not treated as the frozen release source.
+The prior 207/207 snapshot is superseded. The mismatch is `components/agents/__tests__/AgentCommandPanel.test.tsx`; eight current runtime paths are listed in the freeze attestation. The historical manifest is not rewritten and the concurrent runtime changes are not silently accepted into a release identity.
 
 ## Verification Snapshot
 
 | Check | Result |
 |---|---|
-| Agent runtime gates | Passed |
-| Phase 2A static gate | Passed |
-| Phase 2A frozen-commit gate | `FROZEN_COMMIT_VERIFIED` |
-| Authorized-scope requirements | 37/37 passed; 0 repository blockers; 6 external blockers |
-| TypeScript | Passed |
-| Prisma schema | Valid |
-| Service-boundary active violations | 0 |
-| Raw-error active findings | 0 |
-| Lint | 0 errors; 4 pre-existing warnings |
-| Full Jest | 477 suites and 2,886 tests passed; 3 suites and 15 tests skipped |
-| Focused agent and release bundle | 26 suites and 131 tests passed |
-| Global release structure | 11/11 checks passed |
-| Global release blockers | 6 |
-| Operational release | Blocked, 152 blockers |
-| Credential rotation | Blocked, 31 blockers across 15 classes |
-| Phase 2B entry | Blocked, 19 of 23 checks |
-| Phase 3 entry | Blocked, 32 of 34 checks |
+| Agent runtime and Phase 2A static gates | Passed |
+| Authorized-scope requirements | 36/37; 4 repository blocker facts on the freeze requirement; 6 external blockers |
+| TypeScript / Prisma / changed-file lint | Passed / valid / passed |
+| Full Jest | 506 suites and 3,034 tests passed; 3 suites and 15 tests skipped |
+| Focused proposal boundary | 5 suites and 36 tests passed |
+| Agent/copilot regression bundle | 28 suites and 129 tests passed with `--detectOpenHandles` |
+| Skill 016 copilot guardrails | 15/15; analysis read-only; proposal execution none |
+| Promotion evaluator regressions | 3 suites and 42 tests passed |
+| Global release | 11/11 structural checks; 6 release blockers |
+| Secret preflight | 2/8; release enforcement on; 6 blockers |
+| Migration preflight | 7/8; 41 migrations; production target absent |
+| Statutory authority | 10/12; executable binding and approval absent |
+| Credential rotation | 15 classes; 31 blockers |
+| Operational release | 152 blockers |
+| External-input readiness | 1/13; 102 blockers |
+| Phase 2B entry | 2/23 passed; 21 blockers |
+| Phase 3 entry | 0/34 passed; 34 blockers |
 | Enterprise release decision | `REJECTED / NO-GO` |
 
-The full Jest run emitted the known forced-worker-exit warning after every executed test passed. The current focused agent and release bundle passed 26 suites and 131 tests.
+## Promotion Evidence Controls
 
-## Freeze Candidate Manifest
+The entry gate now fails closed unless it can verify release-mode evidence and authoritative detail. It rejects local/skipped migration reports, non-release global or secret summaries, statutory summaries without source and expert binding, and credential or operational declarations that their own evaluators do not support.
 
-| Category | Files |
-|---|---:|
-| Runtime source and tests | 117 |
-| Release evidence documents | 90 |
-| Total | 207 |
-| Duplicate paths | 0 |
-| Verified against frozen commit | 207 |
+## Concurrent Drift Disposition
 
-Committed-content verification used 175 exact blob matches, 5 deterministic line-ending equivalents, and 27 unchanged-checkout Git clean-filter equivalents. No file was accepted from a changed Phase 2A runtime path.
+The eight Phase 2A drift paths form a deliberate but separate copilot proposal tranche:
 
-### Freeze Rule
+- provenance was added to the Command Agent contract and deterministic brief;
+- the governed run now emits `AI_ANALYSIS_REQUESTED`;
+- the UI contains non-executing proposal controls but keeps them hidden by default;
+- the Prisma schema relates organizations and runs to `AiActionProposal`;
+- corresponding tests were expanded.
 
-No additional Phase 2A product capability may be added. Changes are limited to verification, release-evidence remediation, and defects that prevent the controlled pilot. The historical manifest is not rewritten. The frozen commit does not by itself prove protected CI, deployment, or activation readiness.
+Skill 016 passes this tranche at 15/15. Analysis remains read-only and proposal execution authority is none. Every proposal action now requires an exact active Phase 3 release manifest bound to `STOQUIFY_AGENT_RELEASE_COMMIT_SHA`, plus current reconciliation, alert, approval, ownership, certification, role, and kill-switch evidence. Run period, completion time, as-of time, and maximum 24-hour expiry are enforced. It is nevertheless a runtime, UI, persistence, and event-contract expansion after the historical freeze and must be reviewed as a new candidate before refreezing.
 
 ## Fourteen-Point Promotion Sequence
 
-| # | Promotion point | Status | Evidence needed next |
+| # | Promotion point | Status | Required next evidence |
 |---:|---|---|---|
-| 1 | Freeze Phase 2A functionality | Repository verified; review pending | Independent review and acceptance of the commit attestation |
-| 2 | Produce clean release and CI evidence | Blocked | Clean reviewed release state, protected CI, immutable artifact, browser certificate, deployment and external attestation |
-| 3 | Record product and security approvals | Blocked | Distinct real approvers bound to the frozen release bundle |
-| 4 | Assign six operational owner roles | Blocked | Primary, backup, runbook, coverage, and escalation evidence for every role |
+| 1 | Freeze Phase 2A functionality | Blocked | Review eight runtime drift paths, resolve the 206/207 mismatch through a new reviewed candidate, rerun freeze |
+| 2 | Produce clean release and CI evidence | Blocked | Clean reviewed commit, protected CI, immutable artifact, browser certificate, deployment reference |
+| 3 | Record product and security approvals | Blocked | Distinct approvers bound to one reviewed release bundle |
+| 4 | Assign six operational owner roles | Blocked | Primary/backup identities, runbooks, coverage, and escalation evidence |
 | 5 | Deploy reconciler and scheduler authority | Blocked | Managed five-minute schedule and independent deployment attestation |
 | 6 | Configure managed evidence credentials | Blocked | Query-free HTTPS endpoints and managed secret references |
-| 7 | Capture three reconciler windows | Blocked | Three unique completed five-minute windows, readiness, heartbeat, and invalid-auth proof |
+| 7 | Capture three reconciler windows | Blocked | Three unique completed windows, readiness, heartbeat, and invalid-auth proof |
 | 8 | Deploy and test alerting | Blocked | Delivery, acknowledgement, retry, dead letter, recovery, escalation, and rotation proof |
 | 9 | Complete credential rotation | Blocked | Fifteen classes rotated, verified, revoked, rejected, and approved |
-| 10 | Close statutory evidence | Blocked | Source artifact hash verification and qualified expert approval |
-| 11 | Rerun enterprise gate 017 | Executed, no-go | Rerun after points 1 through 10 pass |
-| 12 | Conduct controlled Phase 2B pilot | Not started | Separate activation decision, bounded pilot, monitoring, rollback, support, and incident evidence |
+| 10 | Close statutory evidence | Blocked | Valid executable source bindings and qualified expert approval |
+| 11 | Rerun enterprise gate 017 | Executed, no-go | Rerun only after points 1-10 pass |
+| 12 | Conduct controlled Phase 2B pilot | Not started | Separate activation decision, bounded scope, monitoring, rollback, support, and incidents |
 | 13 | Record explicit Phase 3 GO | Not started | Product, security, finance-domain, and release acceptance of pilot exit evidence |
-| 14 | Begin Phase 3 | Not started | Read-and-draft implementation only after point 13 |
+| 14 | Begin Phase 3 | Not started | Read-and-draft scope only after point 13 |
 
-## Requested Gate Rerun
+## Next Executable Handoff
 
-```text
-npm run agent:reconciler:evidence:apply
-npm run agent:credential-rotation:gate
-npm run agent:operational-release:gate
-```
-
-Results:
-
-- Reconciler apply: failed closed on `RECONCILER_BASE_URL_MISSING`; no register mutation and no secret output.
-- Credential rotation: `BLOCKED`, 15 classes and 31 blockers.
-- Operational release: `BLOCKED`, 152 blockers, ready for independent review false, activation false.
-- Skill 017: `REJECTED / NO-GO`.
-- Phase 2B entry: `BLOCKED`, 19 of 23 checks.
-- Phase 3 entry: `BLOCKED`, 32 of 34 checks.
-- Activation and Phase 3 authority: No / No.
+1. Independently review and disposition all eight current Phase 2A runtime drift paths.
+2. Reconcile the historical manifest mismatch through a new reviewed candidate; do not relabel the old attestation as passing.
+3. Rerun the freeze gate and require 207/207, zero mismatches, and zero runtime drift.
+4. Keep GitHub, pull requests, hosted CI, and provider operations deferred until explicitly reauthorized.
+5. After local freeze recovery, bind protected CI, immutable artifact, browser certificate, deployment, approvals, and operations to one exact commit.
 
 ## Command Order
 
 After the corresponding real-world evidence exists:
 
 ```text
+npm run agent:phase2a:freeze:gate
 npm run agent:ci-release:evidence:apply
 npm run agent:governance:evidence:apply
 npm run agent:scheduler:evidence:apply
@@ -125,20 +112,19 @@ npm run agent:credential-rotation:evidence:apply
 npm run agent:credential-rotation:gate
 npm run statutory:country-pack:gate
 npm run release:evidence:gate:release
-npm run agent:phase2a:freeze:gate
 npm run agent:operational-release:gate
+npm run agent:phase2b:entry:gate
 ```
 
-Then rerun `017-aqstoqflow-enterprise-release-gate`. A passing operational gate means eligible for independent review only. It does not activate the package.
+A passing operational gate means eligible for independent review only. It does not activate a package.
 
 ## Permanent Boundaries
 
 - No direct agent Prisma business writes.
 - No direct ledger posting, payment, statutory filing, payroll mutation, stock mutation, close certification, or access change.
 - No self-approval, self-activation, or self-promotion.
-- Activation remains a protected ceremony after an independent release GO.
-- Phase 3 begins in read-and-draft mode and cannot execute its drafts.
+- Phase 3 starts only after an explicit post-pilot GO and remains read-and-draft.
 
 ## Current Decision
 
-The Phase 2A frozen commit and all 37 repository-owned requirements are verified. The current worktree is not a clean release artifact, the Phase 2B entry gate has 19 blockers, the Phase 3 entry gate has 32 blockers, and the high-authority operational evidence remains incomplete. Continue with independent freeze review and promotion point 2. Do not activate Phase 2A, start the Phase 2B pilot, or implement Phase 3.
+The repository suite passes, but the Phase 2A freeze and every high-authority promotion boundary remain blocked. Continue with local drift review and freeze recovery. Do not activate Phase 2A, begin the Phase 2B pilot, or enable the dormant Phase 3 proposal path.

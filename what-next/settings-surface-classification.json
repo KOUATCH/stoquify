@@ -1,26 +1,26 @@
 {
   "summary": {
-    "generatedAt": "2026-07-19T20:40:11.371Z",
+    "generatedAt": "2026-08-01T14:34:25.113Z",
     "mode": "report-only",
-    "sourceInventoryGeneratedAt": "2026-07-19T20:40:11.360Z",
+    "sourceInventoryGeneratedAt": "2026-08-01T14:34:25.078Z",
     "recordCount": 37,
     "activeFindingCount": 0,
     "byStatus": {
-      "protected": 26,
+      "protected": 27,
       "delegated": 3,
-      "helper": 3,
+      "helper": 2,
       "allowed-public": 4,
       "protected-mixed": 1
     },
     "byExecutionBoundary": {
-      "server-action": 31,
+      "server-action": 32,
       "delegated-re-export": 3,
-      "helper-module": 3
+      "helper-module": 2
     },
     "byAuthorizationBoundary": {
-      "rbac-protected": 26,
+      "rbac-protected": 27,
       "delegated-re-export": 3,
-      "helper-module": 3,
+      "helper-module": 2,
       "token-bound-invitation": 1,
       "public-registration": 1,
       "public-reset-request": 1,
@@ -42,8 +42,8 @@
         "moduleSlug": "inventory",
         "permission": "inventory.brands.read | inventory.brands.create | inventory.brands.update | inventory.brands.delete",
         "guard": "requirePermission",
-        "classification": "mapped, enforcement candidate",
-        "observeOrEnforce": "report-only"
+        "classification": "mapped",
+        "observeOrEnforce": "observe"
       },
       "executionBoundary": "server-action",
       "authorizationBoundary": "rbac-protected",
@@ -66,11 +66,11 @@
       "file": "actions/brands/getOrgBrands.ts",
       "sourceExists": true,
       "sourceInventory": {
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "observeOrEnforce": "report-only"
+        "moduleSlug": "inventory",
+        "permission": "inventory.brands.read | inventory.brands.create | inventory.brands.update | inventory.brands.delete",
+        "guard": "delegated-re-export",
+        "classification": "mapped, delegated re-export",
+        "observeOrEnforce": "observe"
       },
       "executionBoundary": "delegated-re-export",
       "authorizationBoundary": "delegated-re-export",
@@ -88,33 +88,38 @@
       "file": "actions/categories/createBulkCategories.ts",
       "sourceExists": true,
       "sourceInventory": {
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "observeOrEnforce": "report-only"
+        "moduleSlug": "inventory",
+        "permission": "inventory.categories.create",
+        "guard": "requirePermission",
+        "classification": "mapped",
+        "observeOrEnforce": "observe"
       },
-      "executionBoundary": "helper-module",
-      "authorizationBoundary": "helper-module",
-      "status": "helper",
-      "permissionDisposition": "not-applicable",
-      "moduleDisposition": "not-an-executable-surface",
-      "guardMarkers": [],
-      "tenantMarkers": [],
-      "freshAuth": "not-applicable",
-      "moduleObserve": "not-applicable",
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "rbac-protected",
+      "status": "protected",
+      "permissionDisposition": "required-and-present",
+      "moduleDisposition": "module-observed",
+      "guardMarkers": [
+        "requirePermission("
+      ],
+      "tenantMarkers": [
+        "assertCanUseOrganization(",
+        "ctx.orgId"
+      ],
+      "freshAuth": "not-detected",
+      "moduleObserve": "present",
       "findings": [],
-      "recommendedAction": "Exclude this file from executable action permission findings."
+      "recommendedAction": "Retain the trusted RBAC boundary and verify tenant and module evidence."
     },
     {
       "file": "actions/categories/createCategory.ts",
       "sourceExists": true,
       "sourceInventory": {
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "observeOrEnforce": "report-only"
+        "moduleSlug": "inventory",
+        "permission": "inventory.categories.read | inventory.categories.create | inventory.categories.update | inventory.categories.delete",
+        "guard": "delegated-re-export",
+        "classification": "mapped, delegated re-export",
+        "observeOrEnforce": "observe"
       },
       "executionBoundary": "delegated-re-export",
       "authorizationBoundary": "delegated-re-export",
@@ -135,8 +140,8 @@
         "moduleSlug": "inventory",
         "permission": "inventory.categories.read | inventory.categories.create | inventory.categories.update | inventory.categories.delete",
         "guard": "requirePermission",
-        "classification": "mapped, enforcement candidate",
-        "observeOrEnforce": "report-only"
+        "classification": "mapped",
+        "observeOrEnforce": "observe"
       },
       "executionBoundary": "server-action",
       "authorizationBoundary": "rbac-protected",
@@ -159,11 +164,11 @@
       "file": "actions/categories/getOrgCategories.ts",
       "sourceExists": true,
       "sourceInventory": {
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "observeOrEnforce": "report-only"
+        "moduleSlug": "inventory",
+        "permission": "inventory.categories.read | inventory.categories.create | inventory.categories.update | inventory.categories.delete",
+        "guard": "delegated-re-export",
+        "classification": "mapped, delegated re-export",
+        "observeOrEnforce": "observe"
       },
       "executionBoundary": "delegated-re-export",
       "authorizationBoundary": "delegated-re-export",
@@ -184,8 +189,8 @@
         "moduleSlug": "settings",
         "permission": "locations.create",
         "guard": "requirePermission",
-        "classification": "mapped, enforcement candidate",
-        "observeOrEnforce": "report-only"
+        "classification": "mapped",
+        "observeOrEnforce": "observe"
       },
       "executionBoundary": "server-action",
       "authorizationBoundary": "rbac-protected",
@@ -210,8 +215,8 @@
         "moduleSlug": "settings",
         "permission": "locations.delete",
         "guard": "requirePermission",
-        "classification": "mapped, enforcement candidate",
-        "observeOrEnforce": "report-only"
+        "classification": "mapped",
+        "observeOrEnforce": "observe"
       },
       "executionBoundary": "server-action",
       "authorizationBoundary": "rbac-protected",
@@ -236,8 +241,8 @@
         "moduleSlug": "settings",
         "permission": "locations.read",
         "guard": "requirePermission",
-        "classification": "mapped, enforcement candidate",
-        "observeOrEnforce": "report-only"
+        "classification": "mapped",
+        "observeOrEnforce": "observe"
       },
       "executionBoundary": "server-action",
       "authorizationBoundary": "rbac-protected",
@@ -262,8 +267,8 @@
         "moduleSlug": "settings",
         "permission": "locations.read",
         "guard": "requirePermission",
-        "classification": "mapped, enforcement candidate",
-        "observeOrEnforce": "report-only"
+        "classification": "mapped",
+        "observeOrEnforce": "observe"
       },
       "executionBoundary": "server-action",
       "authorizationBoundary": "rbac-protected",
@@ -288,8 +293,8 @@
         "moduleSlug": "settings",
         "permission": "locations.update",
         "guard": "requirePermission",
-        "classification": "mapped, enforcement candidate",
-        "observeOrEnforce": "report-only"
+        "classification": "mapped",
+        "observeOrEnforce": "observe"
       },
       "executionBoundary": "server-action",
       "authorizationBoundary": "rbac-protected",
@@ -340,8 +345,8 @@
         "moduleSlug": "settings",
         "permission": "system.organization.read",
         "guard": "requirePermission",
-        "classification": "mapped, enforcement candidate",
-        "observeOrEnforce": "report-only"
+        "classification": "mapped",
+        "observeOrEnforce": "observe"
       },
       "executionBoundary": "server-action",
       "authorizationBoundary": "rbac-protected",
@@ -367,8 +372,8 @@
         "moduleSlug": "settings",
         "permission": "roles.create",
         "guard": "requirePermission",
-        "classification": "mapped, enforcement candidate",
-        "observeOrEnforce": "report-only"
+        "classification": "mapped",
+        "observeOrEnforce": "observe"
       },
       "executionBoundary": "server-action",
       "authorizationBoundary": "rbac-protected",
@@ -393,8 +398,8 @@
         "moduleSlug": "settings",
         "permission": "roles.read",
         "guard": "requirePermission",
-        "classification": "mapped, enforcement candidate",
-        "observeOrEnforce": "report-only"
+        "classification": "mapped",
+        "observeOrEnforce": "observe"
       },
       "executionBoundary": "server-action",
       "authorizationBoundary": "rbac-protected",
@@ -419,8 +424,8 @@
         "moduleSlug": "settings",
         "permission": "roles.read",
         "guard": "requirePermission",
-        "classification": "mapped, enforcement candidate",
-        "observeOrEnforce": "report-only"
+        "classification": "mapped",
+        "observeOrEnforce": "observe"
       },
       "executionBoundary": "server-action",
       "authorizationBoundary": "rbac-protected",
@@ -491,8 +496,8 @@
         "moduleSlug": "settings",
         "permission": "roles.update",
         "guard": "requirePermission",
-        "classification": "mapped, enforcement candidate",
-        "observeOrEnforce": "report-only"
+        "classification": "mapped",
+        "observeOrEnforce": "observe"
       },
       "executionBoundary": "server-action",
       "authorizationBoundary": "rbac-protected",
@@ -517,8 +522,8 @@
         "moduleSlug": "inventory",
         "permission": "inventory.items.create | inventory.items.update",
         "guard": "requireAnyPermission",
-        "classification": "mapped, enforcement candidate",
-        "observeOrEnforce": "report-only"
+        "classification": "mapped",
+        "observeOrEnforce": "observe"
       },
       "executionBoundary": "server-action",
       "authorizationBoundary": "rbac-protected",
@@ -544,8 +549,8 @@
         "moduleSlug": "settings",
         "permission": "inventory.items.create | inventory.items.update | system.settings.read | system.settings.update",
         "guard": "requireAnyPermission",
-        "classification": "mapped, enforcement candidate",
-        "observeOrEnforce": "report-only"
+        "classification": "mapped",
+        "observeOrEnforce": "observe"
       },
       "executionBoundary": "server-action",
       "authorizationBoundary": "rbac-protected",
@@ -572,8 +577,8 @@
         "moduleSlug": "settings",
         "permission": "taxes.create",
         "guard": "requirePermission",
-        "classification": "mapped, enforcement candidate",
-        "observeOrEnforce": "report-only"
+        "classification": "mapped",
+        "observeOrEnforce": "observe"
       },
       "executionBoundary": "server-action",
       "authorizationBoundary": "rbac-protected",
@@ -598,8 +603,8 @@
         "moduleSlug": "settings",
         "permission": "taxes.read",
         "guard": "requirePermission",
-        "classification": "mapped, enforcement candidate",
-        "observeOrEnforce": "report-only"
+        "classification": "mapped",
+        "observeOrEnforce": "observe"
       },
       "executionBoundary": "server-action",
       "authorizationBoundary": "rbac-protected",
@@ -624,8 +629,8 @@
         "moduleSlug": "settings",
         "permission": "taxes.read",
         "guard": "requirePermission",
-        "classification": "mapped, enforcement candidate",
-        "observeOrEnforce": "report-only"
+        "classification": "mapped",
+        "observeOrEnforce": "observe"
       },
       "executionBoundary": "server-action",
       "authorizationBoundary": "rbac-protected",
@@ -651,8 +656,8 @@
         "moduleSlug": "inventory",
         "permission": "inventory.units.delete",
         "guard": "requirePermission",
-        "classification": "mapped, enforcement candidate",
-        "observeOrEnforce": "report-only"
+        "classification": "mapped",
+        "observeOrEnforce": "observe"
       },
       "executionBoundary": "server-action",
       "authorizationBoundary": "rbac-protected",
@@ -677,8 +682,8 @@
         "moduleSlug": "inventory",
         "permission": "inventory.units.read",
         "guard": "requirePermission",
-        "classification": "mapped, enforcement candidate",
-        "observeOrEnforce": "report-only"
+        "classification": "mapped",
+        "observeOrEnforce": "observe"
       },
       "executionBoundary": "server-action",
       "authorizationBoundary": "rbac-protected",
@@ -700,17 +705,17 @@
       "file": "actions/units/unit-management-actions.ts",
       "sourceExists": true,
       "sourceInventory": {
-        "moduleSlug": null,
+        "moduleSlug": "inventory",
         "permission": "inventory.units.read",
         "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
+        "classification": "mapped, enforcement candidate",
         "observeOrEnforce": "report-only"
       },
       "executionBoundary": "server-action",
       "authorizationBoundary": "rbac-protected",
       "status": "protected",
       "permissionDisposition": "required-and-present",
-      "moduleDisposition": "module-not-detected",
+      "moduleDisposition": "inventory",
       "guardMarkers": [
         "requirePermission("
       ],
@@ -773,8 +778,8 @@
         "moduleSlug": "settings",
         "permission": "users.delete",
         "guard": "requirePermission",
-        "classification": "mapped, enforcement candidate",
-        "observeOrEnforce": "report-only"
+        "classification": "mapped",
+        "observeOrEnforce": "observe"
       },
       "executionBoundary": "server-action",
       "authorizationBoundary": "rbac-protected",
@@ -799,8 +804,8 @@
         "moduleSlug": "settings",
         "permission": "users.invite | users.read",
         "guard": "requireAnyPermission",
-        "classification": "mapped, enforcement candidate",
-        "observeOrEnforce": "report-only"
+        "classification": "mapped",
+        "observeOrEnforce": "observe"
       },
       "executionBoundary": "server-action",
       "authorizationBoundary": "rbac-protected",
@@ -826,8 +831,8 @@
         "moduleSlug": "settings",
         "permission": "users.read",
         "guard": "requirePermission",
-        "classification": "mapped, enforcement candidate",
-        "observeOrEnforce": "report-only"
+        "classification": "mapped",
+        "observeOrEnforce": "observe"
       },
       "executionBoundary": "server-action",
       "authorizationBoundary": "rbac-protected",
@@ -853,8 +858,8 @@
         "moduleSlug": "settings",
         "permission": "users.read",
         "guard": "requirePermission",
-        "classification": "mapped, enforcement candidate",
-        "observeOrEnforce": "report-only"
+        "classification": "mapped",
+        "observeOrEnforce": "observe"
       },
       "executionBoundary": "server-action",
       "authorizationBoundary": "rbac-protected",
@@ -880,8 +885,8 @@
         "moduleSlug": "settings",
         "permission": "INVITATION_ROLE_GRANT_PERMISSIONS",
         "guard": "requireAllPermissions",
-        "classification": "mapped, enforcement candidate",
-        "observeOrEnforce": "report-only"
+        "classification": "mapped",
+        "observeOrEnforce": "observe"
       },
       "executionBoundary": "server-action",
       "authorizationBoundary": "rbac-protected",
@@ -928,8 +933,8 @@
         "moduleSlug": "settings",
         "permission": "users.password.reset",
         "guard": "requirePermission",
-        "classification": "mapped, enforcement candidate",
-        "observeOrEnforce": "report-only"
+        "classification": "mapped",
+        "observeOrEnforce": "observe"
       },
       "executionBoundary": "server-action",
       "authorizationBoundary": "mixed-protected-and-token-bound",

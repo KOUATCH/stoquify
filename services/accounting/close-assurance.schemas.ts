@@ -41,6 +41,15 @@ export const commentOnCloseFindingInputSchema = z.object({
   correlationId: optionalCorrelationIdSchema,
 })
 
+export const requestMissingCloseEvidenceInputSchema = z.object({
+  clientOrganizationId: idSchema.optional(),
+  findingId: idSchema,
+  requestedFromId: idSchema,
+  requestText: z.string().trim().min(10).max(4000),
+  dueAt: z.coerce.date(),
+  correlationId: optionalCorrelationIdSchema,
+})
+
 export const requestCloseWaiverInputSchema = z.object({
   findingId: idSchema,
   reason: z.string().trim().min(10).max(4000),
@@ -70,6 +79,9 @@ export type CloseAssuranceDashboardInput = z.infer<typeof closeAssuranceDashboar
 export type CloseEvidenceGraphInput = z.infer<typeof closeEvidenceGraphInputSchema>
 export type AssignCloseFindingInput = z.infer<typeof assignCloseFindingInputSchema>
 export type CommentOnCloseFindingInput = z.infer<typeof commentOnCloseFindingInputSchema>
+export type RequestMissingCloseEvidenceInput = z.infer<
+  typeof requestMissingCloseEvidenceInputSchema
+>
 export type RequestCloseWaiverInput = z.infer<typeof requestCloseWaiverInputSchema>
 export type ApproveCloseWaiverInput = z.infer<typeof approveCloseWaiverInputSchema>
 export type UpdateAccountantReviewInput = z.infer<typeof updateAccountantReviewInputSchema>

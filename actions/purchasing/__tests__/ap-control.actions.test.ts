@@ -4,9 +4,10 @@ import { requireFreshAuth, FreshAuthRequiredError } from "@/lib/security/auth-se
 import { requirePermission, RbacError } from "@/lib/security/rbac"
 import {
   approveSupplierBankChangeWithControls,
+  approveSupplierInvoice,
   approveSupplierPaymentWithControls,
   getAPWorkbenchData,
-  postSupplierInvoice,
+  prepareSupplierInvoice,
   releaseSupplierPaymentWithControls,
   requestSupplierBankChange,
 } from "@/services/purchasing/ap-control.service"
@@ -16,6 +17,7 @@ import {
   approveSupplierPaymentAction,
   getAPWorkbenchAction,
   postSupplierInvoiceAction,
+  prepareSupplierInvoiceAction,
   releaseSupplierPaymentAction,
   requestSupplierBankChangeAction,
 } from "../ap-control.actions"
@@ -65,16 +67,18 @@ jest.mock("@/lib/logger", () => ({
 
 jest.mock("@/services/purchasing/ap-control.service", () => ({
   approveSupplierBankChangeWithControls: jest.fn(),
+  approveSupplierInvoice: jest.fn(),
   approveSupplierPaymentWithControls: jest.fn(),
   getAPWorkbenchData: jest.fn(),
-  postSupplierInvoice: jest.fn(),
+  prepareSupplierInvoice: jest.fn(),
   releaseSupplierPaymentWithControls: jest.fn(),
   requestSupplierBankChange: jest.fn(),
 }))
 
 const mockRequirePermission = requirePermission as jest.Mock
 const mockRequireFreshAuth = requireFreshAuth as jest.Mock
-const mockPostSupplierInvoice = postSupplierInvoice as jest.Mock
+const mockPrepareSupplierInvoice = prepareSupplierInvoice as jest.Mock
+const mockApproveSupplierInvoice = approveSupplierInvoice as jest.Mock
 const mockRequestSupplierBankChange = requestSupplierBankChange as jest.Mock
 const mockApproveSupplierBankChangeWithControls = approveSupplierBankChangeWithControls as jest.Mock
 const mockApproveSupplierPaymentWithControls = approveSupplierPaymentWithControls as jest.Mock
@@ -126,47 +130,91 @@ function invoiceInput() {
 describe("AP control actions", () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockRequireFreshAuth.mockResolvedValue({ claims: { lastAuthAt: "2026-07-02T12:00:00.000Z" } })
+    mockRequireFreshAuth.mockResolvedValue({
+      claims: { lastAuthAt: "2026-07-02T12:00:00.000Z" },
+    })
   })
 
-  it("derives supplier invoice tenant and actor fields from the authenticated context", async () => {
-    mockRequirePermission.mockResolvedValue(rbacContext("poster-1", ["purchasing.ap.invoice.post"]))
-    mockPostSupplierInvoice.mockResolvedValue({
-      supplierInvoice: { id: "invoice-1" },
-      ledgerStatus: "BLOCKED_PENDING_RULES",
+  it("prepares a matched supplier invoice with tenant and maker derived from the authenticated context", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext("maker-1", ["purchasing.ap.invoice.post"]))
+    mockPrepareSupplierInvoice.mockResolvedValue({
+      supplierInvoice: { id: "invoice-1", status: "MATCHED" },
+      ledgerStatus: "PENDING_APPROVAL",
     })
 
-    const result = await postSupplierInvoiceAction(invoiceInput())
+    const result = await prepareSupplierInvoiceAction(invoiceInput())
 
     expect(result.success).toBe(true)
-    expect(mockPostSupplierInvoice).toHaveBeenCalledWith(
+    expect(mockRequireFreshAuth).not.toHaveBeenCalled()
+    expect(mockPrepareSupplierInvoice).toHaveBeenCalledWith(
       expect.objectContaining({
         organizationId: "org-1",
         supplierId: "supplier-1",
-        createdById: "poster-1",
-        approvedById: "poster-1",
+        createdById: "maker-1",
+        approvedById: undefined,
       }),
     )
-    expect(mockPostSupplierInvoice.mock.calls[0][0]).not.toMatchObject({
+    expect(mockPrepareSupplierInvoice.mock.calls[0][0]).not.toMatchObject({
       organizationId: "client-org",
       approvedById: "client-approver",
+    })
+  })
+
+  it("requires fresh auth and derives the checker for supplier invoice posting", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext("checker-1", ["purchasing.ap.invoice.post"]))
+    mockApproveSupplierInvoice.mockResolvedValue({
+      supplierInvoice: { id: "invoice-1", status: "POSTED" },
+      ledgerStatus: "POSTED",
+    })
+
+    const result = await postSupplierInvoiceAction({
+      organizationId: "client-org",
+      supplierInvoiceId: "invoice-1",
+      approvedById: "client-approver",
+    })
+
+    expect(result.success).toBe(true)
+    expect(mockRequireFreshAuth).toHaveBeenCalledTimes(1)
+    expect(mockApproveSupplierInvoice).toHaveBeenCalledWith({
+      organizationId: "org-1",
+      supplierInvoiceId: "invoice-1",
+      approvedById: "checker-1",
     })
     expect(mockRevalidatePath).toHaveBeenCalledWith("/dashboard/purchases/payables", "page")
   })
 
+  it("fails closed before invoice posting when fresh authentication is unavailable", async () => {
+    mockRequireFreshAuth.mockRejectedValue(new FreshAuthRequiredError())
+
+    const result = await postSupplierInvoiceAction({
+      supplierInvoiceId: "invoice-1",
+    })
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        success: false,
+        code: "FRESH_AUTH_REQUIRED",
+        status: 403,
+      }),
+    )
+    expect(mockRequirePermission).not.toHaveBeenCalled()
+    expect(mockApproveSupplierInvoice).not.toHaveBeenCalled()
+  })
   it("returns a client-safe RBAC denial for the AP workbench", async () => {
     mockRequirePermission.mockRejectedValue(new RbacError("Forbidden", "FORBIDDEN", 403))
 
     const result = await getAPWorkbenchAction({})
 
-    expect(result).toEqual(expect.objectContaining({
-      success: false,
-      data: null,
-      error: "Forbidden",
-      status: 403,
-      code: "FORBIDDEN",
-      retryable: false,
-    }))
+    expect(result).toEqual(
+      expect.objectContaining({
+        success: false,
+        data: null,
+        error: "Forbidden",
+        status: 403,
+        code: "FORBIDDEN",
+        retryable: false,
+      }),
+    )
     expect(result).toHaveProperty("correlationId")
     expect(mockGetAPWorkbenchData).not.toHaveBeenCalled()
   })
@@ -174,16 +222,20 @@ describe("AP control actions", () => {
   it("requires fresh auth before approving supplier bank changes", async () => {
     mockRequireFreshAuth.mockRejectedValue(new FreshAuthRequiredError())
 
-    const result = await approveSupplierBankChangeAction({ changeRequestId: "change-1" })
+    const result = await approveSupplierBankChangeAction({
+      changeRequestId: "change-1",
+    })
 
-    expect(result).toEqual(expect.objectContaining({
-      success: false,
-      data: null,
-      error: "Fresh authentication required",
-      status: 403,
-      code: "FRESH_AUTH_REQUIRED",
-      retryable: false,
-    }))
+    expect(result).toEqual(
+      expect.objectContaining({
+        success: false,
+        data: null,
+        error: "Fresh authentication required",
+        status: 403,
+        code: "FRESH_AUTH_REQUIRED",
+        retryable: false,
+      }),
+    )
     expect(result).toHaveProperty("correlationId")
     expect(mockRequirePermission).not.toHaveBeenCalled()
     expect(mockApproveSupplierBankChangeWithControls).not.toHaveBeenCalled()

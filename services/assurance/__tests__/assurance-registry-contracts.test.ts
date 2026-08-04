@@ -15,6 +15,48 @@ describe("workflow assurance registry contracts", () => {
     }
   })
 
+  it("stages the POS cash-shortage check as disabled registry metadata only", () => {
+    const definition = INITIAL_WORKFLOW_ASSURANCE_CHECK_DEFINITIONS.find(
+      (candidate) => candidate.checkKey === "pos.closed_shift_cash_shortage.review",
+    )
+
+    expect(definition).toEqual(
+      expect.objectContaining({
+        workflow: "pos",
+        moduleSlug: "pos",
+        executionMode: "scheduled_scan",
+        defaultSeverity: "high",
+        requiredPermission: "pos.transactions.read",
+        ownerRole: "branch_manager",
+        enabled: false,
+        enforceMode: false,
+        sourceTables: ["business_events", "cash_shortage_policies"],
+        actionRoute: "/dashboard/manager-action-center",
+        metadata: expect.objectContaining({
+          assuranceDomain: "pos_cash_shortage_review",
+          stagedDefinitionOnly: true,
+          adapter: "pos-shift-cash-shortage-assurance-adapter",
+          productionThresholdConfigured: true,
+          productionActivationCertified: false,
+          activationHold: "worker_scheduler_incident_integration_required",
+        }),
+      }),
+    )
+    expect(definition?.metadata.activationBlockedBy).toEqual([])
+    expect(definition?.metadata.activationBlockedBy).not.toContain("production_policy_entry")
+    expect(definition?.metadata.activationBlockedBy).not.toContain("runner_registration")
+    expect(definition?.metadata.activationBlockedBy).not.toContain("worker_checkpoint_contract")
+    expect(definition?.metadata.activationBlockedBy).not.toContain("pos_specific_lifecycle_gating")
+    expect(definition?.metadata.certifiedPrerequisites).toEqual(
+      expect.arrayContaining([
+        "worker_checkpoint_contract",
+        "pos_specific_lifecycle_gating",
+        "runner_registration",
+        "production_policy_entry",
+      ]),
+    )
+  })
+
   it("registers payroll operations checks with safe aggregate routing", () => {
     const prompt20CheckKeys = [
       "payroll.released_payment_evidence.required",
@@ -36,6 +78,30 @@ describe("workflow assurance registry contracts", () => {
       expect(definition.metadata).toEqual(expect.objectContaining({ evidenceLevel: "aggregate_redacted" }))
       expect(JSON.stringify(definition.metadata).toLowerCase()).not.toMatch(/salary|bank|iban|raw|payload|destination/)
     }
+  })
+  it("rejects POS cash-shortage activation without a certified production activation marker", () => {
+    const definition = INITIAL_WORKFLOW_ASSURANCE_CHECK_DEFINITIONS.find(
+      (candidate) => candidate.checkKey === "pos.closed_shift_cash_shortage.review",
+    )
+    if (!definition) throw new Error("POS cash-shortage definition missing")
+
+    expect(() =>
+      assertCheckDefinitionComplete({
+        ...definition,
+        enabled: true,
+      }),
+    ).toThrow(/separately certified production activation/i)
+
+    expect(() =>
+      assertCheckDefinitionComplete({
+        ...definition,
+        enabled: true,
+        metadata: {
+          ...definition.metadata,
+          productionActivationCertified: true,
+        },
+      }),
+    ).not.toThrow()
   })
   it("rejects an enforce-mode definition during the foundation rollout", () => {
     const definition = {

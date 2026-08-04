@@ -16,6 +16,17 @@ jest.mock("@/prisma/db", () => ({
   },
 }))
 
+jest.mock("../fiscalization-outbox.service", () => ({
+  getFiscalizationQueueSummary: jest.fn().mockResolvedValue({
+    pending: 2,
+    locked: 0,
+    deferred: 1,
+    failed: 0,
+    deadLetter: 0,
+    oldestActionableAt: new Date("2026-07-26T10:00:00.000Z"),
+  }),
+}))
+
 jest.mock("@/services/snapshots/close-readiness-snapshot.service", () => ({
   getCloseReadinessSnapshot: jest.fn(),
 }))
@@ -90,6 +101,14 @@ describe("compliance center service", () => {
         countryPackVersion: "CM-2026.1",
         capabilityStatus: "REQUIRES_EXPERT_REVIEW",
         credentialReference: "vault://org-1/cm-dgi-sandbox",
+        credentialExpiresAt: new Date("2027-06-30T00:00:00.000Z"),
+        officialSpecVersion: "DGI-API-1.0",
+        officialSpecPublishedAt: new Date("2026-06-01T00:00:00.000Z"),
+        officialSpecReference: "https://www.impots.cm/specification",
+        officialSpecHash: `sha256:${"a".repeat(64)}`,
+        reviewStatus: "EXPERT_APPROVED",
+        reviewedAt: new Date("2026-06-10T00:00:00.000Z"),
+        reviewEvidenceHash: `sha256:${"b".repeat(64)}`,
       },
     ])
     mockGetPaymentTruthSnapshot.mockResolvedValue(paymentSnapshot())
@@ -103,6 +122,11 @@ describe("compliance center service", () => {
 
     expect(snapshot.documentCounts).toHaveProperty(FiscalDocumentStatus.DRAFT, 0)
     expect(snapshot.submissionCounts).toHaveProperty(ComplianceSubmissionStatus.PENDING, 0)
+    expect(snapshot.fiscalizationQueue).toMatchObject({
+      pending: 2,
+      deferred: 1,
+      deadLetter: 0,
+    })
     expect(snapshot.adapterConfigs).toEqual([
       {
         id: "adapter-config-1",
@@ -114,6 +138,19 @@ describe("compliance center service", () => {
         countryPackVersion: "CM-2026.1",
         capabilityStatus: "REQUIRES_EXPERT_REVIEW",
         credentialReferencePresent: true,
+        credentialExpiresAt: "2027-06-30T00:00:00.000Z",
+        credentialExpiring: false,
+        officialSpecRecorded: true,
+        officialSpecVersion: "DGI-API-1.0",
+        officialSpecPublishedAt: "2026-06-01T00:00:00.000Z",
+        officialSpecReference: "https://www.impots.cm/specification",
+        officialSpecHash: `sha256:${"a".repeat(64)}`,
+        reviewStatus: "EXPERT_APPROVED",
+        reviewedAt: "2026-06-10T00:00:00.000Z",
+        reviewEvidenceHash: `sha256:${"b".repeat(64)}`,
+        healthStatus: "HEALTHY",
+        openSubmissionCount: 0,
+        oldestQueueAgeSeconds: null,
       },
     ])
     expect(snapshot.payrollForecastReadiness).toMatchObject({

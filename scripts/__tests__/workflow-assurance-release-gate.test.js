@@ -6,6 +6,7 @@ const {
   evaluateWorkflowAssuranceReleaseGate,
   extractDefinitions,
   parseArgs,
+  renderMarkdown,
 } = require("../workflow-assurance-release-gate")
 
 describe("workflow assurance release gate", () => {
@@ -21,7 +22,7 @@ describe("workflow assurance release gate", () => {
           enforceMode: false,
           sourceTables: ["journal_entries"],
           actionRoute: "/dashboard/accounting/journals",
-          metadata: { assuranceDomain: "ledger" },
+          metadata: { assuranceDomain: "ledger", productionActivationCertified: true },
         },
       ]
     `)
@@ -32,6 +33,7 @@ describe("workflow assurance release gate", () => {
         ownerRole: "accountant",
         sourceTables: true,
         assuranceDomain: true,
+        productionActivationCertified: "true",
       }),
     ])
   })
@@ -49,7 +51,7 @@ describe("workflow assurance release gate", () => {
             enforceMode: false,
             sourceTables: ["journal_entries"],
             actionRoute: "/dashboard/accounting/journals",
-            metadata: { assuranceDomain: "ledger" },
+            metadata: { assuranceDomain: "ledger", productionActivationCertified: true },
           },
         ]
       `,
@@ -86,6 +88,165 @@ describe("workflow assurance release gate", () => {
     expect(report.summary.blockerCount).toBe(0)
   })
 
+  it("does not require runner activation for disabled staged definitions", () => {
+    const root = makeFixtureRoot({
+      contract: `
+        export const INITIAL_WORKFLOW_ASSURANCE_CHECK_DEFINITIONS = [
+          {
+            checkKey: "pos.closed_shift_cash_shortage.review",
+            executionMode: "scheduled_scan",
+            defaultSeverity: "high",
+            requiredPermission: "pos.transactions.read",
+            ownerRole: "branch_manager",
+            enabled: false,
+            enforceMode: false,
+            sourceTables: ["business_events", "cash_shortage_policies"],
+            actionRoute: "/dashboard/manager-action-center",
+            metadata: { assuranceDomain: "pos_cash_shortage_review", stagedDefinitionOnly: true },
+          },
+        ]
+      `,
+      registry: "",
+      registryTest: "",
+      scheduler: `export const WORKFLOW_ASSURANCE_SCHEDULER_POLICIES = { scheduled_scan: { cursorFields: [] } }`,
+      controlTower: `const staleRunningCount = 0; const failedRunCount = 0; const pendingAlertCount = 0; const failedAlertCount = 0;`,
+      schema: `
+        @@unique([organizationId, checkKey, definitionVersion, sourceType, sourceId], name: "workflow_assurance_incident_identity_key")
+        @@index([organizationId, status, severity, lastDetectedAt])
+        @@index([organizationId, workflow, status])
+        @@index([organizationId, ownerId, status, dueAt])
+        @@index([organizationId, runStatus, startedAt])
+        @@index([organizationId, sourceType, sourceId])
+        @@index([organizationId, status, createdAt])
+        @@unique([organizationId, checkKey, definitionVersion, executionKey], name: "workflow_assurance_run_execution_key")
+        model WorkflowAssuranceCheckFinding {
+          @@unique([checkRunId, ordinal])
+          @@unique([checkRunId, fingerprint])
+          @@index([organizationId, sourceType, sourceId])
+        }
+      `,
+    })
+
+    const report = evaluateWorkflowAssuranceReleaseGate(root)
+
+    expect(report.summary.blockerCount).toBe(0)
+    expect(report.checks).toEqual([
+      expect.objectContaining({
+        checkKey: "pos.closed_shift_cash_shortage.review",
+        enabled: false,
+        blockers: [],
+      }),
+    ])
+    expect(renderMarkdown(report)).toContain("| pos.closed_shift_cash_shortage.review | disabled |")
+  })
+
+  it("blocks enabled POS cash-shortage definitions without certified production activation", () => {
+    const root = makeFixtureRoot({
+      contract: `
+        export const INITIAL_WORKFLOW_ASSURANCE_CHECK_DEFINITIONS = [
+          {
+            checkKey: "pos.closed_shift_cash_shortage.review",
+            executionMode: "scheduled_scan",
+            defaultSeverity: "high",
+            requiredPermission: "pos.transactions.read",
+            ownerRole: "branch_manager",
+            enabled: true,
+            enforceMode: false,
+            sourceTables: ["business_events", "cash_shortage_policies"],
+            actionRoute: "/dashboard/manager-action-center",
+            metadata: { assuranceDomain: "pos_cash_shortage_review", productionActivationCertified: false },
+          },
+        ]
+      `,
+      registry: `
+        const CHECK_RUNNERS = { "pos.closed_shift_cash_shortage.review": runDormantPosShiftCashShortageReviewCheck }
+        function runDormantPosShiftCashShortageReviewCheck() {
+          const sourceHash = createAssuranceSourceHash({})
+          return { evidenceLinks: [], sourceHash }
+        }
+      `,
+      registryTest: `it("covers pos.closed_shift_cash_shortage.review clean and broken fixture", () => {})`,
+      scheduler: `export const WORKFLOW_ASSURANCE_SCHEDULER_POLICIES = { scheduled_scan: { cursorFields: [] } }`,
+      controlTower: `const staleRunningCount = 0; const failedRunCount = 0; const pendingAlertCount = 0; const failedAlertCount = 0;`,
+      schema: `
+        @@unique([organizationId, checkKey, definitionVersion, sourceType, sourceId], name: "workflow_assurance_incident_identity_key")
+        @@index([organizationId, status, severity, lastDetectedAt])
+        @@index([organizationId, workflow, status])
+        @@index([organizationId, ownerId, status, dueAt])
+        @@index([organizationId, runStatus, startedAt])
+        @@index([organizationId, sourceType, sourceId])
+        @@index([organizationId, status, createdAt])
+        @@unique([organizationId, checkKey, definitionVersion, executionKey], name: "workflow_assurance_run_execution_key")
+        model WorkflowAssuranceCheckFinding {
+          @@unique([checkRunId, ordinal])
+          @@unique([checkRunId, fingerprint])
+          @@index([organizationId, sourceType, sourceId])
+        }
+      `,
+    })
+
+    const report = evaluateWorkflowAssuranceReleaseGate(root)
+
+    expect(report.summary.enforceModeStatus).toBe("blocked")
+    expect(report.blockers).toEqual([
+      {
+        area: "pos.closed_shift_cash_shortage.review",
+        blocker: "missing certified POS cash-shortage production activation marker",
+      },
+    ])
+    expect(renderMarkdown(report)).toContain("missing certified POS cash-shortage production activation marker")
+  })
+
+  it("accepts enabled POS cash-shortage definitions only with certified production activation", () => {
+    const root = makeFixtureRoot({
+      contract: `
+        export const INITIAL_WORKFLOW_ASSURANCE_CHECK_DEFINITIONS = [
+          {
+            checkKey: "pos.closed_shift_cash_shortage.review",
+            executionMode: "scheduled_scan",
+            defaultSeverity: "high",
+            requiredPermission: "pos.transactions.read",
+            ownerRole: "branch_manager",
+            enabled: true,
+            enforceMode: false,
+            sourceTables: ["business_events", "cash_shortage_policies"],
+            actionRoute: "/dashboard/manager-action-center",
+            metadata: { assuranceDomain: "pos_cash_shortage_review", productionActivationCertified: true },
+          },
+        ]
+      `,
+      registry: `
+        const CHECK_RUNNERS = { "pos.closed_shift_cash_shortage.review": runDormantPosShiftCashShortageReviewCheck }
+        function runDormantPosShiftCashShortageReviewCheck() {
+          const sourceHash = createAssuranceSourceHash({})
+          return { evidenceLinks: [], sourceHash }
+        }
+      `,
+      registryTest: `it("covers pos.closed_shift_cash_shortage.review clean and broken fixture", () => {})`,
+      scheduler: `export const WORKFLOW_ASSURANCE_SCHEDULER_POLICIES = { scheduled_scan: { cursorFields: [] } }`,
+      controlTower: `const staleRunningCount = 0; const failedRunCount = 0; const pendingAlertCount = 0; const failedAlertCount = 0;`,
+      schema: `
+        @@unique([organizationId, checkKey, definitionVersion, sourceType, sourceId], name: "workflow_assurance_incident_identity_key")
+        @@index([organizationId, status, severity, lastDetectedAt])
+        @@index([organizationId, workflow, status])
+        @@index([organizationId, ownerId, status, dueAt])
+        @@index([organizationId, runStatus, startedAt])
+        @@index([organizationId, sourceType, sourceId])
+        @@index([organizationId, status, createdAt])
+        @@unique([organizationId, checkKey, definitionVersion, executionKey], name: "workflow_assurance_run_execution_key")
+        model WorkflowAssuranceCheckFinding {
+          @@unique([checkRunId, ordinal])
+          @@unique([checkRunId, fingerprint])
+          @@index([organizationId, sourceType, sourceId])
+        }
+      `,
+    })
+
+    const report = evaluateWorkflowAssuranceReleaseGate(root)
+
+    expect(report.summary.enforceModeStatus).toBe("ready")
+    expect(report.summary.blockerCount).toBe(0)
+  })
   it("blocks enforce-mode when route, runner, tests, and indexes are missing", () => {
     const root = makeFixtureRoot({
       contract: `
@@ -98,7 +259,7 @@ describe("workflow assurance release gate", () => {
             ownerRole: "accountant",
             enforceMode: false,
             sourceTables: ["journal_entries"],
-            metadata: { assuranceDomain: "ledger" },
+            metadata: { assuranceDomain: "ledger", productionActivationCertified: true },
           },
         ]
       `,

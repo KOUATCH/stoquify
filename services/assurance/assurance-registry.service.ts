@@ -78,6 +78,10 @@ import {
   type WorkflowAssuranceSeverity,
   type WorkflowAssuranceWorkflow,
 } from "./assurance-registry-contracts"
+import {
+  buildPosShiftCashShortageDormantRunnerInputFromWorkflowRun,
+  runDormantPosShiftCashShortageAssuranceCheck,
+} from "@/services/leakage/pos-shift-cash-shortage-dormant-runner"
 
 const WORKFLOW_TO_PRISMA = {
   cash_command: "CASH_COMMAND",
@@ -165,6 +169,7 @@ const CHECK_RUNNERS: Record<string, WorkflowAssuranceRunner> = {
   "pos.completed_sale_stock_movement.required": runCompletedPosSaleStockMovementCheck,
   "pos.completed_sale_ledger_source_link.required": runCompletedPosSaleLedgerSourceLinkCheck,
   "pos.network_tender_idempotency_hash.required": runNetworkTenderIdempotencyHashCheck,
+  "pos.closed_shift_cash_shortage.review": runDormantPosShiftCashShortageReviewCheck,
   "offline_pos.replay_sla.visible": runOfflinePosReplaySlaCheck,
   "offline_pos.accepted_event_business_event.required": runOfflineAcceptedEventBusinessEventCheck,
   "offline_pos.sequence_hash_conflict.visible": runOfflineSequenceHashConflictVisibilityCheck,
@@ -546,6 +551,16 @@ function aggregateOnlyWorkflowAssuranceExecution(
   aggregate: WorkflowAssuranceCheckResult,
 ): WorkflowAssuranceDefinitionExecution {
   return assertWorkflowAssuranceExecutionReconciled({ aggregate, findings: [] })
+}
+
+async function runDormantPosShiftCashShortageReviewCheck(
+  definition: WorkflowAssuranceCheckDefinitionContract,
+  input: WorkflowAssuranceRunInput,
+): Promise<WorkflowAssuranceRunnerOutput> {
+  const dormantInput = buildPosShiftCashShortageDormantRunnerInputFromWorkflowRun(definition, input)
+  const result = await runDormantPosShiftCashShortageAssuranceCheck(dormantInput)
+
+  return result.output
 }
 
 async function runPostedSourceLinkCheck(

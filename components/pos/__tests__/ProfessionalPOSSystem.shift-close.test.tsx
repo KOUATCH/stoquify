@@ -238,3 +238,126 @@ describe("ProfessionalPOSSystem shift close", () => {
     expect(closeMutateAsync).not.toHaveBeenCalled()
   })
 })
+
+describe("ProfessionalPOSSystem sale commit", () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
+  it("submits an active cash sale with WhatsApp receipt consent", async () => {
+    const commitMutateAsync = jest.fn().mockResolvedValue(actionSuccess({
+      saleId: "sale-1",
+      orderNumber: "SALE-0001",
+      status: "COMPLETED",
+      paymentStatus: "PAID",
+      total: 100,
+      amountPaid: 100,
+      onAccountAmount: 0,
+      changeDue: 0,
+    }))
+
+    setupHooks(100, actionSuccess({ terminalId: "terminal-1" }))
+    mockHooks.usePOSLocations.mockReturnValue({
+      data: actionSuccess([{
+        id: "location-1",
+        name: "Main shop",
+        code: "MAIN",
+        type: "RETAIL",
+        isDefault: true,
+        organization: { name: "Stoquify", currency: "XAF", defaultLocale: "EN" },
+      }]),
+    } as never)
+    mockHooks.usePOSTerminals.mockReturnValue({
+      data: actionSuccess([{
+        id: "terminal-1",
+        terminalNumber: "T01",
+        name: "Till 1",
+        hasCashDrawer: true,
+        locationId: "location-1",
+        currentSessionId: "session-1",
+      }]),
+    } as never)
+    mockHooks.useActivePOSCart.mockReturnValue({
+      data: actionSuccess({
+        id: "sale-1",
+        orderNumber: "CART-0001",
+        status: "DRAFT",
+        locationId: "location-1",
+        terminalId: "terminal-1",
+        sessionId: "session-1",
+        customer: {
+          id: "walk-in",
+          name: "Walk-in customer",
+          phone: null,
+          email: null,
+          currentBalance: 0,
+          creditLimit: null,
+        },
+        subtotal: 100,
+        discount: 0,
+        taxAmount: 0,
+        total: 100,
+        lines: [{
+          id: "line-1",
+          itemId: "item-1",
+          sku: "SKU-001",
+          barcode: "123456789",
+          nameEn: "Coffee",
+          nameFr: "Cafe",
+          thumbnail: null,
+          quantity: 1,
+          unitPrice: 100,
+          discount: 0,
+          taxRate: 0,
+          taxAmount: 0,
+          lineTotal: 100,
+          stock: { trackInventory: true, quantityOnHand: 10, quantityAvailable: 10 },
+        }],
+      }),
+    } as never)
+    mockHooks.useCommitPOSSale.mockReturnValue(mutationState(commitMutateAsync) as never)
+
+    render(<ProfessionalPOSSystem />)
+
+    fireEvent.click(screen.getByRole("button", { name: "receipt.channels.PRINT" }))
+    expect(screen.queryByPlaceholderText("receipt.destinationPlaceholders.email")).not.toBeInTheDocument()
+    expect(screen.queryByPlaceholderText("receipt.destinationPlaceholders.phone")).not.toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole("button", { name: "receipt.channels.WHATSAPP" }))
+    const chargeButton = screen.getByRole("button", { name: "charge.cta" })
+    expect(chargeButton).toBeDisabled()
+    expect(screen.getByRole("alert")).toHaveTextContent("receipt.destinationRequired")
+
+    fireEvent.change(screen.getByPlaceholderText("receipt.destinationPlaceholders.whatsapp"), {
+      target: { value: "+237699000000" },
+    })
+    expect(chargeButton).toBeDisabled()
+    expect(screen.getByRole("alert")).toHaveTextContent("receipt.whatsAppConsentRequired")
+
+    fireEvent.click(screen.getByRole("checkbox", { name: "receipt.whatsAppConsent" }))
+    expect(chargeButton).toBeEnabled()
+    fireEvent.click(chargeButton)
+
+    await waitFor(() => {
+      expect(commitMutateAsync).toHaveBeenCalledWith({
+        salesOrderId: "sale-1",
+        locationId: "location-1",
+        terminalId: "terminal-1",
+        sessionId: "session-1",
+        customerId: undefined,
+        tenders: [{ method: "CASH", amount: 100, reference: undefined }],
+        receipt: {
+          channel: "WHATSAPP",
+          destination: "+237699000000",
+          locale: "EN",
+          whatsAppCustomerOptInConfirmed: true,
+        },
+      })
+    })
+    expect(mockNotifications.success).toHaveBeenCalledWith(
+      "notifications.saleSuccessTitle",
+      "notifications.saleSuccessMessage",
+      { category: "sales", priority: "high", duration: 9000 },
+    )
+  })
+})

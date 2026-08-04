@@ -1,0 +1,95 @@
+{
+  "checkedAt": "2026-07-27T12:51:50.874Z",
+  "baseUrl": "http://localhost:3000",
+  "mode": "fail",
+  "ok": true,
+  "routeCount": 2,
+  "screenshotTool": "playwright",
+  "auth": {
+    "storageState": null,
+    "protectedRouteScreenshotMode": "unauthenticated-or-redirect-safe"
+  },
+  "routes": [
+    {
+      "route": {
+        "id": "public-home",
+        "path": "/en",
+        "surface": "Public first impression",
+        "requiresAuth": false,
+        "viewports": [
+          "mobile",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": 200,
+        "finalUrl": "http://localhost:3000/en",
+        "durationMs": 8546,
+        "errorMarkers": []
+      }
+    },
+    {
+      "route": {
+        "id": "public-home-fr",
+        "path": "/fr",
+        "surface": "Premiere impression publique",
+        "requiresAuth": false,
+        "viewports": [
+          "mobile",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": 200,
+        "finalUrl": "http://localhost:3000/fr",
+        "durationMs": 8208,
+        "errorMarkers": []
+      }
+    }
+  ],
+  "warmup": {
+    "enabled": false,
+    "skipped": true,
+    "reason": "warmup disabled",
+    "routes": []
+  },
+  "screenshots": {
+    "available": true,
+    "captures": [
+      {
+        "routeId": "public-home",
+        "viewport": "mobile",
+        "ok": true,
+        "file": "what-next/ui-ux/landing-founder-preview/2026-07-27/baseline/screenshots/public-home-mobile.png",
+        "finalUrl": "http://localhost:3000/en",
+        "authenticated": null
+      },
+      {
+        "routeId": "public-home-fr",
+        "viewport": "mobile",
+        "ok": true,
+        "file": "what-next/ui-ux/landing-founder-preview/2026-07-27/baseline/screenshots/public-home-fr-mobile.png",
+        "finalUrl": "http://localhost:3000/fr",
+        "authenticated": null
+      },
+      {
+        "routeId": "public-home",
+        "viewport": "desktop",
+        "ok": true,
+        "file": "what-next/ui-ux/landing-founder-preview/2026-07-27/baseline/screenshots/public-home-desktop.png",
+        "finalUrl": "http://localhost:3000/en",
+        "authenticated": null
+      },
+      {
+        "routeId": "public-home-fr",
+        "viewport": "desktop",
+        "ok": true,
+        "file": "what-next/ui-ux/landing-founder-preview/2026-07-27/baseline/screenshots/public-home-fr-desktop.png",
+        "finalUrl": "http://localhost:3000/fr",
+        "authenticated": null
+      }
+    ]
+  }
+}

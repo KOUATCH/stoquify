@@ -1,12 +1,12 @@
 # Purchasing AP Consolidation Readiness Gate
 
-Generated: 2026-07-20T03:58:00.562Z
+Generated: 2026-08-01T19:28:22.571Z
 Mode: fail
 Status: ready
 
 ## Summary
 
-- Checks ready: 10/10
+- Checks ready: 11/11
 - Blockers: 0
 
 ## Checks
@@ -14,6 +14,7 @@ Status: ready
 - ready: purchase_order_maker_checker
 - ready: goods_receipt_atomic_stock_posting
 - ready: evidence_preserving_line_cleanup
+- ready: supplier_invoice_maker_checker
 - ready: supplier_invoice_receipt_and_variance_controls
 - ready: supplier_invoice_three_way_match_evidence
 - ready: ap_ledger_source_and_audit_proof

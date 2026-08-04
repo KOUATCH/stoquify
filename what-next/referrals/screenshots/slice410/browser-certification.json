@@ -1,0 +1,95 @@
+{
+  "status": "PASS",
+  "checkedAt": "2026-08-01T10:31:01.726Z",
+  "slice": 410,
+  "surface": "inventory-loss-control",
+  "auth": {
+    "organizationId": "org_inventory_loss_e2e_local",
+    "roleCode": "admin",
+    "requiredPermissions": [
+      "dashboard.read",
+      "inventory.levels.read"
+    ],
+    "fixtureSource": "scripts/seed-inventory-loss-e2e-user.js",
+    "credentialsRecorded": false
+  },
+  "authority": {
+    "browserSuppliedOrganizationId": false,
+    "browserSuppliedActorId": false,
+    "browserSuppliedPermissions": false,
+    "browserSuppliedRoles": false,
+    "browserSuppliedLocationAuthority": false,
+    "productAction": "getInventoryLossSummaryAction"
+  },
+  "expectedEvidenceCount": 4,
+  "results": [
+    {
+      "state": "complete",
+      "viewport": "mobile",
+      "path": "/en/dashboard/inventory/loss-control",
+      "finalUrl": "http://127.0.0.1:3010/en/dashboard/inventory/loss-control",
+      "screenshot": "what-next/referrals/screenshots/slice410/complete-mobile.png",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 390,
+        "documentWidth": 390,
+        "bodyWidth": 390,
+        "hasDocumentOverflow": false,
+        "overlappingElements": [],
+        "clippedElements": []
+      }
+    },
+    {
+      "state": "complete",
+      "viewport": "desktop",
+      "path": "/en/dashboard/inventory/loss-control",
+      "finalUrl": "http://127.0.0.1:3010/en/dashboard/inventory/loss-control",
+      "screenshot": "what-next/referrals/screenshots/slice410/complete-desktop.png",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 1440,
+        "documentWidth": 1440,
+        "bodyWidth": 1440,
+        "hasDocumentOverflow": false,
+        "overlappingElements": [],
+        "clippedElements": []
+      }
+    },
+    {
+      "state": "partial",
+      "viewport": "desktop",
+      "path": "/en/dashboard/inventory/loss-control?from=2026-06-12&to=2026-06-22",
+      "finalUrl": "http://127.0.0.1:3010/en/dashboard/inventory/loss-control?from=2026-06-12&to=2026-06-22",
+      "screenshot": "what-next/referrals/screenshots/slice410/partial-desktop.png",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 1440,
+        "documentWidth": 1440,
+        "bodyWidth": 1440,
+        "hasDocumentOverflow": false,
+        "overlappingElements": [],
+        "clippedElements": []
+      }
+    },
+    {
+      "state": "empty",
+      "viewport": "desktop",
+      "path": "/en/dashboard/inventory/loss-control?from=2026-04-03&to=2026-04-13",
+      "finalUrl": "http://127.0.0.1:3010/en/dashboard/inventory/loss-control?from=2026-04-03&to=2026-04-13",
+      "screenshot": "what-next/referrals/screenshots/slice410/empty-desktop.png",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 1440,
+        "documentWidth": 1440,
+        "bodyWidth": 1440,
+        "hasDocumentOverflow": false,
+        "overlappingElements": [],
+        "clippedElements": []
+      }
+    }
+  ]
+}

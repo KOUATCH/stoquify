@@ -5,6 +5,7 @@ const dateInputSchema = z.union([z.date(), z.string().trim().min(1)]).nullable()
 
 export const accountantPortalInputSchema = z
   .object({
+    clientOrganizationId: idSchema.nullable().optional(),
     periodId: idSchema.nullable().optional(),
     startDate: dateInputSchema,
     endDate: dateInputSchema,
@@ -14,6 +15,7 @@ export const accountantPortalInputSchema = z
 
 export const exportAccountantTrustPackInputSchema = z
   .object({
+    clientOrganizationId: idSchema.nullable().optional(),
     periodId: idSchema.nullable().optional(),
     startDate: dateInputSchema,
     endDate: dateInputSchema,

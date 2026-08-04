@@ -145,6 +145,13 @@ const DEFAULT_ROUTES = [
     viewports: ["mobile", "desktop"],
   },
   {
+    id: "assurance-incident-detail",
+    path: `/en/dashboard/assurance/control-tower/incidents/${process.env.ASSURANCE_SMOKE_INCIDENT_ID || "__ASSURANCE_INCIDENT_ID_REQUIRED__"}`,
+    surface: "Workflow Assurance incident detail",
+    requiresAuth: true,
+    viewports: ["mobile", "desktop"],
+  },
+  {
     id: "inventory-items",
     path: "/en/dashboard/inventory/items",
     surface: "Inventory items",

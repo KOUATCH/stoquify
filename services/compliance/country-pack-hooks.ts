@@ -4,7 +4,7 @@ import {
   resolveRegulatoryParameter,
   type RegulatoryEntityProfile,
   type RegulatoryResolutionResult,
-} from "@/services/regulatory/country-packs/resolve"
+} from "@/services/regulatory/regulatory-capability.service"
 
 const E_INVOICING_PARAMETER_PATHS = {
   capability: "compliance.eInvoicing.capability",

@@ -2,6 +2,10 @@ import { render, screen } from "@testing-library/react"
 
 import { HrisManagerSelfService } from "../HrisManagerSelfService"
 
+jest.mock("@/components/hris/HrisOperationalTimeApprovalPanel", () => ({
+  HrisOperationalTimeApprovalPanel: () => <div>Operational time approvals</div>,
+}))
+
 jest.mock("next/link", () => {
   const MockLink = ({ href, children, ...props }: { href: string; children: React.ReactNode }) => (
     <a href={href} {...props}>{children}</a>
@@ -98,6 +102,7 @@ function model() {
       evidence: { requestEvidencePresent: true, approvalEvidencePresent: false },
       readiness: { blockerCode: "COMPENSATION_CHANGE_PENDING", impact: "PAYROLL_INPUT" },
     }],
+    operationalTime: { requests: [] },
     capabilities: {
       approvalDecisions: {
         available: false,

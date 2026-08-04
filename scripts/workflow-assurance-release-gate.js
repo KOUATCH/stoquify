@@ -174,6 +174,7 @@ function evaluateWorkflowAssuranceReleaseGate(root = process.cwd()) {
 
 function evaluateDefinition(definition, context) {
   const blockers = []
+  const enabled = definition.enabled !== "false"
   if (!definition.ownerRole) blockers.push("missing owner role")
   if (!definition.defaultSeverity) blockers.push("missing severity")
   if (!definition.executionMode) blockers.push("missing execution mode")
@@ -181,19 +182,28 @@ function evaluateDefinition(definition, context) {
   if (!definition.requiredPermission) blockers.push("missing required permission")
   if (!definition.sourceTables) blockers.push("missing source tables")
   if (!definition.assuranceDomain) blockers.push("missing assurance domain")
-  if (!new RegExp(`${escapeRegExp(definition.checkKey)}"\\s*:\\s*run`).test(context.registryText)) {
-    blockers.push("missing registered runner")
+  if (enabled) {
+    if (
+      definition.checkKey === "pos.closed_shift_cash_shortage.review" &&
+      definition.productionActivationCertified !== "true"
+    ) {
+      blockers.push("missing certified POS cash-shortage production activation marker")
+    }
+    if (!new RegExp(`${escapeRegExp(definition.checkKey)}"\\s*:\\s*run`).test(context.registryText)) {
+      blockers.push("missing registered runner")
+    }
+    if (!/createAssuranceSourceHash/.test(context.registryText)) blockers.push("missing source hash strategy")
+    if (!/evidenceLinks\s*:/.test(context.registryText)) blockers.push("missing proof/evidence link emission")
+    if (!context.registryTestText.includes(definition.checkKey)) blockers.push("missing clean or broken fixture test reference")
+    if (!context.schedulerText.includes(definition.executionMode)) blockers.push("missing scheduler mode policy")
   }
-  if (!/createAssuranceSourceHash/.test(context.registryText)) blockers.push("missing source hash strategy")
-  if (!/evidenceLinks\s*:/.test(context.registryText)) blockers.push("missing proof/evidence link emission")
-  if (!context.registryTestText.includes(definition.checkKey)) blockers.push("missing clean or broken fixture test reference")
-  if (!context.schedulerText.includes(definition.executionMode)) blockers.push("missing scheduler mode policy")
 
   return {
     checkKey: definition.checkKey,
     executionMode: definition.executionMode,
     ownerRole: definition.ownerRole,
     actionRoute: definition.actionRoute,
+    enabled,
     enforceMode: definition.enforceMode === "true",
     blockers,
   }
@@ -216,6 +226,8 @@ function extractDefinitions(text) {
       requiredPermission: stringField(block, "requiredPermission"),
       sourceTables: /\bsourceTables\s*:\s*\[[^\]]+\]/.test(block),
       assuranceDomain: /assuranceDomain\s*:\s*"[^"]+"/.test(block),
+      productionActivationCertified: booleanField(block, "productionActivationCertified"),
+      enabled: String(!/\benabled\s*:\s*false/.test(block)),
       enforceMode: String(/\benforceMode\s*:\s*true/.test(block)),
     })
   }
@@ -224,6 +236,11 @@ function extractDefinitions(text) {
 
 function stringField(block, field) {
   const match = new RegExp(`${field}:\\s*"([^"]+)"`).exec(block)
+  return match ? match[1] : ""
+}
+
+function booleanField(block, field) {
+  const match = new RegExp(`${field}:\\s*(true|false)\\b`).exec(block)
   return match ? match[1] : ""
 }
 
@@ -250,11 +267,11 @@ function renderMarkdown(report, mode = "report") {
   lines.push("")
   lines.push("## Check Readiness")
   lines.push("")
-  lines.push("| Check | Mode | Owner | Action route | Blockers |")
-  lines.push("| --- | --- | --- | --- | --- |")
+  lines.push("| Check | State | Mode | Owner | Action route | Blockers |")
+  lines.push("| --- | --- | --- | --- | --- | --- |")
   for (const check of report.checks) {
     lines.push(
-      `| ${escapePipes(check.checkKey)} | ${check.executionMode} | ${escapePipes(check.ownerRole)} | ${escapePipes(check.actionRoute)} | ${escapePipes(check.blockers.join("; ") || "None")} |`,
+      `| ${escapePipes(check.checkKey)} | ${check.enabled ? "active" : "disabled"} | ${check.executionMode} | ${escapePipes(check.ownerRole)} | ${escapePipes(check.actionRoute)} | ${escapePipes(check.blockers.join("; ") || "None")} |`,
     )
   }
   lines.push("")

@@ -3,13 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "npx prisma generate && next dev -p 3000",
-    "dev:turbopack": "npx prisma generate && next dev --turbopack -p 3000",
+    "dev": "next dev -p 3000",
+    "dev:turbopack": "next dev --turbopack -p 3000",
     "build": "npm run release:secrets:preflight && npm run prisma:migrate:deploy:safe && npm run build:linted",
     "build:app": "node scripts/build-app-safe.js",
     "build:app:next": "next build",
     "build:app:diagnostics": "node scripts/build-app-diagnostics.js",
+    "roadmap:top12": "node scripts/roadmap-top12-runner.js --skip-prisma",
+    "roadmap:top12:with-prisma": "node scripts/roadmap-top12-runner.js --with-prisma --force-prisma",
+    "roadmap:top12:full": "node scripts/roadmap-top12-runner.js --skip-prisma",
+    "roadmap:top12:full:with-prisma": "node scripts/roadmap-top12-runner.js --with-prisma --force-prisma",
+
     "build:linted": "npm run lint && npm run build:app",
+    "roadmap:top12:legacy": "node scripts/roadmap-top12-runner.js --skip-prisma",
     "start": "next start",
     "lint": "eslint app actions components config hooks lib services --ext .js,.jsx,.ts,.tsx",
     "typecheck": "tsc --noEmit --pretty false",
@@ -25,6 +31,7 @@
     "service:boundary:fail": "node scripts/service-boundary-gate.js --mode fail",
     "agent:tool-registry:gate": "node scripts/agent-tool-registry-gate.js",
     "agent:prohibited-action:gate": "node scripts/agent-prohibited-action-gate.js",
+    "ai:copilot:guardrails:gate": "node scripts/ai-copilot-guardrails-gate.js",
     "agent:release-control:gate": "node scripts/agent-release-control-gate.js",
     "agent:release-control:postgres-smoke": "node scripts/run-agent-release-control-postgres-smoke.js",
     "agent:credential-rotation:report": "node scripts/agent-credential-rotation-gate.js --mode report",
@@ -81,7 +88,6 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:ci": "jest --ci --coverage --watchAll=false",
-    "postinstall": "npx prisma generate",
     "seed": "npx prisma db seed",
     "reset": "npx prisma migrate reset && npm run seed",
     "payroll:immutability:runtime": "node scripts/with-payroll-immutability-test-db.js -- node scripts/payroll-immutability-runtime-check.js --mode fail --out what-next/payroll/payroll-immutability-runtime-check.md --json-out what-next/payroll/payroll-immutability-runtime-check.json",
@@ -282,3 +288,4 @@
     "effect": "3.21.0"
   }
 }
+

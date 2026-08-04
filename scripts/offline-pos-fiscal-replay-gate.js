@@ -1,5 +1,6 @@
 const fs = require("fs")
 const path = require("path")
+const { writeGeneratedReportFile } = require("./generated-report-writer")
 
 const DEFAULT_JSON_OUT = "what-next/offline-pos-fiscal-replay-readiness.json"
 const DEFAULT_MARKDOWN_OUT = "what-next/offline-pos-fiscal-replay-readiness.md"
@@ -47,6 +48,10 @@ function buildOfflinePOSReplayReadiness(root = process.cwd(), options = {}) {
   const receiptService = read(root, "services/pos/receipt.service.ts")
   const assurance = read(root, "services/assurance/assurance-registry.service.ts")
   const packageJson = read(root, "package.json")
+  const syncActions = read(root, "actions/pos/sync.actions.ts")
+  const prismaSchema = read(root, "prisma/schema.prisma")
+  const migration = read(root, "prisma/migrations/20260727110000_offline_pos_sync_foundation/migration.sql")
+  const statusStrip = read(root, "components/pos/offline/OfflineSyncStatusStrip.tsx")
   const ingestSection = section(syncService, "async function ingestBatchInTx", "async function refreshCertificate")
   const replaySection = section(syncService, "export async function replayPendingOfflineSaleEnvelope", "async function ingestBatchInTx")
   const markReplaySection = section(syncService, "async function markOfflineSaleReplayed", "async function blockOfflineSaleReplay")
@@ -114,6 +119,44 @@ function buildOfflinePOSReplayReadiness(root = process.cwd(), options = {}) {
         assurance.includes('"offline_pos.quarantined_event_conflict.required"') &&
         assurance.includes('"offline_pos.replayed_event_proof.required"') &&
         packageJson.includes('"offline:pos:replay:gate"') && packageJson.includes("npm run offline:pos:replay:gate"),
+    },    {
+      id: "durable_offline_schema_migration",
+      ready: prismaSchema.includes("model POSOfflineDevice") && prismaSchema.includes("model POSOfflineSyncBatch") &&
+        prismaSchema.includes("model POSOfflineEvent") && prismaSchema.includes("model POSOfflineSyncConflict") &&
+        prismaSchema.includes("model POSOfflineSyncCertificate") &&
+        migration.includes('CREATE TABLE "pos_offline_devices"') && migration.includes('CREATE TABLE "pos_offline_events"') &&
+        migration.includes('CREATE TABLE "pos_offline_sync_conflicts"') && migration.includes("organizationId_deviceId_deviceSeq_key") &&
+        migration.includes("organizationId_idempotencyKey_key"),
+    },
+    {
+      id: "active_cashier_session_scope",
+      ready: syncService.includes("assertActiveCashierSession") &&
+        ingestSection.includes("requiresActiveCashierSession(parsed.events)") &&
+        ingestSection.includes("sessionId: parsed.sessionId") &&
+        syncService.includes('status: "ACTIVE"') && syncService.includes("userId: input.userId"),
+    },
+    {
+      id: "cryptographic_device_signature_verification",
+      ready: syncService.includes("createPublicKey") && syncService.includes("verifySignature(") &&
+        syncService.includes("offlineEventSignatureIsValid") && ingestSection.includes('conflictType = "SIGNATURE_INVALID"') &&
+        prismaSchema.includes("signingPublicKeyPem"),
+    },
+    {
+      id: "policy_expiry_and_reference_snapshot_quarantine",
+      ready: prismaSchema.includes("policyExpiresAt") && prismaSchema.includes("policySnapshotHash") &&
+        prismaSchema.includes("sourceSnapshotHash") && ingestSection.includes('conflictType = "OFFLINE_POLICY_EXPIRED"') &&
+        ingestSection.includes('conflictType = "STALE_REFERENCE_SNAPSHOT"'),
+    },
+    {
+      id: "stable_offline_action_discriminant",
+      ready: syncActions.includes("withOfflineActionContract") && syncActions.includes("ok: true as const") &&
+        syncActions.includes("ok: false as const") && syncActions.includes("ProtectedActionResponse") &&
+        syncActions.includes("errorCode: offlineActionErrorCode(result)") && syncService.includes("OfflineSyncErrorCode"),
+    },
+    {
+      id: "expired_policy_operator_visibility",
+      ready: syncService.includes("stalePolicyDeviceCount") && syncService.includes('code: "OFFLINE_POLICY_EXPIRED"') &&
+        statusStrip.includes("stalePolicyCount") && statusStrip.includes("t.stalePolicy"),
     },
   ]
 
@@ -150,10 +193,8 @@ function renderMarkdown(report) {
 function writeReport(root, options, report) {
   const jsonTarget = path.resolve(root, options.jsonOut)
   const markdownTarget = path.resolve(root, options.out)
-  fs.mkdirSync(path.dirname(jsonTarget), { recursive: true })
-  fs.mkdirSync(path.dirname(markdownTarget), { recursive: true })
-  fs.writeFileSync(jsonTarget, JSON.stringify(report, null, 2) + String.fromCharCode(10), "utf8")
-  fs.writeFileSync(markdownTarget, renderMarkdown(report), "utf8")
+  writeGeneratedReportFile(jsonTarget, JSON.stringify(report, null, 2) + String.fromCharCode(10), "utf8")
+  writeGeneratedReportFile(markdownTarget, renderMarkdown(report), "utf8")
 }
 
 if (require.main === module) {

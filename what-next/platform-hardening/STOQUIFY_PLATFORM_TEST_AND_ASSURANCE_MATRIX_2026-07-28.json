@@ -1,0 +1,152 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-07-28",
+  "summary": {
+    "passed": 9,
+    "failed": 1,
+    "skipped": 3,
+    "blocked": 1
+  },
+  "commands": [
+    {
+      "id": "CMD-01",
+      "command": "npm test -- --runInBand lib/security/__tests__/trusted-origins.test.ts",
+      "result": "failed",
+      "exitCode": 1,
+      "relevantOutput": "2/3 passed; Request was unavailable in Jest environment",
+      "attribution": "test implementation/harness, not production workflow",
+      "level": "unit"
+    },
+    {
+      "id": "CMD-02",
+      "command": "npm test -- --runInBand lib/security/__tests__/trusted-origins.test.ts",
+      "result": "passed",
+      "exitCode": 0,
+      "relevantOutput": "1 suite, 3/3 tests",
+      "attribution": "trusted-origin containment",
+      "level": "unit"
+    },
+    {
+      "id": "CMD-03",
+      "command": "npm test -- --runInBand services/purchase-order/__tests__/purchase-order.service.test.ts actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts",
+      "result": "passed",
+      "exitCode": 0,
+      "relevantOutput": "2 suites, 14/14 tests",
+      "attribution": "PO approval containment",
+      "level": "unit"
+    },
+    {
+      "id": "CMD-04",
+      "command": "npm test -- --runInBand services/pos/__tests__/pos.service.test.ts",
+      "result": "passed",
+      "exitCode": 0,
+      "relevantOutput": "1 suite, 14/14 tests",
+      "attribution": "POS containment and current POS slice",
+      "level": "unit"
+    },
+    {
+      "id": "CMD-05",
+      "command": "npm test -- --runInBand lib/security/__tests__/trusted-origins.test.ts services/purchase-order/__tests__/purchase-order.service.test.ts actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts",
+      "result": "passed",
+      "exitCode": 0,
+      "relevantOutput": "3 suites, 17/17 tests",
+      "attribution": "combined containment",
+      "level": "unit"
+    },
+    {
+      "id": "CMD-06",
+      "command": "npm run prisma:validate",
+      "result": "passed",
+      "exitCode": 0,
+      "relevantOutput": "Prisma schema valid",
+      "attribution": "schema static validation",
+      "level": "static"
+    },
+    {
+      "id": "CMD-07",
+      "command": "npm run typecheck",
+      "result": "passed",
+      "exitCode": 0,
+      "relevantOutput": "tsc --noEmit --pretty false",
+      "attribution": "current dirty workspace at verification time",
+      "level": "static"
+    },
+    {
+      "id": "CMD-08",
+      "command": "npm run service:boundary:fail",
+      "result": "passed",
+      "exitCode": 0,
+      "relevantOutput": "0 active violations; 11 allowed findings",
+      "attribution": "scanned app/actions/components/hooks boundaries",
+      "level": "static"
+    },
+    {
+      "id": "CMD-09",
+      "command": "npm run hard-delete:fail",
+      "result": "passed",
+      "exitCode": 0,
+      "relevantOutput": "0 active unsafe hard deletes; 8 classified allowed",
+      "attribution": "static callsite scan",
+      "level": "static"
+    },
+    {
+      "id": "CMD-10",
+      "command": "npm run workflow:assurance:release-gate",
+      "result": "passed",
+      "exitCode": 0,
+      "relevantOutput": "38/38 checks, 11/11 indexes, 2/2 engine health",
+      "attribution": "static gate only; no runtime checks executed",
+      "level": "static"
+    },
+    {
+      "id": "CMD-11",
+      "command": "npm run workflow:assurance:runtime-check",
+      "result": "skipped",
+      "exitCode": null,
+      "relevantOutput": "Configured database target authority not established",
+      "attribution": "risk control",
+      "level": "runtime"
+    },
+    {
+      "id": "CMD-12",
+      "command": "npm run policy:gates",
+      "result": "skipped",
+      "exitCode": null,
+      "relevantOutput": "Composite may rewrite user-owned readiness artifacts/run runtime helpers",
+      "attribution": "dirty-worktree risk control",
+      "level": "composite"
+    },
+    {
+      "id": "CMD-13",
+      "command": "npm run build:app",
+      "result": "skipped",
+      "exitCode": null,
+      "relevantOutput": "Not required for containment and time-bounded current run",
+      "attribution": "no build-pass claim",
+      "level": "build"
+    },
+    {
+      "id": "CMD-14",
+      "command": "Production provider/statutory/webhook verification",
+      "result": "blocked",
+      "exitCode": null,
+      "relevantOutput": "No credentials/authority and no external mutation authorized",
+      "attribution": "external dependency",
+      "level": "external"
+    }
+  ],
+  "requiredAdversarialCoverage": [
+    "cross-tenant indirect identifiers",
+    "audit outage",
+    "concurrent invitation redemption",
+    "customer/drawer concurrency",
+    "store-credit duplicate consumption",
+    "provider duplicate/refund",
+    "offline actor mismatch",
+    "AP exception race",
+    "inventory replay",
+    "projection semantic parity",
+    "webhook replay",
+    "migration rollback"
+  ]
+}

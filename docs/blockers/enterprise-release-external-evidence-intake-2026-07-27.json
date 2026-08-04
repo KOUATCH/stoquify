@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "environment": "PRODUCTION",
+  "database": {
+    "owner": {
+      "ownerDirectoryId": null,
+      "acceptanceReference": null,
+      "acceptedAt": null
+    },
+    "targetAttestationReference": null,
+    "managedDatabaseReference": null,
+    "migrationIdentityReference": null,
+    "runtimeIdentityReference": null,
+    "backupReference": null,
+    "restoreTestReference": null,
+    "changeReference": null,
+    "migrationExecutionReference": null
+  },
+  "managedSecrets": {
+    "owner": {
+      "ownerDirectoryId": null,
+      "acceptanceReference": null,
+      "acceptedAt": null
+    },
+    "entries": [
+      {
+        "name": "PUBLIC_IDENTITY_ABUSE_HASH_SECRET",
+        "managedSecretReference": null,
+        "versionReference": null,
+        "operatorDirectoryId": null,
+        "activatedAt": null,
+        "changeReference": null
+      },
+      {
+        "name": "AQSTOQFLOW_RECEIPT_TOKEN_SECRET",
+        "managedSecretReference": null,
+        "versionReference": null,
+        "operatorDirectoryId": null,
+        "activatedAt": null,
+        "changeReference": null
+      },
+      {
+        "name": "AQSTOQFLOW_HISTORY_CURSOR_SECRET",
+        "managedSecretReference": null,
+        "versionReference": null,
+        "operatorDirectoryId": null,
+        "activatedAt": null,
+        "changeReference": null
+      }
+    ],
+    "deploymentReference": null,
+    "redactedGateEvidenceReference": null
+  },
+  "statutory": {
+    "owner": {
+      "ownerDirectoryId": null,
+      "acceptanceReference": null,
+      "acceptedAt": null
+    },
+    "reviewPackageReference": "repository://docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package",
+    "reviewerDirectoryId": null,
+    "checkerDirectoryId": null,
+    "reviewerAppointmentReference": null,
+    "checkerAppointmentReference": null,
+    "qualificationReference": null,
+    "conflictDeclarationReference": null,
+    "sourceHashVerificationReference": null,
+    "fixtureTieOutReference": null,
+    "signedApprovalArtifactReference": null,
+    "signatureValidationReference": null,
+    "checkerVerificationReference": null,
+    "runtimeAuthorityPromotionReference": null,
+    "reviewedAt": null
+  },
+  "credentialRotation": {
+    "owner": {
+      "ownerDirectoryId": null,
+      "acceptanceReference": null,
+      "acceptedAt": null
+    },
+    "securityAuthorityDirectoryId": null,
+    "serviceOwnerRosterReference": null,
+    "credentialInventoryReference": null,
+    "rotationExecutionReference": null,
+    "oldVersionRejectionReference": null,
+    "securityApprovalReference": null
+  },
+  "operations": {
+    "owner": {
+      "ownerDirectoryId": null,
+      "acceptanceReference": null,
+      "acceptedAt": null
+    },
+    "releaseManagerDirectoryId": null,
+    "operationalOwnerRosterReference": null,
+    "protectedCiReference": null,
+    "schedulerDeploymentReference": null,
+    "schedulerWindowEvidenceReference": null,
+    "invalidAuthRejectionReference": null,
+    "alertLifecycleEvidenceReference": null,
+    "independentReviewReference": null,
+    "activationAuthorized": false
+  },
+  "safety": {
+    "secretValuesIncluded": false,
+    "databaseUrlIncluded": false,
+    "approvalsInferred": false,
+    "activationRequested": false,
+    "activationAuthorized": false,
+    "phase2bAuthorized": false,
+    "phase3Authorized": false
+  }
+}

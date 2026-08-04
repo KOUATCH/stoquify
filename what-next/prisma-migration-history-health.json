@@ -1,0 +1,83 @@
+{
+  "summary": {
+    "generatedAt": "2026-07-27T16:16:06.504Z",
+    "mode": "report",
+    "status": "blocked",
+    "checkCount": 8,
+    "readyCount": 5,
+    "blockerCount": 3,
+    "repositoryMigrationCount": 41,
+    "completedRowCount": 38,
+    "unfinishedRowCount": 1,
+    "rolledBackRowCount": 1,
+    "secretValuePrinted": false,
+    "migrationLogPrinted": false
+  },
+  "database": {
+    "configured": true,
+    "targetClass": "local"
+  },
+  "query": {
+    "succeeded": true,
+    "errorCode": null
+  },
+  "checks": [
+    {
+      "id": "database_url_configured",
+      "ready": true
+    },
+    {
+      "id": "migration_catalog_present",
+      "ready": true
+    },
+    {
+      "id": "migration_history_query_succeeded",
+      "ready": true
+    },
+    {
+      "id": "migration_history_has_no_unfinished_rows",
+      "ready": false
+    },
+    {
+      "id": "all_repository_migrations_successfully_applied",
+      "ready": false
+    },
+    {
+      "id": "applied_migration_checksums_match_repository",
+      "ready": false
+    },
+    {
+      "id": "database_has_no_unknown_successful_migrations",
+      "ready": true
+    },
+    {
+      "id": "database_has_no_duplicate_successful_migrations",
+      "ready": true
+    }
+  ],
+  "findings": {
+    "unfinished": [
+      "20260727110000_offline_pos_sync_foundation"
+    ],
+    "missing": [
+      "20260727110000_offline_pos_sync_foundation",
+      "20260727143000_country_adapter_pilot_foundation",
+      "20260727170000_ai_copilot_proposal_guardrails"
+    ],
+    "checksumMismatches": [
+      "20260619120000_backfill_purchase_receive_permission"
+    ],
+    "unknown": [],
+    "duplicateSuccesses": []
+  },
+  "blockers": [
+    "migration_history_has_no_unfinished_rows",
+    "all_repository_migrations_successfully_applied",
+    "applied_migration_checksums_match_repository"
+  ],
+  "safety": {
+    "readOnly": true,
+    "databaseUrlRetained": false,
+    "migrationLogsRetained": false
+  }
+}

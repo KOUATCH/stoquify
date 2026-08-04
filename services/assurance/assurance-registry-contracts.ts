@@ -188,6 +188,10 @@ export type WorkflowAssuranceRunInput = {
   locationId?: string
   sourceType?: string
   sourceId?: string
+  recordedFromInclusive?: string | Date
+  recordedThroughExclusive?: string | Date
+  cursor?: unknown
+  limit?: number
 }
 
 export type WorkflowAssuranceFindingRunSummary = {
@@ -979,6 +983,37 @@ export const INITIAL_WORKFLOW_ASSURANCE_CHECK_DEFINITIONS: WorkflowAssuranceChec
       openFindingStatuses: ["OPEN", "ASSIGNED", "IN_REVIEW", "REOPENED"],
     },
   },
+  {
+    checkKey: "pos.closed_shift_cash_shortage.review",
+    version: 1,
+    workflow: "pos",
+    moduleSlug: "pos",
+    invariantName: "Closed POS cash drawers with shortages should produce reviewable evidence before durable case activation.",
+    executionMode: "scheduled_scan",
+    defaultSeverity: "high",
+    requiredPermission: "pos.transactions.read",
+    ownerRole: "branch_manager",
+    enabled: false,
+    enforceMode: false,
+    sourceTables: ["business_events", "cash_shortage_policies"],
+    actionRoute: "/dashboard/manager-action-center",
+    metadata: {
+      assuranceDomain: "pos_cash_shortage_review",
+      stagedDefinitionOnly: true,
+      activationBlockedBy: [],
+      certifiedPrerequisites: [
+        "worker_checkpoint_contract",
+        "pos_specific_lifecycle_gating",
+        "runner_registration",
+        "production_policy_entry",
+      ],
+      evidenceLevel: "source_findings_redacted",
+      adapter: "pos-shift-cash-shortage-assurance-adapter",
+      productionThresholdConfigured: true,
+      productionActivationCertified: false,
+      activationHold: "worker_scheduler_incident_integration_required",
+    },
+  },
 ]
 
 export function assertCheckDefinitionComplete(definition: WorkflowAssuranceCheckDefinitionContract) {
@@ -997,6 +1032,16 @@ export function assertCheckDefinitionComplete(definition: WorkflowAssuranceCheck
 
   if (missing.length) {
     throw new BusinessRuleError(`Workflow assurance check definition is incomplete: ${missing.join(", ")}`)
+  }
+
+  if (
+    definition.checkKey === "pos.closed_shift_cash_shortage.review" &&
+    definition.enabled &&
+    definition.metadata.productionActivationCertified !== true
+  ) {
+    throw new BusinessRuleError(
+      "POS cash-shortage assurance activation requires separately certified production activation.",
+    )
   }
 
   if (definition.enforceMode) {

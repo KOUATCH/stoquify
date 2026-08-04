@@ -866,6 +866,17 @@
       "REQUIRES_CONFIGURATION": "Needs configuration",
       "REQUIRES_EXPERT_REVIEW": "Needs expert review"
     },
+    "adapterHealthStatuses": {
+      "HEALTHY": "Healthy",
+      "DEGRADED": "Degraded",
+      "BLOCKED": "Blocked",
+      "DISABLED": "Disabled"
+    },
+    "adapterReviewStatuses": {
+      "REQUIRES_EXPERT_REVIEW": "Expert review required",
+      "EXPERT_APPROVED": "Expert approved",
+      "REGULATOR_CONFIRMED": "Regulator confirmed"
+    },
     "environments": {
       "FAKE_SANDBOX": "Fake sandbox",
       "SANDBOX": "Sandbox",
@@ -883,16 +894,14 @@
       "capability": "Capability",
       "credential": "Credential",
       "credentialPresent": "Configured",
-      "credentialMissing": "Not configured"
+      "credentialMissing": "Not configured",
+      "credentialExpires": "Expires {date}",
+      "officialSpec": "Official specification",
+      "officialSpecMissing": "Not recorded",
+      "review": "Independent review",
+      "queue": "Open queue",
+      "queueValue": "{count} item(s), oldest {age}s"
     }
-  },
-  "receiptPreview": {
-    "sendWhatsApp": "Send via WhatsApp",
-    "whatsappSending": "Sending WhatsApp receipt",
-    "whatsappQueuedTitle": "WhatsApp receipt queued",
-    "whatsappQueuedMessage": "The receipt delivery attempt was recorded.",
-    "whatsappFailedTitle": "WhatsApp receipt failed",
-    "whatsappFailedMessage": "Unable to send the receipt via WhatsApp."
   },
   "pos": {
     "shell": {
@@ -1046,7 +1055,15 @@
     },
     "receipt": {
       "options": "Receipt options",
-      "destinationPlaceholder": "Receipt destination: email, phone, or WhatsApp number",
+      "destination": "Receipt destination",
+      "destinationRequired": "Enter a receipt destination before charging.",
+      "destinationPlaceholders": {
+        "email": "Customer email address",
+        "phone": "Customer phone number",
+        "whatsapp": "Customer WhatsApp number, e.g. +237699000000"
+      },
+      "whatsAppConsent": "Customer confirmed they want this receipt sent by WhatsApp.",
+      "whatsAppConsentRequired": "Confirm customer consent before sending a WhatsApp receipt.",
       "tokens": {
         "title": "Public receipt access",
         "loading": "Checking receipt links",
@@ -1177,6 +1194,179 @@
     },
     "hotkeys": "Ctrl/Cmd K search - F4 customer - F8 tender - Esc clear"
   },
+  "landingPreview": {
+    "founderJourney": {
+      "meta": {
+        "title": "Stoquify Founder Journey Preview",
+        "description": "A noindex concept preview for a founder-to-controlled-growth Stoquify landing experience."
+      },
+      "previewBar": {
+        "status": "Concept preview",
+        "aria": "Preview controls",
+        "currentLanding": "Current landing",
+        "languageAria": "Open this preview in French"
+      },
+      "hero": {
+        "category": "POS, inventory and OHADA-ready control",
+        "brand": "Stoquify",
+        "promise": "From your first sale to controlled growth.",
+        "copy": "Build one operating record across sales, stock, purchasing, payments and accounting, then add regulated extensions only when their dependencies are ready.",
+        "primaryCta": "See the adoption path",
+        "secondaryCta": "Inspect real product proof",
+        "evidenceLabel": "Branch daily-close command",
+        "classification": "Redacted product evidence",
+        "imageAlt": "Redacted Stoquify branch daily-close command showing source-linked operating evidence"
+      },
+      "problem": {
+        "eyebrow": "the control gap",
+        "title": "A business can grow faster than its operating record.",
+        "description": "When sales, stock, cash and accounting live in separate tools, the founder carries the explanation personally. Stoquify is designed to keep each decision connected to the source work behind it.",
+        "signals": {
+          "sales": {
+            "title": "Sales without a complete trail",
+            "copy": "A checkout event should still explain the payment, receipt, drawer, return and stock consequence."
+          },
+          "stock": {
+            "title": "Stock without accountable movement",
+            "copy": "A quantity should remain tied to a location, count, transfer, receipt, adjustment or sale."
+          },
+          "close": {
+            "title": "Close without source evidence",
+            "copy": "A journal or balance should lead back to the operational event, responsible role and approval history."
+          }
+        }
+      },
+      "journey": {
+        "eyebrow": "founder to controlled growth",
+        "title": "Build the operating foundation in four deliberate stages.",
+        "description": "Start with the work that creates the record. Add financial control and regulated extensions only after the source path is understood and ready.",
+        "stageLabel": "Stage {number}",
+        "stages": {
+          "foundation": {
+            "title": "Shape the operating model",
+            "copy": "Define locations, roles, products, prices, approval responsibilities and the first workflows the business must control.",
+            "boundary": "Scope, ownership and source data are confirmed during discovery."
+          },
+          "operation": {
+            "title": "Run the core operation",
+            "copy": "Bring sales, POS, inventory, purchasing, receipts and payment capture into one source-linked path.",
+            "boundary": "Enabled modules and implementation readiness govern rollout."
+          },
+          "control": {
+            "title": "Establish financial control",
+            "copy": "Connect payment evidence, reconciliation, journals and OHADA-ready accounting to the work that produced them.",
+            "boundary": "Country, accounting and provider readiness are qualified before activation."
+          },
+          "growth": {
+            "title": "Grow with governed visibility",
+            "copy": "Extend into multi-branch oversight, HRIS, payroll, compliance and automation when their prerequisites are proven.",
+            "boundary": "Extensions retain entitlement, approval, privacy and release gates."
+          }
+        }
+      },
+      "proof": {
+        "eyebrow": "product command",
+        "title": "Inspect the evidence, not a decorative mock-up.",
+        "description": "This approved, redacted product capture shows how a branch-close decision can carry source status, ownership and review context without exposing live tenant data.",
+        "imageAlt": "Read-only redacted Stoquify branch daily-close evidence with review context",
+        "caption": "Branch daily-close command and evidence review",
+        "classification": "Redacted product screenshot",
+        "signals": {
+          "source": {
+            "title": "Source-linked state",
+            "copy": "Operational signals remain connected to the work and records that produced them."
+          },
+          "owner": {
+            "title": "Named responsibility",
+            "copy": "Review context distinguishes who owns the next action without inventing automatic approval."
+          },
+          "decision": {
+            "title": "Decision-ready evidence",
+            "copy": "The surface supports review and follow-up while preserving the underlying control boundary."
+          }
+        }
+      },
+      "pathways": {
+        "eyebrow": "start from the job",
+        "title": "Choose the operating outcome before the module list.",
+        "description": "Each pathway starts with a real buyer responsibility and ends with evidence that can be reviewed.",
+        "items": {
+          "retail": {
+            "job": "Retail and POS operators",
+            "title": "Keep every branch sale accountable",
+            "outcome": "Connect checkout, tender, receipt, drawer and stock movement in one frontline path.",
+            "proof": "POS and continuity depend on enabled sales, inventory and approved device controls."
+          },
+          "inventory": {
+            "job": "Inventory and purchasing teams",
+            "title": "Explain stock and supplier commitments",
+            "outcome": "Tie movements, counts, transfers, orders, receiving and payables to responsible work.",
+            "proof": "Valuation and payable readiness remain dependent on complete source records."
+          },
+          "finance": {
+            "job": "Finance and accounting teams",
+            "title": "Carry operations into an explainable close",
+            "outcome": "Connect payment evidence, reconciliation, journals and OHADA accounting without losing provenance.",
+            "proof": "Accounting and close controls require reviewed configuration and complete periods."
+          },
+          "leadership": {
+            "job": "Multi-branch leadership",
+            "title": "See where control needs attention",
+            "outcome": "Review branch signals, unresolved work and ownership without flattening every role into one dashboard.",
+            "proof": "Visibility follows organization scope, permissions and active source paths."
+          }
+        }
+      },
+      "trust": {
+        "eyebrow": "control before scale",
+        "title": "Growth should deepen the evidence, not weaken it.",
+        "description": "Stoquify's public promise stays within the controls the platform can prove: traceability, scoped access and qualified OHADA readiness.",
+        "items": {
+          "traceability": {
+            "title": "Traceable operating history",
+            "copy": "Material events retain source, actor, state and review context across the connected path.",
+            "boundary": "Evidence quality still depends on complete source capture."
+          },
+          "access": {
+            "title": "Scoped access and approval",
+            "copy": "Tenant boundaries, permissions and controlled approvals determine who can view or act.",
+            "boundary": "The preview makes no certification or zero-risk claim."
+          },
+          "ohada": {
+            "title": "Qualified OHADA readiness",
+            "copy": "Accounting and statutory behavior remains separated from country and expert-reviewed configuration.",
+            "boundary": "Country packs and provider adapters must be proven before production use."
+          }
+        }
+      },
+      "adoption": {
+        "eyebrow": "qualified adoption",
+        "title": "Move from concept to rollout without pretending setup is instant.",
+        "description": "A controlled rollout confirms the operating job, data, modules, country dependencies, responsibilities and acceptance evidence before expansion.",
+        "steps": {
+          "discovery": {
+            "title": "Discover the operating job",
+            "copy": "Map branches, roles, source records, control gaps and the first outcome to prove."
+          },
+          "configuration": {
+            "title": "Configure the source path",
+            "copy": "Confirm data, permissions, modules, imports, providers and country readiness."
+          },
+          "pilot": {
+            "title": "Run a controlled pilot",
+            "copy": "Train users, observe the workflow and collect acceptance and exception evidence."
+          },
+          "decision": {
+            "title": "Decide the rollout",
+            "copy": "Approve the next scope only after controls, support boundaries and ownership are understood."
+          }
+        },
+        "boundary": "This preview does not activate a workspace. Final scope, dependencies, implementation services and commercial terms remain qualified.",
+        "primaryCta": "Plan a qualified rollout",
+        "secondaryCta": "Return to the current landing"
+      }
+    }
+  },
   "landing": {
     "header": {
       "homeAria": "Stoquify home",
@@ -1184,6 +1374,7 @@
       "navAria": "Landing page sections",
       "product": "Product",
       "workflow": "Workflow",
+      "workflowAtlas": "Atlas",
       "platform": "Platform",
       "people": "People & payroll",
       "controls": "Daily control",
@@ -1283,6 +1474,35 @@
       "eyebrow": "buyer pathways",
       "title": "Choose the operating pathway first, then add controlled modules.",
       "description": "Stoquify is clearest when buyers start from a real operating job: branch sales, stock, purchasing, cash, or OHADA close. Compliance, HRIS, payroll, and automation expand the record after the core flow is understood.",
+      "founderJourney": {
+        "eyebrow": "for early-stage founders",
+        "title": "From your first sale to controlled growth.",
+        "description": "Build the operating record in deliberate stages, so selling, stock, cash, and accounting remain explainable as the business grows.",
+        "stageLabel": "Stage {number}",
+        "cta": "Plan your rollout",
+        "stages": {
+          "foundation": {
+            "title": "Shape the operating model",
+            "copy": "Define locations, roles, products, prices, approval responsibilities, and the first workflows the business must control.",
+            "boundary": "Scope and source data are confirmed during discovery."
+          },
+          "launch": {
+            "title": "Run the core operation",
+            "copy": "Bring sales, POS, inventory, purchasing, receipts, and payment capture into one source-linked operating path.",
+            "boundary": "Enabled modules and implementation readiness govern rollout."
+          },
+          "control": {
+            "title": "Establish financial control",
+            "copy": "Connect payment evidence, reconciliation, journals, and OHADA-ready accounting to the work that produced them.",
+            "boundary": "Country and provider readiness are qualified before activation."
+          },
+          "growth": {
+            "title": "Grow with governed visibility",
+            "copy": "Extend into multi-branch oversight, HRIS, payroll, compliance, and automation only when their prerequisites are proven.",
+            "boundary": "Extensions retain entitlement, approval, and release gates."
+          }
+        }
+      },
       "moduleLabel": "pathway",
       "modules": {
         "pos": {
@@ -1967,13 +2187,6 @@
           "requires": "Finance, OHADA accounting, and a validated provider adapter",
           "driver": "Active provider connections and qualified setup scope"
         },
-        "production": {
-          "status": "controlled beta",
-          "name": "Production Operations",
-          "copy": "Connect recipes, raw materials, batches, planning, costing, yield, and profitability to inventory evidence.",
-          "requires": "Operations Core and production-readiness validation",
-          "driver": "Operating sites and implementation scope"
-        },
         "intelligence": {
           "status": "later-stage extension",
           "name": "Intelligence and Growth",
@@ -2046,39 +2259,532 @@
       "navAria": "Footer",
       "copyright": "Stoquify. Built for disciplined OHADA operations."
     },
-    "peopleToPay": {
-      "eyebrow": "people to pay",
-      "title": "Keep people truth separate from payroll execution, but never disconnected.",
-      "description": "Stoquify already contains a permission-gated HRIS foundation. The operating model makes its responsibility explicit: HRIS owns approved people facts; payroll consumes approved inputs; payments, declarations, and accounting retain their own proof.",
-      "stages": {
-        "people": {
-          "title": "HRIS people truth",
-          "copy": "People identity, organization scope, contracts, compensation, time, leave, approvals, self-service, and movement history.",
-          "signal": "Permission-scoped and redacted records"
+    "workflowAtlas": {
+      "eyebrow": "workflow atlas",
+      "title": "Choose your responsibility. See the relevant outcomes. Follow the proof.",
+      "description": "A role-first operating guide for prospects and users: choose a responsibility, narrow the outcomes to the work that role can influence, inspect the controlled path, and open the protected workspace when it is time to act.",
+      "roleLensLabel": "Operating responsibility lenses",
+      "indexLabel": "Workflow index",
+      "visibleCount": "Showing {count} workflow journeys for the selected role lens.",
+      "workflowLabel": "Workflow {number}",
+      "roleLabel": "Roles",
+      "handoffLabel": "Operating handoff",
+      "stepsLabel": "Workflow steps",
+      "controlLabel": "Control points",
+      "evidenceLabel": "Evidence out",
+      "protectedLabel": "Protected workspace routes",
+      "roles": {
+        "all": "All",
+        "owner": "Owner",
+        "cashier": "Cashier",
+        "stock": "Stock",
+        "purchasing": "Purchasing/AP",
+        "hrPayroll": "HR/Payroll",
+        "accountant": "Accountant",
+        "compliance": "Compliance",
+        "admin": "Admin"
+      },
+      "routeLabels": {
+        "pos": "POS",
+        "sales": "Sales",
+        "cashDrawer": "Cash drawer",
+        "reconciliation": "Reconciliation",
+        "inventory": "Inventory",
+        "items": "Items",
+        "movements": "Movements",
+        "transfers": "Transfers",
+        "stockToCash": "Stock to cash",
+        "purchases": "Purchases",
+        "purchaseOrders": "Purchase orders",
+        "payables": "Payables",
+        "suppliers": "Suppliers",
+        "customers": "Customers",
+        "receivables": "Receivables",
+        "people": "People",
+        "team": "Team",
+        "me": "My profile",
+        "payroll": "Payroll",
+        "payrollRuns": "Payroll runs",
+        "payslips": "Payslips",
+        "declarations": "Declarations",
+        "payrollPayments": "Payroll payments",
+        "payrollRegister": "Payroll register",
+        "financePayments": "Finance payments",
+        "accounting": "Accounting",
+        "journals": "Journals",
+        "accountingClose": "Accounting close",
+        "accountingControl": "Accounting control",
+        "assuranceControl": "Assurance control tower",
+        "compliance": "Compliance",
+        "payrollSetup": "Payroll setup",
+        "taxRates": "Tax rates",
+        "dailyDigest": "Daily digest",
+        "managerAction": "Manager action center",
+        "ownerWarRoom": "Owner war room",
+        "settingsUsers": "Users",
+        "settingsRoles": "Roles",
+        "settingsModules": "Modules",
+        "settingsLocations": "Locations",
+        "settingsSecurity": "Security"
+      },
+      "workflows": {
+        "sellToCash": {
+          "shortTitle": "Sell to cash",
+          "title": "Sell to cash",
+          "promise": "A cashier can move from checkout to receipt, drawer, settlement review, and reconciliation without splitting the story across disconnected tools.",
+          "handoff": "The sale creates receipt, payment, drawer, stock, and settlement signals that accounting can review later.",
+          "steps": {
+            "openSession": "Open the responsible POS session",
+            "captureSale": "Capture items, discounts, tax context, and customer details",
+            "collectPayment": "Collect the selected payment method and issue the receipt",
+            "closeDrawer": "Compare expected and counted drawer movement",
+            "reviewSettlement": "Route payment differences into reconciliation before close"
+          },
+          "controls": {
+            "sessionOwner": "Named cashier session",
+            "receiptState": "Receipt issue and return state",
+            "paymentMethod": "Payment method and provider context",
+            "drawerVariance": "Drawer variance review"
+          },
+          "evidence": {
+            "sale": "Sale record",
+            "receipt": "Receipt proof",
+            "drawerMovement": "Drawer movement",
+            "paymentProof": "Payment proof"
+          },
+          "dailyUse": "Use this when the counter needs the fastest route from sale to accountable cash.",
+          "nextAction": "Open POS, complete the sale, then check drawer and reconciliation signals before the day closes.",
+          "source": "Checkout event",
+          "destination": "POS and cash drawer"
         },
-        "payroll": {
-          "title": "Payroll readiness",
-          "copy": "Approved people facts become controlled payroll inputs without allowing payroll to overwrite HRIS truth.",
-          "signal": "Input readiness and approval state"
+        "stockToSale": {
+          "shortTitle": "Stock to sale",
+          "title": "Stock to sale",
+          "promise": "Stock teams can explain what moved, where it moved, why it moved, and how the sale or valuation signal changed the operating record.",
+          "handoff": "Item, location, transfer, count, and movement facts flow into sales availability and stock-to-cash review.",
+          "steps": {
+            "defineItem": "Define the item, unit, category, branch, and supplier context",
+            "receiveStock": "Receive stock with source and quantity proof",
+            "moveOrCount": "Record transfer, count, adjustment, or movement reason",
+            "sellItem": "Let POS consume stock with the sale context attached",
+            "reviewValue": "Review value, variance, and replenishment pressure"
+          },
+          "controls": {
+            "locationScope": "Branch and location scope",
+            "movementReason": "Movement reason and actor",
+            "transferAcceptance": "Dispatch and receiving acceptance",
+            "valuationSignal": "Valuation and variance signal"
+          },
+          "evidence": {
+            "itemRecord": "Item record",
+            "movementSource": "Movement source",
+            "locationActor": "Location and actor trail",
+            "variance": "Variance proof"
+          },
+          "dailyUse": "Use this when a quantity, transfer, count, or sale needs to explain stock truth.",
+          "nextAction": "Start from inventory, confirm the item and location, then follow the movement into sale or valuation review.",
+          "source": "Item or movement",
+          "destination": "Inventory workbench"
         },
-        "proof": {
-          "title": "Payments and declarations",
-          "copy": "Payslips, payment evidence, statutory declarations, provider state, and exceptions remain distinct.",
-          "signal": "Output, payment, and authority evidence"
+        "procureToPay": {
+          "shortTitle": "Procure to pay",
+          "title": "Procure to pay",
+          "promise": "Purchasing and AP teams can control commitments before cash leaves the business.",
+          "handoff": "Supplier identity, order, receiving, invoice, payable, and release readiness stay connected.",
+          "steps": {
+            "qualifySupplier": "Qualify supplier identity and terms",
+            "raiseOrder": "Raise and approve the purchase order",
+            "receiveGoods": "Receive goods or services against the order",
+            "confirmPayable": "Confirm the payable and open balance",
+            "prepareRelease": "Prepare payment release with reviewer context"
+          },
+          "controls": {
+            "supplierIdentity": "Supplier identity and terms",
+            "orderApproval": "Purchase order approval",
+            "receivingState": "Receiving state",
+            "payableReadiness": "Payable readiness"
+          },
+          "evidence": {
+            "order": "Purchase order",
+            "receipt": "Goods receipt",
+            "supplierBalance": "Supplier balance",
+            "payableProof": "Payable proof"
+          },
+          "dailyUse": "Use this before supplier commitments turn into uncontrolled cash pressure.",
+          "nextAction": "Open purchase orders, confirm supplier terms and receiving state, then move only ready payables forward.",
+          "source": "Supplier commitment",
+          "destination": "Purchase orders"
         },
-        "close": {
-          "title": "Accounting and close",
-          "copy": "Payroll postings, liabilities, reconciliation, corrections, and close assurance connect back to source.",
-          "signal": "Ledger references and close controls"
+        "customerToCollection": {
+          "shortTitle": "Customer to collection",
+          "title": "Customer to collection",
+          "promise": "Sales and finance teams can follow customer value beyond the invoice into collections, balances, disputes, and ledger review.",
+          "handoff": "Customer activity and financial position share one traceable path from order to receipt and reconciliation.",
+          "steps": {
+            "openCustomer": "Open or update the customer record",
+            "recordSale": "Record the sale, order, or invoice context",
+            "trackExposure": "Track open exposure and due position",
+            "collectMoney": "Collect money and attach receipt proof",
+            "resolveDifference": "Resolve differences before reporting"
+          },
+          "controls": {
+            "customerScope": "Customer scope and credit context",
+            "duePosition": "Due position",
+            "collectionProof": "Collection proof",
+            "reconciliationState": "Reconciliation state"
+          },
+          "evidence": {
+            "customerTrail": "Customer trail",
+            "openItem": "Open item",
+            "receipt": "Receipt proof",
+            "ledgerReference": "Ledger reference"
+          },
+          "dailyUse": "Use this when a customer balance needs follow-up beyond the original sale.",
+          "nextAction": "Open receivables, review the customer trail, then connect collection proof to reconciliation.",
+          "source": "Customer activity",
+          "destination": "Receivables"
+        },
+        "peopleToPay": {
+          "shortTitle": "People to pay",
+          "title": "People to pay, without losing control",
+          "promise": "HRIS facts become payroll inputs only after identity, contract, attendance, compensation, and readiness checks are clear.",
+          "handoff": "People records feed payroll, but runs, payslips, payments, declarations, and ledger references remain separately reviewable.",
+          "steps": {
+            "confirmIdentity": "Confirm employee identity and organization scope",
+            "approveContract": "Approve contract and compensation basis",
+            "captureTime": "Capture attendance, leave, and exceptions",
+            "approveInputs": "Approve payroll input readiness",
+            "runPayroll": "Calculate and approve the payroll run",
+            "publishPayslip": "Publish payslip and payment evidence"
+          },
+          "controls": {
+            "identity": "Identity and scope",
+            "contract": "Contract and compensation approval",
+            "attendance": "Attendance and exception review",
+            "inputReadiness": "Input readiness gate",
+            "runApproval": "Payroll run approval"
+          },
+          "evidence": {
+            "hrFact": "Approved HR fact",
+            "runResult": "Run result",
+            "payslip": "Payslip",
+            "paymentProof": "Payment proof"
+          },
+          "dailyUse": "Use this as the primary HRIS-to-payroll guide for keeping people truth separate from payroll execution.",
+          "nextAction": "Start in People, verify the approved HR fact, then let payroll consume only ready inputs.",
+          "source": "Approved people fact",
+          "destination": "People and payroll"
+        },
+        "payrollStatutoryProof": {
+          "shortTitle": "Payroll proof",
+          "title": "Payroll to statutory proof",
+          "promise": "Payroll outcomes can move into declarations, payments, and accounting without hiding authority evidence or correction state.",
+          "handoff": "Approved payroll output becomes declaration, payment, register, and compliance evidence.",
+          "steps": {
+            "lockRun": "Lock the approved payroll run",
+            "prepareDeclaration": "Prepare statutory declaration figures",
+            "attachAuthorityProof": "Attach authority or provider evidence",
+            "releasePayment": "Release payment with traceable proof",
+            "postReference": "Carry the reference into accounting review"
+          },
+          "controls": {
+            "declarationReadiness": "Declaration readiness",
+            "authorityEvidence": "Authority evidence",
+            "paymentTrace": "Payment trace",
+            "correctionState": "Correction state"
+          },
+          "evidence": {
+            "declarationPacket": "Declaration packet",
+            "paymentTrace": "Payment trace",
+            "register": "Payroll register",
+            "ledgerReference": "Ledger reference"
+          },
+          "dailyUse": "Use this when payroll output must become declaration, payment, and compliance proof.",
+          "nextAction": "Open declarations, confirm the approved run, attach authority evidence, and keep payment proof distinct.",
+          "source": "Approved payroll run",
+          "destination": "Payroll declarations"
+        },
+        "paymentReconciliation": {
+          "shortTitle": "Reconciliation",
+          "title": "Payment reconciliation",
+          "promise": "Finance can compare internal payments with provider or bank evidence and resolve differences before they distort close.",
+          "handoff": "Payment records, provider evidence, suspense items, and reviewer decisions stay linked.",
+          "steps": {
+            "importEvidence": "Import provider or bank evidence",
+            "compareRecords": "Compare expected and observed payment records",
+            "assignSuspense": "Assign unresolved differences",
+            "approveResolution": "Approve a match or reclassification",
+            "retainProof": "Retain the resolution packet"
+          },
+          "controls": {
+            "providerEvidence": "Provider evidence",
+            "statementImport": "Statement import",
+            "matchDecision": "Match decision",
+            "reviewerSignoff": "Reviewer sign-off"
+          },
+          "evidence": {
+            "matchDecision": "Match decision",
+            "suspenseItem": "Suspense item",
+            "providerProof": "Provider proof",
+            "resolutionHistory": "Resolution history"
+          },
+          "dailyUse": "Use this when recorded money and provider evidence need to agree before close.",
+          "nextAction": "Open reconciliation, import evidence, assign suspense, and retain the reviewer decision.",
+          "source": "Payment or provider event",
+          "destination": "Reconciliation"
+        },
+        "accountingCloseAssurance": {
+          "shortTitle": "Close assurance",
+          "title": "Accounting close assurance",
+          "promise": "Accounting can review source-linked journals, reconciliations, blockers, and close decisions without reconstructing operations from scratch.",
+          "handoff": "Operational proof becomes journal source, blocker state, reviewer history, and close-pack evidence.",
+          "steps": {
+            "linkSources": "Link operational sources to accounting context",
+            "postJournals": "Post journals with rule and reviewer context",
+            "reconcileAccounts": "Reconcile accounts and supporting schedules",
+            "clearBlockers": "Clear blockers or route corrections",
+            "certifyClose": "Certify close readiness"
+          },
+          "controls": {
+            "sourceLink": "Source link",
+            "postingRule": "Posting rule",
+            "blockerReview": "Blocker review",
+            "certificationState": "Certification state"
+          },
+          "evidence": {
+            "journalSource": "Journal source",
+            "closeBlocker": "Close blocker",
+            "reviewHistory": "Review history",
+            "closePack": "Close pack"
+          },
+          "dailyUse": "Use this when accounting needs the shortest route from operational source to defensible close.",
+          "nextAction": "Open accounting close, inspect source-linked journals, and clear blockers before certification.",
+          "source": "Source-linked journal",
+          "destination": "Accounting close"
+        },
+        "complianceCountryEvidence": {
+          "shortTitle": "Country evidence",
+          "title": "Compliance and country evidence",
+          "promise": "Compliance teams can see country rules, fiscal document status, adapter health, and unresolved uncertainty in one governed path.",
+          "handoff": "Country-pack scope, rule provenance, fiscal evidence, and adapter responses become reviewable status.",
+          "steps": {
+            "scopeCountry": "Scope the country and obligation",
+            "applyRule": "Apply the relevant rule source",
+            "collectDocument": "Collect fiscal or statutory document evidence",
+            "reviewAdapter": "Review adapter response and limitation",
+            "surfaceUncertainty": "Surface unresolved uncertainty for review"
+          },
+          "controls": {
+            "ruleProvenance": "Rule provenance",
+            "adapterState": "Adapter state",
+            "documentStatus": "Document status",
+            "openObligation": "Open obligation"
+          },
+          "evidence": {
+            "complianceEvidence": "Compliance evidence",
+            "countryPackStatus": "Country-pack status",
+            "authorityProof": "Authority proof",
+            "limitation": "Known limitation"
+          },
+          "dailyUse": "Use this when a rule, fiscal document, or country-pack limitation must stay visible.",
+          "nextAction": "Open compliance, review rule provenance, and surface unresolved obligations instead of hiding uncertainty.",
+          "source": "Country obligation",
+          "destination": "Compliance center"
+        },
+        "ownerDailyControl": {
+          "shortTitle": "Daily control",
+          "title": "Owner command and daily control",
+          "promise": "Owners and managers can see the exceptions that need a decision today and return to the source workflow behind each signal.",
+          "handoff": "Branch signals, approvals, stale evidence, and close issues become one decision queue.",
+          "steps": {
+            "scanSignals": "Scan branch and operating signals",
+            "openException": "Open the exception or blocker",
+            "assignOwner": "Assign a responsible owner",
+            "decideToday": "Record the decision or next action",
+            "returnToSource": "Return to the source workflow"
+          },
+          "controls": {
+            "exceptionQueue": "Exception queue",
+            "branchSignal": "Branch signal",
+            "approvalQueue": "Approval queue",
+            "staleEvidence": "Stale evidence marker"
+          },
+          "evidence": {
+            "decisionQueue": "Decision queue",
+            "sourceLink": "Source workflow link",
+            "assuranceState": "Assurance state",
+            "dailyClose": "Daily close record"
+          },
+          "dailyUse": "Use this as the owner's first daily stop for signals that need a decision.",
+          "nextAction": "Open the daily digest, choose the exception with the highest operational risk, and return to its source workflow.",
+          "source": "Daily operating signal",
+          "destination": "Daily digest"
+        },
+        "adminAccessControl": {
+          "shortTitle": "Access control",
+          "title": "Admin and access control",
+          "promise": "Admins can separate who may act, approve, configure, and review across modules, locations, and security scope.",
+          "handoff": "User, role, module, location, and security decisions become effective access with an audit trail.",
+          "steps": {
+            "inviteUser": "Invite or update the user",
+            "setRole": "Set role and permission boundary",
+            "scopeModule": "Scope module access",
+            "bindLocation": "Bind location responsibility",
+            "reviewSecurity": "Review security policy and changes"
+          },
+          "controls": {
+            "invitationState": "Invitation state",
+            "roleBoundary": "Role boundary",
+            "moduleAccess": "Module access",
+            "locationScope": "Location scope"
+          },
+          "evidence": {
+            "actorScope": "Actor scope",
+            "effectiveAccess": "Effective access",
+            "auditTrail": "Audit trail",
+            "securityPolicy": "Security policy"
+          },
+          "dailyUse": "Use this when access, role, location, or module scope needs to be changed without blurring responsibility.",
+          "nextAction": "Open users, confirm the actor scope, then adjust role or module access with auditability.",
+          "source": "Access request",
+          "destination": "User settings"
+        },
+        "workflowAssuranceGates": {
+          "shortTitle": "Release gates",
+          "title": "Workflow assurance and release gates",
+          "promise": "Operations can see which workflow is affected by an incident, gate, or release decision before expanding enforcement.",
+          "handoff": "Incidents, module enforcement, release gates, rollback readiness, and decisions remain tied to the affected workflow.",
+          "steps": {
+            "detectIncident": "Detect the workflow incident or gate issue",
+            "nameImpact": "Name the workflow and user impact",
+            "routeOwner": "Route ownership and next action",
+            "holdRelease": "Hold or clear release expansion",
+            "recordDecision": "Record the gate decision"
+          },
+          "controls": {
+            "incidentRouting": "Incident routing",
+            "moduleEnforcement": "Module enforcement",
+            "releaseGate": "Release gate",
+            "rollbackReadiness": "Rollback readiness"
+          },
+          "evidence": {
+            "incidentRecord": "Incident record",
+            "gateDecision": "Gate decision",
+            "affectedWorkflow": "Affected workflow",
+            "releaseHistory": "Release history"
+          },
+          "dailyUse": "Use this when an incident or gate could affect multiple workflows or release readiness.",
+          "nextAction": "Open the assurance control tower, name the affected workflow, and record the gate decision.",
+          "source": "Incident or gate",
+          "destination": "Assurance control tower"
         }
       },
-      "liveLabel": "implemented foundation",
-      "statusTitle": "The HRIS core is present behind role controls",
+      "dailyHubEyebrow": "daily workflow launchpad",
+      "dailyHubTitle": "Pick the work, then follow the safest path.",
+      "dailyHubBody": "The atlas now behaves like a role-aware operating manual: it explains the value for prospects, then gives users a fast path, control point, proof target, and protected route.",
+      "prospectLabel": "for prospects",
+      "prospectTitle": "Understand the value before the module list.",
+      "prospectBody": "Start from the outcome you need and see how Stoquify links work, control, evidence, and close.",
+      "userLabel": "for users",
+      "userTitle": "Use it as a daily shortcut map.",
+      "userBody": "Choose your responsibility, select a relevant outcome, read the next controlled action, and open the protected workspace route.",
+      "roleHubLabel": "choose your responsibility",
+      "outcomeChooserLabel": "choose a relevant outcome",
+      "outcomeContext": "{count} outcomes are relevant to {role}. This public lens organizes guidance; protected workspace permissions still decide access.",
+      "outcomeOptionLabel": "{outcome}, {count, plural, one {# workflow} other {# workflows}}",
+      "selectionAnnouncement": "{count, plural, =0 {No workflows match} one {# workflow matches} other {# workflows match}} {role} and {outcome}.",
+      "selectionLabel": "current operating lens",
+      "selectedRoleLabel": "Role",
+      "selectedOutcomeLabel": "Outcome",
+      "recommendedLabel": "Playbooks",
+      "bestNextActionLabel": "Best next action",
+      "mapLabel": "source to proof map",
+      "sourceLabel": "Source action",
+      "controlPointLabel": "Control point",
+      "proofLabel": "Proof",
+      "destinationLabel": "Workspace destination",
+      "quickLaunchLabel": "Protected shortcuts",
+      "routeHelp": "These links are launch points for signed-in users; dashboard permissions still decide access.",
+      "openProtected": "Open {route}",
+      "resetFilters": "Show all workflows",
+      "noMatchesTitle": "No playbook matches that exact lens.",
+      "noMatchesBody": "Clear one filter or return to all workflows to find the closest controlled path.",
+      "mapIndexLabel": "visual workflow map",
+      "mapIndexTitle": "Jump by outcome, not by department.",
+      "mapIndexBody": "Every tile is a doorway into a playbook. The user sees what to do, the prospect sees why the workflow matters, and both keep the proof boundary visible.",
+      "libraryLabel": "playbook library",
+      "libraryTitle": "The operating manual stays below the launchpad.",
+      "libraryBody": "Use the detailed cards when training, explaining the system to a buyer, or choosing the safest route for a task that crosses teams.",
+      "fastPathLabel": "Fast safe path",
+      "jumpToPlaybook": "Jump to {title} playbook",
+      "outcomes": {
+        "all": "Any outcome",
+        "sell": "Sell and collect",
+        "stock": "Restock or explain stock",
+        "buy": "Buy and control AP",
+        "collect": "Collect customer money",
+        "payPeople": "Pay people",
+        "declare": "Declare payroll obligations",
+        "reconcile": "Reconcile money",
+        "close": "Close the books",
+        "comply": "Handle compliance",
+        "decide": "Decide today's exceptions",
+        "administer": "Control access",
+        "release": "Resolve gates"
+      }
+    },
+    "peopleToPay": {
+      "eyebrow": "people to pay, without losing control",
+      "title": "Turn approved people facts into pay you can explain.",
+      "description": "Stoquify makes every handoff visible: HRIS keeps the trusted people record, payroll consumes approved inputs, and payment, declaration, and accounting evidence stays connected without collapsing those responsibilities.",
+      "flowLabel": "one controlled chain",
+      "flowSummary": "The source record moves forward; ownership changes, but the evidence never disappears.",
+      "flowAria": "From trusted people records to payroll, payment evidence, and accounting close",
+      "stageLabel": "Step {number}",
+      "ownerLabel": "Owner",
+      "inputLabel": "Moves in",
+      "proofLabel": "Evidence out",
+      "stages": {
+        "people": {
+          "title": "Trusted people record",
+          "owner": "HRIS",
+          "copy": "Establish the employee facts that every downstream payroll decision must respect.",
+          "input": "Identity, organization, contract, compensation, time, leave, and approvals",
+          "output": "Approved, permission-scoped people facts",
+          "status": "Foundation available"
+        },
+        "payroll": {
+          "title": "Approved pay inputs",
+          "owner": "Payroll readiness",
+          "copy": "Prepare the period without allowing payroll to rewrite the HRIS source of truth.",
+          "input": "Approved people facts, period controls, and readiness checks",
+          "output": "A reviewable payroll input set",
+          "status": "Controlled readiness"
+        },
+        "proof": {
+          "title": "Pay and declare",
+          "owner": "Payroll, provider, and authority",
+          "copy": "Keep payroll outputs distinct from the evidence that money moved and obligations were declared.",
+          "input": "Approved run, payslips, payment obligations, and declaration context",
+          "output": "Payment, declaration, provider, and exception evidence",
+          "status": "Country and provider gated"
+        },
+        "close": {
+          "title": "Post and close",
+          "owner": "Accounting and close",
+          "copy": "Carry payroll consequences into the ledger without losing the people and payment sources.",
+          "input": "Payroll liabilities, payment evidence, corrections, and reconciliation state",
+          "output": "Ledger references, reconciled balances, and close evidence",
+          "status": "Accounting controls gated"
+        }
+      },
+      "liveLabel": "available foundation",
+      "statusTitle": "Start with controlled people records",
       "statusBody": "The repository includes people directories and profiles, manager and employee self-service, approvals, movement history, contracts, compensation, time and leave, document evidence, organization scope, and payroll-readiness services.",
-      "peopleCta": "Plan people rollout",
-      "payrollCta": "Plan payroll extension",
-      "gatedLabel": "release boundary",
-      "boundaryTitle": "Unrestricted production promotion remains gated",
+      "peopleCta": "Plan the people foundation",
+      "payrollCta": "Qualify the payroll rollout",
+      "gatedLabel": "qualified extension",
+      "boundaryTitle": "Payroll reaches production only when every dependency is proven",
       "boundaryBody": "The latest readiness evidence approves a controlled local pilot, not an unrestricted production claim. Final environment, provider, authority, deployment, and release evidence must still be proven."
     }
   },

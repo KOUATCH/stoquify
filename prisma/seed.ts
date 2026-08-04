@@ -124,9 +124,6 @@ const clearDatabase = async () => {
   await safeDelete("stock_transfers", () => prisma.stockTransfer.deleteMany())
   await safeDelete("stock_adjustment_lines", () => prisma.stockAdjustmentLine.deleteMany())
   await safeDelete("stock_adjustments", () => prisma.stockAdjustment.deleteMany())
-  await safeDelete("production_batches", () => prisma.productionBatch.deleteMany())
-  await safeDelete("recipe_ingredients", () => prisma.recipeIngredient.deleteMany())
-  await safeDelete("recipes", () => prisma.recipe.deleteMany())
   await safeDelete("pos_sessions", () => prisma.pOSSession.deleteMany())
   await safeDelete("cash_drawers", () => prisma.cashDrawer.deleteMany())
   await safeDelete("pos_terminals", () => prisma.pOSStation.deleteMany())
@@ -838,59 +835,6 @@ const seedAccounting = async (actorId: string) => {
   })
 }
 
-const seedProduction = async (items: Awaited<ReturnType<typeof seedItems>>, userId: string) => {
-  const outputItem = items[1]
-  const ingredientItem = items[0]
-  const recipe = await prisma.recipe.create({
-    data: {
-      id: "recipe_demo_juice_pack",
-      nameEn: "Juice Pack Assembly",
-      nameFr: "Assemblage pack de jus",
-      outputItemId: outputItem.id,
-      outputQuantity: 12,
-      laborCost: 1_500,
-      overheadCost: 500,
-      version: 1,
-      isActive: true,
-      notes: "Demo production recipe using current bilingual fields.",
-      organizationId: ORGANIZATION_ID,
-      updatedAt: now(),
-    },
-  })
-
-  await prisma.recipeIngredient.create({
-    data: {
-      id: "recipe_ing_demo_water",
-      recipeId: recipe.id,
-      itemId: ingredientItem.id,
-      quantity: 12,
-      wastePercent: 0,
-      notes: "Packaging input for demo recipe",
-      updatedAt: now(),
-    },
-  })
-
-  await prisma.productionBatch.create({
-    data: {
-      id: "batch_demo_001",
-      batchNumber: "BATCH-DEMO-001",
-      recipeId: recipe.id,
-      plannedQuantity: 24,
-      actualQuantity: 24,
-      status: "COMPLETED",
-      startedAt: new Date("2026-05-01T08:00:00.000Z"),
-      completedAt: new Date("2026-05-01T11:00:00.000Z"),
-      totalInputCost: 4_000,
-      unitCost: 166.67,
-      notes: "Completed demo production batch",
-      locationId: STORE_LOCATION_ID,
-      organizationId: ORGANIZATION_ID,
-      createdById: userId,
-      updatedAt: now(),
-    },
-  })
-}
-
 const seedPOS = async (cashierId: string) => {
   const terminal = await prisma.pOSStation.create({
     data: {
@@ -967,10 +911,9 @@ export async function seedCurrentDemo() {
   await seedLocations()
   const catalog = await seedCatalog()
   const { supplier } = await seedPartners()
-  const items = await seedItems(catalog, supplier.id)
+  await seedItems(catalog, supplier.id)
 
-  console.log("Seeding production and POS data")
-  await seedProduction(items, admin.id)
+  console.log("Seeding POS data")
   await seedPOS(cashier.id)
 
   console.log("Seed complete")

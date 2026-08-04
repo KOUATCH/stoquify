@@ -3,7 +3,6 @@ export const MODULE_CONTROL_MODE = "observe" as const
 export const COMMERCIAL_MODULE_SLUGS = [
   "dashboard",
   "inventory",
-  "production",
   "sales",
   "pos",
   "cash_drawer",

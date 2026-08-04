@@ -3,7 +3,19 @@
 import { revalidateTag } from "next/cache"
 import { protect } from "@/services/_shared/protect"
 import { commitPOSSale, refundPOSSale, voidPOSSale } from "@/services/pos/pos.service"
-import { commitSaleSchema, refundPOSSaleSchema, voidPOSSaleSchema } from "@/services/pos/pos.schemas"
+import {
+  commitSaleSchema,
+  refundPOSSaleSchema,
+  voidPOSSaleSchema,
+} from "@/services/pos/pos.schemas"
+
+const POS_TENDER_ACTION_MODULE = {
+  moduleSlug: "pos" as const,
+  surfaceType: "action" as const,
+  accessIntent: "write" as const,
+  mode: "enforce" as const,
+  audit: true,
+}
 
 function revalidatePOSSaleTags(input: { locationId: string; terminalId: string }) {
   revalidateTag("pos-cart")
@@ -15,10 +27,22 @@ function revalidatePOSSaleTags(input: { locationId: string; terminalId: string }
 }
 
 export const commitPOSSaleAction = protect(
-  { permission: "pos.use", auditResource: "POSSale", auditAllowed: true },
+  {
+    permission: "pos.use",
+    auditResource: "POSSale",
+    auditAllowed: true,
+    module: {
+      ...POS_TENDER_ACTION_MODULE,
+      surface: "actions/pos/tender.actions.ts:commitPOSSaleAction",
+    },
+  },
   async (input: unknown, ctx) => {
     const parsed = commitSaleSchema.parse(input)
-    const sale = await commitPOSSale({ ...parsed, organizationId: ctx.orgId, userId: ctx.userId })
+    const sale = await commitPOSSale({
+      ...parsed,
+      organizationId: ctx.orgId,
+      userId: ctx.userId,
+    })
 
     revalidatePOSSaleTags(parsed)
     return sale
@@ -30,6 +54,10 @@ export const refundPOSSaleAction = protect(
     permission: "pos.transactions.refund",
     auditResource: "POSSaleRefund",
     freshAuth: { maxAgeSeconds: 300 },
+    module: {
+      ...POS_TENDER_ACTION_MODULE,
+      surface: "actions/pos/tender.actions.ts:refundPOSSaleAction",
+    },
   },
   async (input: unknown, ctx) => {
     const parsed = refundPOSSaleSchema.parse(input)
@@ -45,6 +73,10 @@ export const voidPOSSaleAction = protect(
     permission: "pos.transactions.void",
     auditResource: "POSSaleVoid",
     freshAuth: { maxAgeSeconds: 300 },
+    module: {
+      ...POS_TENDER_ACTION_MODULE,
+      surface: "actions/pos/tender.actions.ts:voidPOSSaleAction",
+    },
   },
   async (input: unknown, ctx) => {
     const parsed = voidPOSSaleSchema.parse(input)

@@ -1,0 +1,167 @@
+{
+  "summary": {
+    "generatedAt": "2026-08-01T19:28:23.374Z",
+    "mode": "fail",
+    "totalChecks": 9,
+    "ready": 9,
+    "gaps": 0,
+    "criticalGaps": 0
+  },
+  "checks": [
+    {
+      "id": "supplier-bank-request.action-boundary",
+      "title": "Supplier bank change request uses tenant and actor from protected action context",
+      "risk": "high",
+      "status": "ready",
+      "files": [
+        "actions/purchasing/ap-control.actions.ts",
+        "services/purchasing/ap-control.schemas.ts"
+      ],
+      "evidence": [
+        "Action requires purchasing.supplier.bank.request.",
+        "Action derives organizationId and requestedById from the RBAC context.",
+        "Schema keeps request payload explicit before service handling."
+      ],
+      "missing": [],
+      "recommendation": null
+    },
+    {
+      "id": "supplier-bank-approval.action-boundary",
+      "title": "Supplier bank approval requires fresh auth and trusted actor controls",
+      "risk": "critical",
+      "status": "ready",
+      "files": [
+        "actions/purchasing/ap-control.actions.ts",
+        "actions/purchasing/__tests__/ap-control.actions.test.ts"
+      ],
+      "evidence": [
+        "Action requires purchasing.supplier.bank.approve.",
+        "Fresh authentication is configured before RBAC/service work.",
+        "Client-supplied approvedById and organizationId are overwritten with RBAC context values."
+      ],
+      "missing": [],
+      "recommendation": null
+    },
+    {
+      "id": "supplier-bank-approval.shared-control-policy",
+      "title": "Supplier bank approval has shared sensitive-action policy",
+      "risk": "critical",
+      "status": "ready",
+      "files": [
+        "services/controls/sensitive-action.service.ts",
+        "services/controls/__tests__/sensitive-action.service.test.ts",
+        "lib/security/rbac-permissions.ts",
+        "config/permissions.ts"
+      ],
+      "evidence": [
+        "Shared sensitive-action policy marks supplier bank approval critical.",
+        "Policy requires fresh auth, self-approval blocking, audit action, and detector signals.",
+        "RBAC risk catalog classifies purchasing.supplier.bank.approve as critical."
+      ],
+      "missing": [],
+      "recommendation": null
+    },
+    {
+      "id": "supplier-bank-approval.service-control",
+      "title": "Supplier bank approval blocks self-approval and writes audit/business evidence",
+      "risk": "critical",
+      "status": "ready",
+      "files": [
+        "services/purchasing/ap-control.service.ts",
+        "services/purchasing/__tests__/ap-control.service.test.ts"
+      ],
+      "evidence": [
+        "Service loads the requested bank-change subject before sensitive-action evaluation.",
+        "Service blocks requester self-approval before bank account mutation.",
+        "Allowed approval writes business event and audit evidence inside the service transaction."
+      ],
+      "missing": [],
+      "recommendation": null
+    },
+    {
+      "id": "supplier-payment-release.action-boundary",
+      "title": "Supplier payment release requires fresh auth and trusted actor controls",
+      "risk": "critical",
+      "status": "ready",
+      "files": [
+        "actions/purchasing/ap-control.actions.ts",
+        "actions/purchasing/__tests__/ap-control.actions.test.ts"
+      ],
+      "evidence": [
+        "Action requires purchasing.ap.payment.release.",
+        "Fresh authentication is configured before RBAC/service work.",
+        "Client-supplied approval actors are not forwarded by the release action; the releaser is derived from RBAC context."
+      ],
+      "missing": [],
+      "recommendation": null
+    },
+    {
+      "id": "supplier-payment-release.shared-control-policy",
+      "title": "Supplier payment release has shared sensitive-action policy",
+      "risk": "critical",
+      "status": "ready",
+      "files": [
+        "services/controls/sensitive-action.service.ts",
+        "services/controls/__tests__/sensitive-action.service.test.ts",
+        "lib/security/rbac-permissions.ts",
+        "config/permissions.ts"
+      ],
+      "evidence": [
+        "Shared sensitive-action policy marks supplier payment release critical.",
+        "Policy requires fresh auth, self-approval blocking, audit action, and detector signals.",
+        "RBAC risk catalog classifies purchasing.ap.payment.release as critical."
+      ],
+      "missing": [],
+      "recommendation": null
+    },
+    {
+      "id": "supplier-payment-release.service-control",
+      "title": "Supplier payment release blocks unsafe release and writes ledger/reconciliation evidence",
+      "risk": "critical",
+      "status": "ready",
+      "files": [
+        "services/purchasing/ap-control.service.ts",
+        "services/purchasing/__tests__/ap-control.service.test.ts"
+      ],
+      "evidence": [
+        "Service blocks requester/approver, requester/releaser, and approver/releaser conflicts.",
+        "Service blocks release while supplier bank changes are pending or destination is unapproved.",
+        "Release requires an approved supplier payment before writing supplier ledger, business event, audit, ledger posting status, and reconciliation queue evidence."
+      ],
+      "missing": [],
+      "recommendation": null
+    },
+    {
+      "id": "supplier-payment-approval.action-boundary",
+      "title": "Supplier payment approval has a separate action boundary",
+      "risk": "critical",
+      "status": "ready",
+      "files": [
+        "actions/purchasing/ap-control.actions.ts",
+        "services/purchasing/ap-control.service.ts",
+        "services/controls/sensitive-action.service.ts"
+      ],
+      "evidence": [
+        "Shared policy exists for supplier.payment.approve.",
+        "Action scan expects a dedicated purchasing.ap.payment.approve boundary before release enforcement hardens."
+      ],
+      "missing": [],
+      "recommendation": null
+    },
+    {
+      "id": "ap-fraud-control.policy-gate-wiring",
+      "title": "AP fraud-control readiness runs as a fail-mode policy gate",
+      "risk": "critical",
+      "status": "ready",
+      "files": [
+        "package.json"
+      ],
+      "evidence": [
+        "Fail-mode AP fraud-control gate is available as an npm script.",
+        "The release policy path runs the AP fraud-control gate after the purchasing/AP gate."
+      ],
+      "missing": [],
+      "recommendation": null
+    }
+  ]
+}

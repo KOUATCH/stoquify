@@ -20,6 +20,14 @@ export function buildRoleDailyBrief(input: {
     priorities: [...input.projection.priorities]
       .sort((left, right) => severityScore(right.severity) - severityScore(left.severity))
       .slice(0, 5),
+    provenance: {
+      tenantId: input.context.organizationId,
+      tenantName: input.context.organizationName,
+      periodStart: input.projection.periodStart,
+      periodEnd: input.projection.periodEnd,
+      asOf: input.projection.generatedAt,
+      sourceCount: input.projection.evidence.length,
+    },
     runId: null,
   })
 

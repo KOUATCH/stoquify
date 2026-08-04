@@ -144,6 +144,11 @@ export type WorkflowAssuranceIncidentTransitionInput = {
   metadata?: Record<string, unknown>;
 };
 
+export type ResolveWorkflowAssuranceIncidentInput =
+  WorkflowAssuranceIncidentTransitionInput & {
+    currentSourceHash: string;
+  };
+
 export type AssignWorkflowAssuranceIncidentInput =
   WorkflowAssuranceIncidentTransitionInput & {
     ownerId: string;

@@ -1,0 +1,69 @@
+{
+  "summary": {
+    "generatedAt": "2026-07-27T05:34:18.633Z",
+    "status": "blocked",
+    "checkCount": 8,
+    "readyCount": 7,
+    "blockerCount": 2,
+    "migrationCount": 41,
+    "riskFindingCount": 0,
+    "approvedRiskCount": 0,
+    "secretValuePrinted": false
+  },
+  "deployment": {
+    "environment": "production",
+    "shouldDeploy": true,
+    "reason": "vercel_production",
+    "databaseConfigured": false,
+    "databaseTargetSafe": false,
+    "targetAttestation": null,
+    "blockers": [
+      "database_url_missing"
+    ]
+  },
+  "execution": {
+    "attempted": false,
+    "status": "pending",
+    "exitCode": null
+  },
+  "checks": [
+    {
+      "id": "migration_history_present",
+      "ready": true
+    },
+    {
+      "id": "migration_files_nonempty",
+      "ready": true
+    },
+    {
+      "id": "risk_approval_registry_valid",
+      "ready": true
+    },
+    {
+      "id": "destructive_sql_is_exact_hash_approved",
+      "ready": true
+    },
+    {
+      "id": "deployment_target_is_safe",
+      "ready": false
+    },
+    {
+      "id": "production_build_orders_secret_migration_and_app_gates",
+      "ready": true
+    },
+    {
+      "id": "migration_safety_gate_is_in_policy_chain",
+      "ready": true
+    },
+    {
+      "id": "release_verification_has_migration_preflight",
+      "ready": true
+    }
+  ],
+  "findings": [],
+  "staleApprovals": [],
+  "blockers": [
+    "deployment_target_is_safe",
+    "database_url_missing"
+  ]
+}

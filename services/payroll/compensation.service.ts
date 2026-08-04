@@ -26,7 +26,7 @@ import {
   recordBusinessEventInTx,
 } from "@/services/events/business-event.service"
 import { evaluateHrisContractReadinessProof } from "@/services/hris/payroll-readiness-contract"
-import { resolveRegulatoryParameter } from "@/services/regulatory/country-packs/resolve"
+import { resolveRegulatoryParameter } from "@/services/regulatory/regulatory-capability.service"
 import { evaluateRedaction, type RedactionDecision } from "@/services/security/redaction-policy.service"
 
 type DbClient = typeof db | Prisma.TransactionClient

@@ -1,6 +1,6 @@
 import "server-only"
 
-import { PostingRuleLineSide } from "@prisma/client"
+import { BusinessOutboxStatus, PostingRuleLineSide } from "@prisma/client"
 
 import { hasRbacPermission } from "@/lib/security/rbac-permissions"
 import { db } from "@/prisma/db"
@@ -122,6 +122,21 @@ export type AccountingControlEventSummary = {
   category: AccountingBlockerCategory
 }
 
+export type AccountingBusinessEventOutboxSummary = {
+  status: AccountingReadinessStatus
+  pending: number
+  locked: number
+  deferred: number
+  failed: number
+  deadLetter: number
+  openCount: number
+  blockerCount: number
+  warningCount: number
+  oldestOpenAt: string | null
+  oldestOpenStatus: string | null
+  oldestOpenEventName: string | null
+}
+
 export type AccountingControlCenterData = {
   organizationId: string
   generatedAt: string
@@ -163,6 +178,7 @@ export type AccountingControlCenterData = {
     controlEventCount: number
     deniedControlEventCount: number
   }
+  businessEventOutbox: AccountingBusinessEventOutboxSummary
   setupLock: AccountingSetupLockPolicy
 }
 
@@ -281,6 +297,13 @@ function buildChecklistItem(
   }
 }
 
+function businessEventOutboxCount(
+  groups: Array<{ status: BusinessOutboxStatus; _count: { _all: number } }>,
+  status: BusinessOutboxStatus,
+) {
+  return groups.find((group) => group.status === status)?._count._all ?? 0
+}
+
 export async function getAccountingControlCenterData(
   organizationId: string,
   context: AccountingControlCenterContext,
@@ -302,6 +325,8 @@ export async function getAccountingControlCenterData(
     setupIssues,
     latestLedgerEvents,
     latestControlEvents,
+    outboxStatusGroups,
+    oldestOpenOutbox,
   ] = await Promise.all([
     getAccountingSettings(organizationId),
     db.chartOfAccount.findMany({
@@ -382,6 +407,31 @@ export async function getAccountingControlCenterData(
       },
       orderBy: { createdAt: "desc" },
       take: 8,
+    }),
+    db.businessEventOutbox.groupBy({
+      by: ["status"],
+      where: { organizationId },
+      _count: { _all: true },
+    }),
+    db.businessEventOutbox.findFirst({
+      where: {
+        organizationId,
+        status: {
+          in: [
+            BusinessOutboxStatus.PENDING,
+            BusinessOutboxStatus.LOCKED,
+            BusinessOutboxStatus.DEFERRED,
+            BusinessOutboxStatus.FAILED,
+            BusinessOutboxStatus.DEAD_LETTER,
+          ],
+        },
+      },
+      orderBy: [{ availableAt: "asc" }, { createdAt: "asc" }],
+      select: {
+        availableAt: true,
+        status: true,
+        eventName: true,
+      },
     }),
   ])
 
@@ -653,6 +703,38 @@ export async function getAccountingControlCenterData(
         ),
       ]
 
+  const outboxPending = businessEventOutboxCount(outboxStatusGroups, BusinessOutboxStatus.PENDING)
+  const outboxLocked = businessEventOutboxCount(outboxStatusGroups, BusinessOutboxStatus.LOCKED)
+  const outboxDeferred = businessEventOutboxCount(outboxStatusGroups, BusinessOutboxStatus.DEFERRED)
+  const outboxFailed = businessEventOutboxCount(outboxStatusGroups, BusinessOutboxStatus.FAILED)
+  const outboxDeadLetter = businessEventOutboxCount(outboxStatusGroups, BusinessOutboxStatus.DEAD_LETTER)
+  const outboxOpenCount = outboxPending + outboxLocked + outboxDeferred + outboxFailed + outboxDeadLetter
+  const delayedOutboxCount = outboxFailed + outboxDeferred
+  const outboxBlockers: AccountingControlCenterBlocker[] = []
+
+  if (outboxDeadLetter > 0) {
+    outboxBlockers.push(
+      blocker(
+        "business-event-outbox-dead-letter",
+        "operational",
+        `${outboxDeadLetter} business event outbox message${outboxDeadLetter === 1 ? "" : "s"} require manual review before accounting readiness can be locked.`,
+        `${outboxDeadLetter} message${outboxDeadLetter === 1 ? "" : "s"} de la boite d'envoi des evenements metier exigent une revue manuelle avant le verrouillage comptable.`,
+      ),
+    )
+  }
+
+  if (delayedOutboxCount > 0) {
+    outboxBlockers.push(
+      blocker(
+        "business-event-outbox-delayed",
+        "operational",
+        `${delayedOutboxCount} business event outbox message${delayedOutboxCount === 1 ? "" : "s"} are delayed and need operational follow-up.`,
+        `${delayedOutboxCount} message${delayedOutboxCount === 1 ? "" : "s"} de la boite d'envoi des evenements metier sont en retard et exigent un suivi operationnel.`,
+        "warning",
+      ),
+    )
+  }
+
   const readinessBlockers = setupIssues.map(classifySetupIssue)
   const allBlockersById = new Map<string, AccountingControlCenterBlocker>()
   for (const item of [
@@ -662,6 +744,7 @@ export async function getAccountingControlCenterData(
     ...postingRuleBlockers,
     ...periodBlockers,
     ...permissionBlockers,
+    ...outboxBlockers,
     ...readinessBlockers,
   ]) {
     allBlockersById.set(item.id, item)
@@ -798,6 +881,15 @@ export async function getAccountingControlCenterData(
         "Une periode ouverte courante est disponible pour les ecritures.",
       ),
       buildChecklistItem(
+        "business-event-outbox",
+        "Business event outbox",
+        "Boite d'envoi des evenements metier",
+        "operational",
+        outboxBlockers,
+        "No delayed or dead-lettered business event messages are waiting.",
+        "Aucun message d'evenement metier retarde ou en rejet definitif n'est en attente.",
+      ),
+      buildChecklistItem(
         "setup-lock-permission",
         "Setup-lock permission",
         "Permission verrouillage",
@@ -820,6 +912,20 @@ export async function getAccountingControlCenterData(
       ledgerEventCount: ledgerEvents.length,
       controlEventCount: controlEvents.length,
       deniedControlEventCount: controlEvents.filter((event) => event.status === "denied").length,
+    },
+    businessEventOutbox: {
+      status: statusFromBlockers(outboxBlockers),
+      pending: outboxPending,
+      locked: outboxLocked,
+      deferred: outboxDeferred,
+      failed: outboxFailed,
+      deadLetter: outboxDeadLetter,
+      openCount: outboxOpenCount,
+      blockerCount: outboxBlockers.filter((item) => item.severity === "blocked").length,
+      warningCount: outboxBlockers.filter((item) => item.severity === "warning").length,
+      oldestOpenAt: iso(oldestOpenOutbox?.availableAt),
+      oldestOpenStatus: oldestOpenOutbox?.status ?? null,
+      oldestOpenEventName: oldestOpenOutbox?.eventName ?? null,
     },
     setupLock: {
       action: setupLockPolicy.action,

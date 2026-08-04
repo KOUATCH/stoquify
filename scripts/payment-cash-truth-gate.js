@@ -1,5 +1,6 @@
 const fs = require("fs")
 const path = require("path")
+const { writeGeneratedReportFile } = require("./generated-report-writer")
 
 const DEFAULT_JSON_OUT = "what-next/payment-cash-truth-readiness.json"
 const DEFAULT_MARKDOWN_OUT = "what-next/payment-cash-truth-readiness.md"
@@ -30,6 +31,68 @@ function read(root, relativePath) {
   return fs.existsSync(target) ? fs.readFileSync(target, "utf8") : ""
 }
 
+function listMigrationSources(root) {
+  const migrationsRoot = path.join(root, "prisma", "migrations")
+  if (!fs.existsSync(migrationsRoot)) return []
+
+  return fs
+    .readdirSync(migrationsRoot, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => {
+      const migrationPath = path.join(migrationsRoot, entry.name, "migration.sql")
+      return {
+        name: entry.name,
+        source: fs.existsSync(migrationPath) ? fs.readFileSync(migrationPath, "utf8") : "",
+      }
+    })
+    .sort((left, right) => left.name.localeCompare(right.name))
+}
+
+function hasPaymentReconciliationFoundationMigration(root) {
+  const migrations = listMigrationSources(root)
+  const workerLeaseIndex = migrations.findIndex(
+    (migration) => migration.name === "20260630100000_payment_reconciliation_inbox_worker_leases",
+  )
+  const upperBound = workerLeaseIndex >= 0 ? workerLeaseIndex : migrations.length
+  const foundationMarkers = [
+    'CREATE TYPE "PaymentRailType"',
+    'CREATE TYPE "ProviderAccountStatus"',
+    'CREATE TYPE "ProviderEventStatus"',
+    'CREATE TYPE "PaymentReconciliationInboxSource"',
+    'CREATE TABLE "payment_rails"',
+    'CREATE TABLE "provider_accounts"',
+    'CREATE TABLE "settlement_accounts"',
+    'CREATE TABLE "provider_events"',
+    'CREATE TABLE "statement_files"',
+    'CREATE TABLE "statement_lines"',
+    'CREATE TABLE "payment_transactions"',
+    'CREATE TABLE "match_records"',
+    'CREATE TABLE "suspense_items"',
+    'CREATE TABLE "reconciliation_runs"',
+    'CREATE TABLE "payment_exceptions"',
+    'CREATE TABLE "payment_reconciliation_inbox_items"',
+    'FOREIGN KEY ("organizationId") REFERENCES "organizations"',
+    'FOREIGN KEY ("providerAccountId") REFERENCES "provider_accounts"',
+    'ON "payment_rails"("organizationId", "code")',
+    'ON "provider_events"("organizationId", "providerAccountId", "providerEventId")',
+    'ON "statement_lines"("organizationId", "providerAccountId", "fingerprint")',
+    'ON "reconciliation_runs"("organizationId", "providerAccountId", "businessDate")',
+    'ON "payment_reconciliation_inbox_items"("organizationId", "source", "idempotencyKey")',
+  ]
+  const hasFoundation = migrations
+    .slice(0, upperBound)
+    .some((migration) => foundationMarkers.every((marker) => migration.source.includes(marker)))
+
+  const workerLeaseMigration = migrations[workerLeaseIndex]
+  const hasLeaseMigration =
+    Boolean(workerLeaseMigration) &&
+    workerLeaseMigration.source.includes('ALTER TABLE "payment_reconciliation_inbox_items"') &&
+    workerLeaseMigration.source.includes('ADD COLUMN "leasedBy" TEXT') &&
+    workerLeaseMigration.source.includes('ADD COLUMN "leaseToken" TEXT')
+
+  return hasFoundation && hasLeaseMigration
+}
+
 function markersInOrder(source, markers) {
   let cursor = -1
   for (const marker of markers) {
@@ -43,6 +106,7 @@ function buildPaymentCashTruthReadiness(root = process.cwd(), options = {}) {
   const evidence = read(root, "services/reconciliation/payment-reconciliation-evidence.service.ts")
   const run = read(root, "services/reconciliation/payment-reconciliation-run.service.ts")
   const certification = read(root, "services/reconciliation/payment-reconciliation-certification.service.ts")
+  const suspense = read(root, "services/reconciliation/payment-suspense-workflow.service.ts")
   const assurance = read(root, "services/assurance/assurance-registry.service.ts")
   const packageJson = read(root, "package.json")
 
@@ -88,6 +152,11 @@ function buildPaymentCashTruthReadiness(root = process.cwd(), options = {}) {
         certification.includes("sourceCounts: sourceEvidence.counts"),
     },
     {
+      id: "suspense_posting_reconciles_to_posted_ledger",
+      ready: suspense.includes("postPaymentSuspenseToLedger(") &&
+        certification.includes("assertPaymentSuspenseLedgerTruthInTx("),
+    },
+    {
       id: "export_recomputes_live_source_hash",
       ready: certification.includes("const signedSourceHash = reconciliationCertificateSourceEvidenceHash") &&
         certification.includes("signedSourceHash !== sourceEvidence.sourceHash"),
@@ -111,6 +180,10 @@ function buildPaymentCashTruthReadiness(root = process.cwd(), options = {}) {
       id: "policy_gate_wiring",
       ready: packageJson.includes('"payment:cash-truth:gate"') &&
         packageJson.includes("npm run payment:cash-truth:gate"),
+    },
+    {
+      id: "durable_payment_reconciliation_schema_migration",
+      ready: hasPaymentReconciliationFoundationMigration(root),
     },
   ]
 
@@ -169,10 +242,8 @@ function renderMarkdown(report) {
 function writeReport(root, options, report) {
   const jsonTarget = path.resolve(root, options.jsonOut)
   const markdownTarget = path.resolve(root, options.out)
-  fs.mkdirSync(path.dirname(jsonTarget), { recursive: true })
-  fs.mkdirSync(path.dirname(markdownTarget), { recursive: true })
-  fs.writeFileSync(jsonTarget, JSON.stringify(report, null, 2) + String.fromCharCode(10), "utf8")
-  fs.writeFileSync(markdownTarget, renderMarkdown(report), "utf8")
+  writeGeneratedReportFile(jsonTarget, JSON.stringify(report, null, 2) + String.fromCharCode(10), "utf8")
+  writeGeneratedReportFile(markdownTarget, renderMarkdown(report), "utf8")
 }
 
 if (require.main === module) {
@@ -195,4 +266,5 @@ module.exports = {
   markersInOrder,
   parseArgs,
   renderMarkdown,
+  hasPaymentReconciliationFoundationMigration,
 }

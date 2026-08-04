@@ -1,6 +1,6 @@
 # HRIS/Payroll Migration-Backfill Development Readiness
 
-Generated: 2026-07-20T07:07:34.358Z
+Generated: 2026-07-26T17:01:15.515Z
 Mode: fail
 Status: READY_FOR_SYNTHETIC_MIGRATION_DRY_RUN
 

@@ -78,10 +78,14 @@ function toRepoPath(root, filePath) {
   return path.relative(root, filePath).replace(/\\/g, "/")
 }
 
+function shouldIgnoreDirectory(name) {
+  return IGNORE_DIRS.has(name) || name.startsWith(".next-")
+}
+
 function walk(root, directory, files) {
   for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
     if (entry.isDirectory()) {
-      if (IGNORE_DIRS.has(entry.name)) continue
+      if (shouldIgnoreDirectory(entry.name)) continue
       walk(root, path.join(directory, entry.name), files)
       continue
     }

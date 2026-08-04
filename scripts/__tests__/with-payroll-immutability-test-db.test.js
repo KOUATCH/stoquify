@@ -8,6 +8,7 @@ const {
   resolvePayrollImmutabilityDatabaseUrl,
   setDatabaseName,
 } = require("../with-payroll-immutability-test-db")
+const { resolveSafeTarget } = require("../reset-payroll-immutability-test-db")
 
 describe("with payroll immutability test db", () => {
   it("derives the dedicated immutability database from a local DATABASE_URL", () => {
@@ -71,5 +72,27 @@ describe("with payroll immutability test db", () => {
         DATABASE_URL: "postgresql://user:pass@db.example.com:5432/stockflow",
       }),
     ).toThrow(/non-local DATABASE_URL/)
+  })
+  it("allows reset only for a named local test database", () => {
+    expect(
+      resolveSafeTarget({
+        PAYROLL_IMMUTABILITY_DATABASE_URL:
+          "postgresql://user:pass@localhost:5432/stockflow_immutability_test",
+      }),
+    ).toMatchObject({
+      dbName: "stockflow_immutability_test",
+      host: "localhost",
+    })
+  })
+
+  it.each([
+    "postgresql://user:pass@db.example.com:5432/stockflow_immutability_test",
+    "postgresql://user:pass@localhost:5432/stockflow",
+  ])("refuses unsafe reset target %s", (url) => {
+    expect(() =>
+      resolveSafeTarget({
+        PAYROLL_IMMUTABILITY_DATABASE_URL: url,
+      }),
+    ).toThrow(/Refusing to reset/)
   })
 })

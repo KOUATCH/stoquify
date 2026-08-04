@@ -1,11 +1,16 @@
+import type { ClientMissingCloseEvidenceRequestQueue } from "@/services/accounting/missing-close-evidence-request-queue-contracts"
 import type {
   AllowedOperatingAccessScope,
   OperatingAccessContext,
 } from "@/services/operating-access/operating-access-scope-contracts"
-import type { ActionQueueResult, BusinessSignal } from "@/services/signals/business-signal-contracts"
+import type {
+  ActionQueueResult,
+  BusinessSignal,
+} from "@/services/signals/business-signal-contracts"
 import type {
   CloseReadinessMetrics,
   InventoryCashMetrics,
+  InventoryLossMetrics,
   PaymentTruthMetrics,
   SnapshotFreshness,
   SnapshotResult,
@@ -25,6 +30,14 @@ jest.mock("@/services/snapshots/inventory-cash-snapshot.service", () => ({
   getInventoryCashSnapshot: jest.fn(),
 }))
 
+jest.mock("@/services/snapshots/inventory-loss-snapshot.service", () => ({
+  getInventoryLossSnapshot: jest.fn(),
+}))
+
+jest.mock("@/services/modules/module-entitlement.service", () => ({
+  observeModuleAccess: jest.fn(),
+}))
+
 jest.mock("@/services/snapshots/payment-truth-snapshot.service", () => ({
   getPaymentTruthSnapshot: jest.fn(),
 }))
@@ -38,17 +51,30 @@ jest.mock("@/services/assurance/assurance-control-tower.service", () => ({
   getAssuranceControlTowerData: jest.fn(),
 }))
 
-jest.mock("@/services/reconciliation/payment-reconciliation-sign-off-command-state.service", () => ({
-  getPaymentReconciliationSignOffCommandState: jest.fn(),
-}))
+jest.mock(
+  "@/services/reconciliation/payment-reconciliation-sign-off-command-state.service",
+  () => ({
+    getPaymentReconciliationSignOffCommandState: jest.fn(),
+  }),
+)
+
+jest.mock(
+  "@/services/accounting/missing-close-evidence-request-queue.service",
+  () => ({
+    getClientMissingCloseEvidenceRequestQueue: jest.fn(),
+  }),
+)
 
 import { resolveOperatingAccessScope } from "@/services/operating-access/operating-access-scope.service"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import { getCloseReadinessSnapshot } from "@/services/snapshots/close-readiness-snapshot.service"
 import { getInventoryCashSnapshot } from "@/services/snapshots/inventory-cash-snapshot.service"
 import { getPaymentTruthSnapshot } from "@/services/snapshots/payment-truth-snapshot.service"
+import { getInventoryLossSnapshot } from "@/services/snapshots/inventory-loss-snapshot.service"
 import { getTenantOperatingSnapshotFromRelated } from "@/services/snapshots/tenant-operating-snapshot.service"
 import { getAssuranceControlTowerData } from "@/services/assurance/assurance-control-tower.service"
 import { getPaymentReconciliationSignOffCommandState } from "@/services/reconciliation/payment-reconciliation-sign-off-command-state.service"
+import { getClientMissingCloseEvidenceRequestQueue } from "@/services/accounting/missing-close-evidence-request-queue.service"
 
 import {
   composeManagerActionCenterData,
@@ -60,9 +86,16 @@ const mockResolveOperatingAccessScope = resolveOperatingAccessScope as jest.Mock
 const mockGetCloseReadinessSnapshot = getCloseReadinessSnapshot as jest.Mock
 const mockGetInventoryCashSnapshot = getInventoryCashSnapshot as jest.Mock
 const mockGetPaymentTruthSnapshot = getPaymentTruthSnapshot as jest.Mock
-const mockGetTenantOperatingSnapshotFromRelated = getTenantOperatingSnapshotFromRelated as jest.Mock
-const mockGetAssuranceControlTowerData = getAssuranceControlTowerData as jest.Mock
-const mockGetPaymentReconciliationSignOffCommandState = getPaymentReconciliationSignOffCommandState as jest.Mock
+const mockGetInventoryLossSnapshot = getInventoryLossSnapshot as jest.Mock
+const mockObserveModuleAccess = observeModuleAccess as jest.Mock
+const mockGetTenantOperatingSnapshotFromRelated =
+  getTenantOperatingSnapshotFromRelated as jest.Mock
+const mockGetAssuranceControlTowerData =
+  getAssuranceControlTowerData as jest.Mock
+const mockGetPaymentReconciliationSignOffCommandState =
+  getPaymentReconciliationSignOffCommandState as jest.Mock
+const mockGetClientMissingCloseEvidenceRequestQueue =
+  getClientMissingCloseEvidenceRequestQueue as jest.Mock
 
 const generatedAt = "2026-06-20T10:00:00.000Z"
 
@@ -70,7 +103,14 @@ describe("manager action center service", () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockResolveOperatingAccessScope.mockResolvedValue(tenantAccessDecision())
-    mockGetPaymentReconciliationSignOffCommandState.mockResolvedValue(emptyReconciliationCommandState())
+    mockGetPaymentReconciliationSignOffCommandState.mockResolvedValue(
+      emptyReconciliationCommandState(),
+    )
+    mockObserveModuleAccess.mockResolvedValue({ allowed: true })
+    mockGetInventoryLossSnapshot.mockResolvedValue(inventoryLossSnapshot())
+    mockGetClientMissingCloseEvidenceRequestQueue.mockResolvedValue(
+      missingProofQueue(),
+    )
   })
 
   it("fails closed on a denied operating scope before downstream reads", async () => {
@@ -109,7 +149,9 @@ describe("manager action center service", () => {
       authority: {
         kind: "LOCATION_RESPONSIBILITY",
         basis: "Location.managerId",
-        managedLocations: [{ id: "location-1", name: "Branch One", code: "B1" }],
+        managedLocations: [
+          { id: "location-1", name: "Branch One", code: "B1" },
+        ],
       },
       scope: { kind: "LOCATIONS", locationIds: ["location-1"] },
     })
@@ -166,7 +208,9 @@ describe("manager action center service", () => {
       "assigned",
       "routine",
     ])
-    expect(data.runSheetGroups.find((group) => group.id === "critical")).toMatchObject({
+    expect(
+      data.runSheetGroups.find((group) => group.id === "critical"),
+    ).toMatchObject({
       count: 2,
       state: "blocked",
     })
@@ -185,7 +229,9 @@ describe("manager action center service", () => {
         href: "/dashboard/finance/payments/reconciliation",
       },
     })
-    expect(data.kpis.find((card) => card.id === "manager-hidden-actions")).toMatchObject({
+    expect(
+      data.kpis.find((card) => card.id === "manager-hidden-actions"),
+    ).toMatchObject({
       state: "permission_denied",
       requiredPermission: "users.read",
     })
@@ -197,7 +243,8 @@ describe("manager action center service", () => {
         status: "NON_AUTHORITATIVE",
         authoritative: false,
         reasonCode: "PAYROLL_FORECAST_PROOF_INCOMPLETE",
-        message: "Upcoming payroll finance forecasts are withheld because payroll proof is incomplete.",
+        message:
+          "Upcoming payroll finance forecasts are withheld because payroll proof is incomplete.",
         upcomingNetPayAmount: 0,
         upcomingStatutoryLiabilityAmount: 0,
         totalUpcomingAmount: 0,
@@ -213,9 +260,11 @@ describe("manager action center service", () => {
         severity: "high",
         gate: "payroll_finance_forecast",
         title: "Payroll payment proof is missing",
-        detail: "Upcoming net-pay forecast is withheld until released payment batches include immutable payment and ledger evidence.",
+        detail:
+          "Upcoming net-pay forecast is withheld until released payment batches include immutable payment and ledger evidence.",
         sourceTables: ["payroll_runs", "payroll_payment_batches"],
-        nextAction: "Open payroll payments and complete payment release evidence.",
+        nextAction:
+          "Open payroll payments and complete payment release evidence.",
       },
       {
         id: "tenant-unrelated-close-blocker",
@@ -239,7 +288,9 @@ describe("manager action center service", () => {
       actionQueue: actionQueue({ total: 0, filteredOutCount: 0 }),
     })
 
-    const payroll = data.kpis.find((card) => card.id === "manager-payroll-forecast-proof")
+    const payroll = data.kpis.find(
+      (card) => card.id === "manager-payroll-forecast-proof",
+    )
 
     expect(payroll).toMatchObject({
       value: 0,
@@ -249,11 +300,15 @@ describe("manager action center service", () => {
       moduleSlug: "payroll",
       requiredPermission: "payroll.payments.reconcile",
       blockers: [expect.objectContaining({ gate: "payroll_finance_forecast" })],
-      redactions: [expect.objectContaining({ field: "payroll.personLevelAmounts" })],
+      redactions: [
+        expect.objectContaining({ field: "payroll.personLevelAmounts" }),
+      ],
     })
     expect(payroll?.detail).toContain("Open payroll payments")
     expect(payroll?.blockers).toEqual(
-      expect.not.arrayContaining([expect.objectContaining({ gate: "close_readiness" })]),
+      expect.not.arrayContaining([
+        expect.objectContaining({ gate: "close_readiness" }),
+      ]),
     )
   })
 
@@ -274,7 +329,9 @@ describe("manager action center service", () => {
     expect(data.runSheetGroups.every((group) => group.count === 0)).toBe(true)
     expect(data.commandBrief.state).toBe("empty")
     expect(data.insights).toEqual([])
-    expect(data.kpis.find((card) => card.id === "manager-open-actions")).toMatchObject({
+    expect(
+      data.kpis.find((card) => card.id === "manager-open-actions"),
+    ).toMatchObject({
       state: "empty",
       value: 0,
     })
@@ -284,8 +341,12 @@ describe("manager action center service", () => {
     mockGetPaymentTruthSnapshot.mockResolvedValue(paymentSnapshot())
     mockGetInventoryCashSnapshot.mockResolvedValue(inventorySnapshot())
     mockGetCloseReadinessSnapshot.mockResolvedValue(closeSnapshot())
-    mockGetTenantOperatingSnapshotFromRelated.mockResolvedValue(tenantSnapshot())
-    mockGetAssuranceControlTowerData.mockRejectedValue(new Error("assurance timeout"))
+    mockGetTenantOperatingSnapshotFromRelated.mockResolvedValue(
+      tenantSnapshot(),
+    )
+    mockGetAssuranceControlTowerData.mockRejectedValue(
+      new Error("assurance timeout"),
+    )
 
     const context = accessContext()
     const data = await getManagerActionCenterData({
@@ -304,8 +365,12 @@ describe("manager action center service", () => {
     mockGetPaymentTruthSnapshot.mockResolvedValue(paymentSnapshot())
     mockGetInventoryCashSnapshot.mockResolvedValue(inventorySnapshot())
     mockGetCloseReadinessSnapshot.mockResolvedValue(closeSnapshot())
-    mockGetTenantOperatingSnapshotFromRelated.mockResolvedValue(tenantSnapshot())
-    mockGetAssuranceControlTowerData.mockRejectedValue(new Error("assurance timeout"))
+    mockGetTenantOperatingSnapshotFromRelated.mockResolvedValue(
+      tenantSnapshot(),
+    )
+    mockGetAssuranceControlTowerData.mockRejectedValue(
+      new Error("assurance timeout"),
+    )
 
     const context = accessContext()
     const data = await getManagerActionCenterDataFromResolvedAccess(
@@ -322,6 +387,119 @@ describe("manager action center service", () => {
     expect(mockGetCloseReadinessSnapshot).toHaveBeenCalled()
     expect(mockGetTenantOperatingSnapshotFromRelated).toHaveBeenCalled()
     expect(data.organizationId).toBe("org-1")
+  })
+
+  it("feeds a gated Inventory Loss review into the tenant manager queue", async () => {
+    mockTenantReadSources()
+    mockGetInventoryLossSnapshot.mockResolvedValue(
+      inventoryLossSnapshot({
+        lossLineCount: 2,
+        adjustmentCount: 1,
+        totalLossValue: 45000,
+        damagedLineCount: 2,
+        evidenceCoveredLineCount: 2,
+        evidenceCoveragePercent: 100,
+        valuationCoveredLineCount: 2,
+        valuationCoveragePercent: 100,
+        approvalAttributedLineCount: 2,
+        approvalCoveragePercent: 100,
+      }),
+    )
+
+    const context = accessContext({
+      permissions: ["dashboard.read", "inventory.levels.read"],
+    })
+    const data = await getManagerActionCenterDataFromResolvedAccess(
+      {
+        accessContext: context,
+        now: generatedAt,
+      },
+      tenantAccessDecision(context),
+    )
+
+    expect(mockObserveModuleAccess).toHaveBeenCalledWith({
+      organizationId: "org-1",
+      userId: "user-1",
+      actorPermissions: context.permissions,
+      moduleSlug: "inventory",
+      surfaceType: "page",
+      surface: "manager-action-center.inventory-loss",
+      accessIntent: "read",
+      mode: "enforce",
+      audit: true,
+      now: generatedAt,
+    })
+    expect(mockGetInventoryLossSnapshot).toHaveBeenCalledWith({
+      organizationId: "org-1",
+      periodStart: null,
+      periodEnd: null,
+      maxAgeMinutes: null,
+      now: generatedAt,
+    })
+    expect(data.actionQueue.signals).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          signalType: "inventory_loss_review",
+          sourceSnapshotKind: "inventory.loss",
+          sourceHash: "inventory-loss-hash",
+          requiredPermission: "inventory.levels.read",
+          actionPath: "/dashboard/inventory/losses",
+          assignedRole: "manager",
+        }),
+      ]),
+    )
+    expect(
+      data.actionQueue.signals.find(
+        (signal) => signal.signalType === "inventory_loss_review",
+      )?.detail,
+    ).toContain("does not identify who caused the loss")
+    expect(data.actionItems).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          actionPath: "/dashboard/inventory/losses",
+          origin: "SIGNAL",
+        }),
+      ]),
+    )
+  })
+
+  it("does not evaluate entitlement or read Inventory Loss without RBAC", async () => {
+    mockTenantReadSources()
+    const context = accessContext({ permissions: ["dashboard.read"] })
+
+    const data = await getManagerActionCenterDataFromResolvedAccess(
+      { accessContext: context, now: generatedAt },
+      tenantAccessDecision(context),
+    )
+
+    expect(mockObserveModuleAccess).not.toHaveBeenCalled()
+    expect(mockGetInventoryLossSnapshot).not.toHaveBeenCalled()
+    expect(data.actionQueue.signals).toEqual(
+      expect.not.arrayContaining([
+        expect.objectContaining({ signalType: "inventory_loss_review" }),
+      ]),
+    )
+  })
+
+  it("does not read Inventory Loss when its enforced module entitlement denies", async () => {
+    mockTenantReadSources()
+    mockObserveModuleAccess.mockResolvedValue({ allowed: false })
+    const context = accessContext({
+      permissions: ["dashboard.read", "inventory.levels.read"],
+    })
+
+    const data = await getManagerActionCenterDataFromResolvedAccess(
+      { accessContext: context, now: generatedAt },
+      tenantAccessDecision(context),
+    )
+
+    expect(mockObserveModuleAccess).toHaveBeenCalled()
+    expect(mockGetInventoryLossSnapshot).not.toHaveBeenCalled()
+    expect(data.actionQueue.signals).toEqual(
+      expect.not.arrayContaining([
+        expect.objectContaining({ signalType: "inventory_loss_review" }),
+      ]),
+    )
   })
 
   it("adds visible workflow assurance incidents to manager action items", () => {
@@ -345,7 +523,9 @@ describe("manager action center service", () => {
       blocked: 1,
       hiddenByPermission: 2,
     })
-    expect(data.runSheetGroups.find((group) => group.id === "overdue")).toMatchObject({
+    expect(
+      data.runSheetGroups.find((group) => group.id === "overdue"),
+    ).toMatchObject({
       count: 1,
       state: "blocked",
     })
@@ -372,8 +552,7 @@ describe("manager action center service", () => {
         closeReadiness: closeSnapshot(),
       },
       actionQueue: actionQueue({ total: 0, filteredOutCount: 0 }),
-      paymentReconciliationSignOff:
-        availableReconciliationCommandState(),
+      paymentReconciliationSignOff: availableReconciliationCommandState(),
     })
 
     expect(data.summary).toMatchObject({
@@ -402,8 +581,9 @@ describe("manager action center service", () => {
         }),
       }),
     ])
-    expect(data.runSheetGroups.find((group) => group.id === "critical"))
-      .toMatchObject({ count: 1 })
+    expect(
+      data.runSheetGroups.find((group) => group.id === "critical"),
+    ).toMatchObject({ count: 1 })
   })
 
   it("keeps a read-only reconciliation descriptor link-only with no executable payload", () => {
@@ -417,8 +597,9 @@ describe("manager action center service", () => {
         closeReadiness: closeSnapshot(),
       },
       actionQueue: actionQueue({ total: 0, filteredOutCount: 0 }),
-      paymentReconciliationSignOff:
-        readOnlyReconciliationCommandState("SIGN_PERMISSION_REQUIRED"),
+      paymentReconciliationSignOff: readOnlyReconciliationCommandState(
+        "SIGN_PERMISSION_REQUIRED",
+      ),
     })
 
     expect(data.summary).toMatchObject({
@@ -504,11 +685,12 @@ describe("manager action center service", () => {
       tenantAccessDecision(context),
     )
 
-    expect(mockGetPaymentReconciliationSignOffCommandState)
-      .toHaveBeenCalledWith({
-        accessContext: context,
-        now: generatedAt,
-      })
+    expect(
+      mockGetPaymentReconciliationSignOffCommandState,
+    ).toHaveBeenCalledWith({
+      accessContext: context,
+      now: generatedAt,
+    })
     expect(data.actionItems).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -545,11 +727,297 @@ describe("manager action center service", () => {
         expect.objectContaining({ origin: "SOURCE_COMMAND" }),
       ]),
     )
-    expect(data.summary.hiddenByPermission).toBe(
-      actionQueue().filteredOutCount,
+    expect(data.summary.hiddenByPermission).toBe(actionQueue().filteredOutCount)
+  })
+  it("composes recipient-owned missing-proof requests after RBAC and entitlement", async () => {
+    mockTenantReadSources()
+    const queue = missingProofQueue()
+    mockGetClientMissingCloseEvidenceRequestQueue.mockResolvedValue(queue)
+    const context = accessContext({
+      permissions: ["dashboard.read", "accounting.close.read"],
+    })
+
+    const data = await getManagerActionCenterDataFromResolvedAccess(
+      { accessContext: context, now: generatedAt },
+      tenantAccessDecision(context),
+    )
+
+    expect(mockObserveModuleAccess).toHaveBeenCalledWith({
+      organizationId: "org-1",
+      userId: "user-1",
+      actorPermissions: context.permissions,
+      moduleSlug: "close_assurance",
+      surfaceType: "page",
+      surface: "manager-action-center.client-missing-proof",
+      accessIntent: "read",
+      mode: "enforce",
+      audit: true,
+      now: generatedAt,
+    })
+    expect(mockGetClientMissingCloseEvidenceRequestQueue).toHaveBeenCalledWith({
+      organizationId: "org-1",
+      actorId: "user-1",
+      actorPermissions: context.permissions,
+    })
+    expect(data.clientMissingProofSource).toEqual({
+      state: "AVAILABLE",
+      queue,
+      reason: null,
+    })
+    expect(data.actionItems).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "accountant-missing-proof:request-1",
+          origin: "ACCOUNTANT_REQUEST",
+          kind: "LINK",
+          sourceCommand: null,
+          status: "assigned",
+          state: "redacted",
+          actionPath:
+            "/dashboard/accounting/close/period-1?findingId=finding-1",
+          actionLink: expect.objectContaining({
+            moduleSlug: "close_assurance",
+            requiredPermission: "accounting.close.read",
+          }),
+          redactions: [
+            expect.objectContaining({
+              field: "accountantComment.metadata",
+              policy: "CLIENT_RECIPIENT_ONLY_NO_RAW_METADATA",
+            }),
+          ],
+        }),
+      ]),
+    )
+  })
+
+  it("hides the missing-proof source before entitlement evaluation without close RBAC", async () => {
+    mockTenantReadSources()
+    const context = accessContext({ permissions: ["dashboard.read"] })
+
+    const data = await getManagerActionCenterDataFromResolvedAccess(
+      { accessContext: context, now: generatedAt },
+      tenantAccessDecision(context),
+    )
+
+    expect(mockObserveModuleAccess).not.toHaveBeenCalled()
+    expect(mockGetClientMissingCloseEvidenceRequestQueue).not.toHaveBeenCalled()
+    expect(data.clientMissingProofSource).toEqual({
+      state: "HIDDEN",
+      queue: null,
+      reason: "RBAC_REQUIRED",
+    })
+    expect(data.actionItems).toEqual(
+      expect.not.arrayContaining([
+        expect.objectContaining({ origin: "ACCOUNTANT_REQUEST" }),
+      ]),
+    )
+  })
+
+  it("hides the missing-proof source when close assurance entitlement denies", async () => {
+    mockTenantReadSources()
+    mockObserveModuleAccess.mockResolvedValue({ allowed: false })
+    const context = accessContext({
+      permissions: ["dashboard.read", "accounting.close.read"],
+    })
+
+    const data = await getManagerActionCenterDataFromResolvedAccess(
+      { accessContext: context, now: generatedAt },
+      tenantAccessDecision(context),
+    )
+
+    expect(mockObserveModuleAccess).toHaveBeenCalled()
+    expect(mockGetClientMissingCloseEvidenceRequestQueue).not.toHaveBeenCalled()
+    expect(data.clientMissingProofSource).toEqual({
+      state: "HIDDEN",
+      queue: null,
+      reason: "MODULE_UNAVAILABLE",
+    })
+    expect(data.actionItems).toEqual(
+      expect.not.arrayContaining([
+        expect.objectContaining({ origin: "ACCOUNTANT_REQUEST" }),
+      ]),
+    )
+  })
+
+  it("projects a generic blocked action when the authorized source read fails", async () => {
+    mockTenantReadSources()
+    mockGetClientMissingCloseEvidenceRequestQueue.mockRejectedValue(
+      new Error("database password and tenant row leaked"),
+    )
+    const context = accessContext({
+      permissions: ["dashboard.read", "accounting.close.read"],
+    })
+
+    const data = await getManagerActionCenterDataFromResolvedAccess(
+      { accessContext: context, now: generatedAt },
+      tenantAccessDecision(context),
+    )
+    const accountantActions = data.actionItems.filter(
+      (action) => action.origin === "ACCOUNTANT_REQUEST",
+    )
+
+    expect(data.clientMissingProofSource).toEqual({
+      state: "UNAVAILABLE",
+      queue: null,
+      reason: "SOURCE_READ_FAILED",
+    })
+    expect(accountantActions).toEqual([
+      expect.objectContaining({
+        title: "Missing-proof request source unavailable",
+        state: "blocked",
+        blockers: [
+          expect.objectContaining({
+            gate: "client_missing_proof_request",
+            detail: "The source-owned missing-proof queue could not be read.",
+          }),
+        ],
+      }),
+    ])
+    expect(JSON.stringify(data)).not.toContain(
+      "database password and tenant row leaked",
+    )
+  })
+
+  it("projects invalid stored request evidence as a redacted blocked action", async () => {
+    mockTenantReadSources()
+    mockGetClientMissingCloseEvidenceRequestQueue.mockResolvedValue(
+      missingProofQueue({
+        summary: {
+          total: 0,
+          overdue: 0,
+          dueWithin72Hours: 0,
+          scheduled: 0,
+          invalidEvidence: 1,
+          truncated: false,
+        },
+        requests: [],
+        blockers: [
+          {
+            id: "missing-close-evidence-request:request-2:invalid-evidence",
+            findingId: "finding-2",
+            requestId: "request-2",
+            reason: "INVALID_REQUEST_EVIDENCE",
+            detail: "Stored missing-proof request evidence is incomplete.",
+          },
+        ],
+      }),
+    )
+    const context = accessContext({
+      permissions: ["dashboard.read", "accounting.close.read"],
+    })
+
+    const data = await getManagerActionCenterDataFromResolvedAccess(
+      { accessContext: context, now: generatedAt },
+      tenantAccessDecision(context),
+    )
+
+    expect(data.actionItems).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "accountant-missing-proof-blocker:request-2",
+          origin: "ACCOUNTANT_REQUEST",
+          assignedRole: "accountant",
+          evidenceGrade: "blocked",
+          state: "blocked",
+          blockers: [
+            expect.objectContaining({
+              id: "missing-close-evidence-request:request-2:invalid-evidence",
+              sourceTables: [
+                "accountant_comments",
+                "close_assurance_findings",
+                "accounting_periods",
+              ],
+            }),
+          ],
+          redactions: [
+            expect.objectContaining({
+              field: "accountantComment.metadata",
+            }),
+          ],
+        }),
+      ]),
     )
   })
 })
+
+function missingProofQueue(
+  overrides: Partial<ClientMissingCloseEvidenceRequestQueue> = {},
+): ClientMissingCloseEvidenceRequestQueue {
+  const base: ClientMissingCloseEvidenceRequestQueue = {
+    kind: "CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE",
+    version: 1,
+    organizationId: "org-1",
+    actorId: "user-1",
+    generatedAt,
+    source: {
+      organizationScoped: true,
+      recipientScoped: true,
+      sourceTables: [
+        "accountant_comments",
+        "close_assurance_findings",
+        "accounting_periods",
+      ],
+      redaction: "CLIENT_RECIPIENT_ONLY_NO_RAW_METADATA",
+    },
+    controls: {
+      actorIsRecipient: true,
+      activeTenantActorRequired: true,
+      readPermissionRequired: "accounting.close.read",
+      serviceClockOwned: true,
+      rawMetadataExposed: false,
+      maxItems: 100,
+    },
+    summary: {
+      total: 1,
+      overdue: 0,
+      dueWithin72Hours: 1,
+      scheduled: 0,
+      invalidEvidence: 0,
+      truncated: false,
+    },
+    requests: [
+      {
+        requestId: "request-1",
+        findingId: "finding-1",
+        closeRunId: "close-run-1",
+        correlationId: "correlation-1",
+        requestedById: "accountant-1",
+        requestedFromId: "user-1",
+        requestText: "Upload the supplier statement.",
+        dueAt: generatedAt,
+        createdAt: "2026-06-19T10:00:00.000Z",
+        finding: {
+          domain: "DATA_TRUST",
+          severity: "HIGH",
+          status: "ASSIGNED",
+          title: "Supplier statement missing",
+          detail: "A source statement is required.",
+        },
+        period: {
+          id: "period-1",
+          name: "June 2026",
+          startDate: "2026-06-01T00:00:00.000Z",
+          endDate: "2026-06-30T23:59:59.999Z",
+        },
+        actionPath: "/dashboard/accounting/close/period-1?findingId=finding-1",
+        requiredPermission: "accounting.close.read",
+      },
+    ],
+    blockers: [],
+  }
+
+  return { ...base, ...overrides }
+}
+
+function mockTenantReadSources() {
+  mockGetPaymentTruthSnapshot.mockResolvedValue(paymentSnapshot())
+  mockGetInventoryCashSnapshot.mockResolvedValue(inventorySnapshot())
+  mockGetCloseReadinessSnapshot.mockResolvedValue(closeSnapshot())
+  mockGetTenantOperatingSnapshotFromRelated.mockResolvedValue(tenantSnapshot())
+  mockGetAssuranceControlTowerData.mockRejectedValue(
+    new Error("assurance unavailable"),
+  )
+}
 
 function accessContext(
   overrides: Partial<OperatingAccessContext> = {},
@@ -599,6 +1067,9 @@ function tenantAccessDecision(
 function expectNoManagerActionCenterReads() {
   expect(mockGetPaymentTruthSnapshot).not.toHaveBeenCalled()
   expect(mockGetInventoryCashSnapshot).not.toHaveBeenCalled()
+  expect(mockObserveModuleAccess).not.toHaveBeenCalled()
+  expect(mockGetInventoryLossSnapshot).not.toHaveBeenCalled()
+  expect(mockGetClientMissingCloseEvidenceRequestQueue).not.toHaveBeenCalled()
   expect(mockGetCloseReadinessSnapshot).not.toHaveBeenCalled()
   expect(mockGetAssuranceControlTowerData).not.toHaveBeenCalled()
   expect(mockGetPaymentReconciliationSignOffCommandState).not.toHaveBeenCalled()
@@ -618,8 +1089,7 @@ function reconciliationCommandStateBase() {
     },
     scope: { kind: "TENANT" as const },
     controls: {
-      projectionPurpose:
-        "SOURCE_OWNED_SIGN_OFF_COMMAND_STATE_ONLY" as const,
+      projectionPurpose: "SOURCE_OWNED_SIGN_OFF_COMMAND_STATE_ONLY" as const,
       sourceOfTruth: "ReconciliationRun" as const,
       tenantWideOnly: true as const,
       moduleEntitlementEnforced: true as const,
@@ -722,7 +1192,9 @@ function hiddenReconciliationCommandState(): Extract<
   }
 }
 
-function freshness(overrides: Partial<SnapshotFreshness> = {}): SnapshotFreshness {
+function freshness(
+  overrides: Partial<SnapshotFreshness> = {},
+): SnapshotFreshness {
   return {
     generatedAt,
     sourceMaxUpdatedAt: generatedAt,
@@ -733,7 +1205,9 @@ function freshness(overrides: Partial<SnapshotFreshness> = {}): SnapshotFreshnes
   }
 }
 
-function tenantSnapshot(overrides: Partial<TenantOperatingMetrics> = {}): SnapshotResult<TenantOperatingMetrics> {
+function tenantSnapshot(
+  overrides: Partial<TenantOperatingMetrics> = {},
+): SnapshotResult<TenantOperatingMetrics> {
   return {
     kind: "tenant.operating",
     organizationId: "org-1",
@@ -800,7 +1274,9 @@ function payrollForecastMetrics(
   }
 }
 
-function paymentSnapshot(overrides: Partial<PaymentTruthMetrics> = {}): SnapshotResult<PaymentTruthMetrics> {
+function paymentSnapshot(
+  overrides: Partial<PaymentTruthMetrics> = {},
+): SnapshotResult<PaymentTruthMetrics> {
   return {
     kind: "payment.truth",
     organizationId: "org-1",
@@ -829,7 +1305,9 @@ function paymentSnapshot(overrides: Partial<PaymentTruthMetrics> = {}): Snapshot
   }
 }
 
-function inventorySnapshot(overrides: Partial<InventoryCashMetrics> = {}): SnapshotResult<InventoryCashMetrics> {
+function inventorySnapshot(
+  overrides: Partial<InventoryCashMetrics> = {},
+): SnapshotResult<InventoryCashMetrics> {
   return {
     kind: "inventory.cash",
     organizationId: "org-1",
@@ -849,7 +1327,62 @@ function inventorySnapshot(overrides: Partial<InventoryCashMetrics> = {}): Snaps
   }
 }
 
-function closeSnapshot(overrides: Partial<CloseReadinessMetrics> = {}): SnapshotResult<CloseReadinessMetrics> {
+function inventoryLossSnapshot(
+  overrides: Partial<InventoryLossMetrics> = {},
+): SnapshotResult<InventoryLossMetrics> {
+  const metrics: InventoryLossMetrics = {
+    lossLineCount: 0,
+    adjustmentCount: 0,
+    totalLossValue: 0,
+    currency: "XAF",
+    countVarianceLineCount: 0,
+    damagedLineCount: 0,
+    expiredLineCount: 0,
+    recordedTheftCategoryLineCount: 0,
+    writeOffLineCount: 0,
+    evidenceCoveredLineCount: 0,
+    evidenceCoveragePercent: 100,
+    valuationCoveredLineCount: 0,
+    valuationCoveragePercent: 100,
+    approvalAttributedLineCount: 0,
+    approvalCoveragePercent: 100,
+    missingEvidenceLineCount: 0,
+    missingValuationLineCount: 0,
+    missingApprovalAttributionLineCount: 0,
+    sourceTruncated: false,
+    ...overrides,
+  }
+  const hasLoss = metrics.lossLineCount > 0
+
+  return {
+    kind: "inventory.loss",
+    organizationId: "org-1",
+    locationId: null,
+    periodStart: "2026-06-01T00:00:00.000Z",
+    periodEnd: "2026-06-20T23:59:59.999Z",
+    status: hasLoss ? "fresh" : "empty",
+    uiState: hasLoss ? "fresh" : "empty",
+    evidenceGrade: hasLoss ? "operational" : "raw",
+    freshness: freshness(),
+    sourceHash: "inventory-loss-hash",
+    generatedAt,
+    sourceModules: ["inventory"],
+    metrics,
+    blockers: [],
+    redactions: [
+      {
+        id: "inventory-loss-evidence-hashes-redacted",
+        field: "records.evidence.*Hash",
+        reason: "Source evidence hashes remain server-side.",
+        policy: "INVENTORY_LOSS_EVIDENCE_REDACTION",
+      },
+    ],
+  }
+}
+
+function closeSnapshot(
+  overrides: Partial<CloseReadinessMetrics> = {},
+): SnapshotResult<CloseReadinessMetrics> {
   return {
     kind: "close.readiness",
     organizationId: "org-1",
@@ -869,7 +1402,9 @@ function closeSnapshot(overrides: Partial<CloseReadinessMetrics> = {}): Snapshot
   }
 }
 
-function actionQueue(input: { total?: number; filteredOutCount?: number } = {}): ActionQueueResult {
+function actionQueue(
+  input: { total?: number; filteredOutCount?: number } = {},
+): ActionQueueResult {
   const total = input.total ?? 2
   const signals = total > 0 ? [paymentSignal(), purchasingSignal()] : []
   const actionItems =
@@ -984,7 +1519,8 @@ function assuranceIncident() {
       sourceHash: "source-hash",
       freshness: "blocked" as const,
       proofSubject: null,
-      blockerReason: "No supported proof trail subject is available for this incident yet.",
+      blockerReason:
+        "No supported proof trail subject is available for this incident yet.",
       actionRoute: "/dashboard/accounting/journals",
     },
     redactions: [],
@@ -1000,7 +1536,8 @@ function assuranceIncident() {
         severity: "critical" as const,
         gate: "ledger.posted_source_link.required",
         title: "Assurance incident requires action",
-        detail: "No supported proof trail subject is available for this incident yet.",
+        detail:
+          "No supported proof trail subject is available for this incident yet.",
         sourceTables: ["journal_entries"],
       },
     ],
@@ -1065,7 +1602,9 @@ function purchasingSignal(): BusinessSignal {
   }
 }
 
-function paymentMetrics(overrides: Partial<PaymentTruthMetrics> = {}): PaymentTruthMetrics {
+function paymentMetrics(
+  overrides: Partial<PaymentTruthMetrics> = {},
+): PaymentTruthMetrics {
   return {
     providerAccountCount: 2,
     activeProviderAccountCount: 2,
@@ -1081,7 +1620,9 @@ function paymentMetrics(overrides: Partial<PaymentTruthMetrics> = {}): PaymentTr
   }
 }
 
-function inventoryMetrics(overrides: Partial<InventoryCashMetrics> = {}): InventoryCashMetrics {
+function inventoryMetrics(
+  overrides: Partial<InventoryCashMetrics> = {},
+): InventoryCashMetrics {
   return {
     trackedItemCount: 30,
     inventoryLevelCount: 42,
@@ -1100,7 +1641,9 @@ function inventoryMetrics(overrides: Partial<InventoryCashMetrics> = {}): Invent
   }
 }
 
-function closeMetrics(overrides: Partial<CloseReadinessMetrics> = {}): CloseReadinessMetrics {
+function closeMetrics(
+  overrides: Partial<CloseReadinessMetrics> = {},
+): CloseReadinessMetrics {
   return {
     accountingPeriodCount: 1,
     openPeriodCount: 1,

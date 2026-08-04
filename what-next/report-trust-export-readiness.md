@@ -1,12 +1,12 @@
 # Report Trust and Export Certification Readiness Gate
 
-Generated: 2026-07-19T20:40:07.692Z
+Generated: 2026-08-02T14:32:10.253Z
 Mode: fail
 Status: ready
 
 ## Summary
 
-- Checks ready: 9/9
+- Checks ready: 23/23
 - Blockers: 0
 
 ## Checks
@@ -20,6 +20,20 @@ Status: ready
 - ready: analytics_currency_is_service_owned
 - ready: report_ui_has_no_hardcoded_usd
 - ready: trust_banner_and_policy_wiring
+- ready: ledger_backed_accountant_data_trust
+- ready: explicit_accountant_consent_role_and_expiry
+- ready: cross_client_access_is_server_resolved
+- ready: delegated_export_honors_grant_role
+- ready: accountant_trust_pack_verified_fresh_auth_evidence
+- ready: certified_close_pack_verified_fresh_auth_evidence
+- ready: close_waiver_service_owned_verified_fresh_auth_evidence
+- ready: missing_proof_request_service_owned_command_evidence
+- ready: client_missing_proof_request_queue_service_owned_evidence
+- ready: client_missing_proof_manager_action_center_composition
+- ready: accountant_portfolio_and_client_register_surfaces
+- ready: accountant_access_grant_revoke_events
+- ready: trust_pack_export_event_and_hash_contract
+- ready: statutory_payroll_and_inventory_evidence_coverage
 
 ## Blockers
 

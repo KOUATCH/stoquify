@@ -1,17 +1,21 @@
 #!/usr/bin/env node
 
-const crypto = require("crypto")
-const fs = require("fs")
-const path = require("path")
+const crypto = require("crypto");
+const fs = require("fs");
+const path = require("path");
 
 const {
   buildStatutoryCountryPackReadiness,
-} = require("./statutory-country-pack-production-gate")
+} = require("./statutory-country-pack-production-gate");
 
+const {
+  directNpmRunTargets,
+  integrationGateTargets,
+} = require("./statutory-country-pack-integration-gate");
 const DEFAULT_JSON_OUT =
-  "what-next/statutory-country-pack-development-readiness.json"
+  "what-next/statutory-country-pack-development-readiness.json";
 const DEFAULT_MARKDOWN_OUT =
-  "what-next/statutory-country-pack-development-readiness.md"
+  "what-next/statutory-country-pack-development-readiness.md";
 
 function parseArgs(argv = process.argv.slice(2)) {
   const options = {
@@ -19,57 +23,57 @@ function parseArgs(argv = process.argv.slice(2)) {
     root: process.cwd(),
     out: DEFAULT_MARKDOWN_OUT,
     jsonOut: DEFAULT_JSON_OUT,
-  }
+  };
 
   for (let index = 0; index < argv.length; index += 1) {
-    const value = argv[index]
-    if (value === "--mode") options.mode = argv[++index]
-    else if (value === "--root") options.root = argv[++index]
-    else if (value === "--out") options.out = argv[++index]
-    else if (value === "--json-out") options.jsonOut = argv[++index]
-    else throw new Error("Unknown argument: " + value)
+    const value = argv[index];
+    if (value === "--mode") options.mode = argv[++index];
+    else if (value === "--root") options.root = argv[++index];
+    else if (value === "--out") options.out = argv[++index];
+    else if (value === "--json-out") options.jsonOut = argv[++index];
+    else throw new Error("Unknown argument: " + value);
   }
 
   if (!["report", "fail"].includes(options.mode)) {
-    throw new Error("Unsupported mode: " + options.mode)
+    throw new Error("Unsupported mode: " + options.mode);
   }
 
-  return options
+  return options;
 }
 
 function read(root, relativePath) {
-  const target = path.join(root, relativePath)
-  return fs.existsSync(target) ? fs.readFileSync(target, "utf8") : ""
+  const target = path.join(root, relativePath);
+  return fs.existsSync(target) ? fs.readFileSync(target, "utf8") : "";
 }
 
 function latestSourceEvidenceManifest(root) {
   const evidenceRoot = path.join(
     root,
     "docs/HR-Payroll/evidence/country-packs/CM",
-  )
-  if (!fs.existsSync(evidenceRoot)) return null
+  );
+  if (!fs.existsSync(evidenceRoot)) return null;
 
   const manifestPath = fs
     .readdirSync(evidenceRoot, { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
     .map((entry) => path.join(evidenceRoot, entry.name, "manifest.json"))
     .filter((candidate) => fs.existsSync(candidate))
-    .sort((left, right) => right.localeCompare(left))[0]
+    .sort((left, right) => right.localeCompare(left))[0];
 
-  if (!manifestPath) return null
+  if (!manifestPath) return null;
 
   try {
     return {
       manifestPath,
       manifest: JSON.parse(fs.readFileSync(manifestPath, "utf8")),
-    }
+    };
   } catch {
-    return null
+    return null;
   }
 }
 
 function developmentEvidenceState(root) {
-  const loaded = latestSourceEvidenceManifest(root)
+  const loaded = latestSourceEvidenceManifest(root);
   if (!loaded || !Array.isArray(loaded.manifest.artifacts)) {
     return {
       manifestPresent: false,
@@ -78,10 +82,10 @@ function developmentEvidenceState(root) {
       legalNonClaimsPreserved: false,
       artifactCount: 0,
       manifestRef: null,
-    }
+    };
   }
 
-  const manifestDir = path.dirname(loaded.manifestPath)
+  const manifestDir = path.dirname(loaded.manifestPath);
   const artifactsVerified =
     loaded.manifest.artifacts.length > 0 &&
     loaded.manifest.artifacts.every((artifact) => {
@@ -90,25 +94,28 @@ function developmentEvidenceState(root) {
         typeof artifact.file !== "string" ||
         path.basename(artifact.file) !== artifact.file
       ) {
-        return false
+        return false;
       }
       if (
         typeof artifact.sha256 !== "string" ||
         !/^[a-f0-9]{64}$/.test(artifact.sha256)
       ) {
-        return false
+        return false;
       }
 
-      const artifactPath = path.join(manifestDir, artifact.file)
-      if (!fs.existsSync(artifactPath)) return false
-      const bytes = fs.readFileSync(artifactPath)
-      const actualHash = crypto.createHash("sha256").update(bytes).digest("hex")
+      const artifactPath = path.join(manifestDir, artifact.file);
+      if (!fs.existsSync(artifactPath)) return false;
+      const bytes = fs.readFileSync(artifactPath);
+      const actualHash = crypto
+        .createHash("sha256")
+        .update(bytes)
+        .digest("hex");
       const byteLengthMatches =
         typeof artifact.byteLength !== "number" ||
-        artifact.byteLength === bytes.length
+        artifact.byteLength === bytes.length;
 
-      return actualHash === artifact.sha256 && byteLengthMatches
-    })
+      return actualHash === artifact.sha256 && byteLengthMatches;
+    });
 
   const productionUseDisabled =
     loaded.manifest.productionUseAllowed === false &&
@@ -117,14 +124,14 @@ function developmentEvidenceState(root) {
       (artifact) =>
         artifact.productionUseAllowed === false &&
         artifact.reviewStatus === "PENDING_EXPERT_REVIEW",
-    )
+    );
 
   const nonClaims = Array.isArray(loaded.manifest.nonClaims)
     ? loaded.manifest.nonClaims.join(" ")
-    : ""
+    : "";
   const legalNonClaimsPreserved =
     nonClaims.includes("does not certify legal interpretation") &&
-    nonClaims.includes("does not constitute qualified reviewer approval")
+    nonClaims.includes("does not constitute qualified reviewer approval");
 
   return {
     manifestPresent: true,
@@ -136,55 +143,64 @@ function developmentEvidenceState(root) {
       .relative(root, loaded.manifestPath)
       .split(path.sep)
       .join("/"),
-  }
+  };
 }
 
 function buildStatutoryCountryPackDevelopmentReadiness(
   root = process.cwd(),
   options = {},
 ) {
-  const evidence = developmentEvidenceState(root)
+  const evidence = developmentEvidenceState(root);
   const productionReport = buildStatutoryCountryPackReadiness(root, {
     mode: "fail",
-  })
-  const cameroon = read(root, "services/regulatory/country-packs/cameroon.ts")
-  const fakeAdapter = read(root, "services/compliance/adapters/fake-sandbox.ts")
+  });
+  const cameroon = read(root, "services/regulatory/country-packs/cameroon.ts");
+  const fakeAdapter = read(
+    root,
+    "services/compliance/adapters/fake-sandbox.ts",
+  );
   const cameroonAdapter = read(
     root,
     "services/compliance/adapters/cameroon-dgi-sandbox.ts",
-  )
+  );
   const fiscalDocument = read(
     root,
     "services/compliance/fiscal-document.service.ts",
-  )
-  const outbox = read(root, "services/compliance/certification-outbox.service.ts")
+  );
+  const outbox = read(
+    root,
+    "services/compliance/certification-outbox.service.ts",
+  );
   const payrollAdapters = read(
     root,
     "services/payroll/payroll-adapter-registry.service.ts",
-  )
+  );
   const fixtureRunner = read(
     root,
     "services/payroll/payroll-country-pack-fixture-runner.ts",
-  )
+  );
   const fixtureTests = read(
     root,
     "services/payroll/__tests__/payroll-country-pack-fixture-runner.test.ts",
-  )
+  );
   const countryPackTests = read(
     root,
     "services/regulatory/__tests__/country-pack.service.test.ts",
-  )
+  );
   const payrollControlTests = read(
     root,
     "services/payroll/__tests__/payroll-control.service.test.ts",
-  )
-  const packageJson = read(root, "package.json")
-  let packageScripts = {}
+  );
+  const packageJson = read(root, "package.json");
+  let packageScripts = {};
   try {
-    packageScripts = JSON.parse(packageJson).scripts ?? {}
+    packageScripts = JSON.parse(packageJson).scripts ?? {};
   } catch {
-    packageScripts = {}
+    packageScripts = {};
   }
+
+  const integrationTargets = integrationGateTargets(root, packageScripts);
+  const promotionTargets = directNpmRunTargets(packageScripts["policy:gates"]);
 
   const checks = [
     {
@@ -206,7 +222,9 @@ function buildStatutoryCountryPackDevelopmentReadiness(
     {
       id: "cameroon_production_automation_claim_blocked",
       ready:
-        cameroon.includes('"compliance.eInvoicing": "REQUIRES_EXPERT_REVIEW"') &&
+        cameroon.includes(
+          '"compliance.eInvoicing": "REQUIRES_EXPERT_REVIEW"',
+        ) &&
         cameroon.includes("productionAutomationAllowed: false") &&
         cameroon.includes('adapterReadiness: "REQUIRES_EXPERT_REVIEW"') &&
         cameroon.includes("sandboxOnly: true"),
@@ -235,12 +253,10 @@ function buildStatutoryCountryPackDevelopmentReadiness(
       id: "payroll_live_adapter_certification_guards_present",
       ready:
         payrollAdapters.includes(
-          'registryDecision = productionSubmissionSupported',
+          "registryDecision = productionSubmissionSupported",
         ) &&
         payrollAdapters.includes('"AUTOMATION_BLOCKED"') &&
-        payrollAdapters.includes(
-          'productionPaymentAutomationSupported =',
-        ) &&
+        payrollAdapters.includes("productionPaymentAutomationSupported =") &&
         payrollAdapters.includes(
           '"BLOCKED_PROVIDER_ADAPTER_CERTIFICATION_INCOMPLETE"',
         ) &&
@@ -251,7 +267,9 @@ function buildStatutoryCountryPackDevelopmentReadiness(
     {
       id: "golden_fixture_and_unsupported_country_harness_present",
       ready:
-        fixtureRunner.includes("validatePayrollCountryPackCalculationFixtures") &&
+        fixtureRunner.includes(
+          "validatePayrollCountryPackCalculationFixtures",
+        ) &&
         fixtureTests.includes(
           "fails validation when a CNPS scenario output drifts",
         ) &&
@@ -270,22 +288,32 @@ function buildStatutoryCountryPackDevelopmentReadiness(
     {
       id: "development_and_production_ci_commands_are_separate",
       ready:
+        typeof packageScripts["statutory:country-pack:integration:gate"] ===
+          "string" &&
         typeof packageScripts["statutory:country-pack:dev:gate"] === "string" &&
         typeof packageScripts["statutory:country-pack:gate"] === "string" &&
+        typeof packageScripts["policy:gates:integration"] === "string" &&
         typeof packageScripts["policy:gates"] === "string" &&
-        packageScripts["policy:gates"].includes(
-          "npm run statutory:country-pack:gate",
+        typeof packageScripts["verify:repo"] === "string" &&
+        typeof packageScripts["verify:release"] === "string" &&
+        integrationTargets.includes(
+          "statutory:country-pack:integration:gate",
         ) &&
-        !packageScripts["policy:gates"].includes(
-          "npm run statutory:country-pack:dev:gate",
-        ),
+        !integrationTargets.includes("statutory:country-pack:dev:gate") &&
+        !integrationTargets.includes("statutory:country-pack:gate") &&
+        promotionTargets.includes("statutory:country-pack:gate") &&
+        !promotionTargets.includes("statutory:country-pack:dev:gate") &&
+        packageScripts["verify:repo"].includes(
+          "npm run policy:gates:integration",
+        ) &&
+        packageScripts["verify:release"].includes("npm run policy:gates"),
     },
-  ]
+  ];
 
   const blockers = checks
     .filter((check) => !check.ready)
-    .map((check) => check.id)
-  const ready = blockers.length === 0
+    .map((check) => check.id);
+  const ready = blockers.length === 0;
 
   return {
     summary: {
@@ -313,14 +341,14 @@ function buildStatutoryCountryPackDevelopmentReadiness(
     },
     checks,
     blockers,
-  }
+  };
 }
 
 function gateResultForReport(report, mode = "report") {
   return {
     status: report.summary.status,
     exitCode: mode === "fail" && report.blockers.length ? 1 : 0,
-  }
+  };
 }
 
 function renderMarkdown(report) {
@@ -368,35 +396,54 @@ function renderMarkdown(report) {
     "- This result authorizes only deterministic development and sandbox testing.",
     "- It does not approve statutory interpretation, production payroll, live payment, declaration, or authority submission.",
     "- The independent production gate must remain in the release policy chain and must pass before controlled live or production use.",
-  ]
+  ];
 
-  return lines.join(String.fromCharCode(10)) + String.fromCharCode(10)
+  return lines.join(String.fromCharCode(10)) + String.fromCharCode(10);
+}
+
+function writeWithRetry(target, value, attempts = 5) {
+  let lastError;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      fs.mkdirSync(path.dirname(target), { recursive: true });
+      fs.writeFileSync(target, value, "utf8");
+      return;
+    } catch (error) {
+      lastError = error;
+      if (attempt < attempts) {
+        Atomics.wait(
+          new Int32Array(new SharedArrayBuffer(4)),
+          0,
+          0,
+          500 * attempt,
+        );
+      }
+    }
+  }
+  throw lastError;
 }
 
 function writeReport(root, options, report) {
-  const jsonTarget = path.resolve(root, options.jsonOut)
-  const markdownTarget = path.resolve(root, options.out)
-  fs.mkdirSync(path.dirname(jsonTarget), { recursive: true })
-  fs.mkdirSync(path.dirname(markdownTarget), { recursive: true })
-  fs.writeFileSync(
+  const jsonTarget = path.resolve(root, options.jsonOut);
+  const markdownTarget = path.resolve(root, options.out);
+  writeWithRetry(
     jsonTarget,
     JSON.stringify(report, null, 2) + String.fromCharCode(10),
-    "utf8",
-  )
-  fs.writeFileSync(markdownTarget, renderMarkdown(report), "utf8")
+  );
+  writeWithRetry(markdownTarget, renderMarkdown(report));
 }
 
 if (require.main === module) {
   try {
-    const options = parseArgs()
-    const root = path.resolve(options.root)
-    const report = buildStatutoryCountryPackDevelopmentReadiness(root, options)
-    writeReport(root, options, report)
-    console.log(renderMarkdown(report))
-    process.exitCode = gateResultForReport(report, options.mode).exitCode
+    const options = parseArgs();
+    const root = path.resolve(options.root);
+    const report = buildStatutoryCountryPackDevelopmentReadiness(root, options);
+    writeReport(root, options, report);
+    console.log(renderMarkdown(report));
+    process.exitCode = gateResultForReport(report, options.mode).exitCode;
   } catch (error) {
-    console.error(error instanceof Error ? error.message : String(error))
-    process.exitCode = 1
+    console.error(error instanceof Error ? error.message : String(error));
+    process.exitCode = 1;
   }
 }
 
@@ -406,4 +453,4 @@ module.exports = {
   gateResultForReport,
   parseArgs,
   renderMarkdown,
-}
+};

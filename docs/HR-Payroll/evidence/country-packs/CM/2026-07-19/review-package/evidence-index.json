@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "1.0",
+  "packageId": "CM-2026.1-CNPS-INDEPENDENT-REVIEW-2026-07-26",
+  "countryCode": "CM",
+  "countryPackVersion": "CM-2026.1",
+  "status": "READY_FOR_EXTERNAL_REVIEW",
+  "productionUseAllowed": false,
+  "approvalPath": {
+    "requiredForProduction": "EXPERT_REVIEWED",
+    "regulatorConfirmationRequired": false,
+    "regulatorConfirmationCondition": "Required only if the implementation retains or publishes REGULATOR_CONFIRMED as an implementation-approval claim."
+  },
+  "sourceArtifacts": [
+    {
+      "legalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+      "file": "../CNPS-Decree-2016-072-contribution-rates.pdf",
+      "sha256": "1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+      "byteLength": 2608628,
+      "authority": "Presidency of the Republic of Cameroon / CNPS",
+      "purpose": "Primary contribution rates, ceilings, occupational-risk groups, and employer funding rules"
+    },
+    {
+      "legalRef": "CM_CNPS_EMPLOYER_RULES",
+      "file": "../CNPS-employer-general-rules.html",
+      "sha256": "bc51f74de8dd3b0c7babd86e8f98d92dbdbece214480f66ac89c42d3e894a868",
+      "byteLength": 248633,
+      "authority": "CNPS Cameroon",
+      "purpose": "Employer registration, declaration, calculation, withholding, payment, and control guidance"
+    },
+    {
+      "legalRef": "CM_CNPS_STATISTICAL_YEARBOOK_2025",
+      "file": "../CNPS-Statistical-Yearbook-2025.pdf",
+      "sha256": "53a22ebb9a9bf31bc0c7c60f8cc0eed9383192ef4f0d6a309f2782ad60875504",
+      "byteLength": 2895247,
+      "authority": "CNPS Cameroon",
+      "purpose": "Corroborates continued rates and employer responsibility through 2025-12-31"
+    },
+    {
+      "legalRef": "CM_CNPS_EMPLOYER_OBLIGATIONS_CURRENT",
+      "file": "../CNPS-Employer-Obligations-current-2026-07-26.html",
+      "sha256": "8e319e856a0f473accac53587708523b7080c5aac5f6d8eb4e8bd5cb5bb8d743",
+      "byteLength": 231875,
+      "authority": "CNPS Cameroon",
+      "purpose": "Current CNPS employer guidance captured on 2026-07-26"
+    },
+    {
+      "legalRef": "CM_CNPS_OFFICIAL_FAQ_DECREE_2016_072",
+      "file": "../CNPS-Official-FAQ-Decree-2016-072.pdf",
+      "sha256": "166f12931df869f4a6f96a977342ce18600ece1361535c96fc2e841f2ffb7d5d",
+      "byteLength": 380118,
+      "authority": "CNPS Cameroon",
+      "purpose": "Official explanation of Decree 2016/072, pension ceiling/rates, risk classification, and teledeclaration"
+    },
+    {
+      "legalRef": "CM_CNPS_CONTRIBUTION_SCALE_OFFICIAL_2025",
+      "file": "../CNPS-Contribution-Scale-official-2025.jpg",
+      "sha256": "ae152e77b7a26ab2a2270d032a256815e8f3544e66700f207191edf584ed2259",
+      "byteLength": 1476553,
+      "authority": "CNPS Cameroon",
+      "purpose": "Corroborating official contribution-scale publication"
+    }
+  ],
+  "requiredFixtureFamilies": [
+    "payroll.cnps.pensionRatesBps",
+    "payroll.cnps.familyAllowanceRatesBps",
+    "payroll.cnps.occupationalRiskRatesBps",
+    "payroll.cnps.employerRules"
+  ],
+  "requiredReturnArtifacts": [
+    "source-hash-verification.json",
+    "reviewer-qualification-conflict.json",
+    "fixture-review-workbook.json",
+    "review-decision.json",
+    "signed approval artifact",
+    "maker-checker-approval.json",
+    "signature verification evidence"
+  ],
+  "blockedUntilAuthenticReturn": [
+    "source_artifact_hash_verification",
+    "source_artifact_expert_approval"
+  ]
+}
+

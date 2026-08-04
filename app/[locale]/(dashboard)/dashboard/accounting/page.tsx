@@ -120,7 +120,7 @@ export default async function AccountingDashboardPage() {
             />
           </div>
 
-          <div className="grid gap-4 lg:grid-cols-6">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
               { label: "Control center", href: "/dashboard/accounting/control-center", text: "Readiness gates and setup lock" },
               { label: "Accountant portal", href: "/dashboard/accounting/accountant-portal", text: "Trust packs and source links" },
@@ -128,6 +128,7 @@ export default async function AccountingDashboardPage() {
               { label: "Setup", href: "/dashboard/accounting/setup", text: "Settings, journals, and periods" },
               { label: "Accounts", href: "/dashboard/accounting/accounts", text: "Chart of accounts" },
               { label: "Journals", href: "/dashboard/accounting/journals", text: "Drafts, posting, reversals" },
+              { label: "Financial reports", href: "/dashboard/accounting/reports/financial-statements", text: "P&L, EBITDA, and Balance Sheet" },
               { label: "Trial balance", href: "/dashboard/accounting/reports/trial-balance", text: "Posted ledger report" },
             ].map((item) => (
               <Link

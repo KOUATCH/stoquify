@@ -1,0 +1,668 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-07-28",
+  "auditBasis": "dirty current filesystem; point-in-time, non-certifying",
+  "workflowCount": 22,
+  "workflows": [
+    {
+      "workflowId": "WF-01",
+      "name": "Identity, invitation, session and recovery",
+      "expectedBusinessResult": "Authenticated and recoverable identity",
+      "authoritativeOwner": "users/auth",
+      "status": "partial",
+      "scores": {
+        "completeness": 4,
+        "businessExactness": 4,
+        "sourceOfTruthIntegrity": 4,
+        "securityTenantIsolation": 3,
+        "architecturalConsistency": 4,
+        "rbacEntitlement": 3,
+        "auditEvidence": 3,
+        "efficiency": 3,
+        "resilienceRecovery": 3,
+        "idempotencyConcurrency": 3,
+        "observability": 3,
+        "uiUxProductivity": 3,
+        "accessibilityResponsive": 2,
+        "integrationConsistency": 4,
+        "testReleaseEvidence": 3
+      },
+      "confidence": "medium-high",
+      "evidence": "See system audit and source-of-truth map",
+      "limitations": [
+        "No exhaustive browser execution",
+        "External providers/statutory authorities unverified"
+      ]
+    },
+    {
+      "workflowId": "WF-02",
+      "name": "Tenant, membership and organization selection",
+      "expectedBusinessResult": "Correct active tenant and membership",
+      "authoritativeOwner": "organization/users",
+      "status": "partial",
+      "scores": {
+        "completeness": 4,
+        "businessExactness": 3,
+        "sourceOfTruthIntegrity": 3,
+        "securityTenantIsolation": 3,
+        "architecturalConsistency": 3,
+        "rbacEntitlement": 3,
+        "auditEvidence": 3,
+        "efficiency": 3,
+        "resilienceRecovery": 3,
+        "idempotencyConcurrency": 3,
+        "observability": 3,
+        "uiUxProductivity": 3,
+        "accessibilityResponsive": 2,
+        "integrationConsistency": 3,
+        "testReleaseEvidence": 3
+      },
+      "confidence": "medium-high",
+      "evidence": "See system audit and source-of-truth map",
+      "limitations": [
+        "No exhaustive browser execution",
+        "External providers/statutory authorities unverified"
+      ]
+    },
+    {
+      "workflowId": "WF-03",
+      "name": "RBAC, entitlement and provisioning",
+      "expectedBusinessResult": "Only authorized and entitled actors mutate",
+      "authoritativeOwner": "security/modules",
+      "status": "partial",
+      "scores": {
+        "completeness": 4,
+        "businessExactness": 3,
+        "sourceOfTruthIntegrity": 4,
+        "securityTenantIsolation": 3,
+        "architecturalConsistency": 4,
+        "rbacEntitlement": 3,
+        "auditEvidence": 3,
+        "efficiency": 3,
+        "resilienceRecovery": 3,
+        "idempotencyConcurrency": 3,
+        "observability": 3,
+        "uiUxProductivity": 3,
+        "accessibilityResponsive": 2,
+        "integrationConsistency": 4,
+        "testReleaseEvidence": 3
+      },
+      "confidence": "medium-high",
+      "evidence": "See system audit and source-of-truth map",
+      "limitations": [
+        "No exhaustive browser execution",
+        "External providers/statutory authorities unverified"
+      ]
+    },
+    {
+      "workflowId": "WF-04",
+      "name": "Settings, locations, terminals and registers",
+      "expectedBusinessResult": "Consistent operational configuration",
+      "authoritativeOwner": "organization/locations/pos",
+      "status": "implemented",
+      "scores": {
+        "completeness": 4,
+        "businessExactness": 4,
+        "sourceOfTruthIntegrity": 4,
+        "securityTenantIsolation": 3,
+        "architecturalConsistency": 4,
+        "rbacEntitlement": 3,
+        "auditEvidence": 3,
+        "efficiency": 3,
+        "resilienceRecovery": 3,
+        "idempotencyConcurrency": 3,
+        "observability": 3,
+        "uiUxProductivity": 3,
+        "accessibilityResponsive": 2,
+        "integrationConsistency": 4,
+        "testReleaseEvidence": 3
+      },
+      "confidence": "medium-high",
+      "evidence": "See system audit and source-of-truth map",
+      "limitations": [
+        "No exhaustive browser execution",
+        "External providers/statutory authorities unverified"
+      ]
+    },
+    {
+      "workflowId": "WF-05",
+      "name": "Customers, suppliers, items and catalog",
+      "expectedBusinessResult": "One tenant-owned master-data truth",
+      "authoritativeOwner": "domain master-data services",
+      "status": "partial",
+      "scores": {
+        "completeness": 4,
+        "businessExactness": 3,
+        "sourceOfTruthIntegrity": 4,
+        "securityTenantIsolation": 3,
+        "architecturalConsistency": 4,
+        "rbacEntitlement": 3,
+        "auditEvidence": 3,
+        "efficiency": 3,
+        "resilienceRecovery": 3,
+        "idempotencyConcurrency": 3,
+        "observability": 3,
+        "uiUxProductivity": 3,
+        "accessibilityResponsive": 2,
+        "integrationConsistency": 4,
+        "testReleaseEvidence": 3
+      },
+      "confidence": "medium-high",
+      "evidence": "See system audit and source-of-truth map",
+      "limitations": [
+        "No exhaustive browser execution",
+        "External providers/statutory authorities unverified"
+      ]
+    },
+    {
+      "workflowId": "WF-06",
+      "name": "Inventory lifecycle and valuation",
+      "expectedBusinessResult": "Traceable stock and valuation",
+      "authoritativeOwner": "inventory",
+      "status": "partial",
+      "scores": {
+        "completeness": 4,
+        "businessExactness": 4,
+        "sourceOfTruthIntegrity": 4,
+        "securityTenantIsolation": 4,
+        "architecturalConsistency": 4,
+        "rbacEntitlement": 4,
+        "auditEvidence": 4,
+        "efficiency": 3,
+        "resilienceRecovery": 4,
+        "idempotencyConcurrency": 4,
+        "observability": 3,
+        "uiUxProductivity": 3,
+        "accessibilityResponsive": 2,
+        "integrationConsistency": 4,
+        "testReleaseEvidence": 4
+      },
+      "confidence": "medium-high",
+      "evidence": "See system audit and source-of-truth map",
+      "limitations": [
+        "No exhaustive browser execution",
+        "External providers/statutory authorities unverified"
+      ]
+    },
+    {
+      "workflowId": "WF-07",
+      "name": "Purchasing, AP and supplier settlement",
+      "expectedBusinessResult": "Controlled order-to-settlement evidence",
+      "authoritativeOwner": "purchase-order/purchasing",
+      "status": "partial",
+      "scores": {
+        "completeness": 4,
+        "businessExactness": 3,
+        "sourceOfTruthIntegrity": 4,
+        "securityTenantIsolation": 4,
+        "architecturalConsistency": 4,
+        "rbacEntitlement": 4,
+        "auditEvidence": 4,
+        "efficiency": 3,
+        "resilienceRecovery": 4,
+        "idempotencyConcurrency": 4,
+        "observability": 3,
+        "uiUxProductivity": 3,
+        "accessibilityResponsive": 2,
+        "integrationConsistency": 4,
+        "testReleaseEvidence": 4
+      },
+      "confidence": "medium-high",
+      "evidence": "See system audit and source-of-truth map",
+      "limitations": [
+        "No exhaustive browser execution",
+        "External providers/statutory authorities unverified"
+      ]
+    },
+    {
+      "workflowId": "WF-08",
+      "name": "POS, cash, receipt, refund and void",
+      "expectedBusinessResult": "Atomic sale and correction outcome",
+      "authoritativeOwner": "pos",
+      "status": "partial",
+      "scores": {
+        "completeness": 4,
+        "businessExactness": 3,
+        "sourceOfTruthIntegrity": 4,
+        "securityTenantIsolation": 4,
+        "architecturalConsistency": 4,
+        "rbacEntitlement": 4,
+        "auditEvidence": 4,
+        "efficiency": 3,
+        "resilienceRecovery": 4,
+        "idempotencyConcurrency": 4,
+        "observability": 3,
+        "uiUxProductivity": 3,
+        "accessibilityResponsive": 2,
+        "integrationConsistency": 4,
+        "testReleaseEvidence": 4
+      },
+      "confidence": "medium-high",
+      "evidence": "See system audit and source-of-truth map",
+      "limitations": [
+        "No exhaustive browser execution",
+        "External providers/statutory authorities unverified"
+      ]
+    },
+    {
+      "workflowId": "WF-09",
+      "name": "Payment ingestion and reconciliation",
+      "expectedBusinessResult": "Provider/statement facts reconciled",
+      "authoritativeOwner": "payments/reconciliation",
+      "status": "partial",
+      "scores": {
+        "completeness": 4,
+        "businessExactness": 3,
+        "sourceOfTruthIntegrity": 4,
+        "securityTenantIsolation": 4,
+        "architecturalConsistency": 4,
+        "rbacEntitlement": 4,
+        "auditEvidence": 4,
+        "efficiency": 3,
+        "resilienceRecovery": 4,
+        "idempotencyConcurrency": 4,
+        "observability": 3,
+        "uiUxProductivity": 3,
+        "accessibilityResponsive": 2,
+        "integrationConsistency": 4,
+        "testReleaseEvidence": 4
+      },
+      "confidence": "medium-high",
+      "evidence": "See system audit and source-of-truth map",
+      "limitations": [
+        "No exhaustive browser execution",
+        "External providers/statutory authorities unverified"
+      ]
+    },
+    {
+      "workflowId": "WF-10",
+      "name": "Accounting, ledger and close",
+      "expectedBusinessResult": "Balanced sourced ledger and gated close",
+      "authoritativeOwner": "accounting",
+      "status": "partial",
+      "scores": {
+        "completeness": 4,
+        "businessExactness": 4,
+        "sourceOfTruthIntegrity": 4,
+        "securityTenantIsolation": 4,
+        "architecturalConsistency": 4,
+        "rbacEntitlement": 4,
+        "auditEvidence": 4,
+        "efficiency": 3,
+        "resilienceRecovery": 4,
+        "idempotencyConcurrency": 4,
+        "observability": 3,
+        "uiUxProductivity": 3,
+        "accessibilityResponsive": 2,
+        "integrationConsistency": 4,
+        "testReleaseEvidence": 4
+      },
+      "confidence": "medium-high",
+      "evidence": "See system audit and source-of-truth map",
+      "limitations": [
+        "No exhaustive browser execution",
+        "External providers/statutory authorities unverified"
+      ]
+    },
+    {
+      "workflowId": "WF-11",
+      "name": "HRIS employee lifecycle",
+      "expectedBusinessResult": "Controlled workforce truth",
+      "authoritativeOwner": "hris",
+      "status": "partial",
+      "scores": {
+        "completeness": 3,
+        "businessExactness": 3,
+        "sourceOfTruthIntegrity": 4,
+        "securityTenantIsolation": 3,
+        "architecturalConsistency": 4,
+        "rbacEntitlement": 3,
+        "auditEvidence": 3,
+        "efficiency": 3,
+        "resilienceRecovery": 3,
+        "idempotencyConcurrency": 3,
+        "observability": 3,
+        "uiUxProductivity": 3,
+        "accessibilityResponsive": 2,
+        "integrationConsistency": 4,
+        "testReleaseEvidence": 3
+      },
+      "confidence": "medium-high",
+      "evidence": "See system audit and source-of-truth map",
+      "limitations": [
+        "No exhaustive browser execution",
+        "External providers/statutory authorities unverified"
+      ]
+    },
+    {
+      "workflowId": "WF-12",
+      "name": "Payroll lifecycle",
+      "expectedBusinessResult": "Traceable payroll through close",
+      "authoritativeOwner": "payroll",
+      "status": "partial",
+      "scores": {
+        "completeness": 4,
+        "businessExactness": 4,
+        "sourceOfTruthIntegrity": 4,
+        "securityTenantIsolation": 4,
+        "architecturalConsistency": 4,
+        "rbacEntitlement": 4,
+        "auditEvidence": 4,
+        "efficiency": 3,
+        "resilienceRecovery": 4,
+        "idempotencyConcurrency": 4,
+        "observability": 3,
+        "uiUxProductivity": 3,
+        "accessibilityResponsive": 2,
+        "integrationConsistency": 4,
+        "testReleaseEvidence": 4
+      },
+      "confidence": "medium-high",
+      "evidence": "See system audit and source-of-truth map",
+      "limitations": [
+        "No exhaustive browser execution",
+        "External providers/statutory authorities unverified"
+      ]
+    },
+    {
+      "workflowId": "WF-13",
+      "name": "Compliance and country packs",
+      "expectedBusinessResult": "Versioned expert-approved statutory truth",
+      "authoritativeOwner": "compliance/regulatory",
+      "status": "blocked",
+      "scores": {
+        "completeness": 3,
+        "businessExactness": 2,
+        "sourceOfTruthIntegrity": 4,
+        "securityTenantIsolation": 4,
+        "architecturalConsistency": 4,
+        "rbacEntitlement": 4,
+        "auditEvidence": 4,
+        "efficiency": 3,
+        "resilienceRecovery": 4,
+        "idempotencyConcurrency": 4,
+        "observability": 3,
+        "uiUxProductivity": 3,
+        "accessibilityResponsive": 2,
+        "integrationConsistency": 4,
+        "testReleaseEvidence": 4
+      },
+      "confidence": "medium-high",
+      "evidence": "See system audit and source-of-truth map",
+      "limitations": [
+        "No exhaustive browser execution",
+        "External providers/statutory authorities unverified"
+      ]
+    },
+    {
+      "workflowId": "WF-14",
+      "name": "Approvals, overrides and exceptions",
+      "expectedBusinessResult": "Segregated traceable decisions",
+      "authoritativeOwner": "domain/security",
+      "status": "partial",
+      "scores": {
+        "completeness": 3,
+        "businessExactness": 3,
+        "sourceOfTruthIntegrity": 4,
+        "securityTenantIsolation": 3,
+        "architecturalConsistency": 4,
+        "rbacEntitlement": 3,
+        "auditEvidence": 3,
+        "efficiency": 3,
+        "resilienceRecovery": 3,
+        "idempotencyConcurrency": 3,
+        "observability": 3,
+        "uiUxProductivity": 3,
+        "accessibilityResponsive": 2,
+        "integrationConsistency": 4,
+        "testReleaseEvidence": 3
+      },
+      "confidence": "medium-high",
+      "evidence": "See system audit and source-of-truth map",
+      "limitations": [
+        "No exhaustive browser execution",
+        "External providers/statutory authorities unverified"
+      ]
+    },
+    {
+      "workflowId": "WF-15",
+      "name": "Documents, evidence, redaction and export",
+      "expectedBusinessResult": "Controlled evidence lifecycle",
+      "authoritativeOwner": "evidence/domain services",
+      "status": "partial",
+      "scores": {
+        "completeness": 3,
+        "businessExactness": 3,
+        "sourceOfTruthIntegrity": 3,
+        "securityTenantIsolation": 3,
+        "architecturalConsistency": 3,
+        "rbacEntitlement": 3,
+        "auditEvidence": 3,
+        "efficiency": 3,
+        "resilienceRecovery": 3,
+        "idempotencyConcurrency": 3,
+        "observability": 3,
+        "uiUxProductivity": 3,
+        "accessibilityResponsive": 2,
+        "integrationConsistency": 3,
+        "testReleaseEvidence": 3
+      },
+      "confidence": "medium-high",
+      "evidence": "See system audit and source-of-truth map",
+      "limitations": [
+        "No exhaustive browser execution",
+        "External providers/statutory authorities unverified"
+      ]
+    },
+    {
+      "workflowId": "WF-16",
+      "name": "Reporting, dashboards and snapshots",
+      "expectedBusinessResult": "Fresh consistent projections",
+      "authoritativeOwner": "dashboard/snapshots",
+      "status": "partial",
+      "scores": {
+        "completeness": 3,
+        "businessExactness": 2,
+        "sourceOfTruthIntegrity": 3,
+        "securityTenantIsolation": 3,
+        "architecturalConsistency": 3,
+        "rbacEntitlement": 3,
+        "auditEvidence": 3,
+        "efficiency": 3,
+        "resilienceRecovery": 3,
+        "idempotencyConcurrency": 3,
+        "observability": 3,
+        "uiUxProductivity": 3,
+        "accessibilityResponsive": 2,
+        "integrationConsistency": 3,
+        "testReleaseEvidence": 3
+      },
+      "confidence": "medium-high",
+      "evidence": "See system audit and source-of-truth map",
+      "limitations": [
+        "No exhaustive browser execution",
+        "External providers/statutory authorities unverified"
+      ]
+    },
+    {
+      "workflowId": "WF-17",
+      "name": "Notifications, errors, incidents and recovery",
+      "expectedBusinessResult": "Durable actionable operations",
+      "authoritativeOwner": "error/assurance",
+      "status": "partial",
+      "scores": {
+        "completeness": 3,
+        "businessExactness": 3,
+        "sourceOfTruthIntegrity": 3,
+        "securityTenantIsolation": 3,
+        "architecturalConsistency": 3,
+        "rbacEntitlement": 3,
+        "auditEvidence": 3,
+        "efficiency": 3,
+        "resilienceRecovery": 3,
+        "idempotencyConcurrency": 3,
+        "observability": 3,
+        "uiUxProductivity": 3,
+        "accessibilityResponsive": 2,
+        "integrationConsistency": 3,
+        "testReleaseEvidence": 3
+      },
+      "confidence": "medium-high",
+      "evidence": "See system audit and source-of-truth map",
+      "limitations": [
+        "No exhaustive browser execution",
+        "External providers/statutory authorities unverified"
+      ]
+    },
+    {
+      "workflowId": "WF-18",
+      "name": "Import, migration, backfill and deletion",
+      "expectedBusinessResult": "Safe traceable data evolution",
+      "authoritativeOwner": "prisma/domain services",
+      "status": "blocked",
+      "scores": {
+        "completeness": 3,
+        "businessExactness": 3,
+        "sourceOfTruthIntegrity": 4,
+        "securityTenantIsolation": 3,
+        "architecturalConsistency": 4,
+        "rbacEntitlement": 3,
+        "auditEvidence": 3,
+        "efficiency": 3,
+        "resilienceRecovery": 3,
+        "idempotencyConcurrency": 3,
+        "observability": 3,
+        "uiUxProductivity": 3,
+        "accessibilityResponsive": 2,
+        "integrationConsistency": 4,
+        "testReleaseEvidence": 3
+      },
+      "confidence": "medium-high",
+      "evidence": "See system audit and source-of-truth map",
+      "limitations": [
+        "No exhaustive browser execution",
+        "External providers/statutory authorities unverified"
+      ]
+    },
+    {
+      "workflowId": "WF-19",
+      "name": "Offline synchronization and replay",
+      "expectedBusinessResult": "Idempotent conflict-aware convergence",
+      "authoritativeOwner": "pos offline-sync",
+      "status": "partial",
+      "scores": {
+        "completeness": 4,
+        "businessExactness": 4,
+        "sourceOfTruthIntegrity": 4,
+        "securityTenantIsolation": 4,
+        "architecturalConsistency": 4,
+        "rbacEntitlement": 4,
+        "auditEvidence": 4,
+        "efficiency": 3,
+        "resilienceRecovery": 4,
+        "idempotencyConcurrency": 4,
+        "observability": 3,
+        "uiUxProductivity": 3,
+        "accessibilityResponsive": 2,
+        "integrationConsistency": 4,
+        "testReleaseEvidence": 4
+      },
+      "confidence": "medium-high",
+      "evidence": "See system audit and source-of-truth map",
+      "limitations": [
+        "No exhaustive browser execution",
+        "External providers/statutory authorities unverified"
+      ]
+    },
+    {
+      "workflowId": "WF-20",
+      "name": "AI copilot and automation",
+      "expectedBusinessResult": "Evidence-bound human-controlled proposals",
+      "authoritativeOwner": "ai/agents",
+      "status": "partial",
+      "scores": {
+        "completeness": 4,
+        "businessExactness": 4,
+        "sourceOfTruthIntegrity": 4,
+        "securityTenantIsolation": 4,
+        "architecturalConsistency": 4,
+        "rbacEntitlement": 4,
+        "auditEvidence": 4,
+        "efficiency": 3,
+        "resilienceRecovery": 4,
+        "idempotencyConcurrency": 4,
+        "observability": 3,
+        "uiUxProductivity": 3,
+        "accessibilityResponsive": 2,
+        "integrationConsistency": 4,
+        "testReleaseEvidence": 4
+      },
+      "confidence": "medium-high",
+      "evidence": "See system audit and source-of-truth map",
+      "limitations": [
+        "No exhaustive browser execution",
+        "External providers/statutory authorities unverified"
+      ]
+    },
+    {
+      "workflowId": "WF-21",
+      "name": "Release, observability and rollback",
+      "expectedBusinessResult": "Evidence-bound operable release",
+      "authoritativeOwner": "assurance/operations",
+      "status": "blocked",
+      "scores": {
+        "completeness": 3,
+        "businessExactness": 3,
+        "sourceOfTruthIntegrity": 4,
+        "securityTenantIsolation": 3,
+        "architecturalConsistency": 4,
+        "rbacEntitlement": 3,
+        "auditEvidence": 3,
+        "efficiency": 3,
+        "resilienceRecovery": 3,
+        "idempotencyConcurrency": 3,
+        "observability": 3,
+        "uiUxProductivity": 3,
+        "accessibilityResponsive": 2,
+        "integrationConsistency": 4,
+        "testReleaseEvidence": 3
+      },
+      "confidence": "medium-high",
+      "evidence": "See system audit and source-of-truth map",
+      "limitations": [
+        "No exhaustive browser execution",
+        "External providers/statutory authorities unverified"
+      ]
+    },
+    {
+      "workflowId": "WF-22",
+      "name": "Public APIs, receipts and integrations",
+      "expectedBusinessResult": "Abuse-resistant authenticated boundary",
+      "authoritativeOwner": "pos receipt/provider adapters",
+      "status": "partial",
+      "scores": {
+        "completeness": 4,
+        "businessExactness": 3,
+        "sourceOfTruthIntegrity": 4,
+        "securityTenantIsolation": 4,
+        "architecturalConsistency": 4,
+        "rbacEntitlement": 4,
+        "auditEvidence": 4,
+        "efficiency": 3,
+        "resilienceRecovery": 4,
+        "idempotencyConcurrency": 4,
+        "observability": 3,
+        "uiUxProductivity": 3,
+        "accessibilityResponsive": 2,
+        "integrationConsistency": 4,
+        "testReleaseEvidence": 4
+      },
+      "confidence": "medium-high",
+      "evidence": "See system audit and source-of-truth map",
+      "limitations": [
+        "No exhaustive browser execution",
+        "External providers/statutory authorities unverified"
+      ]
+    }
+  ]
+}

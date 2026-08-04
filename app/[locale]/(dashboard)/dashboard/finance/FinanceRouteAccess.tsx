@@ -4,6 +4,11 @@ import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
 import { localizePath, pickLocale } from "@/i18n/routing"
 import { RbacError, requireAnyPermission } from "@/lib/security/rbac"
 import { getFinanceDashboardViewPermissions } from "@/services/finance/finance-dashboard-access"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
+import type {
+  CommercialModuleSlug,
+  ModuleAccessIntent,
+} from "@/services/modules/module-control-contracts"
 import type { FinanceDashboardView } from "@/services/finance/finance-dashboard.schemas"
 
 export type FinanceRouteParams = Promise<{ locale: string }>
@@ -13,19 +18,26 @@ export async function FinanceRouteAccess({
   permissions,
   resource,
   title,
+  module,
   children,
 }: {
   params: FinanceRouteParams
   permissions: readonly string[]
   resource: string
   title: string
+  module?: {
+    moduleSlug: CommercialModuleSlug
+    surface: string
+    accessIntent?: ModuleAccessIntent
+  }
   children: ReactNode
 }) {
   const { locale: rawLocale } = await params
   const locale = pickLocale(rawLocale)
+  let context: Awaited<ReturnType<typeof requireAnyPermission>>
 
   try {
-    await requireAnyPermission(permissions, { resource })
+    context = await requireAnyPermission(permissions, { resource })
   } catch (error) {
     if (error instanceof RbacError) {
       const noActiveOrg = error.code === "NO_ACTIVE_ORG"
@@ -45,6 +57,31 @@ export async function FinanceRouteAccess({
     }
 
     throw error
+  }
+
+  if (module) {
+    const decision = await observeModuleAccess({
+      organizationId: context.orgId,
+      userId: context.userId,
+      actorPermissions: context.permissions,
+      moduleSlug: module.moduleSlug,
+      surfaceType: "page",
+      surface: module.surface,
+      accessIntent: module.accessIntent ?? "read",
+      mode: "enforce",
+      audit: true,
+    })
+
+    if (!decision.allowed) {
+      return (
+        <DashboardRouteState
+          kind="locked_module"
+          title={`${title} is not enabled for this tenant`}
+          message="This workflow is protected by the payment reconciliation module entitlement. Enable the module before relying on cash, bank, card, or mobile-money reconciliation results here."
+          primaryHref={localizePath("/dashboard", locale)}
+        />
+      )
+    }
   }
 
   return <>{children}</>

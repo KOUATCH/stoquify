@@ -120,8 +120,10 @@ export async function readRoleDailyDigest(
 
   const data = await dependencies.loadDigest({
     organizationId: context.organizationId,
+    actorId: context.actorId,
     actorPermissions: context.permissions,
     actorRoleCodes: context.roleCodes,
+    isSuperUser: context.isSuperUser,
     periodStart: context.periodStart,
     periodEnd: context.periodEnd,
   })

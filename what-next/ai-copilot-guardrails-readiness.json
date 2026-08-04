@@ -1,0 +1,77 @@
+{
+  "generatedAt": "2026-08-03T14:37:28.999Z",
+  "status": "ready",
+  "checks": [
+    {
+      "key": "agent_runtime_tools_remain_read_only",
+      "ready": true
+    },
+    {
+      "key": "autonomous_high_authority_actions_are_prohibited",
+      "ready": true
+    },
+    {
+      "key": "answers_cite_tenant_period_as_of_and_sources",
+      "ready": true
+    },
+    {
+      "key": "proposal_types_are_non_executing_and_allowlisted",
+      "ready": true
+    },
+    {
+      "key": "proposal_acceptance_has_no_execution_authority",
+      "ready": true
+    },
+    {
+      "key": "proposal_evidence_is_bound_to_completed_tenant_run",
+      "ready": true
+    },
+    {
+      "key": "unsafe_proposals_are_blocked_and_audited",
+      "ready": true
+    },
+    {
+      "key": "proposal_actions_require_rbac_fresh_auth_and_server_scope",
+      "ready": true
+    },
+    {
+      "key": "proposal_phase_is_server_authorized_and_ui_inactive_by_default",
+      "ready": true
+    },
+    {
+      "key": "analysis_and_proposal_events_are_recorded",
+      "ready": true
+    },
+    {
+      "key": "proposal_idempotency_and_hash_evidence_are_durable",
+      "ready": true
+    },
+    {
+      "key": "proposal_notifications_are_outboxed",
+      "ready": true
+    },
+    {
+      "key": "proposal_ui_exposes_loading_error_and_human_decision",
+      "ready": true
+    },
+    {
+      "key": "proposal_schema_has_additive_migration",
+      "ready": true
+    },
+    {
+      "key": "hallucination_unsafe_tenant_rbac_and_ui_tests_exist",
+      "ready": true
+    }
+  ],
+  "blockers": [],
+  "authority": {
+    "analysis": "read_only",
+    "proposalExecution": "none",
+    "autonomousPosting": false,
+    "autonomousPayment": false,
+    "autonomousApproval": false,
+    "autonomousFiling": false,
+    "autonomousCertification": false,
+    "credentialMutation": false
+  }
+}

@@ -18,7 +18,7 @@
 - P0 security prerequisites: open and under bounded remediation
 - Enforcement truth: mixed and unreconciled
 - Provider reconciliation: ineligible
-- Rollout certification: rejected for all 20 catalog modules
+- Rollout certification: rejected for all 19 catalog modules
 
 ## Stage Register
 
@@ -31,7 +31,7 @@
 | 04 Surface registry | blocked | Classify new gaps and effective enforcement |
 | 05-12 Durable control plane | blocked | Requires preceding gates and durable truth |
 | 13 Pilot | not_eligible | No certified cohort |
-| 14 Rollout certification | rejected | All catalog modules fail current prerequisites |
+| 14 Rollout certification | rejected | All 19 catalog modules fail current prerequisites |
 | 15 Final release | no_go | Broad enforcement remains disabled |
 
 ## Immediate Next Actions
@@ -54,3 +54,9 @@ Skill installation does not make the runtime module system enterprise-ready. No 
 - Runtime effect: none. No package records, subscription state, billing adapter, provisioning command, entitlement change, or enforcement promotion was introduced.
 - Gate decision: the package-strategy implementation stage remains blocked behind the existing Stage 01-06 prerequisites. The public offer remains quote-led and configuration-assisted.
 - Artifacts: `docs/landing page/landing-packages-adoption-commercial-strategy-prompt.md` and `docs/landing page/landing-packages-adoption-commercial-strategy.md`.
+
+## Production/BOM Retirement, 2026-07-26
+
+- The unimplemented production/BOM capability was removed from the active 19-module catalog, public offer, permissions, runtime schema, and seeds.
+- Existing BOM rows are preserved through a non-destructive legacy-table archival migration; historical inventory and accounting evidence codes remain readable.
+- Evidence: `what-next/PRODUCTION_BOM_CAPABILITY_RETIREMENT_2026-07-26.md`.

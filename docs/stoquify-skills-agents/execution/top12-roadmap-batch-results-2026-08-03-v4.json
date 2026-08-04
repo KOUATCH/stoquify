@@ -1,0 +1,98 @@
+[
+  {
+    "command": "node scripts/top12-programme-gate.js --mode report",
+    "exitCode": 0,
+    "durationMs": 355.0,
+    "result": "{\r\n  \"programmeId\": \"stoquify-top12-2026-08-02\",\r\n  \"status\": \"CONTROL_READY_EXECUTION_BLOCKED\",\r\n  \"controlReady\": true,\r\n  \"promotionReady\": false,\r\n  \"activationAuthorizedByGate\": false,\r\n  \"phase3AuthorizedByGate\": false,\r\n  \"control\": {\r\n    \"valid\": true,\r\n    \"errors\": [],\r\n    \"warnings\": [],\r\n    \"summary\": {\r\n      \"capabilities\": 12,\r\n      \"foundations\": 7,\r\n      \"workItems\": 63,\r\n      \"completedWorkItems\": 8,\r\n      \"inProgressWorkItems\": 1,\r\n      \"externalInputBlockedWorkItems\": 7\r\n    }\r\n  },\r\n  \"baselineMismatches\": [],\r\n  \"phase2b\": {\r\n    \"status\": \"BLOCKED\",\r\n    \"checks\": 23,\r\n    \"passed\": 2,\r\n    \"blockers\": 21\r\n  },\r\n  \"externalInputs\": {\r\n    \"status\": \"EXTERNAL_INPUTS_REQUIRED\",\r\n    \"checks\": 13,\r\n    \"passed\": 1,\r\n    \"blockers\": 102\r\n  }\r\n}"
+  },
+  {
+    "command": "node scripts/top12-evaluation-harness.js --mode fail --limit 150 --out docs/stoquify-skills-agents/execution/TOP12_FND_010_EVALUATION_HARNESS_REPORT_2026-08-03-v4.md --json-out docs/stoquify-skills-agents/execution/top12-evaluation-harness-run-2026-08-03-v4.json",
+    "exitCode": 0,
+    "durationMs": 1261.0,
+    "result": "{\r\n  \"schemaVersion\": 1,\r\n  \"runId\": \"top12-eval-eb67635ebcbecfaf\",\r\n  \"generatedAt\": \"2026-08-03T12:10:08.685Z\",\r\n  \"status\": \"PRIORITIZATION_READY_NOT_EXECUTED\",\r\n  \"behavioralExecution\": false,\r\n  \"productionActivationAuthorized\": false,\r\n  \"source\": {\r\n    \"catalogPath\": \"docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json\",\r\n    \"catalogHash\": \"sha256:fd04f5b662cde7b082ba03e4c78ea79aaf69ca21d39b99972268a3637fa1c255\",\r\n    \"schemaVersion\": \"1.0.0\",\r\n    \"executionStatus\": \"NOT_TESTED\",\r\n    \"totalCases\": 999\r\n  },\r\n  \"validation\": {\r\n    \"valid\": true,\r\n    \"errors\": [],\r\n    \"warnings\": [\r\n      \"SOURCE_CONTAINS_NOT_TESTED_CASES; harness prioritizes but does not certify behavior.\"\r\n    ],\r\n    \"caseCount\": 999\r\n  },\r\n  \"prioritization\": {\r\n    \"requestedLimit\": 150,\r\n    \"selectedCaseCount\": 150,\r\n    \"policy\": \"deterministic-category-and-risk-tag-score-v1\",\r\n    \"summary\": {\r\n      \"byCategory\": {\r\n        \"adversarial\": 103,\r\n        \"evidence_trust\": 7,\r\n        \"access_control\": 40\r\n      },\r\n      \"byCapability\": {\r\n        \"S19\": 11,\r\n        \"S23\": 11,\r\n        \"S24\": 11,\r\n        \"S27\": 11,\r\n        \"stoquify-cash-reconciliation-agent\": 11,\r\n        \"stoquify-payroll-workforce-agent\": 11,\r\n        \"S15\": 11,\r\n        \"S08\": 10,\r\n        \"S01\": 5,\r\n        \"S02\": 5,\r\n        \"S03\": 5,\r\n        \"S04\": 5,\r\n        \"S05\": 5,\r\n        "
+  },
+  {
+    "command": "npm run prisma:validate",
+    "exitCode": 0,
+    "durationMs": 12632.0,
+    "result": "> STOQUIFY@0.1.0 prisma:validate\r\n> prisma validate\r\n\r\nLoaded Prisma config from prisma.config.ts.\r\n\r\nPrisma config detected, skipping environment variable loading.\r\nPrisma schema loaded from prisma\\schema.prisma\r\nThe schema at prisma\\schema.prisma is valid 🚀"
+  },
+  {
+    "command": "npm run agent:tool-registry:gate",
+    "exitCode": 0,
+    "durationMs": 1068.0,
+    "result": "> STOQUIFY@0.1.0 agent:tool-registry:gate\r\n> node scripts/agent-tool-registry-gate.js\r\n\r\nStoquify agent tool registry gate passed: static MVP tools are read-only and dependency-neutral."
+  },
+  {
+    "command": "npm run agent:prohibited-action:gate",
+    "exitCode": 0,
+    "durationMs": 1341.0,
+    "result": "> STOQUIFY@0.1.0 agent:prohibited-action:gate\r\n> node scripts/agent-prohibited-action-gate.js\r\n\r\nStoquify agent prohibited-action gate passed: no business write path is present in services/agents."
+  },
+  {
+    "command": "npm run agent:release-control:gate",
+    "exitCode": 0,
+    "durationMs": 1220.0,
+    "result": "> STOQUIFY@0.1.0 agent:release-control:gate\r\n> node scripts/agent-release-control-gate.js\r\n\r\nAgent release-control gate passed.\r\n- direct activation bypass rejected\r\n- governed runtime authorization ordered before execution\r\n- approval, ownership, certification, reconciliation, and rollback controls present\r\n- replay-safe evidence commands and tenant-safe definition registry present\r\n- blocking active-release drift triggers guarded suspension\r\n- retry-safe Workflow Assurance webhook transport and audited recovery present"
+  },
+  {
+    "command": "npm run ai:copilot:guardrails:gate",
+    "exitCode": 0,
+    "durationMs": 1124.0,
+    "result": "\r\n> STOQUIFY@0.1.0 ai:copilot:guardrails:gate\r\n> node scripts/ai-copilot-guardrails-gate.js\r\n\r\n# AI Copilot Guardrails Readiness\r\n\r\nGenerated: 2026-08-03T12:10:26.984Z\r\nStatus: ready\r\n\r\n## Summary\r\n\r\n- Checks ready: 15/15\r\n- Blockers: 0\r\n- Copilot analysis authority: read-only\r\n- Proposal execution authority: none\r\n\r\n## Checks\r\n\r\n- ready: agent_runtime_tools_remain_read_only\r\n- ready: autonomous_high_authority_actions_are_prohibited\r\n- ready: answers_cite_tenant_period_as_of_and_sources\r\n- ready: proposal_types_are_non_executing_and_allowlisted\r\n- ready: proposal_acceptance_has_no_execution_authority\r\n- ready: proposal_evidence_is_bound_to_completed_tenant_run\r\n- ready: unsafe_proposals_are_blocked_and_audited\r\n- ready: proposal_actions_require_rbac_fresh_auth_and_server_scope\r\n- ready: proposal_phase_is_server_authorized_and_ui_inactive_by_default\r\n- ready: analysis_and_proposal_events_are_recorded\r\n- ready: proposal_idempotency_and_hash_evidence_are_durable\r\n- ready: proposal_notifications_are_outboxed\r\n- ready: proposal_ui_exposes_loading_error_and_human_decision\r\n- ready: proposal_schema_has_additive_migration\r\n- ready: hallucination_unsafe_tenant_rbac_and_ui_tests_exist\r\n\r\n## Blockers\r\n\r\n- None\r\n\r\n## Safety Boundary\r\n\r\n- The copilot may analyze trusted tenant evidence and prepare review proposals.\r\n- A proposal acceptance records human intent only and does not invoke a wor"
+  },
+  {
+    "command": "node scripts/ai-copilot-guardrails-gate.js",
+    "exitCode": 0,
+    "durationMs": 258.0,
+    "result": "# AI Copilot Guardrails Readiness\r\n\r\nGenerated: 2026-08-03T12:10:27.281Z\r\nStatus: ready\r\n\r\n## Summary\r\n\r\n- Checks ready: 15/15\r\n- Blockers: 0\r\n- Copilot analysis authority: read-only\r\n- Proposal execution authority: none\r\n\r\n## Checks\r\n\r\n- ready: agent_runtime_tools_remain_read_only\r\n- ready: autonomous_high_authority_actions_are_prohibited\r\n- ready: answers_cite_tenant_period_as_of_and_sources\r\n- ready: proposal_types_are_non_executing_and_allowlisted\r\n- ready: proposal_acceptance_has_no_execution_authority\r\n- ready: proposal_evidence_is_bound_to_completed_tenant_run\r\n- ready: unsafe_proposals_are_blocked_and_audited\r\n- ready: proposal_actions_require_rbac_fresh_auth_and_server_scope\r\n- ready: proposal_phase_is_server_authorized_and_ui_inactive_by_default\r\n- ready: analysis_and_proposal_events_are_recorded\r\n- ready: proposal_idempotency_and_hash_evidence_are_durable\r\n- ready: proposal_notifications_are_outboxed\r\n- ready: proposal_ui_exposes_loading_error_and_human_decision\r\n- ready: proposal_schema_has_additive_migration\r\n- ready: hallucination_unsafe_tenant_rbac_and_ui_tests_exist\r\n\r\n## Blockers\r\n\r\n- None\r\n\r\n## Safety Boundary\r\n\r\n- The copilot may analyze trusted tenant evidence and prepare review proposals.\r\n- A proposal acceptance records human intent only and does not invoke a workflow.\r\n- Posting, payment, approval, reversal, certification, filing, submission, credential, "
+  },
+  {
+    "command": "npm run agent:phase2a:gate",
+    "exitCode": 0,
+    "durationMs": 1996.0,
+    "result": "> STOQUIFY@0.1.0 agent:phase2a:gate\r\n> node scripts/agent-phase2a-command-gate.js\r\n\r\nStoquify Phase 2A Command Agent gate passed: narrow, read-only, provider-free boundary verified."
+  },
+  {
+    "command": "npm run agent:phase2b:entry:gate",
+    "exitCode": 1,
+    "durationMs": 1744.0,
+    "result": "> STOQUIFY@0.1.0 agent:phase2b:entry:gate\r\n> node scripts/agent-phase-promotion-gate.js --target phase2b --mode fail\r\n\r\n{\r\n  \"target\": \"phase2b\",\r\n  \"status\": \"BLOCKED\",\r\n  \"eligible\": false,\r\n  \"checks\": 23,\r\n  \"passed\": 2,\r\n  \"blockers\": 21,\r\n  \"activationAuthorizedByGate\": false,\r\n  \"phase3AuthorizedByGate\": false,\r\n  \"secretValuesPrinted\": false,\r\n  \"report\": \"docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_ENTRY_DECISION_2026-07-25.md\"\r\n}"
+  },
+  {
+    "command": "npm run agent:phase3:entry:gate",
+    "exitCode": 1,
+    "durationMs": 2763.0,
+    "result": "> STOQUIFY@0.1.0 agent:phase3:entry:gate\r\n> node scripts/agent-phase-promotion-gate.js --target phase3 --mode fail\r\n\r\n{\r\n  \"target\": \"phase3\",\r\n  \"status\": \"BLOCKED\",\r\n  \"eligible\": false,\r\n  \"checks\": 34,\r\n  \"passed\": 0,\r\n  \"blockers\": 34,\r\n  \"activationAuthorizedByGate\": false,\r\n  \"phase3AuthorizedByGate\": false,\r\n  \"secretValuesPrinted\": false,\r\n  \"report\": \"docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_ENTRY_DECISION_2026-07-25.md\"\r\n}"
+  },
+  {
+    "command": "node scripts/agent-external-input-readiness.js --mode fail --json-out docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUT_READINESS_2026-07-25.json --out docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUT_READINESS_2026-07-25.md",
+    "exitCode": 1,
+    "durationMs": 179.0,
+    "result": "{\r\n  \"status\": \"EXTERNAL_INPUTS_REQUIRED\",\r\n  \"ready\": false,\r\n  \"checks\": 13,\r\n  \"passed\": 1,\r\n  \"blockers\": 102,\r\n  \"activationAuthorizedByGate\": false,\r\n  \"phase3AuthorizedByGate\": false,\r\n  \"secretValuesPrinted\": false,\r\n  \"report\": \"docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUT_READINESS_2026-07-25.md\"\r\n}"
+  },
+  {
+    "command": "npm test -- --runInBand scripts/__tests__/top12-programme-gate.test.js scripts/__tests__/top12-evaluation-harness.test.js",
+    "exitCode": 0,
+    "durationMs": 15228.0,
+    "result": "> STOQUIFY@0.1.0 test\r\n> jest --runInBand scripts/__tests__/top12-programme-gate.test.js scripts/__tests__/top12-evaluation-harness.test.js\r\n\r\n\r\nTest Suites: 2 passed, 2 total\r\nTests:       12 passed, 12 total\r\nSnapshots:   0 total\r\nTime:        3.419 s\r\nRan all test suites matching scripts/__tests__/top12-programme-gate.test.js|scripts/__tests__/top12-evaluation-harness.test.js."
+  },
+  {
+    "command": "npx eslint scripts/top12-evaluation-harness.js scripts/__tests__/top12-evaluation-harness.test.js scripts/top12-programme-gate.js scripts/__tests__/top12-programme-gate.test.js",
+    "exitCode": 0,
+    "durationMs": 10043.0,
+    "result": ""
+  },
+  {
+    "command": "npx eslint services/agents/portfolio/connector-health.service.ts services/agents/portfolio/connector-inventory-read-model.service.ts services/agents/portfolio/__tests__/connector-health.service.test.ts services/agents/portfolio/__tests__/connector-inventory-read-model.service.test.ts",
+    "exitCode": 0,
+    "durationMs": 7174.0,
+    "result": ""
+  },
+  {
+    "command": "npm run typecheck",
+    "exitCode": 0,
+    "durationMs": 28618.0,
+    "result": "> STOQUIFY@0.1.0 typecheck\r\n> tsc --noEmit --pretty false"
+  }
+]

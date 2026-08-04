@@ -973,6 +973,12 @@ export async function receiveItems(input: ReceiveItemsInput) {
 export async function bulkUpdateStatus(input: BulkStatusUpdateInput) {
   logger.info("purchase-order.bulk-update", { orgId: input.organizationId, count: input.purchaseOrderIds.length })
 
+  if (input.toStatus === "APPROVED") {
+    throw new BusinessRuleError(
+      "Purchase orders cannot be approved in bulk. Use the canonical approval workflow for each order.",
+    )
+  }
+
   const updated: string[] = []
   const failed: { id: string; error: string }[] = []
 
@@ -995,7 +1001,6 @@ export async function bulkUpdateStatus(input: BulkStatusUpdateInput) {
         data: {
           status:     input.toStatus,
           updatedAt:  new Date(),
-          approvedAt: input.toStatus === "APPROVED" ? new Date() : undefined,
           notes:      input.reason ? { set: input.reason } : undefined,
         },
       })

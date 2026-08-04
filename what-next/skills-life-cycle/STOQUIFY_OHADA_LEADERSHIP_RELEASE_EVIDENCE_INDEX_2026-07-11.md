@@ -6,7 +6,7 @@ Mode: release synthesis
 
 Primary skill: stoquify-release-evidence-ratchet
 
-Status: conditional
+Status: blocked
 
 ## Scope
 
@@ -14,12 +14,14 @@ Consolidate the completed leadership-skill sequence into durable release evidenc
 
 ## Summary
 
-- Structural checks ready: 10/11
-- Release enforcement: off
+- Structural checks ready: 11/11
+- Release enforcement: on
 - Skill run reports: 14
 - Readiness artifacts: 10
-- Structural blockers: 1
-- Release-only blockers: 3
+- Structural blockers: 0
+- Release blockers: 5
+- Readiness release blockers: 1
+- Environment release blockers: 4
 - Secret values printed: no
 
 ## Skill Run Evidence
@@ -47,19 +49,24 @@ Consolidate the completed leadership-skill sequence into durable release evidenc
 | --- | --- | ---: | ---: | ---: |
 | public-identity-abuse | ready | 15/15 | 0 | 1 |
 | ledger-close-truth | ready | 10/10 | 0 | 0 |
-| payment-cash-truth | ready | 10/10 | 0 | 0 |
-| purchasing-ap-consolidation | ready | 10/10 | 0 | 0 |
-| offline-pos-fiscal-replay | ready | 10/10 | 0 | 0 |
+| payment-cash-truth | ready | 11/11 | 0 | 0 |
+| purchasing-ap-consolidation | ready | 11/11 | 0 | 0 |
+| offline-pos-fiscal-replay | ready | 16/16 | 0 | 0 |
 | statutory-country-pack-production | blocked | 10/12 | 2 | 0 |
-| report-trust-export | ready | 9/9 | 0 | 0 |
+| report-trust-export | ready | 17/17 | 0 | 0 |
 | role-based-operating-cockpit | ready | 9/9 | 0 | 0 |
-| prisma-migration-deployment | ready | 8/8 | 0 | 0 |
-| ci-release | ready | 10/10 | 0 | 0 |
+| prisma-migration-deployment | ready | 9/9 | 0 | 0 |
+| ci-release | ready | 11/11 | 0 | 0 |
+
+## Readiness Release Blockers
+
+- blocked: readiness:statutory-country-pack-production
 
 ## Release Conditions
 
 - blocked: public_identity_hash_secret via release:secrets:preflight:release
 - blocked: public_receipt_token_secret via release:secrets:preflight:release
+- blocked: history_cursor_signing_secret via release:secrets:preflight:release
 - blocked: production_database_target via prisma:migration:release:preflight
 
 ## Verification
@@ -68,7 +75,7 @@ Consolidate the completed leadership-skill sequence into durable release evidenc
 | --- | --- |
 | all_skill_run_reports_present | passed |
 | run_reports_record_date_and_verification | passed |
-| readiness_json_is_parseable_and_clear | failed |
+| readiness_json_is_parseable_and_clear | passed |
 | readiness_markdown_is_present | passed |
 | supporting_inventory_evidence_is_present | passed |
 | domain_policy_gates_are_composed | passed |
@@ -80,9 +87,11 @@ Consolidate the completed leadership-skill sequence into durable release evidenc
 
 ## Blockers And Residual Risk
 
-- Structural blocker: readiness_json_is_parseable_and_clear
+- No structural evidence blockers.
+- Release blocker: readiness:statutory-country-pack-production
 - Release blocker: public_identity_hash_secret
 - Release blocker: public_receipt_token_secret
+- Release blocker: history_cursor_signing_secret
 - Release blocker: production_database_target
 - Residual risk: Completed skills are focused slices, not a certification of the entire codebase.
 - Residual risk: Statutory country-pack readiness prevents unsupported claims; it is not legal certification.
@@ -92,8 +101,8 @@ Consolidate the completed leadership-skill sequence into durable release evidenc
 
 ## Next Recommended Skill
 
-The blueprint sequence is complete. Return control to stoquify-ohada-leadership-orchestrator for the next evidence-backed product slice.
+Remain on `017-aqstoqflow-enterprise-release-gate` until every release blocker is closed. Do not promote or activate from this evidence index.
 
 ## Suggested Next Slice
 
-Configure release secrets in the deployment environment, run verify:release, and archive the resulting evidence index with the promoted commit.
+Resolve every listed readiness and environment release blocker with real authority evidence, rerun `verify:release`, and submit the frozen evidence bundle to `017-aqstoqflow-enterprise-release-gate`.

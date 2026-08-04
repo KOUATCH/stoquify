@@ -1,0 +1,227 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-07-28",
+  "count": 20,
+  "records": [
+    {
+      "id": "INC-001",
+      "priority": "P0",
+      "category": "tenant_boundary",
+      "finding": "Accepted org-scoped Prisma ADR is not implemented",
+      "evidenceState": "confirmed",
+      "confidence": "very-high",
+      "currentTruth": true,
+      "proposal": "See dependency-ordered remediation roadmap",
+      "acceptanceTestRequired": true
+    },
+    {
+      "id": "INC-002",
+      "priority": "P0",
+      "category": "purchase_approval",
+      "finding": "Bulk PO approval bypasses actor and maker-checker evidence",
+      "evidenceState": "confirmed",
+      "confidence": "very-high",
+      "currentTruth": true,
+      "proposal": "See dependency-ordered remediation roadmap",
+      "acceptanceTestRequired": true
+    },
+    {
+      "id": "INC-003",
+      "priority": "P0",
+      "category": "store_credit",
+      "finding": "Store-credit tender has no authoritative balance or consumption",
+      "evidenceState": "confirmed",
+      "confidence": "high",
+      "currentTruth": true,
+      "proposal": "See dependency-ordered remediation roadmap",
+      "acceptanceTestRequired": true
+    },
+    {
+      "id": "INC-004",
+      "priority": "P1",
+      "category": "provider_truth",
+      "finding": "Electronic capture and non-cash refund can be locally asserted",
+      "evidenceState": "confirmed",
+      "confidence": "high",
+      "currentTruth": true,
+      "proposal": "See dependency-ordered remediation roadmap",
+      "acceptanceTestRequired": true
+    },
+    {
+      "id": "INC-005",
+      "priority": "P1",
+      "category": "read_models",
+      "finding": "Cash and receivable metrics use conflicting status rules",
+      "evidenceState": "confirmed",
+      "confidence": "very-high",
+      "currentTruth": true,
+      "proposal": "See dependency-ordered remediation roadmap",
+      "acceptanceTestRequired": true
+    },
+    {
+      "id": "INC-006",
+      "priority": "P1",
+      "category": "concurrency",
+      "finding": "Customer and drawer balances use race-prone read-set updates",
+      "evidenceState": "confirmed",
+      "confidence": "high",
+      "currentTruth": true,
+      "proposal": "See dependency-ordered remediation roadmap",
+      "acceptanceTestRequired": true
+    },
+    {
+      "id": "INC-007",
+      "priority": "P1",
+      "category": "security_origin",
+      "finding": "Request-derived host may enter trusted origins",
+      "evidenceState": "confirmed-code/deployment-unverified",
+      "confidence": "high",
+      "currentTruth": true,
+      "proposal": "See dependency-ordered remediation roadmap",
+      "acceptanceTestRequired": true
+    },
+    {
+      "id": "INC-008",
+      "priority": "P1",
+      "category": "audit",
+      "finding": "Critical audit is best-effort and non-transactional",
+      "evidenceState": "confirmed",
+      "confidence": "high",
+      "currentTruth": true,
+      "proposal": "See dependency-ordered remediation roadmap",
+      "acceptanceTestRequired": true
+    },
+    {
+      "id": "INC-009",
+      "priority": "P1",
+      "category": "identity",
+      "finding": "Invitation bearer tokens stored plaintext",
+      "evidenceState": "confirmed",
+      "confidence": "high",
+      "currentTruth": true,
+      "proposal": "See dependency-ordered remediation roadmap",
+      "acceptanceTestRequired": true
+    },
+    {
+      "id": "INC-010",
+      "priority": "P1",
+      "category": "entitlement",
+      "finding": "Module entitlement is optional/observe-only on material actions",
+      "evidenceState": "confirmed",
+      "confidence": "medium-high",
+      "currentTruth": true,
+      "proposal": "See dependency-ordered remediation roadmap",
+      "acceptanceTestRequired": true
+    },
+    {
+      "id": "INC-011",
+      "priority": "P1",
+      "category": "offline_actor",
+      "finding": "Offline original actor and replay authority are ambiguous",
+      "evidenceState": "confirmed",
+      "confidence": "high",
+      "currentTruth": true,
+      "proposal": "See dependency-ordered remediation roadmap",
+      "acceptanceTestRequired": true
+    },
+    {
+      "id": "INC-012",
+      "priority": "P1",
+      "category": "statutory",
+      "finding": "Country-pack sources and expert approvals incomplete",
+      "evidenceState": "confirmed",
+      "confidence": "high",
+      "currentTruth": true,
+      "proposal": "See dependency-ordered remediation roadmap",
+      "acceptanceTestRequired": true
+    },
+    {
+      "id": "INC-013",
+      "priority": "P1",
+      "category": "migration",
+      "finding": "Production migration history readiness blocked",
+      "evidenceState": "existing-evidence/unverified-production",
+      "confidence": "high",
+      "currentTruth": true,
+      "proposal": "See dependency-ordered remediation roadmap",
+      "acceptanceTestRequired": true
+    },
+    {
+      "id": "INC-014",
+      "priority": "P2",
+      "category": "payment_migration",
+      "finding": "Legacy Payment and PaymentTransaction coexist without universal read policy",
+      "evidenceState": "confirmed coexistence",
+      "confidence": "medium-high",
+      "currentTruth": true,
+      "proposal": "See dependency-ordered remediation roadmap",
+      "acceptanceTestRequired": true
+    },
+    {
+      "id": "INC-015",
+      "priority": "P2",
+      "category": "routes_actions",
+      "finding": "Duplicate route/action facades increase drift risk",
+      "evidenceState": "confirmed",
+      "confidence": "high",
+      "currentTruth": true,
+      "proposal": "See dependency-ordered remediation roadmap",
+      "acceptanceTestRequired": true
+    },
+    {
+      "id": "INC-016",
+      "priority": "P2",
+      "category": "status_vocabulary",
+      "finding": "Persistence/trust/authority status mappings fragmented",
+      "evidenceState": "confirmed",
+      "confidence": "medium",
+      "currentTruth": true,
+      "proposal": "See dependency-ordered remediation roadmap",
+      "acceptanceTestRequired": true
+    },
+    {
+      "id": "INC-017",
+      "priority": "P2",
+      "category": "observability",
+      "finding": "Production log/metric/alert transports not evidenced",
+      "evidenceState": "unverified",
+      "confidence": "medium-high",
+      "currentTruth": true,
+      "proposal": "See dependency-ordered remediation roadmap",
+      "acceptanceTestRequired": true
+    },
+    {
+      "id": "INC-018",
+      "priority": "P2",
+      "category": "assurance_coverage",
+      "finding": "Assurance taxonomy omits identity/entitlement/HRIS/master data",
+      "evidenceState": "confirmed taxonomy",
+      "confidence": "medium-high",
+      "currentTruth": true,
+      "proposal": "See dependency-ordered remediation roadmap",
+      "acceptanceTestRequired": true
+    },
+    {
+      "id": "INC-019",
+      "priority": "P2",
+      "category": "inventory_idempotency",
+      "finding": "Blocked inventory replay may append duplicate blocker audit",
+      "evidenceState": "evidence-supported inference",
+      "confidence": "medium-high",
+      "currentTruth": true,
+      "proposal": "See dependency-ordered remediation roadmap",
+      "acceptanceTestRequired": true
+    },
+    {
+      "id": "INC-020",
+      "priority": "P2",
+      "category": "ap_exception",
+      "finding": "AP open-exception find-then-create can race",
+      "evidenceState": "confirmed code pattern",
+      "confidence": "medium-high",
+      "currentTruth": true,
+      "proposal": "See dependency-ordered remediation roadmap",
+      "acceptanceTestRequired": true
+    }
+  ]
+}

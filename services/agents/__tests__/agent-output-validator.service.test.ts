@@ -85,6 +85,14 @@ function brief(overrides: Partial<CommandDailyBrief> = {}): CommandDailyBrief {
     ],
     limitations: [],
     redactionNotices: [],
+    provenance: {
+      tenantId: "org-1",
+      tenantName: "Tenant One",
+      periodStart: "2026-07-22T00:00:00.000Z",
+      periodEnd: "2026-07-22T23:59:59.999Z",
+      asOf: "2026-07-22T12:00:00.000Z",
+      sourceCount: 1,
+    },
     runId: null,
     ...overrides,
   }

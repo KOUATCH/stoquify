@@ -11,6 +11,7 @@ import { createHash } from "node:crypto"
 import { db } from "@/prisma/db"
 import { buildReconciliationEvidenceManifestInTx } from "../payment-reconciliation-evidence.service"
 import { buildPaymentReconciliationSignOffSourceVersionHash } from "../payment-reconciliation-sign-off-source-version"
+import { assertPaymentSuspenseLedgerTruthInTx } from "../payment-suspense-ledger.service"
 
 import {
   exportReconciliationCertificate,
@@ -77,8 +78,12 @@ jest.mock("../payment-reconciliation-evidence.service", () => ({
   ...jest.requireActual("../payment-reconciliation-evidence.service"),
   buildReconciliationEvidenceManifestInTx: jest.fn(),
 }))
+jest.mock("../payment-suspense-ledger.service", () => ({
+  assertPaymentSuspenseLedgerTruthInTx: jest.fn(),
+}))
 
 const mockBuildEvidenceManifest = buildReconciliationEvidenceManifestInTx as jest.Mock
+const mockAssertSuspenseLedgerTruth = assertPaymentSuspenseLedgerTruthInTx as jest.Mock
 const mockedDb = db as unknown as {
   $transaction: jest.Mock
   reconciliationRun: {
@@ -283,6 +288,7 @@ describe("payment reconciliation certification service", () => {
     mockedDb.matchRecord.count.mockResolvedValue(1)
     mockedDb.paymentException.count.mockResolvedValue(0)
     mockedDb.suspenseItem.count.mockResolvedValue(0)
+    mockAssertSuspenseLedgerTruth.mockResolvedValue({ itemCount: 0, totals: [] })
     mockedDb.auditLog.create.mockResolvedValue({ id: "audit-1" })
     mockedDb.ledgerAuditEvent.create.mockResolvedValue({ id: "ledger-audit-1" })
     mockedDb.businessEvent.findUnique.mockResolvedValue(null)
@@ -312,6 +318,10 @@ describe("payment reconciliation certification service", () => {
       correlationId: "corr-sign",
     })
     expect(result.certificateHash).toHaveLength(64)
+    expect(mockAssertSuspenseLedgerTruth).toHaveBeenCalledWith(
+      mockedDb,
+      { organizationId: "org-1", reconciliationRunId: "run-1" },
+    )
     expect(mockedDb.reconciliationRun.updateMany).toHaveBeenCalledWith(
       expect.objectContaining({
         where: expect.objectContaining({
@@ -525,6 +535,7 @@ describe("payment reconciliation certification service", () => {
     mockedDb.matchRecord.count.mockResolvedValue(2)
     mockedDb.paymentException.count.mockResolvedValue(1)
     mockedDb.suspenseItem.count.mockResolvedValue(0)
+    mockAssertSuspenseLedgerTruth.mockResolvedValue({ itemCount: 0, totals: [] })
 
     const result = await exportReconciliationCertificate({
       organizationId: "org-1",

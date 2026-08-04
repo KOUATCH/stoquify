@@ -3,11 +3,39 @@ import type { ActionQueueResult } from "@/services/signals/business-signal-contr
 import type {
   CloseReadinessMetrics,
   InventoryCashMetrics,
+  InventoryLossMetrics,
   PaymentTruthMetrics,
   SnapshotFreshness,
   SnapshotResult,
   TenantOperatingMetrics,
 } from "@/services/snapshots/snapshot-contracts"
+import { db } from "@/prisma/db"
+import { auditRbacDecision } from "@/lib/security/rbac"
+import {
+  getModuleControlCenterData,
+  observeModuleAccess,
+} from "@/services/modules/module-entitlement.service"
+import { buildActionQueue } from "@/services/signals/action-queue.service"
+import { buildBusinessSignalsFromSnapshots } from "@/services/signals/business-signal-rules.service"
+import { getCloseReadinessSnapshot } from "@/services/snapshots/close-readiness-snapshot.service"
+import { getInventoryCashSnapshot } from "@/services/snapshots/inventory-cash-snapshot.service"
+import { getInventoryLossSnapshot } from "@/services/snapshots/inventory-loss-snapshot.service"
+import { getPaymentTruthSnapshot } from "@/services/snapshots/payment-truth-snapshot.service"
+import { getTenantOperatingSnapshotFromRelated } from "@/services/snapshots/tenant-operating-snapshot.service"
+
+jest.mock("@/lib/security/rbac", () => ({
+  auditRbacDecision: jest.fn().mockResolvedValue(undefined),
+  RbacError: class RbacError extends Error {
+    constructor(
+      message: string,
+      public readonly code: string,
+      public readonly status: number,
+    ) {
+      super(message)
+      this.name = "RbacError"
+    }
+  },
+}))
 
 jest.mock("@/prisma/db", () => ({
   db: {
@@ -19,6 +47,7 @@ jest.mock("@/prisma/db", () => ({
 
 jest.mock("@/services/modules/module-entitlement.service", () => ({
   getModuleControlCenterData: jest.fn(),
+  observeModuleAccess: jest.fn(),
 }))
 
 jest.mock("@/services/signals/action-queue.service", () => ({
@@ -26,6 +55,7 @@ jest.mock("@/services/signals/action-queue.service", () => ({
 }))
 
 jest.mock("@/services/signals/business-signal-rules.service", () => ({
+  ...jest.requireActual("@/services/signals/business-signal-rules.service"),
   buildBusinessSignalsFromSnapshots: jest.fn(),
 }))
 
@@ -37,19 +67,30 @@ jest.mock("@/services/snapshots/inventory-cash-snapshot.service", () => ({
   getInventoryCashSnapshot: jest.fn(),
 }))
 
+jest.mock("@/services/snapshots/inventory-loss-snapshot.service", () => ({
+  getInventoryLossSnapshot: jest.fn(),
+}))
+
+
 jest.mock("@/services/snapshots/payment-truth-snapshot.service", () => ({
   getPaymentTruthSnapshot: jest.fn(),
 }))
 
 jest.mock("@/services/snapshots/tenant-operating-snapshot.service", () => ({
-  getTenantOperatingSnapshot: jest.fn(),
+  getTenantOperatingSnapshotFromRelated: jest.fn(),
 }))
 
-import { composeOwnerWarRoomData } from "../owner-war-room.service"
+import {
+  composeOwnerWarRoomData,
+  getOwnerWarRoomData,
+} from "../owner-war-room.service"
 
 const generatedAt = "2026-06-20T10:00:00.000Z"
 
 describe("owner war room service", () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
   it("composes eight read-only cards with evidence, redaction, proof, and module observe state", () => {
     const data = composeOwnerWarRoomData({
       organizationId: "org-1",
@@ -257,6 +298,235 @@ describe("owner war room service", () => {
     })
     expect(data.morningBrief.priorityActions).toHaveLength(0)
     expect(data.morningBrief.proofSubjects.every((subject) => !subject.available)).toBe(true)
+  })
+  it("loads one tenant Inventory Loss action for an entitled administrator", async () => {
+    mockOwnerWarRoomSources()
+    const actorPermissions = ["dashboard.read", "inventory.levels.read"]
+
+    const result = await getOwnerWarRoomData({
+      organizationId: "org-1",
+      actorId: "admin-1",
+      actorPermissions,
+      actorRoleCodes: [" Administrator "],
+      isSuperUser: false,
+      periodStart: "2026-06-01",
+      periodEnd: "2026-06-20",
+      maxAgeMinutes: 45,
+      now: generatedAt,
+    })
+
+    expect(observeModuleAccess).toHaveBeenCalledTimes(1)
+    expect(observeModuleAccess).toHaveBeenCalledWith({
+      organizationId: "org-1",
+      userId: "admin-1",
+      actorPermissions,
+      moduleSlug: "inventory",
+      surfaceType: "report",
+      surface: "owner-war-room.inventory-loss",
+      accessIntent: "read",
+      mode: "enforce",
+      audit: true,
+      now: generatedAt,
+    })
+    expect(getInventoryLossSnapshot).toHaveBeenCalledTimes(1)
+    expect(getInventoryLossSnapshot).toHaveBeenCalledWith({
+      organizationId: "org-1",
+      periodStart: "2026-06-01",
+      periodEnd: "2026-06-20",
+      maxAgeMinutes: 45,
+      now: generatedAt,
+    })
+    expect(result.actionQueue.actionItems).toEqual([
+      expect.objectContaining({
+        signalType: "inventory_loss_review",
+        actionPath: "/dashboard/inventory/losses",
+        requiredPermission: "inventory.levels.read",
+      }),
+    ])
+    expect(result.actionQueue.signals[0]).toMatchObject({
+      signalType: "inventory_loss_review",
+      sourceSnapshotKind: "inventory.loss",
+      sourceHash: "inventory-loss-hash",
+    })
+    expect(result.actionQueue.signals[0]?.detail).toContain(
+      "does not identify who caused the loss",
+    )
+    expect(result.cards).toHaveLength(8)
+    expect(result).not.toHaveProperty("inventoryLoss")
+  })
+
+  it("keeps the tenant-wide command center available for a super user", async () => {
+    mockOwnerWarRoomSources()
+
+    const result = await getOwnerWarRoomData({
+      organizationId: "org-1",
+      actorId: "super-1",
+      actorPermissions: ["dashboard.read"],
+      actorRoleCodes: ["viewer"],
+      isSuperUser: true,
+      now: generatedAt,
+    })
+
+    expect(auditRbacDecision).not.toHaveBeenCalled()
+    expect(getPaymentTruthSnapshot).toHaveBeenCalledTimes(1)
+    expect(getInventoryCashSnapshot).toHaveBeenCalledTimes(1)
+    expect(getCloseReadinessSnapshot).toHaveBeenCalledTimes(1)
+    expect(getModuleControlCenterData).toHaveBeenCalledTimes(1)
+    expect(getTenantOperatingSnapshotFromRelated).toHaveBeenCalledTimes(1)
+    expect(observeModuleAccess).not.toHaveBeenCalled()
+    expect(getInventoryLossSnapshot).not.toHaveBeenCalled()
+    expect(result.cards).toHaveLength(8)
+  })
+
+  it.each([
+    [
+      "actor identity is missing",
+      {
+        organizationId: "org-1",
+        actorId: null,
+        actorPermissions: ["dashboard.read", "inventory.levels.read"],
+        actorRoleCodes: ["admin"],
+        isSuperUser: false,
+        now: generatedAt,
+      },
+      "Missing actor identity",
+      null,
+    ],
+    [
+      "dashboard permission is missing",
+      {
+        organizationId: "org-1",
+        actorId: "admin-1",
+        actorPermissions: ["inventory.levels.read"],
+        actorRoleCodes: ["admin"],
+        isSuperUser: false,
+        now: generatedAt,
+      },
+      "Missing permission",
+      { userId: "admin-1", orgId: "org-1" },
+    ],
+    [
+      "the actor has location-responsibility authority only",
+      {
+        organizationId: "org-1",
+        actorId: "manager-1",
+        actorPermissions: ["dashboard.read", "inventory.levels.read"],
+        actorRoleCodes: ["manager"],
+        isSuperUser: false,
+        now: generatedAt,
+      },
+      "Tenant-wide operating authority required",
+      { userId: "manager-1", orgId: "org-1" },
+    ],
+    [
+      "an owner audience label lacks established tenant-wide authority",
+      {
+        organizationId: "org-1",
+        actorId: "owner-1",
+        actorPermissions: ["dashboard.read", "inventory.levels.read"],
+        actorRoleCodes: ["owner"],
+        isSuperUser: false,
+        now: generatedAt,
+      },
+      "Tenant-wide operating authority required",
+      { userId: "owner-1", orgId: "org-1" },
+    ],
+    [
+      "an org_admin audience alias lacks established tenant-wide authority",
+      {
+        organizationId: "org-1",
+        actorId: "org-admin-1",
+        actorPermissions: ["dashboard.read", "inventory.levels.read"],
+        actorRoleCodes: ["org_admin"],
+        isSuperUser: false,
+        now: generatedAt,
+      },
+      "Tenant-wide operating authority required",
+      { userId: "org-admin-1", orgId: "org-1" },
+    ],
+  ] as const)(
+    "denies the tenant-wide command center before source reads when %s",
+    async (_label, input, reason, ctx) => {
+      mockOwnerWarRoomSources()
+
+      await expect(getOwnerWarRoomData(input)).rejects.toMatchObject({
+        name: "RbacError",
+        code: "FORBIDDEN",
+        status: 403,
+      })
+
+      expect(auditRbacDecision).toHaveBeenCalledTimes(1)
+      expect(auditRbacDecision).toHaveBeenCalledWith({
+        ctx,
+        permission: "dashboard.read",
+        result: "denied",
+        resource: "KontavaOwnerWarRoom",
+        reason,
+      })
+      expect(getPaymentTruthSnapshot).not.toHaveBeenCalled()
+      expect(getInventoryCashSnapshot).not.toHaveBeenCalled()
+      expect(getCloseReadinessSnapshot).not.toHaveBeenCalled()
+      expect(getModuleControlCenterData).not.toHaveBeenCalled()
+      expect(getTenantOperatingSnapshotFromRelated).not.toHaveBeenCalled()
+      expect(observeModuleAccess).not.toHaveBeenCalled()
+      expect(getInventoryLossSnapshot).not.toHaveBeenCalled()
+      expect(buildBusinessSignalsFromSnapshots).not.toHaveBeenCalled()
+      expect(buildActionQueue).not.toHaveBeenCalled()
+      expect(db.journalEntry.findFirst).not.toHaveBeenCalled()
+      expect(db.reconciliationRun.findFirst).not.toHaveBeenCalled()
+      expect(db.closeRun.findFirst).not.toHaveBeenCalled()
+    },
+  )
+
+  it("suppresses only Inventory Loss when its inherited permission is missing", async () => {
+    mockOwnerWarRoomSources()
+
+    const result = await getOwnerWarRoomData({
+      organizationId: "org-1",
+      actorId: "admin-1",
+      actorPermissions: ["dashboard.read"],
+      actorRoleCodes: ["admin"],
+      isSuperUser: false,
+      now: generatedAt,
+    })
+
+    expect(auditRbacDecision).not.toHaveBeenCalled()
+    expect(getPaymentTruthSnapshot).toHaveBeenCalledTimes(1)
+    expect(getInventoryCashSnapshot).toHaveBeenCalledTimes(1)
+    expect(getCloseReadinessSnapshot).toHaveBeenCalledTimes(1)
+    expect(getModuleControlCenterData).toHaveBeenCalledTimes(1)
+    expect(getTenantOperatingSnapshotFromRelated).toHaveBeenCalledTimes(1)
+    expect(observeModuleAccess).not.toHaveBeenCalled()
+    expect(getInventoryLossSnapshot).not.toHaveBeenCalled()
+    expect(result.actionQueue.signals).not.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ signalType: "inventory_loss_review" }),
+      ]),
+    )
+    expect(result.cards).toHaveLength(8)
+  })
+
+  it("keeps the existing Owner War Room available when inventory entitlement denies", async () => {
+    mockOwnerWarRoomSources()
+    ;(observeModuleAccess as jest.Mock).mockResolvedValue({ allowed: false })
+
+    const result = await getOwnerWarRoomData({
+      organizationId: "org-1",
+      actorId: "admin-1",
+      actorPermissions: ["dashboard.read", "inventory.levels.read"],
+      actorRoleCodes: ["admin"],
+      isSuperUser: false,
+      now: generatedAt,
+    })
+
+    expect(observeModuleAccess).toHaveBeenCalledTimes(1)
+    expect(getInventoryLossSnapshot).not.toHaveBeenCalled()
+    expect(result.actionQueue.signals).not.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ signalType: "inventory_loss_review" }),
+      ]),
+    )
+    expect(result.cards).toHaveLength(8)
   })
 })
 
@@ -633,5 +903,107 @@ function moduleControl(input: {
       dependencyGapCount: input.dependencyGapCount,
     },
     items: [],
+  }
+}
+function mockOwnerWarRoomSources() {
+  const actualSignalRules = jest.requireActual(
+    "@/services/signals/business-signal-rules.service",
+  ) as typeof import("@/services/signals/business-signal-rules.service")
+  const actualActionQueue = jest.requireActual(
+    "@/services/signals/action-queue.service",
+  ) as typeof import("@/services/signals/action-queue.service")
+
+  ;(getPaymentTruthSnapshot as jest.Mock).mockResolvedValue(
+    paymentSnapshot({
+      openExceptionCount: 0,
+      criticalExceptionCount: 0,
+      openSuspenseCount: 0,
+      openSuspenseAmount: 0,
+      pendingTransactionCount: 0,
+    }),
+  )
+  ;(getInventoryCashSnapshot as jest.Mock).mockResolvedValue(
+    inventorySnapshot({
+      inventoryValue: 0,
+      zeroStockLevelCount: 0,
+      negativeStockLevelCount: 0,
+    }),
+  )
+  ;(getCloseReadinessSnapshot as jest.Mock).mockResolvedValue(
+    closeSnapshot({
+      blockedCloseRunCount: 0,
+      openFindingCount: 0,
+      criticalOpenFindingCount: 0,
+      unavailableEvidenceCount: 0,
+    }),
+  )
+  ;(getTenantOperatingSnapshotFromRelated as jest.Mock).mockResolvedValue(
+    tenantSnapshot({ pendingPurchaseOrderCount: 0 }),
+  )
+  ;(getModuleControlCenterData as jest.Mock).mockResolvedValue(
+    moduleControl({ wouldBlockCount: 0, dependencyGapCount: 0 }),
+  )
+  ;(observeModuleAccess as jest.Mock).mockResolvedValue({ allowed: true })
+  ;(getInventoryLossSnapshot as jest.Mock).mockResolvedValue(
+    inventoryLossSnapshot(),
+  )
+  ;(buildBusinessSignalsFromSnapshots as jest.Mock).mockImplementation(
+    actualSignalRules.buildBusinessSignalsFromSnapshots,
+  )
+  ;(buildActionQueue as jest.Mock).mockImplementation(
+    actualActionQueue.buildActionQueue,
+  )
+  ;(db.journalEntry.findFirst as jest.Mock).mockResolvedValue(null)
+  ;(db.reconciliationRun.findFirst as jest.Mock).mockResolvedValue(null)
+  ;(db.closeRun.findFirst as jest.Mock).mockResolvedValue(null)
+}
+
+function inventoryLossSnapshot(
+  overrides: Partial<InventoryLossMetrics> = {},
+): SnapshotResult<InventoryLossMetrics> {
+  return {
+    kind: "inventory.loss",
+    organizationId: "org-1",
+    locationId: null,
+    periodStart: "2026-06-01T00:00:00.000Z",
+    periodEnd: "2026-06-20T23:59:59.999Z",
+    status: "fresh",
+    uiState: "redacted",
+    evidenceGrade: "operational",
+    freshness: freshness(),
+    sourceHash: "inventory-loss-hash",
+    generatedAt,
+    sourceModules: ["inventory"],
+    metrics: {
+      lossLineCount: 2,
+      adjustmentCount: 1,
+      totalLossValue: 45000,
+      currency: "XAF",
+      countVarianceLineCount: 0,
+      damagedLineCount: 2,
+      expiredLineCount: 0,
+      recordedTheftCategoryLineCount: 0,
+      writeOffLineCount: 0,
+      evidenceCoveredLineCount: 2,
+      evidenceCoveragePercent: 100,
+      valuationCoveredLineCount: 2,
+      valuationCoveragePercent: 100,
+      approvalAttributedLineCount: 2,
+      approvalCoveragePercent: 100,
+      missingEvidenceLineCount: 0,
+      missingValuationLineCount: 0,
+      missingApprovalAttributionLineCount: 0,
+      sourceTruncated: false,
+      ...overrides,
+    },
+    blockers: [],
+    redactions: [
+      {
+        id: "inventory-loss-evidence-hashes-redacted",
+        field: "records.evidence.*Hash",
+        reason: "Source evidence hashes remain server-side.",
+        policy: "INVENTORY_LOSS_EVIDENCE_REDACTION",
+      },
+    ],
   }
 }

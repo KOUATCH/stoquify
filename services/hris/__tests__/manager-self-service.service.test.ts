@@ -6,13 +6,19 @@ jest.mock("@/services/hris/approval-inbox.service", () => ({
   getHrisApprovalInbox: jest.fn(),
 }))
 
+jest.mock("@/services/hris/operational-time.service", () => ({
+  getManagedOperationalTimeInbox: jest.fn(),
+}))
+
 import { getHrisApprovalInbox } from "@/services/hris/approval-inbox.service"
 import { getHrisEmployeeDirectory } from "@/services/hris/employee.service"
+import { getManagedOperationalTimeInbox } from "@/services/hris/operational-time.service"
 
 import { getHrisManagerSelfService } from "../manager-self-service.service"
 
 const mockDirectory = getHrisEmployeeDirectory as jest.Mock
 const mockInbox = getHrisApprovalInbox as jest.Mock
+const mockOperationalInbox = getManagedOperationalTimeInbox as jest.Mock
 
 function scopedDirectory() {
   return {
@@ -118,6 +124,7 @@ describe("HRIS manager self-service read model", () => {
     jest.clearAllMocks()
     mockDirectory.mockResolvedValue(scopedDirectory())
     mockInbox.mockResolvedValue(scopedInbox())
+    mockOperationalInbox.mockResolvedValue({ requests: [], accessScope: { kind: "REPORTING_RELATIONSHIP" } })
   })
 
   it("composes the proven location scope and emits a minimized operational model", async () => {

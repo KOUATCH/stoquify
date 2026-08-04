@@ -26,6 +26,7 @@ import {
   type SensitiveActionDecision,
 } from "@/services/controls/sensitive-action.service"
 import { recordBusinessEventInTx } from "@/services/events/business-event.service"
+import { assertPaymentSuspenseLedgerTruthInTx } from "./payment-suspense-ledger.service"
 import {
   assertProviderAccountReconciliationReady,
   buildReconciliationEvidenceManifestInTx,
@@ -590,6 +591,11 @@ export async function signReconciliationRun(
             "Posted suspense items must include a ledger posting batch before sign-off.",
           )
         }
+
+        await assertPaymentSuspenseLedgerTruthInTx(tx, {
+          organizationId: normalized.organizationId,
+          reconciliationRunId: run.id,
+        })
 
         const sourceEvidence = await buildReconciliationEvidenceManifestInTx(
           tx,

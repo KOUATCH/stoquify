@@ -151,4 +151,55 @@ describe("Kontava action queue service", () => {
       expect.objectContaining({ userId: "finance-1" }),
     ])
   })
+
+  it("requires inventory levels permission for Inventory Loss review actions", () => {
+    const signals = buildBusinessSignalsFromFacts(
+      [
+        {
+          organizationId: "org-1",
+          signalType: "inventory_loss_review",
+          moduleSlug: "inventory",
+          sourceModule: "inventory",
+          sourceSnapshotKind: "inventory.loss",
+          sourceHash: "hash-inventory-loss",
+          subjectType: "inventory.loss",
+          subjectId: "loc-1:recorded-loss",
+          payload: { lossLineCount: 2, totalLossValue: 250, currency: "XAF" },
+        },
+      ],
+      { now: "2026-06-20T08:00:00.000Z" },
+    )
+
+    const denied = buildActionQueue({
+      organizationId: "org-1",
+      signals,
+      actorPermissions: ["dashboard.read"],
+      now: "2026-06-20T08:30:00.000Z",
+    })
+    const visible = buildActionQueue({
+      organizationId: "org-1",
+      signals,
+      actorPermissions: ["inventory.levels.read"],
+      now: "2026-06-20T08:30:00.000Z",
+    })
+
+    expect(denied).toMatchObject({
+      filteredOutCount: 1,
+      signals: [],
+      actionItems: [],
+    })
+    expect(visible.actionItems).toEqual([
+      expect.objectContaining({
+        signalType: "inventory_loss_review",
+        actionPath: "/dashboard/inventory/losses",
+        requiredPermission: "inventory.levels.read",
+        assignedRole: "manager",
+        status: "open",
+      }),
+    ])
+    expect(visible.signals[0]).toMatchObject({
+      sourceSnapshotKind: "inventory.loss",
+      sourceHash: "hash-inventory-loss",
+    })
+  })
 })

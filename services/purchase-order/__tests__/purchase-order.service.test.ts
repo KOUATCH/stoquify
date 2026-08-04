@@ -5,6 +5,7 @@ import {
 } from "@/services/events/business-event.service"
 import {
   approvePurchaseOrder,
+  bulkUpdateStatus,
   deletePurchaseOrder,
   updatePurchaseOrder,
 } from "../purchase-order.service"
@@ -157,6 +158,47 @@ beforeEach(() => {
 })
 
 describe("purchase-order.service controls", () => {
+  it("rejects bulk approval before opening a transaction", async () => {
+    await expect(
+      bulkUpdateStatus({
+        organizationId: "org-1",
+        purchaseOrderIds: ["po-1"],
+        toStatus: "APPROVED",
+      }),
+    ).rejects.toThrow(
+      "Purchase orders cannot be approved in bulk. Use the canonical approval workflow for each order.",
+    )
+
+    expect(mockDb.$transaction).not.toHaveBeenCalled()
+  })
+
+  it("keeps valid non-approval bulk transitions available", async () => {
+    const tx = {
+      purchaseOrder: {
+        findMany: jest.fn().mockResolvedValue([{ id: "po-1", status: "SUBMITTED" }]),
+        update: jest.fn().mockResolvedValue({ id: "po-1", status: "CANCELLED" }),
+      },
+    }
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
+
+    const result = await bulkUpdateStatus({
+      organizationId: "org-1",
+      purchaseOrderIds: ["po-1"],
+      toStatus: "CANCELLED",
+      reason: "No longer required",
+    })
+
+    expect(result).toEqual({ updated: ["po-1"], failed: [] })
+    expect(tx.purchaseOrder.update).toHaveBeenCalledWith({
+      where: { id: "po-1" },
+      data: {
+        status: "CANCELLED",
+        updatedAt: expect.any(Date),
+        notes: { set: "No longer required" },
+      },
+    })
+  })
+
   it("rejects self approval before updating the purchase order", async () => {
     mockDb.purchaseOrder.findFirst.mockResolvedValue(purchaseOrder({ createdById: "buyer-1" }))
 

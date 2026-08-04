@@ -7,48 +7,17 @@ import { db } from "@/prisma/db"
 
 import {
   OPERATING_ACCESS_REQUIRED_PERMISSION,
+  resolveTenantWideOperatingAuthority,
   type AllowedOperatingAccessScope,
   type DeniedOperatingAccessScope,
   type OperatingAccessContext,
   type OperatingAccessScopeDecision,
-  type TenantWideOperatingAuthority,
 } from "./operating-access-scope-contracts"
 
 type DbClient = typeof db | Prisma.TransactionClient
 
-const TENANT_WIDE_ROLE_CODES = new Set(["admin", "administrator", "super_admin"])
-
 function safeJson(value: unknown): Prisma.InputJsonValue {
   return JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue
-}
-
-function normalizedRoleCodes(context: OperatingAccessContext) {
-  return Array.from(
-    new Set(
-      context.roles
-        .map((role) => role.code.trim().toLowerCase())
-        .filter((code) => code.length > 0),
-    ),
-  ).sort()
-}
-
-function tenantWideAuthority(context: OperatingAccessContext): TenantWideOperatingAuthority | null {
-  if (context.isSuperUser) {
-    return {
-      kind: "TENANT_WIDE",
-      basis: "RBAC_SUPER_USER",
-      matchedRoleCode: null,
-    }
-  }
-
-  const matchedRoleCode = normalizedRoleCodes(context).find((code) => TENANT_WIDE_ROLE_CODES.has(code))
-  if (!matchedRoleCode) return null
-
-  return {
-    kind: "TENANT_WIDE",
-    basis: "RBAC_ROLE",
-    matchedRoleCode,
-  }
 }
 
 function deniedDecision(
@@ -102,7 +71,10 @@ export async function resolveOperatingAccessScope(
     return decision
   }
 
-  const tenantAuthority = tenantWideAuthority(context)
+  const tenantAuthority = resolveTenantWideOperatingAuthority({
+    isSuperUser: context.isSuperUser,
+    roleCodes: context.roles.map((role) => role.code),
+  })
   if (tenantAuthority) {
     const decision: AllowedOperatingAccessScope = {
       allowed: true,

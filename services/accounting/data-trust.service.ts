@@ -21,6 +21,7 @@ import {
 import { createHash, randomUUID } from "node:crypto";
 
 import { db } from "@/prisma/db";
+import { recordBusinessEventInTx } from "@/services/events/business-event.service";
 import { BusinessRuleError } from "@/services/_shared/action-errors";
 import {
   assertSensitiveActionAllowed,
@@ -2490,6 +2491,7 @@ export async function exportAccountantTrustPack(
     const payload = {
       kind: "AQSTOQFLOW_ACCOUNTANT_TRUST_PACK",
       version: 1,
+      packVersion: "accountant-trust-pack.v1",
       export: {
         exportId,
         generatedAt: now.toISOString(),
@@ -2535,6 +2537,37 @@ export async function exportAccountantTrustPack(
           scopeHash: portal.source.scopeHash,
         },
       },
+    });
+
+    await recordBusinessEventInTx(tx, {
+      organizationId: input.organizationId,
+      eventType: "REPORT_EXPORT_CREATED",
+      eventSource: "INTERNAL",
+      idempotencyKey: `accountant-trust-pack-export:${exportId}`,
+      actorId: input.exportedById,
+      sourceType: "AccountantTrustPack",
+      sourceId: exportId,
+      documentHash: contentHash,
+      payload: {
+        exportId,
+        packVersion: "accountant-trust-pack.v1",
+        filtersHash: portal.source.scopeHash,
+        sourceTables: portal.source.sourceTables,
+        periodId: portal.scope.periodId,
+        contentHash,
+        rowCount,
+      },
+      outboxMessages: [
+        {
+          channel: "REPORT_EXPORT",
+          eventName: "REPORT_EXPORT_CREATED",
+          payload: {
+            exportId,
+            organizationId: input.organizationId,
+            contentHash,
+          },
+        },
+      ],
     });
 
     return {

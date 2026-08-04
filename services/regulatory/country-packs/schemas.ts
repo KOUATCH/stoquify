@@ -224,16 +224,18 @@ const payrollCalculationScenarioReviewEvidenceSchema = z.object({
   reviewedBy: z.string().min(1),
   reviewedOn: isoDateSchema,
   legalRef: z.string().min(1),
-  sourceEvidenceHash: z
-    .string()
-    .regex(/^sha256:[A-Za-z0-9_.:-]+$/),
+  sourceEvidenceHash: z.string().regex(/^sha256:[A-Za-z0-9_.:-]+$/),
   notes: z.string().optional(),
 });
 
 const payrollCalculationScenarioSchema = z.object({
   input: z.record(z.unknown()),
   expectedOutput: z.record(z.unknown()),
-  reviewStatus: z.enum(["EXPERT_REVIEWED", "REGULATOR_CONFIRMED"]),
+  reviewStatus: z.enum([
+    "SOURCE_CHECKED",
+    "EXPERT_REVIEWED",
+    "REGULATOR_CONFIRMED",
+  ]),
   reviewEvidence: payrollCalculationScenarioReviewEvidenceSchema.optional(),
   notes: z.string().optional(),
 });

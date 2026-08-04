@@ -51,7 +51,8 @@ jest.mock("@/services/events/business-event.service", () => {
   };
 });
 
-jest.mock("@/services/regulatory/country-packs/resolve", () => ({
+jest.mock("@/services/regulatory/regulatory-capability.service", () => ({
+  getCountryPack: jest.fn(),
   resolveRegulatoryParameter: jest.fn(),
 }));
 
@@ -68,7 +69,7 @@ import {
   markBusinessEventAppliedInTx,
   recordBusinessEventInTx,
 } from "@/services/events/business-event.service";
-import { resolveRegulatoryParameter } from "@/services/regulatory/country-packs/resolve";
+import { resolveRegulatoryParameter } from "@/services/regulatory/regulatory-capability.service";
 import { BusinessRuleError } from "@/services/_shared/action-errors";
 
 import {

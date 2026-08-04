@@ -1,5 +1,6 @@
 const fs = require("fs")
 const path = require("path")
+const { writeGeneratedReportFile } = require("./generated-report-writer")
 
 const DEFAULT_JSON_OUT = "what-next/api-route-guard-inventory.json"
 const DEFAULT_MARKDOWN_OUT = "what-next/api-route-guard-inventory.md"
@@ -439,10 +440,8 @@ function renderMarkdown(report) {
 function writeReport(root, args, report) {
   const jsonTarget = path.join(root, args.jsonOut)
   const markdownTarget = path.join(root, args.out)
-  fs.mkdirSync(path.dirname(jsonTarget), { recursive: true })
-  fs.mkdirSync(path.dirname(markdownTarget), { recursive: true })
-  fs.writeFileSync(jsonTarget, `${JSON.stringify(report, null, 2)}\n`, "utf8")
-  fs.writeFileSync(markdownTarget, renderMarkdown(report), "utf8")
+  writeGeneratedReportFile(jsonTarget, `${JSON.stringify(report, null, 2)}\n`, "utf8")
+  writeGeneratedReportFile(markdownTarget, renderMarkdown(report), "utf8")
 }
 
 if (require.main === module) {
@@ -467,4 +466,5 @@ module.exports = {
   modeDescription,
   parseArgs,
   renderMarkdown,
+  writeReport,
 }

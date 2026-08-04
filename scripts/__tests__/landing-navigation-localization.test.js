@@ -19,7 +19,9 @@ const headerKeys = [
   "homeAria",
   "subtitle",
   "navAria",
-  ...navigation.map(([key]) => key),
+  ...navigation.slice(0, 2).map(([key]) => key),
+  "workflowAtlas",
+  ...navigation.slice(2).map(([key]) => key),
   "explore",
   "exploreAria",
   "login",
@@ -235,3 +237,4 @@ describe("landing navigation and French public localization contract", () => {
   })
 
 })
+

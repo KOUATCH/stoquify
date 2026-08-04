@@ -13,7 +13,7 @@ import type {
 } from "@prisma/client"
 
 import { db } from "@/prisma/db"
-import { ApplicationError, BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
+import { ApplicationError, BusinessRuleError, ConflictError, NotFoundError } from "@/services/_shared/action-errors"
 import {
   EVIDENCE_GRADES,
   type EvidenceGrade,
@@ -41,6 +41,7 @@ import {
   type ApproveWorkflowAssuranceWaiverInput,
   type AssignWorkflowAssuranceIncidentInput,
   type RequestWorkflowAssuranceWaiverInput,
+  type ResolveWorkflowAssuranceIncidentInput,
   type SuppressWorkflowAssuranceIncidentInput,
   type WorkflowAssuranceIncidentDto,
   type WorkflowAssuranceIncidentEventType,
@@ -121,6 +122,17 @@ const REOPENABLE_STATUSES: PrismaIncidentStatus[] = ["RESOLVED", "WAIVED", "CLOS
 const FINAL_STATUSES = new Set<PrismaIncidentStatus>(["RESOLVED", "WAIVED", "SUPPRESSED", "CLOSED"])
 const EVIDENCE_GRADE_SET = new Set<EvidenceGrade>(EVIDENCE_GRADES)
 const INCIDENT_UPSERT_MAX_ATTEMPTS = 2
+const ALLOWED_INCIDENT_TRANSITIONS: Record<PrismaIncidentStatus, readonly WorkflowAssuranceIncidentStatus[]> = {
+  OPEN: ["acknowledged", "assigned", "in_progress", "resolved", "suppressed"],
+  ACKNOWLEDGED: ["assigned", "in_progress", "resolved", "suppressed"],
+  ASSIGNED: ["assigned", "in_progress", "resolved", "suppressed"],
+  IN_PROGRESS: ["assigned", "resolved", "suppressed"],
+  RESOLVED: ["reopened"],
+  WAIVED: ["reopened"],
+  SUPPRESSED: ["reopened"],
+  REOPENED: ["acknowledged", "assigned", "in_progress", "resolved", "suppressed"],
+  CLOSED: ["reopened"],
+}
 
 const PROOF_SUBJECT_TABLE_MAP: Record<string, ProofTrailSubjectType> = {
   journal_entries: "journal.entry",
@@ -221,10 +233,13 @@ export async function assignWorkflowAssuranceIncident(input: AssignWorkflowAssur
       assignedRole: input.assignedRole ?? null,
       dueAt: input.dueAt ?? null,
     },
+    validate: async (client) => {
+      await assertAssignableIncidentOwner(client, input.organizationId, input.ownerId)
+    },
   })
 }
 
-export async function resolveWorkflowAssuranceIncident(input: WorkflowAssuranceIncidentTransitionInput) {
+export async function resolveWorkflowAssuranceIncident(input: ResolveWorkflowAssuranceIncidentInput) {
   if (!input.note?.trim()) throw new BusinessRuleError("Resolution note is required.")
 
   return transitionWorkflowAssuranceIncident(input, {
@@ -235,6 +250,9 @@ export async function resolveWorkflowAssuranceIncident(input: WorkflowAssuranceI
       resolvedAt: new Date(),
       resolvedById: input.actorId ?? null,
       resolutionNote: input.note.trim(),
+    },
+    validate: async (_client, incident) => {
+      assertCurrentIncidentSourceHash(incident, input.currentSourceHash)
     },
   })
 }
@@ -600,6 +618,10 @@ async function transitionWorkflowAssuranceIncident(
     status: WorkflowAssuranceIncidentStatus
     message: string
     data: Prisma.WorkflowAssuranceIncidentUpdateInput
+    validate?: (
+      client: IncidentDbClient,
+      incident: WorkflowAssuranceIncident,
+    ) => Promise<void>
   },
 ) {
   return db.$transaction(async (tx) => {
@@ -608,6 +630,8 @@ async function transitionWorkflowAssuranceIncident(
     if (FINAL_STATUSES.has(incident.status) && transition.status !== "reopened") {
       throw new BusinessRuleError("Finalized incidents must be reopened before another transition.")
     }
+    assertLegalIncidentTransition(incident.status, transition.status)
+    await transition.validate?.(client, incident)
 
     const updateData: Prisma.WorkflowAssuranceIncidentUpdateInput = {
       ...transition.data,
@@ -646,6 +670,50 @@ async function transitionWorkflowAssuranceIncident(
 
     return toIncidentDto(updated)
   })
+}
+
+function assertLegalIncidentTransition(
+  fromStatus: PrismaIncidentStatus,
+  toStatus: WorkflowAssuranceIncidentStatus,
+) {
+  if (!ALLOWED_INCIDENT_TRANSITIONS[fromStatus].includes(toStatus)) {
+    throw new BusinessRuleError(
+      "Workflow assurance incident transition is not allowed from its current status.",
+    )
+  }
+}
+
+function assertCurrentIncidentSourceHash(
+  incident: WorkflowAssuranceIncident,
+  currentSourceHash: string,
+) {
+  const normalized = currentSourceHash.trim()
+  if (!normalized) {
+    throw new BusinessRuleError("Current incident source hash confirmation is required.")
+  }
+  if (normalized !== incident.sourceHash) {
+    throw new ConflictError("Workflow assurance incident source changed before resolution.")
+  }
+}
+
+async function assertAssignableIncidentOwner(
+  client: IncidentDbClient,
+  organizationId: string,
+  ownerId: string,
+) {
+  const owner = await client.user.findFirst({
+    where: {
+      id: ownerId,
+      organizationId,
+      isActive: true,
+    },
+    select: { id: true },
+  })
+  if (!owner) {
+    throw new BusinessRuleError(
+      "Workflow assurance incident owner must be an active user in the same organization.",
+    )
+  }
 }
 
 async function findIncidentForTenant(client: IncidentDbClient, organizationId: string, incidentId: string) {

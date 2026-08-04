@@ -1,6 +1,6 @@
 # Stoquify Agent Runtime Phase 2B Entry Decision
 
-**Evaluated:** 2026-07-25T14:30:06.486Z<br>
+**Evaluated:** 2026-07-27T07:11:34.053Z<br>
 **Status:** `BLOCKED`<br>
 **Eligible:** No<br>
 **Activation authorized by gate:** No<br>
@@ -15,15 +15,15 @@ This read-only gate composes existing authority evidence. It reports eligibility
 | Measure | Result |
 |---|---:|
 | Checks | 23 |
-| Passed | 4 |
-| Blockers | 19 |
+| Passed | 2 |
+| Blockers | 21 |
 
 ## Checks
 
 | Check | Result | Evidence |
 |---|---|---|
-| AUTHORIZED_SCOPE_COMPLETE | Passed | docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_AUTHORIZED_SCOPE_REQUIREMENTS_AUDIT_2026-07-25.json |
-| FROZEN_COMMIT_VERIFIED | Passed | docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json |
+| AUTHORIZED_SCOPE_COMPLETE | Blocked | docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_AUTHORIZED_SCOPE_REQUIREMENTS_AUDIT_2026-07-25.json |
+| FROZEN_COMMIT_VERIFIED | Blocked | docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json |
 | CLEAN_RELEASE_READY | Blocked | docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json |
 | GLOBAL_RELEASE_READY | Blocked | what-next/skills-life-cycle/stoquify-ohada-leadership-release-evidence-index-2026-07-11.json |
 | PRODUCTION_SECRETS_READY | Blocked | what-next/release-secret-preflight.json |
@@ -48,6 +48,8 @@ This read-only gate composes existing authority evidence. It reports eligibility
 
 ## Blockers
 
+- `AUTHORIZED_SCOPE_COMPLETE`
+- `FROZEN_COMMIT_VERIFIED`
 - `CLEAN_RELEASE_READY`
 - `GLOBAL_RELEASE_READY`
 - `PRODUCTION_SECRETS_READY`

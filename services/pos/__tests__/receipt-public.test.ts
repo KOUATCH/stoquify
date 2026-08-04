@@ -7,14 +7,20 @@ import {
 import { db } from "@/prisma/db"
 import { NotFoundError } from "@/services/_shared/action-errors"
 import { createPublicReceiptAccessToken } from "@/services/pos/public-receipt-token"
-import { getPublicSalesReceipt, getSalesReceipt } from "@/services/pos/receipt.service"
+import { getPublicSalesReceipt, getSalesReceipt, sendReceipt } from "@/services/pos/receipt.service"
 
 const mockDb = db as unknown as {
+  $transaction: jest.Mock
   salesOrder: {
     findFirst: jest.Mock
   }
   fiscalDocument: {
     findFirst: jest.Mock
+  }
+  businessEvent: {
+    findUnique: jest.Mock
+    create: jest.Mock
+    update: jest.Mock
   }
   publicReceiptAccessToken: {
     create: jest.Mock
@@ -39,8 +45,21 @@ beforeEach(() => {
   ;(db as any).salesOrder = {
     findFirst: jest.fn(),
   }
+  ;(db as any).$transaction = jest.fn(async (handler: (tx: typeof db) => Promise<unknown>) => handler(db))
   ;(db as any).fiscalDocument = {
     findFirst: jest.fn().mockResolvedValue(null),
+  }
+  ;(db as any).businessEvent = {
+    findUnique: jest.fn().mockResolvedValue(null),
+    create: jest.fn(async (args: any) => ({
+      id: "event-1",
+      ...args.data,
+      outboxMessages: args.data.outboxMessages.create.map((message: unknown, index: number) => ({
+        id: `outbox-${index + 1}`,
+        ...(message as Record<string, unknown>),
+      })),
+    })),
+    update: jest.fn(),
   }
   ;(db as any).publicReceiptAccessToken = {
     create: jest.fn(async (args: any) => ({
@@ -362,5 +381,96 @@ describe("public receipt payload", () => {
       legalDeliveryStatus: "BLOCKED_UNTIL_CERTIFIED",
       legalDeliveryBlocked: true,
     })
+  })
+  it("queues WhatsApp receipt delivery through the business event outbox", async () => {
+    mockDb.salesOrder.findFirst.mockResolvedValue(saleFixture())
+
+    const result = await sendReceipt({
+      salesOrderId: "sale-1",
+      organizationId: "org-1",
+      userId: "cashier-1",
+      channel: "WHATSAPP",
+      destination: "+237699999999",
+      whatsAppCustomerOptInConfirmed: true,
+    })
+
+    expect(result).toMatchObject({
+      channel: "WHATSAPP",
+      status: "PENDING",
+      destination: "+237***9999",
+      providerReference: "outbox-1",
+      retryable: false,
+    })
+    expect(mockDb.$transaction).toHaveBeenCalled()
+    expect(mockDb.businessEvent.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          eventType: "POS_RECEIPT_WHATSAPP_DELIVERY_REQUESTED",
+          eventSource: "POS",
+          sourceType: "POS_SALE",
+          sourceId: "sale-1",
+          outboxMessages: {
+            create: [
+              expect.objectContaining({
+                channel: "WEBHOOK",
+                eventName: "pos.receipt.whatsapp.requested",
+                destination: "+237699999999",
+              }),
+            ],
+          },
+        }),
+      }),
+    )
+    const eventData = mockDb.businessEvent.create.mock.calls[0][0].data
+    expect(JSON.stringify(eventData.payload)).not.toContain("+237699999999")
+    expect(JSON.stringify(eventData.metadata)).not.toContain("+237699999999")
+    expect(JSON.stringify(mockDb.auditLog.create.mock.calls)).not.toContain("+237699999999")
+  })
+  it("blocks WhatsApp receipt delivery when legal delivery is blocked", async () => {
+    mockDb.salesOrder.findFirst.mockResolvedValue(saleFixture())
+    mockDb.fiscalDocument.findFirst.mockResolvedValue({
+      id: "fiscal-doc-1",
+      documentType: FiscalDocumentType.POS_RECEIPT,
+      status: FiscalDocumentStatus.QUEUED,
+      authorityChannel: "CM_DGI_E_SERVICES_PORTAL",
+      authorityReference: null,
+      legalNumber: null,
+      provisionalNumber: null,
+      certifiedAt: null,
+      rejectedAt: null,
+      rejectionReason: null,
+      certificationArtifactHash: null,
+      countryCode: "CM",
+      countryPackVersion: "CM-2026.1",
+      countryPackVerificationStatus: "REQUIRES_EXPERT_REVIEW",
+      certificationPolicySnapshot: {
+        legalDeliveryWhenUncertified: "BLOCK",
+      },
+      submissions: [],
+    })
+
+    await expect(sendReceipt({
+      salesOrderId: "sale-1",
+      organizationId: "org-1",
+      userId: "cashier-1",
+      channel: "WHATSAPP",
+      destination: "+237699999999",
+      whatsAppCustomerOptInConfirmed: true,
+    })).rejects.toThrow("Country-pack policy blocks legal receipt delivery")
+
+    expect(mockDb.auditLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          entityType: "SalesOrder",
+          entityId: "sale-1",
+          action: "RECEIPT_WHATSAPP",
+          changes: expect.objectContaining({
+            channel: "WHATSAPP",
+            status: "FAILED",
+          }),
+        }),
+      }),
+    )
+    expect(JSON.stringify(mockDb.auditLog.create.mock.calls)).not.toContain("+237699999999")
   })
 })

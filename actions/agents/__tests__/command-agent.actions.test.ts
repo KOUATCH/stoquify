@@ -34,6 +34,10 @@ jest.mock("@/services/agents/agent-feedback.service", () => ({
   recordCommandAgentFeedback: jest.fn(),
 }));
 
+jest.mock("@/services/events/business-event.service", () => ({
+  recordBusinessEvent: jest.fn(),
+}));
+
 jest.mock("@/services/agents/agent-definition.service", () => ({
   AgentDefinitionError: class AgentDefinitionError extends Error {
     constructor(
@@ -67,6 +71,7 @@ import {
 import { AgentDefinitionError } from "@/services/agents/agent-definition.service";
 import { recordCommandAgentFeedback } from "@/services/agents/agent-feedback.service";
 import { AgentReleaseControlError } from "@/services/agents/agent-release-control.service";
+import { recordBusinessEvent } from "@/services/events/business-event.service";
 import {
   CommandAgentExecutionError,
   runCommandAgent,
@@ -79,6 +84,7 @@ import {
 
 const mockRunCommandAgent = runCommandAgent as jest.Mock;
 const mockRecordFeedback = recordCommandAgentFeedback as jest.Mock;
+const mockRecordBusinessEvent = recordBusinessEvent as jest.Mock;
 
 const validRequest = {
   requestId: "11111111-1111-4111-8111-111111111111",
@@ -122,6 +128,23 @@ describe("Command Agent actions", () => {
           }),
         }),
       ]),
+    );
+  });
+
+  it("records a tenant-scoped analysis request event after a governed run", async () => {
+    mockRunCommandAgent.mockResolvedValueOnce({
+      receipt: { runId: "cm00000000000000000000001" },
+    });
+
+    await runCommandAgentAction(validRequest);
+
+    expect(mockRecordBusinessEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        organizationId: "org-session",
+        actorId: "user-session",
+        eventType: "AI_ANALYSIS_REQUESTED",
+        sourceId: "cm00000000000000000000001",
+      }),
     );
   });
 

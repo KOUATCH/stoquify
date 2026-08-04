@@ -2,10 +2,7 @@
 
 import { protect } from "@/services/_shared/protect";
 import { BusinessRuleError } from "@/services/_shared/action-errors";
-import {
-  getCountryPack,
-  getCountryPacks,
-} from "@/services/regulatory/country-packs/registry";
+import { getCountryPack, getCountryPacks } from "@/services/regulatory/regulatory-capability.service";
 import {
   countryPackSchema,
   type CountryPack,

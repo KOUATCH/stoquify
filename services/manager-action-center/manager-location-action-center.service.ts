@@ -1,11 +1,14 @@
 import "server-only"
 
+import { hasRbacPermission } from "@/lib/security/rbac-permissions"
 import { ForbiddenError } from "@/services/_shared/action-errors"
 import type { AllowedOperatingAccessScope } from "@/services/operating-access/operating-access-scope-contracts"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import { resolveOperatingAccessScope } from "@/services/operating-access/operating-access-scope.service"
 import { buildActionQueue } from "@/services/signals/action-queue.service"
 import { buildBusinessSignalsFromSnapshots } from "@/services/signals/business-signal-rules.service"
 import { getBranchOperatingSnapshot } from "@/services/snapshots/branch-operating-snapshot.service"
+import { getInventoryLossSnapshot } from "@/services/snapshots/inventory-loss-snapshot.service"
 import { normalizeSnapshotScope } from "@/services/snapshots/snapshot-utils"
 
 import type { ManagerLocationActionCenterData } from "./manager-location-action-center-contracts"
@@ -60,15 +63,32 @@ export async function getManagerLocationActionCenterDataFromResolvedAccess(
     now: input.now,
     maxAgeMinutes: input.maxAgeMinutes,
   })
+  const inventoryLossAllowed = await canLoadManagedLocationInventoryLoss({
+    organizationId: access.organizationId,
+    actorId: access.actorId,
+    actorPermissions: input.accessContext.permissions,
+    now: scope.now,
+  })
   const bundles = await Promise.all(
     managedLocations.map(async (location) => {
-      const snapshot = await getBranchOperatingSnapshot({
-        ...scope,
-        locationId: location.id,
-      })
+      const [snapshot, inventoryLoss] = await Promise.all([
+        getBranchOperatingSnapshot({
+          ...scope,
+          locationId: location.id,
+        }),
+        inventoryLossAllowed
+          ? getInventoryLossSnapshot({
+              ...scope,
+              locationId: location.id,
+            })
+          : Promise.resolve(null),
+      ])
       const signals = buildBusinessSignalsFromSnapshots({
         organizationId: access.organizationId,
-        snapshots: [snapshot],
+        snapshots: [
+          snapshot,
+          ...(inventoryLoss ? [inventoryLoss] : []),
+        ],
         now: scope.now,
       })
       const actionQueue = buildActionQueue({
@@ -102,4 +122,28 @@ export async function getManagerLocationActionCenterDataFromResolvedAccess(
     },
     bundles,
   }
+}
+
+async function canLoadManagedLocationInventoryLoss(input: {
+  organizationId: string
+  actorId: string
+  actorPermissions: readonly string[]
+  now: Date
+}) {
+  if (!hasRbacPermission(input.actorPermissions, "inventory.levels.read")) return false
+
+  const access = await observeModuleAccess({
+    organizationId: input.organizationId,
+    userId: input.actorId,
+    actorPermissions: input.actorPermissions,
+    moduleSlug: "inventory",
+    surfaceType: "page",
+    surface: "manager-location-action-center.inventory-loss",
+    accessIntent: "read",
+    mode: "enforce",
+    audit: true,
+    now: input.now,
+  })
+
+  return access.allowed
 }

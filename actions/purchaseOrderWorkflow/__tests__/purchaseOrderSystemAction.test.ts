@@ -1,11 +1,13 @@
 import {
   approvePurchaseOrder,
+  bulkUpdatePurchaseOrderStatus,
   deletePurchaseOrder,
   receiveItems,
 } from "../purchaseOrderSystemAction"
 import { requirePermission } from "@/lib/security/rbac"
 import {
   approvePurchaseOrder as approvePurchaseOrderService,
+  bulkUpdateStatus,
   deletePurchaseOrder as deletePurchaseOrderService,
   receiveItems as receiveItemsService,
 } from "@/services/purchase-order/purchase-order.service"
@@ -43,6 +45,7 @@ jest.mock("@/services/purchase-order/purchase-order.service", () => ({
 
 const mockRequirePermission = requirePermission as jest.Mock
 const mockApprovePurchaseOrderService = approvePurchaseOrderService as jest.Mock
+const mockBulkUpdateStatus = bulkUpdateStatus as jest.Mock
 const mockDeletePurchaseOrderService = deletePurchaseOrderService as jest.Mock
 const mockReceiveItemsService = receiveItemsService as jest.Mock
 
@@ -60,11 +63,52 @@ beforeEach(() => {
     permissions: ["purchases.orders.approve", "purchases.delete"],
   })
   mockApprovePurchaseOrderService.mockResolvedValue(approvedPurchaseOrder)
+  mockBulkUpdateStatus.mockResolvedValue({ updated: ["po-1"], failed: [] })
   mockDeletePurchaseOrderService.mockResolvedValue("PO-000001")
   mockReceiveItemsService.mockResolvedValue({ ...approvedPurchaseOrder, status: "RECEIVED" })
 })
 
 describe("purchaseOrderSystemAction controls", () => {
+  it("rejects bulk approval before permission lookup or service execution", async () => {
+    await expect(
+      bulkUpdatePurchaseOrderStatus({
+        organizationId: "org-session",
+        purchaseOrderIds: ["po-1"],
+        toStatus: "APPROVED",
+      }),
+    ).rejects.toThrow(
+      "Purchase orders cannot be approved in bulk. Use the canonical approval workflow for each order.",
+    )
+
+    expect(mockRequirePermission).not.toHaveBeenCalled()
+    expect(mockBulkUpdateStatus).not.toHaveBeenCalled()
+  })
+
+  it("keeps safe non-approval bulk transitions available", async () => {
+    const result = await bulkUpdatePurchaseOrderStatus({
+      organizationId: "org-session",
+      purchaseOrderIds: ["po-1"],
+      toStatus: "CANCELLED",
+      reason: "No longer required",
+    })
+
+    expect(mockRequirePermission).toHaveBeenCalledWith("purchases.orders.cancel", {
+      resource: "PurchaseOrder",
+      resourceId: undefined,
+      auditAllowed: true,
+    })
+    expect(mockBulkUpdateStatus).toHaveBeenCalledWith({
+      organizationId: "org-session",
+      purchaseOrderIds: ["po-1"],
+      toStatus: "CANCELLED",
+      reason: "No longer required",
+    })
+    expect(result).toMatchObject({
+      success: true,
+      data: { updated: ["po-1"], failed: [] },
+    })
+  })
+
   it("approves purchase orders with the RBAC actor instead of caller-supplied approvedBy", async () => {
     const result = await approvePurchaseOrder("po-1", "org-session", "client-approver")
 

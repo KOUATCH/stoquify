@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "environment": "INTERNAL_PILOT",
+  "release": {
+    "packageId": null,
+    "releaseVersion": null,
+    "commitSha": null,
+    "artifactDigest": null,
+    "artifactReference": null,
+    "deploymentReference": null,
+    "manifestHash": null,
+    "evidenceBundleHash": null,
+    "browserReportHash": null,
+    "pilotAllowlistReference": null,
+    "roleAllowlistReference": null
+  },
+  "approvers": {
+    "product": {
+      "decision": "PENDING",
+      "actorDirectoryId": null,
+      "approvalReference": null,
+      "decidedAt": null,
+      "expiresAt": null
+    },
+    "security": {
+      "decision": "PENDING",
+      "actorDirectoryId": null,
+      "approvalReference": null,
+      "decidedAt": null,
+      "expiresAt": null
+    }
+  },
+  "owners": [
+    {
+      "role": "ROLLOUT",
+      "primaryDirectoryId": null,
+      "backupDirectoryId": null,
+      "acceptedRunbookVersion": null,
+      "acceptedAt": null,
+      "coverageStartsAt": null,
+      "coverageEndsAt": null,
+      "escalationReference": null
+    },
+    {
+      "role": "ROLLBACK",
+      "primaryDirectoryId": null,
+      "backupDirectoryId": null,
+      "acceptedRunbookVersion": null,
+      "acceptedAt": null,
+      "coverageStartsAt": null,
+      "coverageEndsAt": null,
+      "escalationReference": null
+    },
+    {
+      "role": "SUPPORT",
+      "primaryDirectoryId": null,
+      "backupDirectoryId": null,
+      "acceptedRunbookVersion": null,
+      "acceptedAt": null,
+      "coverageStartsAt": null,
+      "coverageEndsAt": null,
+      "escalationReference": null
+    },
+    {
+      "role": "PILOT",
+      "primaryDirectoryId": null,
+      "backupDirectoryId": null,
+      "acceptedRunbookVersion": null,
+      "acceptedAt": null,
+      "coverageStartsAt": null,
+      "coverageEndsAt": null,
+      "escalationReference": null
+    },
+    {
+      "role": "SECURITY_INCIDENT",
+      "primaryDirectoryId": null,
+      "backupDirectoryId": null,
+      "acceptedRunbookVersion": null,
+      "acceptedAt": null,
+      "coverageStartsAt": null,
+      "coverageEndsAt": null,
+      "escalationReference": null
+    },
+    {
+      "role": "ON_CALL_BACKUP",
+      "primaryDirectoryId": null,
+      "backupDirectoryId": null,
+      "acceptedRunbookVersion": null,
+      "acceptedAt": null,
+      "coverageStartsAt": null,
+      "coverageEndsAt": null,
+      "escalationReference": null
+    }
+  ],
+  "evidenceEndpoints": {
+    "ci": {
+      "url": null,
+      "managedSecretReference": null,
+      "sourceSystemReference": null
+    },
+    "governance": {
+      "url": null,
+      "managedSecretReference": null,
+      "sourceSystemReference": null
+    },
+    "scheduler": {
+      "url": null,
+      "managedSecretReference": null,
+      "sourceSystemReference": null
+    },
+    "reconciler": {
+      "url": null,
+      "managedSecretReference": null,
+      "sourceSystemReference": null
+    },
+    "alert": {
+      "url": null,
+      "managedSecretReference": null,
+      "sourceSystemReference": null
+    },
+    "credential": {
+      "url": null,
+      "managedSecretReference": null,
+      "sourceSystemReference": null
+    }
+  },
+  "managedCredentials": {
+    "workloadIdentityReference": null,
+    "collectorIdentityReference": null,
+    "secretManagerNamespaceReference": null,
+    "rotationAuthorityReference": null,
+    "credentialInventoryReference": null
+  },
+  "statutoryApproval": {
+    "decision": "PENDING",
+    "reviewerDirectoryId": null,
+    "qualificationReference": null,
+    "sourceArtifactHash": null,
+    "approvalArtifactReference": null,
+    "approvalArtifactHash": null,
+    "reviewedAt": null
+  },
+  "pilot": {
+    "cohortReference": null,
+    "tenantScopeHash": null,
+    "roleScopeHash": null,
+    "supportCoverageReference": null,
+    "rollbackPlanReference": null,
+    "activationAuthorityDirectoryId": null,
+    "activationDecision": "PENDING",
+    "activationDecisionReference": null,
+    "activationDecidedAt": null
+  },
+  "safety": {
+    "activationRequested": false,
+    "activationAuthorized": false,
+    "activatedAt": null,
+    "phase3Authorized": false,
+    "secretValuesIncluded": false
+  }
+}

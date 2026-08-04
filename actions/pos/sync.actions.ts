@@ -2,7 +2,7 @@
 
 import { revalidatePath, revalidateTag } from "next/cache"
 
-import { protect } from "@/services/_shared/protect"
+import { protect, type ProtectedActionResponse } from "@/services/_shared/protect"
 import {
   getOfflineSyncDashboard,
   ingestOfflineSyncBatch,
@@ -12,6 +12,7 @@ import {
   type OfflineSyncDashboardData,
   type OfflineSyncDeviceDTO,
   type OfflineSaleReplayResult,
+  type OfflineSyncErrorCode,
 } from "@/services/pos/offline-sync.service"
 
 export type {
@@ -19,6 +20,53 @@ export type {
   OfflineSyncDashboardData,
   OfflineSyncDeviceDTO,
   OfflineSaleReplayResult,
+}
+
+type OfflineActionErrorCode = OfflineSyncErrorCode | Exclude<
+  ProtectedActionResponse<never> extends infer Result
+    ? Result extends { code: infer Code }
+      ? Code
+      : never
+    : never,
+  undefined
+>
+
+function offlineActionErrorCode(
+  result: Extract<ProtectedActionResponse<unknown>, { success: false }>,
+): OfflineActionErrorCode {
+  const explicitCodes: OfflineSyncErrorCode[] = [
+    "IDEMPOTENCY_CONFLICT",
+    "SEQUENCE_CONFLICT",
+    "DEVICE_REVOKED",
+    "DEVICE_SIGNATURE_INVALID",
+    "OFFLINE_POLICY_EXPIRED",
+    "STALE_REFERENCE_SNAPSHOT",
+    "AUTHORITY_UNAVAILABLE",
+    "PROVISIONAL_RECEIPT_PENDING",
+    "SYSTEM_ERROR",
+  ]
+  const explicit = explicitCodes.find((code) => result.error.includes(code))
+  if (explicit) return explicit
+  if (result.code) {
+    return result.code === "INTERNAL_ERROR" ? "SYSTEM_ERROR" : result.code
+  }
+  if (result.status === 401) return "AUTH_REQUIRED"
+  if (result.status === 403) return "FORBIDDEN"
+  if (result.status === 409) return "CONFLICT"
+  return "SYSTEM_ERROR"
+}
+
+async function withOfflineActionContract<T>(
+  response: Promise<ProtectedActionResponse<T>>,
+) {
+  const result = await response
+  return result.success
+    ? { ...result, ok: true as const }
+    : {
+        ...result,
+        ok: false as const,
+        errorCode: offlineActionErrorCode(result),
+      }
 }
 
 function asRecord(input: unknown) {
@@ -49,7 +97,7 @@ const getDashboard = protect<unknown, OfflineSyncDashboardData>(
 )
 
 export async function getOfflineSyncDashboardAction(input: unknown = {}) {
-  return getDashboard(input)
+  return withOfflineActionContract(getDashboard(input))
 }
 
 const enrollDevice = protect<unknown, OfflineSyncDeviceDTO>(
@@ -71,7 +119,7 @@ const enrollDevice = protect<unknown, OfflineSyncDeviceDTO>(
 )
 
 export async function registerOfflineDeviceAction(input: unknown) {
-  return enrollDevice(input)
+  return withOfflineActionContract(enrollDevice(input))
 }
 
 const syncBatch = protect<unknown, OfflineSyncBatchResult>(
@@ -93,7 +141,7 @@ const syncBatch = protect<unknown, OfflineSyncBatchResult>(
 )
 
 export async function syncOfflineEventsAction(input: unknown) {
-  return syncBatch(input)
+  return withOfflineActionContract(syncBatch(input))
 }
 
 const replayOfflineSale = protect<unknown, OfflineSaleReplayResult>(
@@ -115,5 +163,5 @@ const replayOfflineSale = protect<unknown, OfflineSaleReplayResult>(
 )
 
 export async function replayOfflineSaleEnvelopeAction(input: unknown) {
-  return replayOfflineSale(input)
+  return withOfflineActionContract(replayOfflineSale(input))
 }

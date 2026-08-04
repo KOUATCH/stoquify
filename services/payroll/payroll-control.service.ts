@@ -66,11 +66,11 @@ import {
 } from "@/services/hris/payroll-readiness-contract";
 import { validateHrisTimeLeaveAttendanceCertification } from "@/services/hris/time-leave.contract";
 import { assertPayrollCertifiedInputProofMetadata } from "@/services/payroll/certified-input-proof";
-import { getCountryPack } from "@/services/regulatory/country-packs/registry";
 import {
+  getCountryPack,
   resolveRegulatoryParameter,
   type RegulatoryResolutionResult,
-} from "@/services/regulatory/country-packs/resolve";
+} from "@/services/regulatory/regulatory-capability.service";
 import type { ModuleEntitlementDecision } from "@/services/modules/module-control-contracts";
 import {
   evaluateRedaction,
@@ -698,6 +698,7 @@ type PayrollInputReadinessBlockerCode =
   | "PAYROLL_INPUT_ATTENDANCE_SOURCE_MISSING"
   | "PAYROLL_INPUT_ATTENDANCE_CERTIFICATION_MISSING"
   | "PAYROLL_INPUT_PAYMENT_DESTINATION_MISSING"
+  | "PAYROLL_INPUT_PAYMENT_DESTINATION_DUPLICATE"
   | HrisPayrollReadinessBlockerCode;
 
 type PayrollInputReadinessBlocker = {
@@ -1068,6 +1069,40 @@ function buildPayrollInputReadinessVerdict(input: {
     })
     .sort((left, right) => left.employeeId.localeCompare(right.employeeId));
 
+  const destinationOwners = new Map<
+    string,
+    Array<{ employeeId: string; employeeDisplayName: string }>
+  >();
+  for (const employee of input.employees) {
+    const destinationHash =
+      typeof employee.paymentDestinationHash === "string"
+        ? employee.paymentDestinationHash.trim()
+        : "";
+    if (!destinationHash) continue;
+    const owners = destinationOwners.get(destinationHash) ?? [];
+    owners.push({
+      employeeId: employee.id,
+      employeeDisplayName: employee.displayName,
+    });
+    destinationOwners.set(destinationHash, owners);
+  }
+  for (const [destinationHash, owners] of destinationOwners) {
+    if (owners.length < 2) continue;
+    const duplicateEvidenceId = prefixedHash({
+      organizationId: input.organizationId,
+      paymentDestinationHash: destinationHash,
+      employeeIds: owners.map((owner) => owner.employeeId).sort(),
+    });
+    for (const owner of owners) {
+      addBlocker({
+        code: "PAYROLL_INPUT_PAYMENT_DESTINATION_DUPLICATE",
+        message: `Employee ${owner.employeeDisplayName} shares an approved payroll payment destination with another active employee.`,
+        employeeId: owner.employeeId,
+        employeeDisplayName: owner.employeeDisplayName,
+        sourceId: duplicateEvidenceId,
+      });
+    }
+  }
   const hrisPayrollReadiness = buildHrisPayrollReadinessExport({
     organizationId: input.organizationId,
     payrollPeriodId: input.period.id,

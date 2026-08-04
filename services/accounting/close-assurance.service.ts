@@ -21,10 +21,13 @@ import { db } from "@/prisma/db"
 import { recordBusinessEventInTx } from "@/services/events/business-event.service"
 import {
   BusinessRuleError,
+  ConflictError,
+  getPrismaKnownRequest,
   isApplicationError,
   NotFoundError,
 } from "@/services/_shared/action-errors"
 import { getAccountantPortalData } from "./data-trust.service"
+import { resolveAccountantClientAccess } from "./accountant-access.service"
 import {
   getPeriodClosePreflight,
   getPeriodClosePreflightFailures,
@@ -53,17 +56,69 @@ import {
   type CloseAssurancePeriodInput,
   type CloseEvidenceGraphInput,
   type CommentOnCloseFindingInput,
+  type RequestMissingCloseEvidenceInput,
   type RequestCloseWaiverInput,
   type UpdateAccountantReviewInput,
 } from "./close-assurance.schemas"
+import {
+  MISSING_CLOSE_EVIDENCE_REQUEST_TYPE,
+  MISSING_CLOSE_EVIDENCE_VISIBILITY,
+} from "./missing-close-evidence-request-queue-contracts"
 
 type DbClient = typeof db | Prisma.TransactionClient
+
+type CloseFreshAuthControl = {
+  actorId: string
+  organizationId: string
+  lastAuthAt: Date | number | string
+}
 
 type CloseControlContext = {
   actorId?: string | null
   actorPermissions?: readonly string[]
-  lastAuthAt?: Date | number | string | null
   now?: Date | number | string | null
+}
+
+type CloseWaiverControlContext = Omit<CloseControlContext, "now"> & {
+  freshAuth?: CloseFreshAuthControl | null
+}
+
+const CLOSE_WAIVER_FRESH_AUTH_MAX_AGE_MS = 5 * 60 * 1000
+
+function requireFreshWaiverControl(
+  organizationId: string,
+  control: CloseWaiverControlContext,
+  now: Date,
+) {
+  const actorId = control.actorId
+  const freshAuth = control.freshAuth
+  const rawLastAuthAt = freshAuth?.lastAuthAt
+  const lastAuthAt =
+    rawLastAuthAt instanceof Date
+      ? rawLastAuthAt.getTime()
+      : rawLastAuthAt === null || rawLastAuthAt === undefined
+        ? Number.NaN
+        : new Date(rawLastAuthAt).getTime()
+  const nowTime = now.getTime()
+
+  if (
+    !actorId ||
+    !freshAuth ||
+    freshAuth.actorId !== actorId ||
+    freshAuth.organizationId !== organizationId ||
+    !Number.isFinite(nowTime) ||
+    !Number.isFinite(lastAuthAt) ||
+    lastAuthAt <= 0 ||
+    lastAuthAt > nowTime ||
+    nowTime - lastAuthAt > CLOSE_WAIVER_FRESH_AUTH_MAX_AGE_MS
+  ) {
+    throw new BusinessRuleError(
+      "Fresh authentication is required to approve a close waiver.",
+      "FRESH_AUTH_REQUIRED",
+    )
+  }
+
+  return actorId
 }
 
 type ClosePeriodSummary = {
@@ -136,6 +191,21 @@ export type CloseAssuranceCommentDto = {
   authorId: string | null
   body: string
   visibility: string
+  createdAt: string
+}
+
+export type MissingCloseEvidenceRequestDto = {
+  id: string
+  organizationId: string
+  periodId: string
+  closeRunId: string
+  findingId: string
+  requestedById: string
+  requestedFromId: string
+  requestText: string
+  dueAt: string
+  status: "OPEN"
+  correlationId: string
   createdAt: string
 }
 
@@ -3089,6 +3159,269 @@ export async function commentOnCloseFinding(
   })
 }
 
+type MissingCloseEvidenceCommentRecord = {
+  id: string
+  organizationId: string
+  periodId: string
+  closeRunId: string
+  findingId: string | null
+  authorId: string | null
+  body: string
+  visibility: string
+  correlationId: string | null
+  metadata: Prisma.JsonValue | null
+  createdAt: Date
+}
+
+function mapMissingCloseEvidenceRequest(
+  comment: MissingCloseEvidenceCommentRecord,
+): MissingCloseEvidenceRequestDto {
+  const requestType = metadataString(comment.metadata, "requestType")
+  const requestedFromId = metadataString(comment.metadata, "requestedFromId")
+  const dueAt = metadataString(comment.metadata, "dueAt")
+  const dueAtTime = dueAt ? new Date(dueAt).getTime() : Number.NaN
+
+  if (
+    comment.visibility !== MISSING_CLOSE_EVIDENCE_VISIBILITY ||
+    requestType !== MISSING_CLOSE_EVIDENCE_REQUEST_TYPE ||
+    !comment.findingId ||
+    !comment.authorId ||
+    !comment.correlationId ||
+    !requestedFromId ||
+    !Number.isFinite(dueAtTime)
+  ) {
+    throw new BusinessRuleError(
+      "Stored missing-proof request evidence is incomplete.",
+    )
+  }
+
+  return {
+    id: comment.id,
+    organizationId: comment.organizationId,
+    periodId: comment.periodId,
+    closeRunId: comment.closeRunId,
+    findingId: comment.findingId,
+    requestedById: comment.authorId,
+    requestedFromId,
+    requestText: comment.body,
+    dueAt: new Date(dueAtTime).toISOString(),
+    status: "OPEN",
+    correlationId: comment.correlationId,
+    createdAt: comment.createdAt.toISOString(),
+  }
+}
+
+function assertMatchingMissingCloseEvidenceReplay(
+  existing: MissingCloseEvidenceCommentRecord,
+  input: RequestMissingCloseEvidenceInput,
+  actorId: string,
+  dueAt: Date,
+): MissingCloseEvidenceRequestDto {
+  const request = mapMissingCloseEvidenceRequest(existing)
+  if (
+    request.requestedById !== actorId ||
+    request.requestedFromId !== input.requestedFromId ||
+    request.requestText !== input.requestText ||
+    request.dueAt !== dueAt.toISOString()
+  ) {
+    throw new ConflictError(
+      "Correlation ID already belongs to a different missing-proof request.",
+    )
+  }
+  return request
+}
+
+async function runMissingCloseEvidenceTransaction<T>(
+  operation: (tx: Prisma.TransactionClient) => Promise<T>,
+): Promise<T> {
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      return await db.$transaction(operation, {
+        isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+      })
+    } catch (error) {
+      const code = getPrismaKnownRequest(error)?.code
+      if (attempt === 2 || (code !== "P2034" && code !== "P2002")) {
+        throw error
+      }
+    }
+  }
+
+  throw new BusinessRuleError("Missing-proof request transaction failed.")
+}
+
+export async function requestMissingCloseEvidence(
+  homeOrganizationId: string,
+  input: RequestMissingCloseEvidenceInput,
+  control: CloseControlContext = {},
+): Promise<MissingCloseEvidenceRequestDto> {
+  const actorId = control.actorId?.trim()
+  if (!actorId) {
+    throw new BusinessRuleError(
+      "An authenticated accountant is required to request missing evidence.",
+    )
+  }
+
+  const now = new Date()
+  const dueAt = new Date(input.dueAt.getTime())
+  if (!Number.isFinite(dueAt.getTime()) || dueAt.getTime() <= now.getTime()) {
+    throw new BusinessRuleError(
+      "Missing-proof request due date must be in the future.",
+    )
+  }
+  const correlationId = input.correlationId ?? randomUUID()
+
+  return runMissingCloseEvidenceTransaction(async (tx) => {
+    const access = await resolveAccountantClientAccess({
+      homeOrganizationId,
+      clientOrganizationId: input.clientOrganizationId,
+      accountantUserId: actorId,
+      capability: "REVIEW",
+      now,
+      client: tx,
+    })
+    const organizationId = access.organizationId
+
+    const existing = await tx.accountantComment.findFirst({
+      where: {
+        organizationId,
+        findingId: input.findingId,
+        correlationId,
+        visibility: MISSING_CLOSE_EVIDENCE_VISIBILITY,
+      },
+    })
+    if (existing) {
+      return assertMatchingMissingCloseEvidenceReplay(
+        existing,
+        input,
+        actorId,
+        dueAt,
+      )
+    }
+
+    const finding = await tx.closeAssuranceFinding.findFirst({
+      where: { id: input.findingId, organizationId },
+      include: {
+        checklistItem: {
+          select: { status: true, evidenceCount: true },
+        },
+        evidenceItems: {
+          where: { available: false },
+          select: { id: true },
+          take: 1,
+        },
+      },
+    })
+    if (!finding) throw new NotFoundError("Close finding not found")
+    if (
+      finding.status === CloseFindingStatus.RESOLVED ||
+      finding.status === CloseFindingStatus.WAIVED_WITH_APPROVAL
+    ) {
+      throw new BusinessRuleError(
+        "Resolved or waived findings cannot receive missing-proof requests.",
+      )
+    }
+
+    const hasMissingEvidence =
+      finding.evidenceItems.length > 0 ||
+      finding.checklistItem?.status === CloseChecklistStatus.UNAVAILABLE ||
+      finding.checklistItem?.evidenceCount === 0
+    if (!hasMissingEvidence) {
+      throw new BusinessRuleError(
+        "This finding has no verified missing-evidence condition.",
+      )
+    }
+
+    const recipient = await tx.user.findFirst({
+      where: {
+        id: input.requestedFromId,
+        organizationId,
+        isActive: true,
+      },
+      select: { id: true },
+    })
+    if (!recipient) {
+      throw new BusinessRuleError(
+        "Missing-proof recipient must be an active user of the client organization.",
+      )
+    }
+
+    await tx.closeAssuranceFinding.update({
+      where: { id: finding.id },
+      data: {
+        ownerId: recipient.id,
+        assignedById: actorId,
+        assignedAt: now,
+        dueAt,
+        status: CloseFindingStatus.ASSIGNED,
+        correlationId,
+      },
+    })
+
+    const comment = await tx.accountantComment.create({
+      data: {
+        organizationId,
+        periodId: finding.periodId,
+        closeRunId: finding.closeRunId,
+        findingId: finding.id,
+        authorId: actorId,
+        body: input.requestText,
+        visibility: MISSING_CLOSE_EVIDENCE_VISIBILITY,
+        correlationId,
+        metadata: jsonObject({
+          requestType: MISSING_CLOSE_EVIDENCE_REQUEST_TYPE,
+          requestedById: actorId,
+          requestedFromId: recipient.id,
+          dueAt: dueAt.toISOString(),
+          correlationId,
+        }),
+      },
+    })
+
+    await auditCloseWorkflow(tx, {
+      organizationId,
+      actorId,
+      action: "CLOSE_MISSING_EVIDENCE_REQUESTED",
+      resourceType: "AccountantComment",
+      resourceId: comment.id,
+      message: "Close missing-evidence request created",
+      metadata: jsonObject({
+        findingId: finding.id,
+        requestedFromId: recipient.id,
+        dueAt: dueAt.toISOString(),
+        correlationId,
+      }),
+    })
+
+    await recordCloseWorkflowEventInTx(tx, {
+      organizationId,
+      actorId,
+      eventType: "close.assurance.missing_evidence.requested",
+      idempotencyKey:
+        `close-assurance-finding:${finding.id}:missing-evidence-requested:${correlationId}`,
+      sourceType: "CloseAssuranceFinding",
+      sourceId: finding.id,
+      closeRunId: finding.closeRunId,
+      periodId: finding.periodId,
+      findingId: finding.id,
+      ownerId: recipient.id,
+      dueAt,
+      message: "Close missing-evidence request created",
+      severity: notificationSeverity(finding.severity),
+      correlationId,
+      payload: {
+        requestId: comment.id,
+        requestType: MISSING_CLOSE_EVIDENCE_REQUEST_TYPE,
+        requestedById: actorId,
+        requestedFromId: recipient.id,
+        status: "OPEN",
+      },
+    })
+
+    return mapMissingCloseEvidenceRequest(comment)
+  })
+}
+
 export async function requestCloseWaiver(
   organizationId: string,
   input: RequestCloseWaiverInput,
@@ -3160,8 +3493,10 @@ export async function requestCloseWaiver(
 export async function approveCloseWaiver(
   organizationId: string,
   input: ApproveCloseWaiverInput,
-  control: CloseControlContext = {},
+  control: CloseWaiverControlContext = {},
 ) {
+  const now = new Date()
+  const actorId = requireFreshWaiverControl(organizationId, control, now)
   const correlationId = input.correlationId ?? randomUUID()
 
   return db.$transaction(async (tx) => {
@@ -3175,7 +3510,7 @@ export async function approveCloseWaiver(
         "A waiver request is required before approval.",
       )
     }
-    if (control.actorId && finding.waiverRequestedById === control.actorId) {
+    if (finding.waiverRequestedById === actorId) {
       throw new CloseAssuranceError(
         "SoDViolation",
         "The waiver requester cannot approve the same close waiver.",
@@ -3186,15 +3521,15 @@ export async function approveCloseWaiver(
       where: { id: finding.id },
       data: {
         status: CloseFindingStatus.WAIVED_WITH_APPROVAL,
-        waiverApprovedById: control.actorId ?? null,
-        waiverApprovedAt: new Date(),
+        waiverApprovedById: actorId,
+        waiverApprovedAt: now,
         correlationId,
       },
     })
 
     await auditCloseWorkflow(tx, {
       organizationId,
-      actorId: control.actorId,
+      actorId,
       action: "CLOSE_WAIVER_APPROVED",
       resourceType: "CloseAssuranceFinding",
       resourceId: finding.id,
@@ -3207,7 +3542,7 @@ export async function approveCloseWaiver(
 
     await recordCloseWorkflowEventInTx(tx, {
       organizationId,
-      actorId: control.actorId,
+      actorId,
       eventType: "close.assurance.waiver.approved",
       idempotencyKey: `close-assurance-finding:${finding.id}:waiver-approved:${correlationId}`,
       sourceType: "CloseAssuranceFinding",
@@ -3222,7 +3557,7 @@ export async function approveCloseWaiver(
       correlationId,
       payload: {
         requestedById: finding.waiverRequestedById,
-        approvedById: control.actorId ?? null,
+        approvedById: actorId,
       },
     })
 

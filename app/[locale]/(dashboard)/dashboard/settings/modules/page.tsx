@@ -100,7 +100,7 @@ export default async function ModuleSettingsPage({ params }: PageProps) {
   return (
     <div className="dashboard-landing-theme min-h-screen overflow-x-hidden">
       <div className="dashboard-landing-content mx-auto flex w-full max-w-[88rem] min-w-0 flex-col gap-6 px-4 py-6 text-[var(--dash-text)] sm:px-6 sm:py-8">
-        <section className="grid gap-4 lg:grid-cols-[minmax(0,1.45fr)_minmax(20rem,0.75fr)]">
+        <section className="grid gap-4">
           <div className="rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] p-5 shadow-[0_18px_45px_rgba(5,12,16,0.18)]">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div className="min-w-0">
@@ -111,7 +111,7 @@ export default async function ModuleSettingsPage({ params }: PageProps) {
                 <h1 className="mt-3 text-2xl font-semibold text-[var(--dash-text)] sm:text-3xl">{labels.title}</h1>
                 <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--dash-text-soft)]">{labels.subtitle}</p>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="grid w-full grid-cols-2 gap-2 sm:w-auto sm:grid-cols-1">
                 <Badge variant="outline" className="border-[#49c6e5]/35 bg-[rgba(73,198,229,0.12)] text-[#bdefff]">
                   <Network className="mr-1 h-3.5 w-3.5" />
                   {labels.mode}
@@ -122,28 +122,29 @@ export default async function ModuleSettingsPage({ params }: PageProps) {
                 </Badge>
               </div>
             </div>
-          </div>
 
-          <div className="rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] p-5">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[rgba(47,125,246,0.16)] text-[#8fb7ff]">
-                <LockKeyhole className="h-5 w-5" />
-              </div>
-              <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-[var(--dash-text)]">{data.organizationName ?? data.organizationId}</p>
-                <p className="text-xs text-[var(--dash-text-soft)]">{data.generatedAt}</p>
-              </div>
-            </div>
-            <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+            <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
               <Metric label={labels.catalog} value={String(data.summary.catalogCount)} />
               <Metric label={labels.entitled} value={String(data.summary.entitledCount)} />
               <Metric label={labels.wouldBlock} value={String(data.summary.wouldBlockCount)} />
               <Metric label={labels.dependencies} value={String(data.summary.dependencyGapCount)} />
             </div>
+
+            <div className="mt-5 border-t border-white/10 pt-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[rgba(47,125,246,0.16)] text-[#8fb7ff]">
+                  <LockKeyhole className="h-5 w-5" />
+                </div>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-[var(--dash-text)]">{data.organizationName ?? data.organizationId}</p>
+                  <p className="text-xs text-[var(--dash-text-soft)]">{data.generatedAt}</p>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
-        <section className="grid gap-4 lg:grid-cols-[minmax(0,0.7fr)_minmax(0,1.3fr)]">
+        <section className="grid gap-4">
           <div className="rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] p-5">
             <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-[var(--dash-text-soft)]">{labels.requested}</h2>
             {data.requestedModules.length > 0 ? (
@@ -168,7 +169,7 @@ export default async function ModuleSettingsPage({ params }: PageProps) {
             ) : null}
           </div>
 
-          <div className="grid gap-3">
+          <div className="grid gap-3 xl:grid-cols-2">
             {data.items.map((item) => (
               <article key={item.module.slug} className="rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] p-4">
                 <div className="flex flex-wrap items-start justify-between gap-3">
@@ -199,7 +200,7 @@ export default async function ModuleSettingsPage({ params }: PageProps) {
                   <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--dash-text-faint)]">{labels.reason}</p>
                   <p className="mt-2 text-sm leading-6 text-[var(--dash-text-soft)]">{item.decision.reason}</p>
                   <p className="mt-2 text-xs text-[var(--dash-text-faint)]">
-                    {labels.dependenciesTitle}:{" "}
+                    {labels.dependenciesTitle}: {" "}
                     {item.decision.missingDependencies.length > 0
                       ? item.decision.missingDependencies.map((dependency) => dependency.dependsOnSlug).join(", ")
                       : labels.noDependencies}
@@ -222,4 +223,3 @@ function Metric({ label, value }: { label: string; value: string }) {
     </div>
   )
 }
-

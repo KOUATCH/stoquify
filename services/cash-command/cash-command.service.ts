@@ -19,8 +19,17 @@ import type {
 } from "@/services/bi/bi-contracts"
 import type { EvidenceGrade, ProofTrailSubjectType } from "@/services/evidence/evidence-contracts"
 import { SUBJECT_PERMISSION_MAP } from "@/services/evidence/evidence-contracts"
+import { auditRbacDecision, RbacError } from "@/lib/security/rbac"
+import {
+  hasAnyRbacPermission,
+  hasRbacPermission,
+} from "@/lib/security/rbac-permissions"
 import type { CommercialModuleSlug } from "@/services/modules/module-control-contracts"
-import { getModuleControlCenterData } from "@/services/modules/module-entitlement.service"
+import {
+  getModuleControlCenterData,
+  observeModuleAccess,
+} from "@/services/modules/module-entitlement.service"
+import { resolveTenantWideOperatingAuthority } from "@/services/operating-access/operating-access-scope-contracts"
 import { getCashDrawerDashboard } from "@/services/pos/drawer-dashboard.service"
 import { buildActionQueue } from "@/services/signals/action-queue.service"
 import type {
@@ -33,8 +42,10 @@ import {
 } from "@/services/signals/business-signal-rules.service"
 import { getCloseReadinessSnapshot } from "@/services/snapshots/close-readiness-snapshot.service"
 import { getInventoryCashSnapshot } from "@/services/snapshots/inventory-cash-snapshot.service"
+import { getInventoryLossSnapshot } from "@/services/snapshots/inventory-loss-snapshot.service"
 import { getPaymentTruthSnapshot } from "@/services/snapshots/payment-truth-snapshot.service"
 import type {
+  InventoryLossMetrics,
   PaymentTruthMetrics,
   PayrollFinanceForecastMetrics,
   SnapshotBlocker,
@@ -58,6 +69,8 @@ type CashCommandInput = {
   organizationId: string
   actorId?: string | null
   actorPermissions: readonly string[]
+  actorRoleCodes?: readonly string[]
+  isSuperUser?: boolean
   periodStart?: Date | string | null
   periodEnd?: Date | string | null
   maxAgeMinutes?: number | null
@@ -73,12 +86,15 @@ const ACTION_MODULE_BY_SIGNAL_TYPE: Record<ActionItem["signalType"], CommercialM
   refund_void_spike: "pos",
   stockout_risk: "inventory",
   dead_stock_cash_exposure: "inventory",
+  inventory_loss_review: "inventory",
   purchase_order_receiving_delay: "purchasing",
   payroll_exposure: "payroll",
   close_blocker: "close_assurance",
 }
 
 export async function getCashCommandData(input: CashCommandInput): Promise<CashCommandData> {
+  await requireCashCommandTenantAuthority(input)
+
   const scope = {
     organizationId: input.organizationId,
     periodStart: input.periodStart ?? null,
@@ -88,28 +104,42 @@ export async function getCashCommandData(input: CashCommandInput): Promise<CashC
   }
   const drawerScope = drawerScopeFromInput(input)
 
-  const [tenantOperating, paymentTruth, inventoryCash, closeReadiness, drawerDashboard, moduleControl] =
-    await Promise.all([
-      getTenantOperatingSnapshot(scope),
-      getPaymentTruthSnapshot(scope),
-      getInventoryCashSnapshot(scope),
-      getCloseReadinessSnapshot(scope),
-      getCashDrawerDashboard({
-        organizationId: input.organizationId,
-        ...drawerScope,
-      }),
-      getModuleControlCenterData({
-        organizationId: input.organizationId,
-        actorId: input.actorId,
-        actorPermissions: input.actorPermissions,
-        now: input.now ?? null,
-      }),
-    ])
+  const [
+    tenantOperating,
+    paymentTruth,
+    inventoryCash,
+    closeReadiness,
+    drawerDashboard,
+    moduleControl,
+    inventoryLoss,
+  ] = await Promise.all([
+    getTenantOperatingSnapshot(scope),
+    getPaymentTruthSnapshot(scope),
+    getInventoryCashSnapshot(scope),
+    getCloseReadinessSnapshot(scope),
+    getCashDrawerDashboard({
+      organizationId: input.organizationId,
+      ...drawerScope,
+    }),
+    getModuleControlCenterData({
+      organizationId: input.organizationId,
+      actorId: input.actorId,
+      actorPermissions: input.actorPermissions,
+      now: input.now ?? null,
+    }),
+    loadCashCommandInventoryLoss(input),
+  ])
 
   const signals = [
     ...buildBusinessSignalsFromSnapshots({
       organizationId: input.organizationId,
-      snapshots: [tenantOperating, paymentTruth, inventoryCash, closeReadiness],
+      snapshots: [
+        tenantOperating,
+        paymentTruth,
+        inventoryCash,
+        closeReadiness,
+        ...(inventoryLoss ? [inventoryLoss] : []),
+      ],
       now: input.now ?? null,
     }),
     ...buildCashDrawerSignals({
@@ -145,6 +175,94 @@ export async function getCashCommandData(input: CashCommandInput): Promise<CashC
     actionQueue,
     moduleControl,
     proofSubjectIds,
+  })
+}
+
+async function requireCashCommandTenantAuthority(
+  input: CashCommandInput,
+): Promise<void> {
+  const actorId = input.actorId?.trim()
+  const hasBasePermission = hasAnyRbacPermission(input.actorPermissions, [
+    "finance.read",
+    "dashboard.read",
+  ])
+  const authority =
+    actorId && hasBasePermission
+      ? resolveTenantWideOperatingAuthority({
+          isSuperUser: input.isSuperUser === true,
+          roleCodes: input.actorRoleCodes ?? [],
+        })
+      : null
+
+  if (actorId && hasBasePermission && authority) return
+
+  await auditRbacDecision({
+    ctx: actorId
+      ? {
+          userId: actorId,
+          orgId: input.organizationId,
+        }
+      : null,
+    permission: "finance.read",
+    result: "denied",
+    resource: "KontavaCashCommand",
+    reason: !actorId
+      ? "Missing actor identity"
+      : !hasBasePermission
+        ? "Missing permission"
+        : "Tenant-wide operating authority required",
+  })
+
+  throw new RbacError(
+    "Forbidden: Cash Command requires tenant-wide operating authority",
+    "FORBIDDEN",
+    403,
+  )
+}
+
+async function loadCashCommandInventoryLoss(
+  input: CashCommandInput,
+): Promise<SnapshotResult<InventoryLossMetrics> | null> {
+  const actorId = input.actorId?.trim()
+  if (!actorId) return null
+  if (
+    !hasAnyRbacPermission(input.actorPermissions, [
+      "finance.read",
+      "dashboard.read",
+    ])
+  ) {
+    return null
+  }
+  if (!hasRbacPermission(input.actorPermissions, "inventory.levels.read")) {
+    return null
+  }
+
+  const authority = resolveTenantWideOperatingAuthority({
+    isSuperUser: input.isSuperUser === true,
+    roleCodes: input.actorRoleCodes ?? [],
+  })
+  if (!authority) return null
+
+  const access = await observeModuleAccess({
+    organizationId: input.organizationId,
+    userId: actorId,
+    actorPermissions: input.actorPermissions,
+    moduleSlug: "inventory",
+    surfaceType: "report",
+    surface: "cash-command.inventory-loss",
+    accessIntent: "read",
+    mode: "enforce",
+    audit: true,
+    now: input.now ?? null,
+  })
+  if (!access.allowed) return null
+
+  return getInventoryLossSnapshot({
+    organizationId: input.organizationId,
+    periodStart: input.periodStart ?? null,
+    periodEnd: input.periodEnd ?? null,
+    maxAgeMinutes: input.maxAgeMinutes ?? null,
+    now: input.now ?? null,
   })
 }
 

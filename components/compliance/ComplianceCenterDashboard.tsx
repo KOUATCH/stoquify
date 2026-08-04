@@ -70,15 +70,15 @@ function compactHash(hash?: string | null) {
 }
 
 function statusClass(status: string) {
-  if (["CERTIFIED", "ACTIVE"].includes(status)) {
+  if (["CERTIFIED", "ACTIVE", "HEALTHY"].includes(status)) {
     return "border-[var(--dash-success)] bg-[var(--dash-success-soft)] text-[var(--dash-success)]"
   }
 
-  if (["REJECTED", "FAILED", "DEAD_LETTER", "DISABLED"].includes(status)) {
+  if (["REJECTED", "FAILED", "DEAD_LETTER", "DISABLED", "BLOCKED"].includes(status)) {
     return "border-[var(--dash-danger)] bg-[var(--dash-danger-soft)] text-[var(--dash-danger)]"
   }
 
-  if (["QUEUED", "PENDING", "LEASED", "RETRY_SCHEDULED", "REQUIRES_CONFIGURATION", "REQUIRES_EXPERT_REVIEW"].includes(status)) {
+  if (["QUEUED", "PENDING", "LEASED", "RETRY_SCHEDULED", "REQUIRES_CONFIGURATION", "REQUIRES_EXPERT_REVIEW", "DEGRADED"].includes(status)) {
     return "border-[var(--dash-warning)] bg-[var(--dash-warning-soft)] text-[var(--dash-warning)]"
   }
 
@@ -724,12 +724,15 @@ function AdapterHealthPanel({
                     <Badge variant="outline" className={cn("shrink-0", statusClass(adapter.status))}>
                       {t(`adapterStatuses.${adapter.status}`)}
                     </Badge>
+                    <Badge variant="outline" className={cn("shrink-0", statusClass(adapter.healthStatus))}>
+                      {t(`adapterHealthStatuses.${adapter.healthStatus}`)}
+                    </Badge>
                   </div>
                   <div className={cn("mt-2 text-xs", mutedTextClass)}>
                     {adapter.authorityChannel} / {adapter.adapterKey} / {t(`environments.${adapter.environment}`)}
                   </div>
                 </div>
-                {adapter.status === "ACTIVE" ? (
+                {adapter.healthStatus === "HEALTHY" ? (
                   <CheckCircle2 className="h-5 w-5 shrink-0 text-[var(--dash-success)]" />
                 ) : (
                   <AlertTriangle className="h-5 w-5 shrink-0 text-[var(--dash-warning)]" />
@@ -741,7 +744,32 @@ function AdapterHealthPanel({
                 <SummaryLine label={t("adapter.capability")} value={adapter.capabilityStatus} />
                 <SummaryLine
                   label={t("adapter.credential")}
-                  value={adapter.credentialReferencePresent ? t("adapter.credentialPresent") : t("adapter.credentialMissing")}
+                  value={
+                    adapter.credentialReferencePresent
+                      ? adapter.credentialExpiresAt
+                        ? t("adapter.credentialExpires", { date: adapter.credentialExpiresAt.slice(0, 10) })
+                        : t("adapter.credentialPresent")
+                      : t("adapter.credentialMissing")
+                  }
+                />
+                <SummaryLine
+                  label={t("adapter.officialSpec")}
+                  value={
+                    adapter.officialSpecRecorded
+                      ? `${adapter.officialSpecVersion} / ${adapter.officialSpecPublishedAt?.slice(0, 10)}`
+                      : t("adapter.officialSpecMissing")
+                  }
+                />
+                <SummaryLine
+                  label={t("adapter.review")}
+                  value={t(`adapterReviewStatuses.${adapter.reviewStatus}`)}
+                />
+                <SummaryLine
+                  label={t("adapter.queue")}
+                  value={t("adapter.queueValue", {
+                    count: adapter.openSubmissionCount,
+                    age: adapter.oldestQueueAgeSeconds ?? 0,
+                  })}
                 />
               </div>
             </div>

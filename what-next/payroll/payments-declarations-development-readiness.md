@@ -1,6 +1,6 @@
 # Payroll Payments and Declarations Development Readiness
 
-Generated: 2026-07-20T07:07:29.717Z
+Generated: 2026-07-26T17:01:15.291Z
 Mode: fail
 Status: READY_FOR_DEVELOPMENT_AND_SANDBOX_PROOF
 

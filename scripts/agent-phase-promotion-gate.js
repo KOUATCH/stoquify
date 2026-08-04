@@ -7,6 +7,13 @@ const {
   writeFileSync,
 } = require("node:fs");
 const { dirname, resolve } = require("node:path");
+const {
+  evaluateRotationRegister,
+} = require("./agent-credential-rotation-gate");
+const {
+  evaluateOperationalReleaseRegister,
+  sha256Prefixed,
+} = require("./agent-operational-release-gate");
 
 const PATHS = Object.freeze({
   requirementsAudit:
@@ -70,6 +77,34 @@ function parseArgs(argv = process.argv.slice(2)) {
   return options;
 }
 
+function wait(milliseconds) {
+  Atomics.wait(
+    new Int32Array(new SharedArrayBuffer(4)),
+    0,
+    0,
+    milliseconds,
+  );
+}
+
+function writeWithRetry(target, value, options = {}) {
+  const attempts = options.attempts || 5;
+  const writer = options.writer || writeFileSync;
+  const sleeper = options.sleeper || wait;
+  let lastError;
+
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      writer(target, value, "utf8");
+      return;
+    } catch (error) {
+      lastError = error;
+      if (attempt < attempts) sleeper(500 * attempt);
+    }
+  }
+
+  throw lastError;
+}
+
 function evaluatePromotion(input, target) {
   const checks = [];
   const add = (id, title, passed, evidencePath) => {
@@ -101,42 +136,77 @@ function evaluatePromotion(input, target) {
   add(
     "GLOBAL_RELEASE_READY",
     "Global release evidence has no release blockers",
-    input.releaseIndex?.summary?.status === "ready" &&
-      input.releaseIndex?.summary?.releaseBlockerCount === 0,
+    input.releaseIndex?.summary?.releaseEnforced === true &&
+      input.releaseIndex?.summary?.status === "ready" &&
+      input.releaseIndex?.summary?.releaseBlockerCount === 0 &&
+      input.releaseIndex?.summary?.readinessReleaseBlockerCount === 0 &&
+      input.releaseIndex?.summary?.releaseConditionBlockerCount === 0,
     PATHS.releaseIndex,
   );
   add(
     "PRODUCTION_SECRETS_READY",
     "Production-purpose secret preflight is ready",
-    input.secretPreflight?.summary?.status === "ready" &&
-      input.secretPreflight?.summary?.blockerCount === 0,
+    input.secretPreflight?.summary?.releaseEnforced === true &&
+      input.secretPreflight?.summary?.status === "ready" &&
+      input.secretPreflight?.summary?.blockerCount === 0 &&
+      input.secretPreflight?.summary?.warningCount === 0 &&
+      input.secretPreflight?.summary?.checkCount ===
+        input.secretPreflight?.summary?.readyCount &&
+      input.secretPreflight?.summary?.secretValuePrinted === false &&
+      Array.isArray(input.secretPreflight?.checks) &&
+      input.secretPreflight.checks.length ===
+        input.secretPreflight.summary.checkCount &&
+      input.secretPreflight.checks.every((check) => check?.ready === true),
     PATHS.secretPreflight,
   );
   add(
     "MIGRATION_TARGET_READY",
     "Migration and non-local database target are ready",
     input.migrationReadiness?.summary?.status === "ready" &&
-      input.migrationReadiness?.summary?.blockerCount === 0,
+      input.migrationReadiness?.summary?.blockerCount === 0 &&
+      input.migrationReadiness?.deployment?.environment === "production" &&
+      input.migrationReadiness?.deployment?.shouldDeploy === true &&
+      input.migrationReadiness?.deployment?.databaseConfigured === true &&
+      input.migrationReadiness?.deployment?.databaseTargetSafe === true &&
+      Array.isArray(input.migrationReadiness?.deployment?.blockers) &&
+      input.migrationReadiness.deployment.blockers.length === 0 &&
+      ["pending", "succeeded"].includes(
+        input.migrationReadiness?.execution?.status,
+      ),
     PATHS.migrationReadiness,
   );
   add(
     "STATUTORY_AUTHORITY_READY",
     "Statutory source and expert evidence are ready",
-    input.statutoryReadiness?.summary?.status === "ready" &&
-      input.statutoryReadiness?.summary?.blockerCount === 0,
+    input.statutoryReadiness?.summary?.mode === "fail" &&
+      input.statutoryReadiness?.summary?.status === "ready" &&
+      input.statutoryReadiness?.summary?.blockerCount === 0 &&
+      input.statutoryReadiness?.summary?.checkCount ===
+        input.statutoryReadiness?.summary?.readyCount &&
+      input.statutoryReadiness?.sourceEvidence?.hashesVerified === true &&
+      input.statutoryReadiness?.sourceEvidence
+        ?.approvalArtifactVerified === true &&
+      input.statutoryReadiness?.sourceEvidence?.expertApprovalComplete === true,
     PATHS.statutoryReadiness,
   );
   add(
     "CREDENTIAL_ROTATION_READY",
     "Credential rotation register is ready",
-    input.credentialRegister?.declaredStatus === "READY",
+    input.credentialGateResult?.ready === true &&
+      input.credentialGateResult?.status === "READY" &&
+      input.credentialGateResult?.blockerCount === 0 &&
+      input.credentialGateResult?.secretValuesPrinted === false,
     PATHS.credentialRegister,
   );
   add(
     "OPERATIONAL_RELEASE_READY",
     "Operational release is ready for independent review",
-    input.operationalEvidence?.declaredStatus ===
-      "READY_FOR_INDEPENDENT_REVIEW",
+    input.operationalGateResult?.ready === true &&
+      input.operationalGateResult?.status ===
+        "READY_FOR_INDEPENDENT_REVIEW" &&
+      input.operationalGateResult?.blockerCount === 0 &&
+      input.operationalGateResult?.activationAuthorized === false &&
+      input.operationalGateResult?.secretValuesPrinted === false,
     PATHS.operationalEvidence,
   );
   for (const [id, expectedStatus] of PHASE2B_EXPECTED_STEPS) {
@@ -348,6 +418,20 @@ function collectInput(root) {
     }
     input[key] = JSON.parse(readFileSync(absolute, "utf8"));
   }
+  const credentialBuffer = readFileSync(
+    resolve(root, PATHS.credentialRegister),
+  );
+  input.credentialGateResult = evaluateRotationRegister(
+    input.credentialRegister,
+    { expectedRelease: input.operationalEvidence.release },
+  );
+  input.operationalGateResult = evaluateOperationalReleaseRegister(
+    input.operationalEvidence,
+    {
+      credentialRegister: input.credentialRegister,
+      credentialRegisterSha256: sha256Prefixed(credentialBuffer),
+    },
+  );
   return input;
 }
 
@@ -441,8 +525,8 @@ function main() {
   const markdownOut = resolve(root, paths.markdownOut);
   mkdirSync(dirname(jsonOut), { recursive: true });
   mkdirSync(dirname(markdownOut), { recursive: true });
-  writeFileSync(jsonOut, `${JSON.stringify(result, null, 2)}\n`, "utf8");
-  writeFileSync(markdownOut, renderMarkdown(result), "utf8");
+  writeWithRetry(jsonOut, `${JSON.stringify(result, null, 2)}\n`);
+  writeWithRetry(markdownOut, renderMarkdown(result));
   process.stdout.write(
     `${JSON.stringify(
       {
@@ -492,4 +576,5 @@ module.exports = {
   outputPaths,
   parseArgs,
   renderMarkdown,
+  writeWithRetry,
 };

@@ -1,8 +1,8 @@
 # Statutory Country Pack Development Readiness Gate
 
-Generated: 2026-07-20T07:26:27.400Z
+Generated: 2026-08-01T17:39:54.481Z
 Mode: fail
-Status: READY_FOR_DEVELOPMENT_TESTING
+Status: BLOCKED_FOR_DEVELOPMENT_TESTING
 
 ## Scope
 
@@ -15,17 +15,17 @@ Status: READY_FOR_DEVELOPMENT_TESTING
 
 ## Summary
 
-- Checks ready: 11/11
-- Development blockers: 0
+- Checks ready: 10/11
+- Development blockers: 1
 - Production gate status: blocked
-- Production gate blockers: source_artifact_hash_verification, source_artifact_expert_approval
+- Production gate blockers: source_artifact_expert_approval
 
 ## Checks
 
 - ready: development_evidence_manifest_present
 - ready: development_source_artifact_integrity
 - ready: production_use_explicitly_disabled
-- ready: legal_and_approval_non_claims_preserved
+- blocked: legal_and_approval_non_claims_preserved
 - ready: cameroon_production_automation_claim_blocked
 - ready: sandbox_adapters_enforce_environment
 - ready: production_authority_submission_blocked
@@ -36,7 +36,7 @@ Status: READY_FOR_DEVELOPMENT_TESTING
 
 ## Development Blockers
 
-- None
+- legal_and_approval_non_claims_preserved
 
 ## Safety
 

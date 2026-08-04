@@ -35,12 +35,18 @@ function writeReadyFixture(root) {
     "sourceManifestVersion: sourceEvidence.version",
     "sourceHash: sourceEvidence.sourceHash",
     "sourceCounts: sourceEvidence.counts",
+    "assertPaymentSuspenseLedgerTruthInTx(",
     "const signedSourceHash = reconciliationCertificateSourceEvidenceHash",
     "signedSourceHash !== sourceEvidence.sourceHash",
     "return { driftError:",
     'if ("driftError" in result)',
     "throw new BusinessRuleError(result.driftError)",
   ].join("\n"))
+  write(
+    root,
+    "services/reconciliation/payment-suspense-workflow.service.ts",
+    "postPaymentSuspenseToLedger(",
+  )
   write(root, "services/assurance/assurance-registry.service.ts", [
     "sourceDriftedRunIds",
     "buildReconciliationEvidenceManifestInTx(",
@@ -52,6 +58,36 @@ function writeReadyFixture(root) {
       "policy:gates": "npm run payment:cash-truth:gate",
     },
   }))
+  write(root, "prisma/migrations/20260630090000_payment_reconciliation_foundation/migration.sql", [
+    'CREATE TYPE "PaymentRailType"',
+    'CREATE TYPE "ProviderAccountStatus"',
+    'CREATE TYPE "ProviderEventStatus"',
+    'CREATE TYPE "PaymentReconciliationInboxSource"',
+    'CREATE TABLE "payment_rails"',
+    'CREATE TABLE "provider_accounts"',
+    'CREATE TABLE "settlement_accounts"',
+    'CREATE TABLE "provider_events"',
+    'CREATE TABLE "statement_files"',
+    'CREATE TABLE "statement_lines"',
+    'CREATE TABLE "payment_transactions"',
+    'CREATE TABLE "match_records"',
+    'CREATE TABLE "suspense_items"',
+    'CREATE TABLE "reconciliation_runs"',
+    'CREATE TABLE "payment_exceptions"',
+    'CREATE TABLE "payment_reconciliation_inbox_items"',
+    'FOREIGN KEY ("organizationId") REFERENCES "organizations"',
+    'FOREIGN KEY ("providerAccountId") REFERENCES "provider_accounts"',
+    'CREATE UNIQUE INDEX "payment_rails_organizationId_code_key" ON "payment_rails"("organizationId", "code")',
+    'CREATE UNIQUE INDEX "provider_events_organizationId_providerAccountId_providerEv_key" ON "provider_events"("organizationId", "providerAccountId", "providerEventId")',
+    'CREATE UNIQUE INDEX "statement_lines_organizationId_providerAccountId_fingerprin_key" ON "statement_lines"("organizationId", "providerAccountId", "fingerprint")',
+    'CREATE UNIQUE INDEX "reconciliation_runs_organizationId_providerAccountId_busine_key" ON "reconciliation_runs"("organizationId", "providerAccountId", "businessDate")',
+    'CREATE UNIQUE INDEX "payment_reconciliation_inbox_items_organizationId_source_id_key" ON "payment_reconciliation_inbox_items"("organizationId", "source", "idempotencyKey")',
+  ].join("\n"))
+  write(root, "prisma/migrations/20260630100000_payment_reconciliation_inbox_worker_leases/migration.sql", [
+    'ALTER TABLE "payment_reconciliation_inbox_items"',
+    'ADD COLUMN "leasedBy" TEXT',
+    'ADD COLUMN "leaseToken" TEXT',
+  ].join("\n"))
 }
 
 describe("payment cash truth gate", () => {
@@ -61,8 +97,39 @@ describe("payment cash truth gate", () => {
 
     const report = buildPaymentCashTruthReadiness(root, { mode: "fail" })
 
-    expect(report.summary).toMatchObject({ status: "ready", readyCount: 10, blockerCount: 0 })
+    expect(report.summary).toMatchObject({ status: "ready", readyCount: 12, blockerCount: 0 })
     expect(gateResultForReport(report, "fail").exitCode).toBe(0)
+  })
+
+  it("blocks when payment reconciliation tables are not in migration history before inbox leases", () => {
+    const root = makeTempRepo()
+    writeReadyFixture(root)
+    fs.rmSync(
+      path.join(root, "prisma/migrations/20260630090000_payment_reconciliation_foundation"),
+      { recursive: true, force: true },
+    )
+
+    const report = buildPaymentCashTruthReadiness(root, { mode: "fail" })
+
+    expect(report.blockers).toContain("durable_payment_reconciliation_schema_migration")
+    expect(gateResultForReport(report, "fail").exitCode).toBe(1)
+  })
+
+  it("blocks an empty suspense posting batch from satisfying ledger truth", () => {
+    const root = makeTempRepo()
+    writeReadyFixture(root)
+    write(
+      root,
+      "services/reconciliation/payment-suspense-workflow.service.ts",
+      "createLedgerPostingBatch(",
+    )
+
+    const report = buildPaymentCashTruthReadiness(root, { mode: "fail" })
+
+    expect(report.blockers).toContain(
+      "suspense_posting_reconciles_to_posted_ledger",
+    )
+    expect(gateResultForReport(report, "fail").exitCode).toBe(1)
   })
 
   it("blocks when provider readiness and live source recomputation disappear", () => {

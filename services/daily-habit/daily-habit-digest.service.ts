@@ -25,6 +25,8 @@ import {
 import { normalizeSnapshotFreshness } from "@/services/bi/bi-evidence-adapter.service"
 import type { EvidenceGrade } from "@/services/evidence/evidence-contracts"
 import type { CommercialModuleSlug } from "@/services/modules/module-control-contracts"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
+import { resolveTenantWideOperatingAuthority } from "@/services/operating-access/operating-access-scope-contracts"
 import { buildActionQueue } from "@/services/signals/action-queue.service"
 import type {
   ActionItem,
@@ -34,6 +36,7 @@ import type {
 import { buildBusinessSignalsFromSnapshots } from "@/services/signals/business-signal-rules.service"
 import { getCloseReadinessSnapshot } from "@/services/snapshots/close-readiness-snapshot.service"
 import { getInventoryCashSnapshot } from "@/services/snapshots/inventory-cash-snapshot.service"
+import { getInventoryLossSnapshot } from "@/services/snapshots/inventory-loss-snapshot.service"
 import { getPaymentTruthSnapshot } from "@/services/snapshots/payment-truth-snapshot.service"
 import {
   getTenantOperatingSnapshotFromRelated,
@@ -41,6 +44,7 @@ import {
 import type {
   CloseReadinessMetrics,
   InventoryCashMetrics,
+  InventoryLossMetrics,
   PaymentTruthMetrics,
   SnapshotResult,
   SnapshotSourceModule,
@@ -53,8 +57,10 @@ import type {
 
 type DailyHabitDigestInput = {
   organizationId: string
+  actorId?: string | null
   actorPermissions: readonly string[]
   actorRoleCodes: readonly string[]
+  isSuperUser?: boolean
   periodStart?: Date | string | null
   periodEnd?: Date | string | null
   now?: Date | string | null
@@ -69,6 +75,7 @@ type ComposeDailyHabitDigestInput = {
   tenantOperating: SnapshotResult<TenantOperatingMetrics>
   paymentTruth: SnapshotResult<PaymentTruthMetrics>
   inventoryCash: SnapshotResult<InventoryCashMetrics>
+  inventoryLoss?: SnapshotResult<InventoryLossMetrics> | null
   closeReadiness: SnapshotResult<CloseReadinessMetrics>
   now?: Date | string | null
 }
@@ -241,7 +248,7 @@ const DIGEST_CONFIGS: DigestConfig[] = [
 ]
 
 export async function getDailyHabitDigestData(input: DailyHabitDigestInput): Promise<DailyHabitDigestData> {
-  const [organization, paymentTruth, inventoryCash, closeReadiness] = await Promise.all([
+  const [organization, paymentTruth, inventoryCash, closeReadiness, inventoryLoss] = await Promise.all([
     db.organization.findFirst({
       where: { id: input.organizationId, isActive: true, deletedAt: null },
       select: { name: true, currency: true },
@@ -249,6 +256,7 @@ export async function getDailyHabitDigestData(input: DailyHabitDigestInput): Pro
     getPaymentTruthSnapshot(input),
     getInventoryCashSnapshot(input),
     getCloseReadinessSnapshot(input),
+    loadDailyHabitInventoryLoss(input),
   ])
   if (!organization) throw new NotFoundError("Organization not found")
 
@@ -267,6 +275,7 @@ export async function getDailyHabitDigestData(input: DailyHabitDigestInput): Pro
     tenantOperating,
     paymentTruth,
     inventoryCash,
+    inventoryLoss,
     closeReadiness,
     now: input.now,
   })
@@ -276,7 +285,13 @@ export function composeDailyHabitDigestData(input: ComposeDailyHabitDigestInput)
   const generatedAt = input.tenantOperating.generatedAt
   const signals = buildBusinessSignalsFromSnapshots({
     organizationId: input.organizationId,
-    snapshots: [input.tenantOperating, input.paymentTruth, input.inventoryCash, input.closeReadiness],
+    snapshots: [
+      input.tenantOperating,
+      input.paymentTruth,
+      input.inventoryCash,
+      input.closeReadiness,
+      ...(input.inventoryLoss ? [input.inventoryLoss] : []),
+    ],
     now: input.now ?? generatedAt,
   })
   const actionQueue = buildActionQueue({
@@ -318,6 +333,42 @@ export function composeDailyHabitDigestData(input: ComposeDailyHabitDigestInput)
     },
     summary,
   }
+}
+
+async function loadDailyHabitInventoryLoss(
+  input: DailyHabitDigestInput,
+): Promise<SnapshotResult<InventoryLossMetrics> | null> {
+  const actorId = input.actorId?.trim()
+  if (!actorId) return null
+  if (!hasRbacPermission(input.actorPermissions, "dashboard.read")) return null
+  if (!hasRbacPermission(input.actorPermissions, "inventory.levels.read")) return null
+
+  const authority = resolveTenantWideOperatingAuthority({
+    isSuperUser: input.isSuperUser === true,
+    roleCodes: input.actorRoleCodes,
+  })
+  if (!authority) return null
+
+  const access = await observeModuleAccess({
+    organizationId: input.organizationId,
+    userId: actorId,
+    actorPermissions: input.actorPermissions,
+    moduleSlug: "inventory",
+    surfaceType: "report",
+    surface: "daily-habit-digest.inventory-loss",
+    accessIntent: "read",
+    mode: "enforce",
+    audit: true,
+    now: input.now ?? null,
+  })
+  if (!access.allowed) return null
+
+  return getInventoryLossSnapshot({
+    organizationId: input.organizationId,
+    periodStart: input.periodStart ?? null,
+    periodEnd: input.periodEnd ?? null,
+    now: input.now ?? null,
+  })
 }
 
 function isDigestVisible(config: DigestConfig, input: ComposeDailyHabitDigestInput) {

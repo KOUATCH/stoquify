@@ -1,15 +1,15 @@
 # Release Secret Preflight
 
-Generated: 2026-07-19T20:40:55.966Z
-Mode: `fail`
-Status: `conditional`
+Generated: 2026-07-27T16:16:19.295Z
+Mode: `report`
+Status: `blocked`
 
 ## Summary
 
 - Checks ready: 2/8
-- Release enforcement: off
-- Blockers: 0
-- Warnings: 6
+- Release enforcement: on
+- Blockers: 6
+- Warnings: 0
 - Secret value printed: no
 
 ## Checks

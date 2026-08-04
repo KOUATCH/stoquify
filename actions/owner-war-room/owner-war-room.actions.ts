@@ -44,6 +44,8 @@ const getOwnerWarRoom = protect<unknown, OwnerWarRoomData>(
       organizationId: ctx.orgId,
       actorId: ctx.userId,
       actorPermissions: ctx.permissions,
+      actorRoleCodes: ctx.roles.map((role) => role.code),
+      isSuperUser: ctx.isSuperUser,
     })
   },
 )
