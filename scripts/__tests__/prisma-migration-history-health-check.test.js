@@ -7,6 +7,7 @@ const {
   buildMigrationHistoryHealth,
   classifyTarget,
   gateResultForReport,
+  queryHistoryRows,
   renderMarkdown,
 } = require("../prisma-migration-history-health-check");
 
@@ -24,6 +25,11 @@ function makeRepo(names = ["20260701000000_first", "20260702000000_second"]) {
       checksum: crypto.createHash("sha256").update(sql).digest("hex"),
     };
   });
+  fs.writeFileSync(
+    path.join(root, "prisma", "migration-history-checksum-approvals.json"),
+    JSON.stringify({ version: 1, approvals: [] }),
+    "utf8",
+  );
   return { root, migrations };
 }
 
@@ -51,8 +57,8 @@ describe("Prisma migration history health check", () => {
 
     expect(report.summary).toMatchObject({
       status: "ready",
-      readyCount: 8,
-      checkCount: 8,
+      readyCount: 9,
+      checkCount: 9,
       blockerCount: 0,
     });
     expect(gateResultForReport(report, "fail").exitCode).toBe(0);
@@ -81,6 +87,74 @@ describe("Prisma migration history health check", () => {
     expect(report.summary.status).toBe("ready");
     expect(report.findings.checksumMismatches).toEqual([]);
   });
+
+  it("accepts only an exact evidence-backed legacy checksum approval", () => {
+    const { root, migrations } = makeRepo(["20260701000000_first"]);
+    const databaseChecksum = "9".repeat(64);
+    const report = buildMigrationHistoryHealth(root, {
+      mode: "fail",
+      databaseUrl: "postgresql://user:secret@db.example.com:5432/stoquify",
+      querySucceeded: true,
+      rows: [completed(migrations[0], { checksum: databaseChecksum })],
+      approvalRegistry: {
+        exists: true,
+        valid: true,
+        errors: [],
+        approvals: [
+          {
+            migration: migrations[0].name,
+            databaseChecksum,
+            repositoryChecksums: [migrations[0].checksum],
+            approvedBy: "DBA Example",
+            approvedAt: "2026-08-09T00:00:00.000Z",
+            reason: "Verified against archived deployment evidence.",
+          },
+        ],
+      },
+    });
+
+    expect(report.summary.status).toBe("ready");
+    expect(report.findings.checksumMismatches).toEqual([]);
+    expect(report.findings.approvedChecksumMismatches).toEqual([
+      migrations[0].name,
+    ]);
+  });
+
+  it("rejects a checksum approval stale against repository content", () => {
+    const { root, migrations } = makeRepo(["20260701000000_first"]);
+    const databaseChecksum = "9".repeat(64);
+    const report = buildMigrationHistoryHealth(root, {
+      mode: "fail",
+      databaseUrl: "postgresql://user:secret@db.example.com:5432/stoquify",
+      querySucceeded: true,
+      rows: [completed(migrations[0], { checksum: databaseChecksum })],
+      approvalRegistry: {
+        exists: true,
+        valid: true,
+        errors: [],
+        approvals: [
+          {
+            migration: migrations[0].name,
+            databaseChecksum,
+            repositoryChecksums: ["8".repeat(64)],
+            approvedBy: "DBA Example",
+            approvedAt: "2026-08-09T00:00:00.000Z",
+            reason: "Stale evidence.",
+          },
+        ],
+      },
+    });
+
+    expect(report.summary.status).toBe("blocked");
+    expect(report.findings.checksumMismatches).toEqual([migrations[0].name]);
+    expect(report.checksumApprovals.staleApprovals).toEqual([
+      migrations[0].name,
+    ]);
+    expect(report.blockers).toContain(
+      "migration_checksum_approval_registry_valid",
+    );
+  });
+
   it("detects an unfinished row even when all migration names are present", () => {
     const { root, migrations } = makeRepo();
     const rows = migrations.map((migration) => completed(migration));
@@ -164,6 +238,31 @@ describe("Prisma migration history health check", () => {
         "migration_history_query_succeeded",
       ]),
     );
+  });
+
+  it("queries migration history through the native PostgreSQL driver", async () => {
+    const rows = [{ migration_name: "20260701000000_first" }];
+    const client = {
+      connect: jest.fn().mockResolvedValue(undefined),
+      query: jest.fn().mockResolvedValue({ rows }),
+      end: jest.fn().mockResolvedValue(undefined),
+    };
+    const clientFactory = jest.fn(() => client);
+
+    await expect(
+      queryHistoryRows(
+        "postgresql://user:secret@localhost:5432/stoquify",
+        clientFactory,
+      ),
+    ).resolves.toEqual({ rows, succeeded: true, errorCode: null });
+    expect(clientFactory).toHaveBeenCalledWith(
+      "postgresql://user:secret@localhost:5432/stoquify",
+    );
+    expect(client.connect).toHaveBeenCalledTimes(1);
+    expect(client.query).toHaveBeenCalledWith(
+      expect.stringContaining('FROM "_prisma_migrations"'),
+    );
+    expect(client.end).toHaveBeenCalledTimes(1);
   });
 
   it("is wired after migration deployment in protected verification commands", () => {

@@ -4,7 +4,7 @@ import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 
 import {
-  grantAccountantAccessAction,
+  inviteAccountantAccessAction,
   revokeAccountantAccessAction,
 } from "@/actions/accounting/accountant-access.actions"
 import type { AccountantAccessGrantDto } from "@/services/accounting/accountant-access.service"
@@ -41,7 +41,7 @@ export function AccountantAccessManager({
   function grant(formData: FormData) {
     setMessage(null)
     startTransition(async () => {
-      const result = await grantAccountantAccessAction({
+      const result = await inviteAccountantAccessAction({
         accountantEmail: formData.get("accountantEmail"),
         accountantFirmName: formData.get("accountantFirmName"),
         accountantFirmRegistrationNumber:
@@ -51,7 +51,13 @@ export function AccountantAccessManager({
         effectiveFrom: toAbsoluteIsoDateTime(formData.get("effectiveFrom")),
         expiresAt: toAbsoluteIsoDateTime(formData.get("expiresAt")),
       })
-      setMessage(result.success ? "Accountant access granted." : result.error)
+      setMessage(
+        result.success
+          ? result.data.outcome === "GRANTED"
+            ? "Accountant access granted."
+            : "Accountant invitation queued."
+          : result.error,
+      )
       if (result.success) router.refresh()
     })
   }
@@ -77,9 +83,9 @@ export function AccountantAccessManager({
     <div className="space-y-6">
       <form action={grant} className="grid gap-4 rounded-xl border bg-card p-5 md:grid-cols-2">
         <div className="md:col-span-2">
-          <h2 className="font-semibold">Grant a client mandate</h2>
+          <h2 className="font-semibold">Invite an accountant</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Access is explicit, role-bound, time-bound, revocable, and recorded in the audit event ledger.
+            Existing users receive access immediately. New accountants receive a consent-bound invitation and referral onboarding link.
           </p>
         </div>
         <label className="text-sm">
@@ -121,7 +127,7 @@ export function AccountantAccessManager({
           />
         </label>
         <button className="w-fit rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50" disabled={isPending}>
-          {isPending ? "Saving…" : "Grant access"}
+          {isPending ? "Saving…" : "Invite or grant access"}
         </button>
         {message ? <p className="self-center text-sm md:col-span-2">{message}</p> : null}
       </form>

@@ -1,11 +1,11 @@
-# Graph Report - hooks  (2026-07-14)
+# Graph Report - hooks  (2026-08-09)
 
 ## Corpus Check
-- 36 files · ~22,267 words
+- 44 files · ~25,882 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 255 nodes · 252 edges · 9 communities detected
+- 308 nodes · 321 edges · 15 communities detected
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
@@ -15,22 +15,28 @@
 - [[_COMMUNITY_Community 5|Community 5]]
 - [[_COMMUNITY_Community 7|Community 7]]
 - [[_COMMUNITY_Community 8|Community 8]]
+- [[_COMMUNITY_Community 9|Community 9]]
+- [[_COMMUNITY_Community 10|Community 10]]
+- [[_COMMUNITY_Community 11|Community 11]]
 - [[_COMMUNITY_Community 12|Community 12]]
-- [[_COMMUNITY_Community 23|Community 23]]
-- [[_COMMUNITY_Community 24|Community 24]]
-- [[_COMMUNITY_Community 26|Community 26]]
+- [[_COMMUNITY_Community 16|Community 16]]
+- [[_COMMUNITY_Community 21|Community 21]]
+- [[_COMMUNITY_Community 28|Community 28]]
+- [[_COMMUNITY_Community 29|Community 29]]
+- [[_COMMUNITY_Community 31|Community 31]]
+- [[_COMMUNITY_Community 34|Community 34]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `usePurchaseOrderActions()` - 11 edges
-2. `getBaseMutationOptions()` - 6 edges
-3. `useAccountingControlCenter()` - 5 edges
-4. `useOrgBrands()` - 3 edges
-5. `useOrgCategories()` - 3 edges
-6. `toNumberOrUndefined()` - 3 edges
-7. `useCreatePurchaseOrder()` - 3 edges
-8. `useSubmitPurchaseOrder()` - 3 edges
-9. `useApprovePurchaseOrder()` - 3 edges
-10. `useCancelPurchaseOrder()` - 3 edges
+2. `parseCashPaymentHistorySearchParams()` - 6 edges
+3. `getBaseMutationOptions()` - 6 edges
+4. `useAccountingControlCenter()` - 5 edges
+5. `parseInventoryMovementHistorySearchParams()` - 5 edges
+6. `parseAPHistorySearchParams()` - 4 edges
+7. `dateOnlyToUtc()` - 4 edges
+8. `parseSearchParams()` - 3 edges
+9. `useOrgBrands()` - 3 edges
+10. `useOrgCategories()` - 3 edges
 
 ## Surprising Connections (you probably didn't know these)
 - None detected - all connections are within the same source files.
@@ -50,35 +56,61 @@ Cohesion: 0.23
 Nodes (4): organizationKey(), periodKey(), useCloseAssurance(), useCloseEvidenceGraph()
 
 ### Community 7 - "Community 7"
+Cohesion: 0.29
+Nodes (8): enumValue(), filtersForCashPaymentHistoryAction(), filtersForCashPaymentHistoryExport(), isPageSize(), parseCashPaymentHistorySearchParams(), stringParam(), validDateOnly(), validDateTime()
+
+### Community 8 - "Community 8"
+Cohesion: 0.29
+Nodes (7): dateOnlyToUtc(), defaultInventoryLossPeriod(), filtersForInventoryLossAction(), formatDateOnly(), inventoryLossPeriodError(), parseInventoryLossSearchParams(), validDateOnly()
+
+### Community 9 - "Community 9"
+Cohesion: 0.31
+Nodes (7): filtersForInventoryMovementHistoryAction(), filtersForInventoryMovementHistoryExport(), isInventoryMovementType(), isPageSize(), parseInventoryMovementHistorySearchParams(), validDateOnly(), validDateTime()
+
+### Community 10 - "Community 10"
+Cohesion: 0.33
+Nodes (6): enumValue(), filtersForAPHistoryAction(), filtersForAPHistoryExport(), parseAPHistorySearchParams(), stringParam(), validDateOnly()
+
+### Community 11 - "Community 11"
 Cohesion: 0.28
 Nodes (3): useAllOrgBrands(), useBriefBrandsByOrgId(), useOrgBrands()
 
-### Community 8 - "Community 8"
+### Community 12 - "Community 12"
 Cohesion: 0.28
 Nodes (3): useAllOrgCategories(), useBriefCategoriesByOrgId(), useOrgCategories()
 
-### Community 12 - "Community 12"
+### Community 16 - "Community 16"
 Cohesion: 0.48
 Nodes (5): getQueryOrganizationId(), useAccountingControlCenter(), useAccountingPeriods(), useAccountingSetupReadiness(), usePostingRules()
 
-### Community 23 - "Community 23"
+### Community 21 - "Community 21"
+Cohesion: 0.47
+Nodes (3): parseSearchParams(), stringParam(), validDateOnly()
+
+### Community 28 - "Community 28"
 Cohesion: 0.67
 Nodes (2): toItemSupplierDTO(), toNumberOrUndefined()
 
-### Community 24 - "Community 24"
+### Community 29 - "Community 29"
 Cohesion: 0.67
 Nodes (2): toActionError(), unwrapComplianceCenterActionResult()
 
-### Community 26 - "Community 26"
+### Community 31 - "Community 31"
 Cohesion: 1.0
 Nodes (2): useClientAuth(), useOrgAuth()
 
+### Community 34 - "Community 34"
+Cohesion: 1.0
+Nodes (2): createIcon(), get()
+
 ## Knowledge Gaps
-- **Thin community `Community 23`** (4 nodes): `toItemSupplierDTO()`, `toNumberOrUndefined()`, `useUpdateItemSupplier()`, `useAllItemSuppliers.ts`
+- **Thin community `Community 28`** (4 nodes): `toItemSupplierDTO()`, `toNumberOrUndefined()`, `useUpdateItemSupplier()`, `useAllItemSuppliers.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 24`** (4 nodes): `toActionError()`, `useComplianceCenter.ts`, `unwrapComplianceCenterActionResult()`, `useComplianceCenter()`
+- **Thin community `Community 29`** (4 nodes): `toActionError()`, `useComplianceCenter.ts`, `unwrapComplianceCenterActionResult()`, `useComplianceCenter()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 26`** (3 nodes): `useClientAuth()`, `useOrgAuth()`, `useClientAuth.ts`
+- **Thin community `Community 31`** (3 nodes): `useClientAuth()`, `useOrgAuth()`, `useClientAuth.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 34`** (3 nodes): `createIcon()`, `get()`, `useInventoryMovementHistoryWorkbench.test.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions

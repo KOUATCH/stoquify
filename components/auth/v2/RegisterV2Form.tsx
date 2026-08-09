@@ -222,6 +222,10 @@ export function RegisterV2Form({ locale }: { locale: Locale }) {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const defaultCountry = countries[0]
   const loading = registerWorkflow.isPending
+  const isAccountantInvite =
+    params.get("role") === "accountant" &&
+    Boolean(params.get("ref")) &&
+    Boolean(params.get("invite"))
 
   const {
     register,
@@ -246,6 +250,9 @@ export function RegisterV2Form({ locale }: { locale: Locale }) {
       requestedModules: ["POS", "Sales", "Inventory", "Accounting", "Payment reconciliation"],
       assistedSetupRequested: params.get("intent") === "assisted" || params.get("intent") === "enterprise",
       onboardingSource: "aqstoqflow-register-v2",
+      referralCode: params.get("ref") || undefined,
+      accountantInviteToken: params.get("invite") || undefined,
+      accountantInviteAccepted: isAccountantInvite ? false : undefined,
       termsAccepted: false,
     },
   })
@@ -280,7 +287,16 @@ export function RegisterV2Form({ locale }: { locale: Locale }) {
     0: ["country", "businessType", "branchCount", "primaryPain", "companySize"],
     1: ["setupRole"],
     2: ["companyName", "industry", "firstBranchName"],
-    3: ["firstName", "lastName", "email", "phone", "password", "confirmPassword", "termsAccepted"],
+    3: [
+      "firstName",
+      "lastName",
+      "email",
+      "phone",
+      "password",
+      "confirmPassword",
+      "termsAccepted",
+      ...(isAccountantInvite ? ["accountantInviteAccepted" as const] : []),
+    ],
     4: [],
   }
 
@@ -359,6 +375,8 @@ export function RegisterV2Form({ locale }: { locale: Locale }) {
         <input type="hidden" {...register("timezone")} />
         <input type="hidden" {...register("defaultLocale")} />
         <input type="hidden" {...register("onboardingSource")} />
+        <input type="hidden" {...register("referralCode")} />
+        <input type="hidden" {...register("accountantInviteToken")} />
 
         {step === 0 ? (
           <div className="grid gap-4 sm:grid-cols-2">
@@ -494,6 +512,15 @@ export function RegisterV2Form({ locale }: { locale: Locale }) {
                 <span>{t.fields.terms}</span>
               </label>
               {errors.termsAccepted ? <FieldError message={errors.termsAccepted.message} /> : null}
+              {isAccountantInvite ? (
+                <>
+                  <label className="mt-3 flex cursor-pointer items-start gap-3 rounded-lg border border-[#178e83]/30 bg-[#edf8f5] p-4 text-sm font-semibold leading-6 text-[#31515d]">
+                    <input type="checkbox" className="mt-1 h-4 w-4 rounded border-[#9fb4bb]/40 text-[#178e83] focus:ring-[#178e83]/25" {...register("accountantInviteAccepted", { required: locale === "fr" ? "Vous devez accepter le mandat client." : "You must accept the client mandate." })} />
+                    <span>{locale === "fr" ? "J'accepte le mandat client limite, date et revocable decrit dans cette invitation." : "I accept the limited, time-bound, revocable client mandate described in this invitation."}</span>
+                  </label>
+                  {errors.accountantInviteAccepted ? <FieldError message={errors.accountantInviteAccepted.message} /> : null}
+                </>
+              ) : null}
             </div>
           </div>
         ) : null}

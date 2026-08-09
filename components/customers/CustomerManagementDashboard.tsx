@@ -127,6 +127,7 @@ const copy = {
     export: "Export",
     actions: "Actions",
     viewAnalytics: "View analytics",
+    createStatement: "Create statement",
     editCustomer: "Edit customer",
     openEditPage: "Open edit page",
     copyId: "Copy ID",
@@ -250,6 +251,7 @@ const copy = {
     export: "Exporter",
     actions: "Actions",
     viewAnalytics: "Voir analyse",
+    createStatement: "Creer un releve",
     editCustomer: "Modifier client",
     openEditPage: "Ouvrir page modification",
     copyId: "Copier ID",
@@ -852,6 +854,12 @@ export default function CustomerManagementDashboard({
               <DropdownMenuItem onClick={() => setAnalyticsCustomerId(customer.id)}>
                 <BarChart3 className="me-2 h-4 w-4" />
                 {t.viewAnalytics}
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href={`${basePath}/${customer.id}/statement`}>
+                  <ReceiptText className="me-2 h-4 w-4" />
+                  {t.createStatement}
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => openEdit(customer)}>
                 <Edit3 className="me-2 h-4 w-4" />

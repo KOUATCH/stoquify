@@ -14,6 +14,12 @@ export const grantAccountantAccessInputSchema = z.object({
   correlationId: idSchema.nullable().optional(),
 })
 
+export const inviteAccountantAccessInputSchema =
+  grantAccountantAccessInputSchema.extend({
+    idempotencyKey: idSchema.min(8).max(191).nullable().optional(),
+    locale: z.enum(["EN", "FR"]).optional(),
+  })
+
 export const revokeAccountantAccessInputSchema = z.object({
   grantId: idSchema,
   reason: z.string().trim().min(5).max(500),
@@ -25,4 +31,5 @@ export const accountantClientScopeInputSchema = z.object({
 })
 
 export type GrantAccountantAccessInput = z.infer<typeof grantAccountantAccessInputSchema>
+export type InviteAccountantAccessInput = z.infer<typeof inviteAccountantAccessInputSchema>
 export type RevokeAccountantAccessInput = z.infer<typeof revokeAccountantAccessInputSchema>

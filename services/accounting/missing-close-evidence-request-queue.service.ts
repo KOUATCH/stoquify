@@ -12,8 +12,11 @@ import {
 import {
   CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE,
   MISSING_CLOSE_EVIDENCE_REQUEST_TYPE,
+  MISSING_CLOSE_EVIDENCE_RESPONSE_TYPE,
+  MISSING_CLOSE_EVIDENCE_RESPONSE_VISIBILITY,
   MISSING_CLOSE_EVIDENCE_VISIBILITY,
   type ClientMissingCloseEvidenceRequest,
+  type ClientMissingCloseEvidenceResponse,
   type ClientMissingCloseEvidenceRequestQueue,
   type ClientMissingCloseEvidenceRequestQueueBlocker,
 } from "./missing-close-evidence-request-queue-contracts";
@@ -24,7 +27,14 @@ const OPEN_FINDING_STATUSES = [
   CloseFindingStatus.IN_REVIEW,
   CloseFindingStatus.REOPENED,
 ] as const;
+const AWAITING_RESPONSE_FINDING_STATUSES = new Set<CloseFindingStatus>([
+  CloseFindingStatus.OPEN,
+  CloseFindingStatus.ASSIGNED,
+  CloseFindingStatus.REOPENED,
+]);
 const DUE_SOON_WINDOW_MS = 72 * 60 * 60 * 1000;
+const MAX_RESPONSE_CANDIDATES =
+  CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE.maxItems * 2;
 
 export type GetClientMissingCloseEvidenceRequestQueueInput = Readonly<{
   organizationId: string;
@@ -57,6 +67,32 @@ function invalidEvidenceBlocker(
     detail: "Stored missing-proof request evidence is incomplete.",
   };
 }
+
+function invalidResponseEvidenceBlocker(
+  findingId: string,
+  requestId: string,
+): ClientMissingCloseEvidenceRequestQueueBlocker {
+  return {
+    id: `missing-close-evidence-request:${requestId}:invalid-response-evidence`,
+    findingId,
+    requestId,
+    reason: "INVALID_RESPONSE_EVIDENCE",
+    detail: "Stored missing-proof response evidence is incomplete.",
+  };
+}
+
+type MissingCloseEvidenceResponseRecord = {
+  id: string;
+  organizationId: string;
+  periodId: string;
+  closeRunId: string;
+  findingId: string | null;
+  authorId: string | null;
+  body: string;
+  correlationId: string | null;
+  metadata: Prisma.JsonValue | null;
+  createdAt: Date;
+};
 
 export async function getClientMissingCloseEvidenceRequestQueue(
   input: GetClientMissingCloseEvidenceRequestQueueInput,
@@ -152,6 +188,50 @@ export async function getClientMissingCloseEvidenceRequestQueue(
     0,
     CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE.maxItems,
   );
+  const responseCandidates: MissingCloseEvidenceResponseRecord[] =
+    visibleFindings.length === 0
+      ? []
+      : await db.accountantComment.findMany({
+          where: {
+            organizationId,
+            findingId: { in: visibleFindings.map((finding) => finding.id) },
+            visibility: MISSING_CLOSE_EVIDENCE_RESPONSE_VISIBILITY,
+            metadata: {
+              path: ["responseType"],
+              equals: MISSING_CLOSE_EVIDENCE_RESPONSE_TYPE,
+            },
+          },
+          select: {
+            id: true,
+            organizationId: true,
+            periodId: true,
+            closeRunId: true,
+            findingId: true,
+            authorId: true,
+            body: true,
+            correlationId: true,
+            metadata: true,
+            createdAt: true,
+          },
+          orderBy: [
+            { findingId: "asc" },
+            { createdAt: "desc" },
+            { id: "desc" },
+          ],
+          take: MAX_RESPONSE_CANDIDATES + 1,
+        });
+  const responseEvidenceTruncated =
+    responseCandidates.length > MAX_RESPONSE_CANDIDATES;
+  const responsesByFinding = new Map<
+    string,
+    MissingCloseEvidenceResponseRecord[]
+  >();
+  for (const response of responseCandidates.slice(0, MAX_RESPONSE_CANDIDATES)) {
+    if (!response.findingId) continue;
+    const responses = responsesByFinding.get(response.findingId) ?? [];
+    responses.push(response);
+    responsesByFinding.set(response.findingId, responses);
+  }
 
   for (const finding of visibleFindings) {
     const comment = finding.comments[0];
@@ -189,6 +269,81 @@ export async function getClientMissingCloseEvidenceRequestQueue(
       continue;
     }
 
+    const responseCandidatesForFinding =
+      responsesByFinding.get(finding.id) ?? [];
+    const awaitingResponse = AWAITING_RESPONSE_FINDING_STATUSES.has(
+      finding.status,
+    );
+    if (
+      responseEvidenceTruncated ||
+      responseCandidatesForFinding.length > 1 ||
+      (finding.status === CloseFindingStatus.IN_REVIEW &&
+        responseCandidatesForFinding.length !== 1) ||
+      (awaitingResponse && responseCandidatesForFinding.length !== 0)
+    ) {
+      blockers.push(invalidResponseEvidenceBlocker(finding.id, requestId));
+      continue;
+    }
+
+    let response: ClientMissingCloseEvidenceResponse | null = null;
+    if (finding.status === CloseFindingStatus.IN_REVIEW) {
+      const storedResponse = responseCandidatesForFinding[0];
+      const responseType = metadataString(
+        storedResponse.metadata,
+        "responseType",
+      );
+      const responseRequestId = metadataString(
+        storedResponse.metadata,
+        "requestId",
+      );
+      const requestCorrelationId = metadataString(
+        storedResponse.metadata,
+        "requestCorrelationId",
+      );
+      const responseRequestedById = metadataString(
+        storedResponse.metadata,
+        "requestedById",
+      );
+      const responseRequestedFromId = metadataString(
+        storedResponse.metadata,
+        "requestedFromId",
+      );
+      const respondedById = metadataString(
+        storedResponse.metadata,
+        "respondedById",
+      );
+      const responseCorrelationId = metadataString(
+        storedResponse.metadata,
+        "correlationId",
+      );
+      if (
+        storedResponse.organizationId !== organizationId ||
+        storedResponse.periodId !== finding.period.id ||
+        storedResponse.closeRunId !== finding.closeRunId ||
+        storedResponse.findingId !== finding.id ||
+        responseType !== MISSING_CLOSE_EVIDENCE_RESPONSE_TYPE ||
+        responseRequestId !== comment.id ||
+        requestCorrelationId !== correlationId ||
+        responseRequestedById !== requestedById ||
+        responseRequestedFromId !== actorId ||
+        storedResponse.authorId !== actorId ||
+        respondedById !== storedResponse.authorId ||
+        !storedResponse.correlationId ||
+        responseCorrelationId !== storedResponse.correlationId ||
+        !storedResponse.body.trim()
+      ) {
+        blockers.push(invalidResponseEvidenceBlocker(finding.id, requestId));
+        continue;
+      }
+      response = {
+        responseId: storedResponse.id,
+        correlationId: storedResponse.correlationId,
+        respondedById,
+        submittedAt: storedResponse.createdAt.toISOString(),
+        status: "SUBMITTED",
+      };
+    }
+
     requests.push({
       requestId: comment.id,
       findingId: finding.id,
@@ -199,6 +354,10 @@ export async function getClientMissingCloseEvidenceRequestQueue(
       requestText: comment.body,
       dueAt: dueAt.toISOString(),
       createdAt: comment.createdAt.toISOString(),
+      workflowState: response
+        ? "RESPONSE_SUBMITTED"
+        : "AWAITING_RECIPIENT_RESPONSE",
+      response,
       finding: {
         domain: finding.domain,
         severity: finding.severity,
@@ -229,13 +388,23 @@ export async function getClientMissingCloseEvidenceRequestQueue(
 
   const nowTime = generatedAt.getTime();
   const dueSoonTime = nowTime + DUE_SOON_WINDOW_MS;
-  const overdue = requests.filter(
+  const awaitingResponseRequests = requests.filter(
+    (request) => request.workflowState === "AWAITING_RECIPIENT_RESPONSE",
+  );
+  const responseSubmitted =
+    requests.length - awaitingResponseRequests.length;
+  const overdue = awaitingResponseRequests.filter(
     (request) => Date.parse(request.dueAt) < nowTime,
   ).length;
-  const dueWithin72Hours = requests.filter((request) => {
+  const dueWithin72Hours = awaitingResponseRequests.filter((request) => {
     const dueAt = Date.parse(request.dueAt);
     return dueAt >= nowTime && dueAt <= dueSoonTime;
   }).length;
+  const invalidRequestEvidence = blockers.filter(
+    (blocker) => blocker.reason === "INVALID_REQUEST_EVIDENCE",
+  ).length;
+  const invalidResponseEvidence =
+    blockers.length - invalidRequestEvidence;
 
   return {
     kind: CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE.kind,
@@ -256,16 +425,24 @@ export async function getClientMissingCloseEvidenceRequestQueue(
         CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE.readPermission,
       serviceClockOwned: true,
       rawMetadataExposed: false,
+      responseBodyExposed: false,
+      responseStateServiceOwned: true,
       maxItems: CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE.maxItems,
     },
     summary: {
       total: requests.length,
+      awaitingResponse: awaitingResponseRequests.length,
+      responseSubmitted,
       overdue,
       dueWithin72Hours,
-      scheduled: requests.length - overdue - dueWithin72Hours,
+      scheduled:
+        awaitingResponseRequests.length - overdue - dueWithin72Hours,
       invalidEvidence: blockers.length,
+      invalidRequestEvidence,
+      invalidResponseEvidence,
       truncated:
-        findings.length > CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE.maxItems,
+        findings.length > CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE.maxItems ||
+        responseEvidenceTruncated,
     },
     requests,
     blockers,

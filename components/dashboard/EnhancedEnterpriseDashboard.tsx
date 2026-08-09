@@ -44,6 +44,7 @@ import type {
   DashboardData,
   DashboardPeriod,
 } from "@/actions/dashboard/getDashboardData"
+import { createOrganizationMoneyFormatter } from "@/lib/i18n/organization-money"
 import { cn } from "@/lib/utils"
 import {
   Activity,
@@ -260,13 +261,6 @@ function formatNumber(value: number, locale: string) {
   }).format(value)
 }
 
-function formatCurrency(value: number, currency: string, locale: string) {
-  return new Intl.NumberFormat(locale, {
-    style: "currency",
-    currency,
-    maximumFractionDigits: currency === "XAF" ? 0 : 2,
-  }).format(value)
-}
 
 function formatDateTime(value: string, locale: string) {
   return new Intl.DateTimeFormat(locale, {
@@ -400,7 +394,14 @@ export default function EnhancedEnterpriseDashboard({
   } = useDashboardData(organizationId, filters, shouldUseInitialData ? dashboardData : undefined)
 
   const dashboard = data || dashboardData
-  const currency = dashboard.organization.currency || "XAF"
+  const moneyFormatter = useMemo(
+    () => createOrganizationMoneyFormatter({
+      organizationId: dashboard.organization.id,
+      locale,
+      currency: dashboard.organization.currency,
+    }),
+    [dashboard.organization.currency, dashboard.organization.id, locale],
+  )
 
   const selectedLocationLabel =
     locationId === "all"
@@ -639,7 +640,7 @@ export default function EnhancedEnterpriseDashboard({
                             color: "var(--dash-text)",
                           }}
                           formatter={(value, name) => {
-                            if (name === "revenue") return [formatCurrency(Number(value), currency, locale), labels.metrics.revenue]
+                            if (name === "revenue") return [moneyFormatter.format(Number(value)), labels.metrics.revenue]
                             return [formatNumber(Number(value), locale), labels.metrics.orders]
                           }}
                         />
@@ -693,7 +694,7 @@ export default function EnhancedEnterpriseDashboard({
                             </p>
                           </div>
                         <div className="text-right">
-                          <p className="text-sm font-semibold">{formatCurrency(product.revenue, currency, locale)}</p>
+                          <p className="text-sm font-semibold">{moneyFormatter.format(product.revenue)}</p>
                           <p className="text-xs text-[var(--dash-text-soft)]">
                             {formatNumber(product.quantitySold, locale)} sold
                           </p>
@@ -782,8 +783,8 @@ export default function EnhancedEnterpriseDashboard({
                               color: "var(--dash-text)",
                             }}
                             formatter={(value, name) => {
-                              if (name === "revenue") return [formatCurrency(Number(value), currency, locale), labels.metrics.revenue]
-                              if (name === "inventoryValue") return [formatCurrency(Number(value), currency, locale), labels.metrics.inventoryValue]
+                              if (name === "revenue") return [moneyFormatter.format(Number(value)), labels.metrics.revenue]
+                              if (name === "inventoryValue") return [moneyFormatter.format(Number(value)), labels.metrics.inventoryValue]
                               return [formatNumber(Number(value), locale), labels.metrics.orders]
                             }}
                           />

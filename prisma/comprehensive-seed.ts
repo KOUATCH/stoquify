@@ -17,6 +17,7 @@ import {
   FiscalYearStatus,
   GoodsReceiptStatus,
   InviteStatus,
+  InventoryTransactionTimeProvenance,
   JournalEntryStatus,
   JournalType,
   LedgerEntryType,
@@ -2068,6 +2069,9 @@ async function seedInventoryTransactions() {
           serialNumbers: [orgScopedNumber("SERIAL", index)],
           expiryDate: day(index + 180),
           balanceAfter: qty(75 + index + purchasedQuantity),
+          effectiveAt: day(index),
+          recordedAt: day(index),
+          timeProvenance: InventoryTransactionTimeProvenance.EXPLICIT_SOURCE_TIME,
           createdAt: day(index),
         },
         {
@@ -2088,6 +2092,9 @@ async function seedInventoryTransactions() {
           serialNumbers: [orgScopedNumber("SERIAL", index)],
           expiryDate: day(index + 120),
           balanceAfter: qty(75 + index + purchasedQuantity - soldQuantity),
+          effectiveAt: day(index + 1),
+          recordedAt: day(index + 1),
+          timeProvenance: InventoryTransactionTimeProvenance.EXPLICIT_SOURCE_TIME,
           createdAt: day(index + 1),
         },
       ];

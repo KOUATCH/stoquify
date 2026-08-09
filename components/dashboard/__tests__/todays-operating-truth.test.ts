@@ -153,4 +153,22 @@ describe("buildTodaysOperatingTruthModel", () => {
     expect(model.shortcuts.actions.some((action) => action.href === "/fr/dashboard/payroll")).toBe(true)
     expect(model.onboarding.steps.find((step) => step.id === "payroll_setup")?.stateLabel).toBe("Optionnel")
   })
+  it("formats dashboard financial totals with XOF in French", () => {
+    const dashboard = buildDashboard()
+    dashboard.organization.currency = "XOF"
+
+    const model = buildTodaysOperatingTruthModel({
+      dashboard,
+      locale: "fr",
+      dashboardBasePath: "/fr/dashboard",
+      selectedLocationLabel: "Tous les lieux",
+    })
+    const expectedRevenue = new Intl.NumberFormat("fr", {
+      style: "currency",
+      currency: "XOF",
+    }).format(dashboard.kpis.revenue.current)
+
+    expect(model.kpis.find((kpi) => kpi.label === "Revenu")?.value).toBe(expectedRevenue)
+    expect(model.brief.summary).toContain(expectedRevenue)
+  })
 })

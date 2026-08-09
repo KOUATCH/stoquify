@@ -138,6 +138,7 @@ export const financialPermissions = [
   "finance.receivables.create",
   "finance.receivables.update",
   "finance.receivables.collect",
+  "finance.receivables.reverse",
   "finance.cash-flow.read",
   "finance.cash-drawer.read",
   "finance.costs.read",

@@ -115,6 +115,7 @@ export const sidebarLinks: ISidebarLink[] = [
     priority: "primary",
     dropdownMenu: [
       { title: "Overview", href: "/dashboard/analytics", permission: PERMISSIONS.VIEW_ANALYTICS },
+      { title: "Referral Funnel", href: "/dashboard/analytics/referrals", permission: PERMISSIONS.VIEW_ANALYTICS },
       { title: "Reports", href: "/dashboard/analytics/reports", permission: PERMISSIONS.VIEW_ANALYTICS },
     ],
   },

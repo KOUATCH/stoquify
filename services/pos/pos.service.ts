@@ -18,6 +18,13 @@ import { postPayment } from "@/services/accounting/postings/post-payment"
 import { postSale } from "@/services/accounting/postings/post-sale"
 import { postVoid } from "@/services/accounting/postings/post-void"
 import { createCustomerLedgerEntry } from "@/services/accounting/customer-ledger.service"
+import {
+  CUSTOMER_RECEIVABLE_REFERENCE_TYPE,
+  ensurePostedCustomerReceivableDocumentInTx,
+} from "@/services/accounting/customer-receivable-document.service"
+import {
+  voidCustomerReceivableDocumentInTx,
+} from "@/services/accounting/customer-receivable-lifecycle.service"
 import { createFiscalDocumentFromPostedSource } from "@/services/compliance/fiscal-document.service"
 import { resolveEInvoicingMetadata } from "@/services/compliance/country-pack-hooks"
 import {
@@ -1791,8 +1798,6 @@ export async function commitPOSSale(rawInput: UserScoped) {
       select: {
         id: true,
         code: true,
-        currentBalance: true,
-        creditLimit: true,
       },
     })
 
@@ -1856,31 +1861,8 @@ export async function commitPOSSale(rawInput: UserScoped) {
       throw new ConflictError("Sale state changed; refresh before completing it")
     }
 
-    if (onAccountAmount.gt(0)) {
-      if (customer.code === "WALK_IN") {
-        throw new BusinessRuleError("On-account tender requires an attached customer")
-      }
-
-      const nextBalance = addMoney(customer.currentBalance, onAccountAmount).toDecimalPlaces(2)
-      if (customer.creditLimit && nextBalance.gt(customer.creditLimit)) {
-        throw new BusinessRuleError("Customer credit limit would be exceeded")
-      }
-
-      await tx.customer.update({
-        where: { id: customer.id },
-        data: { currentBalance: nextBalance },
-      })
-
-      await createCustomerLedgerEntry(tx, {
-        customerId: customer.id,
-        organizationId: rawInput.organizationId,
-        type: LedgerEntryType.SALE,
-        debit: onAccountAmount,
-        balanceAfter: nextBalance,
-        description: `POS sale ${sale.orderNumber}`,
-        referenceType: "SALES_ORDER",
-        referenceId: sale.id,
-      })
+    if (onAccountAmount.gt(0) && customer.code === "WALK_IN") {
+      throw new BusinessRuleError("On-account tender requires an attached customer")
     }
 
     const inventoryTransactionIds: string[] = []
@@ -2059,6 +2041,34 @@ export async function commitPOSSale(rawInput: UserScoped) {
         notes: input.notes,
       },
     })
+    let postedReceivableDocumentId: string | null = null
+
+    if (onAccountAmount.gt(0)) {
+      const receivable = await ensurePostedCustomerReceivableDocumentInTx(tx, {
+        organizationId: rawInput.organizationId,
+        customerId: customer.id,
+        salesOrderId: updatedSale.id,
+        actorId: rawInput.userId,
+        issuedAt: now,
+        initialUnpaidAmount: onAccountAmount,
+        metadata: {
+          source: "POS_COMMIT",
+          sessionId: input.sessionId,
+          terminalId: input.terminalId,
+        },
+      })
+      postedReceivableDocumentId = receivable.document.id
+      await createCustomerLedgerEntry(tx, {
+        customerId: customer.id,
+        organizationId: rawInput.organizationId,
+        type: LedgerEntryType.SALE,
+        debit: onAccountAmount,
+        enforceCreditLimit: true,
+        description: `POS sale ${sale.orderNumber}`,
+        referenceType: CUSTOMER_RECEIVABLE_REFERENCE_TYPE,
+        referenceId: receivable.document.id,
+      })
+    }
 
     const saleJournalEntry = await postSale(
       rawInput.organizationId,
@@ -2163,6 +2173,7 @@ export async function commitPOSSale(rawInput: UserScoped) {
           status: updatedSale.status,
           paymentStatus: updatedSale.paymentStatus,
           amountPaid: moneyToString(amountPaid),
+          customerReceivableDocumentId: postedReceivableDocumentId,
           onAccountAmount: moneyToString(onAccountAmount),
           changeDue: moneyToString(changeDue),
           fiscalizationRequestId,
@@ -2184,6 +2195,7 @@ export async function commitPOSSale(rawInput: UserScoped) {
       postingBatchId: saleJournalEntry.postingBatchId ?? undefined,
       payload: cleanJson({
         salesOrderId: sale.id,
+        customerReceivableDocumentId: postedReceivableDocumentId,
         orderNumber: sale.orderNumber,
         sessionId: input.sessionId,
         terminalId: input.terminalId,
@@ -2318,7 +2330,7 @@ export async function commitPOSSale(rawInput: UserScoped) {
 }
 
 const correctionSaleInclude = {
-  customer: { select: { id: true, code: true, currentBalance: true } },
+  customer: { select: { id: true, code: true } },
   lines: {
     include: {
       item: {
@@ -2922,27 +2934,43 @@ export async function voidPOSSale(rawInput: UserScoped) {
       reason: `POS void ${sale.orderNumber}: ${input.reason}`,
     })
     const creditAmount = sumPaymentMethod(payments, PaymentMethod.CREDIT)
+    let voidReceivableDocumentId: string | null = null
 
     if (creditAmount.gt(0)) {
-      const nextBalance = subtractMoney(sale.customer.currentBalance, creditAmount).toDecimalPlaces(2)
-      if (nextBalance.lt(0)) {
-        throw new BusinessRuleError("Customer balance is lower than the on-account amount being voided")
-      }
-
-      await tx.customer.update({
-        where: { id: sale.customer.id },
-        data: { currentBalance: nextBalance },
+      const receivable = await ensurePostedCustomerReceivableDocumentInTx(tx, {
+        organizationId: rawInput.organizationId,
+        customerId: sale.customer.id,
+        salesOrderId: sale.id,
+        actorId: rawInput.userId,
+        initialUnpaidAmount: creditAmount,
+        metadata: {
+          source: "POS_VOID_BACKFILL",
+          sessionId: input.sessionId,
+          terminalId: input.terminalId,
+        },
       })
-
-      await createCustomerLedgerEntry(tx, {
+      const ledgerEntry = await createCustomerLedgerEntry(tx, {
         customerId: sale.customer.id,
         organizationId: rawInput.organizationId,
         type: LedgerEntryType.CREDIT_NOTE,
         credit: creditAmount,
-        balanceAfter: nextBalance,
         description: `POS void ${sale.orderNumber}`,
-        referenceType: "SALES_ORDER",
-        referenceId: sale.id,
+        referenceType: CUSTOMER_RECEIVABLE_REFERENCE_TYPE,
+        referenceId: receivable.document.id,
+      })
+      voidReceivableDocumentId = receivable.document.id
+      await voidCustomerReceivableDocumentInTx(tx, {
+        organizationId: rawInput.organizationId,
+        documentId: receivable.document.id,
+        actorId: rawInput.userId,
+        salesOrderId: sale.id,
+        effectiveAt: now,
+        reason: input.reason,
+        evidenceHash: hashBusinessPayload({
+          customerLedgerEntryId: ledgerEntry.id,
+          creditAmount: moneyToString(creditAmount),
+          reason: input.reason,
+        }),
       })
     }
 
@@ -2998,6 +3026,7 @@ export async function voidPOSSale(rawInput: UserScoped) {
       postingBatchId: voidPostingBatchId,
       payload: cleanJson({
         salesOrderId: sale.id,
+        customerReceivableDocumentId: voidReceivableDocumentId,
         orderNumber: sale.orderNumber,
         sessionId: input.sessionId,
         terminalId: input.terminalId,

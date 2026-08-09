@@ -32,6 +32,7 @@ import type {
   DashboardMetric,
   DashboardPendingAction,
 } from "@/actions/dashboard/getDashboardData"
+import { createOrganizationMoneyFormatter } from "@/lib/i18n/organization-money"
 
 type DashboardCopy = {
   title: string
@@ -194,15 +195,19 @@ export function buildTodaysOperatingTruthModel({
   selectedLocationLabel,
 }: TodaysOperatingTruthInput): TodaysOperatingTruthModel {
   const copy = getDashboardCopy(locale)
-  const currency = dashboard.organization.currency || "XAF"
+  const moneyFormatter = createOrganizationMoneyFormatter({
+    organizationId: dashboard.organization.id,
+    locale,
+    currency: dashboard.organization.currency,
+  })
   const periodLabel = copy.periods[dashboard.period.key]
   const stockRiskCount =
     dashboard.stockHealth.lowStock +
     dashboard.stockHealth.outOfStock +
     dashboard.stockHealth.reorderCandidates
   const visibleActionCount = dashboard.pendingActions.reduce((sum, action) => sum + action.count, 0)
-  const revenue = formatCurrency(dashboard.kpis.revenue.current, currency, locale)
-  const cash = formatCurrency(dashboard.kpis.cashCollected.current, currency, locale)
+  const revenue = moneyFormatter.format(dashboard.kpis.revenue.current)
+  const cash = moneyFormatter.format(dashboard.kpis.cashCollected.current)
 
   return {
     brief: {
@@ -243,7 +248,7 @@ export function buildTodaysOperatingTruthModel({
     status: {
       title: copy.statusTitle,
       detail: copy.statusDetail,
-      items: buildStatusItems({ dashboard, copy, currency, locale, dashboardBasePath, stockRiskCount }),
+      items: buildStatusItems({ dashboard, copy, moneyFormatter, locale, dashboardBasePath, stockRiskCount }),
     },
     actionQueue: {
       title: copy.actionTitle,
@@ -258,7 +263,7 @@ export function buildTodaysOperatingTruthModel({
       emptyMessage: copy.evidenceEmpty,
       events: buildEvidenceEvents({ dashboard, copy, locale, dashboardBasePath }),
     },
-    kpis: buildKpis({ dashboard, copy, currency, locale, dashboardBasePath, stockRiskCount }),
+    kpis: buildKpis({ dashboard, copy, moneyFormatter, locale, dashboardBasePath, stockRiskCount }),
     shortcuts: {
       title: copy.shortcutsTitle,
       detail: copy.shortcutsDetail,
@@ -537,14 +542,14 @@ function getDashboardCopy(locale: string): DashboardCopy {
 function buildStatusItems({
   dashboard,
   copy,
-  currency,
+  moneyFormatter,
   locale,
   dashboardBasePath,
   stockRiskCount,
 }: {
   dashboard: DashboardData
   copy: DashboardCopy
-  currency: string
+  moneyFormatter: Intl.NumberFormat
   locale: string
   dashboardBasePath: string
   stockRiskCount: number
@@ -575,7 +580,7 @@ function buildStatusItems({
     {
       id: "cash",
       label: copy.statuses.cash,
-      value: formatCurrency(dashboard.kpis.cashCollected.current, currency, locale),
+      value: moneyFormatter.format(dashboard.kpis.cashCollected.current),
       detail: copy.statusDetails.cash,
       tone: dashboard.kpis.cashCollected.current > 0 ? "success" : "info",
       icon: CreditCard,
@@ -697,14 +702,14 @@ function buildEvidenceEvents({
 function buildKpis({
   dashboard,
   copy,
-  currency,
+  moneyFormatter,
   locale,
   dashboardBasePath,
   stockRiskCount,
 }: {
   dashboard: DashboardData
   copy: DashboardCopy
-  currency: string
+  moneyFormatter: Intl.NumberFormat
   locale: string
   dashboardBasePath: string
   stockRiskCount: number
@@ -714,7 +719,7 @@ function buildKpis({
   return [
     metricKpi({
       label: copy.kpis.revenue,
-      value: formatCurrency(dashboard.kpis.revenue.current, currency, locale),
+      value: moneyFormatter.format(dashboard.kpis.revenue.current),
       detail: copy.kpiDetails.revenue,
       metric: dashboard.kpis.revenue,
       locale,
@@ -738,7 +743,7 @@ function buildKpis({
     },
     metricKpi({
       label: copy.kpis.cash,
-      value: formatCurrency(dashboard.kpis.cashCollected.current, currency, locale),
+      value: moneyFormatter.format(dashboard.kpis.cashCollected.current),
       detail: copy.kpiDetails.cash,
       metric: dashboard.kpis.cashCollected,
       locale,
@@ -964,13 +969,6 @@ function formatNumber(value: number, locale: string) {
   }).format(value)
 }
 
-function formatCurrency(value: number, currency: string, locale: string) {
-  return new Intl.NumberFormat(locale, {
-    style: "currency",
-    currency,
-    maximumFractionDigits: currency === "XAF" ? 0 : 2,
-  }).format(value)
-}
 
 function formatDateTime(value: string, locale: string) {
   return new Intl.DateTimeFormat(locale, {

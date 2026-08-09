@@ -19,6 +19,7 @@ import type { PublicIdentityRequestContext } from "@/lib/security/public-request
 import { safeUserSelect } from "@/lib/security/server-authz"
 import { generateToken } from "@/lib/token"
 import { db } from "@/prisma/db"
+import { recordReferralConversionInTx } from "@/services/referrals/referral-attribution.service"
 import { BusinessRuleError } from "@/services/_shared/action-errors"
 import { enforcePublicIdentityAbuseLimits } from "@/services/security/public-identity-abuse.service"
 import {
@@ -611,6 +612,16 @@ export async function registerOrganizationAccount(
     await upsertCredentialAccount(tx, {
       userId: user.id,
       passwordHash: hashedPassword,
+    })
+
+    await recordReferralConversionInTx(tx, {
+      referralCode: data.referralCode,
+      targetOrganizationId: organization.id,
+      subject: user.email,
+      targetUserId: user.id,
+      accountantInviteToken: data.accountantInviteToken,
+      accountantInviteAccepted: data.accountantInviteAccepted === true,
+      now,
     })
 
     return { user, organization, role: adminRole, defaultLocation }

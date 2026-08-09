@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react"
 
 import {
-  grantAccountantAccessAction,
+  inviteAccountantAccessAction,
   revokeAccountantAccessAction,
 } from "@/actions/accounting/accountant-access.actions"
 import { AccountantAccessManager } from "@/components/accounting/AccountantAccessManager"
@@ -14,11 +14,11 @@ jest.mock("next/navigation", () => ({
 }))
 
 jest.mock("@/actions/accounting/accountant-access.actions", () => ({
-  grantAccountantAccessAction: jest.fn(),
+  inviteAccountantAccessAction: jest.fn(),
   revokeAccountantAccessAction: jest.fn(),
 }))
 
-const mockGrantAction = grantAccountantAccessAction as jest.Mock
+const mockGrantAction = inviteAccountantAccessAction as jest.Mock
 const mockRevokeAction = revokeAccountantAccessAction as jest.Mock
 
 function grant(
@@ -49,7 +49,11 @@ describe("AccountantAccessManager", () => {
     jest.clearAllMocks()
     mockGrantAction.mockResolvedValue({
       success: true,
-      data: grant("new", "SCHEDULED"),
+      data: {
+        outcome: "GRANTED",
+        grant: grant("new", "SCHEDULED"),
+        invite: null,
+      },
       error: null,
       status: 200,
     })
@@ -97,7 +101,7 @@ describe("AccountantAccessManager", () => {
     fireEvent.change(screen.getByLabelText("Signed consent evidence hash"), {
       target: { value: `sha256:${"b".repeat(64)}` },
     })
-    fireEvent.click(screen.getByRole("button", { name: "Grant access" }))
+    fireEvent.click(screen.getByRole("button", { name: "Invite or grant access" }))
 
     await waitFor(() =>
       expect(mockGrantAction).toHaveBeenCalledWith(

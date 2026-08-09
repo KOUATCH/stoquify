@@ -375,15 +375,6 @@ export async function reverseJournalEntry(
     })
 
     if (!original) throw new NotFoundError("Journal entry not found")
-    if (original.status !== JournalEntryStatus.POSTED) {
-      throw new BusinessRuleError("Only posted journal entries can be reversed")
-    }
-    if (original.reversedByEntries.length > 0) {
-      throw new BusinessRuleError("Journal entry has already been reversed")
-    }
-
-    const period = await getOpenPeriodForDate(organizationId, reversalDate, tx)
-    assertBalancedJournalEntry(original.lines)
 
     const controlDecision = evaluateSensitiveAction({
       action: "accounting.journal.reverse",
@@ -397,10 +388,42 @@ export async function reverseJournalEntry(
       subjectActorId: original.postedById || original.createdById,
       amount: amountTotal(original.lines),
       currency: original.currency,
-      metadata: { entryNumber: original.entryNumber, periodId: original.periodId, reason: reason || null },
+      metadata: {
+        entryNumber: original.entryNumber,
+        periodId: original.periodId,
+        reasonProvided: Boolean(reason?.trim()),
+      },
     })
     await auditSensitiveActionDecision(tx, controlDecision)
     if (!controlDecision.allowed) return { denied: controlDecision }
+
+    if (original.sourceType === AccountingSourceType.CUSTOMER_SETTLEMENT) {
+      await tx.auditLog.create({
+        data: {
+          organizationId,
+          entityType: "JournalEntry",
+          entityId: original.id,
+          action: "JOURNAL_ENTRY_SOURCE_OWNED_REVERSAL_BLOCKED",
+          userId: actorId || null,
+          changes: {
+            sourceType: original.sourceType,
+            sourceId: original.sourceId,
+            journalEntryId: original.id,
+            reasonProvided: Boolean(reason?.trim()),
+          },
+        },
+      })
+      return { sourceOwnedBlocked: true as const }
+    }
+    if (original.status !== JournalEntryStatus.POSTED) {
+      throw new BusinessRuleError("Only posted journal entries can be reversed")
+    }
+    if (original.reversedByEntries.length > 0) {
+      throw new BusinessRuleError("Journal entry has already been reversed")
+    }
+
+    const period = await getOpenPeriodForDate(organizationId, reversalDate, tx)
+    assertBalancedJournalEntry(original.lines)
 
     const batch = await createLedgerPostingBatch(
       {
@@ -519,7 +542,13 @@ export async function reverseJournalEntry(
     return { value: reversal }
   })
 
-  if (result.denied) {
+  if ("sourceOwnedBlocked" in result && result.sourceOwnedBlocked) {
+    throw new BusinessRuleError(
+      "Customer settlement journals must be reversed through the customer settlement source command",
+    )
+  }
+
+  if ("denied" in result && result.denied) {
     assertSensitiveActionAllowed(result.denied)
   }
 

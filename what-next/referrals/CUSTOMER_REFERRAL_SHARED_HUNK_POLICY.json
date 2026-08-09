@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "releaseScopePolicy": "what-next/referrals/CUSTOMER_REFERRAL_RELEASE_SCOPE_POLICY.json",
+  "files": [
+    {
+      "path": "components/customers/CustomerManagementDashboard.tsx",
+      "referralAnchors": [
+        "createStatement: \"Create statement\",",
+        "createStatement: \"Creer un releve\",",
+        "<Link href={`${basePath}/${customer.id}/statement`}>",
+        "{t.createStatement}"
+      ],
+      "unrelatedAnchors": [
+        "useCustomerExport,",
+        "const exportMutation = useCustomerExport(locale)",
+        "purpose: \"CUSTOMER_MANAGEMENT_EXPORT\","
+      ]
+    },
+    {
+      "path": "config/permissions.ts",
+      "referralAnchors": [
+        "\"finance.receivables.reverse\","
+      ],
+      "unrelatedAnchors": [
+        "\"customers.export\","
+      ]
+    },
+    {
+      "path": "lib/security/rbac-permissions.ts",
+      "referralAnchors": [
+        "\"finance.receivables.collect\": \"crit\",",
+        "\"finance.receivables.reverse\": \"crit\",",
+        "\"finance.receivables.collect\": [\"CUSTOMER_PAYMENTS_PROCESS\"],"
+      ],
+      "unrelatedAnchors": [
+        "\"customers.export\": \"crit\",",
+        "\"customers.export\": [\"EXPORT_DATA\"],"
+      ]
+    },
+    {
+      "path": "services/controls/sensitive-action.service.ts",
+      "referralAnchors": [
+        "| \"customer.settlement.collect\"",
+        "| \"customer.settlement.reverse\"",
+        "\"customer.settlement.collect\": {",
+        "\"customer.settlement.reverse\": {",
+        "lastAuthAtMs > nowMs"
+      ],
+      "unrelatedAnchors": [
+        "| \"customers.export\"",
+        "\"customers.export\": {"
+      ]
+    }
+  ]
+}

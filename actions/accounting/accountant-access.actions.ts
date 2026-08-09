@@ -9,7 +9,12 @@ import {
   type AccountantPortfolio,
 } from "@/services/accounting/accountant-access.service"
 import {
+  inviteOrGrantAccountantAccess,
+  type InviteOrGrantAccountantAccessResult,
+} from "@/services/accounting/accountant-client-invite.service"
+import {
   grantAccountantAccessInputSchema,
+  inviteAccountantAccessInputSchema,
   revokeAccountantAccessInputSchema,
 } from "@/services/accounting/accountant-access.schemas"
 import { protect } from "@/services/_shared/protect"
@@ -58,6 +63,24 @@ const grantAccess = protect<unknown, AccountantAccessGrantDto>(
 
 export async function grantAccountantAccessAction(input: unknown) {
   return grantAccess(input)
+}
+
+const inviteAccess = protect<unknown, InviteOrGrantAccountantAccessResult>(
+  {
+    permission: "accounting.close.accountant.invite",
+    auditResource: "AccountantClientInvite",
+    freshAuth: { maxAgeSeconds: 300 },
+  },
+  async (input, ctx) =>
+    inviteOrGrantAccountantAccess(
+      ctx.orgId,
+      ctx.userId,
+      inviteAccountantAccessInputSchema.parse(input),
+    ),
+)
+
+export async function inviteAccountantAccessAction(input: unknown) {
+  return inviteAccess(input)
 }
 
 const revokeAccess = protect<unknown, AccountantAccessGrantDto>(

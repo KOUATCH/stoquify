@@ -72,6 +72,7 @@ type ManagerActionCenterActionBase = {
   severityScore: number
   assignedRole: SignalOwnerRole
   dueAt: string
+  waitingOn?: "ACCOUNTANT_REVIEW"
   dueState: ManagerActionDueState
   evidenceGrade: EvidenceGrade
   trustState: BITrustState

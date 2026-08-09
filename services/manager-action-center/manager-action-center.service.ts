@@ -551,6 +551,7 @@ function buildRunSheetGroups(
 function runSheetGroupForAction(
   item: ManagerActionCenterAction,
 ): ManagerActionRunSheetGroupId {
+  if (item.waitingOn === "ACCOUNTANT_REVIEW") return "waiting"
   if (item.dueState === "overdue") return "overdue"
   if (item.blockers.length > 0) return "blocked"
   if (item.severity === "critical" || item.severity === "high")
@@ -794,6 +795,40 @@ function managerActionFromClientMissingProofRequest(
   now: Date,
 ): ManagerActionCenterAction {
   const severity = missingProofSeverity(request.finding.severity)
+  if (request.workflowState === "RESPONSE_SUBMITTED" && request.response) {
+    return {
+      origin: "ACCOUNTANT_REQUEST",
+      kind: "LINK",
+      sourceCommand: null,
+      id: `accountant-missing-proof:${request.requestId}`,
+      signalId: `accountant-missing-proof:${request.findingId}`,
+      title: `Proof response submitted: ${request.finding.title}`,
+      nextStep: "Response submitted; awaiting accountant review.",
+      actionPath: request.actionPath,
+      requiredPermission: request.requiredPermission,
+      status: "assigned",
+      severity,
+      severityScore: missingProofSeverityScore(request.finding.severity),
+      assignedRole: "accountant",
+      dueAt: request.response.submittedAt,
+      waitingOn: "ACCOUNTANT_REVIEW",
+      dueState: "scheduled",
+      evidenceGrade: "operational",
+      trustState: evidenceGradeToBITrustState("operational"),
+      state: "partial",
+      blockers: [],
+      redactions: [missingProofMetadataRedaction(request.requestId)],
+      actionLink: {
+        id: `accountant-missing-proof:${request.requestId}:open`,
+        label: "Open submitted proof response",
+        href: request.actionPath,
+        requiredPermission: request.requiredPermission,
+        moduleSlug: "close_assurance",
+        disabled: false,
+        disabledReason: null,
+      },
+    }
+  }
 
   return {
     origin: "ACCOUNTANT_REQUEST",
@@ -835,6 +870,13 @@ function managerActionFromClientMissingProofBlocker(
 ): ManagerActionCenterAction {
   const actionPath =
     CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE.actionPathPrefix
+  const isResponseEvidence = blocker.reason === "INVALID_RESPONSE_EVIDENCE"
+  const title = isResponseEvidence
+    ? "Missing-proof response evidence needs review"
+    : "Missing-proof request evidence needs review"
+  const gate = isResponseEvidence
+    ? "client_missing_proof_response"
+    : "client_missing_proof_request"
 
   return {
     origin: "ACCOUNTANT_REQUEST",
@@ -842,7 +884,7 @@ function managerActionFromClientMissingProofBlocker(
     sourceCommand: null,
     id: `accountant-missing-proof-blocker:${blocker.requestId}`,
     signalId: blocker.id,
-    title: "Missing-proof request evidence needs review",
+    title,
     nextStep: blocker.detail,
     actionPath,
     requiredPermission:
@@ -860,12 +902,15 @@ function managerActionFromClientMissingProofBlocker(
       {
         id: blocker.id,
         severity: "high",
-        gate: "client_missing_proof_request",
-        title: "Missing-proof request evidence is invalid",
+        gate,
+        title: isResponseEvidence
+          ? "Missing-proof response evidence is invalid"
+          : "Missing-proof request evidence is invalid",
         detail: blocker.detail,
         sourceTables: [...sourceTables],
-        nextAction:
-          "Open Close & Assurance and repair the stored request evidence.",
+        nextAction: isResponseEvidence
+          ? "Open Close & Assurance and review the stored response evidence."
+          : "Open Close & Assurance and repair the stored request evidence.",
       },
     ],
     redactions: [missingProofMetadataRedaction(blocker.requestId)],
