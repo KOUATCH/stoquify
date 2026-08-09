@@ -63,6 +63,8 @@ export default async function SuppliersSystemPage({
           organizationId={ctx.orgId}
           locale={locale}
           basePath={basePath}
+          canExport={ctx.isSuperUser || ctx.permissions.includes("reports.export")}
+          canExportSensitive={ctx.isSuperUser}
         />
       </div>
     </div>

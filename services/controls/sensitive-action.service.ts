@@ -25,9 +25,12 @@ export type SensitiveActionId =
   | "payment.reconciliation.certificate.export"
   | "payment.export"
   | "inventory.history.export"
+  | "customers.export"
   | "supplier.bank-change.approve"
   | "supplier.payment.approve"
   | "supplier.payment.release"
+  | "customer.settlement.collect"
+  | "customer.settlement.reverse"
   | "payroll.run.approve"
   | "payroll.payment.release"
   | "payroll.payment.reconcile"
@@ -229,6 +232,16 @@ export const SENSITIVE_ACTION_POLICIES: Record<SensitiveActionId, SensitiveActio
     auditAction: "INVENTORY_HISTORY_EXPORT_CONTROL",
     detectorSignals: ["inventory_history_export", "mass_export", "after_hours_export"],
   },
+  "customers.export": {
+    action: "customers.export",
+    permission: "customers.export",
+    riskTier: "critical",
+    requiredAssurance: "L1",
+    freshAuthMaxAgeSeconds: 300,
+    exportControl: true,
+    auditAction: "CUSTOMER_EXPORT_CONTROL",
+    detectorSignals: ["customer_pii_export", "mass_export", "after_hours_export"],
+  },
   "supplier.bank-change.approve": {
     action: "supplier.bank-change.approve",
     permission: "purchasing.supplier.bank.approve",
@@ -258,6 +271,25 @@ export const SENSITIVE_ACTION_POLICIES: Record<SensitiveActionId, SensitiveActio
     blockSelfApproval: true,
     auditAction: "SUPPLIER_PAYMENT_RELEASE_CONTROL",
     detectorSignals: ["supplier_payment_release", "payment_after_bank_change", "after_hours_disbursement"],
+  },
+  "customer.settlement.collect": {
+    action: "customer.settlement.collect",
+    permission: "finance.receivables.collect",
+    riskTier: "critical",
+    requiredAssurance: "L1",
+    freshAuthMaxAgeSeconds: 300,
+    auditAction: "CUSTOMER_SETTLEMENT_COLLECT_CONTROL",
+    detectorSignals: ["customer_settlement_collection", "allocation_overpayment_attempt", "duplicate_collection_reference"],
+  },
+  "customer.settlement.reverse": {
+    action: "customer.settlement.reverse",
+    permission: "finance.receivables.reverse",
+    riskTier: "critical",
+    requiredAssurance: "L1",
+    freshAuthMaxAgeSeconds: 300,
+    blockSelfApproval: true,
+    auditAction: "CUSTOMER_SETTLEMENT_REVERSE_CONTROL",
+    detectorSignals: ["customer_settlement_reversal", "self_reversal_attempt", "duplicate_reversal_attempt"],
   },
   "payroll.run.approve": {
     action: "payroll.run.approve",
@@ -494,7 +526,7 @@ export function evaluateSensitiveAction(input: SensitiveActionEvaluationInput): 
     const nowMs = toMillis(input.now) ?? Date.now()
     const lastAuthAtMs = toMillis(input.lastAuthAt)
 
-    if (!lastAuthAtMs || nowMs - lastAuthAtMs > policy.freshAuthMaxAgeSeconds * 1000) {
+    if (!lastAuthAtMs || lastAuthAtMs > nowMs || nowMs - lastAuthAtMs > policy.freshAuthMaxAgeSeconds * 1000) {
       return {
         allowed: false,
         reasonCode: "FRESH_AUTH_REQUIRED",

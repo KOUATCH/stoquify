@@ -3,6 +3,7 @@ const mockPermissions = [
   "accounting.close.run",
   "accounting.close.finding.comment",
   "accounting.close.evidence.request",
+  "accounting.close.accountant.review",
   "accounting.close.export",
   "accounting.close.certify",
   "accounting.close.waiver.approve",
@@ -70,12 +71,14 @@ jest.mock("next/cache", () => ({
 }))
 
 jest.mock("@/services/accounting/close-assurance.service", () => ({
+  acceptMissingCloseEvidenceResponse: jest.fn(),
   getCloseAssuranceDashboard: jest.fn(),
   runCloseAssurance: jest.fn(),
   getCloseEvidenceGraph: jest.fn(),
   assignCloseFinding: jest.fn(),
   commentOnCloseFinding: jest.fn(),
   requestMissingCloseEvidence: jest.fn(),
+  respondToMissingCloseEvidence: jest.fn(),
   requestCloseWaiver: jest.fn(),
   approveCloseWaiver: jest.fn(),
   updateAccountantReview: jest.fn(),
@@ -88,16 +91,20 @@ jest.mock("@/services/accounting/close-assurance-pack.service", () => ({
 import { revalidatePath } from "next/cache"
 
 import {
+  acceptMissingCloseEvidenceResponse,
   commentOnCloseFinding,
   requestMissingCloseEvidence,
+  respondToMissingCloseEvidence,
   approveCloseWaiver,
   getCloseAssuranceDashboard,
   runCloseAssurance,
 } from "@/services/accounting/close-assurance.service"
 import { exportClosePack } from "@/services/accounting/close-assurance-pack.service"
 import {
+  acceptMissingCloseEvidenceResponseAction,
   commentOnCloseFindingAction,
   requestMissingCloseEvidenceAction,
+  respondToMissingCloseEvidenceAction,
   approveCloseWaiverAction,
   exportCertifiedClosePackAction,
   exportDraftClosePackAction,
@@ -105,10 +112,14 @@ import {
   runCloseAssuranceAction,
 } from "../close-assurance.actions"
 
+const mockAcceptMissingCloseEvidenceResponse =
+  acceptMissingCloseEvidenceResponse as jest.Mock
 const mockGetCloseAssuranceDashboard = getCloseAssuranceDashboard as jest.Mock
 const mockRunCloseAssurance = runCloseAssurance as jest.Mock
 const mockCommentOnCloseFinding = commentOnCloseFinding as jest.Mock
 const mockRequestMissingCloseEvidence = requestMissingCloseEvidence as jest.Mock
+const mockRespondToMissingCloseEvidence =
+  respondToMissingCloseEvidence as jest.Mock
 const mockApproveCloseWaiver = approveCloseWaiver as jest.Mock
 const mockExportClosePack = exportClosePack as jest.Mock
 const mockRevalidatePath = revalidatePath as jest.Mock
@@ -128,6 +139,29 @@ describe("close assurance actions", () => {
       findingId: "finding-1",
       requestedFromId: "client-user-1",
       status: "OPEN",
+    })
+    mockRespondToMissingCloseEvidence.mockResolvedValue({
+      id: "response-1",
+      requestId: "request-1",
+      organizationId: "org-session",
+      periodId: "period-1",
+      findingId: "finding-1",
+      respondedById: "user-session",
+      status: "SUBMITTED",
+    })
+    mockAcceptMissingCloseEvidenceResponse.mockResolvedValue({
+      kind: "ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE",
+      version: 1,
+      id: "acceptance-1",
+      organizationId: "client-org",
+      periodId: "period-1",
+      closeRunId: "close-run-1",
+      findingId: "finding-1",
+      requestId: "request-1",
+      responseId: "response-1",
+      acceptedById: "user-session",
+      decision: "ACCEPTED",
+      findingStatus: "RESOLVED",
     })
     mockExportClosePack.mockResolvedValue({
       exportId: "export-1",
@@ -233,6 +267,153 @@ describe("close assurance actions", () => {
       "/dashboard/accounting/close/period-1",
       "page",
     )
+  })
+
+  it("submits a missing-proof response through protected server authority", async () => {
+    const store = globalThis as typeof globalThis & {
+      __closeAssuranceProtectOptions?: Array<Record<string, unknown>>
+    }
+    expect(store.__closeAssuranceProtectOptions).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          permission: "accounting.close.finding.comment",
+          auditResource: "AccountantComment",
+          auditAllowed: true,
+        }),
+      ]),
+    )
+
+    const result = await respondToMissingCloseEvidenceAction({
+      requestId: "request-1",
+      responseText: "The signed bank statement has been delivered for review.",
+      correlationId: "missing-proof-response-corr-1",
+      organizationId: "attacker-org",
+      actorId: "attacker-user",
+      requestedFromId: "attacker-user",
+      requestedById: "attacker-accountant",
+      findingId: "attacker-finding",
+      permissions: ["*"],
+    })
+
+    expect(result.success).toBe(true)
+    expect(mockRespondToMissingCloseEvidence).toHaveBeenCalledWith(
+      "org-session",
+      {
+        requestId: "request-1",
+        responseText:
+          "The signed bank statement has been delivered for review.",
+        correlationId: "missing-proof-response-corr-1",
+      },
+      {
+        actorId: "user-session",
+        actorPermissions: mockPermissions,
+      },
+    )
+    expect(mockRevalidatePath).toHaveBeenCalledWith(
+      "/dashboard/accounting/close/period-1",
+      "page",
+    )
+  })
+
+  it("accepts a missing-proof response through protected fresh accountant authority", async () => {
+    const store = globalThis as typeof globalThis & {
+      __closeAssuranceProtectOptions?: Array<Record<string, unknown>>
+    }
+    expect(store.__closeAssuranceProtectOptions).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          permission: "accounting.close.accountant.review",
+          auditResource: "CloseAssuranceFinding",
+          auditAllowed: true,
+          freshAuth: { maxAgeSeconds: 300 },
+        }),
+      ]),
+    )
+
+    const result = await acceptMissingCloseEvidenceResponseAction({
+      clientOrganizationId: "client-org",
+      requestId: "request-1",
+      responseId: "response-1",
+      resolutionNotes: "Response evidence reviewed and accepted for this finding.",
+      correlationId: "missing-proof-acceptance-corr-1",
+      organizationId: "attacker-org",
+      actorId: "attacker-user",
+      respondedById: "attacker-user",
+      findingId: "attacker-finding",
+      decision: "REJECTED",
+      findingStatus: "RESOLVED",
+      resolvedAt: "1900-01-01T00:00:00.000Z",
+      lastAuthAt: "1900-01-01T00:00:00.000Z",
+      now: "1900-01-01T00:00:00.000Z",
+      permissions: ["*"],
+    })
+
+    expect(result.success).toBe(true)
+    expect(mockAcceptMissingCloseEvidenceResponse).toHaveBeenCalledWith(
+      "org-session",
+      {
+        clientOrganizationId: "client-org",
+        requestId: "request-1",
+        responseId: "response-1",
+        resolutionNotes:
+          "Response evidence reviewed and accepted for this finding.",
+        correlationId: "missing-proof-acceptance-corr-1",
+      },
+      {
+        actorId: "user-session",
+        actorPermissions: mockPermissions,
+        freshAuth: {
+          actorId: "user-session",
+          organizationId: "org-session",
+          lastAuthAt: new Date("2026-08-02T08:30:00.000Z"),
+        },
+      },
+    )
+    expect(mockRevalidatePath).toHaveBeenCalledWith(
+      "/dashboard/accounting/close/period-1",
+      "page",
+    )
+  })
+
+  it.each([
+    ["missing evidence", undefined],
+    ["user identity", freshAuthFixture({ userId: "other-user" })],
+    ["tenant identity", freshAuthFixture({ tenantId: "other-org" })],
+    [
+      "assurance organization",
+      freshAuthFixture({ assuranceOrganizationId: "other-org" }),
+    ],
+    ["password assurance", freshAuthFixture({ assuranceLevel: 0 })],
+    [
+      "authentication timestamp",
+      freshAuthFixture({ lastAuthAt: Date.parse("2026-08-02T08:29:00.000Z") }),
+    ],
+  ])("fails closed for missing-proof acceptance %s mismatch", async (
+    _name,
+    freshAuth,
+  ) => {
+    setCloseAssuranceActionContextOverride({ freshAuth })
+
+    await expect(
+      acceptMissingCloseEvidenceResponseAction({
+        requestId: "request-1",
+        responseId: "response-1",
+        resolutionNotes:
+          "Response evidence reviewed and accepted for this finding.",
+      }),
+    ).rejects.toThrow("Fresh authentication required")
+
+    expect(mockAcceptMissingCloseEvidenceResponse).not.toHaveBeenCalled()
+  })
+
+  it("checks acceptance fresh authentication before parsing malformed input", async () => {
+    setCloseAssuranceActionContextOverride({ freshAuth: undefined })
+
+    await expect(
+      acceptMissingCloseEvidenceResponseAction({ requestId: 42 }),
+    ).rejects.toThrow("Fresh authentication required")
+
+    expect(mockAcceptMissingCloseEvidenceResponse).not.toHaveBeenCalled()
   })
 
   it("exports draft close packs with tenant and actor context", async () => {

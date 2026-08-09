@@ -790,6 +790,73 @@ describe("manager action center service", () => {
     )
   })
 
+  it("moves a submitted missing-proof response into the accountant waiting run sheet", async () => {
+    mockTenantReadSources()
+    const baseQueue = missingProofQueue()
+    const baseRequest = baseQueue.requests[0]
+    mockGetClientMissingCloseEvidenceRequestQueue.mockResolvedValue(
+      missingProofQueue({
+        summary: {
+          total: 1,
+          awaitingResponse: 0,
+          responseSubmitted: 1,
+          overdue: 0,
+          dueWithin72Hours: 0,
+          scheduled: 0,
+          invalidEvidence: 0,
+          invalidRequestEvidence: 0,
+          invalidResponseEvidence: 0,
+          truncated: false,
+        },
+        requests: [
+          {
+            ...baseRequest,
+            workflowState: "RESPONSE_SUBMITTED",
+            finding: { ...baseRequest.finding, status: "IN_REVIEW" },
+            response: {
+              responseId: "response-1",
+              correlationId: "response-correlation-1",
+              respondedById: "user-1",
+              submittedAt: "2026-06-20T09:00:00.000Z",
+              status: "SUBMITTED",
+            },
+          },
+        ],
+      }),
+    )
+    const context = accessContext({
+      permissions: ["dashboard.read", "accounting.close.read"],
+    })
+
+    const data = await getManagerActionCenterDataFromResolvedAccess(
+      { accessContext: context, now: generatedAt },
+      tenantAccessDecision(context),
+    )
+    const action = data.actionItems.find(
+      (item) => item.id === "accountant-missing-proof:request-1",
+    )
+    const waiting = data.runSheetGroups.find((group) => group.id === "waiting")
+
+    expect(action).toEqual(
+      expect.objectContaining({
+        title: "Proof response submitted: Supplier statement missing",
+        nextStep: "Response submitted; awaiting accountant review.",
+        status: "assigned",
+        assignedRole: "accountant",
+        waitingOn: "ACCOUNTANT_REVIEW",
+        dueState: "scheduled",
+        state: "partial",
+        blockers: [],
+      }),
+    )
+    expect(waiting?.actions).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: "accountant-missing-proof:request-1" }),
+      ]),
+    )
+    expect(action).not.toHaveProperty("response")
+  })
+
   it("hides the missing-proof source before entitlement evaluation without close RBAC", async () => {
     mockTenantReadSources()
     const context = accessContext({ permissions: ["dashboard.read"] })
@@ -884,10 +951,14 @@ describe("manager action center service", () => {
       missingProofQueue({
         summary: {
           total: 0,
+          awaitingResponse: 0,
+          responseSubmitted: 0,
           overdue: 0,
           dueWithin72Hours: 0,
           scheduled: 0,
           invalidEvidence: 1,
+          invalidRequestEvidence: 1,
+          invalidResponseEvidence: 0,
           truncated: false,
         },
         requests: [],
@@ -938,6 +1009,69 @@ describe("manager action center service", () => {
       ]),
     )
   })
+
+  it("projects invalid stored response evidence as a generic redacted blocker", async () => {
+    mockTenantReadSources()
+    mockGetClientMissingCloseEvidenceRequestQueue.mockResolvedValue(
+      missingProofQueue({
+        summary: {
+          total: 0,
+          awaitingResponse: 0,
+          responseSubmitted: 0,
+          overdue: 0,
+          dueWithin72Hours: 0,
+          scheduled: 0,
+          invalidEvidence: 1,
+          invalidRequestEvidence: 0,
+          invalidResponseEvidence: 1,
+          truncated: false,
+        },
+        requests: [],
+        blockers: [
+          {
+            id: "missing-close-evidence-response:request-3:invalid-evidence",
+            findingId: "finding-3",
+            requestId: "request-3",
+            reason: "INVALID_RESPONSE_EVIDENCE",
+            detail: "Stored missing-proof response evidence is incomplete.",
+          },
+        ],
+      }),
+    )
+    const context = accessContext({
+      permissions: ["dashboard.read", "accounting.close.read"],
+    })
+
+    const data = await getManagerActionCenterDataFromResolvedAccess(
+      { accessContext: context, now: generatedAt },
+      tenantAccessDecision(context),
+    )
+
+    expect(data.actionItems).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "accountant-missing-proof-blocker:request-3",
+          title: "Missing-proof response evidence needs review",
+          assignedRole: "accountant",
+          state: "blocked",
+          blockers: [
+            expect.objectContaining({
+              gate: "client_missing_proof_response",
+              title: "Missing-proof response evidence is invalid",
+              detail: "Stored missing-proof response evidence is incomplete.",
+              nextAction:
+                "Open Close & Assurance and review the stored response evidence.",
+            }),
+          ],
+          redactions: [
+            expect.objectContaining({
+              field: "accountantComment.metadata",
+            }),
+          ],
+        }),
+      ]),
+    )
+  })
 })
 
 function missingProofQueue(
@@ -945,7 +1079,7 @@ function missingProofQueue(
 ): ClientMissingCloseEvidenceRequestQueue {
   const base: ClientMissingCloseEvidenceRequestQueue = {
     kind: "CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE",
-    version: 1,
+    version: 2,
     organizationId: "org-1",
     actorId: "user-1",
     generatedAt,
@@ -965,14 +1099,20 @@ function missingProofQueue(
       readPermissionRequired: "accounting.close.read",
       serviceClockOwned: true,
       rawMetadataExposed: false,
+      responseBodyExposed: false,
+      responseStateServiceOwned: true,
       maxItems: 100,
     },
     summary: {
       total: 1,
+      awaitingResponse: 1,
+      responseSubmitted: 0,
       overdue: 0,
       dueWithin72Hours: 1,
       scheduled: 0,
       invalidEvidence: 0,
+      invalidRequestEvidence: 0,
+      invalidResponseEvidence: 0,
       truncated: false,
     },
     requests: [
@@ -986,6 +1126,8 @@ function missingProofQueue(
         requestText: "Upload the supplier statement.",
         dueAt: generatedAt,
         createdAt: "2026-06-19T10:00:00.000Z",
+        workflowState: "AWAITING_RECIPIENT_RESPONSE",
+        response: null,
         finding: {
           domain: "DATA_TRUST",
           severity: "HIGH",

@@ -3,8 +3,8 @@ import { localizePath, pickLocale } from "@/i18n/routing"
 import { redirect } from "next/navigation"
 
 // Legacy item-create alias. The canonical create page is
-// at /dashboard/inventory/items/create (uses ModernCreateItemForm with the
-// bilingual EN/FR inputs). Forward here so we don't maintain two parallel
+// at /dashboard/inventory/items/create (uses CreateItemWizard with the
+// bilingual EN/FR inputs). Forward here so we don't maintain parallel
 // item-create UIs.
 export default async function NewItemPage({
   params,

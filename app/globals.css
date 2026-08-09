@@ -619,6 +619,18 @@
     color: var(--dash-text-muted);
   }
 
+  .dashboard-landing-theme .dashboard-table-toolbar {
+    border-color: var(--dash-border-subtle);
+    border-radius: 0.5rem;
+    background: color-mix(in srgb, var(--dash-surface) 70%, transparent);
+    padding: 0.75rem;
+  }
+
+  .dashboard-landing-theme .dashboard-table-toolbar .dashboard-control {
+    min-height: 2.25rem;
+    height: 2.25rem;
+  }
+
   .enterprise-floating-surface {
     --floating-text: #f7faf8;
     --floating-muted: #a9b8b2;
@@ -742,19 +754,37 @@
     overflow: hidden;
   }
 
+  .dashboard-landing-theme .dashboard-table-frame,
+  .dark .dashboard-table-frame {
+    border: 1px solid var(--dash-border-subtle, hsl(var(--border)));
+    border-radius: 0.5rem;
+    background: color-mix(in srgb, var(--dash-surface, hsl(var(--card))) 72%, transparent);
+  }
+
+  .dashboard-data-table .dashboard-table-frame {
+    border: 0;
+    border-radius: inherit;
+    background: transparent;
+  }
+
   .dashboard-data-table {
     color: var(--dash-text-muted);
   }
 
-  .dashboard-data-table table {
+  .dashboard-data-table table,
+  .dashboard-landing-theme .dashboard-table-base {
     min-width: 1040px;
   }
 
-  .dashboard-data-table thead {
+  .dashboard-data-table thead,
+  .dashboard-landing-theme .dashboard-table-base thead,
+  .dashboard-landing-theme table:not(.dashboard-table-base) thead {
     background: rgba(24, 38, 45, 0.9);
   }
 
-  .dashboard-data-table th {
+  .dashboard-data-table th,
+  .dashboard-landing-theme .dashboard-table-base th,
+  .dashboard-landing-theme table:not(.dashboard-table-base) th {
     height: 2.85rem;
     color: var(--dash-text-soft);
     font-size: 0.72rem;
@@ -763,23 +793,33 @@
     text-transform: uppercase;
   }
 
-  .dashboard-data-table tr {
+  .dashboard-data-table tr,
+  .dashboard-landing-theme .dashboard-table-base tr,
+  .dashboard-landing-theme table:not(.dashboard-table-base) tr {
     border-color: var(--dash-border-subtle);
   }
 
-  .dashboard-data-table tbody tr {
+  .dashboard-data-table tbody tr,
+  .dashboard-landing-theme .dashboard-table-base tbody tr,
+  .dashboard-landing-theme table:not(.dashboard-table-base) tbody tr {
     background: rgba(29, 45, 53, 0.42);
   }
 
-  .dashboard-data-table tbody tr:hover {
+  .dashboard-data-table tbody tr:hover,
+  .dashboard-landing-theme .dashboard-table-base tbody tr:hover,
+  .dashboard-landing-theme table:not(.dashboard-table-base) tbody tr:hover {
     background: rgba(73, 198, 229, 0.1);
   }
 
-  .dashboard-data-table td {
+  .dashboard-data-table td,
+  .dashboard-landing-theme .dashboard-table-base td,
+  .dashboard-landing-theme table:not(.dashboard-table-base) td {
     color: var(--dash-text-muted);
   }
 
-  .dashboard-data-table tfoot {
+  .dashboard-data-table tfoot,
+  .dashboard-landing-theme .dashboard-table-base tfoot,
+  .dashboard-landing-theme table:not(.dashboard-table-base) tfoot {
     background: rgba(24, 38, 45, 0.66);
   }
 

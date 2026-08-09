@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "next dev -p 3000",
     "dev:turbopack": "next dev --turbopack -p 3000",
+    "worker:referrals": "npx ts-node --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\",\\\"moduleResolution\\\":\\\"node\\\"}\" -r tsconfig-paths/register scripts/referral-delivery-worker.ts",
+    "referral:postgres:smoke": "npx ts-node --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\",\\\"moduleResolution\\\":\\\"node\\\",\\\"jsx\\\":\\\"react-jsx\\\"}\" -r tsconfig-paths/register scripts/customer-referral-postgres-smoke.ts",
     "build": "npm run release:secrets:preflight && npm run prisma:migrate:deploy:safe && npm run build:linted",
     "build:app": "node scripts/build-app-safe.js",
     "build:app:next": "next build",
@@ -13,7 +15,6 @@
     "roadmap:top12:with-prisma": "node scripts/roadmap-top12-runner.js --with-prisma --force-prisma",
     "roadmap:top12:full": "node scripts/roadmap-top12-runner.js --skip-prisma",
     "roadmap:top12:full:with-prisma": "node scripts/roadmap-top12-runner.js --with-prisma --force-prisma",
-
     "build:linted": "npm run lint && npm run build:app",
     "roadmap:top12:legacy": "node scripts/roadmap-top12-runner.js --skip-prisma",
     "start": "next start",
@@ -23,6 +24,8 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:migrate:status": "prisma migrate status",
+    "prisma:migration:history:health": "node scripts/prisma-migration-history-health-check.js --mode fail --out what-next/prisma-migration-history-health.md --json-out what-next/prisma-migration-history-health.json",
+    "prisma:fresh-replay:certify": "node scripts/prisma-fresh-replay-certification.js --mode fail --out what-next/prisma-fresh-replay-certification.md --json-out what-next/prisma-fresh-replay-certification.json",
     "prisma:migration:safety:gate": "node scripts/prisma-production-migration-gate.js --mode fail --environment local --out what-next/prisma-migration-deployment-readiness.md --json-out what-next/prisma-migration-deployment-readiness.json",
     "prisma:migration:release:preflight": "node scripts/prisma-production-migration-gate.js --mode fail --environment production --out what-next/prisma-migration-deployment-readiness.md --json-out what-next/prisma-migration-deployment-readiness.json",
     "prisma:migrate:deploy:safe": "node scripts/prisma-production-migration-gate.js --mode execute --environment auto --out what-next/prisma-migration-deployment-readiness.md --json-out what-next/prisma-migration-deployment-readiness.json",
@@ -82,8 +85,8 @@
     "inventory:boundary:fail": "node scripts/inventory-boundary-gate.js --mode fail",
     "policy:gates": "npm run inventory:boundary:fail && npm run service:boundary:fail && npm run api:guard:inventory:fail && npm run public-identity:abuse:gate && npm run ledger:close-truth:gate && npm run payment:cash-truth:gate && npm run purchasing:ap:gate && npm run offline:pos:replay:gate && npm run statutory:country-pack:gate && npm run report:trust:export:gate && npm run role:cockpit:gate && npm run settings:surface:fail && npm run workflow:assurance:runtime-check && npm run workflow:assurance:release-gate && npm run kontava:moat:release-gate && npm run receipt:token:config-gate && npm run payroll:immutability:runtime && npm run hard-delete:fail && npm run regulatory:hardcode:fail && npm run demo:trust:fail && npm run error:boundary:fail && npm run ci:release:gate && npm run prisma:migration:safety:gate && npm run release:secrets:preflight && npm run release:evidence:gate",
     "verify:repo": "npm run prisma:validate && npm run typecheck && npm run lint && npm run policy:gates && npm run build:app && npm test -- --runInBand",
-    "verify:ci": "npm run ci:release:gate && npm run prisma:migrate:deploy && npm run prisma:migrate:status && npm run verify:repo",
-    "verify:release": "npm run verify:repo && npm run release:secrets:preflight:release && npm run prisma:migration:release:preflight && npm run public-identity:abuse:gate:release && npm run receipt:token:config-gate:release && npm run release:evidence:gate:release && npm run agent:phased-execution:audit:gate && npm run agent:phase2a:freeze:gate && npm run agent:credential-rotation:gate && npm run agent:operational-release:gate && npm run agent:phase2b:entry:gate",
+    "verify:ci": "npm run ci:release:gate && npm run prisma:migrate:deploy && npm run prisma:migration:history:health && npm run prisma:migrate:status && npm run verify:repo",
+    "verify:release": "npm run verify:repo && npm run release:secrets:preflight:release && npm run prisma:migration:release:preflight && npm run prisma:migration:history:health && npm run public-identity:abuse:gate:release && npm run receipt:token:config-gate:release && npm run release:evidence:gate:release && npm run agent:phased-execution:audit:gate && npm run agent:phase2a:freeze:gate && npm run agent:credential-rotation:gate && npm run agent:operational-release:gate && npm run agent:phase2b:entry:gate",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
@@ -155,10 +158,17 @@
     "ui:gate:landing-packages": "jest scripts/__tests__/landing-packages-content.test.js --runInBand",
     "ui:smoke:landing-packages": "node scripts/landing-packages-browser-smoke.js",
     "ui:gate:landing-navigation-localization": "jest scripts/__tests__/landing-navigation-localization.test.js --runInBand",
-    "ui:smoke:landing-navigation-localization": "node scripts/landing-navigation-localization-browser-smoke.js"
+    "ui:smoke:landing-navigation-localization": "node scripts/landing-navigation-localization-browser-smoke.js",
+    "referral:pilot:evidence:report": "node scripts/customer-referral-pilot-evidence-gate.js --mode report",
+    "referral:pilot:evidence:gate": "node scripts/customer-referral-pilot-evidence-gate.js --mode fail",
+    "referral:release:scope:report": "node scripts/customer-referral-release-scope-gate.js --mode report",
+    "referral:release:scope:gate": "node scripts/customer-referral-release-scope-gate.js --mode fail",
+    "referral:release:hunks:report": "node scripts/customer-referral-shared-hunk-gate.js --mode report",
+    "referral:release:hunks:gate": "node scripts/customer-referral-shared-hunk-gate.js --mode fail"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
+    "@prisma/adapter-pg": "^7.9.1",
     "@prisma/client": "6.19.3",
     "@radix-ui/react-accordion": "^1.2.3",
     "@radix-ui/react-alert-dialog": "^1.1.4",
@@ -232,6 +242,7 @@
     "next-intl": "^4.12.0",
     "next-themes": "^0.4.4",
     "otpauth": "^9.4.1",
+    "pg": "^8.23.0",
     "prisma": "6.19.3",
     "qrcode": "^1.5.4",
     "react": "^19.1.1",
@@ -288,4 +299,3 @@
     "effect": "3.21.0"
   }
 }
-

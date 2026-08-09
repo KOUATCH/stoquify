@@ -53,12 +53,14 @@ export function useAROpenItemsHistoryWorkbench() {
     mutationFn: async () => {
       const response = await prepareAROpenItemsHistoryExportAction({
         filters: queryFilters,
-        rowCount: historyQuery.data?.summary.itemCount ?? 0,
       })
       if (!response.success) throw new Error(response.error || "AR open items export failed")
       return response.data
     },
-    onSuccess: () => setExportStatus("ready"),
+    onSuccess: (exportFile) => {
+      downloadExport(exportFile)
+      setExportStatus("ready")
+    },
     onError: (error) => setExportStatus(error instanceof Error ? error.message : "AR open items export failed"),
   })
   const replaceWith = useCallback(
@@ -101,4 +103,21 @@ function stringParam(value: string | null) {
 
 function validDateOnly(value: string | null) {
   return value && /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : undefined
+}
+
+function downloadExport(exportFile: {
+  content: string
+  fileName: string
+  mimeType: string
+}) {
+  const url = URL.createObjectURL(
+    new Blob([exportFile.content], { type: exportFile.mimeType }),
+  )
+  const anchor = document.createElement("a")
+  anchor.href = url
+  anchor.download = exportFile.fileName
+  document.body.appendChild(anchor)
+  anchor.click()
+  anchor.remove()
+  URL.revokeObjectURL(url)
 }

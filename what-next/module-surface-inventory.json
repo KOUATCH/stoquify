@@ -1,6 +1,6 @@
 {
   "summary": {
-    "generatedAt": "2026-08-01T18:02:15.147Z",
+    "generatedAt": "2026-08-06T09:43:22.585Z",
     "mode": "report",
     "sourceFiles": {
       "sidebar": true,
@@ -12,7 +12,7 @@
       "apiGuardInventory": true
     },
     "catalogCount": 19,
-    "recordCount": 386,
+    "recordCount": 387,
     "bySurfaceType": {
       "action": 138,
       "api_evidence": 2,
@@ -22,14 +22,14 @@
       "layout": 10,
       "module_service": 3,
       "navigation": 81,
-      "page": 123,
+      "page": 124,
       "report_evidence": 3,
       "report": 3
     },
     "byClassification": {
       "not applicable: internal action response helper": 1,
-      "mapped": 352,
-      "enforcement candidate": 259,
+      "mapped": 353,
+      "enforcement candidate": 257,
       "unmapped": 6,
       "delegated re-export": 7,
       "not applicable: public identity boundary": 1,
@@ -850,13 +850,13 @@
       "surfaceType": "action",
       "moduleApplicability": "required",
       "moduleSlug": "inventory",
-      "permission": "inventory.items.read",
+      "permission": "inventory.items.create",
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/item/listItemsAction.ts",
@@ -4637,6 +4637,20 @@
       "classification": "mapped, enforcement candidate"
     },
     {
+      "file": "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/edit/page.tsx",
+      "surface": "/dashboard/inventory/items/[id]/edit",
+      "surfaceType": "page",
+      "moduleApplicability": "required",
+      "moduleSlug": "inventory",
+      "permission": "inventory.items.update",
+      "guard": "checkPermission",
+      "observeOrEnforce": "enforce",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped"
+    },
+    {
       "file": "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/others/page.tsx",
       "surface": "/dashboard/inventory/items/[id]/others",
       "surfaceType": "page",
@@ -4672,11 +4686,11 @@
       "moduleSlug": "inventory",
       "permission": "inventory.items.create",
       "guard": "checkPermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "observe",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/inventory/items/new/page.tsx",

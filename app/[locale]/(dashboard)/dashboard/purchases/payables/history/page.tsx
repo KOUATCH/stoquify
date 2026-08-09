@@ -1,5 +1,5 @@
 import { APHistoryWorkbench } from "@/components/purchasing/APHistoryWorkbench"
-import { requirePermission } from "@/lib/security/rbac"
+import { requireAnyPermission } from "@/lib/security/rbac"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 
 export const metadata = {
@@ -8,7 +8,11 @@ export const metadata = {
 }
 
 export default async function SupplierAPHistoryPage() {
-  const ctx = await requirePermission("purchasing.ap.invoice.view", {
+  const ctx = await requireAnyPermission([
+    "purchasing.ap.invoice.view",
+    "finance.payables.read",
+    "purchases.suppliers.read",
+  ], {
     resource: "SupplierAPHistory",
   })
   await observeModuleAccess({

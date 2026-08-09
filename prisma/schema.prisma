@@ -290,6 +290,22 @@ model Organization {
   expenseCategories                       ExpenseCategory[]
   expenses                                Expense[]
   customerLedgerEntries                   CustomerLedgerEntry[]
+  customerReceivableDocuments             CustomerReceivableDocument[]
+  customerReceivableDocumentStates        CustomerReceivableDocumentState[]
+  customerStatementSnapshots              CustomerStatementSnapshot[]
+  customerStatementAccessTokens           CustomerStatementAccessToken[]
+  customerStatementAccessLogs             CustomerStatementAccessLog[]
+  customerStatementRecipientActions       CustomerStatementRecipientAction[]
+  customerStatementRecipientActionStates  CustomerStatementRecipientActionState[]
+  customerStatementDeliveries             CustomerStatementDelivery[]
+  customerStatementDeliveryStates         CustomerStatementDeliveryState[]
+  referralAttributions                    ReferralAttribution[]
+  referralAttributionEvents               ReferralAttributionEvent[]               @relation("ReferralAttributionSourceOrganization")
+  referralConversionEvents                ReferralAttributionEvent[]               @relation("ReferralAttributionTargetOrganization")
+  accountantClientInvites                 AccountantClientInvite[]
+  accountantClientInviteStates            AccountantClientInviteState[]
+  customerSettlements                     CustomerSettlement[]
+  customerSettlementAllocations           CustomerSettlementAllocation[]
   supplierLedgerEntries                   SupplierLedgerEntry[]
   accountingSettings                      OrganizationAccountingSettings?
   fiscalYears                             FiscalYear[]
@@ -1106,8 +1122,11 @@ model Customer {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  salesOrders   SalesOrder[]
-  ledgerEntries CustomerLedgerEntry[]
+  salesOrders         SalesOrder[]
+  ledgerEntries       CustomerLedgerEntry[]
+  receivableDocuments CustomerReceivableDocument[]
+  statementSnapshots  CustomerStatementSnapshot[]
+  settlements         CustomerSettlement[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -3137,9 +3156,11 @@ model SalesOrder {
   sessionId String?
   session   POSSession? @relation(fields: [sessionId], references: [id])
 
-  lines                     SalesOrderLine[]
-  payments                  Payment[]
-  publicReceiptAccessTokens PublicReceiptAccessToken[]
+  lines                         SalesOrderLine[]
+  payments                      Payment[]
+  publicReceiptAccessTokens     PublicReceiptAccessToken[]
+  customerReceivableDocuments   CustomerReceivableDocument[]
+  customerSettlementAllocations CustomerSettlementAllocation[]
 
   deletedAt DateTime?
   createdAt DateTime  @default(now())
@@ -5078,12 +5099,734 @@ model CustomerLedgerEntry {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
 
+  settlementAllocation         CustomerSettlementAllocation? @relation("CustomerSettlementAllocationLedgerEntry")
+  settlementReversalAllocation CustomerSettlementAllocation? @relation("CustomerSettlementAllocationReversalLedgerEntry")
+
   createdAt DateTime @default(now())
 
   @@index([customerId, entryDate]) // hot: customer statement query
   @@index([referenceType, referenceId])
   @@index([organizationId, entryDate])
   @@map("customer_ledger_entries")
+}
+
+enum CustomerReceivableDocumentStatus {
+  DRAFT
+  ISSUED
+  PARTIALLY_PAID
+  PAID
+  CANCELLED
+  VOIDED
+}
+
+/// Immutable invoice-grade receivable identity. Financial identity, source
+/// snapshots, and hashes are append-only after insertion; lifecycle changes
+/// are recorded in CustomerReceivableDocumentState rather than overwriting
+/// the posted document.
+model CustomerReceivableDocument {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Restrict)
+
+  sourceSalesOrderId String
+  sourceSalesOrder   SalesOrder @relation(fields: [sourceSalesOrderId], references: [id], onDelete: Restrict)
+
+  documentNumber String
+  version        Int    @default(1)
+  sourceVersion  Int    @default(1)
+
+  issuedAt         DateTime
+  invoiceDate      DateTime
+  dueDate          DateTime
+  paymentTermsDays Int
+
+  currency          String
+  currencyPrecision Int    @default(2)
+
+  subtotal            Decimal @db.Decimal(14, 2)
+  taxAmount           Decimal @db.Decimal(14, 2)
+  shippingAmount      Decimal @default(0) @db.Decimal(14, 2)
+  discountAmount      Decimal @default(0) @db.Decimal(14, 2)
+  totalAmount         Decimal @db.Decimal(14, 2)
+  initialPaidAmount   Decimal @default(0) @db.Decimal(14, 2)
+  initialUnpaidAmount Decimal @db.Decimal(14, 2)
+
+  organizationSnapshot Json
+  customerSnapshot     Json
+  sourceSnapshot       Json
+  metadata             Json?
+
+  documentHash       String
+  sourceEvidenceHash String
+  metadataHash       String
+
+  issuedById String
+
+  supersedesDocumentId  String?
+  supersedesDocument    CustomerReceivableDocument?  @relation("CustomerReceivableDocumentSupersession", fields: [organizationId, supersedesDocumentId], references: [organizationId, id], onDelete: Restrict)
+  supersededByDocuments CustomerReceivableDocument[] @relation("CustomerReceivableDocumentSupersession")
+  correctionReason      String?
+
+  lifecycleStates           CustomerReceivableDocumentState[]
+  settlementAllocations     CustomerSettlementAllocation[]
+  statementRecipientActions CustomerStatementRecipientAction[]
+
+  createdAt DateTime @default(now())
+
+  @@unique([organizationId, id])
+  @@unique([organizationId, documentNumber, version])
+  @@unique([organizationId, sourceSalesOrderId, version])
+  @@index([organizationId, customerId, invoiceDate])
+  @@index([organizationId, customerId, dueDate])
+  @@index([organizationId, supersedesDocumentId])
+  @@map("customer_receivable_documents")
+}
+
+/// Append-only, hash-chained lifecycle and balance evidence for a posted
+/// receivable document. The latest version is a projection; prior versions
+/// remain the correction, settlement, reversal, cancellation, and void trail.
+model CustomerReceivableDocumentState {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  documentId String
+  document   CustomerReceivableDocument @relation(fields: [organizationId, documentId], references: [organizationId, id], onDelete: Restrict)
+
+  version Int
+  status  CustomerReceivableDocumentStatus
+
+  paidAmount   Decimal @db.Decimal(14, 2)
+  unpaidAmount Decimal @db.Decimal(14, 2)
+
+  effectiveAt DateTime
+  actorId     String
+  sourceType  String
+  sourceId    String
+  reason      String?
+
+  previousStateHash String?
+  stateHash         String
+  businessEventId   String?
+  evidenceHash      String
+  metadata          Json?
+
+  createdAt DateTime @default(now())
+
+  @@unique([organizationId, id])
+  @@unique([organizationId, documentId, version])
+  @@unique([organizationId, stateHash])
+  @@index([organizationId, documentId, effectiveAt])
+  @@index([organizationId, sourceType, sourceId])
+  @@map("customer_receivable_document_states")
+}
+
+/// Immutable, versioned customer statement evidence generated exclusively
+/// from posted receivable documents and their as-known lifecycle/ledger state.
+/// External access, delivery, disputes, and promises-to-pay are separate
+/// authority planes and do not mutate this snapshot.
+model CustomerStatementSnapshot {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Restrict)
+
+  statementNumber String
+  version         Int    @default(1)
+
+  periodStart     DateTime
+  periodEnd       DateTime
+  asOf            DateTime
+  recordedThrough DateTime
+  generatedAt     DateTime
+
+  currency          String
+  currencyPrecision Int    @default(2)
+
+  openingBalance Decimal @db.Decimal(14, 2)
+  periodDebits   Decimal @db.Decimal(14, 2)
+  periodCredits  Decimal @db.Decimal(14, 2)
+  closingBalance Decimal @db.Decimal(14, 2)
+  overdueBalance Decimal @db.Decimal(14, 2)
+
+  itemCount         Int
+  movementCount     Int
+  sourceItemCount   Int
+  includedItemCount Int
+  itemLimit         Int
+  truncated         Boolean @default(false)
+
+  organizationSnapshot Json
+  customerSnapshot     Json
+  statementPayload     Json
+  sourceTables         Json
+  sourceDocumentHashes Json
+  sourceStateHashes    Json
+  sourceLedgerEntryIds Json
+
+  contentHash            String
+  idempotencyKey         String
+  idempotencyPayloadHash String
+  correlationId          String
+  generatedById          String
+  businessEventId        String
+
+  supersedesStatementId  String?
+  supersedesStatement    CustomerStatementSnapshot?         @relation("CustomerStatementSnapshotSupersession", fields: [organizationId, supersedesStatementId], references: [organizationId, id], onDelete: Restrict)
+  supersededByStatements CustomerStatementSnapshot[]        @relation("CustomerStatementSnapshotSupersession")
+  accessTokens           CustomerStatementAccessToken[]
+  accessLogs             CustomerStatementAccessLog[]
+  recipientActions       CustomerStatementRecipientAction[]
+  deliveries             CustomerStatementDelivery[]
+  referralAttributions   ReferralAttribution[]
+
+  createdAt DateTime @default(now())
+
+  @@unique([organizationId, id])
+  @@unique([organizationId, statementNumber, version])
+  @@unique([organizationId, customerId, periodStart, periodEnd, currency, version], map: "customer_statement_scope_version_key")
+  @@unique([organizationId, idempotencyKey])
+  @@unique([organizationId, correlationId])
+  @@unique([organizationId, contentHash])
+  @@index([organizationId, customerId, periodEnd])
+  @@index([organizationId, customerId, currency, periodEnd])
+  @@index([organizationId, supersedesStatementId])
+  @@map("customer_statement_snapshots")
+}
+
+enum CustomerStatementAccessTokenStatus {
+  ACTIVE
+  REVOKED
+  EXPIRED
+}
+
+enum CustomerStatementAccessAction {
+  VIEW
+  DISPUTE
+  PROMISE_TO_PAY
+}
+
+enum CustomerStatementAccessOutcome {
+  GRANTED
+  DENIED
+}
+
+enum CustomerStatementRecipientActionType {
+  DISPUTE
+  PROMISE_TO_PAY
+}
+
+enum CustomerStatementRecipientActionStatus {
+  OPEN
+  ACKNOWLEDGED
+  RESOLVED
+  REJECTED
+  CANCELLED
+}
+
+model CustomerStatementAccessToken {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  statementSnapshotId String
+  statementSnapshot   CustomerStatementSnapshot @relation(fields: [organizationId, statementSnapshotId], references: [organizationId, id], onDelete: Restrict)
+
+  tokenHash            String
+  jtiHash              String
+  statementContentHash String
+  recipientHash        String?
+
+  referralAttributionId String?
+  referralAttribution   ReferralAttribution? @relation(fields: [organizationId, referralAttributionId], references: [organizationId, id], onDelete: Restrict)
+
+  allowView         Boolean                            @default(true)
+  allowDispute      Boolean                            @default(false)
+  allowPromiseToPay Boolean                            @default(false)
+  status            CustomerStatementAccessTokenStatus @default(ACTIVE)
+
+  issuedById String
+  issuedAt   DateTime
+  expiresAt  DateTime
+
+  revokedById      String?
+  revokedAt        DateTime?
+  revocationReason String?
+
+  lastAccessedAt DateTime?
+  accessCount    Int       @default(0)
+  metadata       Json?
+
+  accessLogs       CustomerStatementAccessLog[]
+  recipientActions CustomerStatementRecipientAction[]
+  deliveries       CustomerStatementDelivery[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([organizationId, id])
+  @@unique([organizationId, tokenHash])
+  @@unique([organizationId, jtiHash])
+  @@index([organizationId, statementSnapshotId, status])
+  @@index([organizationId, status, expiresAt])
+  @@map("customer_statement_access_tokens")
+}
+
+/// Redacted, append-only recipient access evidence. Raw tokens, IP addresses,
+/// user agents, recipient contacts, notes, and statement payloads are forbidden.
+model CustomerStatementAccessLog {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  statementSnapshotId String
+  statementSnapshot   CustomerStatementSnapshot @relation(fields: [organizationId, statementSnapshotId], references: [organizationId, id], onDelete: Restrict)
+
+  tokenId String
+  token   CustomerStatementAccessToken @relation(fields: [organizationId, tokenId], references: [organizationId, id], onDelete: Restrict)
+
+  action  CustomerStatementAccessAction
+  outcome CustomerStatementAccessOutcome
+
+  statementContentHash String
+  tokenHashPrefix      String
+  ipHash               String?
+  userAgentHash        String?
+  responseHash         String?
+  denialReason         String?
+  occurredAt           DateTime
+
+  createdAt DateTime @default(now())
+
+  @@index([organizationId, statementSnapshotId, occurredAt])
+  @@index([organizationId, tokenId, occurredAt])
+  @@map("customer_statement_access_logs")
+}
+
+/// Immutable recipient-submitted dispute or promise-to-pay command.
+/// Current workflow status is derived from the append-only state chain.
+model CustomerStatementRecipientAction {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  statementSnapshotId String
+  statementSnapshot   CustomerStatementSnapshot @relation(fields: [organizationId, statementSnapshotId], references: [organizationId, id], onDelete: Restrict)
+
+  tokenId String
+  token   CustomerStatementAccessToken @relation(fields: [organizationId, tokenId], references: [organizationId, id], onDelete: Restrict)
+
+  customerReceivableDocumentId String?
+  customerReceivableDocument   CustomerReceivableDocument? @relation(fields: [organizationId, customerReceivableDocumentId], references: [organizationId, id], onDelete: Restrict)
+
+  actionType      CustomerStatementRecipientActionType
+  requestedAmount Decimal?                             @db.Decimal(14, 2)
+  promisedFor     DateTime?
+  recipientNote   String
+  noteHash        String
+  payloadHash     String
+
+  idempotencyKey  String
+  correlationId   String
+  businessEventId String
+
+  states CustomerStatementRecipientActionState[]
+
+  createdAt DateTime @default(now())
+
+  @@unique([organizationId, id])
+  @@unique([organizationId, statementSnapshotId, idempotencyKey])
+  @@unique([organizationId, correlationId])
+  @@index([organizationId, statementSnapshotId, actionType, createdAt])
+  @@index([organizationId, customerReceivableDocumentId])
+  @@map("customer_statement_recipient_actions")
+}
+
+model CustomerStatementRecipientActionState {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  actionId String
+  action   CustomerStatementRecipientAction @relation(fields: [organizationId, actionId], references: [organizationId, id], onDelete: Restrict)
+
+  version Int
+  status  CustomerStatementRecipientActionStatus
+
+  effectiveAt DateTime
+  actorType   String
+  actorId     String?
+  reason      String?
+
+  previousStateHash String?
+  stateHash         String
+  evidenceHash      String
+  businessEventId   String?
+
+  createdAt DateTime @default(now())
+
+  @@unique([organizationId, actionId, version])
+  @@unique([organizationId, stateHash])
+  @@index([organizationId, actionId, effectiveAt])
+  @@map("customer_statement_recipient_action_states")
+}
+
+enum ReferralAttributionSource {
+  CUSTOMER_STATEMENT
+  ACCOUNTANT_INVITE
+}
+
+enum ReferralAttributionEventType {
+  IMPRESSION
+  CLICK
+  CONVERSION
+}
+
+enum AccountantClientInviteStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  REVOKED
+}
+
+enum CustomerStatementDeliveryChannel {
+  EMAIL
+  WHATSAPP
+}
+
+enum CustomerStatementDeliveryStatus {
+  QUEUED
+  SENT
+  DEFERRED
+  FAILED
+  DEAD_LETTER
+  CANCELLED
+}
+
+enum CustomerStatementConsentBasis {
+  EXPLICIT
+  RECIPIENT_REQUESTED
+}
+
+/// Stable, non-secret attribution attached to a professional external artifact.
+/// Events are recorded separately so the attribution identity never mutates.
+model ReferralAttribution {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  statementSnapshotId String?
+  statementSnapshot   CustomerStatementSnapshot? @relation(fields: [organizationId, statementSnapshotId], references: [organizationId, id], onDelete: Restrict)
+
+  sourceType   ReferralAttributionSource
+  sourceId     String
+  referralCode String                    @unique
+  campaign     String
+  channel      String?
+  createdById  String
+  evidenceHash String
+
+  accessTokens           CustomerStatementAccessToken[]
+  deliveries             CustomerStatementDelivery[]
+  events                 ReferralAttributionEvent[]
+  accountantClientInvite AccountantClientInvite?
+
+  createdAt DateTime @default(now())
+
+  @@unique([organizationId, id])
+  @@index([organizationId, sourceType, sourceId])
+  @@index([organizationId, campaign, createdAt])
+  @@map("referral_attributions")
+}
+
+/// Append-only, privacy-bounded referral funnel evidence.
+model ReferralAttributionEvent {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation("ReferralAttributionSourceOrganization", fields: [organizationId], references: [id], onDelete: Restrict)
+
+  attributionId String
+  attribution   ReferralAttribution @relation(fields: [organizationId, attributionId], references: [organizationId, id], onDelete: Restrict)
+
+  targetOrganizationId String?
+  targetOrganization   Organization? @relation("ReferralAttributionTargetOrganization", fields: [targetOrganizationId], references: [id], onDelete: Restrict)
+
+  eventType      ReferralAttributionEventType
+  sourceEventKey String
+  subjectHash    String?
+  payloadHash    String
+  occurredAt     DateTime
+  metadata       Json?
+
+  createdAt DateTime @default(now())
+
+  @@unique([organizationId, attributionId, eventType, sourceEventKey])
+  @@index([organizationId, eventType, occurredAt])
+  @@index([targetOrganizationId, eventType])
+  @@map("referral_attribution_events")
+}
+
+/// Immutable, consent-bound invitation command for a net-new accountant.
+/// Lifecycle is represented by the append-only AccountantClientInviteState chain.
+model AccountantClientInvite {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  attributionId String              @unique
+  attribution   ReferralAttribution @relation(fields: [organizationId, attributionId], references: [organizationId, id], onDelete: Restrict)
+
+  inviteTokenHash String @unique
+  emailHash       String
+  redactedEmail   String
+
+  accountantFirmName               String
+  accountantFirmRegistrationNumber String?
+  role                             AccountantAccessRole
+
+  consentGrantedById  String
+  consentGrantedAt    DateTime
+  consentEvidenceHash String
+  effectiveFrom       DateTime
+  expiresAt           DateTime
+
+  idempotencyKey  String
+  correlationId   String
+  evidenceHash    String
+  businessEventId String
+  outboxId        String @unique
+
+  states AccountantClientInviteState[]
+
+  createdAt DateTime @default(now())
+
+  @@unique([organizationId, id])
+  @@unique([organizationId, attributionId])
+  @@unique([organizationId, idempotencyKey])
+  @@unique([organizationId, correlationId])
+  @@index([organizationId, emailHash, expiresAt])
+  @@index([organizationId, createdAt])
+  @@map("accountant_client_invites")
+}
+
+/// Append-only accountant invitation lifecycle evidence.
+model AccountantClientInviteState {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  inviteId String
+  invite   AccountantClientInvite @relation(fields: [organizationId, inviteId], references: [organizationId, id], onDelete: Restrict)
+
+  version    Int
+  status     AccountantClientInviteStatus
+  occurredAt DateTime
+  actorId    String?
+
+  accountantUserId String?
+  accessGrantId    String?
+  reason           String?
+
+  previousStateHash String?
+  stateHash         String
+  evidenceHash      String
+  businessEventId   String?
+
+  createdAt DateTime @default(now())
+
+  @@unique([organizationId, inviteId, version])
+  @@unique([organizationId, stateHash])
+  @@index([organizationId, inviteId, occurredAt])
+  @@index([accountantUserId, status, occurredAt])
+  @@map("accountant_client_invite_states")
+}
+
+/// Immutable consented statement-delivery command. Provider state is derived
+/// from the append-only CustomerStatementDeliveryState chain.
+model CustomerStatementDelivery {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  statementSnapshotId String
+  statementSnapshot   CustomerStatementSnapshot @relation(fields: [organizationId, statementSnapshotId], references: [organizationId, id], onDelete: Restrict)
+
+  tokenId String
+  token   CustomerStatementAccessToken @relation(fields: [organizationId, tokenId], references: [organizationId, id], onDelete: Restrict)
+
+  attributionId String
+  attribution   ReferralAttribution @relation(fields: [organizationId, attributionId], references: [organizationId, id], onDelete: Restrict)
+
+  channel             CustomerStatementDeliveryChannel
+  destinationHash     String
+  redactedDestination String
+  consentBasis        CustomerStatementConsentBasis
+  consentEvidenceHash String
+  consentCapturedAt   DateTime
+  consentCapturedById String
+
+  statementContentHash String
+  payloadHash          String
+  idempotencyKey       String
+  correlationId        String
+  businessEventId      String
+  outboxId             String @unique
+  locale               String
+
+  states CustomerStatementDeliveryState[]
+
+  createdAt DateTime @default(now())
+
+  @@unique([organizationId, id])
+  @@unique([organizationId, statementSnapshotId, idempotencyKey])
+  @@unique([organizationId, correlationId])
+  @@index([organizationId, statementSnapshotId, channel, createdAt])
+  @@index([organizationId, destinationHash, createdAt])
+  @@map("customer_statement_deliveries")
+}
+
+model CustomerStatementDeliveryState {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  deliveryId String
+  delivery   CustomerStatementDelivery @relation(fields: [organizationId, deliveryId], references: [organizationId, id], onDelete: Restrict)
+
+  version    Int
+  status     CustomerStatementDeliveryStatus
+  occurredAt DateTime
+
+  providerReferenceHash String?
+  errorCode             String?
+  previousStateHash     String?
+  stateHash             String
+  evidenceHash          String
+  businessEventId       String?
+
+  createdAt DateTime @default(now())
+
+  @@unique([organizationId, deliveryId, version])
+  @@unique([organizationId, stateHash])
+  @@index([organizationId, deliveryId, occurredAt])
+  @@map("customer_statement_delivery_states")
+}
+
+enum CustomerSettlementStatus {
+  POSTED
+  REVERSED
+}
+
+model CustomerSettlement {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Restrict)
+
+  settlementNumber String
+  status           CustomerSettlementStatus @default(POSTED)
+  method           PaymentMethod
+  amount           Decimal                  @db.Decimal(14, 2)
+  currency         String                   @default("XAF")
+  settlementDate   DateTime
+
+  idempotencyKey         String
+  idempotencyPayloadHash String
+  correlationId          String
+  externalReference      String?
+  documentHash           String
+  evidenceHash           String
+
+  receivedById String
+
+  ledgerPostingBatchId  String?
+  journalEntryId        String?
+  postedBusinessEventId String?
+
+  reversedAt                     DateTime?
+  reversalDate                   DateTime?
+  reversedById                   String?
+  reversalReason                 String?
+  reversalIdempotencyKey         String?
+  reversalIdempotencyPayloadHash String?
+  reversalCorrelationId          String?
+  reversalDocumentHash           String?
+  reversalEvidenceHash           String?
+  reversalLedgerPostingBatchId   String?
+  reversalJournalEntryId         String?
+  reversalAccountingSourceLinkId String?
+  reversalBusinessEventId        String?
+
+  notes    String?
+  metadata Json?
+
+  allocations CustomerSettlementAllocation[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([organizationId, settlementNumber])
+  @@unique([organizationId, idempotencyKey])
+  @@unique([organizationId, correlationId])
+  @@unique([organizationId, method, externalReference], map: "customer_settlements_external_reference_key")
+  @@unique([organizationId, reversalIdempotencyKey], map: "customer_settlements_reversal_idempotency_key")
+  @@unique([organizationId, reversalCorrelationId], map: "customer_settlements_reversal_correlation_key")
+  @@index([organizationId, customerId, status, settlementDate])
+  @@index([organizationId, settlementDate])
+  @@map("customer_settlements")
+}
+
+model CustomerSettlementAllocation {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  customerSettlementId String
+  customerSettlement   CustomerSettlement @relation(fields: [customerSettlementId], references: [id], onDelete: Cascade)
+
+  salesOrderId String
+  salesOrder   SalesOrder @relation(fields: [salesOrderId], references: [id], onDelete: Restrict)
+
+  customerReceivableDocumentId String?
+  customerReceivableDocument   CustomerReceivableDocument? @relation(fields: [organizationId, customerReceivableDocumentId], references: [organizationId, id], onDelete: Restrict)
+
+  customerLedgerEntryId String              @unique
+  customerLedgerEntry   CustomerLedgerEntry @relation("CustomerSettlementAllocationLedgerEntry", fields: [customerLedgerEntryId], references: [id], onDelete: Restrict)
+
+  reversalCustomerLedgerEntryId String?              @unique
+  reversalCustomerLedgerEntry   CustomerLedgerEntry? @relation("CustomerSettlementAllocationReversalLedgerEntry", fields: [reversalCustomerLedgerEntryId], references: [id], onDelete: Restrict)
+
+  amount Decimal @db.Decimal(14, 2)
+
+  createdAt DateTime @default(now())
+
+  @@unique([customerSettlementId, salesOrderId])
+  @@unique([customerSettlementId, customerReceivableDocumentId])
+  @@index([organizationId, customerReceivableDocumentId])
+  @@index([organizationId, salesOrderId])
+  @@map("customer_settlement_allocations")
 }
 
 model SupplierLedgerEntry {
@@ -5119,6 +5862,7 @@ enum LedgerEntryType {
   SALE
   PURCHASE
   PAYMENT
+  PAYMENT_REVERSAL
   REFUND
   CREDIT_NOTE
   DEBIT_NOTE
@@ -6069,6 +6813,14 @@ enum AccountingSourceType {
   PAYMENT_SUSPENSE
   OPENING_BALANCE
   IMPORT
+  CUSTOMER_RECEIVABLE_DOCUMENT
+  CUSTOMER_STATEMENT_SNAPSHOT
+  CUSTOMER_STATEMENT
+  CUSTOMER_STATEMENT_DELIVERY
+  CUSTOMER_STATEMENT_RECIPIENT_ACTION
+  CUSTOMER_SETTLEMENT_ALLOCATION
+  CUSTOMER_SETTLEMENT_REVERSAL
+  ACCOUNTANT_CLIENT_INVITE
 }
 
 enum AccountingPostingPurpose {

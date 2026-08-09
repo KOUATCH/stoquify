@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stoquify.local/schemas/uiux-certification-manifest.schema.json",
+  "title": "Stoquify UI/UX Certification Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion","manifestId","status","generatedAt","owner","approvers","sources","coveragePolicy","dimensions","fixtureProfiles","routeFamilies","evidenceRecordRequiredFields","completion"],
+  "properties": {
+    "$schema": {"type":"string"},
+    "schemaVersion": {"type":"string","pattern":"^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "manifestId": {"type":"string","minLength":1},
+    "status": {"enum":["planned-not-certified","certification-in-progress","certified","rejected","expired"]},
+    "generatedAt": {"type":"string","format":"date"},
+    "owner": {"type":"string","minLength":1},
+    "approvers": {"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string","minLength":1}},
+    "sources": {"type":"object","minProperties":4},
+    "coveragePolicy": {"type":"object","required":["universalRule","aliasRule","changedRouteRule","tier0","tier1","tier2","evidenceFreshnessDays","prohibitedEvidence"]},
+    "dimensions": {"type":"object","required":["locales","currencies","timeZones","themes","browsers","viewports","connectionStates","dataStates","roles","packages"]},
+    "fixtureProfiles": {
+      "type":"array",
+      "minItems":10,
+      "items":{"type":"object","required":["id","role","package","organizationState","expected"],"properties":{"id":{"type":"string","pattern":"^fx-"},"role":{"type":"string"},"package":{"type":"string"},"organizationState":{"type":"string"},"expected":{"type":"string"}},"additionalProperties":true}
+    },
+    "routeFamilies": {
+      "type":"array",
+      "minItems":10,
+      "items": {
+        "type":"object",
+        "required":["id","tier","patterns","owner","requiredRoles","requiredPackages","requiredStates","requiredEvidence","status"],
+        "properties": {
+          "id":{"type":"string","pattern":"^RF-[0-9]{2}-"},
+          "tier":{"enum":["tier0","tier1","tier2"]},
+          "patterns":{"type":"array","minItems":1,"items":{"type":"string"}},
+          "owner":{"type":"string","minLength":1},
+          "requiredRoles":{"type":"array","minItems":1,"items":{"type":"string"}},
+          "requiredPackages":{"type":"array","minItems":1,"items":{"type":"string"}},
+          "requiredStates":{"type":"array","minItems":1,"items":{"type":"string"}},
+          "requiredEvidence":{"type":"array","minItems":1,"items":{"type":"string"}},
+          "explicitExclusions":{"type":"array","items":{"type":"string"}},
+          "status":{"enum":["planned","in-progress","certified","rejected","expired"]}
+        },
+        "additionalProperties":false
+      }
+    },
+    "evidenceRecordRequiredFields":{"type":"array","minItems":20,"uniqueItems":true,"items":{"type":"string"}},
+    "completion":{"type":"object","required":["certified","reason","openPrerequisites"],"properties":{"certified":{"type":"boolean"},"reason":{"type":"string"},"openPrerequisites":{"type":"array","items":{"type":"string"}}},"additionalProperties":false}
+  }
+}

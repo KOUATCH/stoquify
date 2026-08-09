@@ -1,21 +1,21 @@
 # Referral War Room Status
 
-Generated: 2026-08-02
+Generated: 2026-08-08
 Program owner: `stoquify-referral-war-room-orchestrator`
 
 ## Current Objective
 
-Execute the referral-worthy roadmap through narrow, evidence-gated slices. Phase 3 is complete. Phase 4, Accountant Portal And Close Pack, is active. Slice 428 is certified for the current worktree, and no Slice 429 is selected. The accountant-access foundation is not deployment-certified, and POS cash-shortage production activation remains disabled.
+Execute the referral-worthy roadmap through narrow, evidence-gated slices. Phase 4, Accountant Portal And Close Pack, is complete at the current-worktree implementation level. Phase 5, Statement Hub And External Proof Network, is active. Slices 434-437 are certified at current-worktree foundation or protected-boundary level, and Slice 438 is selected. Repository integration, migration deployment, PostgreSQL concurrency evidence, and production deployment remain uncertified, and POS cash-shortage production activation remains disabled.
 
 ## Current Decision
 
-- **Active phase:** Phase 4: Accountant Portal And Close Pack
-- **Latest completed slice:** Phase 4 / Slice 428: Client Missing-Proof Manager Action Center Composition Foundation.
+- **Active phase:** Phase 5: Statement Hub And External Proof Network
+- **Latest completed slice:** Phase 5 / Slice 437: Protected Customer Settlement Reversal Action Boundary.
 - **Completed slices:** operating access scope; Payment Truth scope honesty; Close Readiness scope honesty; Tenant Operating scope honesty; Manager Action Center actor-scope gate; managed-location branch bundles; unified single-resolution query; location-aware product surface; branch end-of-day readiness; durable branch daily-close review foundation; branch payment-capture attribution evidence; close-readiness capture integration; close-review drift assessment; sign-off control-policy foundation; sign-off persistence foundation; sign-off service command; sign-off state read model; versioned completion composition; protected completion read action; dedicated review-write permission and protected review action; protected critical sign-off action; managed-location branch daily-close workspace; permission-aware review-start product command; controlled sign-off product command and browser certification; durable action-resolution audit and source-command selection; source-owned reconciliation sign-off command state; protected reconciliation sign command hardening; reconciliation sign-off product command and browser certification; Leakage Radar source and exception ownership audit; POS shift-close evidence foundation; stable Workflow Assurance case identity foundation; POS closed-shift cash-shortage rule contract; cash-shortage policy governance foundation; POS closed-shift cash-shortage evaluation batch; POS shift-close applied-state evidence completion; Workflow Assurance multi-finding contract foundation; Workflow Assurance transactional multi-finding persistence; Workflow Assurance incident lifecycle policy foundation; dormant POS cash-shortage assurance adapter contract; disabled POS cash-shortage registry definition contract; dormant POS cash-shortage runner-input gating contract; dormant POS cash-shortage incident lifecycle policy contract; dormant POS cash-shortage worker checkpoint contract; disabled POS cash-shortage definition blocker reconciliation; dormant POS cash-shortage runner composition; POS cash-shortage registry run-window contract; controlled disabled POS cash-shortage runner registration; POS cash-shortage production policy entry reconciliation; POS cash-shortage activation-hold ratchet; POS cash-shortage release-gate activation ratchet; POS cash-shortage production activation preflight contract; POS cash-shortage scheduler-policy preflight certification; POS cash-shortage worker checkpoint persistence preflight; POS cash-shortage worker checkpoint persistence schema foundation; POS cash-shortage worker checkpoint persistence command contract; POS cash-shortage worker checkpoint persistence activation-evidence contract; POS cash-shortage incident command integration preflight; POS cash-shortage alert delivery integration preflight; POS cash-shortage rollback-plan preflight; POS cash-shortage observability runbook preflight; POS cash-shortage owner/security approval evidence preflight; POS cash-shortage service/release activation marker evidence preflight; POS cash-shortage production policy readiness preflight; POS cash-shortage source-owned resolution readiness preflight; POS cash-shortage source-owned resolution recheck contract; POS cash-shortage terminal resolution command-readiness contract; POS cash-shortage protected resolution execution preflight; POS cash-shortage idempotent resolution command-wrapper preflight contract; POS cash-shortage dormant idempotent resolution command wrapper; POS cash-shortage server-owned resolution source loader contract; POS cash-shortage protected resolution action wrapper; POS cash-shortage incident detail product caller; POS cash-shortage product-caller audit/event preflight; POS cash-shortage browser certification readiness preflight; POS cash-shortage assurance incident browser smoke harness; POS cash-shortage browser evidence manifest preflight; POS cash-shortage browser auth and fixture readiness preflight; POS cash-shortage browser certification gate preflight; POS cash-shortage production activation browser-certification gate ratchet; POS cash-shortage browser certification gate activation-evidence contract; POS cash-shortage production activation production-policy readiness ratchet; POS cash-shortage production activation source-owned resolution readiness ratchet; POS cash-shortage source-owned resolution readiness activation-evidence composer; POS cash-shortage scheduler-policy activation-evidence composer; POS cash-shortage production policy readiness activation-evidence composer; POS cash-shortage production activation evidence aggregation contract; POS cash-shortage composed production activation preflight wrapper; POS cash-shortage composed production activation blocker classification contract; POS cash-shortage production activation review summary contract; POS cash-shortage production activation review checklist contract; POS cash-shortage production activation review packet contract; POS cash-shortage production activation review packet fingerprint contract; POS cash-shortage production activation review artifact contract; POS cash-shortage production activation review artifact digest contract; POS cash-shortage production activation review artifact status line contract; war-room completed-slice rollup consistency repair; POS cash-shortage production policy readiness review status-line contract; POS cash-shortage production policy readiness review packet contract; POS cash-shortage production policy readiness review packet fingerprint contract; POS cash-shortage production policy readiness review artifact contract; POS cash-shortage production policy readiness review artifact digest contract; POS cash-shortage production policy readiness review artifact status-line contract; POS cash-shortage source-owned resolution readiness status-line contract; POS cash-shortage source-owned resolution readiness review packet contract; POS cash-shortage source-owned resolution readiness review packet fingerprint contract; POS cash-shortage source-owned resolution readiness review artifact contract; POS cash-shortage source-owned resolution readiness review artifact digest contract; POS cash-shortage source-owned resolution readiness review artifact status-line contract; POS cash-shortage source-owned resolution readiness review evidence-row contract; POS cash-shortage production policy readiness review evidence-row contract; POS cash-shortage production activation review evidence-row contract; POS cash-shortage production activation review evidence-table contract; POS cash-shortage production activation review evidence-table digest contract; POS cash-shortage production activation review evidence-table status-line contract; POS cash-shortage production activation review evidence-table packet contract; POS cash-shortage production activation review evidence-table packet fingerprint contract; POS cash-shortage production activation review evidence-table packet artifact contract; POS cash-shortage production activation review evidence-table packet artifact digest contract; POS cash-shortage production activation review evidence-table packet artifact status-line contract; POS cash-shortage production activation review evidence-table packet artifact evidence-row contract; POS cash-shortage production activation review evidence-table packet artifact evidence-table contract; POS cash-shortage production activation review evidence-table packet artifact evidence-table digest contract; POS cash-shortage production activation review evidence-table packet artifact evidence-table status-line contract; POS cash-shortage production activation review evidence-table packet artifact evidence-table evidence-row contract; POS cash-shortage production activation review evidence-table packet artifact evidence-table evidence-table contract; POS cash-shortage production activation review evidence-table packet artifact evidence-table evidence-table digest contract; POS cash-shortage production activation review evidence-table packet artifact evidence-table evidence-table status-line contract; POS cash-shortage production activation review evidence-table packet artifact evidence-table evidence-table evidence-row contract; POS cash-shortage production activation review evidence-table packet artifact evidence-table evidence-table evidence-table contract; POS cash-shortage production activation review evidence-table packet artifact evidence-table evidence-table evidence-table digest contract; POS cash-shortage production activation review evidence-table packet artifact evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table status-line contract; POS cash-shortage production activation review evidence-table packet artifact evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-row contract; POS cash-shortage production activation review evidence-table packet artifact evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table contract; POS cash-shortage production activation review evidence-table packet artifact evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table table contract; POS cash-shortage production activation review evidence-table packet artifact evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table digest contract; POS cash-shortage production activation review evidence-table packet artifact evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table status-line contract; POS cash-shortage production activation review evidence-table packet artifact evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-row contract; POS cash-shortage production activation review evidence-table packet artifact evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table contract; POS cash-shortage production activation review evidence-table packet artifact evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table table evidence-table digest status-line evidence-row contract; POS cash-shortage production activation review evidence-table packet artifact evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table table evidence-table digest status-line evidence-row table contract; POS cash-shortage production activation review evidence-table packet artifact evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table table evidence-table digest status-line evidence-row table digest contract; POS cash-shortage production activation review evidence-table packet artifact evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table table evidence-table digest status-line evidence-row table digest status-line contract; POS cash-shortage production activation review evidence-table packet artifact evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table table evidence-table digest status-line evidence-row table digest status-line evidence-row contract; POS cash-shortage production activation review evidence-table packet artifact evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table table evidence-table digest status-line evidence-row table digest status-line evidence-row table contract; POS cash-shortage production activation review evidence-table packet artifact evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table table evidence-table digest status-line evidence-row table digest status-line evidence-row table digest contract; POS cash-shortage production activation review evidence-table packet artifact evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table table evidence-table digest status-line evidence-row table digest status-line evidence-row table digest status-line contract; POS cash-shortage production activation review evidence-table packet artifact evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table table evidence-table digest status-line evidence-row table digest status-line evidence-row table digest status-line evidence-row contract; POS cash-shortage production activation review evidence-table packet artifact evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table table evidence-table digest status-line evidence-row table digest status-line evidence-row table digest status-line evidence-row table contract; POS cash-shortage production activation review evidence-table packet artifact evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table evidence-table table evidence-table digest status-line evidence-row table digest status-line evidence-row table digest status-line evidence-row table digest contract
-- **Selected next slice:** None. A fresh Phase 4 evidence and risk audit is required.
-- **Next skill:** `stoquify-referral-war-room-orchestrator` for a fresh Phase 4 candidate audit, consulting `stoquify-accountant-close-portal`.
-- **Product-code state:** Slice 428 is the latest current-worktree certification. The tenant manager action center consumes the Slice 427 source-owned queue only after tenant-wide access, `accounting.close.read`, and enforced audited `close_assurance` entitlement. Valid requests become assigned generic actions, invalid evidence becomes redacted blocked work, hidden states do not enumerate requests, and authorized source failure is generic. No public action, route, UI, schema, migration, external share, AI, WhatsApp, or POS activation was added.
-- **Release constraint:** Phase 4 is active but incomplete. Repository/migration ownership, actor identity integrity, retention and organization-deletion policy, database lifecycle constraints, exact PostgreSQL deployment evidence, register/portfolio pagination, organization-timezone policy, PostgreSQL queue integration evidence, and the missing-proof response/resolution lifecycle remain open. External sharing, AI/WhatsApp authority, and POS cash-shortage production activation remain unauthorized.
+- **Selected next slice:** Phase 5 / Slice 438: Immutable Posted Customer Receivable Document Foundation.
+- **Next skill:** `stoquify-referral-war-room-orchestrator` through `/stoquify-referral-war-room`, consulting `stoquify-statement-proof-network`, under `/caveman full` control.
+- **Product-code state:** Slices 434-437 are certified at current-worktree source/ protected-boundary level. Slice 438 is selected and in planning. The Slice 437 finance action has no route, UI, API, or other product caller and therefore does not authorize public reversal execution.
+- **Release constraint:** Complete immutable posted receivable truth and statement generation remain blocked, as do snapshots, signed access, recipient actions, and delivery. Finance-module entitlement remains intentionally fail-closed. Repository integration, migration deployment, PostgreSQL concurrency evidence, and production deployment remain uncertified. POS cash-shortage production activation remains disabled.
 
 ## Progress
 
@@ -443,9 +443,9 @@ Existing snapshots, signals, action queues, owner/manager surfaces, POS shift cl
 | Phase 0: Program Control Plane                   | complete                                                                                     | `stoquify-referral-war-room-orchestrator`                             | Continue evidence-gated orchestration.                                             | `what-next/referrals/REFERRAL_WAR_ROOM_PHASE_0_REPORT_2026-07-17.md`                    |
 | Phase 1: Service-Owned Operating Truth           | complete                                                                                     | `stoquify-daily-truth-command-center`                                 | Preserve scope-honest snapshot contracts.                                          | `what-next/referrals/DAILY_TRUTH_TENANT_SCOPE_REPORT_2026-07-17.md`                     |
 | Phase 2: Daily Truth Dashboard And Action Center | capability complete; deployment gate separately held                                         | `stoquify-referral-war-room-orchestrator`                             | Preserve three certified commands and their source-owned evidence.                 | `what-next/referrals/REFERRAL_WAR_ROOM_PHASE_2_PROMOTION_REPORT_2026-07-19.md`          |
-| Phase 3: Leakage Radar And Inventory Loss        | in progress; Slice 233 POS cash-shortage production activation review digest status-line evidence-row table digest status-line evidence-row table digest status-line evidence-row table digest status-line evidence-row table digest status-line evidence-row table digest status-line evidence-row table digest status-line evidence-row table digest status-line evidence-row contract certified; no Slice 234 selected | `stoquify-referral-war-room-orchestrator`                                          | Return to the war-room before selecting Slice 234. | `what-next/referrals/POS_CASH_SHORTAGE_SLICE_233_EVIDENCE_ROW_CONTRACT_REPORT_2026-07-30.md` |
-| Phase 4: Accountant Portal And Close Pack        | pending                                                                                      | `stoquify-accountant-close-portal`                                    | Build on service-owned accounting close readiness and immutable evidence.          | `what-next/referrals/ACCOUNTANT_CLOSE_PORTAL_REPORT_<date>.md`                          |
-| Phase 5: Statement Hub And External Proof        | pending                                                                                      | `stoquify-statement-proof-network`                                    | Add signed, expiring, revocable, redacted sharing after close evidence is trusted. | `what-next/referrals/STATEMENT_PROOF_NETWORK_REPORT_<date>.md`                          |
+| Phase 3: Leakage Radar And Inventory Loss        | complete at current-worktree implementation level; production activation hold remains separate                    | `stoquify-referral-war-room-orchestrator`                             | Preserve the disabled POS cash-shortage production activation hold.                | `what-next/referrals/REFERRAL_WAR_ROOM_PHASE_3_EXIT_PHASE_4_ENTRY_REPORT_2026-08-01.md` |
+| Phase 4: Accountant Portal And Close Pack        | complete at current-worktree implementation level; integration and deployment held                              | `stoquify-accountant-close-portal`                                    | Preserve certified access, close-pack, and missing-proof controls.                  | `what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_EXIT_PHASE_5_ENTRY_REPORT_2026-08-08.md` |
+| Phase 5: Statement Hub And External Proof        | active; Slices 434-437 certified at current-worktree foundation or protected-boundary level                  | `stoquify-referral-war-room-orchestrator`                             | Audit immutable posted customer receivable truth before selecting the next slice.   | `what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_POST_SLICE_437_AUDIT_REPORT_2026-08-08.md` |
 | Phase 6: Financing Passport                      | pending                                                                                      | `stoquify-financing-passport`                                         | Build readiness proof from certified evidence.                                     | `what-next/referrals/FINANCING_PASSPORT_REPORT_<date>.md`                               |
 | Phase 7: Automation And Referral Flywheel        | pending                                                                                      | `stoquify-copilot-whatsapp-ops` / `stoquify-referral-proof-artifacts` | Add automation after deterministic workflows and sharing controls are trusted.     | `what-next/referrals/COPILOT_WHATSAPP_OPS_REPORT_<date>.md`                             |
 
@@ -5741,3 +5741,317 @@ Use `stoquify-referral-war-room-orchestrator` to review Slice 143 evidence and s
 - Missing-proof response/resolution, PostgreSQL JSON-path integration evidence, identity/retention policy, pagination, timezone policy, repository ownership, and exact deployment evidence remain open.
 - No Slice 429 is selected.
 - Next skill: `stoquify-referral-war-room-orchestrator` for a fresh Phase 4 candidate audit, consulting `stoquify-accountant-close-portal`.
+
+## Phase 4 / Slice 429 Selected - Client Missing-Proof Recipient Response Command Foundation
+
+- Slice 429 is selected to let the authenticated client recipient submit a response to one typed missing-proof request without treating a generic comment, UI state, AI, or WhatsApp as business truth.
+- Primary skill is `stoquify-accountant-close-portal`, consulting `013-aqstoqflow-data-trust-accountant-portal`, `004-aqstoqflow-business-event-gateway`, and release-evidence controls.
+- Existing request creation, recipient queue, and manager action-center projection are certified, but no request-bound, recipient-owned response command exists.
+- Scope is limited to a server-owned schema/action/service command, typed response metadata, recipient authority checks, atomic finding transition, audit/business-event evidence, idempotency, focused tests, and one report-trust ratchet.
+- The command must resolve organization, actor, recipient, finding, request author, period, and close run on the server; caller-owned authority fields are forbidden.
+- Response submission may move the finding to `IN_REVIEW` but must not resolve, waive, approve, certify, upload evidence, complete close, or externally share data.
+- Queue/action-center response-state projection is the immediate follow-up dependency and is not part of this command-foundation slice.
+- Earlier focused baseline in this goal run passed 5 suites / 169 tests. The 2026-08-08 rerun timed out after 124.1 seconds without a Jest result and is not counted as passed or failed.
+- Live report-trust readiness remains 23/23 ready with zero blockers, dated 2026-08-02.
+- Selection report: `what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_429_SELECTION_REPORT_2026-08-08.md`.
+- Handoff report: `what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_HANDOFF_REPORT_2026-08-08.md`.
+- No product code was changed by this `/caveman full` orchestration pass.
+- Next skill: `stoquify-accountant-close-portal` under referral war-room control.
+
+## Phase 4 / Slice 429 Certified - Client Missing-Proof Recipient Response Command Foundation
+
+- Slice 429 is certified for the current worktree after formatter-only churn was removed and focused verification was rerun.
+- The action accepts only request ID, response text, and optional correlation ID; tenant, actor, permission, recipient, finding, period, close run, request author, and request correlation authority remain server-owned.
+- The service requires an authenticated active tenant user, complete typed request evidence, the original requested recipient, an allowed open finding state, and current finding ownership.
+- Exact correlation replay returns the existing response; conflicting reuse fails safely.
+- One serializable transaction moves the finding only to `IN_REVIEW`, creates `MISSING_CLOSE_EVIDENCE_RESPONSE` / `CLIENT_RESPONSE_SUBMITTED` evidence, writes `CLOSE_MISSING_EVIDENCE_RESPONSE_SUBMITTED`, and emits `close.assurance.missing_evidence.response_submitted`.
+- Audit and business-event/outbox payloads contain identifiers and status only; response text and raw request metadata are excluded.
+- Existing request creation, queue, manager action center, and RBAC behavior remained green.
+- Verification passed: action/service 2 suites / 71 tests; report-gate 1 suite / 107 tests; combined focused 5 suites / 204 tests; full typecheck; scoped ESLint; report-trust 24/24 with zero blockers; scoped diff hygiene; conflict-marker scan.
+- Reports: `what-next/referrals/CLIENT_MISSING_PROOF_RESPONSE_COMMAND_SLICE_429_REPORT_2026-08-08.md`, `what-next/referrals/ACCOUNTANT_CLOSE_PORTAL_REPORT_2026-08-08.md`, and `what-next/skills-life-cycle/STOQUIFY_SLICE_429_RELEASE_EVIDENCE_REPORT_2026-08-08.md`.
+- No UI, route, hook, evidence upload, response-state projection, resolution, waiver, certification, schema, migration, external delivery, AI/WhatsApp authority, or POS activation was added.
+- Repository integration and production deployment remain NO-GO.
+- Response-state projection, PostgreSQL queue integration evidence, identity/retention policy, pagination, timezone policy, repository ownership, and exact deployment evidence remain open.
+- No Slice 430 is selected.
+- Next skill: `stoquify-referral-war-room-orchestrator` under `/caveman full` for a fresh Phase 4 candidate audit.
+
+## Phase 4 / Slice 430 Selected - Client Missing-Proof Response-State Queue And Action-Center Projection Foundation
+
+- Slice 430 is selected to prevent a valid submitted response from remaining falsely assigned or overdue recipient work.
+- Primary skill is `stoquify-accountant-close-portal`, consulting `stoquify-daily-truth-command-center`, accountant data-trust, and release-evidence controls.
+- The queue currently includes `IN_REVIEW` findings, reads only request comments, and has no response-state contract.
+- The manager action center maps every valid queue request to assigned accountant-request work and cannot represent “response submitted; awaiting accountant review.”
+- The slice must validate typed request/response relationship evidence by tenant, recipient, authors, finding, period, close run, request ID, and correlations without exposing response text or raw metadata.
+- Valid unanswered requests remain `AWAITING_RECIPIENT_RESPONSE`; valid submitted responses become `RESPONSE_SUBMITTED` waiting work.
+- Missing, malformed, duplicate, or state-inconsistent response evidence becomes a generic `INVALID_RESPONSE_EVIDENCE` blocker.
+- Existing tenant-wide access, RBAC, audited module entitlement, hidden-state behavior, generic source-failure handling, bounded reads, deterministic ordering, and service clock remain required.
+- Baseline passed: queue and manager action center 2 suites / 27 tests; Slice 429 combined boundary 5 suites / 204 tests; report-trust 24/24 with zero blockers.
+- Selection report: `what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_430_SELECTION_REPORT_2026-08-08.md`.
+- Handoff report: `what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_430_HANDOFF_REPORT_2026-08-08.md`.
+- No Slice 430 product code was changed by this orchestration pass.
+- No response command change, acceptance/resolution, upload, UI, route, schema, migration, external delivery, AI/WhatsApp authority, or POS activation is selected.
+- Next skill: `stoquify-accountant-close-portal` for Slice 430 only, consulting `stoquify-daily-truth-command-center`.
+
+## Phase 4 / Slice 430 Certified - Client Missing-Proof Response-State Queue And Action-Center Projection Foundation
+
+- Slice 430 is certified for the current worktree after focused implementation and release verification.
+- Queue contract version 2 distinguishes `AWAITING_RECIPIENT_RESPONSE` from `RESPONSE_SUBMITTED` and exposes lifecycle identifiers only.
+- Response candidates are tenant-scoped, typed, bounded, and validated against finding, period, close run, request, actors, and correlations.
+- `IN_REVIEW` requires exactly one valid response; awaiting states require zero response candidates.
+- Missing, malformed, duplicate, truncated, or state-inconsistent response evidence fails closed as a generic `INVALID_RESPONSE_EVIDENCE` blocker.
+- Response body and raw response metadata are not exposed by the queue or manager action.
+- Queue urgency counts only unanswered recipient work.
+- Submitted responses become accountant-owned waiting actions with a scheduled due state and fixed source-controlled next step.
+- Waiting-state composition precedes overdue, severity, and assigned-state grouping.
+- Verification passed: queue 1 suite / 11 tests; manager action center 1 suite / 23 tests; combined regression 4 suites / 212 tests; gate 1 suite / 128 tests; full typecheck; scoped ESLint; scoped diff hygiene; conflict-marker scan.
+- The report-trust gate adds 21 response-state mutations and is ready 25/25 with zero blockers.
+- Reports: `what-next/referrals/CLIENT_MISSING_PROOF_RESPONSE_STATE_PROJECTION_SLICE_430_REPORT_2026-08-08.md`, `what-next/referrals/DAILY_TRUTH_COMMAND_CENTER_REPORT_2026-08-08.md`, `what-next/referrals/ACCOUNTANT_CLOSE_PORTAL_REPORT_2026-08-08.md`, and `what-next/skills-life-cycle/STOQUIFY_SLICE_430_RELEASE_EVIDENCE_REPORT_2026-08-08.md`.
+- No response command change, acceptance/resolution, upload, UI, route, schema, migration, external delivery, AI/WhatsApp authority, or POS activation was added.
+- Repository integration and production deployment remain NO-GO.
+- PostgreSQL JSON-path integration evidence, accountant response acceptance/resolution, identity/retention policy, pagination, timezone policy, repository ownership, and exact deployment evidence remain open.
+- No Slice 431 is selected.
+- Next skill: `stoquify-referral-war-room-orchestrator` under `/caveman full` for a fresh Phase 4 candidate audit.
+
+## Phase 4 / Slice 431 Selected - Accountant Missing-Proof Response Review Queue Foundation
+
+- A fresh `/caveman full` war-room audit selected Slice 431 after reconciling the roadmap, installed skills, current register, architecture graph, live source, and focused tests.
+- The client queue intentionally redacts response text, and the manager action center intentionally projects only a generic accountant-waiting state.
+- The current close dashboard returns a broad current-tenant comment stream and does not resolve delegated client access.
+- The delegated accountant portal accepts a client organization but contains ledger/data-trust evidence, not a request-bound missing-proof response review queue.
+- The existing `updateAccountantReview` command creates close-run review records, is not bound to a request/response pair, and does not resolve a finding.
+- No live service command sets `CloseFindingStatus.RESOLVED`.
+- Slice 431 will add a bounded, source-owned accountant review queue before any acceptance/resolution command is permitted.
+- The read model must require an active authenticated home actor, `accounting.close.accountant.review`, and tenant membership or an active delegated `REVIEW` grant resolved by `resolveAccountantClientAccess`.
+- Delegated `READ_ONLY`, expired, revoked, wrong-client, and missing grants must fail before client evidence is returned.
+- Only `IN_REVIEW` findings with exactly one fully relationship-validated typed request and response may expose request/response text.
+- Missing, duplicate, malformed, truncated, or state-inconsistent evidence must fail closed as a generic blocker.
+- Raw metadata, unrelated comments, contacts, authentication data, and full tenant ledger data remain excluded.
+- Candidate reads and outputs must be bounded, deterministically ordered, service-clock-owned, and explicit about truncation.
+- Baseline passed: action, close service, client queue, manager action center, and gate 5 suites / 233 tests; live report trust is 25/25 ready with zero blockers.
+- Audit report: `what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_POST_SLICE_430_AUDIT_REPORT_2026-08-08.md`.
+- Selection report: `what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_431_SELECTION_REPORT_2026-08-08.md`.
+- Handoff report: `what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_431_HANDOFF_REPORT_2026-08-08.md`.
+- No product code was changed by this orchestration pass.
+- No acceptance/resolution command, finding transition, UI, route, hook, schema, migration, statement network, external delivery, AI/WhatsApp authority, or POS activation is selected.
+- Accountant response acceptance/resolution remains the immediate dependent candidate. The signed statement network remains the first candidate after Phase 4 close-loop exit.
+- Next skill: `stoquify-accountant-close-portal` for Slice 431 only, consulting accountant data-trust, business-event, and release-evidence controls.
+
+## Phase 4 / Slice 431 Certified - Accountant Missing-Proof Response Review Queue Foundation
+
+- Slice 431 is certified for the current worktree as a bounded, service-owned accountant review read model.
+- The queue requires `accounting.close.accountant.review`, an active actor in the home tenant, and service-resolved tenant membership or delegated `REVIEW` access.
+- `READ_ONLY`, missing, expired, revoked, wrong-accountant, and wrong-client grants fail before client evidence is returned.
+- The target tenant is derived from `resolveAccountantClientAccess`; caller target-organization and clock authority are absent.
+- One repeatable-read transaction loads bounded `IN_REVIEW` findings and two bounded typed comment candidate sets.
+- Both finding and comment truncation paths fail closed with no items and one generic blocker.
+- Exactly one fully relationship-validated request and response is required before request/response text is exposed.
+- Raw metadata, unrelated comments, contacts, authentication data, and broad ledger data remain excluded.
+- Deterministic ordering uses oldest response submission time, then request ID.
+- New service Jest passed: 1 suite / 20 tests.
+- Report-trust Jest passed: 1 suite / 159 tests, including 31 Slice 431 mutations.
+- Combined Slice 429-431 regression passed: 6 suites / 284 tests.
+- Typecheck, scoped ESLint, live report-trust gate, conflict scan, whitespace scan, and scoped diff hygiene passed.
+- Live report-trust readiness is 26/26 with zero blockers.
+- Reports: `what-next/referrals/ACCOUNTANT_MISSING_PROOF_RESPONSE_REVIEW_QUEUE_SLICE_431_REPORT_2026-08-08.md`, `what-next/referrals/ACCOUNTANT_CLOSE_PORTAL_REPORT_2026-08-08.md`, and `what-next/skills-life-cycle/STOQUIFY_SLICE_431_RELEASE_EVIDENCE_REPORT_2026-08-08.md`.
+- Repository integration and production deployment remain NO-GO.
+- No acceptance/rejection command, finding resolution, action, route, UI, schema, migration, statement network, external delivery, AI/WhatsApp authority, or POS activation was added.
+- No Slice 432 is selected.
+- Next skill: `stoquify-referral-war-room-orchestrator` under `/caveman full` for a fresh post-Slice 431 audit, consulting `stoquify-accountant-close-portal`.
+
+## Phase 4 / Slice 432 Selected - Accountant Missing-Proof Response Acceptance And Finding Resolution Command Foundation
+
+- A fresh `/caveman full` post-Slice 431 audit selected the positive acceptance path before Phase 5 statement-network work.
+- Slice 431 now provides the required least-privilege request/response review queue; no live request-bound acceptance command currently resolves a finding.
+- The slice is acceptance-only: a freshly authenticated authorized accountant may accept one fully validated typed response and atomically move its `IN_REVIEW` finding to `RESOLVED`.
+- Input is limited to optional client organization, request ID, response ID, required resolution notes, and optional correlation ID.
+- The protected action must own actor, home tenant, permissions, password-assurance claims, and exact fresh-auth time.
+- The service must own the clock, validate permission/fresh-auth before database work, verify an active home actor, and resolve tenant/delegated `REVIEW` access before client evidence reads.
+- Request, response, and finding tenant/period/close-run/actor/correlation relationships must be revalidated; the respondent cannot accept their own response.
+- Exact replay must be side-effect free, mismatched correlation reuse must conflict, and a compare-and-set transition must prevent double resolution.
+- Typed acceptance evidence, finding resolution attribution, audit, business event, and client notification must be atomic and exclude request text, response text, resolution notes, and raw metadata from audit/event payloads.
+- Selection report: `what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_432_SELECTION_REPORT_2026-08-08.md`.
+- Audit report: `what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_POST_SLICE_431_AUDIT_REPORT_2026-08-08.md`.
+- Handoff report: `what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_432_HANDOFF_REPORT_2026-08-08.md`.
+- No product code was changed by this orchestration pass.
+- Rejection/rework, close certification, UI, route, hook, dashboard, schema, migration, statement network, external delivery, AI/WhatsApp authority, and POS activation remain outside the slice.
+- Next skill: `stoquify-accountant-close-portal` for Slice 432 only, consulting accountant data-trust, business-event, and release-verification controls.
+
+## Phase 4 / Slice 432 Certified - Accountant Missing-Proof Response Acceptance And Finding Resolution Command Foundation
+
+- Slice 432 is certified for the current worktree as the positive request-bound accountant acceptance command.
+- The action requires `accounting.close.accountant.review` and verified five-minute password-assurance evidence before caller input is parsed.
+- The service independently checks RBAC and fresh auth with its own clock before database work.
+- An active home-tenant actor is required before service-resolved tenant/delegated `REVIEW` access; `READ_ONLY` remains denied.
+- The target tenant comes only from `resolveAccountantClientAccess`.
+- Typed request, response, and finding evidence is revalidated by tenant, period, close run, finding, actors, request ID, and correlations.
+- The respondent cannot accept their own response.
+- Exact correlation replay is side-effect free; mismatched reuse conflicts.
+- A tenant/state/owner compare-and-set moves exactly one `IN_REVIEW` finding to `RESOLVED` with resolution notes, time, resolver, and correlation.
+- Typed acceptance evidence, audit evidence, and the business event/notification are committed in the same serializable transaction.
+- Request text, response text, resolution notes, and raw metadata are excluded from audit and event payloads.
+- Acceptance does not certify a close run or signed statement.
+- Focused action/service Jest passed: 2 suites / 99 tests.
+- Report-trust Jest passed: 1 suite / 212 tests, including 53 Slice 432 mutations.
+- Combined Slice 429-432 regression passed: 6 suites / 365 tests.
+- Typecheck, scoped ESLint, JavaScript syntax, conflict scan, and scoped diff hygiene passed.
+- Live report-trust readiness is 27/27 with zero blockers.
+- Reports: `what-next/referrals/ACCOUNTANT_MISSING_PROOF_RESPONSE_ACCEPTANCE_SLICE_432_REPORT_2026-08-08.md`, `what-next/referrals/ACCOUNTANT_CLOSE_PORTAL_REPORT_2026-08-08.md`, and `what-next/skills-life-cycle/STOQUIFY_SLICE_432_RELEASE_EVIDENCE_REPORT_2026-08-08.md`.
+- Repository integration and production deployment remain NO-GO.
+- No rejection/rework, close certification, UI, route, hook, schema, migration, statement network, external delivery, AI/WhatsApp authority, or POS activation was added.
+- No Slice 433 is selected.
+- Next skill: `stoquify-referral-war-room-orchestrator` under `/caveman full` for a fresh Phase 4 exit audit.
+
+## Phase 4 / Slice 433 Selected - Phase 4 Accountant-Close Exit And Phase 5 Statement-Proof Entry Gate
+
+- A fresh `/caveman full` and referral-war-room audit selected an orchestration-only phase transition gate.
+- Certified Slice 432 closes the positive request-bound missing-proof loop; the Phase 4 roadmap success criterion can now be tested against the full current worktree.
+- Phase 5 has a reusable public receipt token pattern with signature, expiry, organization/resource binding, hash-only registry, revocation, access logging, and audit evidence.
+- Customer ledger and supplier/AP source systems exist, but no customer or supplier statement generation read model exists.
+- No statement snapshot identity, statement-specific token registry, public statement route, dispute, promise-to-pay, or delivery workflow exists.
+- The first Phase 5 product candidate must establish service-owned statement-generation truth before signed external sharing or UI.
+- Slice 433 may change only referral reports and the status register.
+- Verification will cover the Phase 4 access/close/missing-proof loop, the Phase 5 receipt-token/customer/supplier/AP foundations, TypeScript, Prisma, and static authority/redaction controls.
+- Audit report: `what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_POST_SLICE_432_AUDIT_REPORT_2026-08-08.md`.
+- Selection report: `what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_433_SELECTION_REPORT_2026-08-08.md`.
+- No product code was changed by this selection pass.
+- No statement generation, signed statement link, external route, dispute, promise-to-pay, delivery hook, AI/WhatsApp authority, financing passport, or POS activation is selected.
+- No Slice 434 is selected.
+- Next skill for this gate: `stoquify-referral-war-room-orchestrator`, consulting `stoquify-statement-proof-network`.
+
+## Phase 4 / Slice 433 Certified - Phase 4 Accountant-Close Exit And Phase 5 Statement-Proof Entry Gate
+
+- Phase 4 is complete against the referral roadmap’s current-worktree implementation success criteria.
+- Phase 5 is active as a build phase; this does not claim that a Statement Proof Network exists.
+- Phase 4 exit verification passed 11 suites / 418 tests across accountant access, data trust, close packs, close assurance, the complete missing-proof lifecycle, manager projection, and report trust.
+- Phase 5 entry verification passed 9 suites / 78 tests across signed receipt tokens, registry lifecycle, public receipt redaction, public route guards, customer/supplier scope, and AP truth.
+- Full TypeScript and Prisma schema validation passed.
+- Live report-trust readiness is 27/27 with zero blockers.
+- Direct source checks proved HMAC/timing-safe signature verification, organization/resource/JTI/expiry binding, hash-only registry storage, revocation, access counts, last-access time, and issue/access/revoke audit actions.
+- Public receipt access requires a token, re-resolves the tenant through registry evidence, and disables customer contact projection.
+- Customer ledger and supplier/AP foundations are tenant-attributed, but the customer ledger remains write-only for statement purposes.
+- Direct inventory found zero Statement Proof Network implementation files; no statement capability is being overclaimed.
+- Slice 433 changed only referral reports and this status register.
+- Transition report: `what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_EXIT_PHASE_5_ENTRY_REPORT_2026-08-08.md`.
+- Phase 5 baseline: `what-next/referrals/STATEMENT_PROOF_NETWORK_REPORT_2026-08-08.md`.
+- Lifecycle evidence: `what-next/skills-life-cycle/STOQUIFY_SLICE_433_RELEASE_EVIDENCE_REPORT_2026-08-08.md`.
+- Repository integration, migration history, PostgreSQL integration, external delivery, and production deployment remain NO-GO.
+- The receipt token is reference evidence only and is not authorized as a statement token.
+- No Slice 434 is selected.
+- Next skill: `stoquify-referral-war-room-orchestrator` under `/caveman full`, consulting `stoquify-statement-proof-network` for a fresh first-candidate audit.
+
+## Phase 5 / Slice 434 Selected - Customer Ledger Service-Owned Balance Integrity Kernel
+
+- Live source tracing rejected the initial customer-statement candidate despite its 18/18 prototype tests.
+- Production customer-ledger writes cover POS on-account residuals and voids only; no production customer settlement or invoice-allocation path exists.
+- The existing helper trusted caller-supplied `balanceAfter`, and POS callers updated customer balances directly without a prior-balance compare-and-set condition.
+- Slice 434 was selected to harden the shared source boundary before adding settlement or statement surfaces.
+- Selection evidence: `what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_SLICE_434_SELECTION_REPORT_2026-08-08.md`.
+- No action, route, UI, schema, migration, statement, token, recipient workflow, or delivery authority was selected.
+
+## Phase 5 / Slice 434 Certified - Customer Ledger Service-Owned Balance Integrity Kernel
+
+- The customer-ledger service now resolves the tenant customer, derives the next balance, validates type polarity, prevents negative balances, and optionally enforces the credit limit.
+- A tenant/customer/prior-balance/soft-delete compare-and-set update must affect exactly one row before the ledger append.
+- POS on-account sale and POS void both delegate balance truth to the kernel; neither supplies `balanceAfter` or directly updates `Customer.currentBalance`.
+- Focused customer-ledger and POS verification passed 2 suites / 38 tests.
+- Report-trust verification passed 1 suite / 223 tests, including 11 Slice 434 mutations.
+- Consolidated affected-boundary verification passed 6 suites / 273 tests.
+- TypeScript, focused ESLint, JavaScript syntax, direct authority scan, and focused diff hygiene passed.
+- Live report-trust readiness is 28/28 with zero blockers.
+- Implementation report: `what-next/referrals/CUSTOMER_LEDGER_BALANCE_INTEGRITY_KERNEL_SLICE_434_REPORT_2026-08-08.md`.
+- Lifecycle evidence: `what-next/skills-life-cycle/STOQUIFY_SLICE_434_RELEASE_EVIDENCE_REPORT_2026-08-08.md`.
+- Phase 5 baseline: `what-next/referrals/STATEMENT_PROOF_NETWORK_REPORT_2026-08-08.md`.
+- Repository integration, PostgreSQL concurrency evidence, and production deployment remain NO-GO.
+- Customer settlement, invoice allocation, and statement generation remain NO-GO.
+- No Slice 435 is selected.
+- Next skill: `stoquify-referral-war-room-orchestrator` under `/caveman full`, consulting `stoquify-statement-proof-network` for a fresh customer-settlement and allocation audit.
+
+## Phase 5 / Slice 435 Selected - Customer Settlement And Invoice Allocation Source Foundation
+
+- A fresh `/caveman full` war-room audit selected the missing incoming customer-settlement source command.
+- The legacy POS `Payment` model cannot conserve one customer receipt across multiple sales orders and will not be relabeled as the settlement aggregate.
+- Slice 435 will add dedicated tenant-scoped settlement/allocation persistence, migration proof, collection RBAC, idempotency, evidence hashes, exact allocation conservation, per-order open-balance validation, customer-ledger credits, configured accounting posting, close invalidation, audit, business event, and outbox evidence.
+- Every source and evidence write must commit in one serializable transaction or fail together.
+- The model reserves explicit posted/reversed vocabulary, but no reversal mutation is authorized in this slice; a future compensating reversal command must be separately selected and certified.
+- No action, route, UI, dashboard, statement, snapshot, public token, recipient workflow, delivery, AI/WhatsApp authority, or POS activation is selected.
+- Audit report: `what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_POST_SLICE_434_AUDIT_REPORT_2026-08-08.md`.
+- Selection report: `what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_SLICE_435_SELECTION_REPORT_2026-08-08.md`.
+- Handoff report: `what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_SLICE_435_HANDOFF_REPORT_2026-08-08.md`.
+- Next skill: `stoquify-statement-proof-network` for Slice 435 only.
+
+## Phase 5 / Slice 435 Certified - Customer Settlement And Allocation Source Foundation
+
+- Slice 435 is certified for the current worktree as a dedicated incoming customer-settlement source foundation.
+- The legacy POS `Payment` model remains separate; the command does not mutate `SalesOrder.paymentStatus`.
+- Required tenant/customer settlement and allocation persistence includes idempotency, correlation, document/evidence hashes, posting references, event references, and reserved reversal provenance.
+- Each allocation is positive, unique by sales order, exactly conserved to the settlement amount, limited to the service-owned open balance, and linked to one required unique customer-ledger entry.
+- Ledger credits are written through the Slice 434 balance kernel before their allocations are created in the same serializable transaction.
+- Replay uses the stored allocation links and revalidates tenant, customer, payment type, sales-order reference, zero debit, and exact credit amount.
+- `finance.receivables.collect` is critical, alias-aware, and protected by five-minute fresh authentication.
+- The configured `CUSTOMER_SETTLEMENT` rule fails closed and posts the selected receipt rail against accounts receivable with source-link, ledger-audit, and close-invalidation evidence.
+- Settlement, allocations, ledger, journal, audit, business event, outbox, and completion evidence commit together or fail together.
+- Focused settlement/security verification passed 2 suites / 23 tests.
+- Report-trust verification passed 1 suite / 245 tests, including direct ledger-link mutation coverage.
+- Consolidated affected-boundary verification passed 13 suites / 343 tests.
+- Prisma format, client generation without engine replacement, schema validation, TypeScript, focused ESLint, JavaScript syntax, scoped diff hygiene, and temporary-file scan passed.
+- Live report-trust readiness is 29/29 with zero blockers.
+- Reports: `what-next/referrals/CUSTOMER_SETTLEMENT_ALLOCATION_SOURCE_FOUNDATION_SLICE_435_REPORT_2026-08-08.md`, `what-next/referrals/STATEMENT_PROOF_NETWORK_REPORT_2026-08-08.md`, and `what-next/skills-life-cycle/STOQUIFY_SLICE_435_RELEASE_EVIDENCE_REPORT_2026-08-08.md`.
+- Repository integration, migration-history certification, PostgreSQL migration/concurrency evidence, and production deployment remain NO-GO.
+- No reversal command, action, route, UI, SalesInvoice aggregate, statement, snapshot, signed access, recipient workflow, delivery, AI/WhatsApp authority, or POS activation was added.
+- No Slice 436 is selected.
+- Next skill: `stoquify-referral-war-room-orchestrator` under `/caveman full` for a fresh post-Slice 435 audit, consulting `stoquify-statement-proof-network`.
+
+## Phase 5 / Slice 436 Certification Record - Customer Settlement Compensating Reversal Foundation
+
+### Certified Outcome
+
+- Slice 436 is certified at current-worktree service-foundation level.
+- Posted settlements now retain explicit compensating chronology through allocation-linked `PAYMENT_REVERSAL` ledger debits, mirrored reversing journal evidence, source links, close invalidation, audit, applied event, outbox, and one final aggregate compare-and-set.
+- Exact replay revalidates tenant-scoped original/reversal ledger, posting, journal, source-link, applied-event, and outbox payload evidence.
+- The service owns the execution clock and returns a bounded DTO; caller-controlled time and raw persistence-row return are rejected by the ratchet.
+- Generic journal reversal refuses `CUSTOMER_SETTLEMENT` sources and commits a durable redacted bypass audit.
+- Verification passed: reversal 15/15; combined accounting/event/security 73/73 across 8 suites; report-trust 262/262; live readiness 30/30; TypeScript, Prisma validate/generate, focused lint, syntax, diff, whitespace, exposure, and temporary-file checks.
+- Independent review findings for event replay, result redaction, service time, and static-ratchet coverage were remediated before certification.
+- No authenticated action, route, UI, provider refund, statement, snapshot, signed access, recipient workflow, delivery, AI/WhatsApp authority, migration deployment, or PostgreSQL concurrency claim is included.
+- Reports: `what-next/referrals/CUSTOMER_SETTLEMENT_COMPENSATING_REVERSAL_SLICE_436_REPORT_2026-08-08.md`, `what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_POST_SLICE_436_AUDIT_REPORT_2026-08-08.md`, and `what-next/skills-life-cycle/STOQUIFY_SLICE_436_RELEASE_EVIDENCE_REPORT_2026-08-08.md`.
+- Historical closeout: no Slice 437 was selected when Slice 436 was certified; this was later superseded by the Slice 437 selection and certification.
+- Next skill: `stoquify-referral-war-room-orchestrator` under `/caveman full` for a fresh post-Slice 436 audit, consulting `stoquify-statement-proof-network`.
+
+
+### Selection Baseline (Historical)
+
+- A fresh `/caveman full` post-Slice 435 audit selected the missing source-owned settlement reversal command.
+- The current settlement model reserves reversal status/references but has no reversal command, payload hash, correlation, effective date, or direct allocation reversal-ledger link.
+- The current generic journal reversal can reverse a customer-settlement journal without restoring customer balance, allocations, or source/event truth.
+- Slice 436 will add explicit `PAYMENT_REVERSAL` evidence, direct per-allocation reversal links, complete reversal provenance, and a distinct critical permission with five-minute fresh authentication.
+- One serializable command must validate original source evidence, compare-and-set the settlement, restore customer/open-item truth through the Slice 434 kernel, reverse the original journal lines, and record source-link, close-invalidation, audit, event, and outbox evidence atomically.
+- Generic journal reversal must refuse `CUSTOMER_SETTLEMENT` source journals.
+- Baseline passed: 7 settlement/ledger/open-item/posting/close/event/security suites / 53 tests; Prisma schema validation passed; live report trust remains 29/29 ready with zero blockers.
+- Audit report: `what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_POST_SLICE_435_AUDIT_REPORT_2026-08-08.md`.
+- Selection report: `what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_SLICE_436_SELECTION_REPORT_2026-08-08.md`.
+- Handoff report: `what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_SLICE_436_HANDOFF_REPORT_2026-08-08.md`.
+- No action, route, UI, dashboard, statement, snapshot, token, recipient workflow, delivery, AI/WhatsApp authority, reconciliation execution, or production activation is selected.
+- Migration-history health remains blocked independently; repository integration and production deployment remain NO-GO.
+- Next skill: `stoquify-statement-proof-network` for Slice 436 only.
+
+## Phase 5 / Slice 437 Certification Record - Protected Customer Settlement Reversal Action Boundary
+
+- Slice 437 is certified at current-worktree protected-action-boundary level.
+- The finance-owned server action requires exact `finance.receivables.reverse`, allowed-command audit evidence, five-minute fresh authentication, and enforced/audited finance-module write entitlement.
+- Fresh-auth user, tenant, assurance organization, finite password-level assurance, and real finite timestamp are bound to the protected context before canonical command parsing.
+- The service receives only context-derived organization, actor, permissions, and bounded five-claim fresh-auth evidence. Cache revalidation occurs only after success.
+- Verification passed: protected action 14/14; eight-suite runtime/security bundle 86/86; report-trust mutations 290/290; live readiness 31/31; TypeScript, scoped lint, syntax, diff, exposure, and temporary-file checks.
+- Independent review findings were remediated. The final constrained re-review found no remaining issue, including the concrete dead-code denial-guard bypass.
+- No route, UI, API, provider refund, statement, snapshot, signed access, recipient workflow, delivery, AI/WhatsApp authority, migration deployment, PostgreSQL concurrency, or production release claim is included.
+- Reports: `what-next/referrals/CUSTOMER_SETTLEMENT_REVERSAL_PROTECTED_ACTION_SLICE_437_REPORT_2026-08-08.md`, `what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_POST_SLICE_437_AUDIT_REPORT_2026-08-08.md`, and `what-next/skills-life-cycle/STOQUIFY_SLICE_437_RELEASE_EVIDENCE_REPORT_2026-08-08.md`.
+- No Slice 438 is selected.
+- Leading next-audit candidate: immutable posted customer receivable document foundation, including customer-scoped receivable grouping.
+- Next skill: `stoquify-referral-war-room-orchestrator` under `/caveman full`, consulting `stoquify-statement-proof-network`.
+## Last `/caveman full` pass
+
+- Date: 2026-08-08
+- Result: Ran `/caveman full` + `/stoquify-referral-war-room` re-audit for Phase 5 next-step control.
+- Finding: Slice 438 remains the correct next dependency because no immutable posted customer receivable source model exists yet and settlement/open-item flows still bind to `SalesOrder` references.
+- Decision: Keep **Slice 438** as selected and stay source-only.
+- Next skill: Continue under `/caveman` with `/stoquify-referral-war-room` and `stoquify-statement-proof-network` for Slice 438 implementation handoff.
+- Evidence artifacts added: `what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_POST_SLICE_438_NEXT_SLICE_AUDIT_REPORT_2026-08-08.md`.

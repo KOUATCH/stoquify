@@ -3,6 +3,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma"
 import { db } from "@/prisma/db"
 import { logSecurityEvent, SecurityEventType } from "@/lib/security/audit-log"
 import { buildTrustedOrigins } from "@/lib/security/trusted-origins"
+import { credentialSignInSucceeded } from "@/lib/security/credential-sign-in-outcome"
 
 const baseURL = process.env.NEXTAUTH_URL ?? process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000"
 const configuredTrustedOrigins = buildTrustedOrigins([
@@ -180,7 +181,7 @@ export const auth = betterAuth({
       const email = (ctx.body as any)?.email as string | undefined
       if (!email) return {}
 
-      const isSuccess = ctx.response?.status >= 200 && ctx.response?.status < 300
+      const isSuccess = credentialSignInSucceeded(ctx)
 
       const user = await db.user.findFirst({
         where: { email: { equals: email, mode: "insensitive" } },

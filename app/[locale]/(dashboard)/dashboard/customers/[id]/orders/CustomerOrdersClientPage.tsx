@@ -6,14 +6,6 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
@@ -21,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { useCustomer, useCustomerOrders } from "@/hooks/useCustomerQueries"
+import { useCustomerExport } from "@/hooks/useCustomerManagement"
 import { useFormatters } from "@/hooks/useFormatters"
 import { format, formatDistanceToNow } from "date-fns"
 import {
@@ -34,7 +27,7 @@ import {
   Download,
   Edit,
   Eye,
-  MoreHorizontal,
+  Loader2,
   Package,
   Plus,
   Receipt,
@@ -50,7 +43,19 @@ import { DEFAULT_LOCALE } from "@/types/bilingual"
 import { useParams, usePathname, useRouter } from "next/navigation"
 import { useState } from "react"
 
-export default function CustomerOrdersClientPage() {
+const ORDER_STATUS_EXPORT = {
+  all: "all",
+  draft: "DRAFT",
+  confirmed: "CONFIRMED",
+  processing: "PROCESSING",
+  shipped: "SHIPPED",
+  delivered: "DELIVERED",
+  cancelled: "CANCELLED",
+} as const
+
+type OrderStatusFilter = keyof typeof ORDER_STATUS_EXPORT
+
+export default function CustomerOrdersClientPage({ currency }: { currency: string }) {
   const params = useParams()
   const router = useRouter()
   const pathname = usePathname()
@@ -60,7 +65,8 @@ export default function CustomerOrdersClientPage() {
 
   const { data: customer, isLoading, error } = useCustomer(customerId)
   const { data: customerOrdersData, isLoading: ordersLoading, error: ordersError } = useCustomerOrders(customerId)
-  const { info, success, warning } = useNotifications()
+  const { info } = useNotifications()
+  const exportMutation = useCustomerExport(locale)
 
   // Use real customer orders data
   const orders = customerOrdersData?.orders || []
@@ -71,10 +77,10 @@ export default function CustomerOrdersClientPage() {
   }
 
   const [searchQuery, setSearchQuery] = useState("")
-  const [statusFilter, setStatusFilter] = useState("all")
+  const [statusFilter, setStatusFilter] = useState<OrderStatusFilter>("all")
   const [sortField, setSortField] = useState("createdAt")
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc")
-  const fmt = useFormatters("USD")
+  const fmt = useFormatters(currency)
 
   if (isLoading || ordersLoading) {
     return <CustomerOrdersSkeleton />
@@ -218,12 +224,23 @@ export default function CustomerOrdersClientPage() {
                   size="sm"
                   className="hidden sm:inline-flex"
                   onClick={() => {
-                    info("Export Started", `Exporting orders for ${customer.name}`)
-                    // Add actual export logic here
-                    setTimeout(() => success("Export Complete", "Customer orders exported successfully"), 2000)
+                    exportMutation.mutate({
+                      scope: "customer-orders",
+                      customerId: customer.id,
+                      purpose: "CUSTOMER_ORDER_HISTORY_EXPORT",
+                      filters: {
+                        search: searchQuery,
+                        orderStatus: ORDER_STATUS_EXPORT[statusFilter],
+                      },
+                    })
                   }}
+                  disabled={exportMutation.isPending}
                 >
-                  <Download className="w-4 h-4 me-2" />
+                  {exportMutation.isPending ? (
+                    <Loader2 className="w-4 h-4 me-2 animate-spin" />
+                  ) : (
+                    <Download className="w-4 h-4 me-2" />
+                  )}
                   Export
                 </Button>
                 <Button
@@ -356,11 +373,12 @@ export default function CustomerOrdersClientPage() {
                         className="w-full justify-start"
                         size="sm"
                         onClick={() => {
-                          warning("Feature Coming Soon", "Invoices feature will be available soon")
+                          info("Open Receivables", "Opening the finance receivables workspace")
+                          router.push(localizedHref("/dashboard/finance/receivables"))
                         }}
                       >
                         <Receipt className="h-4 w-4 me-2" />
-                        View Invoices
+                        Open Receivables
                       </Button>
                     </div>
                   </div>
@@ -376,7 +394,7 @@ export default function CustomerOrdersClientPage() {
                     <div>
                       <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white">Order History</CardTitle>
                       <CardDescription className="text-slate-600 dark:text-slate-400 mt-1">
-                        Complete order history and details
+                        Filter and export this customer's order history
                       </CardDescription>
                     </div>
                     <Badge
@@ -400,12 +418,17 @@ export default function CustomerOrdersClientPage() {
                       />
                     </div>
 
-                    <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <Select
+                      value={statusFilter}
+                      onValueChange={(value) => setStatusFilter(value as OrderStatusFilter)}
+                    >
                       <SelectTrigger className="w-40 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-slate-200 dark:border-slate-700">
                         <SelectValue placeholder="All Status" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">All Status</SelectItem>
+                        <SelectItem value="draft">Draft</SelectItem>
+                        <SelectItem value="confirmed">Confirmed</SelectItem>
                         <SelectItem value="delivered">Delivered</SelectItem>
                         <SelectItem value="shipped">Shipped</SelectItem>
                         <SelectItem value="processing">Processing</SelectItem>
@@ -461,7 +484,7 @@ export default function CustomerOrdersClientPage() {
                                 variant="ghost"
                                 size="sm"
                                 className="h-auto p-0 hover:bg-transparent font-semibold"
-                                onClick={() => handleSort("total")}
+                                onClick={() => handleSort("totalAmount")}
                               >
                                 Total
                                 <ArrowUpDown className="ms-2 h-3 w-3" />
@@ -479,7 +502,6 @@ export default function CustomerOrdersClientPage() {
                                 <ArrowUpDown className="ms-2 h-3 w-3" />
                               </Button>
                             </TableHead>
-                            <TableHead className="w-[70px]"></TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -519,49 +541,6 @@ export default function CustomerOrdersClientPage() {
                                 <div className="text-sm text-slate-700 dark:text-slate-300">
                                   {formatDistanceToNow(order.createdAt, { addSuffix: true })}
                                 </div>
-                              </TableCell>
-                              <TableCell className="py-4">
-                                <DropdownMenu>
-                                  <DropdownMenuTrigger asChild>
-                                    <Button
-                                      variant="ghost"
-                                      className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                                    >
-                                      <MoreHorizontal className="h-4 w-4" />
-                                    </Button>
-                                  </DropdownMenuTrigger>
-                                  <DropdownMenuContent align="end">
-                                    <DropdownMenuLabel>Order Actions</DropdownMenuLabel>
-                                    <DropdownMenuItem
-                                      onClick={() => {
-                                        info("View Order", `Opening details for order ${order.id}`)
-                                        // Add navigation to order details page when it exists
-                                      }}
-                                    >
-                                      <Eye className="me-2 h-4 w-4" />
-                                      View Details
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                      onClick={() => {
-                                        info("View Invoice", `Opening invoice for order ${order.id}`)
-                                        // Add navigation to invoice page when it exists
-                                      }}
-                                    >
-                                      <Receipt className="me-2 h-4 w-4" />
-                                      View Invoice
-                                    </DropdownMenuItem>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem
-                                      onClick={() => {
-                                        info("Download PDF", `Generating PDF for order ${order.id}`)
-                                        setTimeout(() => success("PDF Ready", "Order PDF has been downloaded"), 2000)
-                                      }}
-                                    >
-                                      <Download className="me-2 h-4 w-4" />
-                                      Download PDF
-                                    </DropdownMenuItem>
-                                  </DropdownMenuContent>
-                                </DropdownMenu>
                               </TableCell>
                             </TableRow>
                           ))}

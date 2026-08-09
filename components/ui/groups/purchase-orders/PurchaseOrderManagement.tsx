@@ -28,6 +28,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { DataTablePagination } from "@/components/DataTableComponents/DataTablePagination"
 
 import {
   DropdownMenu,
@@ -523,7 +524,7 @@ const ModernPurchaseOrderTable = ({
       </div>
 
       {/* Filters */}
-      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center">
+      <div className="dashboard-table-toolbar flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="relative min-w-0 flex-1 sm:max-w-sm">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--dash-text-faint)]" />
           <Input
@@ -631,39 +632,7 @@ const ModernPurchaseOrderTable = ({
       </div>
 
       {/* Pagination */}
-      <div className="flex flex-col gap-3 py-1 sm:flex-row sm:items-center sm:justify-between">
-        <div className="min-w-0 flex-1 text-sm text-[var(--dash-text-soft)]">
-          {Object.keys(rowSelection).length > 0 && (
-            <span>{Object.keys(rowSelection).length} of {table.getFilteredRowModel().rows.length} row(s) selected. </span>
-          )}
-          Showing {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1} to{" "}
-          {Math.min(
-            (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize,
-            table.getFilteredRowModel().rows.length
-          )}{" "}
-          of {table.getFilteredRowModel().rows.length} entries
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-            className="dashboard-button-secondary h-9 rounded-lg disabled:opacity-50"
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-            className="dashboard-button-secondary h-9 rounded-lg disabled:opacity-50"
-          >
-            Next
-          </Button>
-        </div>
-      </div>
+      <DataTablePagination table={table} variant="landing" />
     </div>
   )
 }

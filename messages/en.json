@@ -3224,8 +3224,8 @@
       "reset": "Reset"
     },
     "actions": {
-      "export": "Prepare export",
-      "exporting": "Preparing"
+      "export": "Download export",
+      "exporting": "Preparing download"
     },
     "table": {
       "caption": "Customer receivable open items",
@@ -3236,6 +3236,7 @@
       "resultCount": "{count, plural, one {# AR item} other {# AR items}}",
       "customer": "Customer",
       "reference": "Reference",
+      "currency": "Currency",
       "opened": "Opened",
       "allocated": "Allocated",
       "open": "Open",
@@ -3273,6 +3274,7 @@
       "allocations": "Allocations",
       "customer": "Customer",
       "reference": "Reference",
+      "currency": "Currency",
       "opened": "Opened",
       "allocated": "Allocated",
       "open": "Open",
@@ -3290,7 +3292,7 @@
       "recordedThrough": "Recorded through"
     },
     "exportStatus": {
-      "ready": "Export preparation passed. Use the server export worker to generate the file."
+      "ready": "Controlled export downloaded."
     }
   }
 }

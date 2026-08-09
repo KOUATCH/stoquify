@@ -1,13 +1,13 @@
 # Report Trust and Export Certification Readiness Gate
 
-Generated: 2026-08-02T14:32:10.253Z
+Generated: 2026-08-09T07:54:05.775Z
 Mode: fail
-Status: ready
+Status: blocked
 
 ## Summary
 
-- Checks ready: 23/23
-- Blockers: 0
+- Checks ready: 34/35
+- Blockers: 1
 
 ## Checks
 
@@ -28,16 +28,28 @@ Status: ready
 - ready: certified_close_pack_verified_fresh_auth_evidence
 - ready: close_waiver_service_owned_verified_fresh_auth_evidence
 - ready: missing_proof_request_service_owned_command_evidence
+- ready: missing_proof_response_service_owned_command_evidence
 - ready: client_missing_proof_request_queue_service_owned_evidence
 - ready: client_missing_proof_manager_action_center_composition
+- ready: client_missing_proof_response_state_projection
+- ready: accountant_missing_proof_response_review_queue
+- ready: accountant_missing_proof_response_acceptance_resolution
 - ready: accountant_portfolio_and_client_register_surfaces
 - ready: accountant_access_grant_revoke_events
 - ready: trust_pack_export_event_and_hash_contract
+- ready: customer_ledger_service_owned_balance_integrity_kernel
+- ready: customer_settlement_allocation_source_foundation
+- ready: customer_settlement_compensating_reversal_foundation
+- ready: posted_customer_receivable_document_foundation
+- ready: immutable_customer_statement_snapshot_foundation
+- ready: signed_customer_statement_external_access_foundation
+- blocked: consented_customer_referral_launch_foundation
+- ready: customer_settlement_reversal_protected_action_boundary
 - ready: statutory_payroll_and_inventory_evidence_coverage
 
 ## Blockers
 
-- None
+- consented_customer_referral_launch_foundation
 
 ## Certification Boundary
 

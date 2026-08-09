@@ -75,6 +75,7 @@ import {
 import { addPOSCartLine, openPOSShift } from "@/services/pos/pos.service"
 import { updateTaxRateForManagement } from "@/services/tax-rate/tax-rate.service"
 import { createLocationForManagement } from "@/services/location/location.service"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import { removeUnitForManagement } from "@/services/unit/unit.service"
 import { getCustomer, createCustomer } from "../customers/customerAction2"
 import { openPOSShiftAction } from "../pos/session.actions"
@@ -92,6 +93,7 @@ const mockOpenPOSShift = openPOSShift as jest.Mock
 const mockAddPOSCartLine = addPOSCartLine as jest.Mock
 const mockUpdateTaxRateForManagement = updateTaxRateForManagement as jest.Mock
 const mockCreateLocationForManagement = createLocationForManagement as jest.Mock
+const mockObserveModuleAccess = observeModuleAccess as jest.Mock
 const mockRemoveUnitForManagement = removeUnitForManagement as jest.Mock
 
 const rbacContext = {
@@ -128,6 +130,7 @@ const customerRecord = {
 beforeEach(() => {
   jest.clearAllMocks()
   mockRequirePermission.mockResolvedValue(rbacContext)
+  mockObserveModuleAccess.mockResolvedValue({ allowed: true })
   mockAssertCanUseOrganization.mockResolvedValue(true)
   mockOrganizationFindFirst.mockResolvedValue({ id: "org-session" })
   mockGetLegacyCustomerByIdForOrg.mockResolvedValue(customerRecord)

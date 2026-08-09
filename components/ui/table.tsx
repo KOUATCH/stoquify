@@ -4,19 +4,20 @@ import { cn } from "@/lib/utils"
 
 type TableProps = React.HTMLAttributes<HTMLTableElement> & {
   scrollRegionLabel?: string
+  containerClassName?: string
 }
 
 const Table = React.forwardRef<HTMLTableElement, TableProps>(
-  ({ className, scrollRegionLabel, ...props }, ref) => (
+  ({ className, containerClassName, scrollRegionLabel, ...props }, ref) => (
     <div
-      className="relative w-full overflow-auto"
+      className={cn("dashboard-table-frame relative w-full overflow-auto", containerClassName)}
       role={scrollRegionLabel ? "region" : undefined}
       aria-label={scrollRegionLabel}
       tabIndex={scrollRegionLabel ? 0 : undefined}
     >
       <table
         ref={ref}
-        className={cn("w-full caption-bottom text-sm", className)}
+        className={cn("dashboard-table-base w-full caption-bottom text-sm", className)}
         {...props}
       />
     </div>

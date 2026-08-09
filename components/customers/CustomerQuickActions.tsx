@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { useNotifications } from "@/components/notifications/NotificationProvider"
+import { useCustomerExport } from "@/hooks/useCustomerManagement"
 import { getLocaleFromPathname, localizePath } from "@/i18n/routing"
 import { DEFAULT_LOCALE } from "@/types/bilingual"
 import { useRouter, usePathname } from "next/navigation"
@@ -14,6 +15,7 @@ import {
   ArrowLeft,
   MessageCircle,
   Download,
+  Loader2,
   Phone,
   Mail,
   Plus
@@ -36,7 +38,8 @@ export function CustomerQuickActions({ customer, currentPage }: CustomerQuickAct
   const pathname = usePathname()
   const locale = getLocaleFromPathname(pathname) ?? DEFAULT_LOCALE
   const localizedHref = (href: string) => localizePath(href, locale)
-  const { info, success, warning } = useNotifications()
+  const { info, warning } = useNotifications()
+  const exportMutation = useCustomerExport(locale)
 
   const handleNavigation = (page: string, pageName: string) => {
     if (pathname.includes(page)) return // Already on this page
@@ -64,9 +67,11 @@ export function CustomerQuickActions({ customer, currentPage }: CustomerQuickAct
   }
 
   const handleExport = () => {
-    info("Export Started", `Exporting ${customer.name}'s data`)
-    // Simulate export process
-    setTimeout(() => success("Export Complete", "Customer data exported successfully"), 2000)
+    exportMutation.mutate({
+      scope: "customer",
+      customerId: customer.id,
+      purpose: "CUSTOMER_PROFILE_EXPORT",
+    })
   }
 
   const handleCreateOrder = () => {
@@ -196,10 +201,15 @@ export function CustomerQuickActions({ customer, currentPage }: CustomerQuickAct
               variant="outline"
               size="sm"
               onClick={handleExport}
+              disabled={exportMutation.isPending}
               className="w-full justify-start"
             >
-              <Download className="h-4 w-4 mr-2" />
-              Export Data
+              {exportMutation.isPending ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4 mr-2" />
+              )}
+              Export Summary
             </Button>
           </div>
         </div>

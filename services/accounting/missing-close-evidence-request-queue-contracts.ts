@@ -8,9 +8,13 @@ export const MISSING_CLOSE_EVIDENCE_REQUEST_TYPE =
   "MISSING_CLOSE_EVIDENCE" as const;
 export const MISSING_CLOSE_EVIDENCE_VISIBILITY =
   "CLIENT_ACTION_REQUIRED" as const;
+export const MISSING_CLOSE_EVIDENCE_RESPONSE_TYPE =
+  "MISSING_CLOSE_EVIDENCE_RESPONSE" as const;
+export const MISSING_CLOSE_EVIDENCE_RESPONSE_VISIBILITY =
+  "CLIENT_RESPONSE_SUBMITTED" as const;
 
 export const CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE = {
-  version: 1,
+  version: 2,
   kind: "CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE",
   readPermission: "accounting.close.read",
   maxItems: 100,
@@ -23,6 +27,18 @@ export const CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE = {
   redaction: "CLIENT_RECIPIENT_ONLY_NO_RAW_METADATA",
 } as const;
 
+export type ClientMissingCloseEvidenceWorkflowState =
+  | "AWAITING_RECIPIENT_RESPONSE"
+  | "RESPONSE_SUBMITTED";
+
+export type ClientMissingCloseEvidenceResponse = Readonly<{
+  responseId: string;
+  correlationId: string;
+  respondedById: string;
+  submittedAt: string;
+  status: "SUBMITTED";
+}>;
+
 export type ClientMissingCloseEvidenceRequest = Readonly<{
   requestId: string;
   findingId: string;
@@ -33,6 +49,8 @@ export type ClientMissingCloseEvidenceRequest = Readonly<{
   requestText: string;
   dueAt: string;
   createdAt: string;
+  workflowState: ClientMissingCloseEvidenceWorkflowState;
+  response: ClientMissingCloseEvidenceResponse | null;
   finding: {
     domain: CloseFindingDomain;
     severity: CloseFindingSeverity;
@@ -50,13 +68,22 @@ export type ClientMissingCloseEvidenceRequest = Readonly<{
   requiredPermission: typeof CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE.readPermission;
 }>;
 
-export type ClientMissingCloseEvidenceRequestQueueBlocker = Readonly<{
-  id: string;
-  findingId: string;
-  requestId: string;
-  reason: "INVALID_REQUEST_EVIDENCE";
-  detail: "Stored missing-proof request evidence is incomplete.";
-}>;
+export type ClientMissingCloseEvidenceRequestQueueBlocker = Readonly<
+  | {
+      id: string;
+      findingId: string;
+      requestId: string;
+      reason: "INVALID_REQUEST_EVIDENCE";
+      detail: "Stored missing-proof request evidence is incomplete.";
+    }
+  | {
+      id: string;
+      findingId: string;
+      requestId: string;
+      reason: "INVALID_RESPONSE_EVIDENCE";
+      detail: "Stored missing-proof response evidence is incomplete.";
+    }
+>;
 
 export type ClientMissingCloseEvidenceRequestQueue = Readonly<{
   kind: typeof CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE.kind;
@@ -76,14 +103,20 @@ export type ClientMissingCloseEvidenceRequestQueue = Readonly<{
     readPermissionRequired: typeof CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE.readPermission;
     serviceClockOwned: true;
     rawMetadataExposed: false;
+    responseBodyExposed: false;
+    responseStateServiceOwned: true;
     maxItems: typeof CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE.maxItems;
   };
   summary: {
     total: number;
+    awaitingResponse: number;
+    responseSubmitted: number;
     overdue: number;
     dueWithin72Hours: number;
     scheduled: number;
     invalidEvidence: number;
+    invalidRequestEvidence: number;
+    invalidResponseEvidence: number;
     truncated: boolean;
   };
   requests: ClientMissingCloseEvidenceRequest[];

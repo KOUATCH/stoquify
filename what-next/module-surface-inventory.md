@@ -4,17 +4,17 @@ Report mode: this inventory is read-only and does not enforce module entitlement
 
 ## Summary
 
-- Generated at: 2026-08-01T18:02:15.147Z
+- Generated at: 2026-08-06T09:43:22.585Z
 - Catalog modules: 19
-- Surfaces inventoried: 386
+- Surfaces inventoried: 387
 - Source coverage: sidebar=present, moduleCatalog=present, dashboardRoot=present, actionsRoot=present, reportExportSurfaces=present, apiRoutes=present, apiGuardInventory=present
 
 ## Classification Counts
 
 - delegated re-export: 7
 - delegated_uploadthing_core: 1
-- enforcement candidate: 259
-- mapped: 352
+- enforcement candidate: 257
+- mapped: 353
 - missing permission: 4
 - not applicable: cross-module session assurance: 1
 - not applicable: internal action response helper: 1
@@ -96,7 +96,7 @@ Report mode: this inventory is read-only and does not enforce module entitlement
 | action | inventory/inventoryMovementHistoryBackgroundExportActions.ts | inventory | reports.export | protect | mapped | actions/inventory/inventoryMovementHistoryBackgroundExportActions.ts |
 | action | item-suppliers/addItemSuppliers.ts | inventory | ITEM_SUPPLIER_CREATE_PERMISSIONS | requireAllPermissions | mapped, enforcement candidate | actions/item-suppliers/addItemSuppliers.ts |
 | action | item-suppliers/getItemWithSuppliers.ts | inventory | ITEM_SUPPLIER_READ_PERMISSIONS | requireAllPermissions | mapped, enforcement candidate | actions/item-suppliers/getItemWithSuppliers.ts |
-| action | item/items.ts | inventory | inventory.items.read | requirePermission | mapped, enforcement candidate | actions/item/items.ts |
+| action | item/items.ts | inventory | inventory.items.create | requirePermission | mapped | actions/item/items.ts |
 | action | item/listItemsAction.ts | inventory | inventory.items.read | requirePermission | mapped, enforcement candidate | actions/item/listItemsAction.ts |
 | action | itemsShow/createActionItem.ts | inventory | inventory.items.create | requirePermission | mapped, enforcement candidate | actions/itemsShow/createActionItem.ts |
 | action | itemsShow/deleteItem.ts | inventory | inventory.items.delete | requirePermission | mapped, enforcement candidate | actions/itemsShow/deleteItem.ts |
@@ -348,9 +348,10 @@ Report mode: this inventory is read-only and does not enforce module entitlement
 | page | /dashboard/inventory/categories/[id] | inventory | inventory.categories.read | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/inventory/categories/[id]/page.tsx |
 | page | /dashboard/inventory/categories/create | inventory | inventory.categories.create | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/inventory/categories/create/page.tsx |
 | page | /dashboard/inventory/categories | inventory | inventory.categories.read | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/inventory/categories/page.tsx |
+| page | /dashboard/inventory/items/[id]/edit | inventory | inventory.items.update | checkPermission | mapped | app/[locale]/(dashboard)/dashboard/inventory/items/[id]/edit/page.tsx |
 | page | /dashboard/inventory/items/[id]/others | inventory | inventory.items.read | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/inventory/items/[id]/others/page.tsx |
 | page | /dashboard/inventory/items/[id]/suppliers | inventory | inventory.items.read | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/page.tsx |
-| page | /dashboard/inventory/items/create | inventory | inventory.items.create | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/inventory/items/create/page.tsx |
+| page | /dashboard/inventory/items/create | inventory | inventory.items.create | checkPermission | mapped | app/[locale]/(dashboard)/dashboard/inventory/items/create/page.tsx |
 | page | /dashboard/inventory/items/new | inventory | inventory.items.create | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/inventory/items/new/page.tsx |
 | page | /dashboard/inventory/items | inventory | inventory.items.read | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/inventory/items/page.tsx |
 | page | /dashboard/inventory/loss-control | inventory | inventory.levels.read | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/inventory/loss-control/page.tsx |

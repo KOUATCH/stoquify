@@ -3,9 +3,12 @@ import getBriefItemById from "@/actions/itemsShow/getBriefItemById"
 import getOrgSuppliers from "@/actions/suppliers/getOrgSuppliers"
 import { Button } from "@/components/ui/button"
 import { TableLoading } from "@/components/ui/data-table"
-import { checkPermission } from "@/config/useAuth"
+import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
 import { ArrowLeft } from 'lucide-react'
 import { Link } from "@/i18n/navigation"
+import { pickLocale } from "@/i18n/routing"
+import { createOrganizationMoneyFormatter } from "@/lib/i18n/organization-money"
+import { getOrganizationSettingsForOrg } from "@/services/organization/organization-settings.service"
 import { Suspense } from "react"
 import AddSuppliersToItemModal from "./AddSuppliersToItemModal"
 import LayoutItemSuppliers from "./LayoutItemSuppliers"
@@ -20,7 +23,11 @@ interface ItemDetailspageProps {
 const page = async ({ params }: ItemDetailspageProps) => {
   await checkPermission("inventory.items.read")
 
-  const { id } = await params
+  const { id, locale: rawLocale } = await params
+  const locale = pickLocale(rawLocale)
+  const user = await getAuthenticatedUser()
+  const organizationId = user.organizationId
+  const organizationSettings = await getOrganizationSettingsForOrg(organizationId)
 
   const { data: item, success } = await getBriefItemById(id)
   const itemSuppliers = await getItemWithSuppliersById(id)
@@ -30,6 +37,13 @@ const page = async ({ params }: ItemDetailspageProps) => {
   if (!success || !item) {
     return <div className="text-3xl font-bold">Not found</div>
   }
+  const organizationCurrency = organizationSettings?.currency
+  createOrganizationMoneyFormatter({
+    organizationId,
+    locale,
+    currency: organizationCurrency,
+  })
+  const currency = organizationCurrency!.trim().toUpperCase()
   const suppliers = allSuppliers.success ? allSuppliers.data.data : []
   // Extract the actual supplier relations from the response
   const supplierRelations = itemSuppliers.data
@@ -76,6 +90,9 @@ const page = async ({ params }: ItemDetailspageProps) => {
           </div>
           <LayoutItemSuppliers
             itemId={id}
+            organizationId={organizationId}
+            currency={currency}
+            locale={locale}
             itemSuppliers={
               supplierRelations
                 ? supplierRelations.map(rel => ({

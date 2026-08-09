@@ -5,18 +5,33 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { cn } from "@/lib/utils"
+import { createOrganizationMoneyFormatter } from "@/lib/i18n/organization-money"
 import { ItemSupplierDTO } from "@/types/itemSuppliers"
-import { Clock, DollarSign, Package, Search, Star, X } from "lucide-react"
+import { Clock, Coins, Package, Search, Star, X } from "lucide-react"
 import { useMemo, useState } from "react"
 
 interface SuppliersListProps {
   itemSuppliers: ItemSupplierDTO[] | null
   selectedSupplier: ItemSupplierDTO | null
   onSelectSupplier: (supplier: ItemSupplierDTO) => void
+  organizationId: string
+  currency: string
+  locale: string
 }
 
-export default function SuppliersList({ itemSuppliers, selectedSupplier, onSelectSupplier }: SuppliersListProps) {
+export default function SuppliersList({
+  itemSuppliers,
+  selectedSupplier,
+  onSelectSupplier,
+  organizationId,
+  currency,
+  locale,
+}: SuppliersListProps) {
   const [searchQuery, setSearchQuery] = useState("")
+  const moneyFormatter = useMemo(
+    () => createOrganizationMoneyFormatter({ organizationId, locale, currency }),
+    [currency, locale, organizationId],
+  )
 
   // Filter suppliers based on search query
   const filteredSuppliers = useMemo(() => {
@@ -129,10 +144,10 @@ export default function SuppliersList({ itemSuppliers, selectedSupplier, onSelec
                         <span>{itemSupplier.leadTime} days</span>
                       </div>
                     )}
-                    {itemSupplier.unitCost && (
+                    {itemSupplier.unitCost !== undefined && itemSupplier.unitCost !== null && (
                       <div className="flex items-center gap-1">
-                        <DollarSign className="h-3 w-3 shrink-0" />
-                        <span>${itemSupplier?.unitCost ? itemSupplier?.unitCost.toString() : "N/A"}</span>
+                        <Coins className="h-3 w-3 shrink-0" />
+                        <span>{moneyFormatter.format(itemSupplier.unitCost)}</span>
                       </div>
                     )}
                     {itemSupplier.minOrderQty && (

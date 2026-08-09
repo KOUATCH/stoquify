@@ -25,6 +25,8 @@ import {
 } from "lucide-react"
 import { getLocale } from "next-intl/server"
 import { Link } from "@/i18n/navigation"
+import { createOrganizationMoneyFormatter } from "@/lib/i18n/organization-money"
+import { getOrganizationSettingsForOrg } from "@/services/organization/organization-settings.service"
 import { Suspense, type CSSProperties } from "react"
 
 function toStringParam(input: unknown): string {
@@ -43,14 +45,6 @@ function toNumberParam(
   return value
 }
 
-function formatCurrency(amount: number, locale: Locale, currency = "USD"): string {
-  return new Intl.NumberFormat(locale === "fr" ? "fr-FR" : "en-US", {
-    style: "currency",
-    currency,
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(Number.isFinite(amount) ? amount : 0)
-}
 
 type SearchParams = Record<string, string | string[] | undefined>
 type StockStatusFilter =
@@ -150,13 +144,19 @@ export default async function ItemsPage(props: {
     )
   }
 
-  const [itemsRes, brandsRes, unitsRes, taxRatesRes, catsRes] = await Promise.all([
+  const [organizationSettings, itemsRes, brandsRes, unitsRes, taxRatesRes, catsRes] = await Promise.all([
+    getOrganizationSettingsForOrg(userOrg),
     getOrgItemsWithInventoryLevels(userOrg).catch(() => null),
     getOrgBrands(userOrg).catch(() => null),
     getOrgUnits(userOrg).catch(() => null),
     getOrgTaxRates(userOrg).catch(() => null),
     getOrgCategories(userOrg).catch(() => null),
   ])
+  const moneyFormatter = createOrganizationMoneyFormatter({
+    organizationId: userOrg,
+    locale,
+    currency: organizationSettings?.currency,
+  })
 
   const allItemData: ItemWithInventoryLevelsPayload[] =
     itemsRes?.success && Array.isArray(itemsRes.data) ? itemsRes.data : []
@@ -184,6 +184,19 @@ export default async function ItemsPage(props: {
   const initialBrandData = brandsRes?.success && Array.isArray(brandsRes.data) ? brandsRes.data : []
   const initialUnitData = unitsRes?.success ? unitsRes.data ?? [] : []
   const initialTaxRateData = taxRatesRes?.success ? taxRatesRes.data ?? [] : []
+  const activeFilterChips = [
+    ...(stockFilter === "all" ? [] : [{
+      id: "stock-status",
+      label: stockFilterLabels[stockFilter],
+      queryParam: "stock",
+    }]),
+    ...(q ? [{
+      id: "search",
+      label: `Search: ${q}`,
+      queryParam: "q",
+    }] : []),
+  ]
+
 
   const totalValue = initialItemData.reduce((sum, item) => {
     const qty = Number(item.inventoryLevels?.[0]?.quantityOnHand) || 0
@@ -216,7 +229,7 @@ export default async function ItemsPage(props: {
     },
     {
       label: "Total Value",
-      value: formatCurrency(totalValue, locale, "USD"),
+      value: moneyFormatter.format(totalValue),
       Icon: DollarSign,
       accent: "var(--dash-info)",
       soft: "var(--dash-info-soft)",
@@ -248,7 +261,7 @@ export default async function ItemsPage(props: {
     },
     {
       label: "Profit Potential",
-      value: formatCurrency(totalProfit, locale, "USD"),
+      value: moneyFormatter.format(totalProfit),
       Icon: TrendingUp,
       accent: "var(--dash-success)",
       soft: "var(--dash-success-soft)",
@@ -328,6 +341,8 @@ export default async function ItemsPage(props: {
             <div className="min-w-0 overflow-hidden">
               <ItemManagement
                 title={stockFilterLabels[stockFilter]}
+                activeFilterChips={activeFilterChips}
+                initialSearch={q}
                 editingId=""
                 organizationId={userOrg}
                 initialItemData={initialItemData as never}

@@ -79,6 +79,7 @@ interface DataTableProps<TData> {
   showToolbar?: boolean;
   variant?: "default" | "landing";
   onRefresh?: () => void;
+  onVisibleDataChange?: (visibleData: TData[]) => void;
   actions?: LegacyTableActions<TData>;
   filters?: LegacyTableFilters<TData>;
   renderRowActions?: (item: TData) => ReactNode;
@@ -164,6 +165,7 @@ export default function DataTable<TData>({
   showToolbar = true,
   variant = "default",
   onRefresh,
+  onVisibleDataChange,
   actions,
   filters,
   renderRowActions,
@@ -207,6 +209,10 @@ export default function DataTable<TData>({
     if (isDateFilterActive) return dateFilteredData;
     return data;
   }, [data, dateFilteredData, isDateFilterActive, isSearchActive, keyField, searchResults]);
+
+  React.useEffect(() => {
+    onVisibleDataChange?.(tableData);
+  }, [onVisibleDataChange, tableData]);
 
   const table = useReactTable({
     data: tableData,
@@ -292,7 +298,7 @@ export default function DataTable<TData>({
       {hasTableControls ? (
         <div
           className={cn(
-            "flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between",
+            "dashboard-table-toolbar flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between",
             isLanding && "rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)]/70 p-3"
           )}
         >
@@ -436,7 +442,7 @@ export default function DataTable<TData>({
           </Table>
         </div>
       </div>
-      <DataTablePagination table={table} />
+      <DataTablePagination table={table} variant={variant} />
     </div>
   );
 }

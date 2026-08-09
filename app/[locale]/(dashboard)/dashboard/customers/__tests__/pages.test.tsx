@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react"
 import { redirect } from "next/navigation"
 
 import CustomerManagementDashboard from "@/components/customers/CustomerManagementDashboard"
-import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
+import { checkAllPermissions, checkPermission, getAuthenticatedUser } from "@/config/useAuth"
 
 import CustomerAnalyticsPage from "../[id]/page"
 import EditCustomerPage from "../[id]/edit/page"
@@ -10,6 +10,7 @@ import CustomersPage from "../page"
 import CreateCustomerPage from "../new/page"
 
 jest.mock("@/config/useAuth", () => ({
+  checkAllPermissions: jest.fn(),
   checkPermission: jest.fn(),
   getAuthenticatedUser: jest.fn(),
 }))
@@ -40,13 +41,14 @@ jest.mock("@/components/customers/CustomerManagementDashboard", () =>
 )
 
 const mockCheckPermission = checkPermission as jest.Mock
+const mockCheckAllPermissions = checkAllPermissions as jest.Mock
 const mockGetAuthenticatedUser = getAuthenticatedUser as jest.Mock
 const mockRedirect = redirect as unknown as jest.Mock
 const mockCustomerManagementDashboard = CustomerManagementDashboard as jest.Mock
 
 type CustomerRouteCase = {
   name: string
-  permission: string
+  permissions: string[]
   renderPage: () => Promise<React.ReactElement>
   expectedProps: Record<string, unknown>
 }
@@ -54,7 +56,7 @@ type CustomerRouteCase = {
 const routeCases: CustomerRouteCase[] = [
   {
     name: "customers list",
-    permission: "customers.read",
+    permissions: ["customers.read"],
     renderPage: () => CustomersPage({ params: Promise.resolve({ locale: "en" }) }),
     expectedProps: {
       organizationId: "org-customer",
@@ -64,7 +66,7 @@ const routeCases: CustomerRouteCase[] = [
   },
   {
     name: "customer create",
-    permission: "customers.create",
+    permissions: ["customers.read", "customers.create"],
     renderPage: () => CreateCustomerPage({ params: Promise.resolve({ locale: "en" }) }),
     expectedProps: {
       organizationId: "org-customer",
@@ -75,7 +77,7 @@ const routeCases: CustomerRouteCase[] = [
   },
   {
     name: "customer detail analytics",
-    permission: "customers.read",
+    permissions: ["customers.read", "customers.analytics.read"],
     renderPage: () => CustomerAnalyticsPage({ params: Promise.resolve({ locale: "en", id: "cust-1" }) }),
     expectedProps: {
       organizationId: "org-customer",
@@ -86,7 +88,7 @@ const routeCases: CustomerRouteCase[] = [
   },
   {
     name: "customer edit",
-    permission: "customers.update",
+    permissions: ["customers.read", "customers.update"],
     renderPage: () => EditCustomerPage({ params: Promise.resolve({ locale: "en", id: "cust-1" }) }),
     expectedProps: {
       organizationId: "org-customer",
@@ -100,14 +102,19 @@ const routeCases: CustomerRouteCase[] = [
 describe("customer dashboard server pages", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockCheckAllPermissions.mockResolvedValue(true)
     mockCheckPermission.mockResolvedValue(true)
     mockGetAuthenticatedUser.mockResolvedValue({ organizationId: "org-customer" })
   })
 
-  it.each(routeCases)("requires $permission before rendering the tenant-scoped $name page", async ({ permission, renderPage, expectedProps }) => {
+  it.each(routeCases)("requires the complete permission set before rendering the tenant-scoped $name page", async ({ permissions, renderPage, expectedProps }) => {
     render(await renderPage())
 
-    expect(mockCheckPermission).toHaveBeenCalledWith(permission)
+    if (permissions.length === 1) {
+      expect(mockCheckPermission).toHaveBeenCalledWith(permissions[0])
+    } else {
+      expect(mockCheckAllPermissions).toHaveBeenCalledWith(permissions)
+    }
     expect(mockGetAuthenticatedUser).toHaveBeenCalledTimes(1)
     expect(mockCustomerManagementDashboard).toHaveBeenCalledWith(
       expect.objectContaining(expectedProps),
@@ -117,22 +124,34 @@ describe("customer dashboard server pages", () => {
     expect(screen.getByText("organization:org-customer")).toBeInTheDocument()
   })
 
-  it.each(routeCases)("stops before tenant lookup and rendering when $name permission is denied", async ({ permission, renderPage }) => {
-    mockCheckPermission.mockRejectedValue(new Error("Forbidden"))
+  it.each(routeCases)("stops before tenant lookup and rendering when $name permission is denied", async ({ permissions, renderPage }) => {
+    if (permissions.length === 1) {
+      mockCheckPermission.mockRejectedValue(new Error("Forbidden"))
+    } else {
+      mockCheckAllPermissions.mockRejectedValue(new Error("Forbidden"))
+    }
 
     await expect(renderPage()).rejects.toThrow("Forbidden")
 
-    expect(mockCheckPermission).toHaveBeenCalledWith(permission)
+    if (permissions.length === 1) {
+      expect(mockCheckPermission).toHaveBeenCalledWith(permissions[0])
+    } else {
+      expect(mockCheckAllPermissions).toHaveBeenCalledWith(permissions)
+    }
     expect(mockGetAuthenticatedUser).not.toHaveBeenCalled()
     expect(mockCustomerManagementDashboard).not.toHaveBeenCalled()
   })
 
-  it.each(routeCases)("redirects the $name page before rendering when tenant scope is unavailable", async ({ permission, renderPage }) => {
+  it.each(routeCases)("redirects the $name page before rendering when tenant scope is unavailable", async ({ permissions, renderPage }) => {
     mockGetAuthenticatedUser.mockResolvedValue({ organizationId: null })
 
     await expect(renderPage()).rejects.toThrow("NEXT_REDIRECT:/en/unauthorized")
 
-    expect(mockCheckPermission).toHaveBeenCalledWith(permission)
+    if (permissions.length === 1) {
+      expect(mockCheckPermission).toHaveBeenCalledWith(permissions[0])
+    } else {
+      expect(mockCheckAllPermissions).toHaveBeenCalledWith(permissions)
+    }
     expect(mockRedirect).toHaveBeenCalledWith("/en/unauthorized")
     expect(mockCustomerManagementDashboard).not.toHaveBeenCalled()
   })

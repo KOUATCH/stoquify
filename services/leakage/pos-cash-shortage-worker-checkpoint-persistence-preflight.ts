@@ -79,7 +79,7 @@ function isRequirementSatisfied(
 
   switch (requirement) {
     case "dedicated_checkpoint_model":
-      return true;
+      return Boolean(modelBlock);
     case "dedicated_checkpoint_table_mapping":
       return hasMap(modelBlock, "pos_cash_shortage_worker_checkpoints");
     case "tenant_and_check_identity":
@@ -114,13 +114,15 @@ function isRequirementSatisfied(
       return hasIndex(modelBlock, ["organizationId", "status", "nextAttemptAt"]);
     case "lease_recovery_index":
       return hasIndex(modelBlock, ["organizationId", "status", "leaseExpiresAt"]);
+    default:
+      return false;
   }
 }
 
 function extractModelBlock(schemaText: string, modelName: string): string | null {
   const sanitizedSchemaText = stripSchemaComments(schemaText);
   const match = new RegExp(
-    `^\\s*model\\s+${modelName}\\s+{([\\s\\S]*?)\\n\\s*}`,
+    `^\\s*model\\s+${modelName}\\s+{([\\s\\S]*?)^\\s*}`,
     "m",
   ).exec(sanitizedSchemaText);
   return match ? match[1] : null;
@@ -166,16 +168,13 @@ function hasAttribute(
   fields: readonly string[],
 ): boolean {
   const attributePattern = new RegExp(
-    `${escapeRegExp(attribute)}\\s*\\(\\s*\\[([\\s\\S]*?)\\]`,
+    `${escapeRegExp(attribute)}\\s*\\(\\s*\\[([\\s\\S]*?)\\]\\s*(?:,\\s*[^)]*)?\\)`,
     "g",
   );
   const matches = modelBlock.matchAll(attributePattern);
 
   for (const match of matches) {
-    const declaredFields = match[1]
-      .split(",")
-      .map((field) => field.trim())
-      .filter(Boolean);
+    const declaredFields = parseAttributeFieldList(match[1]);
 
     if (
       declaredFields.length === fields.length &&
@@ -190,4 +189,12 @@ function hasAttribute(
 
 function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+
+function parseAttributeFieldList(rawAttributeFields: string): string[] {
+  return rawAttributeFields
+    .split(",")
+    .map((field) => field.replace(/\/\/.*$/gm, "").trim())
+    .filter(Boolean);
 }

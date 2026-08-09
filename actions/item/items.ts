@@ -1,5 +1,6 @@
 "use server"
 
+import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses"
 import {
   type ActionResult,
   createItemSchema,
@@ -13,15 +14,18 @@ import {
   updateRelationsSchema,
   updateStockSchema,
   updateTrackingSchema,
+  updateItemFromFormSchema,
 } from "@/lib/item/schemas"
 import { revalidateItem as revalidateItems } from "@/lib/item/revalidation"
-import { getAuthenticatedUser } from "@/config/useAuth"
 import { requirePermission } from "@/lib/security/rbac"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import {
   archiveItem,
   createItemFromForm,
+  type ItemEditDTO,
   getItemWithRelations,
   listItemsWithRelations,
+  updateItemFromForm,
   updateItemBasicInfoWithRelations,
   updateItemDetailsWithRelations,
   updateItemPricingWithRelations,
@@ -29,6 +33,7 @@ import {
   updateItemStockFromForm,
   updateItemTrackingWithRelations,
 } from "@/services/item/item.service"
+import { ForbiddenError } from "@/services/_shared/action-errors"
 import { revalidatePath, revalidateTag } from "next/cache"
 
 export type PaginatedItems = {
@@ -42,11 +47,30 @@ export type PaginatedItems = {
 // Create Item (optionally seed initial inventory at a specific location)
 export async function createItemAction(input: unknown): Promise<ActionResult<ItemWithRelations>> {
   try {
+    const ctx = await requirePermission("inventory.items.create", {
+      resource: "Item",
+      auditAllowed: true,
+    })
+    await observeModuleAccess({
+      organizationId: ctx.orgId,
+      userId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      moduleSlug: "inventory",
+      surfaceType: "action",
+      surface: "actions/item/items.ts#createItemAction",
+      accessIntent: "write",
+      mode: "observe",
+    })
+
     const data = createItemSchema.parse(input)
-    const user = await getAuthenticatedUser()
-    const created = await createItemFromForm(user.organizationId, user.id, {
+
+    if (data.organizationId !== ctx.orgId) {
+      throw new ForbiddenError("You cannot create an item for another organization")
+    }
+
+    const created = await createItemFromForm(ctx.orgId, ctx.userId, {
       ...data,
-      organizationId: user.organizationId,
+      organizationId: ctx.orgId,
     })
 
     revalidateItems(created.id, created.organizationId)
@@ -57,8 +81,15 @@ export async function createItemAction(input: unknown): Promise<ActionResult<Ite
       message: "Item created successfully",
     }
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to create item"
-    return { success: false, error: message }
+    return {
+      success: false,
+      error: safeLoggedActionErrorMessage(
+        "Create item action failed",
+        error,
+        { action: "createItemAction" },
+        "Failed to create item. Review the item details and try again.",
+      ),
+    }
   }
 }
 
@@ -101,6 +132,47 @@ export async function listItemsAction(input: unknown): Promise<ActionResult<Pagi
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to list items"
     return { success: false, error: message }
+  }
+}
+
+// Canonical edit-item action: one explicit item-master update, no stock movement.
+export async function updateItemFromFormAction(input: unknown): Promise<ActionResult<ItemEditDTO>> {
+  try {
+    const data = updateItemFromFormSchema.parse(input)
+    const ctx = await requirePermission("inventory.items.update", {
+      resource: "Item",
+      resourceId: data.id,
+      auditAllowed: true,
+    })
+
+
+    const moduleDecision = await observeModuleAccess({
+      organizationId: ctx.orgId,
+      userId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      moduleSlug: "inventory",
+      surfaceType: "action",
+      surface: "actions/item/items.ts#updateItemFromFormAction",
+      accessIntent: "write",
+      mode: "enforce",
+    })
+    if (!moduleDecision.allowed) {
+      throw new ForbiddenError("Inventory module access is not active")
+    }
+
+    const updated = await updateItemFromForm(ctx.orgId, data.id, data)
+    revalidateItems(updated.id, ctx.orgId)
+    return { success: true, data: updated, message: "Item updated successfully" }
+  } catch (error) {
+    return {
+      success: false,
+      error: safeLoggedActionErrorMessage(
+        "Edit item action failed",
+        error,
+        { action: "updateItemFromFormAction" },
+        "Failed to save the item. Your changes are still available; review them and try again.",
+      ),
+    }
   }
 }
 

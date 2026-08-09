@@ -1,11 +1,11 @@
-# Graph Report - lib  (2026-07-14)
+# Graph Report - lib  (2026-08-09)
 
 ## Corpus Check
-- 58 files · ~32,638 words
+- 68 files · ~34,730 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 408 nodes · 610 edges · 19 communities detected
+- 431 nodes · 623 edges · 21 communities detected
 - Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 30 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
@@ -28,7 +28,9 @@
 - [[_COMMUNITY_Community 18|Community 18]]
 - [[_COMMUNITY_Community 19|Community 19]]
 - [[_COMMUNITY_Community 20|Community 20]]
-- [[_COMMUNITY_Community 24|Community 24]]
+- [[_COMMUNITY_Community 21|Community 21]]
+- [[_COMMUNITY_Community 23|Community 23]]
+- [[_COMMUNITY_Community 27|Community 27]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `SystemMonitor` - 40 edges
@@ -51,8 +53,8 @@
   permissions.ts → security\rbac-permissions.ts
 - `createCanonicalError()` --calls--> `sanitizeErrorMetadata()`  [INFERRED]
   error-handling\canonical.ts → error-handling\error-handler.ts
-- `auditRbacDecision()` --calls--> `logSecurityEvent()`  [INFERRED]
-  security\rbac.ts → security\audit-log.ts
+- `logSecurityEvent()` --calls--> `auditRbacDecision()`  [INFERRED]
+  security\audit-log.ts → security\rbac.ts
 
 ## Communities
 
@@ -113,22 +115,30 @@ Cohesion: 0.33
 Nodes (2): createErrorNotification(), getCategoryString()
 
 ### Community 17 - "Community 17"
+Cohesion: 0.33
+Nodes (1): MockRbacError
+
+### Community 18 - "Community 18"
 Cohesion: 0.6
 Nodes (3): useAuth(), usePermissions(), useSession()
 
-### Community 18 - "Community 18"
+### Community 19 - "Community 19"
 Cohesion: 0.5
 Nodes (2): createNotificationCallback(), setupErrorNotificationIntegration()
 
-### Community 19 - "Community 19"
+### Community 20 - "Community 20"
 Cohesion: 0.67
 Nodes (2): getRequestAuditContext(), readHeader()
 
-### Community 20 - "Community 20"
+### Community 21 - "Community 21"
 Cohesion: 0.67
 Nodes (2): sink(), write()
 
-### Community 24 - "Community 24"
+### Community 23 - "Community 23"
+Cohesion: 0.5
+Nodes (1): OrganizationCurrencyUnavailableError
+
+### Community 27 - "Community 27"
 Cohesion: 1.0
 Nodes (2): getPublicIdentityRequestContext(), normalizePublicClientIp()
 
@@ -139,22 +149,26 @@ Nodes (2): getPublicIdentityRequestContext(), normalizePublicClientIp()
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 15`** (7 nodes): `createErrorNotification()`, `getCategoryString()`, `hooks.ts`, `useErrorMonitoring()`, `useErrorRecovery()`, `useFormErrorHandler()`, `useServerActionHandler()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 18`** (5 nodes): `createNotificationCallback()`, `mapCategoryToNotification()`, `mapSeverityToNotification()`, `setupErrorNotificationIntegration()`, `notification-integration.ts`
+- **Thin community `Community 17`** (6 nodes): `auth-session.test.ts`, `assuranceEvidence()`, `MockRbacError`, `.constructor()`, `rawSession()`, `rbacContext()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 19`** (4 nodes): `auth.ts`, `getRequestAuditContext()`, `getRequestOrigin()`, `readHeader()`
+- **Thin community `Community 19`** (5 nodes): `createNotificationCallback()`, `mapCategoryToNotification()`, `mapSeverityToNotification()`, `setupErrorNotificationIntegration()`, `notification-integration.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 20`** (4 nodes): `setLoggerSink()`, `sink()`, `write()`, `logger.ts`
+- **Thin community `Community 20`** (4 nodes): `auth.ts`, `getRequestAuditContext()`, `getRequestOrigin()`, `readHeader()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 24`** (3 nodes): `getPublicIdentityRequestContext()`, `normalizePublicClientIp()`, `public-request-context.ts`
+- **Thin community `Community 21`** (4 nodes): `setLoggerSink()`, `sink()`, `write()`, `logger.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 23`** (4 nodes): `createOrganizationMoneyFormatter()`, `OrganizationCurrencyUnavailableError`, `.constructor()`, `organization-money.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 27`** (3 nodes): `getPublicIdentityRequestContext()`, `normalizePublicClientIp()`, `public-request-context.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `sanitizeErrorMetadata()` connect `Community 5` to `Community 2`?**
-  _High betweenness centrality (0.016) - this node is a cross-community bridge._
+  _High betweenness centrality (0.014) - this node is a cross-community bridge._
 - **Why does `createCanonicalError()` connect `Community 2` to `Community 5`?**
-  _High betweenness centrality (0.015) - this node is a cross-community bridge._
+  _High betweenness centrality (0.014) - this node is a cross-community bridge._
 - **Are the 4 inferred relationships involving `normalizeToCanonicalError()` (e.g. with `safeRouteErrorBody()` and `jsonErrorResponse()`) actually correct?**
   _`normalizeToCanonicalError()` has 4 INFERRED edges - model-reasoned connections that need verification._
 - **Should `Community 0` be split into smaller, more focused modules?**

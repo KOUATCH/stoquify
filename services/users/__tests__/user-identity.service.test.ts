@@ -4,6 +4,7 @@ import { adminPermissions } from "@/config/permissions"
 import { hashPolicyCompliantPassword, syncUserCredentialPassword, upsertCredentialAccount, verifyUserCredentialPassword } from "@/lib/security/auth-credentials"
 import { logSecurityEvent } from "@/lib/security/audit-log"
 import { db } from "@/prisma/db"
+import { recordReferralConversionInTx } from "@/services/referrals/referral-attribution.service"
 import { enforcePublicIdentityAbuseLimits } from "@/services/security/public-identity-abuse.service"
 import {
   acceptInvitationWorkflow,
@@ -78,6 +79,10 @@ jest.mock("@/services/security/public-identity-abuse.service", () => ({
   enforcePublicIdentityAbuseLimits: jest.fn(),
 }))
 
+jest.mock("@/services/referrals/referral-attribution.service", () => ({
+  recordReferralConversionInTx: jest.fn(),
+}))
+
 jest.mock("@/lib/security/server-authz", () => ({
   safeUserSelect: {
     id: true,
@@ -108,6 +113,7 @@ const mockUpsertCredentialAccount = upsertCredentialAccount as jest.Mock
 const mockLogSecurityEvent = logSecurityEvent as jest.Mock
 const mockEnforcePublicIdentityAbuseLimits = enforcePublicIdentityAbuseLimits as jest.Mock
 
+const mockRecordReferralConversionInTx = recordReferralConversionInTx as jest.Mock
 beforeEach(() => {
   mockDb.$transaction.mockReset()
   mockDb.user.findFirst.mockReset()
@@ -119,6 +125,7 @@ beforeEach(() => {
   mockUpsertCredentialAccount.mockReset()
   mockLogSecurityEvent.mockReset()
   mockEnforcePublicIdentityAbuseLimits.mockReset()
+  mockRecordReferralConversionInTx.mockReset()
   mockEnforcePublicIdentityAbuseLimits.mockResolvedValue({
     allowed: true,
     operation: "registration",
@@ -126,6 +133,7 @@ beforeEach(() => {
   })
   mockHashPolicyCompliantPassword.mockResolvedValue({ ok: true, hash: "hash-1" })
   mockVerifyUserCredentialPassword.mockResolvedValue(true)
+  mockRecordReferralConversionInTx.mockResolvedValue(null)
 })
 
 function runTransactionWith(tx: unknown) {
@@ -548,6 +556,9 @@ describe("user identity service creation and invite workflows", () => {
       requestedModules: ["POS", "Inventory", "POS", "Accounting"],
       assistedSetupRequested: true,
       onboardingSource: "aqstoqflow-register-v2",
+      referralCode: "referral_code_123",
+      accountantInviteToken: "invite-token-" + "a".repeat(32),
+      accountantInviteAccepted: true,
       password: "StrongPassword123!",
       confirmPassword: "StrongPassword123!",
       termsAccepted: true,
@@ -616,6 +627,15 @@ describe("user identity service creation and invite workflows", () => {
     expect(mockUpsertCredentialAccount).toHaveBeenCalledWith(tx, {
       userId: "user-1",
       passwordHash: "hash-1",
+    })
+    expect(mockRecordReferralConversionInTx).toHaveBeenCalledWith(tx, {
+      referralCode: "referral_code_123",
+      targetOrganizationId: "org-1",
+      subject: "owner@example.com",
+      targetUserId: "user-1",
+      accountantInviteToken: "invite-token-" + "a".repeat(32),
+      accountantInviteAccepted: true,
+      now: expect.any(Date),
     })
     expect(mockLogSecurityEvent).toHaveBeenCalledWith(
       expect.objectContaining({

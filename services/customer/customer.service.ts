@@ -10,7 +10,12 @@ import type {
 import { BusinessRuleError, ConflictError, NotFoundError } from "../_shared/action-errors"
 import { buildPagination, buildPaginatedResult, MAX_PAGE_SIZES } from "../_shared/pagination"
 import type { PaginatedResult } from "../_shared/types"
-import type { CustomerCreateInput, CustomerListParams, CustomerUpdateInput } from "./customer.schemas"
+import type {
+  CustomerCreateInput,
+  CustomerExportFilters,
+  CustomerListParams,
+  CustomerUpdateInput,
+} from "./customer.schemas"
 
 export type CustomerDTO = PrismaCustomer
 
@@ -58,6 +63,7 @@ export type CustomerManagementSummary = {
 }
 
 export type CustomerManagementData = {
+  currency: string
   customers: CustomerManagementRow[]
   summary: CustomerManagementSummary
   topBySales: CustomerManagementRow[]
@@ -114,6 +120,7 @@ const UNPAID_PAYMENT_STATUSES = [
 ]
 
 const CUSTOMER_MANAGEMENT_ROW_LIMIT = 500
+export const CUSTOMER_EXPORT_ROW_LIMIT = 5000
 
 function toNumber(value: Prisma.Decimal | number | string | null | undefined) {
   if (value === null || value === undefined) return 0
@@ -461,6 +468,7 @@ export async function archiveLegacyCustomerForOrg(
 async function buildCustomerManagementRows(
   organizationId: string,
   customers: CustomerManagementRecord[],
+  client: Prisma.TransactionClient | typeof db = db,
 ) {
   const customerIds = customers.map((customer) => customer.id)
 
@@ -471,14 +479,14 @@ async function buildCustomerManagementRows(
     ledgerSummaries,
   ] = customerIds.length
     ? await Promise.all([
-        db.salesOrder.groupBy({
+        client.salesOrder.groupBy({
           by: ["customerId"],
           where: { organizationId, customerId: { in: customerIds }, deletedAt: null },
           _count: { _all: true },
           _sum: { total: true },
           _max: { orderDate: true },
         }),
-        db.salesOrder.groupBy({
+        client.salesOrder.groupBy({
           by: ["customerId"],
           where: {
             organizationId,
@@ -488,7 +496,7 @@ async function buildCustomerManagementRows(
           },
           _count: { _all: true },
         }),
-        db.salesOrder.groupBy({
+        client.salesOrder.groupBy({
           by: ["customerId"],
           where: {
             organizationId,
@@ -498,7 +506,7 @@ async function buildCustomerManagementRows(
           },
           _count: { _all: true },
         }),
-        db.customerLedgerEntry.groupBy({
+        client.customerLedgerEntry.groupBy({
           by: ["customerId"],
           where: { organizationId, customerId: { in: customerIds } },
           _max: { entryDate: true },
@@ -568,6 +576,161 @@ async function buildCustomerManagementRows(
   }
 }
 
+function matchesCustomerExportActivity(
+  customer: CustomerManagementRow,
+  activity: CustomerExportFilters["activity"],
+) {
+  if (activity === "open-orders") return customer.openSalesOrdersCount > 0
+  if (activity === "unpaid") return customer.unpaidSalesOrdersCount > 0
+  if (activity === "over-limit") {
+    return customer.creditLimit !== null && customer.currentBalance > customer.creditLimit
+  }
+  if (activity === "with-orders") return customer.salesOrdersCount > 0
+  if (activity === "no-orders") return customer.salesOrdersCount === 0
+  return true
+}
+
+export async function getCustomerManagementExportRowsForOrg(
+  organizationId: string,
+  filters: CustomerExportFilters,
+  customerId?: string,
+  customerIds?: string[],
+  client: Prisma.TransactionClient | typeof db = db,
+): Promise<CustomerManagementRow[]> {
+  const where: Prisma.CustomerWhereInput = {
+    organizationId,
+    deletedAt: null,
+    ...(customerId
+      ? { id: customerId }
+      : customerIds
+        ? { id: { in: customerIds } }
+        : {}),
+    ...(filters.status === "active"
+      ? { isActive: true }
+      : filters.status === "inactive"
+        ? { isActive: false }
+        : {}),
+    ...(filters.preferredLocale === "all"
+      ? {}
+      : { preferredLocale: filters.preferredLocale }),
+    ...(filters.search
+      ? {
+          OR: [
+            { name: { contains: filters.search, mode: "insensitive" } },
+            { code: { contains: filters.search, mode: "insensitive" } },
+            { email: { contains: filters.search, mode: "insensitive" } },
+            { phone: { contains: filters.search, mode: "insensitive" } },
+          ],
+        }
+      : {}),
+  }
+  const customers = await client.customer.findMany({
+    where,
+    orderBy: [{ isActive: "desc" }, { name: "asc" }],
+    take: CUSTOMER_EXPORT_ROW_LIMIT + 1,
+    select: customerManagementSelect,
+  })
+
+  if (customerId && customers.length === 0) {
+    throw new NotFoundError("Customer not found")
+  }
+  if (customers.length > CUSTOMER_EXPORT_ROW_LIMIT) {
+    throw new BusinessRuleError(
+      `Customer export exceeds the ${CUSTOMER_EXPORT_ROW_LIMIT}-row limit. Apply narrower filters and retry.`,
+    )
+  }
+
+  const { rows } = await buildCustomerManagementRows(organizationId, customers, client)
+  return rows.filter((customer) => matchesCustomerExportActivity(customer, filters.activity))
+}
+
+export type CustomerOrderExportRow = {
+  id: string
+  orderNumber: string
+  status: string
+  paymentStatus: string
+  subtotal: number
+  taxAmount: number
+  discountAmount: number
+  totalAmount: number
+  itemCount: number
+  orderDate: Date
+  dueDate: Date | null
+  createdAt: Date
+  updatedAt: Date
+}
+
+export async function getCustomerOrderExportRowsForOrg(
+  organizationId: string,
+  customerId: string,
+  filters: CustomerExportFilters,
+  client: Prisma.TransactionClient | typeof db = db,
+): Promise<CustomerOrderExportRow[]> {
+  const customer = await client.customer.findFirst({
+    where: { id: customerId, organizationId, deletedAt: null },
+    select: { id: true },
+  })
+  if (!customer) {
+    throw new NotFoundError("Customer not found")
+  }
+
+  const orders = await client.salesOrder.findMany({
+    where: {
+      organizationId,
+      customerId,
+      deletedAt: null,
+      ...(filters.orderStatus === "all" ? {} : { status: filters.orderStatus }),
+      ...(filters.search
+        ? {
+            OR: [
+              { id: { contains: filters.search, mode: "insensitive" } },
+              { orderNumber: { contains: filters.search, mode: "insensitive" } },
+            ],
+          }
+        : {}),
+    },
+    orderBy: { orderDate: "desc" },
+    take: CUSTOMER_EXPORT_ROW_LIMIT + 1,
+    select: {
+      id: true,
+      orderNumber: true,
+      status: true,
+      paymentStatus: true,
+      subtotal: true,
+      taxAmount: true,
+      discount: true,
+      total: true,
+      orderDate: true,
+      dueDate: true,
+      createdAt: true,
+      updatedAt: true,
+      lines: { select: { quantity: true } },
+    },
+  })
+
+  if (orders.length > CUSTOMER_EXPORT_ROW_LIMIT) {
+    throw new BusinessRuleError(
+      `Customer order export exceeds the ${CUSTOMER_EXPORT_ROW_LIMIT}-row limit. Apply narrower filters and retry.`,
+    )
+  }
+
+  return orders.map((order) => ({
+    id: order.id,
+    orderNumber: order.orderNumber,
+    status: order.status,
+    paymentStatus: order.paymentStatus,
+    subtotal: toNumber(order.subtotal),
+    taxAmount: toNumber(order.taxAmount),
+    discountAmount: toNumber(order.discount),
+    totalAmount: toNumber(order.total),
+    itemCount: order.lines.reduce((total, line) => total + toNumber(line.quantity), 0),
+    orderDate: order.orderDate,
+    dueDate: order.dueDate,
+    createdAt: order.createdAt,
+    updatedAt: order.updatedAt,
+  }))
+}
+
 export async function getCustomerManagementDataForOrg(
   organizationId: string,
 ): Promise<CustomerManagementData> {
@@ -576,6 +739,7 @@ export async function getCustomerManagementDataForOrg(
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
 
   const [
+    organization,
     customers,
     totalCustomers,
     activeCustomers,
@@ -589,6 +753,10 @@ export async function getCustomerManagementDataForOrg(
     topSalesGroups,
     topBalanceCustomers,
   ] = await Promise.all([
+    db.organization.findUnique({
+      where: { id: organizationId },
+      select: { currency: true },
+    }),
     db.customer.findMany({
       where: baseWhere,
       orderBy: [
@@ -648,6 +816,10 @@ export async function getCustomerManagementDataForOrg(
       select: customerManagementSelect,
     }),
   ])
+  const currency = organization?.currency.trim().toUpperCase()
+  if (!currency || !/^[A-Z]{3}$/.test(currency)) {
+    throw new BusinessRuleError("Organization currency is unavailable or invalid")
+  }
 
   const { rows } = await buildCustomerManagementRows(organizationId, customers)
   const topSalesCustomerIds = topSalesGroups.map((summary) => summary.customerId)
@@ -664,6 +836,7 @@ export async function getCustomerManagementDataForOrg(
   const topSalesRank = new Map(topSalesCustomerIds.map((id, index) => [id, index]))
 
   return {
+    currency,
     customers: rows,
     summary: {
       totalCustomers,
@@ -740,6 +913,9 @@ export async function removeCustomerForManagement(
         select: {
           salesOrders: true,
           ledgerEntries: true,
+          receivableDocuments: true,
+          statementSnapshots: true,
+          settlements: true,
         },
       },
     },
@@ -749,7 +925,12 @@ export async function removeCustomerForManagement(
     throw new NotFoundError("Customer not found")
   }
 
-  const hasHistory = customer._count.salesOrders > 0 || customer._count.ledgerEntries > 0
+  const hasHistory =
+    customer._count.salesOrders > 0 ||
+    customer._count.ledgerEntries > 0 ||
+    customer._count.receivableDocuments > 0 ||
+    customer._count.statementSnapshots > 0 ||
+    customer._count.settlements > 0
 
   await db.customer.update({
     where: { id: customerId },

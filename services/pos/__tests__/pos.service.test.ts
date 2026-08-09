@@ -26,6 +26,15 @@ jest.mock("@/services/accounting/postings/post-void", () => ({
   postVoid: jest.fn(),
 }))
 
+jest.mock("@/services/accounting/customer-receivable-document.service", () => ({
+  CUSTOMER_RECEIVABLE_REFERENCE_TYPE: "CUSTOMER_RECEIVABLE_DOCUMENT",
+  ensurePostedCustomerReceivableDocumentInTx: jest.fn(),
+}))
+
+jest.mock("@/services/accounting/customer-receivable-lifecycle.service", () => ({
+  voidCustomerReceivableDocumentInTx: jest.fn(),
+}))
+
 jest.mock("@/services/compliance/fiscal-document.service", () => ({
   createFiscalDocumentFromPostedSource: jest.fn(),
 }))
@@ -37,6 +46,12 @@ jest.mock("@/services/pos/receipt.service", () => ({
 
 import { db } from "@/prisma/db"
 import { getOpenPeriodForDate } from "@/services/accounting/periods.service"
+import {
+  ensurePostedCustomerReceivableDocumentInTx,
+} from "@/services/accounting/customer-receivable-document.service"
+import {
+  voidCustomerReceivableDocumentInTx,
+} from "@/services/accounting/customer-receivable-lifecycle.service"
 import { postPayment } from "@/services/accounting/postings/post-payment"
 import { postRefund } from "@/services/accounting/postings/post-refund"
 import { postSale } from "@/services/accounting/postings/post-sale"
@@ -49,6 +64,8 @@ const mockDb = db as unknown as {
   $transaction: jest.Mock
 }
 const mockGetOpenPeriodForDate = getOpenPeriodForDate as jest.Mock
+const mockEnsurePostedReceivable = ensurePostedCustomerReceivableDocumentInTx as jest.Mock
+const mockVoidReceivable = voidCustomerReceivableDocumentInTx as jest.Mock
 const mockPostSale = postSale as jest.Mock
 const mockPostPayment = postPayment as jest.Mock
 const mockPostRefund = postRefund as jest.Mock
@@ -87,6 +104,7 @@ const mockTx = {
   customer: {
     findFirst: jest.fn(),
     update: jest.fn(),
+    updateMany: jest.fn(),
   },
   customerLedgerEntry: {
     create: jest.fn(),
@@ -258,6 +276,12 @@ function correctionInput(reason = "Customer requested return") {
 describe("commitPOSSale accounting wiring", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockEnsurePostedReceivable.mockResolvedValue({
+      document: { id: "receivable-document-1" },
+      state: { id: "receivable-state-1" },
+      replayed: false,
+    })
+    mockVoidReceivable.mockResolvedValue({ state: { id: "void-state-1" }, replayed: false })
     mockDb.$transaction.mockImplementation(async (handler: (tx: typeof mockTx) => Promise<unknown>) => handler(mockTx))
     mockTx.salesOrder.findFirst.mockResolvedValue(draftSaleFixture())
     mockTx.pOSSession.findFirst.mockResolvedValue({
@@ -270,6 +294,8 @@ describe("commitPOSSale accounting wiring", () => {
       currentBalance: decimal(0),
       creditLimit: decimal(1000),
     })
+    mockTx.customer.updateMany.mockResolvedValue({ count: 1 })
+    mockTx.customerLedgerEntry.create.mockResolvedValue({ id: "customer-ledger-entry-1" })
     mockGetOpenPeriodForDate.mockResolvedValue({ id: "period-1" })
     mockTx.item.findFirst.mockResolvedValue({
       id: "item-1",
@@ -490,6 +516,78 @@ describe("commitPOSSale accounting wiring", () => {
       salesOrderId: "sale-1",
       organizationId: "org-1",
     })
+  })
+
+  it("delegates an on-account sale balance and credit-limit claim to the customer-ledger kernel", async () => {
+    mockTx.salesOrder.update.mockResolvedValueOnce({
+      id: "sale-1",
+      status: "COMPLETED",
+      paymentStatus: "PENDING",
+    })
+    const result = await commitPOSSale({
+      ...commitInput(),
+      tenders: [
+        {
+          method: "ON_ACCOUNT" as const,
+          amount: 118,
+        },
+      ],
+    })
+
+    expect(result).toMatchObject({
+      amountPaid: 0,
+      onAccountAmount: 118,
+      paymentStatus: "PENDING",
+    })
+    expect(mockTx.customer.update).not.toHaveBeenCalled()
+    expect(mockTx.customer.updateMany).toHaveBeenCalledWith({
+      where: {
+        id: "customer-1",
+        organizationId: "org-1",
+        deletedAt: null,
+        currentBalance: expect.any(Prisma.Decimal),
+      },
+      data: { currentBalance: expect.any(Prisma.Decimal) },
+    })
+    const balanceClaim = mockTx.customer.updateMany.mock.calls[0][0]
+    expect(balanceClaim.where.currentBalance.eq("0.00")).toBe(true)
+    expect(balanceClaim.data.currentBalance.eq("118.00")).toBe(true)
+    expect(mockEnsurePostedReceivable).toHaveBeenCalledWith(
+      mockTx,
+      expect.objectContaining({
+        organizationId: "org-1",
+        customerId: "customer-1",
+        salesOrderId: "sale-1",
+        actorId: "cashier-1",
+        initialUnpaidAmount: expect.anything(),
+      }),
+    )
+    expect(mockTx.customerLedgerEntry.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        customerId: "customer-1",
+        organizationId: "org-1",
+        type: "SALE",
+        debit: expect.any(Prisma.Decimal),
+        credit: expect.any(Prisma.Decimal),
+        balanceAfter: expect.any(Prisma.Decimal),
+        description: "POS sale POS-20260610-0001",
+        referenceType: "CUSTOMER_RECEIVABLE_DOCUMENT",
+        referenceId: "receivable-document-1",
+      }),
+    })
+    const ledgerData = mockTx.customerLedgerEntry.create.mock.calls[0][0].data
+    expect(ledgerData.debit.eq("118.00")).toBe(true)
+    expect(ledgerData.credit.eq("0.00")).toBe(true)
+    expect(ledgerData.balanceAfter.eq("118.00")).toBe(true)
+    expect(mockTx.payment.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          method: "CREDIT",
+          status: "PENDING",
+        }),
+      }),
+    )
+    expect(mockPostPayment).not.toHaveBeenCalled()
   })
 
   it("does not invalidate the sale when email receipt delivery throws write EOF", async () => {
@@ -914,6 +1012,66 @@ describe("commitPOSSale accounting wiring", () => {
           postingBatchId: "void-batch-1",
         }),
         include: { outboxMessages: true },
+      }),
+    )
+  })
+
+  it("delegates an on-account void balance claim to the customer-ledger kernel", async () => {
+    const sale = completedSaleFixture()
+    sale.payments = [
+      {
+        id: "payment-credit-1",
+        paymentNumber: "PAY-CREDIT-1",
+        amount: decimal(118),
+        method: "CREDIT",
+        status: "PENDING",
+        refundedAmount: decimal(0),
+        deletedAt: null,
+        refunds: [],
+      },
+    ]
+    mockTx.salesOrder.findFirst.mockResolvedValue(sale)
+    mockTx.customer.findFirst.mockResolvedValue({
+      id: "customer-1",
+      currentBalance: decimal(118),
+      creditLimit: decimal(1000),
+    })
+
+    await voidPOSSale(correctionInput("Void on-account sale"))
+
+    expect(mockTx.customer.update).not.toHaveBeenCalled()
+    expect(mockTx.customer.updateMany).toHaveBeenCalledWith({
+      where: {
+        id: "customer-1",
+        organizationId: "org-1",
+        deletedAt: null,
+        currentBalance: expect.any(Prisma.Decimal),
+      },
+      data: { currentBalance: expect.any(Prisma.Decimal) },
+    })
+    const balanceClaim = mockTx.customer.updateMany.mock.calls[0][0]
+    expect(balanceClaim.where.currentBalance.eq("118.00")).toBe(true)
+    expect(balanceClaim.data.currentBalance.eq("0.00")).toBe(true)
+    const ledgerData = mockTx.customerLedgerEntry.create.mock.calls[0][0].data
+    expect(ledgerData).toMatchObject({
+      customerId: "customer-1",
+      organizationId: "org-1",
+      type: "CREDIT_NOTE",
+      description: "POS void POS-20260610-0001",
+      referenceType: "CUSTOMER_RECEIVABLE_DOCUMENT",
+      referenceId: "receivable-document-1",
+    })
+    expect(ledgerData.debit.eq("0.00")).toBe(true)
+    expect(ledgerData.credit.eq("118.00")).toBe(true)
+    expect(ledgerData.balanceAfter.eq("0.00")).toBe(true)
+    expect(mockVoidReceivable).toHaveBeenCalledWith(
+      mockTx,
+      expect.objectContaining({
+        organizationId: "org-1",
+        documentId: "receivable-document-1",
+        actorId: "cashier-1",
+        salesOrderId: "sale-1",
+        reason: "Void on-account sale",
       }),
     )
   })

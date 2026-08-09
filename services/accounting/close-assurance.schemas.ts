@@ -50,6 +50,20 @@ export const requestMissingCloseEvidenceInputSchema = z.object({
   correlationId: optionalCorrelationIdSchema,
 })
 
+export const respondToMissingCloseEvidenceInputSchema = z.object({
+  requestId: idSchema,
+  responseText: z.string().trim().min(3).max(4000),
+  correlationId: optionalCorrelationIdSchema,
+})
+
+export const acceptMissingCloseEvidenceResponseInputSchema = z.object({
+  clientOrganizationId: idSchema.optional(),
+  requestId: idSchema,
+  responseId: idSchema,
+  resolutionNotes: z.string().trim().min(10).max(4000),
+  correlationId: optionalCorrelationIdSchema,
+})
+
 export const requestCloseWaiverInputSchema = z.object({
   findingId: idSchema,
   reason: z.string().trim().min(10).max(4000),
@@ -81,6 +95,12 @@ export type AssignCloseFindingInput = z.infer<typeof assignCloseFindingInputSche
 export type CommentOnCloseFindingInput = z.infer<typeof commentOnCloseFindingInputSchema>
 export type RequestMissingCloseEvidenceInput = z.infer<
   typeof requestMissingCloseEvidenceInputSchema
+>
+export type RespondToMissingCloseEvidenceInput = z.infer<
+  typeof respondToMissingCloseEvidenceInputSchema
+>
+export type AcceptMissingCloseEvidenceResponseInput = z.infer<
+  typeof acceptMissingCloseEvidenceResponseInputSchema
 >
 export type RequestCloseWaiverInput = z.infer<typeof requestCloseWaiverInputSchema>
 export type ApproveCloseWaiverInput = z.infer<typeof approveCloseWaiverInputSchema>

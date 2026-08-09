@@ -17,11 +17,13 @@ import {
 } from "@prisma/client"
 import { randomUUID } from "node:crypto"
 
+import { hasRbacPermission } from "@/lib/security/rbac-permissions"
 import { db } from "@/prisma/db"
 import { recordBusinessEventInTx } from "@/services/events/business-event.service"
 import {
   BusinessRuleError,
   ConflictError,
+  ForbiddenError,
   getPrismaKnownRequest,
   isApplicationError,
   NotFoundError,
@@ -51,19 +53,29 @@ import type {
 import {
   assertFindingCanReceiveComment,
   CloseAssuranceError,
+  type AcceptMissingCloseEvidenceResponseInput,
   type ApproveCloseWaiverInput,
   type AssignCloseFindingInput,
   type CloseAssurancePeriodInput,
   type CloseEvidenceGraphInput,
   type CommentOnCloseFindingInput,
   type RequestMissingCloseEvidenceInput,
+  type RespondToMissingCloseEvidenceInput,
   type RequestCloseWaiverInput,
   type UpdateAccountantReviewInput,
 } from "./close-assurance.schemas"
 import {
+  MISSING_CLOSE_EVIDENCE_RESPONSE_TYPE,
+  MISSING_CLOSE_EVIDENCE_RESPONSE_VISIBILITY,
   MISSING_CLOSE_EVIDENCE_REQUEST_TYPE,
   MISSING_CLOSE_EVIDENCE_VISIBILITY,
 } from "./missing-close-evidence-request-queue-contracts"
+import {
+  ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE,
+  MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE_TYPE,
+  MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE_VISIBILITY,
+  type MissingCloseEvidenceResponseAcceptanceDto,
+} from "./missing-close-evidence-response-acceptance-contracts"
 
 type DbClient = typeof db | Prisma.TransactionClient
 
@@ -83,7 +95,17 @@ type CloseWaiverControlContext = Omit<CloseControlContext, "now"> & {
   freshAuth?: CloseFreshAuthControl | null
 }
 
+type MissingCloseEvidenceAcceptanceControlContext = Omit<
+  CloseControlContext,
+  "now"
+> & {
+  freshAuth?: CloseFreshAuthControl | null
+}
+
 const CLOSE_WAIVER_FRESH_AUTH_MAX_AGE_MS = 5 * 60 * 1000
+const MISSING_CLOSE_EVIDENCE_ACCEPTANCE_FRESH_AUTH_MAX_AGE_MS =
+  ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.freshAuthMaxAgeSeconds *
+  1000
 
 function requireFreshWaiverControl(
   organizationId: string,
@@ -114,6 +136,43 @@ function requireFreshWaiverControl(
   ) {
     throw new BusinessRuleError(
       "Fresh authentication is required to approve a close waiver.",
+      "FRESH_AUTH_REQUIRED",
+    )
+  }
+
+  return actorId
+}
+
+function requireFreshMissingEvidenceAcceptanceControl(
+  homeOrganizationId: string,
+  control: MissingCloseEvidenceAcceptanceControlContext,
+  now: Date,
+): string {
+  const actorId = control.actorId?.trim()
+  const freshAuth = control.freshAuth
+  const rawLastAuthAt = freshAuth?.lastAuthAt
+  const lastAuthAt =
+    rawLastAuthAt instanceof Date
+      ? rawLastAuthAt.getTime()
+      : rawLastAuthAt === null || rawLastAuthAt === undefined
+        ? Number.NaN
+        : new Date(rawLastAuthAt).getTime()
+  const nowTime = now.getTime()
+
+  if (
+    !actorId ||
+    !freshAuth ||
+    freshAuth.actorId !== actorId ||
+    freshAuth.organizationId !== homeOrganizationId ||
+    !Number.isFinite(nowTime) ||
+    !Number.isFinite(lastAuthAt) ||
+    lastAuthAt <= 0 ||
+    lastAuthAt > nowTime ||
+    nowTime - lastAuthAt >
+      MISSING_CLOSE_EVIDENCE_ACCEPTANCE_FRESH_AUTH_MAX_AGE_MS
+  ) {
+    throw new BusinessRuleError(
+      "Fresh authentication is required to accept missing-proof evidence.",
       "FRESH_AUTH_REQUIRED",
     )
   }
@@ -205,6 +264,23 @@ export type MissingCloseEvidenceRequestDto = {
   requestText: string
   dueAt: string
   status: "OPEN"
+  correlationId: string
+  createdAt: string
+}
+
+export type MissingCloseEvidenceResponseDto = {
+  id: string
+  requestId: string
+  organizationId: string
+  periodId: string
+  closeRunId: string
+  findingId: string
+  requestedById: string
+  requestedFromId: string
+  respondedById: string
+  responseText: string
+  requestCorrelationId: string
+  status: "SUBMITTED"
   correlationId: string
   createdAt: string
 }
@@ -387,6 +463,12 @@ const openFindingStatuses = [
   CloseFindingStatus.IN_REVIEW,
   CloseFindingStatus.REOPENED,
 ] as const
+
+const missingCloseEvidenceResponseStatuses = new Set<CloseFindingStatus>([
+  CloseFindingStatus.OPEN,
+  CloseFindingStatus.ASSIGNED,
+  CloseFindingStatus.REOPENED,
+])
 
 function iso(value: Date | string | null | undefined) {
   return value ? new Date(value).toISOString() : null
@@ -3177,8 +3259,13 @@ function mapMissingCloseEvidenceRequest(
   comment: MissingCloseEvidenceCommentRecord,
 ): MissingCloseEvidenceRequestDto {
   const requestType = metadataString(comment.metadata, "requestType")
+  const requestedById = metadataString(comment.metadata, "requestedById")
   const requestedFromId = metadataString(comment.metadata, "requestedFromId")
   const dueAt = metadataString(comment.metadata, "dueAt")
+  const metadataCorrelationId = metadataString(
+    comment.metadata,
+    "correlationId",
+  )
   const dueAtTime = dueAt ? new Date(dueAt).getTime() : Number.NaN
 
   if (
@@ -3187,7 +3274,9 @@ function mapMissingCloseEvidenceRequest(
     !comment.findingId ||
     !comment.authorId ||
     !comment.correlationId ||
+    requestedById !== comment.authorId ||
     !requestedFromId ||
+    metadataCorrelationId !== comment.correlationId ||
     !Number.isFinite(dueAtTime)
   ) {
     throw new BusinessRuleError(
@@ -3201,7 +3290,7 @@ function mapMissingCloseEvidenceRequest(
     periodId: comment.periodId,
     closeRunId: comment.closeRunId,
     findingId: comment.findingId,
-    requestedById: comment.authorId,
+    requestedById,
     requestedFromId,
     requestText: comment.body,
     dueAt: new Date(dueAtTime).toISOString(),
@@ -3231,6 +3320,196 @@ function assertMatchingMissingCloseEvidenceReplay(
   return request
 }
 
+function mapMissingCloseEvidenceResponse(
+  comment: MissingCloseEvidenceCommentRecord,
+): MissingCloseEvidenceResponseDto {
+  const responseType = metadataString(comment.metadata, "responseType")
+  const requestId = metadataString(comment.metadata, "requestId")
+  const requestCorrelationId = metadataString(
+    comment.metadata,
+    "requestCorrelationId",
+  )
+  const requestedById = metadataString(comment.metadata, "requestedById")
+  const requestedFromId = metadataString(comment.metadata, "requestedFromId")
+  const respondedById = metadataString(comment.metadata, "respondedById")
+  const metadataCorrelationId = metadataString(
+    comment.metadata,
+    "correlationId",
+  )
+
+  if (
+    comment.visibility !== MISSING_CLOSE_EVIDENCE_RESPONSE_VISIBILITY ||
+    responseType !== MISSING_CLOSE_EVIDENCE_RESPONSE_TYPE ||
+    !comment.findingId ||
+    !comment.authorId ||
+    !comment.correlationId ||
+    !requestId ||
+    !requestCorrelationId ||
+    !requestedById ||
+    !requestedFromId ||
+    respondedById !== comment.authorId ||
+    respondedById !== requestedFromId ||
+    metadataCorrelationId !== comment.correlationId
+  ) {
+    throw new BusinessRuleError(
+      "Stored missing-proof response evidence is incomplete.",
+    )
+  }
+
+  return {
+    id: comment.id,
+    requestId,
+    organizationId: comment.organizationId,
+    periodId: comment.periodId,
+    closeRunId: comment.closeRunId,
+    findingId: comment.findingId,
+    requestedById,
+    requestedFromId,
+    respondedById,
+    responseText: comment.body,
+    requestCorrelationId,
+    status: "SUBMITTED",
+    correlationId: comment.correlationId,
+    createdAt: comment.createdAt.toISOString(),
+  }
+}
+
+function assertMatchingMissingCloseEvidenceResponseReplay(
+  existing: MissingCloseEvidenceCommentRecord,
+  input: RespondToMissingCloseEvidenceInput,
+  request: MissingCloseEvidenceRequestDto,
+  actorId: string,
+): MissingCloseEvidenceResponseDto {
+  const response = mapMissingCloseEvidenceResponse(existing)
+  if (
+    response.requestId !== request.id ||
+    response.organizationId !== request.organizationId ||
+    response.periodId !== request.periodId ||
+    response.closeRunId !== request.closeRunId ||
+    response.findingId !== request.findingId ||
+    response.requestedById !== request.requestedById ||
+    response.requestedFromId !== request.requestedFromId ||
+    response.respondedById !== actorId ||
+    response.responseText !== input.responseText ||
+    response.requestCorrelationId !== request.correlationId
+  ) {
+    throw new ConflictError(
+      "Correlation ID already belongs to a different missing-proof response.",
+    )
+  }
+  return response
+}
+
+function mapMissingCloseEvidenceResponseAcceptance(
+  comment: MissingCloseEvidenceCommentRecord,
+): MissingCloseEvidenceResponseAcceptanceDto {
+  const acceptanceType = metadataString(comment.metadata, "acceptanceType")
+  const requestId = metadataString(comment.metadata, "requestId")
+  const responseId = metadataString(comment.metadata, "responseId")
+  const requestCorrelationId = metadataString(
+    comment.metadata,
+    "requestCorrelationId",
+  )
+  const responseCorrelationId = metadataString(
+    comment.metadata,
+    "responseCorrelationId",
+  )
+  const findingId = metadataString(comment.metadata, "findingId")
+  const periodId = metadataString(comment.metadata, "periodId")
+  const closeRunId = metadataString(comment.metadata, "closeRunId")
+  const respondedById = metadataString(comment.metadata, "respondedById")
+  const acceptedById = metadataString(comment.metadata, "acceptedById")
+  const decision = metadataString(comment.metadata, "decision")
+  const findingStatus = metadataString(comment.metadata, "findingStatus")
+  const resolvedAt = metadataString(comment.metadata, "resolvedAt")
+  const metadataCorrelationId = metadataString(
+    comment.metadata,
+    "correlationId",
+  )
+  const resolvedAtTime = resolvedAt ? new Date(resolvedAt).getTime() : Number.NaN
+
+  if (
+    comment.visibility !==
+      MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE_VISIBILITY ||
+    acceptanceType !== MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE_TYPE ||
+    !comment.findingId ||
+    !comment.authorId ||
+    !comment.correlationId ||
+    !requestId ||
+    !responseId ||
+    !requestCorrelationId ||
+    !responseCorrelationId ||
+    findingId !== comment.findingId ||
+    periodId !== comment.periodId ||
+    closeRunId !== comment.closeRunId ||
+    !respondedById ||
+    acceptedById !== comment.authorId ||
+    acceptedById === respondedById ||
+    decision !==
+      ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.decision ||
+    findingStatus !==
+      ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.findingStatus ||
+    !Number.isFinite(resolvedAtTime) ||
+    metadataCorrelationId !== comment.correlationId ||
+    comment.body.trim().length < 10
+  ) {
+    throw new BusinessRuleError(
+      "Stored missing-proof response acceptance evidence is incomplete.",
+    )
+  }
+
+  return {
+    kind: ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.kind,
+    version: ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.version,
+    id: comment.id,
+    organizationId: comment.organizationId,
+    periodId: comment.periodId,
+    closeRunId: comment.closeRunId,
+    findingId: comment.findingId,
+    requestId,
+    responseId,
+    respondedById,
+    acceptedById,
+    decision: ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.decision,
+    findingStatus:
+      ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.findingStatus,
+    resolutionNotes: comment.body,
+    resolvedAt: new Date(resolvedAtTime).toISOString(),
+    correlationId: comment.correlationId,
+    createdAt: comment.createdAt.toISOString(),
+    controls: {
+      serviceClockOwned: true,
+      freshAuthRequired: true,
+      delegatedReviewRequired: true,
+      segregationOfDutiesRequired: true,
+      compareAndSetResolution: true,
+      rawMetadataExposed: false,
+      closeCertificationAuthorized: false,
+    },
+  }
+}
+
+function assertMatchingMissingCloseEvidenceAcceptanceReplay(
+  existing: MissingCloseEvidenceCommentRecord,
+  input: AcceptMissingCloseEvidenceResponseInput,
+  organizationId: string,
+  actorId: string,
+): MissingCloseEvidenceResponseAcceptanceDto {
+  const acceptance = mapMissingCloseEvidenceResponseAcceptance(existing)
+  if (
+    acceptance.organizationId !== organizationId ||
+    acceptance.requestId !== input.requestId.trim() ||
+    acceptance.responseId !== input.responseId.trim() ||
+    acceptance.acceptedById !== actorId ||
+    acceptance.resolutionNotes !== input.resolutionNotes.trim()
+  ) {
+    throw new ConflictError(
+      "Correlation ID already belongs to a different missing-proof response acceptance.",
+    )
+  }
+  return acceptance
+}
+
 async function runMissingCloseEvidenceTransaction<T>(
   operation: (tx: Prisma.TransactionClient) => Promise<T>,
 ): Promise<T> {
@@ -3247,7 +3526,7 @@ async function runMissingCloseEvidenceTransaction<T>(
     }
   }
 
-  throw new BusinessRuleError("Missing-proof request transaction failed.")
+  throw new BusinessRuleError("Missing-proof workflow transaction failed.")
 }
 
 export async function requestMissingCloseEvidence(
@@ -3419,6 +3698,465 @@ export async function requestMissingCloseEvidence(
     })
 
     return mapMissingCloseEvidenceRequest(comment)
+  })
+}
+
+export async function respondToMissingCloseEvidence(
+  organizationId: string,
+  input: RespondToMissingCloseEvidenceInput,
+  control: CloseControlContext = {},
+): Promise<MissingCloseEvidenceResponseDto> {
+  const actorId = control.actorId?.trim()
+  if (!actorId) {
+    throw new BusinessRuleError(
+      "An authenticated client recipient is required to respond to missing evidence.",
+    )
+  }
+  const correlationId = input.correlationId ?? randomUUID()
+
+  return runMissingCloseEvidenceTransaction(async (tx) => {
+    const activeActor = await tx.user.findFirst({
+      where: {
+        id: actorId,
+        organizationId,
+        isActive: true,
+      },
+      select: { id: true },
+    })
+    if (!activeActor) {
+      throw new BusinessRuleError(
+        "Missing-proof response requires an active user of the client organization.",
+      )
+    }
+
+    const storedRequest = await tx.accountantComment.findFirst({
+      where: {
+        id: input.requestId,
+        organizationId,
+        visibility: MISSING_CLOSE_EVIDENCE_VISIBILITY,
+        metadata: {
+          path: ["requestType"],
+          equals: MISSING_CLOSE_EVIDENCE_REQUEST_TYPE,
+        },
+      },
+    })
+    if (!storedRequest) {
+      throw new NotFoundError("Missing-proof request not found")
+    }
+    const request = mapMissingCloseEvidenceRequest(storedRequest)
+    if (request.requestedFromId !== actorId) {
+      throw new ForbiddenError(
+        "Only the requested client recipient can submit this response.",
+      )
+    }
+
+    const existingResponse = await tx.accountantComment.findFirst({
+      where: {
+        organizationId,
+        correlationId,
+        visibility: MISSING_CLOSE_EVIDENCE_RESPONSE_VISIBILITY,
+      },
+    })
+    if (existingResponse) {
+      return assertMatchingMissingCloseEvidenceResponseReplay(
+        existingResponse,
+        input,
+        request,
+        actorId,
+      )
+    }
+
+    const finding = await tx.closeAssuranceFinding.findFirst({
+      where: { id: request.findingId, organizationId },
+      select: {
+        id: true,
+        periodId: true,
+        closeRunId: true,
+        ownerId: true,
+        status: true,
+        severity: true,
+      },
+    })
+    if (!finding) throw new NotFoundError("Close finding not found")
+    if (
+      finding.periodId !== request.periodId ||
+      finding.closeRunId !== request.closeRunId
+    ) {
+      throw new BusinessRuleError(
+        "Stored missing-proof request evidence does not match its finding.",
+      )
+    }
+    if (!missingCloseEvidenceResponseStatuses.has(finding.status)) {
+      throw new BusinessRuleError(
+        "This finding is not awaiting a missing-proof response.",
+      )
+    }
+    if (finding.ownerId !== actorId) {
+      throw new ForbiddenError(
+        "Only the assigned finding owner can submit this response.",
+      )
+    }
+
+    await tx.closeAssuranceFinding.update({
+      where: { id: finding.id },
+      data: {
+        status: CloseFindingStatus.IN_REVIEW,
+        correlationId,
+      },
+    })
+
+    const response = await tx.accountantComment.create({
+      data: {
+        organizationId,
+        periodId: request.periodId,
+        closeRunId: request.closeRunId,
+        findingId: request.findingId,
+        authorId: actorId,
+        body: input.responseText,
+        visibility: MISSING_CLOSE_EVIDENCE_RESPONSE_VISIBILITY,
+        correlationId,
+        metadata: jsonObject({
+          responseType: MISSING_CLOSE_EVIDENCE_RESPONSE_TYPE,
+          requestId: request.id,
+          requestCorrelationId: request.correlationId,
+          requestedById: request.requestedById,
+          requestedFromId: request.requestedFromId,
+          respondedById: actorId,
+          correlationId,
+        }),
+      },
+    })
+
+    await auditCloseWorkflow(tx, {
+      organizationId,
+      actorId,
+      action: "CLOSE_MISSING_EVIDENCE_RESPONSE_SUBMITTED",
+      resourceType: "AccountantComment",
+      resourceId: response.id,
+      message: "Close missing-evidence response submitted",
+      metadata: jsonObject({
+        requestId: request.id,
+        findingId: request.findingId,
+        requestedById: request.requestedById,
+        requestedFromId: request.requestedFromId,
+        respondedById: actorId,
+        status: "SUBMITTED",
+        correlationId,
+      }),
+    })
+
+    await recordCloseWorkflowEventInTx(tx, {
+      organizationId,
+      actorId,
+      eventType: "close.assurance.missing_evidence.response_submitted",
+      idempotencyKey:
+        `close-assurance-missing-evidence-request:${request.id}:response-submitted:${correlationId}`,
+      sourceType: "CloseAssuranceFinding",
+      sourceId: request.findingId,
+      closeRunId: request.closeRunId,
+      periodId: request.periodId,
+      findingId: request.findingId,
+      ownerId: request.requestedById,
+      message: "Close missing-evidence response submitted",
+      severity: notificationSeverity(finding.severity),
+      correlationId,
+      payload: {
+        requestId: request.id,
+        responseId: response.id,
+        responseType: MISSING_CLOSE_EVIDENCE_RESPONSE_TYPE,
+        requestedById: request.requestedById,
+        requestedFromId: request.requestedFromId,
+        respondedById: actorId,
+        status: "SUBMITTED",
+      },
+    })
+
+    return mapMissingCloseEvidenceResponse(response)
+  })
+}
+
+export async function acceptMissingCloseEvidenceResponse(
+  homeOrganizationIdInput: string,
+  input: AcceptMissingCloseEvidenceResponseInput,
+  control: MissingCloseEvidenceAcceptanceControlContext = {},
+): Promise<MissingCloseEvidenceResponseAcceptanceDto> {
+  const homeOrganizationId = homeOrganizationIdInput.trim()
+  if (!homeOrganizationId) {
+    throw new BusinessRuleError(
+      "A home organization is required to accept missing-proof evidence.",
+    )
+  }
+  if (
+    !hasRbacPermission(
+      control.actorPermissions ?? [],
+      ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.permission,
+    )
+  ) {
+    throw new ForbiddenError(
+      "Missing-proof response acceptance requires accountant review permission.",
+    )
+  }
+
+  const now = new Date()
+  const actorId = requireFreshMissingEvidenceAcceptanceControl(
+    homeOrganizationId,
+    control,
+    now,
+  )
+  const clientOrganizationId = input.clientOrganizationId?.trim() || null
+  if (input.clientOrganizationId != null && !clientOrganizationId) {
+    throw new BusinessRuleError("Client organization cannot be blank.")
+  }
+  const requestId = input.requestId.trim()
+  const responseId = input.responseId.trim()
+  const resolutionNotes = input.resolutionNotes.trim()
+  if (!requestId || !responseId) {
+    throw new BusinessRuleError(
+      "Missing-proof request and response identifiers are required.",
+    )
+  }
+  if (resolutionNotes.length < 10 || resolutionNotes.length > 4000) {
+    throw new BusinessRuleError(
+      "Missing-proof acceptance notes must contain between 10 and 4000 characters.",
+    )
+  }
+  const suppliedCorrelationId = input.correlationId?.trim() || null
+  if (input.correlationId != null && !suppliedCorrelationId) {
+    throw new BusinessRuleError("Correlation ID cannot be blank.")
+  }
+  const correlationId = suppliedCorrelationId ?? randomUUID()
+
+  return runMissingCloseEvidenceTransaction(async (tx) => {
+    const activeActor = await tx.user.findFirst({
+      where: {
+        id: actorId,
+        organizationId: homeOrganizationId,
+        isActive: true,
+      },
+      select: { id: true },
+    })
+    if (!activeActor) {
+      throw new ForbiddenError(
+        "Missing-proof response acceptance requires an active home-tenant accountant.",
+      )
+    }
+
+    const access = await resolveAccountantClientAccess({
+      homeOrganizationId,
+      clientOrganizationId,
+      accountantUserId: actorId,
+      capability: "REVIEW",
+      now,
+      client: tx,
+    })
+    const organizationId = access.organizationId
+
+    const existingAcceptance = await tx.accountantComment.findFirst({
+      where: {
+        organizationId,
+        correlationId,
+        visibility: MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE_VISIBILITY,
+        metadata: {
+          path: ["acceptanceType"],
+          equals: MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE_TYPE,
+        },
+      },
+    })
+    if (existingAcceptance) {
+      return assertMatchingMissingCloseEvidenceAcceptanceReplay(
+        existingAcceptance,
+        input,
+        organizationId,
+        actorId,
+      )
+    }
+
+    const storedRequest = await tx.accountantComment.findFirst({
+      where: {
+        id: requestId,
+        organizationId,
+        visibility: MISSING_CLOSE_EVIDENCE_VISIBILITY,
+        metadata: {
+          path: ["requestType"],
+          equals: MISSING_CLOSE_EVIDENCE_REQUEST_TYPE,
+        },
+      },
+    })
+    if (!storedRequest) {
+      throw new NotFoundError("Missing-proof request not found")
+    }
+    const request = mapMissingCloseEvidenceRequest(storedRequest)
+
+    const storedResponse = await tx.accountantComment.findFirst({
+      where: {
+        id: responseId,
+        organizationId,
+        visibility: MISSING_CLOSE_EVIDENCE_RESPONSE_VISIBILITY,
+        metadata: {
+          path: ["responseType"],
+          equals: MISSING_CLOSE_EVIDENCE_RESPONSE_TYPE,
+        },
+      },
+    })
+    if (!storedResponse) {
+      throw new NotFoundError("Missing-proof response not found")
+    }
+    const response = mapMissingCloseEvidenceResponse(storedResponse)
+
+    if (
+      response.requestId !== request.id ||
+      response.organizationId !== request.organizationId ||
+      response.periodId !== request.periodId ||
+      response.closeRunId !== request.closeRunId ||
+      response.findingId !== request.findingId ||
+      response.requestedById !== request.requestedById ||
+      response.requestedFromId !== request.requestedFromId ||
+      response.respondedById !== request.requestedFromId ||
+      response.requestCorrelationId !== request.correlationId
+    ) {
+      throw new BusinessRuleError(
+        "Stored missing-proof request and response evidence do not match.",
+      )
+    }
+    if (actorId === response.respondedById) {
+      throw new ForbiddenError(
+        "The client respondent cannot accept their own missing-proof response.",
+      )
+    }
+
+    const finding = await tx.closeAssuranceFinding.findFirst({
+      where: { id: request.findingId, organizationId },
+      select: {
+        id: true,
+        periodId: true,
+        closeRunId: true,
+        ownerId: true,
+        status: true,
+        severity: true,
+      },
+    })
+    if (!finding) throw new NotFoundError("Close finding not found")
+    if (
+      finding.periodId !== request.periodId ||
+      finding.closeRunId !== request.closeRunId
+    ) {
+      throw new BusinessRuleError(
+        "Stored missing-proof evidence does not match its finding.",
+      )
+    }
+    if (finding.status !== CloseFindingStatus.IN_REVIEW) {
+      throw new BusinessRuleError(
+        "Only an in-review missing-proof finding can be accepted.",
+      )
+    }
+    if (finding.ownerId !== response.respondedById) {
+      throw new BusinessRuleError(
+        "The in-review finding owner does not match the client respondent.",
+      )
+    }
+
+    const transition = await tx.closeAssuranceFinding.updateMany({
+      where: {
+        id: finding.id,
+        organizationId,
+        status: CloseFindingStatus.IN_REVIEW,
+        ownerId: response.respondedById,
+      },
+      data: {
+        status: CloseFindingStatus.RESOLVED,
+        resolutionNotes,
+        resolvedAt: now,
+        resolvedById: actorId,
+        correlationId,
+      },
+    })
+    if (transition.count !== 1) {
+      throw new ConflictError(
+        "The missing-proof finding changed before acceptance completed.",
+      )
+    }
+
+    const acceptance = await tx.accountantComment.create({
+      data: {
+        organizationId,
+        periodId: request.periodId,
+        closeRunId: request.closeRunId,
+        findingId: request.findingId,
+        authorId: actorId,
+        body: resolutionNotes,
+        visibility: MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE_VISIBILITY,
+        correlationId,
+        metadata: jsonObject({
+          acceptanceType: MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE_TYPE,
+          requestId: request.id,
+          responseId: response.id,
+          requestCorrelationId: request.correlationId,
+          responseCorrelationId: response.correlationId,
+          findingId: request.findingId,
+          periodId: request.periodId,
+          closeRunId: request.closeRunId,
+          respondedById: response.respondedById,
+          acceptedById: actorId,
+          decision:
+            ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.decision,
+          findingStatus:
+            ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.findingStatus,
+          resolvedAt: now.toISOString(),
+          correlationId,
+        }),
+      },
+    })
+
+    await auditCloseWorkflow(tx, {
+      organizationId,
+      actorId,
+      action:
+        ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.auditAction,
+      resourceType: "AccountantComment",
+      resourceId: acceptance.id,
+      message: "Close missing-evidence response accepted",
+      metadata: jsonObject({
+        requestId: request.id,
+        responseId: response.id,
+        findingId: request.findingId,
+        respondedById: response.respondedById,
+        acceptedById: actorId,
+        status: CloseFindingStatus.RESOLVED,
+        correlationId,
+      }),
+    })
+
+    await recordCloseWorkflowEventInTx(tx, {
+      organizationId,
+      actorId,
+      eventType:
+        ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.eventType,
+      idempotencyKey:
+        `close-assurance-missing-evidence-response:${response.id}:accepted:${correlationId}`,
+      sourceType: "CloseAssuranceFinding",
+      sourceId: request.findingId,
+      closeRunId: request.closeRunId,
+      periodId: request.periodId,
+      findingId: request.findingId,
+      ownerId: response.respondedById,
+      message: "Close missing-evidence response accepted",
+      severity: notificationSeverity(finding.severity),
+      correlationId,
+      payload: {
+        acceptanceId: acceptance.id,
+        requestId: request.id,
+        responseId: response.id,
+        findingId: request.findingId,
+        respondedById: response.respondedById,
+        acceptedById: actorId,
+        decision:
+          ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.decision,
+        findingStatus:
+          ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.findingStatus,
+      },
+    })
+
+    return mapMissingCloseEvidenceResponseAcceptance(acceptance)
   })
 }
 

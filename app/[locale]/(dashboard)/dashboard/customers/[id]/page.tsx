@@ -1,5 +1,5 @@
 import CustomerManagementDashboard from "@/components/customers/CustomerManagementDashboard"
-import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
+import { checkAllPermissions, getAuthenticatedUser } from "@/config/useAuth"
 import { localizePath, pickLocale } from "@/i18n/routing"
 import { redirect } from "next/navigation"
 
@@ -15,7 +15,7 @@ export const metadata = {
 export default async function CustomerAnalyticsPage({ params }: CustomerAnalyticsPageProps) {
   const { locale: rawLocale, id } = await params
   const locale = pickLocale(rawLocale)
-  await checkPermission("customers.read")
+  await checkAllPermissions(["customers.read", "customers.analytics.read"])
   const user = await getAuthenticatedUser()
 
   if (!user.organizationId) {

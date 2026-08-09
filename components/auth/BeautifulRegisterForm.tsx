@@ -31,7 +31,7 @@ import {
   Users,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { AuthFormCard } from "./AuthLayout";
@@ -69,8 +69,13 @@ export default function BeautifulRegisterForm() {
 
   const router = useRouter();
   const pathname = usePathname();
+  const params = useSearchParams();
   const { formError, formSuccess, warning } = useNotifications();
   const locale = getAuthLocale(pathname);
+  const isAccountantInvite =
+    params.get("role") === "accountant" &&
+    Boolean(params.get("ref")) &&
+    Boolean(params.get("invite"));
   const {
     register,
     handleSubmit,
@@ -85,6 +90,9 @@ export default function BeautifulRegisterForm() {
       currency: "XAF",
       timezone: "Africa/Douala",
       defaultLocale: locale,
+      referralCode: params.get("ref") || undefined,
+      accountantInviteToken: params.get("invite") || undefined,
+      accountantInviteAccepted: isAccountantInvite ? false : undefined,
     },
   });
   const copy = authCopy[locale].register;
@@ -118,7 +126,12 @@ export default function BeautifulRegisterForm() {
   const stepFields: Record<StepId, (keyof RegisterUserProps)[]> = {
     personal: ["firstName", "lastName", "email", "phone"],
     company: ["companyName", "companySize"],
-    security: ["password", "confirmPassword", "termsAccepted"],
+    security: [
+      "password",
+      "confirmPassword",
+      "termsAccepted",
+      ...(isAccountantInvite ? ["accountantInviteAccepted" as const] : []),
+    ],
   };
 
   const goNext = async () => {
@@ -260,6 +273,8 @@ export default function BeautifulRegisterForm() {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <input type="hidden" {...register("referralCode")} />
+        <input type="hidden" {...register("accountantInviteToken")} />
         {currentStep === "personal" ? (
           <div className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
@@ -548,6 +563,27 @@ export default function BeautifulRegisterForm() {
               </span>
             </label>
             {errors.termsAccepted?.message ? <ErrorText message={errors.termsAccepted.message} /> : null}
+            {isAccountantInvite ? (
+              <>
+                <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-[#2dd4bf]/25 bg-[rgba(45,212,191,0.10)] p-4 text-sm leading-6 text-[#31515d] dark:text-[#b5f5ee]">
+                  <input
+                    type="checkbox"
+                    className="mt-1 h-4 w-4 rounded border-[#9fb4bb]/40 bg-white text-[#178e83] focus:ring-[#178e83]/30 dark:border-white/10 dark:bg-[#0f171d]"
+                    {...register("accountantInviteAccepted", {
+                      required: locale === "fr"
+                        ? "Vous devez accepter le mandat client."
+                        : "You must accept the client mandate.",
+                    })}
+                  />
+                  <span>
+                    {locale === "fr"
+                      ? "J'accepte le mandat client limite, date et revocable decrit dans cette invitation."
+                      : "I accept the limited, time-bound, revocable client mandate described in this invitation."}
+                  </span>
+                </label>
+                {errors.accountantInviteAccepted?.message ? <ErrorText message={errors.accountantInviteAccepted.message} /> : null}
+              </>
+            ) : null}
           </div>
         ) : null}
 

@@ -3,7 +3,8 @@
 import { notify } from "@/lib/notifications/notify"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { format } from "date-fns"
-import { memo, useCallback, useMemo, useState } from "react"
+import { memo, useCallback, useEffect, useMemo, useState } from "react"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useForm } from "react-hook-form"
 import * as XLSX from "xlsx"
 import { z } from "zod"
@@ -75,7 +76,17 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
+import { DataTablePagination } from "@/components/DataTableComponents/DataTablePagination"
+import DateFilters from "@/components/DataTableComponents/DateFilters"
+import DateRangeFilter from "@/components/DataTableComponents/DateRangeFilter"
 
 // Enhanced form schema with better validation
 const itemFormSchema = z
@@ -107,6 +118,23 @@ const itemFormSchema = z
 
 export type ItemFormValues = z.infer<typeof itemFormSchema>
 
+type ActiveFilterChip = {
+  id: string
+  label: string
+  queryParam?: string | string[]
+}
+
+const STOCK_FILTER_OPTIONS = [
+  { value: "all", label: "All stock" },
+  { value: "in-stock", label: "In stock" },
+  { value: "low-stock", label: "Low stock" },
+  { value: "out-of-stock", label: "Out of stock" },
+  { value: "overstock", label: "Overstock" },
+  { value: "reorder", label: "Reorder" },
+  { value: "available", label: "Available" },
+  { value: "reserved", label: "Reserved" },
+] as const
+
 interface ItemManagementProps {
   title: string
   editingId: string
@@ -116,6 +144,8 @@ interface ItemManagementProps {
   initialBrandData: BrandDTO[]
   initialUnitData: UnitDTO[]
   initialTaxRateData: TaxRateDTO[]
+  initialSearch?: string
+  activeFilterChips?: ActiveFilterChip[]
 }
 
 const DEFAULT_IMAGE_URL = "https://14J7oh8kso.ufs.sh/f/HLxTbDBCDLwfAXaapcezIN7vwylKf1PXSCqAuseUG0gx8mhd"
@@ -282,6 +312,8 @@ const ModernItemTable = ({
   onRefresh,
   onExport,
   title,
+  initialSearch = "",
+  activeFilterChips = [],
 }: {
   data: ItemWithInventoryLevelsPayload[]
   columns: ColumnDef<ItemWithInventoryLevelsPayload>[]
@@ -289,15 +321,38 @@ const ModernItemTable = ({
   onRefresh: () => void
   onExport: (data: ItemWithInventoryLevelsPayload[]) => void
   title: string
+  initialSearch?: string
+  activeFilterChips?: ActiveFilterChip[]
 }) => {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
-  const [globalFilter, setGlobalFilter] = useState("")
+  const [globalFilter, setGlobalFilter] = useState(initialSearch)
+  const [dateFilteredData, setDateFilteredData] = useState(data)
+  const [isDateFilterActive, setIsDateFilterActive] = useState(false)
+  const pathname = usePathname()
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const hasActiveFilterChips = activeFilterChips.length > 0
+  const hasSearchFilterChip = activeFilterChips.some((chip) => chip.id === "search" || chip.id === "q")
+  const hasActiveSearch = Boolean(globalFilter.trim())
+  const requestedStockFilter = searchParams.get("stock") ?? "all"
+  const stockFilter = STOCK_FILTER_OPTIONS.some((option) => option.value === requestedStockFilter)
+    ? requestedStockFilter
+    : "all"
+
+  useEffect(() => {
+    setGlobalFilter(initialSearch)
+  }, [initialSearch])
+
+  useEffect(() => {
+    setDateFilteredData(data)
+    setIsDateFilterActive(false)
+  }, [data])
 
   const table = useReactTable({
-    data,
+    data: isDateFilterActive ? dateFilteredData : data,
     columns,
     filterFns: {
       global: globalFilterFn,
@@ -322,10 +377,53 @@ const ModernItemTable = ({
   })
 
   const selectedRows = table.getFilteredSelectedRowModel().rows
-  const hasActiveSearch = Boolean(String(globalFilter ?? "").trim())
-  const pageCount = Math.max(table.getPageCount(), 1)
   const filteredRowCount = table.getFilteredRowModel().rows.length
   const selectedItems = selectedRows.map((row) => row.original)
+  const tableTitle = title || "Items Management"
+
+  const handleClearFilters = useCallback(() => {
+    if (hasActiveSearch) {
+      setGlobalFilter("")
+    }
+
+    if (!hasActiveFilterChips) {
+      return
+    }
+
+    const nextParams = new URLSearchParams(searchParams)
+
+    activeFilterChips.forEach((chip) => {
+      if (!chip.queryParam) {
+        return
+      }
+      const queryKeys = Array.isArray(chip.queryParam) ? chip.queryParam : [chip.queryParam]
+      queryKeys.forEach((queryKey) => nextParams.delete(queryKey))
+    })
+    nextParams.delete("page")
+    const queryString = nextParams.toString()
+    const nextHref = queryString ? `${pathname}?${queryString}` : pathname
+
+    const currentSearch = searchParams.toString()
+    const currentHref = currentSearch ? `${pathname}?${currentSearch}` : pathname
+
+    if (currentHref !== nextHref) {
+      void router.replace(nextHref)
+    }
+  }, [activeFilterChips, hasActiveFilterChips, hasActiveSearch, pathname, router, searchParams, setGlobalFilter])
+
+  const handleStockFilterChange = useCallback((value: string) => {
+    const nextParams = new URLSearchParams(searchParams)
+
+    if (value === "all") {
+      nextParams.delete("stock")
+    } else {
+      nextParams.set("stock", value)
+    }
+
+    nextParams.delete("page")
+    const queryString = nextParams.toString()
+    void router.replace(queryString ? `${pathname}?${queryString}` : pathname)
+  }, [pathname, router, searchParams])
 
   return (
     <div className="w-full min-w-0 space-y-4">
@@ -336,7 +434,7 @@ const ModernItemTable = ({
               <Package className="h-5 w-5" />
             </div>
             <div className="min-w-0">
-              <h2 className="text-lg font-semibold text-[var(--dash-text)]">{title}</h2>
+              <h2 className="text-lg font-semibold text-[var(--dash-text)]">{tableTitle}</h2>
               <p className="mt-1 break-words text-sm text-[var(--dash-text-soft)]">
                 Showing {filteredRowCount.toLocaleString()} of {data.length.toLocaleString()} items
               </p>
@@ -356,7 +454,7 @@ const ModernItemTable = ({
               className="dashboard-button-secondary h-9 rounded-lg"
             >
               <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
-              Refresh
+              {isLoading ? "Refreshing" : "Refresh"}
             </Button>
             <Button
               variant="outline"
@@ -369,12 +467,39 @@ const ModernItemTable = ({
             </Button>
           </div>
         </div>
+
+        {hasActiveFilterChips || hasActiveSearch ? (
+          <div className="mt-3 flex min-w-0 flex-wrap items-center gap-2">
+            {activeFilterChips.map((chip) => (
+              <Badge
+                key={chip.id}
+                variant="outline"
+                className="dashboard-filter-chip h-9 w-fit rounded-lg"
+              >
+                {chip.label}
+              </Badge>
+            ))}
+            {hasActiveSearch && !hasSearchFilterChip ? (
+              <Badge variant="outline" className="dashboard-filter-chip h-9 w-fit rounded-lg">
+                Search: {globalFilter}
+              </Badge>
+            ) : null}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleClearFilters}
+              className="h-8 rounded-lg text-[var(--dash-text-soft)] hover:bg-[var(--dash-brand-soft)] hover:text-[var(--dash-brand-strong)]"
+            >
+              Clear
+            </Button>
+          </div>
+        ) : null}
       </div>
 
       <div className="space-y-4 p-3 sm:p-5">
         {/* Filters and search */}
-        <div className="flex flex-col gap-3 rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)]/70 p-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="relative w-full min-w-0 flex-1">
+        <div className="dashboard-table-toolbar flex flex-col gap-3 rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)]/70 p-3 lg:flex-row lg:items-center lg:justify-between">
+          <div className="relative w-full min-w-0 flex-1 lg:min-w-[18rem]">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--dash-text-faint)]" />
             <Input
               placeholder="Search items, SKUs, categories, or brands"
@@ -394,7 +519,32 @@ const ModernItemTable = ({
             ) : null}
           </div>
 
-          <div className="flex shrink-0 flex-wrap items-center gap-2">
+          <div className="flex w-full shrink-0 flex-wrap items-center gap-2 lg:w-auto lg:justify-end">
+            <DateRangeFilter
+              data={data}
+              onFilter={setDateFilteredData}
+              setIsDateFilterActive={setIsDateFilterActive}
+              variant="landing"
+            />
+            <DateFilters
+              data={data}
+              onFilter={setDateFilteredData}
+              setIsDateFilterActive={setIsDateFilterActive}
+              variant="landing"
+            />
+            <Select value={stockFilter} onValueChange={handleStockFilterChange}>
+              <SelectTrigger className="dashboard-control h-9 w-full rounded-lg sm:w-[160px]">
+                <SelectValue placeholder="Stock status" />
+              </SelectTrigger>
+              <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
+                {STOCK_FILTER_OPTIONS.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
             {selectedRows.length > 0 ? (
               <>
                 <Badge variant="outline" className="rounded-lg border-[var(--dash-brand)] bg-[var(--dash-brand-soft)] text-[var(--dash-brand-strong)]">
@@ -534,57 +684,7 @@ const ModernItemTable = ({
       </div>
 
         {/* Pagination and summary */}
-      <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <div className="text-sm text-[var(--dash-text-soft)]">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
-
-        <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center lg:justify-end">
-          <div className="flex items-center gap-2">
-            <p className="whitespace-nowrap text-sm font-medium text-[var(--dash-text-soft)]">Rows per page</p>
-            <select
-              className="dashboard-control h-9 w-[76px] rounded-lg px-3 py-2 text-sm"
-              value={table.getState().pagination.pageSize}
-              onChange={(e) => {
-                table.setPageSize(Number(e.target.value))
-              }}
-            >
-              {[10, 20, 30, 40, 50].map((pageSize) => (
-                <option key={pageSize} value={pageSize}>
-                  {pageSize}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex min-w-[100px] items-center justify-center text-sm font-medium text-[var(--dash-text-soft)]">
-            Page {table.getState().pagination.pageIndex + 1} of{" "}
-            {pageCount}
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-              className="dashboard-button-secondary h-9 rounded-lg"
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-              className="dashboard-button-secondary h-9 rounded-lg"
-            >
-              Next
-            </Button>
-          </div>
-        </div>
-      </div>
+        <DataTablePagination table={table} variant="landing" />
       </div>
     </div>
   )
@@ -600,6 +700,8 @@ const ItemManagement = memo<ItemManagementProps>(
     initialBrandData,
     initialUnitData,
     initialTaxRateData,
+    initialSearch = "",
+    activeFilterChips = [],
   }) => {
     // Validate required props
     if (!organizationId) {
@@ -798,6 +900,8 @@ const ItemManagement = memo<ItemManagementProps>(
           onRefresh={handleRefresh}
           onExport={handleExport}
           title={title || "Items Management"}
+          initialSearch={initialSearch}
+          activeFilterChips={activeFilterChips}
         />
 
         {/* Add Item Form Dialog */}

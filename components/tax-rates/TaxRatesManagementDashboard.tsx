@@ -80,6 +80,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { DataTablePagination } from "@/components/DataTableComponents/DataTablePagination"
 import type { TaxRateManagementInput, TaxRateManagementRow } from "@/actions/taxRate/tax-rate-management-actions"
 import {
   useCreateManagedTaxRate,
@@ -808,7 +809,7 @@ export default function TaxRatesManagementDashboard({
         </div>
 
         <div className="dashboard-glass-panel rounded-lg border border-[var(--dash-border-subtle)] p-4">
-          <div className="mb-4 grid gap-3 xl:grid-cols-[minmax(0,1fr)_10rem_10rem_10rem_auto]">
+          <div className="dashboard-table-toolbar mb-4 grid gap-3 xl:grid-cols-[minmax(0,1fr)_10rem_10rem_10rem_auto]">
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--dash-text-faint)]" />
               <Input
@@ -921,45 +922,7 @@ export default function TaxRatesManagementDashboard({
             </div>
           </div>
 
-          <div className="mt-4 flex flex-col gap-3 text-sm text-[var(--dash-text-soft)] md:flex-row md:items-center md:justify-between">
-            <div>
-              {t.page} {table.getState().pagination.pageIndex + 1} {t.of} {Math.max(table.getPageCount(), 1)}
-              <span className="ms-2">({formatNumber(filteredTaxRates.length, locale)} {t.rows})</span>
-            </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <Select
-                value={String(table.getState().pagination.pageSize)}
-                onValueChange={(value) => table.setPageSize(Number(value))}
-              >
-                <SelectTrigger className="dashboard-control h-10 w-24 rounded-lg">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
-                  {[5, 10, 20, 50].map((size) => (
-                    <SelectItem key={size} value={String(size)}>{size}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-                className="dashboard-button-secondary h-10 rounded-lg"
-              >
-                {t.previous}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-                className="dashboard-button-secondary h-10 rounded-lg"
-              >
-                {t.next}
-              </Button>
-            </div>
-          </div>
+          <DataTablePagination table={table} variant="landing" />
         </div>
       </section>
 

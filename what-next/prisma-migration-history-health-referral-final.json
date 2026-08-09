@@ -1,0 +1,82 @@
+{
+  "summary": {
+    "generatedAt": "2026-08-09T08:11:11.244Z",
+    "mode": "report",
+    "status": "blocked",
+    "checkCount": 8,
+    "readyCount": 6,
+    "blockerCount": 2,
+    "repositoryMigrationCount": 53,
+    "completedRowCount": 48,
+    "unfinishedRowCount": 0,
+    "rolledBackRowCount": 5,
+    "secretValuePrinted": false,
+    "migrationLogPrinted": false
+  },
+  "database": {
+    "configured": true,
+    "targetClass": "local"
+  },
+  "query": {
+    "succeeded": true,
+    "errorCode": null
+  },
+  "checks": [
+    {
+      "id": "database_url_configured",
+      "ready": true
+    },
+    {
+      "id": "migration_catalog_present",
+      "ready": true
+    },
+    {
+      "id": "migration_history_query_succeeded",
+      "ready": true
+    },
+    {
+      "id": "migration_history_has_no_unfinished_rows",
+      "ready": true
+    },
+    {
+      "id": "all_repository_migrations_successfully_applied",
+      "ready": false
+    },
+    {
+      "id": "applied_migration_checksums_match_repository",
+      "ready": false
+    },
+    {
+      "id": "database_has_no_unknown_successful_migrations",
+      "ready": true
+    },
+    {
+      "id": "database_has_no_duplicate_successful_migrations",
+      "ready": true
+    }
+  ],
+  "findings": {
+    "unfinished": [],
+    "missing": [
+      "20260809100000_customer_receivable_document_foundation",
+      "20260809113000_customer_statement_snapshot_foundation",
+      "20260809130000_customer_statement_external_access",
+      "20260809143000_customer_statement_delivery_referral",
+      "20260809160000_accountant_client_invite_onboarding"
+    ],
+    "checksumMismatches": [
+      "20260619120000_backfill_purchase_receive_permission"
+    ],
+    "unknown": [],
+    "duplicateSuccesses": []
+  },
+  "blockers": [
+    "all_repository_migrations_successfully_applied",
+    "applied_migration_checksums_match_repository"
+  ],
+  "safety": {
+    "readOnly": true,
+    "databaseUrlRetained": false,
+    "migrationLogsRetained": false
+  }
+}

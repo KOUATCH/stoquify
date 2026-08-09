@@ -664,7 +664,7 @@ export function FilterBar({
         </div>
       ) : null}
 
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+      <div className="dashboard-table-toolbar flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
           {search ? (
             <label className="relative min-w-[min(100%,18rem)] flex-1 sm:max-w-xs">

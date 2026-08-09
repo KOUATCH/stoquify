@@ -96,6 +96,32 @@ describe("auth action edge cases", () => {
     )
   })
 
+  it("preserves referral and accountant-invite evidence at the action boundary", async () => {
+    const attributedRegistration = {
+      ...validRegistration,
+      referralCode: "accountant_ref_123",
+      accountantInviteToken: "invite-token-" + "a".repeat(32),
+      accountantInviteAccepted: true,
+    }
+    mockRegisterOrganizationAccount.mockResolvedValue({
+      success: true,
+      data: {
+        userId: "accountant-user",
+        organizationId: "accountant-org",
+        email: attributedRegistration.email,
+      },
+    })
+
+    await expect(registerUser(attributedRegistration)).resolves.toMatchObject({
+      success: true,
+      data: { organizationId: "accountant-org" },
+    })
+    expect(mockRegisterOrganizationAccount).toHaveBeenCalledWith(
+      attributedRegistration,
+      { ipAddress: "203.0.113.10" },
+    )
+  })
+
   it("keeps missing credential responses local to the action boundary", async () => {
     const result = await signInWithCredentials({
       email: "",

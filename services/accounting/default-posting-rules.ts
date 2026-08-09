@@ -435,6 +435,70 @@ export const DEFAULT_AP_POSTING_RULES: DefaultPostingRuleTemplate[] = [
   },
 ];
 
+export const DEFAULT_CUSTOMER_SETTLEMENT_POSTING_RULES: DefaultPostingRuleTemplate[] = [
+  {
+    code: "AR-CUSTOMER-SETTLEMENT",
+    nameEn: "Customer receivable settlement",
+    nameFr: "Reglement creance client",
+    descriptionEn:
+      "Records a customer collection through the received payment rail and clears accounts receivable.",
+    descriptionFr:
+      "Comptabilise un encaissement client par le moyen de paiement recu et solde la creance client.",
+    sourceType: AccountingSourceType.CUSTOMER_SETTLEMENT,
+    postingPurpose: AccountingPostingPurpose.CUSTOMER_SETTLEMENT,
+    priority: 10,
+    lines: [
+      {
+        lineNumber: 1,
+        side: PostingRuleLineSide.DEBIT,
+        mappingKey: "BANK",
+        amountSource: PostingRuleAmountSource.SOURCE_AMOUNT,
+        condition: { paymentMethod: "BANK_TRANSFER" },
+        description: "Receive customer bank transfer",
+      },
+      {
+        lineNumber: 2,
+        side: PostingRuleLineSide.DEBIT,
+        mappingKey: "CASH_ON_HAND",
+        amountSource: PostingRuleAmountSource.SOURCE_AMOUNT,
+        condition: { paymentMethod: "CASH" },
+        description: "Receive customer cash payment",
+      },
+      {
+        lineNumber: 3,
+        side: PostingRuleLineSide.DEBIT,
+        mappingKey: "MOBILE_MONEY_CLEARING",
+        amountSource: PostingRuleAmountSource.SOURCE_AMOUNT,
+        condition: { paymentMethod: "MOBILE_MONEY" },
+        description: "Receive customer mobile money payment",
+      },
+      {
+        lineNumber: 4,
+        side: PostingRuleLineSide.DEBIT,
+        mappingKey: "CARD_CLEARING",
+        amountSource: PostingRuleAmountSource.SOURCE_AMOUNT,
+        condition: { paymentMethod: "CARD" },
+        description: "Receive customer card payment",
+      },
+      {
+        lineNumber: 5,
+        side: PostingRuleLineSide.DEBIT,
+        mappingKey: "CHEQUE_CLEARING",
+        amountSource: PostingRuleAmountSource.SOURCE_AMOUNT,
+        condition: { paymentMethod: "CHEQUE" },
+        description: "Receive customer cheque payment",
+      },
+      {
+        lineNumber: 6,
+        side: PostingRuleLineSide.CREDIT,
+        mappingKey: "ACCOUNTS_RECEIVABLE",
+        amountSource: PostingRuleAmountSource.SOURCE_AMOUNT,
+        description: "Clear customer receivable",
+      },
+    ],
+  },
+];
+
 export const DEFAULT_PAYROLL_POSTING_RULES: DefaultPostingRuleTemplate[] = [
   {
     code: "PAYROLL-RUN",
@@ -626,5 +690,6 @@ export const DEFAULT_PAYROLL_POSTING_RULES: DefaultPostingRuleTemplate[] = [
 export const DEFAULT_POSTING_RULES: DefaultPostingRuleTemplate[] = [
   ...DEFAULT_POS_POSTING_RULES,
   ...DEFAULT_AP_POSTING_RULES,
+  ...DEFAULT_CUSTOMER_SETTLEMENT_POSTING_RULES,
   ...DEFAULT_PAYROLL_POSTING_RULES,
 ];

@@ -1,14 +1,21 @@
 import getOrgBrands from "@/actions/brands/getOrgBrands"
 import getOrgCategories from "@/actions/categories/getOrgCategories"
 import { createItemAction } from "@/actions/item/items"
+import { getOrgLocations } from "@/actions/locations/getOrgLocations"
 import getOrgTaxRates from "@/actions/taxRate/getOrgTaxRates"
 import getOrgUnits from "@/actions/units/getOrgUnits"
-import { ModernCreateItemForm } from "@/components/inventory/ModernCreateItemForm"
+import { CreateItemWizard } from "@/components/inventory/CreateItemWizard"
 import { Button } from "@/components/ui/button"
 import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
-import { localizedRedirect } from "@/i18n/server-routing"
+import { pickLocale } from "@/i18n/routing"
+import { generateSimpleSKU } from "@/lib/generateSKU"
+import { createOrganizationMoneyFormatter } from "@/lib/i18n/organization-money"
 import { ArrowLeft, Package } from "lucide-react"
+import { localizedRedirect } from "@/i18n/server-routing"
 import { revalidatePath } from "next/cache"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
+import { getOrganizationSettingsForOrg } from "@/services/organization/organization-settings.service"
+import { getLocale } from "next-intl/server"
 
 async function handleCreateItem(formData: FormData) {
   "use server"
@@ -17,7 +24,10 @@ async function handleCreateItem(formData: FormData) {
 
   const user = await getAuthenticatedUser()
   if (!user?.organizationId) {
-    throw new Error("Organization not found")
+    return {
+      success: false,
+      error: "Organization not found",
+    }
   }
 
   const text = (key: string) => String(formData.get(key) ?? "").trim()
@@ -25,20 +35,75 @@ async function handleCreateItem(formData: FormData) {
     const value = text(key)
     return value.length > 0 ? value : null
   }
-  const optionalNumber = (key: string) => {
+
+  const parseNumber = (
+    key: string,
+    options: {
+      required?: boolean
+      fallback?: number | null
+      min?: number
+      max?: number
+    } = {},
+  ) => {
     const value = text(key)
-    return value.length > 0 ? Number(value) : null
+
+    if (!value) {
+      return options.required ? Number.NaN : (options.fallback ?? null)
+    }
+
+    const parsed = Number(value)
+    if (!Number.isFinite(parsed)) {
+      return Number.NaN
+    }
+
+    if (typeof options.min === "number" && parsed < options.min) {
+      return Number.NaN
+    }
+
+    if (typeof options.max === "number" && parsed > options.max) {
+      return Number.NaN
+    }
+
+    return parsed
   }
+
+  const toBoolean = (key: string, fallback: boolean) => {
+    const raw = formData.get(key)
+    if (raw === null) return fallback
+    if (typeof raw !== "string") return fallback
+
+    const normalized = raw.trim().toLowerCase()
+    if (["true", "1", "on", "yes"].includes(normalized)) {
+      return true
+    }
+    if (["false", "0", "off", "no"].includes(normalized)) {
+      return false
+    }
+
+    return fallback
+  }
+
+  const openingQuantity = parseNumber("initialInventory.quantity", { fallback: 0, min: 0 })
+  const openingLocationId = optionalText("initialInventory.locationId")
+  const initialInventory = typeof openingQuantity === "number" && openingQuantity > 0
+    ? {
+        locationId: openingLocationId ?? "",
+        quantity: openingQuantity,
+        unitCost: parseNumber("initialInventory.unitCost", { fallback: 0, min: 0 }) ?? 0,
+        notes: optionalText("initialInventory.notes") ?? undefined,
+        referenceNumber: optionalText("initialInventory.referenceNumber") ?? undefined,
+      }
+    : undefined
 
   const data = {
     nameEn: text("nameEn"),
     nameFr: optionalText("nameFr"),
     descriptionEn: optionalText("descriptionEn"),
     descriptionFr: optionalText("descriptionFr"),
-    sku: text("sku"),
-    costPrice: optionalNumber("costPrice") ?? 0,
-    sellingPrice: optionalNumber("sellingPrice") ?? 0,
-    tax: optionalNumber("tax"),
+    sku: optionalText("sku") || generateSimpleSKU(9, "ITEM"),
+    costPrice: parseNumber("costPrice", { required: true, fallback: 0, min: 0 }),
+    sellingPrice: parseNumber("sellingPrice", { required: true, fallback: 0, min: 0 }),
+    tax: parseNumber("tax", { min: 0, max: 1000 }),
     thumbnail: optionalText("thumbnail"),
     imageUrls: optionalText("imageUrls"),
     organizationId: user.organizationId,
@@ -47,28 +112,37 @@ async function handleCreateItem(formData: FormData) {
     unitId: optionalText("unitId"),
     taxRateId: optionalText("taxRateId"),
     barcode: optionalText("barcode"),
-    weight: optionalNumber("weight"),
+    weight: parseNumber("weight", { min: 0 }),
     dimensions: optionalText("dimensions"),
-    minStockLevel: optionalNumber("minStockLevel") ?? 0,
-    maxStockLevel: optionalNumber("maxStockLevel"),
+    minStockLevel: parseNumber("minStockLevel", { required: true, fallback: 0, min: 0 }),
+    maxStockLevel: parseNumber("maxStockLevel", { fallback: null, min: 0 }),
     unitOfMeasure: optionalText("unitOfMeasure"),
-    isActive: formData.get("isActive") !== "false",
-    isSerialTracked: formData.get("isSerialTracked") === "true",
+    isActive: toBoolean("isActive", true),
+    isSerialTracked: toBoolean("isSerialTracked", false),
     slug: optionalText("slug"),
+    initialInventory,
   }
 
   const result = await createItemAction(data)
 
-  if (result.success) {
-    revalidatePath("/dashboard/inventory/items")
-    await localizedRedirect("/dashboard/inventory/items")
-  } else {
-    throw new Error(result.error)
+  if (!result.success) {
+    return {
+      success: false,
+      error: result.error,
+    }
+  }
+
+  revalidatePath("/dashboard/inventory/items")
+
+  return {
+    success: true,
+    redirect: "/dashboard/inventory/items",
   }
 }
 
 export default async function CreateItemPage() {
   await checkPermission("inventory.items.create")
+  const locale = pickLocale(await getLocale())
 
   const user = await getAuthenticatedUser()
 
@@ -106,21 +180,51 @@ export default async function CreateItemPage() {
   }
 
   const organizationId = user.organizationId
+  await observeModuleAccess({
+    organizationId,
+    userId: user.id,
+    actorPermissions: user.permissions,
+    moduleSlug: "inventory",
+    surfaceType: "page",
+    surface: "/dashboard/inventory/items/create",
+    accessIntent: "write",
+    mode: "observe",
+  })
 
-  const [categoriesResult, brandsResult, unitsResult, taxRatesResult] = await Promise.all([
+
+  const [organizationSettings, categoriesResult, brandsResult, unitsResult, taxRatesResult, locationsResult] = await Promise.all([
+    getOrganizationSettingsForOrg(organizationId),
     getOrgCategories(organizationId),
     getOrgBrands(organizationId),
     getOrgUnits(organizationId),
     getOrgTaxRates(organizationId),
+    getOrgLocations(organizationId),
   ])
+  const organizationCurrency = organizationSettings?.currency
+  createOrganizationMoneyFormatter({
+    organizationId,
+    locale,
+    currency: organizationCurrency,
+  })
+  const currency = organizationCurrency!.trim().toUpperCase()
 
   const categories = categoriesResult?.success ? (categoriesResult.data ?? []) : []
   const brands = brandsResult?.success ? (brandsResult.data ?? []) : []
   const units = unitsResult?.success ? (unitsResult.data ?? []) : []
   const taxRates = taxRatesResult?.success ? (taxRatesResult.data ?? []) : []
+  const locations = locationsResult?.success
+    ? (locationsResult.data ?? []).filter((location) => location.isActive !== false)
+    : []
+  const referenceDataWarnings = [
+    !categoriesResult?.success ? "Categories could not be loaded." : null,
+    !brandsResult?.success ? "Brands could not be loaded." : null,
+    !unitsResult?.success ? "Units could not be loaded." : null,
+    !taxRatesResult?.success ? "Tax rates could not be loaded." : null,
+    !locationsResult?.success ? "Locations could not be loaded, so opening stock is unavailable." : null,
+  ].filter((message): message is string => Boolean(message))
 
   return (
-    <ModernCreateItemForm
+    <CreateItemWizard
       action={handleCreateItem}
       isLoading={false}
       categories={categories}
@@ -137,7 +241,15 @@ export default async function CreateItemPage() {
         nameEn: tr.nameEn ?? tr.taxRateName,
         nameFr: tr.nameFr ?? null,
       }))}
+      locations={locations.map((location) => ({
+        id: location.id,
+        name: location.name,
+        code: location.code,
+      }))}
+      referenceDataWarnings={referenceDataWarnings}
       organizationId={organizationId}
+      currency={currency}
+      locale={locale}
     />
   )
 }

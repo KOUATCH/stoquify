@@ -138,6 +138,7 @@ export const financialPermissions = [
   "finance.receivables.create",
   "finance.receivables.update",
   "finance.receivables.collect",
+  "finance.receivables.reverse",
   "finance.cash-flow.read",
   "finance.cash-drawer.read",
   "finance.costs.read",
@@ -269,6 +270,7 @@ export const customerPermissions = [
   "customers.create",
   "customers.update",
   "customers.delete",
+  "customers.export",
   "customers.orders.read",
   "customers.analytics.read",
   "customers.communication.send",
@@ -601,4 +603,3 @@ export default {
   getAllPermissions,
   isValidPermission,
 };
-

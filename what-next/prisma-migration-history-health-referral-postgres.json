@@ -1,0 +1,75 @@
+{
+  "summary": {
+    "generatedAt": "2026-08-09T09:59:26.128Z",
+    "mode": "report",
+    "status": "blocked",
+    "checkCount": 8,
+    "readyCount": 7,
+    "blockerCount": 1,
+    "repositoryMigrationCount": 54,
+    "completedRowCount": 54,
+    "unfinishedRowCount": 0,
+    "rolledBackRowCount": 5,
+    "secretValuePrinted": false,
+    "migrationLogPrinted": false
+  },
+  "database": {
+    "configured": true,
+    "targetClass": "local"
+  },
+  "query": {
+    "succeeded": true,
+    "errorCode": null
+  },
+  "checks": [
+    {
+      "id": "database_url_configured",
+      "ready": true
+    },
+    {
+      "id": "migration_catalog_present",
+      "ready": true
+    },
+    {
+      "id": "migration_history_query_succeeded",
+      "ready": true
+    },
+    {
+      "id": "migration_history_has_no_unfinished_rows",
+      "ready": true
+    },
+    {
+      "id": "all_repository_migrations_successfully_applied",
+      "ready": true
+    },
+    {
+      "id": "applied_migration_checksums_match_repository",
+      "ready": false
+    },
+    {
+      "id": "database_has_no_unknown_successful_migrations",
+      "ready": true
+    },
+    {
+      "id": "database_has_no_duplicate_successful_migrations",
+      "ready": true
+    }
+  ],
+  "findings": {
+    "unfinished": [],
+    "missing": [],
+    "checksumMismatches": [
+      "20260619120000_backfill_purchase_receive_permission"
+    ],
+    "unknown": [],
+    "duplicateSuccesses": []
+  },
+  "blockers": [
+    "applied_migration_checksums_match_repository"
+  ],
+  "safety": {
+    "readOnly": true,
+    "databaseUrlRetained": false,
+    "migrationLogsRetained": false
+  }
+}

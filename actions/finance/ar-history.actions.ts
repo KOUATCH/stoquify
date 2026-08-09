@@ -5,16 +5,11 @@ import { z } from "zod";
 import { requireFreshAuth } from "@/lib/security/auth-session";
 import { requireAnyPermission } from "@/lib/security/rbac";
 import { err, ok } from "@/services/_shared/action-response";
-import { BusinessRuleError } from "@/services/_shared/action-errors";
+import { prepareAROpenItemsExport } from "@/services/accounting/ar-open-item-export.service";
 import {
   getCustomerAROpenItems,
   type AROpenItemResult,
 } from "@/services/accounting/ar-open-item.service";
-import { hashNormalizedHistoryFilters } from "@/services/history/transaction-history-cursor";
-import {
-  buildExportWatermark,
-  evaluateExportSafety,
-} from "@/services/security/export-safety.service";
 
 export type { AROpenItemResult };
 
@@ -30,7 +25,7 @@ const arHistoryReadActionSchema = z
   .object({ filters: arHistoryFiltersSchema.optional() })
   .strict();
 const arHistoryExportActionSchema = arHistoryReadActionSchema.extend({
-  rowCount: z.number().int().min(0).max(100_000).default(0),
+  rowCount: z.number().int().min(0).max(100_000).optional(),
 });
 
 export async function getAROpenItemsHistoryAction(input: unknown = {}) {
@@ -65,36 +60,15 @@ export async function prepareAROpenItemsHistoryExportAction(
         resource: "AROpenItemsHistoryExport",
       },
     );
-    await requireFreshAuth(300);
-    const filtersHash = hashNormalizedHistoryFilters(parsed.filters ?? {});
-    const watermarkId = buildExportWatermark({
-      organizationId: ctx.orgId,
-      actorId: ctx.userId,
-      scope: "customer-ar-open-items-history",
-      filtersHash,
-      rowCount: parsed.rowCount,
-      fileType: "csv",
-      sensitivity: "financial",
-    });
-    const decision = evaluateExportSafety({
-      action: "report.export",
+    const freshAuth = await requireFreshAuth(300);
+    const exportFile = await prepareAROpenItemsExport({
       organizationId: ctx.orgId,
       actorId: ctx.userId,
       actorPermissions: ctx.permissions,
-      lastAuthAt: Date.now(),
-      resourceType: "AROpenItemsHistoryExport",
-      resourceId: "customer-ar-open-items-history",
-      exportContext: {
-        scope: "customer-ar-open-items-history",
-        filtersHash,
-        rowCount: parsed.rowCount,
-        fileType: "csv",
-        sensitivity: "financial",
-        watermarkId,
-      },
+      lastAuthAt: freshAuth.claims.lastAuthAt,
+      filters: parsed.filters,
     });
-    if (!decision.allowed) throw new BusinessRuleError(decision.safeMessage);
-    return ok({ decision });
+    return ok(exportFile);
   } catch (error) {
     return err(error);
   }

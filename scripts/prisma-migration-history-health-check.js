@@ -3,11 +3,14 @@
 const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
+const { Client } = require("pg");
 
 require("dotenv").config();
 
 const DEFAULT_MARKDOWN_OUT = "what-next/prisma-migration-history-health.md";
 const DEFAULT_JSON_OUT = "what-next/prisma-migration-history-health.json";
+const CHECKSUM_APPROVALS_FILE =
+  "prisma/migration-history-checksum-approvals.json";
 const LOCAL_HOSTS = new Set([
   "localhost",
   "127.0.0.1",
@@ -100,6 +103,56 @@ function migrationCatalog(root = process.cwd()) {
     .sort((left, right) => left.name.localeCompare(right.name));
 }
 
+function readChecksumApprovalRegistry(root = process.cwd()) {
+  const target = path.join(root, CHECKSUM_APPROVALS_FILE);
+  if (!fs.existsSync(target)) {
+    return {
+      exists: false,
+      valid: false,
+      approvals: [],
+      errors: ["checksum_approval_registry_missing"],
+    };
+  }
+  try {
+    const parsed = JSON.parse(fs.readFileSync(target, "utf8"));
+    const approvals = Array.isArray(parsed.approvals) ? parsed.approvals : [];
+    const errors = [];
+    if (parsed.version !== 1) errors.push("checksum_approval_registry_version");
+    for (const approval of approvals) {
+      if (
+        typeof approval.migration !== "string" ||
+        !/^\d{14}_[a-z0-9_]+$/.test(approval.migration) ||
+        !/^[a-f0-9]{64}$/.test(String(approval.databaseChecksum || "")) ||
+        !Array.isArray(approval.repositoryChecksums) ||
+        approval.repositoryChecksums.length === 0 ||
+        !approval.repositoryChecksums.every((checksum) =>
+          /^[a-f0-9]{64}$/.test(String(checksum || "")),
+        ) ||
+        typeof approval.approvedBy !== "string" ||
+        !approval.approvedBy.trim() ||
+        typeof approval.reason !== "string" ||
+        !approval.reason.trim() ||
+        !/^\d{4}-\d{2}-\d{2}/.test(String(approval.approvedAt || ""))
+      ) {
+        errors.push("checksum_approval_registry_entry_invalid");
+      }
+    }
+    return {
+      exists: true,
+      valid: errors.length === 0,
+      approvals,
+      errors: [...new Set(errors)],
+    };
+  } catch {
+    return {
+      exists: true,
+      valid: false,
+      approvals: [],
+      errors: ["checksum_approval_registry_unparseable"],
+    };
+  }
+}
+
 function isCompleted(row) {
   return Boolean(row.finished_at) && !row.rolled_back_at;
 }
@@ -110,6 +163,8 @@ function isUnfinished(row) {
 
 function buildMigrationHistoryHealth(root = process.cwd(), options = {}) {
   const catalog = migrationCatalog(root);
+  const approvalRegistry =
+    options.approvalRegistry || readChecksumApprovalRegistry(root);
   const rows = Array.isArray(options.rows) ? options.rows : [];
   const database = classifyTarget(options.databaseUrl || "");
   const querySucceeded = options.querySucceeded === true;
@@ -131,16 +186,45 @@ function buildMigrationHistoryHealth(root = process.cwd(), options = {}) {
   const missing = catalog
     .filter((migration) => !completedByName.has(migration.name))
     .map((migration) => migration.name);
-  const checksumMismatches = catalog
-    .filter((migration) => {
-      const successes = completedByName.get(migration.name) || [];
+  const staleApprovals = approvalRegistry.approvals
+    .filter((approval) => {
+      const migration = catalogByName.get(approval.migration);
       return (
-        successes.length > 0 &&
-        !successes.some((row) =>
-          migration.acceptedChecksums.includes(row.checksum),
+        !migration ||
+        !approval.repositoryChecksums.some((checksum) =>
+          migration.acceptedChecksums.includes(checksum),
         )
       );
     })
+    .map((approval) => approval.migration)
+    .sort();
+  const mismatchedMigrations = catalog.filter((migration) => {
+    const successes = completedByName.get(migration.name) || [];
+    return (
+      successes.length > 0 &&
+      !successes.some((row) =>
+        migration.acceptedChecksums.includes(row.checksum),
+      )
+    );
+  });
+  const approvedChecksumMismatches = mismatchedMigrations
+    .filter((migration) => {
+      const successes = completedByName.get(migration.name) || [];
+      return successes.some((row) =>
+        approvalRegistry.approvals.some(
+          (approval) =>
+            approval.migration === migration.name &&
+            approval.databaseChecksum === row.checksum &&
+            approval.repositoryChecksums.some((checksum) =>
+              migration.acceptedChecksums.includes(checksum),
+            ),
+        ),
+      );
+    })
+    .map((migration) => migration.name);
+  const approvedChecksumMismatchSet = new Set(approvedChecksumMismatches);
+  const checksumMismatches = mismatchedMigrations
+    .filter((migration) => !approvedChecksumMismatchSet.has(migration.name))
     .map((migration) => migration.name);
   const unknown = [
     ...new Set(
@@ -157,6 +241,10 @@ function buildMigrationHistoryHealth(root = process.cwd(), options = {}) {
   const checks = [
     { id: "database_url_configured", ready: database.configured },
     { id: "migration_catalog_present", ready: catalog.length > 0 },
+    {
+      id: "migration_checksum_approval_registry_valid",
+      ready: approvalRegistry.valid && staleApprovals.length === 0,
+    },
     { id: "migration_history_query_succeeded", ready: querySucceeded },
     {
       id: "migration_history_has_no_unfinished_rows",
@@ -199,6 +287,14 @@ function buildMigrationHistoryHealth(root = process.cwd(), options = {}) {
       migrationLogPrinted: false,
     },
     database,
+    checksumApprovals: {
+      exists: approvalRegistry.exists,
+      valid: approvalRegistry.valid,
+      approvalCount: approvalRegistry.approvals.length,
+      approvedChecksumMismatches,
+      staleApprovals,
+      errors: approvalRegistry.errors,
+    },
     query: {
       succeeded: querySucceeded,
       errorCode: querySucceeded
@@ -210,6 +306,7 @@ function buildMigrationHistoryHealth(root = process.cwd(), options = {}) {
       unfinished: unfinished.map((row) => row.migration_name).sort(),
       missing,
       checksumMismatches,
+      approvedChecksumMismatches,
       unknown,
       duplicateSuccesses,
     },
@@ -218,6 +315,7 @@ function buildMigrationHistoryHealth(root = process.cwd(), options = {}) {
       readOnly: true,
       databaseUrlRetained: false,
       migrationLogsRetained: false,
+      checksumApprovalExactMatchOnly: true,
     },
   };
 }
@@ -245,6 +343,8 @@ function renderMarkdown(report) {
     `- Database configured: ${report.database.configured ? "yes" : "no"}`,
     `- Target class: \`${report.database.targetClass}\``,
     `- History query succeeded: ${report.query.succeeded ? "yes" : "no"}`,
+    `- Checksum approval registry valid: ${report.checksumApprovals.valid ? "yes" : "no"}`,
+    `- Checksum approvals: ${report.checksumApprovals.approvalCount}`,
     "",
     "## Checks",
     "",
@@ -257,6 +357,8 @@ function renderMarkdown(report) {
     `- Unfinished: ${report.findings.unfinished.length ? report.findings.unfinished.join(", ") : "none"}`,
     `- Missing: ${report.findings.missing.length ? report.findings.missing.join(", ") : "none"}`,
     `- Checksum mismatches: ${report.findings.checksumMismatches.length ? report.findings.checksumMismatches.join(", ") : "none"}`,
+    `- Approved checksum mismatches: ${report.findings.approvedChecksumMismatches.length ? report.findings.approvedChecksumMismatches.join(", ") : "none"}`,
+    `- Stale checksum approvals: ${report.checksumApprovals.staleApprovals.length ? report.checksumApprovals.staleApprovals.join(", ") : "none"}`,
     `- Unknown successful migrations: ${report.findings.unknown.length ? report.findings.unknown.join(", ") : "none"}`,
     `- Duplicate successful migrations: ${report.findings.duplicateSuccesses.length ? report.findings.duplicateSuccesses.join(", ") : "none"}`,
     "",
@@ -271,6 +373,7 @@ function renderMarkdown(report) {
     "- This gate performs a read-only query of `_prisma_migrations`.",
     "- It does not print or retain the database URL or migration error logs.",
     "- It compares successful history rows with the exact repository migration file checksums.",
+    "- A legacy mismatch is accepted only when an approval matches the migration name, exact database checksum, and an exact current repository checksum.",
     "- It does not resolve, apply, roll back, or mutate a migration.",
     "",
   ].join("\n");
@@ -310,16 +413,19 @@ function gateResultForReport(report, mode = "report") {
   };
 }
 
-async function queryHistoryRows(databaseUrl) {
+async function queryHistoryRows(
+  databaseUrl,
+  clientFactory = (connectionString) => new Client({ connectionString }),
+) {
   if (!databaseUrl)
     return { rows: [], succeeded: false, errorCode: "database_url_missing" };
-  const { PrismaClient } = require("@prisma/client");
-  const client = new PrismaClient();
+  const client = clientFactory(databaseUrl);
   try {
-    const rows = await client.$queryRawUnsafe(
+    await client.connect();
+    const result = await client.query(
       'SELECT migration_name, checksum, started_at, finished_at, rolled_back_at, applied_steps_count FROM "_prisma_migrations" ORDER BY started_at',
     );
-    return { rows, succeeded: true, errorCode: null };
+    return { rows: result.rows, succeeded: true, errorCode: null };
   } catch (error) {
     return {
       rows: [],
@@ -330,7 +436,7 @@ async function queryHistoryRows(databaseUrl) {
           : "migration_history_query_failed",
     };
   } finally {
-    await client.$disconnect();
+    await client.end();
   }
 }
 
@@ -366,6 +472,7 @@ module.exports = {
   migrationCatalog,
   parseArgs,
   queryHistoryRows,
+  readChecksumApprovalRegistry,
   renderMarkdown,
   writeFileWithRetry,
 };

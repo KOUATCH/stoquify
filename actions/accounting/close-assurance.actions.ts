@@ -8,11 +8,13 @@ import {
 } from "@/lib/security/auth-session"
 import { protect, type ProtectedActionContext } from "@/services/_shared/protect"
 import {
+  acceptMissingCloseEvidenceResponse,
   approveCloseWaiver,
   assignCloseFinding,
   commentOnCloseFinding,
   getCloseAssuranceDashboard,
   getCloseEvidenceGraph,
+  respondToMissingCloseEvidence,
   requestMissingCloseEvidence,
   requestCloseWaiver,
   runCloseAssurance,
@@ -23,12 +25,17 @@ import {
   type CloseAssuranceFindingDto,
   type CloseEvidenceGraphDto,
   type MissingCloseEvidenceRequestDto,
+  type MissingCloseEvidenceResponseDto,
 } from "@/services/accounting/close-assurance.service"
+import {
+  type MissingCloseEvidenceResponseAcceptanceDto,
+} from "@/services/accounting/missing-close-evidence-response-acceptance-contracts"
 import {
   exportClosePack,
   type ClosePackExportResult,
 } from "@/services/accounting/close-assurance-pack.service"
 import {
+  acceptMissingCloseEvidenceResponseInputSchema,
   approveCloseWaiverInputSchema,
   assignCloseFindingInputSchema,
   closeAssuranceDashboardInputSchema,
@@ -37,6 +44,7 @@ import {
   commentOnCloseFindingInputSchema,
   exportClosePackInputSchema,
   requestMissingCloseEvidenceInputSchema,
+  respondToMissingCloseEvidenceInputSchema,
   requestCloseWaiverInputSchema,
   updateAccountantReviewInputSchema,
 } from "@/services/accounting/close-assurance.schemas"
@@ -48,6 +56,8 @@ export type {
   CloseAssuranceFindingDto,
   CloseEvidenceGraphDto,
   MissingCloseEvidenceRequestDto,
+  MissingCloseEvidenceResponseDto,
+  MissingCloseEvidenceResponseAcceptanceDto,
   ClosePackExportResult,
 }
 
@@ -151,6 +161,58 @@ const requestMissingEvidence = protect<unknown, MissingCloseEvidenceRequestDto>(
 
 export async function requestMissingCloseEvidenceAction(input: unknown) {
   return requestMissingEvidence(input)
+}
+
+const respondToMissingEvidence = protect<unknown, MissingCloseEvidenceResponseDto>(
+  {
+    permission: "accounting.close.finding.comment",
+    auditResource: "AccountantComment",
+    auditAllowed: true,
+  },
+  async (input, ctx) => {
+    const parsed = respondToMissingCloseEvidenceInputSchema.parse(input)
+    const result = await respondToMissingCloseEvidence(ctx.orgId, parsed, {
+      actorId: ctx.userId,
+      actorPermissions: ctx.permissions,
+    })
+    revalidateClosePaths(result.periodId)
+    return result
+  },
+)
+
+export async function respondToMissingCloseEvidenceAction(input: unknown) {
+  return respondToMissingEvidence(input)
+}
+
+const acceptMissingEvidenceResponse = protect<
+  unknown,
+  MissingCloseEvidenceResponseAcceptanceDto
+>(
+  {
+    permission: "accounting.close.accountant.review",
+    auditResource: "CloseAssuranceFinding",
+    auditAllowed: true,
+    freshAuth: { maxAgeSeconds: 300 },
+  },
+  async (input, ctx) => {
+    const lastAuthAt = verifiedCloseFreshAuthTime(ctx)
+    const parsed = acceptMissingCloseEvidenceResponseInputSchema.parse(input)
+    const result = await acceptMissingCloseEvidenceResponse(ctx.orgId, parsed, {
+      actorId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      freshAuth: {
+        actorId: ctx.userId,
+        organizationId: ctx.orgId,
+        lastAuthAt,
+      },
+    })
+    revalidateClosePaths(result.periodId)
+    return result
+  },
+)
+
+export async function acceptMissingCloseEvidenceResponseAction(input: unknown) {
+  return acceptMissingEvidenceResponse(input)
 }
 
 const requestWaiver = protect<unknown, CloseAssuranceFindingDto>(

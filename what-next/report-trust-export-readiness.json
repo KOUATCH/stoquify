@@ -1,11 +1,11 @@
 {
   "summary": {
-    "generatedAt": "2026-08-02T14:32:10.253Z",
+    "generatedAt": "2026-08-09T07:54:05.775Z",
     "mode": "fail",
-    "status": "ready",
-    "checkCount": 23,
-    "readyCount": 23,
-    "blockerCount": 0
+    "status": "blocked",
+    "checkCount": 35,
+    "readyCount": 34,
+    "blockerCount": 1
   },
   "checks": [
     {
@@ -77,11 +77,27 @@
       "ready": true
     },
     {
+      "id": "missing_proof_response_service_owned_command_evidence",
+      "ready": true
+    },
+    {
       "id": "client_missing_proof_request_queue_service_owned_evidence",
       "ready": true
     },
     {
       "id": "client_missing_proof_manager_action_center_composition",
+      "ready": true
+    },
+    {
+      "id": "client_missing_proof_response_state_projection",
+      "ready": true
+    },
+    {
+      "id": "accountant_missing_proof_response_review_queue",
+      "ready": true
+    },
+    {
+      "id": "accountant_missing_proof_response_acceptance_resolution",
       "ready": true
     },
     {
@@ -97,9 +113,43 @@
       "ready": true
     },
     {
+      "id": "customer_ledger_service_owned_balance_integrity_kernel",
+      "ready": true
+    },
+    {
+      "id": "customer_settlement_allocation_source_foundation",
+      "ready": true
+    },
+    {
+      "id": "customer_settlement_compensating_reversal_foundation",
+      "ready": true
+    },
+    {
+      "id": "posted_customer_receivable_document_foundation",
+      "ready": true
+    },
+    {
+      "id": "immutable_customer_statement_snapshot_foundation",
+      "ready": true
+    },
+    {
+      "id": "signed_customer_statement_external_access_foundation",
+      "ready": true
+    },
+    {
+      "id": "consented_customer_referral_launch_foundation",
+      "ready": false
+    },
+    {
+      "id": "customer_settlement_reversal_protected_action_boundary",
+      "ready": true
+    },
+    {
       "id": "statutory_payroll_and_inventory_evidence_coverage",
       "ready": true
     }
   ],
-  "blockers": []
+  "blockers": [
+    "consented_customer_referral_launch_foundation"
+  ]
 }

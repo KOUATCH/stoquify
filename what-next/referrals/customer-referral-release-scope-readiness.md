@@ -1,0 +1,330 @@
+# Customer Referral Release Scope Readiness
+
+Generated: 2026-08-09T14:02:27.189Z
+Classification: `blocked`
+Exact release: `blocked`
+
+## Scope summary
+
+- Changed paths inspected: 556
+- Referral candidate paths: 226
+- Mixed shared paths requiring hunk isolation: 4
+- Regenerate on isolated revision: 37
+- Explicitly excluded user/unrelated paths: 280
+- Unclassified paths: 9
+- Category conflicts: 0
+- Protected staged paths: 2
+- Candidate scope digest: `b364f3cbb1eed3848e5328c3c8991c95884715808788f009ce0e26d26f59a5c0`
+
+## Classification blockers
+
+- release_scope_has_unclassified_paths
+
+## Exact-release blockers
+
+- release_scope_has_unclassified_paths
+- unrelated_user_index_changes_present
+- mixed_shared_files_require_hunk_isolation
+- architecture_graph_must_be_regenerated_on_isolated_revision
+- exact_referral_git_revision_not_created
+- security_diff_scan_not_run_on_exact_revision
+
+## Protected staged paths
+
+- app/[locale]/(dashboard)/dashboard/inventory/items/[id]/edit/page.tsx
+- components/inventory/CreateItemWizard.tsx
+
+## Unclassified paths
+
+- app/[locale]/(dashboard)/dashboard/customers/layout.tsx
+- components/finance/AROpenItemsHistoryWorkbench.tsx
+- hooks/useAROpenItemsHistoryWorkbench.ts
+- messages/en.json
+- messages/fr.json
+- what-next/STOQUIFY_CUSTOMER_WORKFLOW_COMPLETION_REPORT_2026-08-09.md
+- what-next/customer-workflow-export-trust-readiness-2026-08-09.json
+- what-next/customer-workflow-export-trust-readiness-2026-08-09.md
+- what-next/screenshots/supplier-workflow-completion-2026-08-09/README.md
+
+## Mixed shared paths requiring hunk isolation
+
+- components/customers/CustomerManagementDashboard.tsx
+- config/permissions.ts
+- lib/security/rbac-permissions.ts
+- services/controls/sensitive-action.service.ts
+
+## Regenerate after isolation
+
+- actions/graphify-out/GRAPH_REPORT.md
+- actions/graphify-out/graph.html
+- actions/graphify-out/graph.json
+- app/graphify-out/GRAPH_REPORT.md
+- app/graphify-out/graph.html
+- app/graphify-out/graph.json
+- components/graphify-out/GRAPH_REPORT.md
+- components/graphify-out/graph.html
+- components/graphify-out/graph.json
+- graphify-out/GRAPH_REPORT_actions.md
+- graphify-out/GRAPH_REPORT_app.md
+- graphify-out/GRAPH_REPORT_components.md
+- graphify-out/GRAPH_REPORT_hooks.md
+- graphify-out/GRAPH_REPORT_types.md
+- graphify-out/POST_SLICE_438_GRAPH_REFRESH_2026-08-09.md
+- graphify-out/graph_actions.json
+- graphify-out/graph_app.json
+- graphify-out/graph_components.json
+- graphify-out/graph_hooks.json
+- graphify-out/graph_types.json
+- graphify-out/manifest.json
+- graphify-out/ordered-code-graph.json
+- hooks/graphify-out/GRAPH_REPORT.md
+- hooks/graphify-out/graph.html
+- hooks/graphify-out/graph.json
+- lib/graphify-out/GRAPH_REPORT.md
+- lib/graphify-out/graph.html
+- lib/graphify-out/graph.json
+- prisma/graphify-out/GRAPH_REPORT.md
+- prisma/graphify-out/graph.html
+- prisma/graphify-out/graph.json
+- services/graphify-out/GRAPH_REPORT.md
+- services/graphify-out/graph.html
+- services/graphify-out/graph.json
+- types/graphify-out/GRAPH_REPORT.md
+- types/graphify-out/graph.html
+- types/graphify-out/graph.json
+
+## Candidate paths
+
+- actions/__tests__/auth-actions.test.ts
+- actions/accounting/__tests__/accountant-access.actions.test.ts
+- actions/accounting/__tests__/close-assurance.actions.test.ts
+- actions/accounting/__tests__/customer-statement.actions.test.ts
+- actions/accounting/accountant-access.actions.ts
+- actions/accounting/close-assurance.actions.ts
+- actions/accounting/customer-statement.actions.ts
+- actions/finance/__tests__/customer-settlement.actions.test.ts
+- actions/finance/ar-history.actions.ts
+- actions/finance/customer-settlement.actions.ts
+- actions/referrals/__tests__/referral-funnel.actions.test.ts
+- actions/referrals/referral-funnel.actions.ts
+- app/[locale]/(dashboard)/dashboard/analytics/referrals/page.tsx
+- app/[locale]/(dashboard)/dashboard/customers/[id]/statement/__tests__/page.test.tsx
+- app/[locale]/(dashboard)/dashboard/customers/[id]/statement/page.tsx
+- app/api/customer-statements/[statementId]/__tests__/route.test.ts
+- app/api/customer-statements/[statementId]/actions/__tests__/route.test.ts
+- app/api/customer-statements/[statementId]/actions/route.ts
+- app/api/customer-statements/[statementId]/route.ts
+- app/api/referrals/[referralCode]/__tests__/route.test.ts
+- app/api/referrals/[referralCode]/route.ts
+- app/customer-statement/[statementId]/CustomerStatementPortal.tsx
+- app/customer-statement/[statementId]/__tests__/CustomerStatementPortal.test.tsx
+- app/customer-statement/[statementId]/page.tsx
+- components/accounting/AccountantAccessManager.tsx
+- components/accounting/__tests__/AccountantAccessManager.test.tsx
+- components/auth/BeautifulRegisterForm.tsx
+- components/auth/v2/RegisterV2Form.tsx
+- components/auth/v2/__tests__/RegisterV2Form.referral.test.tsx
+- components/customers/CustomerStatementWorkflow.tsx
+- components/customers/__tests__/CustomerStatementWorkflow.test.tsx
+- components/dashboard/EnhancedEnterpriseDashboard.tsx
+- components/dashboard/__tests__/todays-operating-truth.test.ts
+- components/dashboard/primitives/command-center-primitives.tsx
+- components/dashboard/todays-operating-truth.ts
+- components/referrals/ReferralFunnelDashboard.tsx
+- components/referrals/__tests__/ReferralFunnelDashboard.test.tsx
+- config/sidebar.ts
+- lib/auth.ts
+- lib/i18n/__tests__/organization-money.test.ts
+- lib/i18n/organization-money.ts
+- lib/security/__tests__/credential-sign-in-outcome.test.ts
+- lib/security/__tests__/customer-settlement-security.test.ts
+- lib/security/credential-sign-in-outcome.ts
+- package-lock.json
+- package.json
+- prisma/comprehensive-seed.ts
+- prisma/migration-history-checksum-approvals.json
+- prisma/migrations/20260528124341_refine_item_barcode/migration.sql
+- prisma/migrations/20260611120000_payment_provider_reference_uniqueness/migration.sql
+- prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql
+- prisma/migrations/20260618160000_payroll_foundation_bridge/migration.sql
+- prisma/migrations/20260618161000_ap_stock_count_foundation_bridge/migration.sql
+- prisma/migrations/20260726140000_business_event_foundation_bridge/migration.sql
+- prisma/migrations/20260727110100_offline_pos_sync_foundation_reconciliation/migration.sql
+- prisma/migrations/20260730150000_organization_onboarding_entitlement_bridge/migration.sql
+- prisma/migrations/20260808120000_customer_settlement_allocation_foundation/migration.sql
+- prisma/migrations/20260808133000_customer_settlement_compensating_reversal_foundation/migration.sql
+- prisma/migrations/20260809100000_customer_receivable_document_foundation/migration.sql
+- prisma/migrations/20260809113000_customer_statement_snapshot_foundation/migration.sql
+- prisma/migrations/20260809130000_customer_statement_external_access/migration.sql
+- prisma/migrations/20260809143000_customer_statement_delivery_referral/migration.sql
+- prisma/migrations/20260809160000_accountant_client_invite_onboarding/migration.sql
+- prisma/migrations/20260809170000_referral_accounting_source_types/migration.sql
+- prisma/migrations/20260809180000_accounting_enum_completion/migration.sql
+- prisma/schema.prisma
+- scripts/__tests__/customer-referral-pilot-evidence-gate.test.js
+- scripts/__tests__/customer-referral-release-scope-gate.test.js
+- scripts/__tests__/customer-referral-shared-hunk-gate.test.js
+- scripts/__tests__/prisma-migration-history-health-check.test.js
+- scripts/__tests__/referral-delivery-worker.test.ts
+- scripts/__tests__/release-secret-preflight.test.js
+- scripts/__tests__/report-trust-export-gate.test.js
+- scripts/customer-referral-pilot-evidence-gate.js
+- scripts/customer-referral-postgres-smoke.ts
+- scripts/customer-referral-release-scope-gate.js
+- scripts/customer-referral-shared-hunk-gate.js
+- scripts/prisma-fresh-replay-certification.js
+- scripts/prisma-migration-history-health-check.js
+- scripts/referral-delivery-worker.ts
+- scripts/release-secret-preflight.js
+- scripts/report-trust-export-gate.js
+- services/accounting/__tests__/accountant-client-invite-envelope.test.ts
+- services/accounting/__tests__/accountant-client-invite.service.test.ts
+- services/accounting/__tests__/ar-open-item-export.service.test.ts
+- services/accounting/__tests__/ar-open-item.service.test.ts
+- services/accounting/__tests__/close-assurance.service.test.ts
+- services/accounting/__tests__/customer-ledger.service.test.ts
+- services/accounting/__tests__/customer-receivable-backfill.service.test.ts
+- services/accounting/__tests__/customer-receivable-document.service.test.ts
+- services/accounting/__tests__/customer-receivable-lifecycle.service.test.ts
+- services/accounting/__tests__/customer-settlement-reversal.service.test.ts
+- services/accounting/__tests__/customer-settlement.service.test.ts
+- services/accounting/__tests__/customer-statement-access.service.test.ts
+- services/accounting/__tests__/customer-statement-delivery-envelope.test.ts
+- services/accounting/__tests__/customer-statement-delivery.service.test.ts
+- services/accounting/__tests__/customer-statement-recipient-action.service.test.ts
+- services/accounting/__tests__/customer-statement-token.test.ts
+- services/accounting/__tests__/customer-statement.service.test.ts
+- services/accounting/__tests__/missing-close-evidence-accountant-review-queue.service.test.ts
+- services/accounting/__tests__/missing-close-evidence-request-queue.service.test.ts
+- services/accounting/__tests__/posting.service.test.ts
+- services/accounting/accountant-access.schemas.ts
+- services/accounting/accountant-client-invite-envelope.ts
+- services/accounting/accountant-client-invite.service.ts
+- services/accounting/ar-open-item-export.service.ts
+- services/accounting/ar-open-item.service.ts
+- services/accounting/close-assurance.schemas.ts
+- services/accounting/close-assurance.service.ts
+- services/accounting/customer-ledger.service.ts
+- services/accounting/customer-receivable-backfill.service.ts
+- services/accounting/customer-receivable-document.service.ts
+- services/accounting/customer-receivable-lifecycle.service.ts
+- services/accounting/customer-settlement-reversal.service.ts
+- services/accounting/customer-settlement.schemas.ts
+- services/accounting/customer-settlement.service.ts
+- services/accounting/customer-statement-access.service.ts
+- services/accounting/customer-statement-delivery-envelope.ts
+- services/accounting/customer-statement-delivery.service.ts
+- services/accounting/customer-statement-recipient-action.service.ts
+- services/accounting/customer-statement-token.ts
+- services/accounting/customer-statement.schemas.ts
+- services/accounting/customer-statement.service.ts
+- services/accounting/default-posting-rules.ts
+- services/accounting/missing-close-evidence-accountant-review-queue-contracts.ts
+- services/accounting/missing-close-evidence-accountant-review-queue.service.ts
+- services/accounting/missing-close-evidence-request-queue-contracts.ts
+- services/accounting/missing-close-evidence-request-queue.service.ts
+- services/accounting/missing-close-evidence-response-acceptance-contracts.ts
+- services/accounting/posting.service.ts
+- services/communication/__tests__/accountant-client-invite-worker.service.test.ts
+- services/communication/__tests__/accountant-client-invite.provider.test.ts
+- services/communication/__tests__/customer-statement-delivery-worker.service.test.ts
+- services/communication/__tests__/customer-statement-delivery.provider.test.ts
+- services/communication/accountant-client-invite-worker.service.ts
+- services/communication/accountant-client-invite.provider.ts
+- services/communication/customer-statement-delivery-worker.service.ts
+- services/communication/customer-statement-delivery.provider.ts
+- services/manager-action-center/__tests__/manager-action-center.service.test.ts
+- services/manager-action-center/manager-action-center-contracts.ts
+- services/manager-action-center/manager-action-center.service.ts
+- services/pos/__tests__/pos.service.test.ts
+- services/pos/pos.service.ts
+- services/referrals/__tests__/referral-attribution.service.test.ts
+- services/referrals/__tests__/referral-funnel-read-model.service.test.ts
+- services/referrals/referral-attribution.service.ts
+- services/referrals/referral-funnel-read-model.service.ts
+- services/users/__tests__/user-identity.service.test.ts
+- services/users/user-identity.service.ts
+- types/types.ts
+- what-next/prisma-fresh-replay-certification-referral.json
+- what-next/prisma-fresh-replay-certification-referral.md
+- what-next/prisma-migration-deployment-readiness-referral.json
+- what-next/prisma-migration-deployment-readiness-referral.md
+- what-next/prisma-migration-history-health-referral.json
+- what-next/prisma-migration-history-health-referral.md
+- what-next/prisma-referral-postgres-schema-drift.sql
+- what-next/referral-browser-dashboard.png
+- what-next/referral-browser-delivery-queued.png
+- what-next/referral-browser-statement-generated.png
+- what-next/referral-browser-statement-page.png
+- what-next/referrals/ACCOUNTANT_CLOSE_PORTAL_REPORT_2026-08-08.md
+- what-next/referrals/ACCOUNTANT_MISSING_PROOF_RESPONSE_ACCEPTANCE_SLICE_432_REPORT_2026-08-08.md
+- what-next/referrals/ACCOUNTANT_MISSING_PROOF_RESPONSE_REVIEW_QUEUE_SLICE_431_REPORT_2026-08-08.md
+- what-next/referrals/CLIENT_MISSING_PROOF_RESPONSE_COMMAND_SLICE_429_REPORT_2026-08-08.md
+- what-next/referrals/CLIENT_MISSING_PROOF_RESPONSE_STATE_PROJECTION_SLICE_430_REPORT_2026-08-08.md
+- what-next/referrals/CUSTOMER_LEDGER_BALANCE_INTEGRITY_KERNEL_SLICE_434_REPORT_2026-08-08.md
+- what-next/referrals/CUSTOMER_REFERRAL_MIGRATION_BASELINE_REPAIR_2026-08-09.md
+- what-next/referrals/CUSTOMER_REFERRAL_PILOT_EVIDENCE_INPUT.template.json
+- what-next/referrals/CUSTOMER_REFERRAL_RELEASE_SCOPE_POLICY.json
+- what-next/referrals/CUSTOMER_REFERRAL_SHARED_HUNK_POLICY.json
+- what-next/referrals/CUSTOMER_REFERRAL_TAKEOFF_READINESS_2026-08-09.md
+- what-next/referrals/CUSTOMER_SETTLEMENT_ALLOCATION_SOURCE_FOUNDATION_SLICE_435_REPORT_2026-08-08.md
+- what-next/referrals/CUSTOMER_SETTLEMENT_COMPENSATING_REVERSAL_SLICE_436_REPORT_2026-08-08.md
+- what-next/referrals/CUSTOMER_SETTLEMENT_REVERSAL_PROTECTED_ACTION_SLICE_437_REPORT_2026-08-08.md
+- what-next/referrals/CUSTOMER_STATEMENT_ENTITLEMENT_ACTIVATION_2026-08-09.md
+- what-next/referrals/DAILY_TRUTH_COMMAND_CENTER_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_EXIT_PHASE_5_ENTRY_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_HANDOFF_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_POST_SLICE_430_AUDIT_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_POST_SLICE_431_AUDIT_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_POST_SLICE_432_AUDIT_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_429_SELECTION_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_430_HANDOFF_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_430_SELECTION_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_431_HANDOFF_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_431_SELECTION_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_432_HANDOFF_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_432_SELECTION_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_433_SELECTION_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_POST_SLICE_433_AUDIT_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_POST_SLICE_434_AUDIT_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_POST_SLICE_435_AUDIT_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_POST_SLICE_436_AUDIT_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_POST_SLICE_436_NEXT_SLICE_AUDIT_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_POST_SLICE_437_AUDIT_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_POST_SLICE_437_NEXT_SLICE_AUDIT_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_POST_SLICE_438_NEXT_SLICE_AUDIT_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_RE_AUDIT_POST_SLICE_438_CAVEMAN_FULL_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_SLICE_434_SELECTION_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_SLICE_435_HANDOFF_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_SLICE_435_SELECTION_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_SLICE_436_HANDOFF_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_SLICE_436_SELECTION_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_SLICE_437_HANDOFF_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_SLICE_437_SELECTION_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_SLICE_438_SELECTION_REPORT_2026-08-08.md
+- what-next/referrals/REFERRAL_WAR_ROOM_STATUS.md
+- what-next/referrals/STATEMENT_PROOF_NETWORK_REPORT_2026-08-08.md
+- what-next/referrals/customer-referral-pilot-evidence-readiness.json
+- what-next/referrals/customer-referral-pilot-evidence-readiness.md
+- what-next/release-secret-preflight-referral-local.json
+- what-next/release-secret-preflight-referral-local.md
+- what-next/release-secret-preflight-referral-release.json
+- what-next/release-secret-preflight-referral-release.md
+- what-next/report-trust-export-readiness-referral-final.json
+- what-next/report-trust-export-readiness-referral-final.md
+- what-next/skills-life-cycle/STOQUIFY_SLICE_429_RELEASE_EVIDENCE_REPORT_2026-08-08.md
+- what-next/skills-life-cycle/STOQUIFY_SLICE_430_RELEASE_EVIDENCE_REPORT_2026-08-08.md
+- what-next/skills-life-cycle/STOQUIFY_SLICE_431_RELEASE_EVIDENCE_REPORT_2026-08-08.md
+- what-next/skills-life-cycle/STOQUIFY_SLICE_432_RELEASE_EVIDENCE_REPORT_2026-08-08.md
+- what-next/skills-life-cycle/STOQUIFY_SLICE_433_RELEASE_EVIDENCE_REPORT_2026-08-08.md
+- what-next/skills-life-cycle/STOQUIFY_SLICE_434_RELEASE_EVIDENCE_REPORT_2026-08-08.md
+- what-next/skills-life-cycle/STOQUIFY_SLICE_435_RELEASE_EVIDENCE_REPORT_2026-08-08.md
+- what-next/skills-life-cycle/STOQUIFY_SLICE_436_RELEASE_EVIDENCE_REPORT_2026-08-08.md
+- what-next/skills-life-cycle/STOQUIFY_SLICE_437_RELEASE_EVIDENCE_REPORT_2026-08-08.md
+
+## Safety
+
+- This gate reads Git and file content only; it never stages, commits, or changes the index.
+- Existing staged paths outside the referral candidate are protected and block exact-release readiness.
+- Generated architecture graphs are excluded from the dirty-tree candidate and must be regenerated after referral isolation.
+- Security certification remains blocked until an exact Git-backed referral revision exists.

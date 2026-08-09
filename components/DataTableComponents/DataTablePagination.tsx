@@ -16,15 +16,20 @@ import {
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
+  variant?: "default" | "landing";
 }
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export function DataTablePagination<TData>({
   table,
+  variant = "default",
 }: DataTablePaginationProps<TData>) {
+  const isLanding = variant === "landing";
+
   return (
-    <div className="flex min-w-0 flex-col gap-3 px-2 sm:flex-row sm:items-center sm:justify-between">
-      <div className="min-w-0 flex-1 text-sm text-muted-foreground">
+    <div className={cn("flex min-w-0 flex-col gap-3 px-2 sm:flex-row sm:items-center sm:justify-between", isLanding && "dashboard-table-pagination text-[var(--dash-text-soft)]")}>
+      <div className={cn("min-w-0 flex-1 text-sm text-muted-foreground", isLanding && "text-[var(--dash-text-soft)]")}>
         {table.getFilteredSelectedRowModel().rows.length} of{" "}
         {table.getFilteredRowModel().rows.length} row(s) selected.
       </div>
@@ -37,7 +42,7 @@ export function DataTablePagination<TData>({
               table.setPageSize(Number(value));
             }}
           >
-            <SelectTrigger className="h-8 w-[70px]">
+            <SelectTrigger className={cn("h-8 w-[70px]", isLanding && "dashboard-control rounded-lg border-[var(--dash-border-subtle)]")}>
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
             <SelectContent side="top">
@@ -56,7 +61,7 @@ export function DataTablePagination<TData>({
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
-            className="hidden h-8 w-8 p-0 lg:flex"
+            className={cn("hidden h-8 w-8 p-0 lg:flex", isLanding && "dashboard-button-secondary rounded-lg")}
             onClick={() => table.setPageIndex(0)}
             disabled={!table.getCanPreviousPage()}
           >
@@ -65,7 +70,7 @@ export function DataTablePagination<TData>({
           </Button>
           <Button
             variant="outline"
-            className="h-8 w-8 p-0"
+            className={cn("h-8 w-8 p-0", isLanding && "dashboard-button-secondary rounded-lg")}
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
@@ -74,7 +79,7 @@ export function DataTablePagination<TData>({
           </Button>
           <Button
             variant="outline"
-            className="h-8 w-8 p-0"
+            className={cn("h-8 w-8 p-0", isLanding && "dashboard-button-secondary rounded-lg")}
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
@@ -83,7 +88,7 @@ export function DataTablePagination<TData>({
           </Button>
           <Button
             variant="outline"
-            className="hidden h-8 w-8 p-0 lg:flex"
+            className={cn("hidden h-8 w-8 p-0 lg:flex", isLanding && "dashboard-button-secondary rounded-lg")}
             onClick={() => table.setPageIndex(table.getPageCount() - 1)}
             disabled={!table.getCanNextPage()}
           >

@@ -64,6 +64,8 @@ export default async function PurchaseSupplierAnalyticsPage({ params }: Purchase
           organizationId={ctx.orgId}
           locale={locale}
           basePath={basePath}
+          canExport={ctx.isSuperUser || ctx.permissions.includes("reports.export")}
+          canExportSensitive={ctx.isSuperUser}
           initialAnalyticsId={id}
         />
       </div>

@@ -1,0 +1,139 @@
+{
+  "summary": {
+    "generatedAt": "2026-08-09T14:02:13.796Z",
+    "mode": "fail",
+    "status": "blocked",
+    "checkCount": 16,
+    "readyCount": 0,
+    "blockerCount": 16
+  },
+  "pilot": {
+    "pilotId": "replace-with-pilot-id",
+    "releaseRevision": null,
+    "pilotStartedAt": null,
+    "pilotCompletedAt": null,
+    "approvedAt": null,
+    "approvedByRecorded": true,
+    "evidenceReferenceCount": 1,
+    "evidenceReferenceDigest": "42673b6151013fd1bd796a4ebb6b535db124f0624cd643fe7c6819cf719b98de",
+    "scopeDigest": "d24a2a601434014b8315682661e1c749a07cf3685e79d5b9a7381022121215de",
+    "manifestErrors": [
+      "manifest_release_revision",
+      "manifest_pilot_started_at",
+      "manifest_pilot_completed_at",
+      "manifest_approved_at",
+      "manifest_realUserPilot",
+      "manifest_productionEnvironment",
+      "manifest_tenantConsentConfirmed",
+      "manifest_testAndSeedDataExcluded"
+    ]
+  },
+  "database": {
+    "configured": false,
+    "targetClass": "unconfigured",
+    "querySucceeded": false,
+    "queryErrorCode": "preflight_blocked"
+  },
+  "counts": {
+    "tokenCount": 0,
+    "sentDeliveryCount": 0,
+    "grantedViewCount": 0,
+    "recipientActionCount": 0,
+    "responseLogCount": 0,
+    "impressionCount": 0,
+    "clickCount": 0,
+    "conversionCount": 0
+  },
+  "checks": [
+    {
+      "id": "pilot_manifest_valid",
+      "ready": false
+    },
+    {
+      "id": "exact_release_revision_attested",
+      "ready": false
+    },
+    {
+      "id": "real_user_production_pilot_attested",
+      "ready": false
+    },
+    {
+      "id": "pilot_database_is_postgresql",
+      "ready": false
+    },
+    {
+      "id": "read_only_evidence_query_succeeded",
+      "ready": false
+    },
+    {
+      "id": "immutable_statement_snapshot_exists",
+      "ready": false
+    },
+    {
+      "id": "statement_hash_and_source_evidence_valid",
+      "ready": false
+    },
+    {
+      "id": "statement_specific_referral_token_valid",
+      "ready": false
+    },
+    {
+      "id": "consented_statement_delivery_sent",
+      "ready": false
+    },
+    {
+      "id": "redacted_external_view_logged",
+      "ready": false
+    },
+    {
+      "id": "recipient_response_captured_and_logged",
+      "ready": false
+    },
+    {
+      "id": "referral_impression_logged",
+      "ready": false
+    },
+    {
+      "id": "referral_click_logged",
+      "ready": false
+    },
+    {
+      "id": "referral_conversion_attributed",
+      "ready": false
+    },
+    {
+      "id": "referred_organization_activated",
+      "ready": false
+    },
+    {
+      "id": "end_to_end_event_sequence_complete",
+      "ready": false
+    }
+  ],
+  "blockers": [
+    "pilot_manifest_valid",
+    "exact_release_revision_attested",
+    "real_user_production_pilot_attested",
+    "pilot_database_is_postgresql",
+    "read_only_evidence_query_succeeded",
+    "immutable_statement_snapshot_exists",
+    "statement_hash_and_source_evidence_valid",
+    "statement_specific_referral_token_valid",
+    "consented_statement_delivery_sent",
+    "redacted_external_view_logged",
+    "recipient_response_captured_and_logged",
+    "referral_impression_logged",
+    "referral_click_logged",
+    "referral_conversion_attributed",
+    "referred_organization_activated",
+    "end_to_end_event_sequence_complete"
+  ],
+  "safety": {
+    "databaseReadOnlyTransaction": true,
+    "databaseUrlRetained": false,
+    "personalDataPrinted": false,
+    "rawEvidenceReferencesPrinted": false,
+    "seedAndTestDataForbidden": true,
+    "exactReleaseRevisionRequired": true
+  }
+}

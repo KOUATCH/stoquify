@@ -21,16 +21,22 @@ jest.mock("@/services/accounting/accountant-access.service", () => ({
   revokeAccountantAccess: jest.fn(),
 }))
 
+jest.mock("@/services/accounting/accountant-client-invite.service", () => ({
+  inviteOrGrantAccountantAccess: jest.fn(),
+}))
+
 import {
   getAccountantAccessRegister,
   getAccountantPortfolio,
   grantAccountantAccess,
   revokeAccountantAccess,
 } from "@/services/accounting/accountant-access.service"
+import { inviteOrGrantAccountantAccess } from "@/services/accounting/accountant-client-invite.service"
 import {
   getAccountantAccessRegisterAction,
   getAccountantPortfolioAction,
   grantAccountantAccessAction,
+  inviteAccountantAccessAction,
   revokeAccountantAccessAction,
 } from "../accountant-access.actions"
 
@@ -38,6 +44,7 @@ const mockRegister = getAccountantAccessRegister as jest.Mock
 const mockPortfolio = getAccountantPortfolio as jest.Mock
 const mockGrant = grantAccountantAccess as jest.Mock
 const mockRevoke = revokeAccountantAccess as jest.Mock
+const mockInvite = inviteOrGrantAccountantAccess as jest.Mock
 
 describe("accountant access actions", () => {
   beforeEach(() => {
@@ -46,6 +53,11 @@ describe("accountant access actions", () => {
     mockPortfolio.mockResolvedValue({ clients: [] })
     mockGrant.mockResolvedValue({ id: "grant-1" })
     mockRevoke.mockResolvedValue({ id: "grant-1", status: "REVOKED" })
+    mockInvite.mockResolvedValue({
+      outcome: "INVITED",
+      grant: null,
+      invite: { id: "invite-1" },
+    })
   })
 
   it("lists the client tenant register and the actor portfolio from session scope", async () => {
@@ -75,6 +87,28 @@ describe("accountant access actions", () => {
       "client-owner",
       expect.objectContaining({
         accountantEmail: "accountant@example.test",
+        role: "REVIEWER",
+      }),
+    )
+  })
+
+  it("derives invitation tenant and actor identity from the protected context", async () => {
+    await inviteAccountantAccessAction({
+      organizationId: "attacker-org",
+      actorId: "attacker-user",
+      accountantEmail: "new-accountant@example.test",
+      accountantFirmName: "New Ledger LLP",
+      role: "REVIEWER",
+      consentEvidenceHash: `sha256:${"c".repeat(64)}`,
+      expiresAt: "2026-12-31T23:59:59.000Z",
+    })
+
+    expect(mockInvite).toHaveBeenCalledWith(
+      "client-org",
+      "client-owner",
+      expect.objectContaining({
+        accountantEmail: "new-accountant@example.test",
+        accountantFirmName: "New Ledger LLP",
         role: "REVIEWER",
       }),
     )

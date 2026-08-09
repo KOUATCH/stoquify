@@ -21,6 +21,7 @@ jest.mock("@/prisma/db", () => {
       create: jest.fn(),
       findFirst: jest.fn(),
       update: jest.fn(),
+      updateMany: jest.fn(),
     },
     closeEvidenceItem: {
       create: jest.fn(),
@@ -92,9 +93,11 @@ import {
 import { reconcileLedger } from "../reconciliations.service"
 import { getPaymentReconciliationDashboardData } from "@/services/reconciliation/payment-reconciliation-dashboard.service"
 import {
+  acceptMissingCloseEvidenceResponse,
   approveCloseWaiver,
   assignCloseFinding,
   requestMissingCloseEvidence,
+  respondToMissingCloseEvidence,
   commentOnCloseFinding,
   getCloseAssuranceDashboard,
   getCloseEvidenceGraph,
@@ -122,6 +125,7 @@ const mockDb = db as unknown as {
     create: jest.Mock
     findFirst: jest.Mock
     update: jest.Mock
+    updateMany: jest.Mock
   }
   closeEvidenceItem: {
     create: jest.Mock
@@ -533,6 +537,89 @@ function missingEvidenceComment(overrides: Record<string, unknown> = {}) {
   }
 }
 
+function missingEvidenceResponse(overrides: Record<string, unknown> = {}) {
+  return {
+    id: "response-1",
+    organizationId: "client-org",
+    periodId: period.id,
+    closeRunId: "close-run-1",
+    findingId: "finding-1",
+    authorId: "client-user-1",
+    body: "The signed bank statement has been delivered for review.",
+    visibility: "CLIENT_RESPONSE_SUBMITTED",
+    correlationId: "missing-proof-response-corr-1",
+    metadata: {
+      responseType: "MISSING_CLOSE_EVIDENCE_RESPONSE",
+      requestId: "request-1",
+      requestCorrelationId: "missing-proof-corr-1",
+      requestedById: "accountant-1",
+      requestedFromId: "client-user-1",
+      respondedById: "client-user-1",
+      correlationId: "missing-proof-response-corr-1",
+    },
+    createdAt: new Date("2026-08-02T10:30:00.000Z"),
+    ...overrides,
+  }
+}
+
+function missingEvidenceAcceptance(overrides: Record<string, unknown> = {}) {
+  return {
+    id: "acceptance-1",
+    organizationId: "client-org",
+    periodId: period.id,
+    closeRunId: "close-run-1",
+    findingId: "finding-1",
+    authorId: "accountant-1",
+    body: "Response evidence reviewed and accepted for this finding.",
+    visibility: "ACCOUNTANT_RESPONSE_ACCEPTED",
+    correlationId: "missing-proof-acceptance-corr-1",
+    metadata: {
+      acceptanceType: "MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE",
+      requestId: "request-1",
+      responseId: "response-1",
+      requestCorrelationId: "missing-proof-corr-1",
+      responseCorrelationId: "missing-proof-response-corr-1",
+      findingId: "finding-1",
+      periodId: period.id,
+      closeRunId: "close-run-1",
+      respondedById: "client-user-1",
+      acceptedById: "accountant-1",
+      decision: "ACCEPTED",
+      findingStatus: "RESOLVED",
+      resolvedAt: "2026-08-02T11:00:00.000Z",
+      correlationId: "missing-proof-acceptance-corr-1",
+    },
+    createdAt: new Date("2026-08-02T11:00:00.000Z"),
+    ...overrides,
+  }
+}
+
+function missingEvidenceAcceptanceControl(
+  overrides: Record<string, unknown> = {},
+) {
+  return {
+    actorId: "accountant-1",
+    actorPermissions: ["accounting.close.accountant.review"],
+    freshAuth: {
+      actorId: "accountant-1",
+      organizationId: "accounting-firm",
+      lastAuthAt: new Date("2026-08-02T10:58:00.000Z"),
+    },
+    ...overrides,
+  }
+}
+
+function acceptanceInput(overrides: Record<string, unknown> = {}) {
+  return {
+    clientOrganizationId: "client-org",
+    requestId: "request-1",
+    responseId: "response-1",
+    resolutionNotes: "Response evidence reviewed and accepted for this finding.",
+    correlationId: "missing-proof-acceptance-corr-1",
+    ...overrides,
+  }
+}
+
 function seedCleanSources() {
   mockDb.$transaction.mockImplementation((callback) => callback(mockDb))
   mockDb.accountingPeriod.findFirst.mockResolvedValue(period)
@@ -562,6 +649,7 @@ function seedCleanSources() {
     }),
   )
   mockDb.closeEvidenceItem.create.mockResolvedValue({ id: "evidence-created" })
+  mockDb.closeAssuranceFinding.updateMany.mockResolvedValue({ count: 1 })
   mockDb.accountantComment.findFirst.mockResolvedValue(null)
   mockDb.user.findFirst.mockResolvedValue({ id: "client-user-1" })
   mockResolveAccountantClientAccess.mockResolvedValue({
@@ -595,6 +683,8 @@ describe("close assurance service", () => {
 
   afterEach(() => {
     jest.useRealTimers()
+    mockDb.accountantComment.findFirst.mockReset()
+    mockDb.closeAssuranceFinding.updateMany.mockReset()
   })
 
   it("builds a live close readiness dashboard from close, reconciliation, suspense, and data-trust services", async () => {
@@ -1260,6 +1350,904 @@ describe("close assurance service", () => {
       expect(mockRecordBusinessEventInTx).toHaveBeenCalledTimes(1)
     },
   )
+
+  it("submits an atomic recipient-owned missing-proof response with minimized evidence", async () => {
+    const responseText =
+      "The signed bank statement has been delivered for review."
+    mockDb.accountantComment.findFirst
+      .mockResolvedValueOnce(missingEvidenceComment())
+      .mockResolvedValueOnce(null)
+    mockDb.closeAssuranceFinding.findFirst.mockResolvedValue(
+      missingEvidenceFinding({
+        status: "ASSIGNED",
+        ownerId: "client-user-1",
+      }),
+    )
+    mockDb.accountantComment.create.mockResolvedValue(
+      missingEvidenceResponse({ body: responseText }),
+    )
+
+    const result = await respondToMissingCloseEvidence(
+      "client-org",
+      {
+        requestId: "request-1",
+        responseText,
+        correlationId: "missing-proof-response-corr-1",
+      },
+      {
+        actorId: "client-user-1",
+        actorPermissions: ["accounting.close.finding.comment"],
+      },
+    )
+
+    expect(result).toMatchObject({
+      id: "response-1",
+      requestId: "request-1",
+      organizationId: "client-org",
+      periodId: period.id,
+      closeRunId: "close-run-1",
+      findingId: "finding-1",
+      requestedById: "accountant-1",
+      requestedFromId: "client-user-1",
+      respondedById: "client-user-1",
+      responseText,
+      requestCorrelationId: "missing-proof-corr-1",
+      status: "SUBMITTED",
+      correlationId: "missing-proof-response-corr-1",
+    })
+    expect(mockDb.$transaction).toHaveBeenCalledWith(expect.any(Function), {
+      isolationLevel: "Serializable",
+    })
+    expect(mockDb.user.findFirst).toHaveBeenCalledWith({
+      where: {
+        id: "client-user-1",
+        organizationId: "client-org",
+        isActive: true,
+      },
+      select: { id: true },
+    })
+    expect(mockDb.accountantComment.findFirst).toHaveBeenNthCalledWith(1, {
+      where: {
+        id: "request-1",
+        organizationId: "client-org",
+        visibility: "CLIENT_ACTION_REQUIRED",
+        metadata: {
+          path: ["requestType"],
+          equals: "MISSING_CLOSE_EVIDENCE",
+        },
+      },
+    })
+    expect(mockDb.accountantComment.findFirst).toHaveBeenNthCalledWith(2, {
+      where: {
+        organizationId: "client-org",
+        correlationId: "missing-proof-response-corr-1",
+        visibility: "CLIENT_RESPONSE_SUBMITTED",
+      },
+    })
+    expect(mockDb.closeAssuranceFinding.findFirst).toHaveBeenCalledWith({
+      where: { id: "finding-1", organizationId: "client-org" },
+      select: {
+        id: true,
+        periodId: true,
+        closeRunId: true,
+        ownerId: true,
+        status: true,
+        severity: true,
+      },
+    })
+    expect(mockDb.closeAssuranceFinding.update).toHaveBeenCalledWith({
+      where: { id: "finding-1" },
+      data: {
+        status: "IN_REVIEW",
+        correlationId: "missing-proof-response-corr-1",
+      },
+    })
+    expect(mockDb.accountantComment.create).toHaveBeenCalledWith({
+      data: {
+        organizationId: "client-org",
+        periodId: period.id,
+        closeRunId: "close-run-1",
+        findingId: "finding-1",
+        authorId: "client-user-1",
+        body: responseText,
+        visibility: "CLIENT_RESPONSE_SUBMITTED",
+        correlationId: "missing-proof-response-corr-1",
+        metadata: {
+          responseType: "MISSING_CLOSE_EVIDENCE_RESPONSE",
+          requestId: "request-1",
+          requestCorrelationId: "missing-proof-corr-1",
+          requestedById: "accountant-1",
+          requestedFromId: "client-user-1",
+          respondedById: "client-user-1",
+          correlationId: "missing-proof-response-corr-1",
+        },
+      },
+    })
+    expect(mockDb.ledgerAuditEvent.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          action: "CLOSE_MISSING_EVIDENCE_RESPONSE_SUBMITTED",
+          actorId: "client-user-1",
+          resourceType: "AccountantComment",
+          resourceId: "response-1",
+          metadata: expect.objectContaining({
+            requestId: "request-1",
+            findingId: "finding-1",
+            respondedById: "client-user-1",
+            status: "SUBMITTED",
+          }),
+        }),
+      }),
+    )
+    const auditInput = mockDb.ledgerAuditEvent.create.mock.calls.at(-1)?.[0]
+    expect(JSON.stringify(auditInput)).not.toContain(responseText)
+    expect(mockRecordBusinessEventInTx).toHaveBeenCalledWith(
+      mockDb,
+      expect.objectContaining({
+        organizationId: "client-org",
+        eventType: "close.assurance.missing_evidence.response_submitted",
+        actorId: "client-user-1",
+        sourceId: "finding-1",
+        payload: expect.objectContaining({
+          requestId: "request-1",
+          responseId: "response-1",
+          responseType: "MISSING_CLOSE_EVIDENCE_RESPONSE",
+          requestedById: "accountant-1",
+          requestedFromId: "client-user-1",
+          respondedById: "client-user-1",
+          status: "SUBMITTED",
+        }),
+      }),
+    )
+    const eventInput = mockRecordBusinessEventInTx.mock.calls.at(-1)?.[1]
+    expect(JSON.stringify(eventInput)).not.toContain(responseText)
+  })
+
+  it("rejects a missing-proof response without an authenticated actor before transaction work", async () => {
+    await expect(
+      respondToMissingCloseEvidence(
+        "client-org",
+        {
+          requestId: "request-1",
+          responseText:
+            "The signed bank statement has been delivered for review.",
+          correlationId: "missing-proof-response-corr-1",
+        },
+        {},
+      ),
+    ).rejects.toThrow(/authenticated client recipient/i)
+
+    expect(mockDb.$transaction).not.toHaveBeenCalled()
+    expect(mockDb.user.findFirst).not.toHaveBeenCalled()
+  })
+
+  it("rejects an inactive or cross-tenant response actor before request lookup", async () => {
+    mockDb.user.findFirst.mockResolvedValue(null)
+
+    await expect(
+      respondToMissingCloseEvidence(
+        "client-org",
+        {
+          requestId: "request-1",
+          responseText:
+            "The signed bank statement has been delivered for review.",
+          correlationId: "missing-proof-response-corr-1",
+        },
+        { actorId: "other-org-user" },
+      ),
+    ).rejects.toThrow(/active user of the client organization/i)
+
+    expect(mockDb.user.findFirst).toHaveBeenCalledWith({
+      where: {
+        id: "other-org-user",
+        organizationId: "client-org",
+        isActive: true,
+      },
+      select: { id: true },
+    })
+    expect(mockDb.accountantComment.findFirst).not.toHaveBeenCalled()
+    expect(mockDb.closeAssuranceFinding.update).not.toHaveBeenCalled()
+  })
+
+  it.each([
+    ["unknown or cross-tenant request", null, /request not found/i],
+    [
+      "malformed typed request evidence",
+      missingEvidenceComment({
+        metadata: {
+          requestType: "MISSING_CLOSE_EVIDENCE",
+          requestedFromId: "client-user-1",
+          dueAt: "2026-08-05T12:00:00.000Z",
+          correlationId: "missing-proof-corr-1",
+        },
+      }),
+      /request evidence is incomplete/i,
+    ],
+  ])("rejects %s before response mutation", async (_name, request, error) => {
+    mockDb.accountantComment.findFirst.mockResolvedValueOnce(request)
+
+    await expect(
+      respondToMissingCloseEvidence(
+        "client-org",
+        {
+          requestId: "request-1",
+          responseText:
+            "The signed bank statement has been delivered for review.",
+          correlationId: "missing-proof-response-corr-1",
+        },
+        { actorId: "client-user-1" },
+      ),
+    ).rejects.toThrow(error)
+
+    expect(mockDb.closeAssuranceFinding.findFirst).not.toHaveBeenCalled()
+    expect(mockDb.closeAssuranceFinding.update).not.toHaveBeenCalled()
+    expect(mockDb.accountantComment.create).not.toHaveBeenCalled()
+  })
+
+  it("rejects a tenant actor who is not the typed request recipient", async () => {
+    mockDb.accountantComment.findFirst.mockResolvedValueOnce(
+      missingEvidenceComment({
+        metadata: {
+          ...missingEvidenceComment().metadata,
+          requestedFromId: "another-client-user",
+        },
+      }),
+    )
+
+    await expect(
+      respondToMissingCloseEvidence(
+        "client-org",
+        {
+          requestId: "request-1",
+          responseText:
+            "The signed bank statement has been delivered for review.",
+          correlationId: "missing-proof-response-corr-1",
+        },
+        { actorId: "client-user-1" },
+      ),
+    ).rejects.toThrow(/requested client recipient/i)
+
+    expect(mockDb.accountantComment.findFirst).toHaveBeenCalledTimes(1)
+    expect(mockDb.closeAssuranceFinding.findFirst).not.toHaveBeenCalled()
+    expect(mockDb.accountantComment.create).not.toHaveBeenCalled()
+  })
+
+  it.each([
+    [
+      "request/finding period mismatch",
+      missingEvidenceFinding({
+        status: "ASSIGNED",
+        ownerId: "client-user-1",
+        periodId: "other-period",
+      }),
+      /does not match its finding/i,
+    ],
+    [
+      "finding already in review",
+      missingEvidenceFinding({
+        status: "IN_REVIEW",
+        ownerId: "client-user-1",
+      }),
+      /not awaiting a missing-proof response/i,
+    ],
+    [
+      "resolved finding",
+      missingEvidenceFinding({
+        status: "RESOLVED",
+        ownerId: "client-user-1",
+      }),
+      /not awaiting a missing-proof response/i,
+    ],
+    [
+      "waived finding",
+      missingEvidenceFinding({
+        status: "WAIVED_WITH_APPROVAL",
+        ownerId: "client-user-1",
+      }),
+      /not awaiting a missing-proof response/i,
+    ],
+    [
+      "different finding owner",
+      missingEvidenceFinding({
+        status: "ASSIGNED",
+        ownerId: "another-client-user",
+      }),
+      /assigned finding owner/i,
+    ],
+  ])("rejects %s before response mutation", async (_name, finding, error) => {
+    mockDb.accountantComment.findFirst
+      .mockResolvedValueOnce(missingEvidenceComment())
+      .mockResolvedValueOnce(null)
+    mockDb.closeAssuranceFinding.findFirst.mockResolvedValue(finding)
+
+    await expect(
+      respondToMissingCloseEvidence(
+        "client-org",
+        {
+          requestId: "request-1",
+          responseText:
+            "The signed bank statement has been delivered for review.",
+          correlationId: "missing-proof-response-corr-1",
+        },
+        { actorId: "client-user-1" },
+      ),
+    ).rejects.toThrow(error)
+
+    expect(mockDb.closeAssuranceFinding.update).not.toHaveBeenCalled()
+    expect(mockDb.accountantComment.create).not.toHaveBeenCalled()
+    expect(mockDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
+    expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled()
+  })
+
+  it("returns an exact missing-proof response replay without duplicate side effects", async () => {
+    mockDb.accountantComment.findFirst
+      .mockResolvedValueOnce(missingEvidenceComment())
+      .mockResolvedValueOnce(missingEvidenceResponse())
+
+    const result = await respondToMissingCloseEvidence(
+      "client-org",
+      {
+        requestId: "request-1",
+        responseText:
+          "The signed bank statement has been delivered for review.",
+        correlationId: "missing-proof-response-corr-1",
+      },
+      { actorId: "client-user-1" },
+    )
+
+    expect(result).toMatchObject({
+      id: "response-1",
+      requestId: "request-1",
+      status: "SUBMITTED",
+    })
+    expect(mockDb.closeAssuranceFinding.findFirst).not.toHaveBeenCalled()
+    expect(mockDb.closeAssuranceFinding.update).not.toHaveBeenCalled()
+    expect(mockDb.accountantComment.create).not.toHaveBeenCalled()
+    expect(mockDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
+    expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled()
+  })
+
+  it("rejects correlation reuse for a different missing-proof response", async () => {
+    mockDb.accountantComment.findFirst
+      .mockResolvedValueOnce(missingEvidenceComment())
+      .mockResolvedValueOnce(
+        missingEvidenceResponse({
+          body: "A different response was already recorded.",
+        }),
+      )
+
+    await expect(
+      respondToMissingCloseEvidence(
+        "client-org",
+        {
+          requestId: "request-1",
+          responseText:
+            "The signed bank statement has been delivered for review.",
+          correlationId: "missing-proof-response-corr-1",
+        },
+        { actorId: "client-user-1" },
+      ),
+    ).rejects.toThrow(/different missing-proof response/i)
+
+    expect(mockDb.closeAssuranceFinding.update).not.toHaveBeenCalled()
+    expect(mockDb.accountantComment.create).not.toHaveBeenCalled()
+    expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled()
+  })
+
+  it.each(["P2034", "P2002"])(
+    "retries a serializable missing-proof response after %s",
+    async (code) => {
+      mockDb.$transaction
+        .mockRejectedValueOnce(Object.assign(new Error("retry"), { code }))
+        .mockImplementationOnce((callback) => callback(mockDb))
+      mockDb.accountantComment.findFirst
+        .mockResolvedValueOnce(missingEvidenceComment())
+        .mockResolvedValueOnce(null)
+      mockDb.closeAssuranceFinding.findFirst.mockResolvedValue(
+        missingEvidenceFinding({
+          status: "ASSIGNED",
+          ownerId: "client-user-1",
+        }),
+      )
+      mockDb.accountantComment.create.mockResolvedValue(
+        missingEvidenceResponse(),
+      )
+
+      await expect(
+        respondToMissingCloseEvidence(
+          "client-org",
+          {
+            requestId: "request-1",
+            responseText:
+              "The signed bank statement has been delivered for review.",
+            correlationId: "missing-proof-response-corr-1",
+          },
+          { actorId: "client-user-1" },
+        ),
+      ).resolves.toMatchObject({ id: "response-1", status: "SUBMITTED" })
+
+      expect(mockDb.$transaction).toHaveBeenCalledTimes(2)
+      expect(mockDb.accountantComment.create).toHaveBeenCalledTimes(1)
+      expect(mockRecordBusinessEventInTx).toHaveBeenCalledTimes(1)
+    },
+  )
+
+  it("atomically accepts a validated response and resolves its finding with minimized evidence", async () => {
+    jest.useFakeTimers().setSystemTime(new Date("2026-08-02T11:00:00.000Z"))
+    const requestText = "Please attach the missing signed bank statement."
+    const responseText =
+      "The signed bank statement has been delivered for review."
+    const resolutionNotes =
+      "Response evidence reviewed and accepted for this finding."
+    mockDb.accountantComment.findFirst
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce(missingEvidenceComment({ body: requestText }))
+      .mockResolvedValueOnce(missingEvidenceResponse({ body: responseText }))
+    mockDb.closeAssuranceFinding.findFirst.mockResolvedValue(
+      missingEvidenceFinding({
+        status: "IN_REVIEW",
+        ownerId: "client-user-1",
+      }),
+    )
+    mockDb.accountantComment.create.mockResolvedValue(
+      missingEvidenceAcceptance({ body: resolutionNotes }),
+    )
+
+    const result = await acceptMissingCloseEvidenceResponse(
+      "accounting-firm",
+      acceptanceInput({ resolutionNotes }),
+      missingEvidenceAcceptanceControl(),
+    )
+
+    expect(result).toMatchObject({
+      kind: "ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE",
+      version: 1,
+      id: "acceptance-1",
+      organizationId: "client-org",
+      periodId: period.id,
+      closeRunId: "close-run-1",
+      findingId: "finding-1",
+      requestId: "request-1",
+      responseId: "response-1",
+      respondedById: "client-user-1",
+      acceptedById: "accountant-1",
+      decision: "ACCEPTED",
+      findingStatus: "RESOLVED",
+      resolutionNotes,
+      resolvedAt: "2026-08-02T11:00:00.000Z",
+      correlationId: "missing-proof-acceptance-corr-1",
+      controls: {
+        serviceClockOwned: true,
+        freshAuthRequired: true,
+        delegatedReviewRequired: true,
+        segregationOfDutiesRequired: true,
+        compareAndSetResolution: true,
+        rawMetadataExposed: false,
+        closeCertificationAuthorized: false,
+      },
+    })
+    expect(mockDb.$transaction).toHaveBeenCalledWith(expect.any(Function), {
+      isolationLevel: "Serializable",
+    })
+    expect(mockDb.user.findFirst).toHaveBeenCalledWith({
+      where: {
+        id: "accountant-1",
+        organizationId: "accounting-firm",
+        isActive: true,
+      },
+      select: { id: true },
+    })
+    expect(mockResolveAccountantClientAccess).toHaveBeenCalledWith({
+      homeOrganizationId: "accounting-firm",
+      clientOrganizationId: "client-org",
+      accountantUserId: "accountant-1",
+      capability: "REVIEW",
+      now: new Date("2026-08-02T11:00:00.000Z"),
+      client: mockDb,
+    })
+    expect(mockDb.closeAssuranceFinding.updateMany).toHaveBeenCalledWith({
+      where: {
+        id: "finding-1",
+        organizationId: "client-org",
+        status: "IN_REVIEW",
+        ownerId: "client-user-1",
+      },
+      data: {
+        status: "RESOLVED",
+        resolutionNotes,
+        resolvedAt: new Date("2026-08-02T11:00:00.000Z"),
+        resolvedById: "accountant-1",
+        correlationId: "missing-proof-acceptance-corr-1",
+      },
+    })
+    expect(mockDb.accountantComment.create).toHaveBeenCalledWith({
+      data: {
+        organizationId: "client-org",
+        periodId: period.id,
+        closeRunId: "close-run-1",
+        findingId: "finding-1",
+        authorId: "accountant-1",
+        body: resolutionNotes,
+        visibility: "ACCOUNTANT_RESPONSE_ACCEPTED",
+        correlationId: "missing-proof-acceptance-corr-1",
+        metadata: {
+          acceptanceType: "MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE",
+          requestId: "request-1",
+          responseId: "response-1",
+          requestCorrelationId: "missing-proof-corr-1",
+          responseCorrelationId: "missing-proof-response-corr-1",
+          findingId: "finding-1",
+          periodId: period.id,
+          closeRunId: "close-run-1",
+          respondedById: "client-user-1",
+          acceptedById: "accountant-1",
+          decision: "ACCEPTED",
+          findingStatus: "RESOLVED",
+          resolvedAt: "2026-08-02T11:00:00.000Z",
+          correlationId: "missing-proof-acceptance-corr-1",
+        },
+      },
+    })
+    expect(mockDb.ledgerAuditEvent.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          action: "CLOSE_MISSING_EVIDENCE_RESPONSE_ACCEPTED",
+          actorId: "accountant-1",
+          resourceType: "AccountantComment",
+          resourceId: "acceptance-1",
+          metadata: expect.objectContaining({
+            requestId: "request-1",
+            responseId: "response-1",
+            findingId: "finding-1",
+            acceptedById: "accountant-1",
+            status: "RESOLVED",
+          }),
+        }),
+      }),
+    )
+    expect(mockRecordBusinessEventInTx).toHaveBeenCalledWith(
+      mockDb,
+      expect.objectContaining({
+        organizationId: "client-org",
+        eventType: "close.assurance.missing_evidence.response_accepted",
+        actorId: "accountant-1",
+        sourceId: "finding-1",
+        payload: expect.objectContaining({
+          acceptanceId: "acceptance-1",
+          requestId: "request-1",
+          responseId: "response-1",
+          respondedById: "client-user-1",
+          acceptedById: "accountant-1",
+          decision: "ACCEPTED",
+          findingStatus: "RESOLVED",
+          ownerId: "client-user-1",
+        }),
+      }),
+    )
+    const auditInput = mockDb.ledgerAuditEvent.create.mock.calls.at(-1)?.[0]
+    const eventInput = mockRecordBusinessEventInTx.mock.calls.at(-1)?.[1]
+    for (const evidence of [auditInput, eventInput]) {
+      const serialized = JSON.stringify(evidence)
+      expect(serialized).not.toContain(requestText)
+      expect(serialized).not.toContain(responseText)
+      expect(serialized).not.toContain(resolutionNotes)
+    }
+  })
+
+  it("rejects acceptance without service-level review permission before database work", async () => {
+    jest.useFakeTimers().setSystemTime(new Date("2026-08-02T11:00:00.000Z"))
+
+    await expect(
+      acceptMissingCloseEvidenceResponse(
+        "accounting-firm",
+        acceptanceInput(),
+        missingEvidenceAcceptanceControl({ actorPermissions: [] }),
+      ),
+    ).rejects.toThrow(/accountant review permission/i)
+
+    expect(mockDb.$transaction).not.toHaveBeenCalled()
+    expect(mockDb.user.findFirst).not.toHaveBeenCalled()
+  })
+
+  it.each([
+    ["missing", null],
+    [
+      "actor-mismatched",
+      {
+        actorId: "another-accountant",
+        organizationId: "accounting-firm",
+        lastAuthAt: new Date("2026-08-02T10:58:00.000Z"),
+      },
+    ],
+    [
+      "tenant-mismatched",
+      {
+        actorId: "accountant-1",
+        organizationId: "other-firm",
+        lastAuthAt: new Date("2026-08-02T10:58:00.000Z"),
+      },
+    ],
+    [
+      "future",
+      {
+        actorId: "accountant-1",
+        organizationId: "accounting-firm",
+        lastAuthAt: new Date("2026-08-02T11:00:00.001Z"),
+      },
+    ],
+    [
+      "stale",
+      {
+        actorId: "accountant-1",
+        organizationId: "accounting-firm",
+        lastAuthAt: new Date("2026-08-02T10:54:59.999Z"),
+      },
+    ],
+  ])("rejects %s fresh-auth evidence before database work", async (
+    _name,
+    freshAuth,
+  ) => {
+    jest.useFakeTimers().setSystemTime(new Date("2026-08-02T11:00:00.000Z"))
+
+    await expect(
+      acceptMissingCloseEvidenceResponse(
+        "accounting-firm",
+        acceptanceInput(),
+        missingEvidenceAcceptanceControl({ freshAuth }),
+      ),
+    ).rejects.toThrow(/fresh authentication/i)
+
+    expect(mockDb.$transaction).not.toHaveBeenCalled()
+  })
+
+  it("rejects an inactive home-tenant accountant before delegated access or client reads", async () => {
+    jest.useFakeTimers().setSystemTime(new Date("2026-08-02T11:00:00.000Z"))
+    mockDb.user.findFirst.mockResolvedValue(null)
+
+    await expect(
+      acceptMissingCloseEvidenceResponse(
+        "accounting-firm",
+        acceptanceInput(),
+        missingEvidenceAcceptanceControl(),
+      ),
+    ).rejects.toThrow(/active home-tenant accountant/i)
+
+    expect(mockResolveAccountantClientAccess).not.toHaveBeenCalled()
+    expect(mockDb.accountantComment.findFirst).not.toHaveBeenCalled()
+  })
+
+  it("fails closed when delegated REVIEW access is denied", async () => {
+    jest.useFakeTimers().setSystemTime(new Date("2026-08-02T11:00:00.000Z"))
+    mockResolveAccountantClientAccess.mockRejectedValue(
+      new Error("Read-only grant cannot request client work"),
+    )
+
+    await expect(
+      acceptMissingCloseEvidenceResponse(
+        "accounting-firm",
+        acceptanceInput(),
+        missingEvidenceAcceptanceControl(),
+      ),
+    ).rejects.toThrow(/read-only grant/i)
+
+    expect(mockResolveAccountantClientAccess).toHaveBeenCalledWith(
+      expect.objectContaining({ capability: "REVIEW" }),
+    )
+    expect(mockDb.accountantComment.findFirst).not.toHaveBeenCalled()
+  })
+
+  it.each([
+    ["missing request", null, missingEvidenceResponse(), /request not found/i],
+    [
+      "request-response mismatch",
+      missingEvidenceComment(),
+      missingEvidenceResponse({
+        metadata: {
+          ...missingEvidenceResponse().metadata,
+          requestId: "other-request",
+        },
+      }),
+      /do not match/i,
+    ],
+    [
+      "response author corruption",
+      missingEvidenceComment(),
+      missingEvidenceResponse({ authorId: "other-client-user" }),
+      /response evidence is incomplete/i,
+    ],
+  ])("rejects %s before finding resolution", async (
+    _name,
+    request,
+    response,
+    error,
+  ) => {
+    jest.useFakeTimers().setSystemTime(new Date("2026-08-02T11:00:00.000Z"))
+    mockDb.accountantComment.findFirst
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce(request)
+      .mockResolvedValueOnce(response)
+
+    await expect(
+      acceptMissingCloseEvidenceResponse(
+        "accounting-firm",
+        acceptanceInput(),
+        missingEvidenceAcceptanceControl(),
+      ),
+    ).rejects.toThrow(error)
+
+    expect(mockDb.closeAssuranceFinding.updateMany).not.toHaveBeenCalled()
+    expect(mockDb.accountantComment.create).not.toHaveBeenCalled()
+  })
+
+  it("enforces segregation of duties against respondent self-acceptance", async () => {
+    jest.useFakeTimers().setSystemTime(new Date("2026-08-02T11:00:00.000Z"))
+    mockResolveAccountantClientAccess.mockResolvedValue({
+      organizationId: "client-org",
+      mode: "TENANT_MEMBER",
+      grant: null,
+    })
+    mockDb.accountantComment.findFirst
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce(missingEvidenceComment())
+      .mockResolvedValueOnce(missingEvidenceResponse())
+
+    await expect(
+      acceptMissingCloseEvidenceResponse(
+        "client-org",
+        acceptanceInput({ clientOrganizationId: undefined }),
+        missingEvidenceAcceptanceControl({
+          actorId: "client-user-1",
+          freshAuth: {
+            actorId: "client-user-1",
+            organizationId: "client-org",
+            lastAuthAt: new Date("2026-08-02T10:58:00.000Z"),
+          },
+        }),
+      ),
+    ).rejects.toThrow(/cannot accept their own/i)
+
+    expect(mockDb.closeAssuranceFinding.findFirst).not.toHaveBeenCalled()
+    expect(mockDb.closeAssuranceFinding.updateMany).not.toHaveBeenCalled()
+  })
+
+  it.each([
+    [
+      "request/finding period mismatch",
+      missingEvidenceFinding({
+        status: "IN_REVIEW",
+        ownerId: "client-user-1",
+        periodId: "other-period",
+      }),
+      /does not match its finding/i,
+    ],
+    [
+      "non-review finding",
+      missingEvidenceFinding({ status: "ASSIGNED", ownerId: "client-user-1" }),
+      /only an in-review/i,
+    ],
+    [
+      "respondent ownership mismatch",
+      missingEvidenceFinding({ status: "IN_REVIEW", ownerId: "other-user" }),
+      /owner does not match/i,
+    ],
+  ])("rejects %s before compare-and-set resolution", async (
+    _name,
+    finding,
+    error,
+  ) => {
+    jest.useFakeTimers().setSystemTime(new Date("2026-08-02T11:00:00.000Z"))
+    mockDb.accountantComment.findFirst
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce(missingEvidenceComment())
+      .mockResolvedValueOnce(missingEvidenceResponse())
+    mockDb.closeAssuranceFinding.findFirst.mockResolvedValue(finding)
+
+    await expect(
+      acceptMissingCloseEvidenceResponse(
+        "accounting-firm",
+        acceptanceInput(),
+        missingEvidenceAcceptanceControl(),
+      ),
+    ).rejects.toThrow(error)
+
+    expect(mockDb.closeAssuranceFinding.updateMany).not.toHaveBeenCalled()
+    expect(mockDb.accountantComment.create).not.toHaveBeenCalled()
+    expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled()
+  })
+
+  it("returns an exact acceptance replay without duplicate resolution or evidence", async () => {
+    jest.useFakeTimers().setSystemTime(new Date("2026-08-02T11:00:00.000Z"))
+    mockDb.accountantComment.findFirst.mockResolvedValueOnce(
+      missingEvidenceAcceptance(),
+    )
+
+    const result = await acceptMissingCloseEvidenceResponse(
+      "accounting-firm",
+      acceptanceInput(),
+      missingEvidenceAcceptanceControl(),
+    )
+
+    expect(result).toMatchObject({ id: "acceptance-1", decision: "ACCEPTED" })
+    expect(mockDb.closeAssuranceFinding.findFirst).not.toHaveBeenCalled()
+    expect(mockDb.closeAssuranceFinding.updateMany).not.toHaveBeenCalled()
+    expect(mockDb.accountantComment.create).not.toHaveBeenCalled()
+    expect(mockDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
+    expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled()
+  })
+
+  it("rejects acceptance correlation reuse with different decision evidence", async () => {
+    jest.useFakeTimers().setSystemTime(new Date("2026-08-02T11:00:00.000Z"))
+    mockDb.accountantComment.findFirst.mockResolvedValueOnce(
+      missingEvidenceAcceptance({ responseId: "other-response" }),
+    )
+
+    await expect(
+      acceptMissingCloseEvidenceResponse(
+        "accounting-firm",
+        acceptanceInput({
+          resolutionNotes: "Different acceptance notes for the same correlation.",
+        }),
+        missingEvidenceAcceptanceControl(),
+      ),
+    ).rejects.toThrow(/different missing-proof response acceptance/i)
+
+    expect(mockDb.closeAssuranceFinding.updateMany).not.toHaveBeenCalled()
+    expect(mockDb.accountantComment.create).not.toHaveBeenCalled()
+  })
+
+  it("fails closed when compare-and-set resolution loses a concurrent race", async () => {
+    jest.useFakeTimers().setSystemTime(new Date("2026-08-02T11:00:00.000Z"))
+    mockDb.accountantComment.findFirst
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce(missingEvidenceComment())
+      .mockResolvedValueOnce(missingEvidenceResponse())
+    mockDb.closeAssuranceFinding.findFirst.mockResolvedValue(
+      missingEvidenceFinding({ status: "IN_REVIEW", ownerId: "client-user-1" }),
+    )
+    mockDb.closeAssuranceFinding.updateMany.mockResolvedValue({ count: 0 })
+
+    await expect(
+      acceptMissingCloseEvidenceResponse(
+        "accounting-firm",
+        acceptanceInput(),
+        missingEvidenceAcceptanceControl(),
+      ),
+    ).rejects.toThrow(/changed before acceptance/i)
+
+    expect(mockDb.accountantComment.create).not.toHaveBeenCalled()
+    expect(mockDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
+    expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled()
+  })
+
+  it("retries acceptance after a serializable transaction conflict", async () => {
+    jest.useFakeTimers().setSystemTime(new Date("2026-08-02T11:00:00.000Z"))
+    mockDb.$transaction
+      .mockRejectedValueOnce(Object.assign(new Error("retry"), { code: "P2034" }))
+      .mockImplementationOnce((callback) => callback(mockDb))
+    mockDb.accountantComment.findFirst
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce(missingEvidenceComment())
+      .mockResolvedValueOnce(missingEvidenceResponse())
+    mockDb.closeAssuranceFinding.findFirst.mockResolvedValue(
+      missingEvidenceFinding({ status: "IN_REVIEW", ownerId: "client-user-1" }),
+    )
+    mockDb.accountantComment.create.mockResolvedValue(
+      missingEvidenceAcceptance(),
+    )
+
+    await expect(
+      acceptMissingCloseEvidenceResponse(
+        "accounting-firm",
+        acceptanceInput(),
+        missingEvidenceAcceptanceControl(),
+      ),
+    ).resolves.toMatchObject({ id: "acceptance-1", decision: "ACCEPTED" })
+
+    expect(mockDb.$transaction).toHaveBeenCalledTimes(2)
+    expect(mockDb.closeAssuranceFinding.updateMany).toHaveBeenCalledTimes(1)
+    expect(mockDb.accountantComment.create).toHaveBeenCalledTimes(1)
+    expect(mockRecordBusinessEventInTx).toHaveBeenCalledTimes(1)
+  })
 
   it.each([
     ["missing evidence", { actorId: "user-2" }],

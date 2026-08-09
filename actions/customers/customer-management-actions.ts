@@ -1,12 +1,19 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
+import { z } from "zod"
 
-import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses"
-import { BusinessRuleError, ForbiddenError, getPrismaKnownRequest } from "@/services/_shared/action-errors"
-import { requireOrg } from "@/services/_shared/require-org"
+import { hasRbacPermission } from "@/lib/security/rbac-permissions"
+import { ForbiddenError } from "@/services/_shared/action-errors"
+import { protect } from "@/services/_shared/protect"
+import {
+  prepareCustomerExport,
+  type CustomerExportRequest,
+  type CustomerExportResult,
+} from "@/services/customer/customer-export.service"
 import {
   CustomerCreateSchema,
+  CustomerExportRequestSchema,
   CustomerUpdateSchema,
   type CustomerCreateInput,
   type CustomerUpdateInput,
@@ -25,6 +32,8 @@ import {
 export type CustomerManagementInput = CustomerCreateInput
 export type {
   CustomerDetailAnalytics,
+  CustomerExportRequest,
+  CustomerExportResult,
   CustomerManagementData,
   CustomerManagementRow,
 }
@@ -34,113 +43,21 @@ export type CustomerRemovalResult = {
   mode: "archived" | "deactivated"
 }
 
-type ActionResult<T> = {
-  success: boolean
-  data?: T
-  error?: string
-}
+const organizationInputSchema = z.object({
+  organizationId: z.string().trim().min(1, "Organization is required"),
+})
 
-const ACTIONABLE_ERROR_MESSAGES = new Set([
-  "Unauthorized: no active organization",
-  "Organization is required",
-  "You do not have access to this organization",
-  "Customer not found",
-  "Customer was created but could not be reloaded",
-  "Customer was updated but could not be reloaded",
-])
+const customerIdentityInputSchema = organizationInputSchema.extend({
+  customerId: z.string().trim().min(1, "Customer is required"),
+})
 
-const CUSTOMER_PERMISSIONS = {
-  read: "customers.read",
-  analytics: "customers.analytics.read",
-  create: "customers.create",
-  update: "customers.update",
-  delete: "customers.delete",
-} as const
+const createCustomerInputSchema = organizationInputSchema.extend({
+  data: CustomerCreateSchema,
+})
 
-function cleanText(value?: string | null) {
-  const trimmed = value?.trim()
-  return trimmed ? trimmed : null
-}
-
-function hasPermission(userPermissions: string[] | undefined, requiredPermission: string) {
-  return Boolean(userPermissions?.includes("*") || userPermissions?.includes(requiredPermission))
-}
-
-function getActionErrorMessage(error: unknown, fallback: string) {
-  const prismaError = getPrismaKnownRequest(error)
-
-  if (prismaError) {
-    if (prismaError.code === "P2002") {
-      return "A customer with that code already exists for this organization"
-    }
-
-    if (prismaError.code === "P2003") {
-      return "Referenced organization or customer record was not found"
-    }
-  }
-
-  if (error instanceof Error) {
-    if (ACTIONABLE_ERROR_MESSAGES.has(error.message)) {
-      return error.message
-    }
-
-    if (error.message.startsWith("Missing permission: ")) {
-      return error.message
-    }
-
-    if (error.message.startsWith("Customer with code")) {
-      return error.message
-    }
-  }
-
-  return fallback
-}
-
-function parseCreateInput(input: unknown) {
-  const parsed = CustomerCreateSchema.safeParse(input)
-
-  if (parsed.success) {
-    return { success: true as const, data: parsed.data }
-  }
-
-  return {
-    success: false as const,
-    error: parsed.error.issues.map((issue) => issue.message).join("; ") || "Invalid customer input",
-  }
-}
-
-function parseUpdateInput(input: unknown) {
-  const parsed = CustomerUpdateSchema.safeParse(input)
-
-  if (parsed.success) {
-    return { success: true as const, data: parsed.data }
-  }
-
-  return {
-    success: false as const,
-    error: parsed.error.issues.map((issue) => issue.message).join("; ") || "Invalid customer input",
-  }
-}
-
-async function assertOrganizationAccess(organizationId: string, requiredPermission: string) {
-  const requestedOrganizationId = cleanText(organizationId)
-
-  if (!requestedOrganizationId) {
-    throw new BusinessRuleError("Organization is required")
-  }
-
-  const { orgId, user } = await requireOrg()
-
-  if (orgId !== requestedOrganizationId) {
-    throw new ForbiddenError("You do not have access to this organization")
-  }
-
-  if (!hasPermission(user.permissions, requiredPermission)) {
-    throw new ForbiddenError(`Missing permission: ${requiredPermission}`)
-  }
-
-  return orgId
-}
+const updateCustomerInputSchema = customerIdentityInputSchema.extend({
+  data: CustomerUpdateSchema,
+})
 
 function revalidateCustomerPaths() {
   revalidatePath("/dashboard/customers", "page")
@@ -153,144 +70,168 @@ function revalidateCustomerPaths() {
   revalidatePath("/[locale]/dashboard/finance/receivables", "page")
 }
 
-export async function getCustomerManagementData(
-  organizationId: string,
-): Promise<ActionResult<CustomerManagementData>> {
-  try {
-    const scopedOrganizationId = await assertOrganizationAccess(organizationId, CUSTOMER_PERMISSIONS.read)
-    const data = await getCustomerManagementDataForOrg(scopedOrganizationId)
+const getManagementData = protect<unknown, CustomerManagementData>(
+  {
+    permission: "customers.read",
+    auditResource: "Customer",
+    auditAllowed: false,
+    module: {
+      moduleSlug: "sales",
+      surface: "customers.read",
+      accessIntent: "read",
+      mode: "enforce",
+    },
+  },
+  async (input, ctx) => {
+    organizationInputSchema.parse(input)
+    return getCustomerManagementDataForOrg(ctx.orgId)
+  },
+)
 
-    return { success: true, data }
-  } catch (error) {
-    return {
-      success: false,
-      error: safeLoggedActionErrorMessage(
-        "Error fetching customer management data",
-        error,
-        { action: "getCustomerManagementData" },
-        getActionErrorMessage(error, "Failed to fetch customer management data"),
-      ),
-    }
-  }
+export async function getCustomerManagementData(organizationId: string) {
+  return getManagementData({ organizationId })
 }
+
+const getAnalyticsData = protect<unknown, CustomerDetailAnalytics>(
+  {
+    permission: "customers.analytics.read",
+    auditResource: "CustomerAnalytics",
+    auditAllowed: false,
+    module: {
+      moduleSlug: "sales",
+      surface: "customers.analytics.read",
+      accessIntent: "read",
+      mode: "enforce",
+    },
+  },
+  async (input, ctx) => {
+    const parsed = customerIdentityInputSchema.parse(input)
+    return getCustomerDetailAnalyticsForOrg(ctx.orgId, parsed.customerId)
+  },
+)
 
 export async function getCustomerAnalyticsData(
   organizationId: string,
   customerId: string,
-): Promise<ActionResult<CustomerDetailAnalytics>> {
-  try {
-    const scopedOrganizationId = await assertOrganizationAccess(organizationId, CUSTOMER_PERMISSIONS.analytics)
-    const scopedCustomerId = cleanText(customerId)
-
-    if (!scopedCustomerId) {
-      return { success: false, error: "Customer not found" }
-    }
-
-    const data = await getCustomerDetailAnalyticsForOrg(scopedOrganizationId, scopedCustomerId)
-    return { success: true, data }
-  } catch (error) {
-    return {
-      success: false,
-      error: safeLoggedActionErrorMessage(
-        "Error fetching customer analytics data",
-        error,
-        { action: "getCustomerAnalyticsData" },
-        getActionErrorMessage(error, "Failed to fetch customer analytics"),
-      ),
-    }
-  }
+) {
+  return getAnalyticsData({ organizationId, customerId })
 }
+
+const createCustomer = protect<unknown, CustomerManagementRow>(
+  {
+    permission: "customers.create",
+    auditResource: "Customer",
+    auditAllowed: true,
+    module: {
+      moduleSlug: "sales",
+      surface: "customers.create",
+      accessIntent: "write",
+      mode: "enforce",
+    },
+  },
+  async (input, ctx) => {
+    const parsed = createCustomerInputSchema.parse(input)
+    const row = await createCustomerForManagement(ctx.orgId, parsed.data)
+    revalidateCustomerPaths()
+    return row
+  },
+)
 
 export async function createManagedCustomer(
   organizationId: string,
   input: CustomerManagementInput,
-): Promise<ActionResult<CustomerManagementRow>> {
-  try {
-    const scopedOrganizationId = await assertOrganizationAccess(organizationId, CUSTOMER_PERMISSIONS.create)
-    const parsed = parseCreateInput(input)
-
-    if (!parsed.success) {
-      return { success: false, error: parsed.error }
-    }
-
-    const row = await createCustomerForManagement(scopedOrganizationId, parsed.data)
-    revalidateCustomerPaths()
-
-    return { success: true, data: row }
-  } catch (error) {
-    return {
-      success: false,
-      error: safeLoggedActionErrorMessage(
-        "Error creating managed customer",
-        error,
-        { action: "createManagedCustomer" },
-        getActionErrorMessage(error, "Failed to create customer"),
-      ),
-    }
-  }
+) {
+  return createCustomer({ organizationId, data: input })
 }
+
+const updateCustomer = protect<unknown, CustomerManagementRow>(
+  {
+    permission: "customers.update",
+    auditResource: "Customer",
+    auditAllowed: true,
+    module: {
+      moduleSlug: "sales",
+      surface: "customers.update",
+      accessIntent: "write",
+      mode: "enforce",
+    },
+  },
+  async (input, ctx) => {
+    const parsed = updateCustomerInputSchema.parse(input)
+    const row = await updateCustomerForManagement(ctx.orgId, parsed.customerId, parsed.data)
+    revalidateCustomerPaths()
+    return row
+  },
+)
 
 export async function updateManagedCustomer(
   organizationId: string,
   customerId: string,
   input: CustomerUpdateInput,
-): Promise<ActionResult<CustomerManagementRow>> {
-  try {
-    const scopedOrganizationId = await assertOrganizationAccess(organizationId, CUSTOMER_PERMISSIONS.update)
-    const scopedCustomerId = cleanText(customerId)
-
-    if (!scopedCustomerId) {
-      return { success: false, error: "Customer not found" }
-    }
-
-    const parsed = parseUpdateInput(input)
-
-    if (!parsed.success) {
-      return { success: false, error: parsed.error }
-    }
-
-    const row = await updateCustomerForManagement(scopedOrganizationId, scopedCustomerId, parsed.data)
-    revalidateCustomerPaths()
-
-    return { success: true, data: row }
-  } catch (error) {
-    return {
-      success: false,
-      error: safeLoggedActionErrorMessage(
-        "Error updating managed customer",
-        error,
-        { action: "updateManagedCustomer" },
-        getActionErrorMessage(error, "Failed to update customer"),
-      ),
-    }
-  }
+) {
+  return updateCustomer({ organizationId, customerId, data: input })
 }
+
+const archiveCustomer = protect<unknown, CustomerRemovalResult>(
+  {
+    permission: "customers.delete",
+    auditResource: "Customer",
+    auditAllowed: true,
+    module: {
+      moduleSlug: "sales",
+      surface: "customers.delete",
+      accessIntent: "write",
+      mode: "enforce",
+    },
+  },
+  async (input, ctx) => {
+    const parsed = customerIdentityInputSchema.parse(input)
+    const result = await removeCustomerForManagement(ctx.orgId, parsed.customerId)
+    revalidateCustomerPaths()
+    return result
+  },
+)
 
 export async function deleteManagedCustomer(
   organizationId: string,
   customerId: string,
-): Promise<ActionResult<CustomerRemovalResult>> {
-  try {
-    const scopedOrganizationId = await assertOrganizationAccess(organizationId, CUSTOMER_PERMISSIONS.delete)
-    const scopedCustomerId = cleanText(customerId)
+) {
+  return archiveCustomer({ organizationId, customerId })
+}
 
-    if (!scopedCustomerId) {
-      return { success: false, error: "Customer not found" }
+const prepareExport = protect<unknown, CustomerExportResult>(
+  {
+    permission: "customers.export",
+    auditResource: "CustomerExport",
+    auditAllowed: true,
+    freshAuth: { maxAgeSeconds: 300 },
+    tenantGuard: "handler-derived",
+    module: {
+      moduleSlug: "sales",
+      surface: "customers.export",
+      accessIntent: "export",
+      mode: "enforce",
+    },
+  },
+  async (input, ctx) => {
+    const parsed = CustomerExportRequestSchema.parse(input)
+    const requiredReadPermission =
+      parsed.scope === "customer-orders" ? "customers.orders.read" : "customers.read"
+    if (!hasRbacPermission(ctx.permissions, requiredReadPermission)) {
+      throw new ForbiddenError(`Missing permission: ${requiredReadPermission}`)
     }
+    const now = new Date()
+    return prepareCustomerExport({
+      ...parsed,
+      organizationId: ctx.orgId,
+      actorId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      lastAuthAt: ctx.freshAuth?.lastAuthAt ?? now,
+      now,
+    })
+  },
+)
 
-    const data = await removeCustomerForManagement(scopedOrganizationId, scopedCustomerId)
-    revalidateCustomerPaths()
-
-    return { success: true, data }
-  } catch (error) {
-    return {
-      success: false,
-      error: safeLoggedActionErrorMessage(
-        "Error archiving managed customer",
-        error,
-        { action: "deleteManagedCustomer" },
-        getActionErrorMessage(error, "Failed to archive customer"),
-      ),
-    }
-  }
+export async function prepareCustomerExportAction(input: CustomerExportRequest) {
+  return prepareExport(input)
 }

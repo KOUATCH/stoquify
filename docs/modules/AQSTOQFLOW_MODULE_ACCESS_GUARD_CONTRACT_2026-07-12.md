@@ -318,3 +318,24 @@ Focused Jest and broader gates are not required for this planning artifact becau
 
 Run `aqstoqflow-module-workbench-ux-states` next. It should specify active, trial, read-only, suspended, expired, unavailable, dependency-missing, owner/admin upgrade, and normal-user safe states for the Module Workbench and shell, while keeping UI subordinate to server-side guards.
 
+
+## 2026-08-06 Inventory Item Create/Edit Follow-up
+
+Inventory remains a canonical commercial module in the catalog, but live entitlement truth is still legacy-derived from `Organization.requestedModules`; the durable commercial entitlement read model and approved bounded enforcement pilot remain unavailable.
+
+This normalization added observe-mode inventory decisions before create-page reference-data access and before `createItemAction` invokes the create service. Existing RBAC checks remain authoritative and no create allow/deny outcome changed.
+
+The current edit page and canonical edit action already contain explicit `mode: "enforce"` checks. True create/edit enforcement parity was not introduced in this pass because either available change requires explicit approval:
+
+- changing edit to observe would weaken an existing denial;
+- changing create to enforce would introduce new hard-denial surfaces backed by legacy entitlement truth.
+
+Therefore the current state is intentionally documented as **instrumented but not enforcement-parity complete**. The next decision owner must approve one bounded direction, tenant cohort, unavailable/read-only UX, audit evidence, and rollback before runtime parity changes.
+
+Verification evidence for the safe observation-only change:
+
+- focused create/edit and legacy-route Jest matrix: 9 suites, 35 tests passed;
+- focused ESLint: passed;
+- `npx tsc --noEmit --pretty false`: passed;
+- `npm run module:surface:inventory`: passed and refreshed 387 records at `2026-08-06T09:43:22.585Z`;
+- create page and action tests prove observation occurs before reference-data loading and service mutation.

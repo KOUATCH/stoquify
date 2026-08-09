@@ -75,6 +75,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { DataTablePagination } from "@/components/DataTableComponents/DataTablePagination"
 import { Textarea } from "@/components/ui/textarea"
 import type { OrganizationManagementRow } from "@/actions/organization/organization-settings-actions"
 import { useCreateOrganizationSettings, useOrganizationManagementRows } from "@/hooks/useOrganizationSettings"
@@ -799,7 +800,7 @@ export default function OrganizationManagementTable({
     getPaginationRowModel: getPaginationRowModel(),
     initialState: {
       pagination: {
-        pageSize: 5,
+        pageSize: 10,
       },
     },
   })
@@ -876,7 +877,7 @@ export default function OrganizationManagementTable({
       </div>
 
       <div className="space-y-4 p-5 sm:p-6">
-        <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto]">
+        <div className="dashboard-table-toolbar grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto]">
           <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_13rem]">
             <div className="relative min-w-0">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--dash-text-faint)]" />
@@ -1017,32 +1018,7 @@ export default function OrganizationManagementTable({
           </Table>
         </div>
 
-        <div className="flex flex-col gap-3 text-sm text-[var(--dash-text-soft)] sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            {t.page} {table.getState().pagination.pageIndex + 1} {t.of} {Math.max(table.getPageCount(), 1)}
-            <span className="ms-2">({formatNumber(filteredData.length, locale)} {t.rows})</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-              className="dashboard-button-secondary h-10 rounded-lg"
-            >
-              {t.previous}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-              className="dashboard-button-secondary h-10 rounded-lg"
-            >
-              {t.next}
-            </Button>
-          </div>
-        </div>
+        <DataTablePagination table={table} variant="landing" />
       </div>
       </section>
 
