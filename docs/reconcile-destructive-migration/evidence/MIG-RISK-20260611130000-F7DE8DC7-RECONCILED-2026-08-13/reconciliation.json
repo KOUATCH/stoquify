@@ -1,0 +1,27 @@
+{
+  "artifactId": "R-05",
+  "artifactStatus": "TEMPLATE_NOT_EVIDENCE",
+  "migrationSha256": "f7de8dc7ace0a5e063cdb7ecd9527e77807b7f872e474546819e9fca13a273d4",
+  "redactedEnvironmentId": null,
+  "selectedPath": null,
+  "beforeSnapshotReference": null,
+  "afterSnapshotReference": null,
+  "operations": [
+    { "id": "D-001", "source": "accounts.access_token", "target": "accounts.accessToken", "expectedTreatment": null, "result": "UNASSESSED" },
+    { "id": "D-002", "source": "accounts.expires_at", "target": "accounts.accessTokenExpiresAt", "expectedTreatment": null, "result": "UNASSESSED" },
+    { "id": "D-003", "source": "accounts.id_token", "target": "accounts.idToken", "expectedTreatment": null, "result": "UNASSESSED" },
+    { "id": "D-004", "source": "accounts.provider", "target": "accounts.providerId", "expectedTreatment": null, "result": "UNASSESSED" },
+    { "id": "D-005", "source": "accounts.providerAccountId", "target": "accounts.accountId", "expectedTreatment": null, "result": "UNASSESSED" },
+    { "id": "D-006", "source": "accounts.refresh_token", "target": "accounts.refreshToken", "expectedTreatment": null, "result": "UNASSESSED" },
+    { "id": "D-007", "source": "accounts.session_state", "target": null, "expectedTreatment": null, "result": "UNASSESSED" },
+    { "id": "D-008", "source": "accounts.token_type", "target": null, "expectedTreatment": null, "result": "UNASSESSED" },
+    { "id": "D-009", "source": "accounts.type", "target": null, "expectedTreatment": null, "result": "UNASSESSED" },
+    { "id": "D-010", "source": "sessions.expires", "target": "sessions.expiresAt", "expectedTreatment": null, "result": "UNASSESSED" },
+    { "id": "D-011", "source": "sessions.sessionToken", "target": "sessions.token", "expectedTreatment": null, "result": "UNASSESSED" },
+    { "id": "D-012", "source": "users.emailVerified", "target": "users.emailVerified", "expectedTreatment": null, "result": "UNASSESSED" },
+    { "id": "D-013", "source": "auth_sessions", "target": null, "expectedTreatment": null, "result": "UNASSESSED" }
+  ],
+  "unexplainedVarianceCount": null,
+  "reviewedBy": null,
+  "reviewedAt": null
+}

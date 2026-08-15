@@ -8,6 +8,7 @@ import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
 import { localizePath, pickLocale } from "@/i18n/routing"
 import { LayoutGrid, Plus, ShieldCheck, UsersRound } from "lucide-react"
 import { columns } from "./columns"
+import { routeByKey, withSettingsSurfaceAccess } from "../settings-route-access"
 
 type RolePageProps = {
   params: Promise<{ locale: string }>
@@ -57,7 +58,7 @@ function MetricCard({ label, value }: { label: string; value: string }) {
   )
 }
 
-export default async function RolesPage({ params }: RolePageProps) {
+async function RolesPageImpl({ params }: RolePageProps) {
   const { locale: rawLocale } = await params
   const locale = pickLocale(rawLocale)
   const labels = copy[locale]
@@ -162,4 +163,20 @@ export default async function RolesPage({ params }: RolePageProps) {
       </div>
     </div>
   )
+}
+
+
+
+export default async function SettingsRoutePage(props: any = {}) {
+  const surface = routeByKey("settings-roles")
+
+  if (!surface) {
+    throw new Error("Missing settings route surface definition: settings-roles")
+  }
+
+  return withSettingsSurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => RolesPageImpl(props),
+  })
 }

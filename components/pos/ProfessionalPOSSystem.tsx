@@ -61,6 +61,7 @@ import {
   useAddPOSCartLine,
   useClosePOSShift,
   useCommitPOSSale,
+  useCurrentUserPOSShift,
   useOpenPOSShift,
   usePOSCatalog,
   usePOSCustomers,
@@ -112,7 +113,8 @@ type CommitSaleResult = {
     status: string
     authorityChannel: string | null
   } | null
-  receipt?: { digitalReceiptUrl?: string | null } & Record<string, unknown>
+  receipt?: ({ digitalReceiptUrl?: string | null } & Record<string, unknown>) | null
+  receiptStatus?: "READY" | "RETRY_REQUIRED"
   delivery: {
     channel: ReceiptChannel
     status: string
@@ -353,6 +355,8 @@ export default function ProfessionalPOSSystem() {
   const searchRef = useRef<HTMLInputElement>(null)
   const customerSearchRef = useRef<HTMLInputElement>(null)
   const tenderAmountRef = useRef<HTMLInputElement>(null)
+  const currentShiftDefaultAppliedRef = useRef(false)
+  const previousCustomerLocationIdRef = useRef("")
   const [selectedLocationId, setSelectedLocationId] = useState("")
   const [selectedTerminalId, setSelectedTerminalId] = useState("")
   const [selectedCategoryId, setSelectedCategoryId] = useState("")
@@ -385,13 +389,26 @@ export default function ProfessionalPOSSystem() {
   const locations = unwrap(locationsQuery.data, [])
   const terminalsQuery = usePOSTerminals(selectedLocationId || undefined)
   const terminals = unwrap(terminalsQuery.data, [])
+  const currentUserShiftQuery = useCurrentUserPOSShift()
+  const currentUserShift = unwrap(currentUserShiftQuery.data, null)
   const activeShiftQuery = useActivePOSShift(selectedTerminalId || undefined)
   const activeShift = unwrap(activeShiftQuery.data, null)
-  const customersQuery = usePOSCustomers()
-  const customers = useMemo(
-    () => customersQuery.data?.success ? ((customersQuery.data.data ?? []) as POSCustomer[]) : [],
+  const customersQuery = usePOSCustomers({
+    locationId: selectedLocationId || undefined,
+    search: customerSearch,
+  })
+  const customerResult = useMemo(
+    () => customersQuery.data?.success
+      ? customersQuery.data.data
+      : { customers: [] as POSCustomer[], total: 0 },
     [customersQuery.data],
   )
+  const customers = customerResult.customers as POSCustomer[]
+  const customerTotal = customerResult.total
+  const customersQueryErrorCode = actionError(customersQuery.data)
+  const customersQueryError = customersQueryErrorCode === "POS_LOCATION_UNAVAILABLE"
+    ? t("customers.locationUnavailable")
+    : customersQueryErrorCode
   const catalogQuery = usePOSCatalog({
     locationId: selectedLocationId || undefined,
     search,
@@ -499,17 +516,9 @@ export default function ProfessionalPOSSystem() {
   }, [catalog.items, catalogView, favoriteItemIds, recentItemIds])
 
   const visibleCustomers = useMemo(() => {
-    const query = customerSearch.trim().toLowerCase()
     return customers
       .filter((customer) => customer.isActive && customer.code !== "WALK_IN")
-      .filter((customer) => {
-        if (!query) return true
-        return [customer.name, customer.code, customer.email, customer.phone]
-          .filter(Boolean)
-          .some((value) => String(value).toLowerCase().includes(query))
-      })
-      .slice(0, 12)
-  }, [customerSearch, customers])
+  }, [customers])
 
   useEffect(() => {
     if (!selectedLocationId && locations.length > 0) {
@@ -518,10 +527,29 @@ export default function ProfessionalPOSSystem() {
   }, [locations, selectedLocationId])
 
   useEffect(() => {
+    const previousLocationId = previousCustomerLocationIdRef.current
+    previousCustomerLocationIdRef.current = selectedLocationId
+
+    if (!previousLocationId || previousLocationId === selectedLocationId) return
+
+    setSelectedCustomerId("")
+    setCustomerSearch("")
+    setIsCustomerDialogOpen(false)
+  }, [selectedLocationId])
+
+  useEffect(() => {
     if (terminals.length > 0 && !terminals.some((terminal) => terminal.id === selectedTerminalId)) {
       setSelectedTerminalId(terminals[0].id)
     }
   }, [selectedTerminalId, terminals])
+
+  useEffect(() => {
+    if (!currentUserShift || currentShiftDefaultAppliedRef.current) return
+
+    currentShiftDefaultAppliedRef.current = true
+    setSelectedLocationId(currentUserShift.locationId)
+    setSelectedTerminalId(currentUserShift.terminalId)
+  }, [currentUserShift])
 
   useEffect(() => {
     setClosingBalance("")
@@ -559,7 +587,7 @@ export default function ProfessionalPOSSystem() {
       }
       if (event.key === "F4") {
         event.preventDefault()
-        setIsCustomerDialogOpen(true)
+        if (selectedLocationId) setIsCustomerDialogOpen(true)
       }
       if (event.key === "F8") {
         event.preventDefault()
@@ -569,7 +597,7 @@ export default function ProfessionalPOSSystem() {
 
     window.addEventListener("keydown", onKeyDown)
     return () => window.removeEventListener("keydown", onKeyDown)
-  }, [])
+  }, [selectedLocationId])
 
   useEffect(() => {
     if (!isCustomerDialogOpen) return
@@ -933,10 +961,13 @@ export default function ProfessionalPOSSystem() {
         },
       })
       const error = actionError(response)
+      const localizedError = error === "POS_CUSTOMER_LOCATION_MISMATCH"
+        ? t("customers.locationMismatch")
+        : error
 
       notifications.removeNotification(pendingId)
-      if (error || !response.success) {
-        notifications.error(t("notifications.saleErrorTitle"), error || t("notifications.genericError"), { category: "sales", priority: "high" })
+      if (localizedError || !response.success) {
+        notifications.error(t("notifications.saleErrorTitle"), localizedError || t("notifications.genericError"), { category: "sales", priority: "high" })
         return
       }
 
@@ -956,6 +987,16 @@ export default function ProfessionalPOSSystem() {
         }),
         { category: "sales", priority: "high", duration: 9000 },
       )
+      if (response.data.receiptStatus === "RETRY_REQUIRED") {
+        notifications.warning(
+          t("notifications.receiptTitle"),
+          t("notifications.receiptMessage", {
+            channel: t("receipt.channels.NONE"),
+            status: response.data.receiptStatus,
+          }),
+          { category: "receipt", priority: "high", duration: 9000 },
+        )
+      }
       notifications.info(
         t("notifications.salePostedTitle"),
         t("notifications.salePostedMessage", {
@@ -1057,6 +1098,34 @@ export default function ProfessionalPOSSystem() {
     setSelectedCustomerId("")
     setIsCustomerDialogOpen(false)
     setCustomerSearch("")
+  }
+
+  function changeLocation(nextLocationId: string) {
+    if (nextLocationId === selectedLocationId) return
+
+    if (hasCartLines) {
+      notifications.warning(
+        t("notifications.locationChangeBlockedTitle"),
+        t("notifications.locationChangeBlockedMessage"),
+        { category: "pos", priority: "high" },
+      )
+      return
+    }
+
+    const customerWasSelected = selectedCustomerId.length > 0
+    setSelectedCustomerId("")
+    setCustomerSearch("")
+    setIsCustomerDialogOpen(false)
+    setSelectedTerminalId("")
+    setSelectedLocationId(nextLocationId)
+
+    if (customerWasSelected) {
+      notifications.info(
+        t("notifications.customerResetTitle"),
+        t("notifications.customerResetMessage"),
+        { category: "pos" },
+      )
+    }
   }
 
   function updateTenderLine(id: string, patch: Partial<TenderLineState>) {
@@ -1171,10 +1240,7 @@ export default function ProfessionalPOSSystem() {
                     className={posSelectClass}
                     value={selectedLocationId}
                     disabled={locationsQuery.isLoading}
-                    onChange={(event) => {
-                      setSelectedLocationId(event.target.value)
-                      setSelectedTerminalId("")
-                    }}
+                    onChange={(event) => changeLocation(event.target.value)}
                   >
                     <option value="">{t("setup.chooseLocation")}</option>
                     {locations.map((location) => (
@@ -1320,7 +1386,13 @@ export default function ProfessionalPOSSystem() {
               </div>
 
               <div className="mt-3 grid gap-2 md:grid-cols-3 xl:grid-cols-6">
-                <POSButton type="button" variant="outline" className={posButtonClass} onClick={() => setIsCustomerDialogOpen(true)}>
+                <POSButton
+                  type="button"
+                  variant="outline"
+                  className={posButtonClass}
+                  disabled={!selectedLocationId}
+                  onClick={() => setIsCustomerDialogOpen(true)}
+                >
                   <UsersRound className="h-4 w-4" />
                   {selectedCustomer ? t("smart.changeCustomer") : t("smart.addCustomer")}
                 </POSButton>
@@ -1598,9 +1670,9 @@ export default function ProfessionalPOSSystem() {
           </div>
 
           <aside className="min-h-0 min-w-0 xl:sticky xl:top-16 xl:h-[calc(100dvh-3.5rem)]">
-            <div className={cn("flex min-h-[760px] flex-col overflow-hidden xl:h-full xl:min-h-0", posSurfaceClass)}>
-              <div className={cn("shrink-0 p-2", posPanelClass)}>
-                <div className="mb-2 flex flex-wrap items-center gap-2">
+            <div className={cn("flex flex-col overflow-hidden xl:h-full xl:min-h-0", posSurfaceClass)}>
+              <div className={cn("shrink-0 p-1.5", posPanelClass)}>
+                <div className="mb-1 flex flex-wrap items-center gap-2">
                   <UsersRound className={cn("h-4 w-4", posIconBrandClass)} />
                   <h2 className="text-sm font-semibold">{t("customers.title")}</h2>
                   {selectedCustomer ? (
@@ -1609,19 +1681,19 @@ export default function ProfessionalPOSSystem() {
                     </Badge>
                   ) : null}
                 </div>
-                <div className={cn("p-2", posInsetClass)}>
+                <div className={cn("p-1.5", posInsetClass)}>
                   <div className="flex items-start gap-2">
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-[rgba(47,125,246,0.18)] text-sm font-semibold text-[#d9fffb] shadow-[0_14px_28px_rgba(47,125,246,0.15)]">
                       {selectedCustomer ? customerInitials(selectedCustomer.name) : "WI"}
                     </span>
                     <div className="min-w-0 flex-1">
                       <div className="truncate text-sm font-semibold">{currentCustomerLabel}</div>
-                      <div className={cn("mt-1 truncate text-xs", posMutedTextClass)}>
+                      <div className={cn("mt-0.5 truncate text-xs", posMutedTextClass)}>
                         {selectedCustomer
                           ? selectedCustomer.phone || selectedCustomer.email || selectedCustomer.code || t("customers.noContact")
                           : t("customers.walkInMeta")}
                       </div>
-                      <div className={cn("mt-2 flex flex-wrap gap-2 text-xs", posMutedTextClass)}>
+                      <div className={cn("mt-1 flex flex-wrap gap-2 text-xs", posMutedTextClass)}>
                         <span className={posSuccessPillClass}>
                           {selectedCustomer ? t("customers.selected") : t("customers.walkIn")}
                         </span>
@@ -1651,10 +1723,11 @@ export default function ProfessionalPOSSystem() {
                       ) : null}
                     </div>
                   </div>
-                  <div className="mt-2 grid grid-cols-2 gap-2">
+                  <div className="mt-1 grid grid-cols-2 gap-2">
                     <POSButton
                       type="button"
                       variant="outline"
+                      disabled={!selectedLocationId}
                       onClick={() => setIsCustomerDialogOpen(true)}
                       className={posButtonClass}
                     >
@@ -1674,7 +1747,7 @@ export default function ProfessionalPOSSystem() {
                   </div>
                 </div>
               </div>
-              <div className={cn("shrink-0 border-b bg-[rgba(12,20,24,0.42)] p-3", posDividerClass)}>
+              <div className={cn("shrink-0 border-b bg-[rgba(12,20,24,0.42)] p-2", posDividerClass)}>
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <h2 className="text-lg font-semibold text-[var(--dash-text)]">{t("cart.title")}</h2>
@@ -1696,25 +1769,39 @@ export default function ProfessionalPOSSystem() {
                 </div>
               </div>
 
-              <ScrollArea className="min-h-[7rem] flex-[0_1_11rem]">
-                <div className="p-3 pb-4 pr-4">
+              <ScrollArea
+                data-testid="pos-cart-lines"
+                className="min-h-[18rem] xl:min-h-0 xl:flex-[3_1_20rem]"
+              >
+                <div className="p-2 pr-3">
                   {!cart || cart.lines.length === 0 ? (
                     <div className="rounded-lg border border-dashed border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.36)] p-6 text-center text-sm text-[var(--dash-text-soft)]">
                       {t("cart.empty")}
                     </div>
                   ) : (
-                    <div className="space-y-2">
+                    <div className="space-y-0.5">
                       {cart.lines.map((line) => {
                         const quantityOnHand = getCartLineQuantityOnHand(line)
 
                         return (
-                        <div key={line.id} className={cn("p-2 transition-colors hover:border-[var(--dash-border)] hover:bg-[rgba(37,57,67,0.82)]", posPanelClass)}>
+                        <div
+                          key={line.id}
+                          data-testid="pos-cart-line"
+                          className={cn(
+                            "px-2 py-0.5 transition-colors hover:border-[var(--dash-border)] hover:bg-[rgba(37,57,67,0.82)]",
+                            touchMode && "py-2",
+                            posPanelClass,
+                          )}
+                        >
                           <div className="flex items-start justify-between gap-2">
                             <div className="min-w-0 flex-1">
-                              <div className="truncate text-sm font-semibold">
+                              <div
+                                className="truncate text-sm font-semibold"
+                                title={locale === "fr" ? line.nameFr || line.nameEn : line.nameEn}
+                              >
                                 {locale === "fr" ? line.nameFr || line.nameEn : line.nameEn}
                               </div>
-                              <div className={cn("mt-1 text-xs", posMutedTextClass)}>
+                              <div className={cn("mt-0.5 text-xs", posMutedTextClass)}>
                                 {line.sku} - {money.format(line.unitPrice)}
                               </div>
                             </div>
@@ -1724,7 +1811,10 @@ export default function ProfessionalPOSSystem() {
                                 type="button"
                                 variant="ghost"
                                 size="icon"
-                                className={cn("h-7 w-7", posButtonDangerClass)}
+                                className={cn("h-7 w-7", touchMode && "h-10 w-10", posButtonDangerClass)}
+                                aria-label={t("cart.removeLine", {
+                                  item: locale === "fr" ? line.nameFr || line.nameEn : line.nameEn,
+                                })}
                                 disabled={removeLine.isPending}
                                 onClick={() => handleRemove(line.id)}
                               >
@@ -1732,7 +1822,13 @@ export default function ProfessionalPOSSystem() {
                               </POSButton>
                             </div>
                           </div>
-                          <div className={cn("mt-2 flex items-center justify-between gap-3 rounded-md border bg-[rgba(12,20,24,0.28)] px-2 py-1.5", posDividerClass)}>
+                          <div
+                            className={cn(
+                              "mt-1 flex min-h-7 items-center justify-between gap-3 rounded-md border bg-[rgba(12,20,24,0.28)] px-2 py-0",
+                              touchMode && "mt-2 min-h-10 py-1.5",
+                              posDividerClass,
+                            )}
+                          >
                             <label className="flex min-w-0 items-center gap-2 text-xs font-semibold uppercase tracking-[0.08em] text-[var(--dash-text-soft)]">
                               <span className="shrink-0">{t("stock.inCart")}</span>
                               <Input
@@ -1760,7 +1856,11 @@ export default function ProfessionalPOSSystem() {
                                     event.currentTarget.blur()
                                   }
                                 }}
-                                className={cn("h-8 w-20 text-center font-semibold tabular-nums", posFieldClass)}
+                                className={cn(
+                                  touchMode ? "h-10 w-24 text-base" : "h-7 w-20",
+                                  "text-center font-semibold tabular-nums",
+                                  posFieldClass,
+                                )}
                               />
                             </label>
                             {quantityOnHand !== null ? (
@@ -1777,29 +1877,36 @@ export default function ProfessionalPOSSystem() {
                 </div>
               </ScrollArea>
 
-              <div className={cn("flex min-h-0 flex-[2_1_46rem] flex-col overflow-hidden border-t bg-[rgba(12,20,24,0.36)]", posDividerClass)}>
-                <div className="px-3 py-2">
-                  <div className="grid grid-cols-3 gap-2 text-xs tabular-nums">
-                    <div className={cn("rounded-md border bg-[rgba(37,57,67,0.42)] px-2 py-1.5", posDividerClass)}>
+              <div
+                data-testid="pos-payment-panel"
+                className={cn(
+                  "flex flex-col border-t bg-[rgba(12,20,24,0.36)] xl:min-h-[20rem] xl:flex-[2_1_24rem] xl:overflow-hidden",
+                  posDividerClass,
+                )}
+              >
+                <div data-testid="pos-totals-summary" className="grid grid-cols-2 gap-2 px-3 py-1 text-xs tabular-nums sm:grid-cols-4 xl:gap-1.5">
+                    <div className={cn("rounded-md border bg-[rgba(37,57,67,0.42)] px-2 py-1", posDividerClass)}>
                       <div className={posMutedTextClass}>{t("totals.subtotal")}</div>
-                      <div className="mt-1 truncate font-semibold">{money.format(cart?.subtotal ?? 0)}</div>
+                      <div className="mt-0.5 truncate font-semibold">{money.format(cart?.subtotal ?? 0)}</div>
                     </div>
-                    <div className={cn("rounded-md border bg-[rgba(37,57,67,0.42)] px-2 py-1.5", posDividerClass)}>
+                    <div className={cn("rounded-md border bg-[rgba(37,57,67,0.42)] px-2 py-1", posDividerClass)}>
                       <div className={posMutedTextClass}>{t("totals.discount")}</div>
-                      <div className="mt-1 truncate font-semibold">{money.format(cart?.discount ?? 0)}</div>
+                      <div className="mt-0.5 truncate font-semibold">{money.format(cart?.discount ?? 0)}</div>
                     </div>
-                    <div className={cn("rounded-md border bg-[rgba(37,57,67,0.42)] px-2 py-1.5", posDividerClass)}>
+                    <div className={cn("rounded-md border bg-[rgba(37,57,67,0.42)] px-2 py-1", posDividerClass)}>
                       <div className={posMutedTextClass}>{t("totals.tax")}</div>
-                      <div className="mt-1 truncate font-semibold">{money.format(cart?.taxAmount ?? 0)}</div>
+                      <div className="mt-0.5 truncate font-semibold">{money.format(cart?.taxAmount ?? 0)}</div>
                     </div>
-                  </div>
-                  <div className={cn("mt-2 flex items-center justify-between rounded-lg border bg-[rgba(37,57,67,0.58)] px-3 py-2", posDividerClass)}>
-                    <span className="text-sm font-semibold">{t("totals.total")}</span>
-                    <span className="text-xl font-bold tabular-nums text-[#8fb7ff]">{money.format(cart?.total ?? 0)}</span>
+                  <div className={cn("rounded-md border bg-[rgba(37,57,67,0.58)] px-2 py-1", posDividerClass)}>
+                    <div className={posMutedTextClass}>{t("totals.total")}</div>
+                    <div className="mt-0.5 truncate text-base font-bold text-[#8fb7ff]">{money.format(cart?.total ?? 0)}</div>
                   </div>
                 </div>
 
-                <div className={cn("min-h-0 flex-1 overflow-y-auto border-t px-4 py-3", posDividerClass)}>
+                <div
+                  data-testid="pos-tender-scroll-region"
+                  className={cn("flex-1 border-t px-3 py-2 xl:min-h-0 xl:overflow-y-auto", posDividerClass)}
+                >
                   {lastSale ? (
                   <div className="mb-3 rounded-lg border border-[var(--dash-spruce)]/25 bg-[var(--dash-spruce-soft)] p-3 text-sm text-[#d9fffb]">
                     <div className="flex items-start justify-between gap-3">
@@ -1882,31 +1989,7 @@ export default function ProfessionalPOSSystem() {
                   </div>
                   ) : null}
 
-                  <ReceiptTokenHistoryPanel
-                    searchDraft={receiptHistorySearchDraft}
-                    hasSearched={receiptHistorySearchQuery !== null}
-                    selectedSaleId={receiptHistorySaleId}
-                    saleResults={receiptHistorySales}
-                    tokens={receiptHistoryTokens}
-                    canManage={canManageReceiptTokens}
-                    capabilityLoading={receiptTokenCapabilityQuery.isLoading}
-                    capabilityUnavailable={receiptTokenCapabilityQuery.isError}
-                    capabilityErrorMessage={receiptTokenCapabilityError || receiptTokenCapabilityUnavailableError}
-                    salesLoading={receiptHistorySalesQuery.isFetching}
-                    isLoading={receiptHistoryTokensQuery.isFetching}
-                    salesErrorMessage={receiptHistorySalesError}
-                    errorMessage={receiptHistoryError}
-                    revokePendingTokenId={revokePendingTokenId}
-                    controlLabels={receiptTokenLabels}
-                    labels={receiptTokenHistoryLabels}
-                    formatTotal={(amount) => money.format(amount)}
-                    onSearchDraftChange={setReceiptHistorySearchDraft}
-                    onLookup={handleReceiptHistoryLookup}
-                    onSelectSale={setReceiptHistorySaleId}
-                    onRevoke={handleRevokeHistoricalReceiptToken}
-                  />
-
-                  <div className={cn("space-y-3 p-3", posPanelClass)}>
+                  <div data-testid="pos-tender-controls" className={cn("space-y-1 p-1.5", posPanelClass)}>
                   <div className="flex items-center justify-between gap-2">
                     <div>
                       <div className="text-sm font-semibold">{t("tender.panelTitle")}</div>
@@ -2050,38 +2133,65 @@ export default function ProfessionalPOSSystem() {
                       </div>
                     ) : null}
                   </div>
-                  </div>
-                </div>
 
-                <div className={cn("shrink-0 border-t px-3 py-2", posDividerClass)}>
-                  <div className="grid grid-cols-3 gap-2 text-center text-xs tabular-nums">
-                    <div>
-                      <div className={posMutedTextClass}>{t("tender.paid")}</div>
-                      <div className="mt-1 font-semibold">{money.format(paidPreview)}</div>
-                    </div>
-                    <div>
-                      <div className={posMutedTextClass}>{t("tender.due")}</div>
-                      <div className="mt-1 font-semibold">{money.format(balancePreview)}</div>
-                    </div>
-                    <div>
-                      <div className={posMutedTextClass}>{t("tender.change")}</div>
-                      <div className="mt-1 font-semibold">{money.format(changePreview)}</div>
-                    </div>
-                  </div>
                   {saleBlocker ? (
-                    <div className="mt-2 rounded-lg border border-[var(--dash-warning)]/25 bg-[var(--dash-warning-soft)] px-3 py-2 text-xs font-medium text-[#ffe4a8]">
+                    <div className="rounded-lg border border-[var(--dash-warning)]/25 bg-[var(--dash-warning-soft)] px-3 py-2 text-xs font-medium text-[#ffe4a8]">
                       {saleBlocker}
                     </div>
                   ) : null}
-                  <POSButton
-                    type="button"
-                    className={cn("mt-2.5 h-12 w-full justify-center text-base", posButtonPrimaryClass, touchMode && "h-14")}
-                    disabled={!canCommitSale}
-                    onClick={handleCommitSale}
-                  >
-                    <CreditCard className="h-4 w-4" />
-                    {t("charge.cta", { amount: money.format(cart?.total ?? 0) })}
-                  </POSButton>
+                  </div>
+
+                  <ReceiptTokenHistoryPanel
+                    searchDraft={receiptHistorySearchDraft}
+                    hasSearched={receiptHistorySearchQuery !== null}
+                    selectedSaleId={receiptHistorySaleId}
+                    saleResults={receiptHistorySales}
+                    tokens={receiptHistoryTokens}
+                    canManage={canManageReceiptTokens}
+                    capabilityLoading={receiptTokenCapabilityQuery.isLoading}
+                    capabilityUnavailable={receiptTokenCapabilityQuery.isError}
+                    capabilityErrorMessage={receiptTokenCapabilityError || receiptTokenCapabilityUnavailableError}
+                    salesLoading={receiptHistorySalesQuery.isFetching}
+                    isLoading={receiptHistoryTokensQuery.isFetching}
+                    salesErrorMessage={receiptHistorySalesError}
+                    errorMessage={receiptHistoryError}
+                    revokePendingTokenId={revokePendingTokenId}
+                    controlLabels={receiptTokenLabels}
+                    labels={receiptTokenHistoryLabels}
+                    formatTotal={(amount) => money.format(amount)}
+                    onSearchDraftChange={setReceiptHistorySearchDraft}
+                    onLookup={handleReceiptHistoryLookup}
+                    onSelectSale={setReceiptHistorySaleId}
+                    onRevoke={handleRevokeHistoricalReceiptToken}
+                  />
+                </div>
+
+                <div data-testid="pos-charge-footer" className={cn("shrink-0 border-t px-3 py-1", posDividerClass)}>
+                  <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_minmax(9.5rem,1.25fr)] xl:items-center xl:gap-2">
+                    <div className="grid grid-cols-3 gap-2 text-center text-xs tabular-nums">
+                      <div>
+                        <div className={posMutedTextClass}>{t("tender.paid")}</div>
+                        <div className="mt-0.5 font-semibold">{money.format(paidPreview)}</div>
+                      </div>
+                      <div>
+                        <div className={posMutedTextClass}>{t("tender.due")}</div>
+                        <div className="mt-0.5 font-semibold">{money.format(balancePreview)}</div>
+                      </div>
+                      <div>
+                        <div className={posMutedTextClass}>{t("tender.change")}</div>
+                        <div className="mt-0.5 font-semibold">{money.format(changePreview)}</div>
+                      </div>
+                    </div>
+                    <POSButton
+                      type="button"
+                      className={cn("mt-1.5 h-11 w-full justify-center text-base xl:mt-0", posButtonPrimaryClass, touchMode && "h-14")}
+                      disabled={!canCommitSale}
+                      onClick={handleCommitSale}
+                    >
+                      <CreditCard className="h-4 w-4" />
+                      {t("charge.cta", { amount: money.format(cart?.total ?? 0) })}
+                    </POSButton>
+                  </div>
                 </div>
               </div>
             </div>
@@ -2267,7 +2377,9 @@ export default function ProfessionalPOSSystem() {
               {t("customers.choose")}
             </DialogTitle>
             <DialogDescription className={posMutedTextClass}>
-              {t("customers.description")}
+              {selectedLocation
+                ? t("customers.descriptionForLocation", { location: selectedLocation.name, count: customerTotal })
+                : t("customers.locationRequired")}
             </DialogDescription>
           </DialogHeader>
 
@@ -2279,9 +2391,16 @@ export default function ProfessionalPOSSystem() {
                 value={customerSearch}
                 onChange={(event) => setCustomerSearch(event.target.value)}
                 placeholder={t("customers.searchPlaceholder")}
+                disabled={!selectedLocationId}
                 className={cn(posFieldClass, "pl-9")}
               />
             </div>
+
+            {customersQueryError ? (
+              <div role="alert" className="rounded-lg border border-[var(--dash-danger)]/35 bg-[var(--dash-danger-soft)] px-3 py-2 text-sm text-[#ffd4db]">
+                {customersQueryError}
+              </div>
+            ) : null}
 
             <POSButton
               type="button"

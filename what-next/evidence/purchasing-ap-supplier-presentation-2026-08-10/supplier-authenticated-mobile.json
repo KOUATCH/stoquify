@@ -1,0 +1,127 @@
+{
+  "status": "PASS",
+  "checkedAt": "2026-08-11T17:37:21.540Z",
+  "project": "supplier-authenticated-mobile",
+  "viewport": "mobile",
+  "scenarios": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "createdSupplierId": "cmsoxywc0004zmafgo6v510v8",
+  "fixture": {
+    "source": "scripts/supplier-e2e-fixture.js",
+    "productionBackfill": false,
+    "organizationId": "org_supplier_e2e_local",
+    "foreignOrganizationId": "org_supplier_e2e_foreign",
+    "lifecycleSupplierId": "supplier_supplier_e2e_archive_mobile"
+  },
+  "results": [
+    {
+      "surface": "list",
+      "viewport": "mobile",
+      "path": "/en/dashboard/purchases/suppliers",
+      "finalUrl": "http://127.0.0.1:3137/en/dashboard/purchases/suppliers",
+      "screenshot": "what-next/evidence/purchasing-ap-supplier-presentation-2026-08-10/list-mobile.png",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 412,
+        "documentWidth": 412,
+        "bodyWidth": 412,
+        "hasDocumentOverflow": false,
+        "clippedActions": [],
+        "overlappingActions": []
+      }
+    },
+    {
+      "surface": "mutation-dialog",
+      "viewport": "mobile",
+      "path": "/en/dashboard/purchases/suppliers",
+      "finalUrl": "http://127.0.0.1:3137/en/dashboard/purchases/suppliers",
+      "screenshot": "what-next/evidence/purchasing-ap-supplier-presentation-2026-08-10/mutation-dialog-mobile.png",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 412,
+        "documentWidth": 412,
+        "bodyWidth": 412,
+        "hasDocumentOverflow": false,
+        "clippedActions": [],
+        "overlappingActions": []
+      }
+    },
+    {
+      "surface": "create-page",
+      "viewport": "mobile",
+      "path": "/en/dashboard/purchases/suppliers/create",
+      "finalUrl": "http://127.0.0.1:3137/en/dashboard/purchases/suppliers/create",
+      "screenshot": "what-next/evidence/purchasing-ap-supplier-presentation-2026-08-10/create-page-mobile.png",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 412,
+        "documentWidth": 412,
+        "bodyWidth": 412,
+        "hasDocumentOverflow": false,
+        "clippedActions": [],
+        "overlappingActions": []
+      }
+    },
+    {
+      "surface": "detail-page",
+      "viewport": "mobile",
+      "path": "/en/dashboard/purchases/suppliers/cmsoxywc0004zmafgo6v510v8",
+      "finalUrl": "http://127.0.0.1:3137/en/dashboard/purchases/suppliers/cmsoxywc0004zmafgo6v510v8",
+      "screenshot": "what-next/evidence/purchasing-ap-supplier-presentation-2026-08-10/detail-page-mobile.png",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 412,
+        "documentWidth": 412,
+        "bodyWidth": 412,
+        "hasDocumentOverflow": false,
+        "clippedActions": [],
+        "overlappingActions": []
+      }
+    },
+    {
+      "surface": "edit-page",
+      "viewport": "mobile",
+      "path": "/en/dashboard/purchases/suppliers/cmsoxywc0004zmafgo6v510v8/edit",
+      "finalUrl": "http://127.0.0.1:3137/en/dashboard/purchases/suppliers/cmsoxywc0004zmafgo6v510v8/edit",
+      "screenshot": "what-next/evidence/purchasing-ap-supplier-presentation-2026-08-10/edit-page-mobile.png",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 412,
+        "documentWidth": 412,
+        "bodyWidth": 412,
+        "hasDocumentOverflow": false,
+        "clippedActions": [],
+        "overlappingActions": []
+      }
+    },
+    {
+      "surface": "history-page",
+      "viewport": "mobile",
+      "path": "/en/dashboard/purchases/payables/history",
+      "finalUrl": "http://127.0.0.1:3137/en/dashboard/purchases/payables/history?supplierId=cmsoxywc0004zmafgo6v510v8",
+      "screenshot": "what-next/evidence/purchasing-ap-supplier-presentation-2026-08-10/history-page-mobile.png",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 412,
+        "documentWidth": 412,
+        "bodyWidth": 412,
+        "hasDocumentOverflow": false,
+        "clippedActions": [],
+        "overlappingActions": []
+      }
+    }
+  ]
+}

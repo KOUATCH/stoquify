@@ -1,11 +1,11 @@
 {
   "summary": {
-    "generatedAt": "2026-08-01T14:34:21.870Z",
+    "generatedAt": "2026-08-12T19:19:06.345Z",
     "mode": "fail",
-    "status": "ready",
+    "status": "blocked",
     "checkCount": 9,
-    "readyCount": 9,
-    "blockerCount": 0
+    "readyCount": 7,
+    "blockerCount": 2
   },
   "scope": {
     "roleWorkspace": "Daily Digest",
@@ -19,7 +19,7 @@
     },
     {
       "id": "route_propagates_roles_without_currency_override",
-      "ready": true
+      "ready": false
     },
     {
       "id": "digest_configs_are_permission_filtered",
@@ -35,7 +35,7 @@
     },
     {
       "id": "no_workspace_permission_and_session_states",
-      "ready": true
+      "ready": false
     },
     {
       "id": "command_center_anatomy_is_present",
@@ -50,5 +50,8 @@
       "ready": true
     }
   ],
-  "blockers": []
+  "blockers": [
+    "route_propagates_roles_without_currency_override",
+    "no_workspace_permission_and_session_states"
+  ]
 }

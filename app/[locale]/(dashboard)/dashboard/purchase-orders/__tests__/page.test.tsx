@@ -164,23 +164,25 @@ describe("PurchaseOrdersPage", () => {
     })
   })
 
-  it("enforces purchasing RBAC, observes module access in report mode, and loads tenant-scoped purchase order data", async () => {
+  it("enforces purchasing RBAC, observes module access in report mode, and loads tenant-scoped purchase-order data", async () => {
     render(await PurchaseOrdersPage())
 
     expect(mockRequirePermission).toHaveBeenCalledWith("purchases.orders.read", {
       resource: "PurchaseOrder",
       auditAllowed: true,
     })
-    expect(mockObserveModuleAccess).toHaveBeenCalledWith(expect.objectContaining({
-      organizationId: "org-1",
-      userId: "user-1",
-      actorPermissions: ["purchases.orders.read"],
-      moduleSlug: "purchasing",
-      surfaceType: "page",
-      surface: "/dashboard/purchase-orders",
-      accessIntent: "read",
-      mode: "observe",
-    }))
+    expect(mockObserveModuleAccess).toHaveBeenCalledWith(
+      expect.objectContaining({
+        organizationId: "org-1",
+        userId: "user-1",
+        actorPermissions: ["purchases.orders.read"],
+        moduleSlug: "purchasing",
+        surfaceType: "page",
+        surface: "/dashboard/purchase-orders",
+        accessIntent: "read",
+        mode: "observe",
+      }),
+    )
     expect(mockListPurchaseOrders).toHaveBeenCalledWith("org-1")
     expect(mockGetPurchaseOrderFormOptions).toHaveBeenCalledWith("org-1")
     expect(mockGetSummary).toHaveBeenCalledWith("org-1")
@@ -194,7 +196,7 @@ describe("PurchaseOrdersPage", () => {
 
     render(await PurchaseOrdersPage())
 
-    expect(screen.getByRole("heading", { name: "Purchase orders are not available for this role" })).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "Purchase order dashboard is not available for this role" })).toBeInTheDocument()
     expect(screen.getByRole("main")).toHaveAttribute("data-kind", "permission_denied")
     expect(screen.getByRole("link", { name: "Back to dashboard" })).toHaveAttribute("href", "/fr/dashboard")
     expect(mockObserveModuleAccess).not.toHaveBeenCalled()
@@ -208,7 +210,7 @@ describe("PurchaseOrdersPage", () => {
 
     render(await PurchaseOrdersPage())
 
-    expect(screen.getByRole("heading", { name: "Purchase orders need an active organization" })).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "Purchase order dashboard needs an active organization" })).toBeInTheDocument()
     expect(screen.getByRole("main")).toHaveAttribute("data-kind", "no_active_org")
     expect(mockObserveModuleAccess).not.toHaveBeenCalled()
     expect(mockListPurchaseOrders).not.toHaveBeenCalled()

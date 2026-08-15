@@ -1,13 +1,13 @@
 # Report Trust and Export Certification Readiness Gate
 
-Generated: 2026-08-09T07:54:05.775Z
+Generated: 2026-08-12T19:18:42.715Z
 Mode: fail
-Status: blocked
+Status: ready
 
 ## Summary
 
-- Checks ready: 34/35
-- Blockers: 1
+- Checks ready: 35/35
+- Blockers: 0
 
 ## Checks
 
@@ -43,13 +43,13 @@ Status: blocked
 - ready: posted_customer_receivable_document_foundation
 - ready: immutable_customer_statement_snapshot_foundation
 - ready: signed_customer_statement_external_access_foundation
-- blocked: consented_customer_referral_launch_foundation
+- ready: consented_customer_referral_launch_foundation
 - ready: customer_settlement_reversal_protected_action_boundary
 - ready: statutory_payroll_and_inventory_evidence_coverage
 
 ## Blockers
 
-- consented_customer_referral_launch_foundation
+- None
 
 ## Certification Boundary
 

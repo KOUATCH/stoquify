@@ -1,7 +1,7 @@
 "use client"
 
 import { useLocale, useTranslations } from "next-intl"
-import { CalendarClock, Database, Landmark, ReceiptText, Truck } from "lucide-react"
+import { ArrowLeft, CalendarClock, Database, Landmark, ReceiptText, Truck } from "lucide-react"
 
 import {
   DetailLine,
@@ -11,8 +11,13 @@ import {
   type TransactionHistoryFilters,
   type TransactionHistoryKpi,
 } from "@/components/dashboard/history/TransactionHistoryWorkbenchShell"
+import {
+  dashboardToneClass,
+  type DashboardTone,
+} from "@/components/dashboard/primitives/command-center-primitives"
 import { Badge } from "@/components/ui/badge"
 import { useAPHistoryWorkbench } from "@/hooks/useAPHistoryWorkbench"
+import { cn } from "@/lib/utils"
 import type { APHistoryResult, APHistoryRow } from "@/services/purchasing/ap-history.service"
 
 type APHistoryT = ReturnType<typeof useTranslations<"apHistory">>
@@ -41,6 +46,13 @@ export function APHistoryWorkbench() {
   const timezone = result?.snapshot.timezone ?? result?.appliedFilters.timezone ?? "UTC"
   const selectedRow = rows.find((row) => row.id === selectedRowId) ?? null
   const isPartial = result?.completeness.state === "partial"
+  const supplierScope = filters.supplierId
+    ? rows.find((row) => row.supplier.id === filters.supplierId)?.supplier.name ??
+      filters.supplierId
+    : null
+  const scopeLabel = supplierScope
+    ? t("scopeSupplier", { supplier: supplierScope })
+    : t("scopeLabel")
 
   return (
     <TransactionHistoryWorkbenchShell
@@ -48,7 +60,7 @@ export function APHistoryWorkbench() {
         eyebrow: t("eyebrow"),
         title: t("title"),
         summary: t("summary"),
-        scopeLabel: t("scopeLabel"),
+        scopeLabel,
         filtersTitle: t("filters.title"),
         filtersDetail: t("filters.detail"),
         searchPlaceholder: t("filters.searchPlaceholder"),
@@ -97,7 +109,7 @@ export function APHistoryWorkbench() {
         id: (row) => row.id,
         title: (row) => row.reference.invoiceNumber ?? row.reference.paymentNumber ?? row.sourceId,
         subtitle: (row) => `${row.supplier.name} / ${laneLabel(row.lane, t)}`,
-        status: (row) => <StateBadge state={row.controlState} />,
+        status: (row) => <StateBadge state={row.controlState} t={t} />,
         value: (row) => formatMoney(row.signedPayableMovement, row.currency, locale),
       }}
       drawerTitle={(row) => row.reference.invoiceNumber ?? row.reference.paymentNumber ?? row.sourceId}
@@ -124,7 +136,27 @@ export function APHistoryWorkbench() {
       partialSources={result?.completeness.sources.filter((source) => source.state === "partial").map((source) => source.source) ?? []}
       isExporting={isExporting}
       exportStatus={exportStatus ? t(`exportStatus.${exportStatus}`) : null}
+      headerActions={
+        filters.supplierId
+          ? [
+              {
+                label: t("actions.backToSupplier"),
+                href:
+                  "/" +
+                  locale +
+                  "/dashboard/purchases/suppliers/" +
+                  encodeURIComponent(filters.supplierId),
+                icon: ArrowLeft,
+                variant: "secondary",
+              },
+            ]
+          : []
+      }
+      hideEmptyActionQueue
       snapshotMetadata={[
+        ...(supplierScope
+          ? [{ label: t("snapshot.supplier"), value: supplierScope, icon: Truck }]
+          : []),
         { label: t("snapshot.timezone"), value: timezone, icon: Landmark },
         { label: t("snapshot.recordedThrough"), value: formatHistoryDate(result?.snapshot.recordedThrough, locale, timezone), icon: CalendarClock },
         { label: t("snapshot.generatedAt"), value: formatHistoryDate(result?.snapshot.generatedAt, locale, timezone), icon: Database },
@@ -183,7 +215,7 @@ function buildColumns(t: APHistoryT, locale: string, timezone: string): Transact
     { id: "reference", header: t("table.reference"), cell: (row) => row.reference.invoiceNumber ?? row.reference.paymentNumber ?? row.sourceId },
     { id: "amount", header: t("table.amount"), cell: (row) => formatMoney(row.amount, row.currency, locale) },
     { id: "movement", header: t("table.movement"), cell: (row) => formatMoney(row.signedPayableMovement, row.currency, locale) },
-    { id: "state", header: t("table.state"), cell: (row) => <StateBadge state={row.controlState} /> },
+    { id: "state", header: t("table.state"), cell: (row) => <StateBadge state={row.controlState} t={t} /> },
     { id: "effectiveAt", header: t("table.effectiveAt"), cell: (row) => formatHistoryDate(row.effectiveAt, locale, timezone) },
   ]
 }
@@ -203,8 +235,59 @@ function laneLabel(lane: APHistoryRow["lane"], t: APHistoryT) {
   return t(`lanes.${lane}`)
 }
 
-function StateBadge({ state }: { state: APHistoryRow["controlState"] }) {
-  return <Badge variant="outline" className="rounded-md border-[var(--dash-border-subtle)]">{state.replaceAll("_", " ")}</Badge>
+const apControlStateTones = {
+  draft: "muted",
+  matched: "info",
+  posted: "brand",
+  payment_pending: "gold",
+  paid: "success",
+  released: "spruce",
+  exception: "danger",
+  cancelled: "muted",
+} satisfies Record<APHistoryRow["controlState"], DashboardTone>
+
+function StateBadge({
+  state,
+  t,
+}: {
+  state: APHistoryRow["controlState"]
+  t: APHistoryT
+}) {
+  return (
+    <Badge
+      variant="outline"
+      className={cn(
+        "rounded-md",
+        dashboardToneClass(apControlStateTones[state]),
+      )}
+    >
+      {controlStateLabel(state, t)}
+    </Badge>
+  )
+}
+
+function controlStateLabel(
+  state: APHistoryRow["controlState"],
+  t: APHistoryT,
+) {
+  switch (state) {
+    case "draft":
+      return t("controlStates.draft")
+    case "matched":
+      return t("controlStates.matched")
+    case "posted":
+      return t("controlStates.posted")
+    case "payment_pending":
+      return t("controlStates.paymentPending")
+    case "paid":
+      return t("controlStates.paid")
+    case "released":
+      return t("controlStates.released")
+    case "exception":
+      return t("controlStates.exception")
+    case "cancelled":
+      return t("controlStates.cancelled")
+  }
 }
 
 function formatMoney(value: string | number, currency: string, locale: string) {

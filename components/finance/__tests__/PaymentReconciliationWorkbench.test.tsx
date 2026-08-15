@@ -40,6 +40,44 @@ jest.mock("next-intl", () => ({
       "trustBanner.available": "Available",
       "trustBanner.missing": "Missing",
       "trustBanner.suspenseAmount": "Exposure {amount}",
+      "statementImport.title": "Provider statement intake",
+      "statementImport.description": "Import statement evidence.",
+      "statementImport.noActiveAccount": "Configure an active provider account.",
+      "statementImport.accountLabel": "Provider account",
+      "statementImport.accountPlaceholder": "Select a provider account",
+      "statementImport.fileLabel": "Statement file",
+      "statementImport.fileNameLabel": "Statement file name",
+      "statementImport.fileNamePlaceholder": "Statement file name",
+      "statementImport.contentLabel": "Statement content",
+      "statementImport.contentPlaceholder": "Upload or paste statement content.",
+      "statementImport.formatHint": "Required columns: amount and date.",
+      "statementImport.action": "Import statement",
+      "statementImport.historyTitle": "Recent statement evidence",
+      "statementImport.emptyHistory": "No statement file has been imported yet.",
+      "statementImport.unnamedFile": "Unnamed statement",
+      "statementImport.lineCount": "{count} line(s)",
+      "statementImport.statuses.IMPORTED": "Imported",
+      "statementImport.notifications.completedTitle": "Statement intake complete",
+      "statementImport.notifications.completedMessage": "{status}: {count} line(s) imported.",
+      "statementImport.notifications.failedTitle": "Statement import failed",
+      "statementImport.notifications.failedMessage": "The statement could not be imported safely.",
+      "statementImport.notifications.readFailedTitle": "File could not be read",
+      "statementImport.notifications.readFailedMessage": "Choose a readable statement file.",
+      "manualMatch.title": "Manual match review",
+      "manualMatch.description": "Compare evidence and require an independent approver.",
+      "manualMatch.emptyCandidates": "No evidence pair currently requires a manual match proposal.",
+      "manualMatch.internalEvidence": "Internal {reference} / {amount}",
+      "manualMatch.externalEvidence": "External {reference} / {amount}",
+      "manualMatch.amountLabel": "Amount to match",
+      "manualMatch.approvalTitle": "Independent approval queue",
+      "manualMatch.emptyApprovals": "No manual match proposal is waiting for approval.",
+      "manualMatch.proposalFacts": "{id} / {amount} / {time}",
+      "manualMatch.actions.propose": "Propose match",
+      "manualMatch.actions.approve": "Approve match",
+      "manualMatch.notifications.proposedTitle": "Manual match proposed",
+      "manualMatch.notifications.proposedMessage": "Waiting for an independent reviewer.",
+      "manualMatch.notifications.approvedTitle": "Manual match approved",
+      "manualMatch.notifications.approvedMessage": "The approval record was created.",
       "certification.statuses.NEEDS_REVIEW": "Needs review",
       "filters.location": "Location",
       "filters.allLocations": "All locations",
@@ -117,6 +155,8 @@ jest.mock("@/hooks/payments/usePaymentReconciliationWorkbench", () => ({
 
 jest.mock("@/hooks/payments/usePaymentReconciliationDashboard", () => ({
   useExportReconciliationCertificate: jest.fn(),
+  useImportProviderStatement: jest.fn(),
+  useManualMatchWorkflow: jest.fn(),
   usePaymentReconciliationDashboard: jest.fn(),
   useResolveSuspenseItem: jest.fn(),
   useRunPaymentReconciliation: jest.fn(),
@@ -127,6 +167,8 @@ import { getProofTrailAction } from "@/actions/evidence/proof-trail.actions"
 import { usePaymentReconciliationWorkbench } from "@/hooks/payments/usePaymentReconciliationWorkbench"
 import {
   useExportReconciliationCertificate,
+  useImportProviderStatement,
+  useManualMatchWorkflow,
   usePaymentReconciliationDashboard,
   useResolveSuspenseItem,
   useRunPaymentReconciliation,
@@ -142,6 +184,8 @@ const mockUsePaymentReconciliationDashboard = usePaymentReconciliationDashboard 
 const mockUseRunPaymentReconciliation = useRunPaymentReconciliation as jest.Mock
 const mockUseSignReconciliationRun = useSignReconciliationRun as jest.Mock
 const mockUseExportReconciliationCertificate = useExportReconciliationCertificate as jest.Mock
+const mockUseImportProviderStatement = useImportProviderStatement as jest.Mock
+const mockUseManualMatchWorkflow = useManualMatchWorkflow as jest.Mock
 const mockUseResolveSuspenseItem = useResolveSuspenseItem as jest.Mock
 
 const dashboard: PaymentReconciliationDashboardData = {
@@ -166,6 +210,9 @@ const dashboard: PaymentReconciliationDashboardData = {
     closeBlockerCount: 4,
   },
   providerAccounts: [],
+  statementFiles: [],
+  manualMatchCandidates: [],
+  manualMatchProposals: [],
   recentRuns: [],
   suspenseQueue: [],
   notificationQueue: [],
@@ -297,7 +344,9 @@ function proofTrail(overrides: Partial<ProofTrailResult> = {}): ProofTrailResult
   }
 }
 
-function setupWorkbench(data = workbenchData()) {
+function setupWorkbench(data = workbenchData(), durableDashboard?: PaymentReconciliationDashboardData) {
+  const importStatement = mutationMock()
+  const manualMatch = { propose: mutationMock(), approve: mutationMock() }
   mockUsePaymentReconciliationWorkbench.mockReturnValue({
     data,
     isLoading: false,
@@ -305,7 +354,9 @@ function setupWorkbench(data = workbenchData()) {
     error: null,
     refetch: jest.fn(),
   })
-  mockUsePaymentReconciliationDashboard.mockReturnValue({ data: undefined, isLoading: false, error: null })
+  mockUsePaymentReconciliationDashboard.mockReturnValue({ data: durableDashboard, isLoading: false, error: null })
+  mockUseImportProviderStatement.mockReturnValue(importStatement)
+  mockUseManualMatchWorkflow.mockReturnValue(manualMatch)
   mockUseRunPaymentReconciliation.mockReturnValue(mutationMock())
   mockUseSignReconciliationRun.mockReturnValue(mutationMock())
   mockUseExportReconciliationCertificate.mockReturnValue(mutationMock())
@@ -315,7 +366,7 @@ function setupWorkbench(data = workbenchData()) {
     approve: mutationMock(),
   })
 
-  return render(<PaymentReconciliationWorkbench />)
+  return { ...render(<PaymentReconciliationWorkbench />), importStatement, manualMatch }
 }
 
 function rowForPayment(paymentNumber: string) {
@@ -428,5 +479,91 @@ describe("PaymentReconciliationWorkbench proof launcher", () => {
     fireEvent.click(within(rowForPayment("PAY-1")).getByRole("button", { name: "Open proof" }))
 
     expect(await screen.findByText("Proof service unavailable")).toBeInTheDocument()
+  })
+})
+
+describe("PaymentReconciliationWorkbench evidence operations", () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
+  it("imports statement content through the protected provider account workflow", async () => {
+    const rendered = setupWorkbench(workbenchData(), {
+      ...dashboard,
+      providerAccounts: [{
+        id: "provider-account-1",
+        displayName: "MTN MoMo",
+        providerCode: "MTN",
+        status: "ACTIVE",
+        currencyCode: "XAF",
+        railName: "Mobile money",
+        railType: "MOBILE_MONEY",
+      }],
+    })
+    rendered.importStatement.mutateAsync.mockResolvedValue({ status: "IMPORTED", importedLineCount: 1 })
+
+    fireEvent.change(screen.getByLabelText("Statement content"), {
+      target: { value: "amount,date,reference\n1000,2026-08-14,REF-1" },
+    })
+    fireEvent.change(screen.getByLabelText("Statement file name"), { target: { value: "momo-2026-08-14.csv" } })
+    fireEvent.click(screen.getByRole("button", { name: "Import statement" }))
+
+    await waitFor(() => {
+      expect(rendered.importStatement.mutateAsync).toHaveBeenCalledWith({
+        providerAccountId: "provider-account-1",
+        providerCode: "MTN",
+        rawContent: "amount,date,reference\n1000,2026-08-14,REF-1",
+        fileName: "momo-2026-08-14.csv",
+      })
+    })
+  })
+
+  it("proposes and approves manual matches with bounded evidence identifiers", async () => {
+    const rendered = setupWorkbench(workbenchData(), {
+      ...dashboard,
+      manualMatchCandidates: [{
+        exceptionId: "exception-1",
+        providerAccountId: "provider-account-1",
+        providerAccountName: "MTN MoMo",
+        paymentTransactionId: "payment-transaction-1",
+        providerEventId: null,
+        statementLineId: "statement-line-1",
+        exceptionType: "AMOUNT_MISMATCH",
+        severity: "HIGH",
+        internalReference: "RE****01",
+        externalReference: "RE****02",
+        internalAmount: 1000,
+        externalAmount: 900,
+        currencyCode: "XAF",
+        occurredAt: "2026-08-14T08:00:00.000Z",
+      }],
+      manualMatchProposals: [{
+        id: "proposed-match-1",
+        providerAccountId: "provider-account-1",
+        providerAccountName: "MTN MoMo",
+        paymentTransactionId: "payment-transaction-1",
+        providerEventId: null,
+        statementLineId: "statement-line-1",
+        amountMatched: 900,
+        currencyCode: "XAF",
+        matchedById: "maker-1",
+        createdAt: "2026-08-14T08:30:00.000Z",
+      }],
+    })
+
+    fireEvent.click(screen.getByRole("button", { name: "Propose match" }))
+    fireEvent.click(screen.getByRole("button", { name: "Approve match" }))
+
+    await waitFor(() => {
+      expect(rendered.manualMatch.propose.mutateAsync).toHaveBeenCalledWith({
+        providerAccountId: "provider-account-1",
+        paymentTransactionId: "payment-transaction-1",
+        providerEventId: undefined,
+        statementLineId: "statement-line-1",
+        amountMatched: "900",
+        currencyCode: "XAF",
+      })
+      expect(rendered.manualMatch.approve.mutateAsync).toHaveBeenCalledWith({ proposedMatchId: "proposed-match-1" })
+    })
   })
 })

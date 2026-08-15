@@ -1,0 +1,160 @@
+{
+  "generatedAt": "2026-08-13T16:27:22.964Z",
+  "status": "REJECTED_BLOCKED_EVIDENCE_INCOMPLETE",
+  "packetId": "MIG-RISK-20260611130000-F7DE8DC7-RECONCILED-2026-08-13",
+  "packetBindings": {
+    "ready": true,
+    "errors": [],
+    "migrationSha256": "f7de8dc7ace0a5e063cdb7ecd9527e77807b7f872e474546819e9fca13a273d4",
+    "migrationByteLength": 24674,
+    "operationCount": 13,
+    "operationHashMismatches": [],
+    "inventorySha256": "55d332c3319b65acfdf415e64042a15504d12861b664429af7e63155296e1ad1",
+    "boundFileCount": 24,
+    "boundFileMismatches": []
+  },
+  "manifest": {
+    "ready": true,
+    "errors": [],
+    "schemaSha256": "9156e5ae948854abee5d95adc8c033cdc3cea66bbb50173b078e1c24353f0a54",
+    "requiredArtifactCount": 14,
+    "completedArtifactCount": 0,
+    "missingArtifactIds": [],
+    "duplicateArtifactIds": [],
+    "unexpectedArtifactIds": [],
+    "supportingEvidenceMismatches": []
+  },
+  "artifacts": [
+    {
+      "id": "R-01",
+      "path": "environment-census.json",
+      "status": "EXTERNAL_HUMAN_ACTION_REQUIRED",
+      "validation": "EXTERNAL_HUMAN_ACTION_REQUIRED",
+      "declaredStatus": "TEMPLATE_NOT_EVIDENCE",
+      "actualSha256": "862aa8c38f6185622226c9d1ce287749ed42201c578aec13948366fa1985d216",
+      "reason": "manifest_does_not_claim_completed_evidence"
+    },
+    {
+      "id": "R-02",
+      "path": "affected-data-profile.json",
+      "status": "EXTERNAL_HUMAN_ACTION_REQUIRED",
+      "validation": "EXTERNAL_HUMAN_ACTION_REQUIRED",
+      "declaredStatus": "TEMPLATE_NOT_EVIDENCE",
+      "actualSha256": "347f09207f6b862d4f335785259fa10e43fdb5fcb61ca55cc93c09cc1db717aa",
+      "reason": "manifest_does_not_claim_completed_evidence"
+    },
+    {
+      "id": "R-03",
+      "path": "execute-empty-baseline-rehearsal.log",
+      "status": "PARTIAL",
+      "validation": "PARTIAL",
+      "declaredStatus": "PARTIAL",
+      "actualSha256": "2baf90b7de72c68a27ee136e7cb1c3c9d47d458043cd8e16cab866c771c4f566",
+      "reason": "manifest_does_not_claim_completed_evidence"
+    },
+    {
+      "id": "R-04",
+      "path": "resolve-existing-database-rehearsal.log",
+      "status": "EXTERNAL_HUMAN_ACTION_REQUIRED",
+      "validation": "EXTERNAL_HUMAN_ACTION_REQUIRED",
+      "declaredStatus": "TEMPLATE_NOT_EVIDENCE",
+      "actualSha256": "913334c42f9782a22748566cd40b005fbce6b3d05e12733775166564c7be323c",
+      "reason": "manifest_does_not_claim_completed_evidence"
+    },
+    {
+      "id": "R-05",
+      "path": "reconciliation.json",
+      "status": "PARTIAL",
+      "validation": "PARTIAL",
+      "declaredStatus": "TEMPLATE_NOT_EVIDENCE",
+      "actualSha256": "e9318bffa50e38dabdd9d140cf0a5c5ba693c8d90bb50c4d0f88471b89b1fbb5",
+      "reason": "manifest_does_not_claim_completed_evidence"
+    },
+    {
+      "id": "R-06",
+      "path": "auth-regression.log",
+      "status": "EXTERNAL_HUMAN_ACTION_REQUIRED",
+      "validation": "EXTERNAL_HUMAN_ACTION_REQUIRED",
+      "declaredStatus": "TEMPLATE_NOT_EVIDENCE",
+      "actualSha256": "a17c0a52d8e80d3e98b9325fff2389596363cfa3f613c99cae411e3832a4f584",
+      "reason": "manifest_does_not_claim_completed_evidence"
+    },
+    {
+      "id": "B-01",
+      "path": "backup-manifest.json",
+      "status": "EXTERNAL_HUMAN_ACTION_REQUIRED",
+      "validation": "EXTERNAL_HUMAN_ACTION_REQUIRED",
+      "declaredStatus": "TEMPLATE_NOT_EVIDENCE",
+      "actualSha256": "c1cd5f83b0fbcf4a83bab58b1f078c8b9b9f03231a56e1cf5c9c287be92be0c0",
+      "reason": "manifest_does_not_claim_completed_evidence"
+    },
+    {
+      "id": "B-02",
+      "path": "restore-test.log",
+      "status": "EXTERNAL_HUMAN_ACTION_REQUIRED",
+      "validation": "EXTERNAL_HUMAN_ACTION_REQUIRED",
+      "declaredStatus": "TEMPLATE_NOT_EVIDENCE",
+      "actualSha256": "af1fd4344fb1c9d841879251afe7c424274f0ec0fca425bf26668a16b5131050",
+      "reason": "manifest_does_not_claim_completed_evidence"
+    },
+    {
+      "id": "B-03",
+      "path": "recovery-runbook.md",
+      "status": "PARTIAL",
+      "validation": "PARTIAL",
+      "declaredStatus": "",
+      "actualSha256": "b77ec17031bacbe9fa188ea7a1a608243ab37df19dca0a98a42d0b32b71a4ce7",
+      "reason": "manifest_does_not_claim_completed_evidence"
+    },
+    {
+      "id": "B-04",
+      "path": "transaction-failure-injection.log",
+      "status": "EXTERNAL_HUMAN_ACTION_REQUIRED",
+      "validation": "EXTERNAL_HUMAN_ACTION_REQUIRED",
+      "declaredStatus": "TEMPLATE_NOT_EVIDENCE",
+      "actualSha256": "c51c576860b0f06b22af2a7e94d2d1515152d0a3fc783886da4aa355d74c2417",
+      "reason": "manifest_does_not_claim_completed_evidence"
+    },
+    {
+      "id": "B-05",
+      "path": "resolve-metadata-recovery.log",
+      "status": "EXTERNAL_HUMAN_ACTION_REQUIRED",
+      "validation": "EXTERNAL_HUMAN_ACTION_REQUIRED",
+      "declaredStatus": "TEMPLATE_NOT_EVIDENCE",
+      "actualSha256": "de157b233075f757c1b5d569ef799fc3f0a8935ba203bccd30142c7440cee6ff",
+      "reason": "manifest_does_not_claim_completed_evidence"
+    },
+    {
+      "id": "A-01",
+      "path": "maker-attestation.json",
+      "status": "EXTERNAL_HUMAN_ACTION_REQUIRED",
+      "validation": "EXTERNAL_HUMAN_ACTION_REQUIRED",
+      "declaredStatus": "TEMPLATE_NOT_EVIDENCE",
+      "actualSha256": "1c6167fbfcc568851260a098da98f4b0d3f4d01ddda479f90b27376bb5907429",
+      "reason": "manifest_does_not_claim_completed_evidence"
+    },
+    {
+      "id": "A-02",
+      "path": "checker-decision.json",
+      "status": "EXTERNAL_HUMAN_ACTION_REQUIRED",
+      "validation": "EXTERNAL_HUMAN_ACTION_REQUIRED",
+      "declaredStatus": "TEMPLATE_NOT_EVIDENCE",
+      "actualSha256": "ba2ec740786d7d860eb5faa8143788c3ea7311e287911c154488b50f60673b93",
+      "reason": "manifest_does_not_claim_completed_evidence"
+    },
+    {
+      "id": "A-03",
+      "path": "exact-hash-approval-entry.json",
+      "status": "NOT_APPLICABLE_PENDING_CHECKER",
+      "validation": "NOT_APPLICABLE_PENDING_CHECKER",
+      "declaredStatus": "NOT_APPLICABLE_PENDING_CHECKER",
+      "actualSha256": "7e8317f1944c9d424856ba05e6efa2034b1e3949857c4df7a3b2b2f5abc05c04",
+      "reason": "manifest_does_not_claim_completed_evidence"
+    }
+  ],
+  "preCheckerReady": false,
+  "checkerDecision": null,
+  "exactHashApprovalRecorded": false,
+  "productionExecutionAuthorized": false,
+  "approvalClaimed": false
+}

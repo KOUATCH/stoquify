@@ -1,16 +1,16 @@
 # Prisma Migration Deployment Readiness
 
-Generated: 2026-08-01T16:45:18.781Z
+Generated: 2026-08-15T16:54:17.835Z
 Mode: `fail`
-Status: `ready`
+Status: `blocked`
 
 ## Summary
 
-- Checks ready: 9/9
-- Migrations: 45
-- Risk findings: 0
+- Checks ready: 8/9
+- Migrations: 65
+- Risk findings: 13
 - Approved risks: 0
-- Blockers: 0
+- Blockers: 1
 - Secret values printed: no
 
 ## Deployment Decision
@@ -27,7 +27,7 @@ Status: `ready`
 - ready: migration_history_present
 - ready: migration_files_nonempty
 - ready: risk_approval_registry_valid
-- ready: destructive_sql_is_exact_hash_approved
+- blocked: destructive_sql_is_exact_hash_approved
 - ready: deployment_target_is_safe
 - ready: production_build_orders_secret_migration_and_app_gates
 - ready: migration_safety_gate_is_in_policy_chain
@@ -36,11 +36,23 @@ Status: `ready`
 
 ## Risk Findings
 
-- No destructive SQL patterns detected.
+- blocked: drop_table in prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql:116
+- blocked: drop_column in prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql:80
+- blocked: drop_column in prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql:81
+- blocked: drop_column in prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql:82
+- blocked: drop_column in prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql:83
+- blocked: drop_column in prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql:84
+- blocked: drop_column in prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql:85
+- blocked: drop_column in prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql:86
+- blocked: drop_column in prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql:87
+- blocked: drop_column in prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql:88
+- blocked: drop_column in prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql:101
+- blocked: drop_column in prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql:102
+- blocked: drop_column in prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql:112
 
 ## Blockers
 
-- None
+- destructive_sql_is_exact_hash_approved
 
 ## Safety
 

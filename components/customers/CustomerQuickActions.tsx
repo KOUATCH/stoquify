@@ -1,25 +1,26 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { useNotifications } from "@/components/notifications/NotificationProvider"
 import { useCustomerExport } from "@/hooks/useCustomerManagement"
 import { getLocaleFromPathname, localizePath } from "@/i18n/routing"
 import { DEFAULT_LOCALE } from "@/types/bilingual"
-import { useRouter, usePathname } from "next/navigation"
 import {
-  User,
-  Edit,
-  ShoppingCart,
   ArrowLeft,
-  MessageCircle,
+  CheckCircle2,
   Download,
+  Edit,
   Loader2,
-  Phone,
   Mail,
-  Plus
+  Phone,
+  ReceiptText,
+  ShoppingCart,
+  User,
+  XCircle,
 } from "lucide-react"
+import { usePathname, useRouter } from "next/navigation"
 
 interface CustomerQuickActionsProps {
   customer: {
@@ -30,189 +31,232 @@ interface CustomerQuickActionsProps {
     isActive: boolean
     totalOrders?: number
   }
+  capabilities: {
+    canCreateStatement: boolean
+    canExport: boolean
+    canOpenSales: boolean
+    canUpdate: boolean
+    canViewOrders: boolean
+  }
   currentPage?: "profile" | "edit" | "orders"
 }
 
-export function CustomerQuickActions({ customer, currentPage }: CustomerQuickActionsProps) {
+const copy = {
+  en: {
+    back: "Back to customers",
+    active: "Active",
+    inactive: "Inactive",
+    order: "order",
+    orders: "orders",
+    navigation: "Navigation",
+    profile: "View profile",
+    edit: "Edit customer",
+    viewOrders: "View orders",
+    statement: "Create statement",
+    quickActions: "Quick actions",
+    sales: "Open sales workspace",
+    email: "Send email",
+    call: "Call customer",
+    export: "Export customer summary",
+    contactEmailTitle: "Contact by email",
+    contactPhoneTitle: "Contact by phone",
+    openingEmail: "Opening the email client for",
+    openingPhone: "Opening the phone dialer for",
+  },
+  fr: {
+    back: "Retour aux clients",
+    active: "Actif",
+    inactive: "Inactif",
+    order: "commande",
+    orders: "commandes",
+    navigation: "Navigation",
+    profile: "Voir le profil",
+    edit: "Modifier le client",
+    viewOrders: "Voir les commandes",
+    statement: "Créer un relevé",
+    quickActions: "Actions rapides",
+    sales: "Ouvrir l’espace ventes",
+    email: "Envoyer un e-mail",
+    call: "Appeler le client",
+    export: "Exporter la synthèse client",
+    contactEmailTitle: "Contacter par e-mail",
+    contactPhoneTitle: "Contacter par téléphone",
+    openingEmail: "Ouverture du client de messagerie pour",
+    openingPhone: "Ouverture du composeur téléphonique pour",
+  },
+} as const
+
+export function CustomerQuickActions({
+  customer,
+  capabilities,
+  currentPage,
+}: CustomerQuickActionsProps) {
   const router = useRouter()
   const pathname = usePathname()
   const locale = getLocaleFromPathname(pathname) ?? DEFAULT_LOCALE
+  const t = copy[locale]
   const localizedHref = (href: string) => localizePath(href, locale)
-  const { info, warning } = useNotifications()
+  const { info } = useNotifications()
   const exportMutation = useCustomerExport(locale)
 
-  const handleNavigation = (page: string, pageName: string) => {
-    if (pathname.includes(page)) return // Already on this page
-
-    info(`Navigate to ${pageName}`, `Opening ${customer.name}'s ${pageName.toLowerCase()}`)
-    router.push(localizedHref(`/dashboard/customers/${customer.id}${page === 'profile' ? '' : `/${page}`}`))
+  const navigate = (page: "profile" | "edit" | "orders") => {
+    if (currentPage === page) return
+    const suffix = page === "profile" ? "" : `/${page}`
+    router.push(localizedHref(`/dashboard/customers/${customer.id}${suffix}`))
   }
 
-  const handleContact = (type: 'email' | 'phone') => {
-    if (type === 'email') {
-      if (customer.email) {
-        info("Contact via Email", `Opening email client for ${customer.email}`)
-        window.open(`mailto:${customer.email}`)
-      } else {
-        warning("No Email", "This customer doesn't have an email address on file")
-      }
-    } else if (type === 'phone') {
-      if (customer.phone) {
-        info("Contact via Phone", `Opening phone dialer for ${customer.phone}`)
-        window.open(`tel:${customer.phone}`)
-      } else {
-        warning("No Phone", "This customer doesn't have a phone number on file")
-      }
-    }
-  }
+  const handleContact = (type: "email" | "phone") => {
+    const destination = type === "email" ? customer.email : customer.phone
+    if (!destination) return
 
-  const handleExport = () => {
-    exportMutation.mutate({
-      scope: "customer",
-      customerId: customer.id,
-      purpose: "CUSTOMER_PROFILE_EXPORT",
-    })
-  }
-
-  const handleCreateOrder = () => {
-    info("Create Order", `Redirecting to create order for ${customer.name}`)
-    router.push(localizedHref(`/dashboard/sales/new?customerId=${customer.id}`))
+    info(
+      type === "email" ? t.contactEmailTitle : t.contactPhoneTitle,
+      `${type === "email" ? t.openingEmail : t.openingPhone} ${destination}`,
+    )
+    window.open(`${type === "email" ? "mailto" : "tel"}:${destination}`)
   }
 
   return (
-    <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg border-0 shadow-lg">
-      <CardContent className="p-4">
-        <div className="space-y-4">
-          {/* Back Button */}
-          <Button
+    <Card className="dashboard-glass-panel border-[var(--dash-border-subtle)] text-[var(--dash-text)] shadow-sm">
+      <CardContent className="space-y-5 p-4">
+        <Button
+          className="dashboard-button-secondary w-full justify-start rounded-lg"
+          onClick={() => router.push(localizedHref("/dashboard/customers"))}
+          size="sm"
+          variant="outline"
+        >
+          <ArrowLeft aria-hidden="true" className="me-2 h-4 w-4" />
+          {t.back}
+        </Button>
+
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <Badge
+            className={
+              customer.isActive
+                ? "border-[var(--dash-success)] bg-[var(--dash-success-soft)] text-[var(--dash-success)]"
+                : "border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] text-[var(--dash-text-soft)]"
+            }
             variant="outline"
-            size="sm"
-            onClick={() => {
-              info("Back to Customers", "Returning to customer list")
-              router.push(localizedHref("/dashboard/customers"))
-            }}
-            className="w-full justify-start bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-slate-200 dark:border-slate-700"
           >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Customers
-          </Button>
-
-          {/* Customer Status */}
-          <div className="flex items-center justify-between">
+            {customer.isActive ? (
+              <CheckCircle2 aria-hidden="true" className="me-1 h-3.5 w-3.5" />
+            ) : (
+              <XCircle aria-hidden="true" className="me-1 h-3.5 w-3.5" />
+            )}
+            {customer.isActive ? t.active : t.inactive}
+          </Badge>
+          {(customer.totalOrders ?? 0) > 0 ? (
             <Badge
-              variant={customer.isActive ? "default" : "secondary"}
-              className={
-                customer.isActive
-                  ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 border-green-200 dark:border-green-700"
-                  : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 border-slate-200 dark:border-slate-700"
-              }
+              className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] text-[var(--dash-text-soft)]"
+              variant="outline"
             >
-              <div className={`w-2 h-2 rounded-full mr-2 ${customer.isActive ? 'bg-green-500' : 'bg-slate-400'}`}></div>
-              {customer.isActive ? "Active" : "Inactive"}
+              {customer.totalOrders} {customer.totalOrders === 1 ? t.order : t.orders}
             </Badge>
-            {(customer.totalOrders ?? 0) > 0 && (
-              <Badge variant="secondary" className="text-xs">
-                {customer.totalOrders} {customer.totalOrders === 1 ? 'order' : 'orders'}
-              </Badge>
-            )}
-          </div>
+          ) : null}
+        </div>
 
-          {/* Navigation Buttons */}
-          <div className="space-y-2">
-            <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
-              Navigation
-            </h4>
-
+        <nav aria-label={t.navigation} className="space-y-2">
+          <h2 className="text-xs font-black uppercase tracking-[0.14em] text-[var(--dash-text-soft)]">
+            {t.navigation}
+          </h2>
+          <Button
+            className="w-full justify-start rounded-lg"
+            disabled={currentPage === "profile"}
+            onClick={() => navigate("profile")}
+            size="sm"
+            variant={currentPage === "profile" ? "default" : "outline"}
+          >
+            <User aria-hidden="true" className="me-2 h-4 w-4" />
+            {t.profile}
+          </Button>
+          {capabilities.canUpdate ? (
             <Button
-              variant={currentPage === "profile" ? "default" : "outline"}
-              size="sm"
-              onClick={() => handleNavigation('profile', 'Profile')}
-              className="w-full justify-start"
-              disabled={currentPage === "profile"}
-            >
-              <User className="h-4 w-4 mr-2" />
-              View Profile
-            </Button>
-
-            <Button
-              variant={currentPage === "edit" ? "default" : "outline"}
-              size="sm"
-              onClick={() => handleNavigation('edit', 'Edit')}
-              className="w-full justify-start"
+              className="w-full justify-start rounded-lg"
               disabled={currentPage === "edit"}
-            >
-              <Edit className="h-4 w-4 mr-2" />
-              Edit Details
-            </Button>
-
-            <Button
-              variant={currentPage === "orders" ? "default" : "outline"}
+              onClick={() => navigate("edit")}
               size="sm"
-              onClick={() => handleNavigation('orders', 'Orders')}
-              className="w-full justify-start"
+              variant={currentPage === "edit" ? "default" : "outline"}
+            >
+              <Edit aria-hidden="true" className="me-2 h-4 w-4" />
+              {t.edit}
+            </Button>
+          ) : null}
+          {capabilities.canViewOrders ? (
+            <Button
+              className="w-full justify-start rounded-lg"
               disabled={currentPage === "orders"}
-            >
-              <ShoppingCart className="h-4 w-4 mr-2" />
-              View Orders
-            </Button>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="space-y-2">
-            <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
-              Quick Actions
-            </h4>
-
-            <Button
-              variant="outline"
+              onClick={() => navigate("orders")}
               size="sm"
-              onClick={handleCreateOrder}
-              className="w-full justify-start bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200 dark:border-blue-700 hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-900/30 dark:hover:to-indigo-900/30"
+              variant={currentPage === "orders" ? "default" : "outline"}
             >
-              <Plus className="h-4 w-4 mr-2" />
-              Create Order
+              <ShoppingCart aria-hidden="true" className="me-2 h-4 w-4" />
+              {t.viewOrders}
             </Button>
+          ) : null}
+        </nav>
 
-            {customer.email && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleContact('email')}
-                className="w-full justify-start"
-              >
-                <Mail className="h-4 w-4 mr-2" />
-                Send Email
-              </Button>
-            )}
-
-            {customer.phone && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleContact('phone')}
-                className="w-full justify-start"
-              >
-                <Phone className="h-4 w-4 mr-2" />
-                Call Customer
-              </Button>
-            )}
-
+        <section aria-labelledby="customer-quick-actions-title" className="space-y-2">
+          <h2
+            className="text-xs font-black uppercase tracking-[0.14em] text-[var(--dash-text-soft)]"
+            id="customer-quick-actions-title"
+          >
+            {t.quickActions}
+          </h2>
+          {capabilities.canCreateStatement ? (
             <Button
-              variant="outline"
+              className="dashboard-button-secondary w-full justify-start rounded-lg"
+              onClick={() => router.push(localizedHref(`/dashboard/customers/${customer.id}/statement`))}
               size="sm"
-              onClick={handleExport}
+              variant="outline"
+            >
+              <ReceiptText aria-hidden="true" className="me-2 h-4 w-4" />
+              {t.statement}
+            </Button>
+          ) : null}
+          {capabilities.canOpenSales ? (
+            <Button
+              className="dashboard-button-secondary w-full justify-start rounded-lg"
+              onClick={() => router.push(localizedHref("/dashboard/sales"))}
+              size="sm"
+              variant="outline"
+            >
+              <ShoppingCart aria-hidden="true" className="me-2 h-4 w-4" />
+              {t.sales}
+            </Button>
+          ) : null}
+          {customer.email ? (
+            <Button className="w-full justify-start rounded-lg" onClick={() => handleContact("email")} size="sm" variant="outline">
+              <Mail aria-hidden="true" className="me-2 h-4 w-4" />
+              {t.email}
+            </Button>
+          ) : null}
+          {customer.phone ? (
+            <Button className="w-full justify-start rounded-lg" onClick={() => handleContact("phone")} size="sm" variant="outline">
+              <Phone aria-hidden="true" className="me-2 h-4 w-4" />
+              {t.call}
+            </Button>
+          ) : null}
+          {capabilities.canExport ? (
+            <Button
+              className="w-full justify-start rounded-lg"
               disabled={exportMutation.isPending}
-              className="w-full justify-start"
+              onClick={() => exportMutation.mutate({
+                scope: "customer",
+                customerId: customer.id,
+                purpose: "CUSTOMER_PROFILE_EXPORT",
+              })}
+              size="sm"
+              variant="outline"
             >
               {exportMutation.isPending ? (
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                <Loader2 aria-hidden="true" className="me-2 h-4 w-4 animate-spin" />
               ) : (
-                <Download className="h-4 w-4 mr-2" />
+                <Download aria-hidden="true" className="me-2 h-4 w-4" />
               )}
-              Export Summary
+              {t.export}
             </Button>
-          </div>
-        </div>
+          ) : null}
+        </section>
       </CardContent>
     </Card>
   )

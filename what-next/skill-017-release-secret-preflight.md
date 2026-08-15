@@ -1,14 +1,14 @@
 # Release Secret Preflight
 
-Generated: 2026-07-27T05:34:17.702Z
+Generated: 2026-08-11T13:31:10.532Z
 Mode: `fail`
 Status: `blocked`
 
 ## Summary
 
-- Checks ready: 2/8
+- Checks ready: 5/21
 - Release enforcement: on
-- Blockers: 6
+- Blockers: 16
 - Warnings: 0
 - Secret value printed: no
 
@@ -22,7 +22,20 @@ Status: `blocked`
 | blocked | public_receipt_secret_strong | AQSTOQFLOW_RECEIPT_TOKEN_SECRET | Use a random secret with at least 32 characters and 12 distinct characters. |
 | blocked | history_cursor_secret_present | AQSTOQFLOW_HISTORY_CURSOR_SECRET | Configure the dedicated transaction-history cursor signing secret in the production environment. |
 | blocked | history_cursor_secret_strong | AQSTOQFLOW_HISTORY_CURSOR_SECRET | Use a random, purpose-specific secret that meets the release strength policy. |
-| ready | dedicated_secrets_are_distinct | n/a | Use separate random values for identity hashing, receipt signing, and history cursor signing. |
+| blocked | statement_token_secret_present | AQSTOQFLOW_STATEMENT_TOKEN_SECRET | Configure the dedicated customer-statement signing secret in production. |
+| blocked | statement_token_secret_strong | AQSTOQFLOW_STATEMENT_TOKEN_SECRET | Use a strong, random, purpose-specific statement signing secret. |
+| blocked | statement_delivery_encryption_key_present | AQSTOQFLOW_STATEMENT_DELIVERY_ENCRYPTION_KEY | Configure the AES-256 key used to seal statement delivery envelopes. |
+| blocked | statement_delivery_encryption_key_valid | AQSTOQFLOW_STATEMENT_DELIVERY_ENCRYPTION_KEY | Use exactly 32 random bytes encoded as base64 or 64 hexadecimal characters. |
+| blocked | accountant_invite_encryption_key_present | AQSTOQFLOW_ACCOUNTANT_INVITE_ENCRYPTION_KEY | Configure the AES-256 key used to seal accountant invitation envelopes. |
+| blocked | accountant_invite_encryption_key_valid | AQSTOQFLOW_ACCOUNTANT_INVITE_ENCRYPTION_KEY | Use exactly 32 random bytes encoded as base64 or 64 hexadecimal characters. |
+| blocked | public_app_url_present | NEXT_PUBLIC_BASE_URL | Configure the canonical public application URL used in signed referral links. |
+| blocked | public_app_url_https | NEXT_PUBLIC_BASE_URL | Use a valid HTTPS origin for production referral links. |
+| blocked | statement_live_delivery_channel_enabled | n/a | Enable at least one live customer-statement channel: email or WhatsApp. |
+| ready | statement_email_provider_configured | RESEND_API_KEY | When statement email sends are enabled, configure RESEND_API_KEY and RESEND_FROM_EMAIL. |
+| ready | statement_whatsapp_provider_configured | WHATSAPP_ACCESS_TOKEN | When statement WhatsApp sends are enabled, configure WHATSAPP_PHONE_NUMBER_ID and WHATSAPP_ACCESS_TOKEN. |
+| blocked | accountant_invite_live_delivery_enabled | STOQUIFY_ACCOUNTANT_INVITE_LIVE_SENDS | Enable live accountant invitation delivery for production onboarding. |
+| ready | accountant_invite_provider_configured | RESEND_API_KEY | When accountant invitation sends are enabled, configure RESEND_API_KEY and an accountant or default Resend sender. |
+| ready | dedicated_secrets_are_distinct | n/a | Use separate random values for every signing, hashing, cursor, and envelope-encryption boundary. |
 | ready | dedicated_secrets_are_not_auth_secrets | n/a | Do not reuse AUTH_SECRET or NEXTAUTH_SECRET for any dedicated boundary secret. |
 
 ## Safety

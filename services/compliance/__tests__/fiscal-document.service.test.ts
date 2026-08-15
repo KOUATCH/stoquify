@@ -281,6 +281,46 @@ describe("compliance fiscal document business events", () => {
     expect(tx.fiscalDocument.create).not.toHaveBeenCalled()
     expect(tx.businessEvent.create).not.toHaveBeenCalled()
   })
+
+  it("does not create fiscal evidence when the posted source has no accounting source link", async () => {
+    const tx = createTx()
+    tx.ledgerPostingBatch.findFirst.mockResolvedValue({
+      id: "batch-1",
+      journalEntries: [{ id: "journal-1" }],
+      sourceLinks: [],
+    })
+    wireBusinessEventCreate(tx)
+
+    await expect(
+      createFiscalDocumentFromPostedSource(
+        {
+          organizationId: "org-1",
+          createdById: "user-1",
+          documentType: FiscalDocumentType.POS_RECEIPT,
+          sourceType: AccountingSourceType.POS_SALE,
+          sourceId: "sale-1",
+          countryCode: "CM",
+          idempotencyKey: "fd-sale-1",
+          lines: [
+            {
+              lineNumber: 1,
+              description: "Retail sale",
+              quantity: "1",
+              unitPrice: "1000.00",
+              lineTotal: "1000.00",
+            },
+          ],
+        },
+        tx as never,
+      ),
+    ).rejects.toThrow(
+      "A fiscal document requires an accounting source link to its posted source event.",
+    )
+
+    expect(tx.fiscalDocument.create).not.toHaveBeenCalled()
+    expect(tx.complianceEvidence.create).not.toHaveBeenCalled()
+    expect(tx.businessEvent.create).not.toHaveBeenCalled()
+  })
 })
 
 describe("compliance submission outbox events", () => {

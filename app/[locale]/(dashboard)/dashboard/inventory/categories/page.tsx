@@ -7,12 +7,13 @@ import CategoriesPageClient from "@/components/dashboard/categories/CategoriesPa
 import { Button } from "@/components/ui/button"
 import { getAuthenticatedUser, checkPermission } from "@/config/useAuth"
 import { pickLocale } from "@/i18n/routing"
+import { routeByKey, withInventorySurfaceAccess } from "../inventory-route-access"
 
 type CategoriesPageProps = {
   params: Promise<{ locale: string }>
 }
 
-export default async function CategoriesPage({ params }: CategoriesPageProps) {
+async function CategoriesPageImpl({ params }: CategoriesPageProps) {
   await checkPermission("inventory.categories.read")
 
   const { locale: rawLocale } = await params
@@ -89,4 +90,20 @@ export default async function CategoriesPage({ params }: CategoriesPageProps) {
       </div>
     </div>
   )
+}
+
+
+
+export default async function InventoryRoutePage(props: any = {}) {
+  const surface = routeByKey("inventory-categories")
+
+  if (!surface) {
+    throw new Error("Missing inventory route surface definition: inventory-categories")
+  }
+
+  return withInventorySurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => CategoriesPageImpl(props),
+  })
 }

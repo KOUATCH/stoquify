@@ -1,20 +1,34 @@
 "use server"
 
 import { revalidateTag } from "next/cache"
+import { logger } from "@/lib/logger"
 import { err, ok } from "@/services/_shared/action-response"
 import { requirePermission } from "@/lib/security/rbac"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import { closePOSShift, getActivePOSSession, openPOSShift } from "@/services/pos/pos.service"
 import { activePOSSessionSchema, closeShiftSchema, openShiftSchema } from "@/services/pos/pos.schemas"
 
+function revalidatePOSSessionTags(tags: string[]) {
+  for (const tag of tags) {
+    try {
+      revalidateTag(tag)
+    } catch (error) {
+      logger.warn("POS session cache revalidation failed after a committed operation", {
+        tag,
+        error: error instanceof Error ? error.message : "unknown",
+      })
+    }
+  }
+}
+
 export async function getActivePOSSessionAction(input: unknown) {
   try {
     const parsed = activePOSSessionSchema.parse(input)
-    const { orgId } = await requirePermission("pos.read", {
+    const { orgId, userId } = await requirePermission("pos.read", {
       resource: "POSSession",
       resourceId: parsed.terminalId,
     })
-    const session = await getActivePOSSession({ ...parsed, organizationId: orgId })
+    const session = await getActivePOSSession({ ...parsed, organizationId: orgId, userId })
     return ok(session)
   } catch (error) {
     return err(error)
@@ -31,8 +45,7 @@ export async function openPOSShiftAction(input: unknown) {
     })
     const session = await openPOSShift({ ...parsed, organizationId: orgId, userId })
 
-    revalidateTag("pos-sessions")
-    revalidateTag(`pos-terminal-${parsed.terminalId}`)
+    revalidatePOSSessionTags(["pos-sessions", `pos-terminal-${parsed.terminalId}`])
 
     return ok(session)
   } catch (error) {
@@ -61,8 +74,7 @@ export async function closePOSShiftAction(input: unknown) {
     })
     const result = await closePOSShift({ ...parsed, organizationId: ctx.orgId, userId: ctx.userId })
 
-    revalidateTag("pos-sessions")
-    revalidateTag(`pos-terminal-${result.terminalId}`)
+    revalidatePOSSessionTags(["pos-sessions", `pos-terminal-${result.terminalId}`])
 
     return ok(result)
   } catch (error) {

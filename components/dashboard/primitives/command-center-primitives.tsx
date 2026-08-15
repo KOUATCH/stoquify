@@ -193,6 +193,7 @@ export type CommandBriefHeaderProps = {
   }
   metadata?: CommandMetadataItem[]
   actions?: CommandCenterAction[]
+  actionsPlacement?: "aside" | "below-content"
   proof?: ProofBadgeProps | ReactNode
   children?: ReactNode
   className?: string
@@ -205,6 +206,7 @@ export function CommandBriefHeader({
   state,
   metadata = [],
   actions = [],
+  actionsPlacement = "aside",
   proof,
   children,
   className,
@@ -235,9 +237,17 @@ export function CommandBriefHeader({
           ) : null}
 
           {children}
+
+          {actionsPlacement === "below-content" && actions.length ? (
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {actions.map((action) => (
+                <CommandActionButton key={action.label} action={action} />
+              ))}
+            </div>
+          ) : null}
         </div>
 
-        {metadata.length || actions.length ? (
+        {metadata.length || (actionsPlacement === "aside" && actions.length) ? (
           <aside className="flex w-full flex-col gap-3 xl:w-[420px]">
             {metadata.length ? (
               <dl className={cn(dashboardRowClass, "space-y-2 p-3 text-xs text-[var(--dash-text-soft)]")}>
@@ -246,7 +256,7 @@ export function CommandBriefHeader({
                 ))}
               </dl>
             ) : null}
-            {actions.length ? (
+            {actionsPlacement === "aside" && actions.length ? (
               <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap xl:flex-col">
                 {actions.map((action) => (
                   <CommandActionButton key={action.label} action={action} />
@@ -765,6 +775,7 @@ export type RouteStateKind =
   | "empty"
   | "error"
   | "partial"
+  | "stale_data"
   | "permission_denied"
   | "locked_module"
   | "no_active_org"
@@ -802,6 +813,12 @@ const routeStateCopy: Record<RouteStateKind, { title: string; message: string; t
     message: "Some source modules are available, but the command view is missing enough proof to be complete.",
     tone: "gold",
     icon: AlertTriangle,
+  },
+  stale_data: {
+    title: "Command data is stale",
+    message: "The last trusted snapshot is older than the operating window. Refresh before relying on this view.",
+    tone: "warning",
+    icon: Clock3,
   },
   permission_denied: {
     title: "Permission required",

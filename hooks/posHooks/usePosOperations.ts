@@ -1,8 +1,8 @@
 "use client"
 
-import { getCustomersAction } from "@/actions/customers/customerActions"
 import {
   getPOSCatalogAction,
+  getPOSCustomersAction,
   getPOSLocationsAction,
   getPOSTerminalsAction,
 } from "@/actions/pos/catalog.actions"
@@ -30,12 +30,14 @@ export const posOperationsKeys = {
   all: ["pos-operations"] as const,
   locations: () => [...posOperationsKeys.all, "locations"] as const,
   terminals: (locationId?: string) => [...posOperationsKeys.all, "terminals", locationId] as const,
+  currentUserSession: () => [...posOperationsKeys.all, "current-user-session"] as const,
   activeSession: (terminalId?: string) => [...posOperationsKeys.all, "active-session", terminalId] as const,
   catalog: (locationId?: string, search?: string, categoryId?: string) =>
     [...posOperationsKeys.all, "catalog", locationId, search, categoryId] as const,
   cart: (locationId?: string, terminalId?: string, sessionId?: string) =>
     [...posOperationsKeys.all, "cart", locationId, terminalId, sessionId] as const,
-  customers: () => [...posOperationsKeys.all, "customers"] as const,
+  customers: (locationId?: string, search?: string) =>
+    [...posOperationsKeys.all, "customers", locationId, search] as const,
   receiptTokens: (salesOrderId?: string) => [...posOperationsKeys.all, "receipt-tokens", salesOrderId] as const,
   receiptSales: (query?: string) => [...posOperationsKeys.all, "receipt-sales", query] as const,
   receiptTokenCapability: () => [...posOperationsKeys.all, "receipt-token-capability"] as const,
@@ -64,6 +66,14 @@ export function useActivePOSShift(terminalId?: string) {
   })
 }
 
+export function useCurrentUserPOSShift() {
+  return useQuery({
+    queryKey: posOperationsKeys.currentUserSession(),
+    queryFn: () => getActivePOSSessionAction({}),
+    refetchInterval: 30000,
+  })
+}
+
 export function usePOSCatalog(params: { locationId?: string; search?: string; categoryId?: string }) {
   return useQuery({
     queryKey: posOperationsKeys.catalog(params.locationId, params.search, params.categoryId),
@@ -84,10 +94,14 @@ export function useActivePOSCart(params: { locationId?: string; terminalId?: str
   })
 }
 
-export function usePOSCustomers() {
+export function usePOSCustomers(params: { locationId?: string; search?: string }) {
   return useQuery({
-    queryKey: posOperationsKeys.customers(),
-    queryFn: () => getCustomersAction(),
+    queryKey: posOperationsKeys.customers(params.locationId, params.search),
+    queryFn: () => getPOSCustomersAction({
+      locationId: params.locationId,
+      search: params.search || undefined,
+    }),
+    enabled: !!params.locationId,
   })
 }
 

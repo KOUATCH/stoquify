@@ -21,6 +21,7 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
 import type { ReactNode } from "react"
+import { routeByKey, withSettingsSurfaceAccess } from "../settings-route-access"
 
 export const metadata = {
   title: "Security Settings | Stoquify",
@@ -209,7 +210,7 @@ async function revokeOtherSessionsAction(formData: FormData) {
   redirect(localizePath(`/dashboard/settings/security?revoked=${revoked}`, locale))
 }
 
-export default async function SecuritySettingsPage({ params, searchParams }: SecurityPageProps) {
+async function SecuritySettingsPageImpl({ params, searchParams }: SecurityPageProps) {
   const { locale: rawLocale } = await params
   const locale = pickLocale(rawLocale)
   await checkPermission("PASSWORD_READ")
@@ -417,4 +418,20 @@ function Metric({ label, value }: { label: string; value: string }) {
       <p className="mt-2 break-words text-sm font-semibold text-[var(--dash-text)]">{value}</p>
     </div>
   )
+}
+
+
+
+export default async function SettingsRoutePage(props: any = {}) {
+  const surface = routeByKey("settings-security")
+
+  if (!surface) {
+    throw new Error("Missing settings route surface definition: settings-security")
+  }
+
+  return withSettingsSurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => SecuritySettingsPageImpl(props),
+  })
 }

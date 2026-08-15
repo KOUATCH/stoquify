@@ -17,6 +17,7 @@ jest.mock("@/prisma/db", () => ({
 }))
 
 import { db } from "@/prisma/db"
+import { BusinessRuleError } from "@/services/_shared/action-errors"
 import { getConnectorInventoryReadModel } from "../connector-inventory-read-model.service"
 import { PortfolioControlError } from "../evidence-trust.contracts"
 
@@ -268,6 +269,26 @@ describe("connector inventory read model", () => {
         asOf,
       }),
     ).rejects.toThrow(expect.objectContaining<Partial<PortfolioControlError>>({ code: "TENANT_SCOPE_VIOLATION" }))
+  })
+
+  it.each([
+    [{ correlationId: "corr-invalid" }, "requires trustedOrganizationId"],
+    [{ trustedOrganizationId: "org-1", organizationId: "org-1", correlationId: "corr-invalid", asOf: "not-a-date" }, "valid timestamp"],
+    [{ trustedOrganizationId: "org-1", organizationId: "org-1", correlationId: "corr-invalid", defaultFreshnessSlaMinutes: 0 }, "positive integer"],
+    [{ trustedOrganizationId: "org-1", organizationId: "org-1", correlationId: "corr-invalid", limit: 1001 }, "between 1 and 1000"],
+  ])("returns a typed business-rule error for invalid input %#", async (input, message) => {
+    await expect(
+      getConnectorInventoryReadModel({
+        actorAuthorized: true,
+        ...input,
+      } as Parameters<typeof getConnectorInventoryReadModel>[0]),
+    ).rejects.toEqual(
+      expect.objectContaining<Partial<BusinessRuleError>>({
+        code: "BUSINESS_RULE_VIOLATION",
+        message: expect.stringContaining(message),
+        status: 422,
+      }),
+    )
   })
 
   it("returns dead-letter and gap counts in connector summary", async () => {

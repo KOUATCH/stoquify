@@ -2,6 +2,11 @@ import { checkPermission } from "@/config/useAuth"
 import { redirect } from "next/navigation"
 import ItemsNewPage from "../page"
 
+jest.mock("@/app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access", () => ({
+  routeByKey: jest.fn(() => ({ key: "inventory-test" })),
+  withInventorySurfaceAccess: jest.fn(({ onAllowed }) => onAllowed({ orgId: "org-1" }, "en")),
+}))
+
 jest.mock("@/config/useAuth", () => ({ checkPermission: jest.fn() }))
 jest.mock("@/i18n/routing", () => ({
   localizePath: (href: string, locale: string) => `/${locale}${href}`,

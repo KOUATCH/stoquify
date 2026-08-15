@@ -16,6 +16,14 @@ const transactionHistoryAuthStatePath =
 const inventoryLossAuthStatePath =
   process.env.PLAYWRIGHT_INVENTORY_LOSS_STORAGE_STATE ??
   "playwright/.auth/inventory-loss.json";
+const supplierAuthStatePath =
+  process.env.PLAYWRIGHT_SUPPLIER_STORAGE_STATE ??
+  "playwright/.auth/supplier.json";
+const supplierDeniedAuthStatePath =
+  process.env.PLAYWRIGHT_SUPPLIER_DENIED_STORAGE_STATE ??
+  "playwright/.auth/supplier-denied.json";
+const chromiumExecutablePath =
+  process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH;
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -27,6 +35,9 @@ export default defineConfig({
     : [["list"], ["html", { open: "never" }]],
   use: {
     baseURL,
+    launchOptions: chromiumExecutablePath
+      ? { executablePath: chromiumExecutablePath }
+      : undefined,
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
     video: "retain-on-failure",
@@ -172,6 +183,63 @@ export default defineConfig({
       use: {
         ...devices["Desktop Chrome"],
         storageState: inventoryLossAuthStatePath,
+      },
+    },
+    {
+      name: "supplier-auth-setup",
+      testMatch: /supplier-auth\.setup\.ts/,
+      teardown: "supplier-cleanup",
+    },
+    {
+      name: "supplier-cleanup",
+      testMatch: /supplier-cleanup-evidence\.setup\.ts/,
+    },
+    {
+      name: "supplier-authenticated-desktop",
+      testMatch: /supplier-authenticated-release\.spec\.ts/,
+      dependencies: ["supplier-auth-setup"],
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: supplierAuthStatePath,
+        acceptDownloads: true,
+        trace: "off",
+        video: "off",
+      },
+    },
+    {
+      name: "supplier-authenticated-tablet",
+      testMatch: /supplier-authenticated-release\.spec\.ts/,
+      dependencies: ["supplier-auth-setup"],
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 834, height: 1112 },
+        storageState: supplierAuthStatePath,
+        acceptDownloads: true,
+        trace: "off",
+        video: "off",
+      },
+    },
+    {
+      name: "supplier-authenticated-mobile",
+      testMatch: /supplier-authenticated-release\.spec\.ts/,
+      dependencies: ["supplier-auth-setup"],
+      use: {
+        ...devices["Pixel 7"],
+        storageState: supplierAuthStatePath,
+        acceptDownloads: true,
+        trace: "off",
+        video: "off",
+      },
+    },
+    {
+      name: "supplier-rbac-negative",
+      testMatch: /supplier-rbac-negative\.spec\.ts/,
+      dependencies: ["supplier-auth-setup"],
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: supplierDeniedAuthStatePath,
+        trace: "off",
+        video: "off",
       },
     },
   ],

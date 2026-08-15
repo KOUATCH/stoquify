@@ -136,16 +136,18 @@ describe("CreatePurchaseOrderPage", () => {
       resource: "PurchaseOrder",
       auditAllowed: true,
     })
-    expect(mockObserveModuleAccess).toHaveBeenCalledWith(expect.objectContaining({
-      organizationId: "org-1",
-      userId: "user-1",
-      actorPermissions: ["purchases.orders.create"],
-      moduleSlug: "purchasing",
-      surfaceType: "page",
-      surface: "/dashboard/purchase-orders/new",
-      accessIntent: "write",
-      mode: "observe",
-    }))
+    expect(mockObserveModuleAccess).toHaveBeenCalledWith(
+      expect.objectContaining({
+        organizationId: "org-1",
+        userId: "user-1",
+        actorPermissions: ["purchases.orders.create"],
+        moduleSlug: "purchasing",
+        surfaceType: "page",
+        surface: "/dashboard/purchase-orders/new",
+        accessIntent: "write",
+        mode: "observe",
+      }),
+    )
     expect(mockGetPurchaseOrderFormOptions).toHaveBeenCalledWith("org-1")
     expect(screen.getByRole("heading", { name: "Purchase order create form rendered" })).toBeInTheDocument()
     expect(screen.getByText("org-1")).toBeInTheDocument()
@@ -158,9 +160,9 @@ describe("CreatePurchaseOrderPage", () => {
 
     render(await CreatePurchaseOrderPage())
 
-    expect(screen.getByRole("heading", { name: "Purchase order creation is not available for this role" })).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "Create purchase order is not available for this role" })).toBeInTheDocument()
     expect(screen.getByRole("main")).toHaveAttribute("data-kind", "permission_denied")
-    expect(screen.getByRole("link", { name: "Back to purchase orders" })).toHaveAttribute("href", "/fr/dashboard/purchase-orders")
+    expect(screen.getByRole("link", { name: "Back to purchase orders" })).toHaveAttribute("href", "/fr/dashboard")
     expect(mockObserveModuleAccess).not.toHaveBeenCalled()
     expect(mockGetPurchaseOrderFormOptions).not.toHaveBeenCalled()
   })
@@ -170,7 +172,7 @@ describe("CreatePurchaseOrderPage", () => {
 
     render(await CreatePurchaseOrderPage())
 
-    expect(screen.getByRole("heading", { name: "Purchase order creation needs an active organization" })).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "Create purchase order needs an active organization" })).toBeInTheDocument()
     expect(screen.getByRole("main")).toHaveAttribute("data-kind", "no_active_org")
     expect(mockObserveModuleAccess).not.toHaveBeenCalled()
     expect(mockGetPurchaseOrderFormOptions).not.toHaveBeenCalled()

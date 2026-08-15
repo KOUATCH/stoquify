@@ -1,7 +1,6 @@
 import { render, screen } from "@testing-library/react"
 
 import { getAPWorkbenchAction } from "@/actions/purchasing/ap-control.actions"
-import { DashboardErrorState } from "@/components/dashboard/DashboardErrorState"
 import { RbacError, requirePermission } from "@/lib/security/rbac"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 
@@ -41,16 +40,6 @@ jest.mock("@/i18n/routing", () => ({
 jest.mock("@/components/purchasing/APControlWorkbench", () => ({
   __esModule: true,
   default: ({ locale }: { locale: string }) => <div>AP workbench rendered for {locale}</div>,
-}))
-
-jest.mock("@/components/dashboard/DashboardErrorState", () => ({
-  DashboardErrorState: jest.fn(() => (
-    <section>
-      <h1>Dashboard page could not load</h1>
-      <p>One command source failed or timed out. Retry the read-only dashboard without exposing internal details.</p>
-      <button type="button">Try again</button>
-    </section>
-  )),
 }))
 
 jest.mock("@/components/dashboard/DashboardRouteState", () => ({
@@ -129,12 +118,9 @@ describe("PurchasePayablesPage", () => {
     const ui = await PurchasePayablesPage({ params: Promise.resolve({ locale: "en" }) })
     render(ui)
 
-    expect(DashboardErrorState).toHaveBeenCalledWith(
-      expect.objectContaining({ error: "AP workbench data unavailable" }),
-      undefined,
-    )
-    expect(screen.getByRole("heading", { name: "Dashboard page could not load" })).toBeInTheDocument()
-    expect(screen.getByText(/Retry the read-only dashboard without exposing internal details/)).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "AP workbench data is unavailable" })).toBeInTheDocument()
+    expect(screen.getByRole("main")).toHaveAttribute("data-kind", "error")
+    expect(screen.getByText(/read-only AP source failed safely/)).toBeInTheDocument()
     expect(screen.queryByText(/raw supplier AP SQL failure/)).not.toBeInTheDocument()
     expect(screen.queryByText(/AP workbench rendered/)).not.toBeInTheDocument()
   })
@@ -145,7 +131,7 @@ describe("PurchasePayablesPage", () => {
     const ui = await PurchasePayablesPage({ params: Promise.resolve({ locale: "fr" }) })
     render(ui)
 
-    expect(screen.getByRole("heading", { name: "AP workbench is not available for this role" })).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "L'atelier AP n'est pas disponible pour ce rôle" })).toBeInTheDocument()
     expect(screen.getByRole("main")).toHaveAttribute("data-kind", "permission_denied")
     expect(screen.getByRole("link", { name: "Back to purchases" })).toHaveAttribute("href", "/fr/dashboard/purchases")
     expect(mockObserveModuleAccess).not.toHaveBeenCalled()

@@ -142,9 +142,13 @@ function writeDevelopmentFixture(root) {
         approvalArtifactFile: null,
         approvalArtifactHash: null,
       },
+      nonClaimPolicy: {
+        legalInterpretationCertified: false,
+        qualifiedReviewerApprovalClaimed: false,
+      },
       nonClaims: [
-        "Artifact capture does not certify legal interpretation.",
-        "Artifact capture does not constitute qualified reviewer approval.",
+        "Artifact capture and source hash binding do not certify legal interpretation.",
+        "Artifact capture and source hash binding do not constitute qualified reviewer approval.",
       ],
     }),
   );
@@ -180,6 +184,70 @@ describe("statutory country-pack development gate", () => {
     );
     expect(gateResultForReport(report, "fail").exitCode).toBe(0);
   });
+
+  it("accepts the current legitimate non-claim wording through canonical policy fields", () => {
+    const root = makeTempRepo();
+    writeDevelopmentFixture(root);
+
+    const report = buildStatutoryCountryPackDevelopmentReadiness(root, {
+      mode: "fail",
+    });
+
+    expect(report.evidence.legalNonClaimsPreserved).toBe(true);
+    expect(report.blockers).not.toContain(
+      "legal_and_approval_non_claims_preserved",
+    );
+  });
+
+  it("does not parse informational non-claim prose", () => {
+    const root = makeTempRepo();
+    writeDevelopmentFixture(root);
+    const manifestPath = path.join(
+      root,
+      "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/manifest.json",
+    );
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+    manifest.nonClaims = [
+      "Captured evidence remains subject to legal and qualified reviewer assessment.",
+    ];
+    fs.writeFileSync(manifestPath, JSON.stringify(manifest), "utf8");
+
+    const report = buildStatutoryCountryPackDevelopmentReadiness(root, {
+      mode: "fail",
+    });
+
+    expect(report.evidence.legalNonClaimsPreserved).toBe(true);
+    expect(report.blockers).not.toContain(
+      "legal_and_approval_non_claims_preserved",
+    );
+  });
+
+  it.each([
+    "legalInterpretationCertified",
+    "qualifiedReviewerApprovalClaimed",
+  ])(
+    "blocks any structured approval or certification claim: %s",
+    (claimField) => {
+      const root = makeTempRepo();
+      writeDevelopmentFixture(root);
+      const manifestPath = path.join(
+        root,
+        "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/manifest.json",
+      );
+      const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+      manifest.nonClaimPolicy[claimField] = true;
+      fs.writeFileSync(manifestPath, JSON.stringify(manifest), "utf8");
+
+      const report = buildStatutoryCountryPackDevelopmentReadiness(root, {
+        mode: "fail",
+      });
+
+      expect(report.evidence.legalNonClaimsPreserved).toBe(false);
+      expect(report.blockers).toContain(
+        "legal_and_approval_non_claims_preserved",
+      );
+    },
+  );
 
   it("accepts the canonical manifest-driven integration runner", () => {
     const root = makeTempRepo();

@@ -1,13 +1,13 @@
 {
   "schemaVersion": "1.0",
-  "evaluatedAt": "2026-07-27T16:49:17.994Z",
+  "evaluatedAt": "2026-08-11T13:35:38.171Z",
   "status": "EXTERNAL_EVIDENCE_REQUIRED",
   "ready": false,
   "releasePosture": "DEVELOPMENT_CONTINUES_PILOT_AND_PRODUCTION_FAIL_CLOSED",
   "summary": {
     "checks": 6,
     "passed": 1,
-    "blockers": 71,
+    "blockers": 70,
     "secretValuesPrinted": false
   },
   "checks": [
@@ -92,7 +92,6 @@
         "CHECKER_VERIFICATION_REFERENCE_INVALID",
         "RUNTIME_AUTHORITY_PROMOTION_REFERENCE_INVALID",
         "STATUTORY_REVIEWED_AT_INVALID",
-        "AUTHORITATIVE_B05_REQUIRES_EXPERT_REVIEW",
         "AUTHORITATIVE_B06_REQUIRES_EXPERT_REVIEW"
       ],
       "nextCommands": [
@@ -204,7 +203,6 @@
     "B05_B06:CHECKER_VERIFICATION_REFERENCE_INVALID",
     "B05_B06:RUNTIME_AUTHORITY_PROMOTION_REFERENCE_INVALID",
     "B05_B06:STATUTORY_REVIEWED_AT_INVALID",
-    "B05_B06:AUTHORITATIVE_B05_REQUIRES_EXPERT_REVIEW",
     "B05_B06:AUTHORITATIVE_B06_REQUIRES_EXPERT_REVIEW",
     "B07:CREDENTIAL_ROTATION_OWNER_IDENTITY_INVALID",
     "B07:ACCEPTANCE_REFERENCE_INVALID",
@@ -238,12 +236,12 @@
     "B04": {
       "ready": false,
       "status": "BLOCKED_EXTERNAL_CONFIG",
-      "blockerCount": 6
+      "blockerCount": 16
     },
     "B05": {
-      "ready": false,
-      "status": "REQUIRES_EXPERT_REVIEW",
-      "blockerCount": 1
+      "ready": true,
+      "status": "READY",
+      "blockerCount": 0
     },
     "B06": {
       "ready": false,

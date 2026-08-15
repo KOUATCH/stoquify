@@ -98,6 +98,7 @@ const stateCopy: Record<
 
 export function DashboardRouteState({
   kind,
+  eyebrow,
   title,
   message,
   primaryHref,
@@ -107,6 +108,7 @@ export function DashboardRouteState({
   actions,
 }: {
   kind: DashboardRouteStateKind
+  eyebrow?: string
   title?: string
   message?: string
   primaryHref: string
@@ -136,7 +138,7 @@ export function DashboardRouteState({
             <Icon className="h-7 w-7" aria-hidden="true" />
           </div>
           <p className="mt-4 text-xs font-semibold uppercase tracking-normal text-[var(--dash-text-soft)]">
-            {state.eyebrow}
+            {eyebrow ?? state.eyebrow}
           </p>
           <h1 className="mt-2 text-xl font-semibold tracking-normal text-[var(--dash-text)]">
             {title ?? state.defaultTitle}

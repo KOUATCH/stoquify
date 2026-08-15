@@ -70,6 +70,7 @@ export default function DateFilters({
         onValueChange={handleChange}
       >
         <SelectTrigger
+          aria-label="Date filter"
           className={cn(
             "h-9 w-full rounded-lg",
             isLanding && "dashboard-control border-[var(--dash-border-subtle)] text-[var(--dash-text)]"

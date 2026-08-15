@@ -1,0 +1,222 @@
+{
+  "status": "PASS",
+  "checkedAt": "2026-08-11T13:58:43.952Z",
+  "project": "customer-authenticated-mobile",
+  "viewport": "mobile",
+  "locales": [
+    "en",
+    "fr"
+  ],
+  "requiredSurfaces": [
+    "list",
+    "create",
+    "profile",
+    "edit",
+    "orders",
+    "statement"
+  ],
+  "verifiedStates": [
+    "success"
+  ],
+  "fixture": {
+    "source": "scripts/customer-e2e-fixture.js",
+    "productionBackfill": false,
+    "organizationId": "org_customer_e2e_local",
+    "primaryCustomerId": "customer_customer_e2e_primary",
+    "emptyCustomerId": "customer_customer_e2e_empty"
+  },
+  "results": [
+    {
+      "surface": "list",
+      "locale": "en",
+      "viewport": "mobile",
+      "state": "success",
+      "path": "/en/dashboard/customers",
+      "screenshot": "what-next/evidence/customer-browser-certification-2026-08-11/success-list-en-mobile.png",
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 412,
+        "documentWidth": 412,
+        "bodyWidth": 412,
+        "hasDocumentOverflow": false
+      },
+      "evidenceMethod": "live-route"
+    },
+    {
+      "surface": "create",
+      "locale": "en",
+      "viewport": "mobile",
+      "state": "success",
+      "path": "/en/dashboard/customers/new",
+      "screenshot": "what-next/evidence/customer-browser-certification-2026-08-11/success-create-en-mobile.png",
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 412,
+        "documentWidth": 412,
+        "bodyWidth": 412,
+        "hasDocumentOverflow": false
+      },
+      "evidenceMethod": "live-route"
+    },
+    {
+      "surface": "profile",
+      "locale": "en",
+      "viewport": "mobile",
+      "state": "success",
+      "path": "/en/dashboard/customers/customer_customer_e2e_primary",
+      "screenshot": "what-next/evidence/customer-browser-certification-2026-08-11/success-profile-en-mobile.png",
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 412,
+        "documentWidth": 412,
+        "bodyWidth": 412,
+        "hasDocumentOverflow": false
+      },
+      "evidenceMethod": "live-route"
+    },
+    {
+      "surface": "edit",
+      "locale": "en",
+      "viewport": "mobile",
+      "state": "success",
+      "path": "/en/dashboard/customers/customer_customer_e2e_primary/edit",
+      "screenshot": "what-next/evidence/customer-browser-certification-2026-08-11/success-edit-en-mobile.png",
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 412,
+        "documentWidth": 412,
+        "bodyWidth": 412,
+        "hasDocumentOverflow": false
+      },
+      "evidenceMethod": "live-route"
+    },
+    {
+      "surface": "orders",
+      "locale": "en",
+      "viewport": "mobile",
+      "state": "success",
+      "path": "/en/dashboard/customers/customer_customer_e2e_primary/orders",
+      "screenshot": "what-next/evidence/customer-browser-certification-2026-08-11/success-orders-en-mobile.png",
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 412,
+        "documentWidth": 412,
+        "bodyWidth": 412,
+        "hasDocumentOverflow": false
+      },
+      "evidenceMethod": "live-route"
+    },
+    {
+      "surface": "statement",
+      "locale": "en",
+      "viewport": "mobile",
+      "state": "success",
+      "path": "/en/dashboard/customers/customer_customer_e2e_primary/statement",
+      "screenshot": "what-next/evidence/customer-browser-certification-2026-08-11/success-statement-en-mobile.png",
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 412,
+        "documentWidth": 412,
+        "bodyWidth": 412,
+        "hasDocumentOverflow": false
+      },
+      "evidenceMethod": "live-route"
+    },
+    {
+      "surface": "list",
+      "locale": "fr",
+      "viewport": "mobile",
+      "state": "success",
+      "path": "/fr/dashboard/customers",
+      "screenshot": "what-next/evidence/customer-browser-certification-2026-08-11/success-list-fr-mobile.png",
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 412,
+        "documentWidth": 412,
+        "bodyWidth": 412,
+        "hasDocumentOverflow": false
+      },
+      "evidenceMethod": "live-route"
+    },
+    {
+      "surface": "create",
+      "locale": "fr",
+      "viewport": "mobile",
+      "state": "success",
+      "path": "/fr/dashboard/customers/new",
+      "screenshot": "what-next/evidence/customer-browser-certification-2026-08-11/success-create-fr-mobile.png",
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 412,
+        "documentWidth": 412,
+        "bodyWidth": 412,
+        "hasDocumentOverflow": false
+      },
+      "evidenceMethod": "live-route"
+    },
+    {
+      "surface": "profile",
+      "locale": "fr",
+      "viewport": "mobile",
+      "state": "success",
+      "path": "/fr/dashboard/customers/customer_customer_e2e_primary",
+      "screenshot": "what-next/evidence/customer-browser-certification-2026-08-11/success-profile-fr-mobile.png",
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 412,
+        "documentWidth": 412,
+        "bodyWidth": 412,
+        "hasDocumentOverflow": false
+      },
+      "evidenceMethod": "live-route"
+    },
+    {
+      "surface": "edit",
+      "locale": "fr",
+      "viewport": "mobile",
+      "state": "success",
+      "path": "/fr/dashboard/customers/customer_customer_e2e_primary/edit",
+      "screenshot": "what-next/evidence/customer-browser-certification-2026-08-11/success-edit-fr-mobile.png",
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 412,
+        "documentWidth": 412,
+        "bodyWidth": 412,
+        "hasDocumentOverflow": false
+      },
+      "evidenceMethod": "live-route"
+    },
+    {
+      "surface": "orders",
+      "locale": "fr",
+      "viewport": "mobile",
+      "state": "success",
+      "path": "/fr/dashboard/customers/customer_customer_e2e_primary/orders",
+      "screenshot": "what-next/evidence/customer-browser-certification-2026-08-11/success-orders-fr-mobile.png",
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 412,
+        "documentWidth": 412,
+        "bodyWidth": 412,
+        "hasDocumentOverflow": false
+      },
+      "evidenceMethod": "live-route"
+    },
+    {
+      "surface": "statement",
+      "locale": "fr",
+      "viewport": "mobile",
+      "state": "success",
+      "path": "/fr/dashboard/customers/customer_customer_e2e_primary/statement",
+      "screenshot": "what-next/evidence/customer-browser-certification-2026-08-11/success-statement-fr-mobile.png",
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 412,
+        "documentWidth": 412,
+        "bodyWidth": 412,
+        "hasDocumentOverflow": false
+      },
+      "evidenceMethod": "live-route"
+    }
+  ]
+}

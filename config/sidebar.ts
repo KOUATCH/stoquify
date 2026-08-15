@@ -21,6 +21,8 @@ export interface ISidebarDropdownItem {
   title: string
   href: string
   permission: string
+  permissions?: readonly string[]
+  permissionMode?: "any" | "all"
   description?: string
   moduleSlug?: string
   quickAccess?: boolean
@@ -32,6 +34,8 @@ export interface ISidebarLink {
   icon: LucideIcon
   dropdown: boolean
   permission: string
+  permissions?: readonly string[]
+  permissionMode?: "any" | "all"
   description?: string
   moduleSlug?: string
   section: SidebarSectionKey
@@ -254,11 +258,23 @@ export const sidebarLinks: ISidebarLink[] = [
     priority: "primary",
     dropdownMenu: [
       { title: "Overview", href: "/dashboard/purchases", permission: PERMISSIONS.READ_PURCHASE_ORDERS },
-      { title: "AP History", href: "/dashboard/purchases/payables/history", permission: "finance.payables.read" },
+      {
+        title: "AP History",
+        href: "/dashboard/purchases/payables/history",
+        permission: "finance.payables.read",
+        permissions: [
+          "purchasing.ap.invoice.view",
+          "finance.payables.read",
+          "purchases.suppliers.read",
+        ],
+        permissionMode: "any",
+        description: "Supplier invoices, payments, payable movements, and AP proof",
+      },
       { title: "AP Workbench", href: "/dashboard/purchases/payables", permission: "finance.payables.read" },
       { title: "New Purchase Order", href: "/dashboard/purchase-orders/new", permission: PERMISSIONS.CREATE_PURCHASE_ORDERS },
       { title: "New Supplier", href: "/dashboard/purchases/suppliers/create", permission: PERMISSIONS.CREATE_SUPPLIERS },
       { title: "Purchase Orders", href: "/dashboard/purchase-orders", permission: PERMISSIONS.READ_PURCHASE_ORDERS },
+      { title: "Purchase Analytics", href: "/dashboard/purchase-orders/analytics", permission: PERMISSIONS.READ_PURCHASE_ORDERS },
       { title: "Suppliers", href: "/dashboard/purchases/suppliers", permission: PERMISSIONS.READ_SUPPLIERS },
     ],
   },
@@ -310,13 +326,28 @@ export function filterSidebarLinksByPermission(
   return links
     .map((link) => ({
       ...link,
-      dropdownMenu: link.dropdownMenu?.filter((item) => hasPermission(item.permission)),
+      dropdownMenu: link.dropdownMenu?.filter((item) =>
+        hasSidebarPermission(item, hasPermission),
+      ),
     }))
     .filter(
       (link) =>
-        hasPermission(link.permission) ||
+        hasSidebarPermission(link, hasPermission) ||
         Boolean(link.dropdown && link.dropdownMenu?.length),
     )
+}
+
+function hasSidebarPermission(
+  item: Pick<ISidebarLink, "permission" | "permissions" | "permissionMode">,
+  hasPermission: (permission: string) => boolean,
+) {
+  const permissions = item.permissions?.length
+    ? item.permissions
+    : [item.permission]
+
+  return item.permissionMode === "all"
+    ? permissions.every(hasPermission)
+    : permissions.some(hasPermission)
 }
 
 export function searchSidebarLinks(links: ISidebarLink[], searchTerm: string): ISidebarLink[] {

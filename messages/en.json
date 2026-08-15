@@ -90,6 +90,27 @@
     "title": "Cash drawer control",
     "subtitle": "Location-scoped drawer oversight, reconciliation confidence, and cashier session history.",
     "updated": "Updated {time}",
+    "operatingStatus": {
+      "title": "Operating status",
+      "prompt": "Is cash under control for this scope?",
+      "states": {
+        "controlled": "Cash under control",
+        "review": "Review required",
+        "critical": "Critical attention"
+      },
+      "confidence": "Confidence",
+      "alerts": "Active alerts",
+      "openDrawers": "Open drawers",
+      "lastUpdated": "Last updated"
+    },
+    "navigation": {
+      "label": "Cash drawer sections",
+      "overview": "Overview",
+      "drawers": "Drawers",
+      "movement": "Movement",
+      "sessions": "Sessions",
+      "journal": "Journal"
+    },
     "common": {
       "notAvailable": "Not available"
     },
@@ -111,7 +132,9 @@
       "pos": "POS",
       "openPos": "Open POS",
       "terminals": "Manage terminals",
-      "cashFlow": "Cash flow"
+      "cashFlow": "Cash flow",
+      "history": "Cash and payment history",
+      "reconciliation": "Reconciliation"
     },
     "notifications": {
       "refreshTitle": "Refreshing drawer dashboard",
@@ -157,7 +180,9 @@
       "refunds": "Refunds",
       "closingCounts": "Closing counts",
       "accuracy": "Accuracy {value}",
-      "thresholds": "Variance thresholds: review at {medium}, manager attention at {high}."
+      "thresholds": "Variance thresholds: review at {medium}, manager attention at {high}.",
+      "reviewThreshold": "Review threshold {amount}",
+      "managerThreshold": "Manager attention {amount}"
     },
     "alerts": {
       "highVariance": "{count} session(s) have high variance totaling {amount}.",
@@ -182,6 +207,15 @@
       "cashOut": "Cash out",
       "refunds": "Refunds"
     },
+    "chart": {
+      "netMovement": "Net movement",
+      "totalInflow": "Total inflow",
+      "totalOutflow": "Total outflow",
+      "latestComparison": "Latest vs previous day",
+      "comparisonUnavailable": "Not enough data",
+      "net": "Net",
+      "daySummary": "{date}: net {net}"
+    },
     "table": {
       "session": "Session",
       "cashier": "Cashier",
@@ -193,6 +227,25 @@
       "drawer": "Drawer",
       "amount": "Amount",
       "after": "After"
+    },
+    "details": {
+      "showSession": "Show session details",
+      "hideSession": "Hide session details",
+      "showJournal": "Show journal details",
+      "hideJournal": "Hide journal details",
+      "location": "Location",
+      "session": "Session",
+      "openingBalance": "Opening balance",
+      "expectedBalance": "Expected balance",
+      "closingBalance": "Closing balance",
+      "card": "Card",
+      "mobileMoney": "Mobile money",
+      "bankTransfer": "Bank transfer",
+      "credit": "Credit",
+      "transactions": "Transactions",
+      "balanceBefore": "Balance before",
+      "balanceAfter": "Balance after",
+      "reason": "Reason"
     },
     "statuses": {
       "ACTIVE": "Open",
@@ -211,10 +264,25 @@
       "REFUND": "Refund",
       "PAYOUT": "Payout"
     },
+    "tableControls": {
+      "searchPlaceholder": "Search session, cashier, terminal",
+      "status": "Status",
+      "time": "Time range",
+      "statusAll": "All statuses",
+      "timeAll": "All periods",
+      "time24h": "Last 24 hours",
+      "time7d": "Last 7 days",
+      "time30d": "Last 30 days",
+      "rowsPerPage": "Rows per page",
+      "previous": "Previous",
+      "next": "Next",
+      "showing": "Showing {start}-{end} of {total}"
+    },
     "empty": {
       "drawers": "No cash drawers were found for this scope.",
       "trend": "No drawer movement was found for this period.",
       "sessions": "No cashier sessions were found for this period.",
+      "sessionsFiltered": "No sessions match your search, filters, or time range.",
       "journal": "No drawer journal events were found for this period."
     }
   },
@@ -258,6 +326,8 @@
       "view": "View",
       "location": "Location",
       "period": "Period",
+      "startDate": "Start date",
+      "endDate": "End date",
       "allLocations": "All locations"
     },
     "views": {
@@ -298,6 +368,20 @@
       "payables": "Payables",
       "confidence": "Confidence"
     },
+    "tableControls": {
+      "searchPlaceholder": "Search session, cashier, terminal",
+      "status": "Status",
+      "time": "Time range",
+      "statusAll": "All statuses",
+      "timeAll": "All periods",
+      "time24h": "Last 24 hours",
+      "time7d": "Last 7 days",
+      "time30d": "Last 30 days",
+      "rowsPerPage": "Rows per page",
+      "previous": "Previous",
+      "next": "Next",
+      "showing": "Showing {start}-{end} of {total}"
+    },
     "details": {
       "cash": "Net cash movement {amount}",
       "margin": "Gross margin {value}",
@@ -317,7 +401,9 @@
       "payments": "Recent payments",
       "paymentsDescription": "Latest inbound and outbound payments with method, status, processor, and counterparty.",
       "methods": "Payment mix",
-      "methodsDescription": "Tender and settlement methods for the selected period."
+      "methodsDescription": "Tender and settlement methods for the selected period.",
+      "workflows": "{view} workflows",
+      "workflowsDescription": "Move from the {view} view to controlled payment, reconciliation, drawer, cash-flow, and tax work."
     },
     "summary": {
       "paymentsCollected": "Collected",
@@ -393,6 +479,7 @@
       "customers": "Customer ledger",
       "sales": "Sales workflow",
       "salesFinance": "Sales finance",
+      "apHistory": "AP history",
       "apWorkbench": "AP workbench",
       "purchaseOrders": "Purchase orders",
       "suppliers": "Supplier ledger"
@@ -422,6 +509,41 @@
         "methodsDescription": "Tender and settlement methods by captured amount for the selected period.",
         "workflows": "Payment workflows",
         "workflowsDescription": "Move directly from payment insight to capture, reconciliation, drawer, tax, and cash-flow work."
+      },
+      "ledger": {
+        "searchPlaceholder": "Search payment, counterparty, processor, method, or amount",
+        "searchLabel": "Search payment ledger",
+        "clearSearch": "Clear payment search",
+        "statusFilter": "Payment status",
+        "methodFilter": "Payment method",
+        "allStatuses": "All statuses",
+        "allMethods": "All methods",
+        "dateFrom": "Payments from date",
+        "dateTo": "Payments to date",
+        "columns": "Columns",
+        "visibleColumns": "Visible columns",
+        "reset": "Reset filters",
+        "sortBy": "Sort by {column}",
+        "noResultsTitle": "No payments match these filters",
+        "noResultsDescription": "Adjust or reset the ledger filters to review another payment scope.",
+        "resultCount": "Showing {visible} of {total} payments",
+        "rowsPerPage": "Rows per page",
+        "pageOf": "Page {page} of {total}",
+        "firstPage": "Go to first page",
+        "previousPage": "Go to previous page",
+        "nextPage": "Go to next page",
+        "lastPage": "Go to last page"
+      },
+      "mix": {
+        "capturedVolume": "Captured volume",
+        "capturedVolumeDetail": "Total value represented across payment methods.",
+        "transactions": "Transactions",
+        "transactionsDetail": "Captured payments across all active methods.",
+        "averagePayment": "Average payment",
+        "averagePaymentDetail": "Mean captured value per payment.",
+        "leadingMethod": "Leading method",
+        "paymentCount": "{count, plural, one {# payment} other {# payments}}",
+        "share": "{share}% of captured volume"
       },
       "summary": {
         "inboundRecent": "Recent inbound receipts",
@@ -562,6 +684,58 @@
       "missing": "Missing",
       "suspenseAmount": "Exposure {amount}"
     },
+    "statementImport": {
+      "title": "Provider statement intake",
+      "description": "Import tenant-scoped CSV or JSON statement evidence. File and line hashes prevent duplicate ingestion.",
+      "noActiveAccount": "Configure an active provider account before importing statement evidence.",
+      "accountLabel": "Provider account",
+      "accountPlaceholder": "Select a provider account",
+      "fileLabel": "Statement file",
+      "fileNameLabel": "Statement file name",
+      "fileNamePlaceholder": "Statement file name",
+      "contentLabel": "Statement content",
+      "contentPlaceholder": "Upload a CSV or JSON file, or paste its contents here.",
+      "formatHint": "Required columns: amount and date; transaction, reference, direction, fee, and currency are supported.",
+      "action": "Import statement",
+      "historyTitle": "Recent statement evidence",
+      "emptyHistory": "No statement file has been imported yet.",
+      "unnamedFile": "Unnamed statement",
+      "lineCount": "{count} line(s)",
+      "statuses": {
+        "IMPORTED": "Imported",
+        "DUPLICATE_FILE": "Duplicate file",
+        "DUPLICATE_LINE": "Duplicate line"
+      },
+      "notifications": {
+        "completedTitle": "Statement intake complete",
+        "completedMessage": "{status}: {count} line(s) imported.",
+        "failedTitle": "Statement import failed",
+        "failedMessage": "The statement could not be imported safely.",
+        "readFailedTitle": "File could not be read",
+        "readFailedMessage": "Choose a readable CSV or JSON statement file."
+      }
+    },
+    "manualMatch": {
+      "title": "Manual match review",
+      "description": "Compare masked internal and external evidence, propose a bounded amount, then require an independent fresh-auth approver.",
+      "emptyCandidates": "No evidence pair currently requires a manual match proposal.",
+      "internalEvidence": "Internal {reference} / {amount}",
+      "externalEvidence": "External {reference} / {amount}",
+      "amountLabel": "Amount to match",
+      "approvalTitle": "Independent approval queue",
+      "emptyApprovals": "No manual match proposal is waiting for approval.",
+      "proposalFacts": "{id} / {amount} / {time}",
+      "actions": {
+        "propose": "Propose match",
+        "approve": "Approve match"
+      },
+      "notifications": {
+        "proposedTitle": "Manual match proposed",
+        "proposedMessage": "The evidence pair is waiting for an independent reviewer.",
+        "approvedTitle": "Manual match approved",
+        "approvedMessage": "The independent approval record was created."
+      }
+    },
     "suspenseWorkflow": {
       "title": "Suspense approval lane",
       "description": "Assign, propose reclassification, and approve suspense posting requests with maker-checker evidence.",
@@ -606,7 +780,7 @@
     },
     "source": {
       "captureReadModel": "Captured payment read model",
-      "providerPersistencePending": "Provider statement and signed reconciliation-run persistence is not present yet, so this view shows capture-readiness evidence from existing payments."
+      "providerPersistencePending": "Captured-payment summaries remain a diagnostic view; the durable evidence kernel above is authoritative for statement evidence, sign-off, and close blockers."
     },
     "notifications": {
       "refreshTitle": "Refreshing reconciliation",
@@ -972,6 +1146,10 @@
     "customers": {
       "title": "Customer",
       "description": "Choose one customer for this transaction. The selected customer is locked until you change it or return to walk-in.",
+      "descriptionForLocation": "Choose from {count} customers assigned to {location}.",
+      "locationRequired": "Choose a location before selecting a customer.",
+      "locationUnavailable": "This location is unavailable for POS customer access.",
+      "locationMismatch": "This customer is not available at the selected location. Choose another customer or use walk-in.",
       "searchPlaceholder": "Search customers",
       "choose": "Choose customer",
       "change": "Change customer",
@@ -1016,7 +1194,8 @@
       "title": "Cart",
       "walkIn": "Walk-in customer",
       "empty": "Scan or select an item to start a persisted draft sale.",
-      "lines": "{count} lines"
+      "lines": "{count} lines",
+      "removeLine": "Remove {item} from cart"
     },
     "totals": {
       "subtotal": "Subtotal",
@@ -1120,6 +1299,10 @@
       "closeShiftSuccessTitle": "Register closed",
       "closeShiftSuccessMessage": "Session {number} was closed with an actual drawer balance of {amount}.",
       "closeShiftErrorTitle": "Register close failed",
+      "locationChangeBlockedTitle": "Finish the current cart first",
+      "locationChangeBlockedMessage": "Remove or complete the cart lines before changing location. The draft will not be moved to another branch.",
+      "customerResetTitle": "Customer reset",
+      "customerResetMessage": "The previous location's customer was cleared. This sale is now set to walk-in.",
       "addItemSuccessTitle": "Item added",
       "addItemSuccessMessage": "{item} was added to the current sale.",
       "addItemErrorTitle": "Item could not be added",
@@ -3117,6 +3300,7 @@
     "title": "Supplier payable history",
     "summary": "Review supplier invoices, payments, payable movements, and AP proof signals from one operational history.",
     "scopeLabel": "Tenant-scoped AP history",
+    "scopeSupplier": "AP history for {supplier}",
     "filters": {
       "title": "Filter AP history",
       "detail": "Use server-owned filters. Cursor and export preparation stay on the server.",
@@ -3130,8 +3314,19 @@
       "reset": "Reset"
     },
     "actions": {
+      "backToSupplier": "Back to supplier",
       "export": "Prepare export",
       "exporting": "Preparing"
+    },
+    "controlStates": {
+      "draft": "Draft",
+      "matched": "Matched",
+      "posted": "Posted",
+      "paymentPending": "Payment pending",
+      "paid": "Paid",
+      "released": "Released",
+      "exception": "Exception",
+      "cancelled": "Cancelled"
     },
     "table": {
       "caption": "Supplier AP events",
@@ -3198,6 +3393,7 @@
       "recordedAt": "Recorded at"
     },
     "snapshot": {
+      "supplier": "Supplier scope",
       "timezone": "Timezone",
       "recordedThrough": "Recorded through",
       "generatedAt": "Generated"
@@ -3293,6 +3489,93 @@
     },
     "exportStatus": {
       "ready": "Controlled export downloaded."
+    }
+  },
+  "supplierPoAcknowledgement": {
+    "loading": "Verifying your secure purchase order…",
+    "invalidTitle": "Access unavailable",
+    "invalidDescription": "This invitation is invalid, expired, or has been revoked. Ask the buyer for a new secure link.",
+    "switchLanguage": "Français",
+    "secureEnvelope": "Secure supplier purchase-order envelope",
+    "purchaseOrder": "Purchase order",
+    "redactedVerified": "Redacted · verified snapshot",
+    "proposalBoundaryTitle": "Proposal-only boundary.",
+    "proposalBoundary": "Your response does not change the purchase order, stock, accounts payable, or accounting. A buyer must explicitly review any proposal.",
+    "orderDate": "Order date",
+    "expectedDate": "Expected delivery",
+    "deliveryLocation": "Delivery location",
+    "paymentTerms": "Payment terms",
+    "orderLines": "Order lines",
+    "item": "Item",
+    "quantity": "Quantity",
+    "unitCost": "Unit cost",
+    "lineTotal": "Line total",
+    "subtotal": "Subtotal",
+    "tax": "Tax",
+    "shipping": "Shipping",
+    "total": "Total",
+    "submittedProposal": "Immutable supplier response",
+    "respondTitle": "Acknowledge this purchase order",
+    "respondDescription": "Choose one response. Once submitted, it becomes immutable evidence for buyer review.",
+    "requestedDate": "Requested delivery date",
+    "requestedQuantities": "Requested quantities",
+    "ordered": "ordered",
+    "requestedQuantityFor": "Requested quantity for {item}",
+    "noteOptional": "Note (optional)",
+    "reasonRequired": "Reason (required)",
+    "notePlaceholder": "Add concise context for the buyer",
+    "submitProposal": "Submit response",
+    "submitting": "Submitting…",
+    "submissionFailed": "The response could not be submitted. Check the requested changes and try again.",
+    "footerControl": "Invite-only access. The token is signed, the envelope is redacted, request metadata is hashed, and every response state is append-only evidence.",
+    "evidenceHash": "Envelope evidence hash",
+    "proposalType": {
+      "ACCEPT": "Accept as ordered",
+      "REJECT": "Reject order",
+      "REQUEST_CHANGE": "Request date or quantity changes"
+    },
+    "proposalStatus": {
+      "SUBMITTED": "Awaiting buyer review",
+      "BUYER_ACCEPTED": "Proposal accepted by buyer",
+      "BUYER_REJECTED": "Proposal rejected by buyer"
+    },
+    "buyerWorkbench": {
+      "title": "Supplier acknowledgement",
+      "description": "Issue one-time signed invitations and review supplier proposals without changing authoritative records.",
+      "authoritativeBoundary": "Purchase order, stock, accounts payable, and accounting remain authoritative. Accepting a proposal here records a buyer decision only; operational changes require the normal internal workflows.",
+      "backToOrder": "Back to purchase order",
+      "issueTitle": "Issue invitation",
+      "recipientReference": "Supplier email or reference",
+      "recipientPlaceholder": "supplier@example.com",
+      "issue": "Create signed invitation",
+      "issuing": "Creating…",
+      "invitationReady": "Invitation ready",
+      "copyLink": "Copy secure link",
+      "copied": "Copied",
+      "oneTimeWarning": "This signed link is shown after issuance. Share it only with the intended supplier.",
+      "envelope": "Envelope",
+      "noEnvelope": "No supplier acknowledgement envelope has been issued.",
+      "tokens": "Invitation access",
+      "noTokens": "No invitations for this envelope.",
+      "active": "Active",
+      "expired": "Expired",
+      "revoked": "Revoked",
+      "expires": "Expires",
+      "accesses": "Accesses",
+      "revokeReason": "Revocation reason",
+      "revoke": "Revoke access",
+      "accessRevoked": "Supplier invitation access revoked.",
+      "proposals": "Supplier proposals",
+      "noProposals": "No supplier response has been submitted.",
+      "requestedChanges": "Requested changes",
+      "supplierNote": "Supplier note",
+      "history": "Immutable state history",
+      "reviewReason": "Buyer decision reason",
+      "acceptProposal": "Accept proposal",
+      "rejectProposal": "Reject proposal",
+      "reviewed": "Buyer decision recorded. No authoritative record was changed.",
+      "actionFailed": "The action could not be completed.",
+      "hash": "Evidence hash"
     }
   }
 }

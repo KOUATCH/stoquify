@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react"
 import type { ColumnDef } from "@tanstack/react-table"
 import {
@@ -14,7 +15,6 @@ import {
   CreditCard,
   Download,
   Edit3,
-  ExternalLink,
   Languages,
   Loader2,
   Mail,
@@ -465,6 +465,7 @@ export default function CustomerManagementDashboard({
   initialAnalyticsId,
 }: CustomerManagementDashboardProps) {
   const t = copy[locale]
+  const router = useRouter()
   const notifications = useNotifications()
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all")
   const [activityFilter, setActivityFilter] = useState<ActivityFilter>("all")
@@ -828,9 +829,11 @@ export default function CustomerManagementDashboard({
                 {t.copyId}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setAnalyticsCustomerId(customer.id)}>
-                <BarChart3 className="me-2 h-4 w-4" />
-                {t.viewAnalytics}
+              <DropdownMenuItem asChild>
+                <Link href={`${basePath}/${customer.id}`}>
+                  <BarChart3 className="me-2 h-4 w-4" />
+                  {t.viewAnalytics}
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href={`${basePath}/${customer.id}/statement`}>
@@ -838,14 +841,10 @@ export default function CustomerManagementDashboard({
                   {t.createStatement}
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => openEdit(customer)}>
-                <Edit3 className="me-2 h-4 w-4" />
-                {t.editCustomer}
-              </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href={`${basePath}/${customer.id}/edit`}>
-                  <ExternalLink className="me-2 h-4 w-4" />
-                  {t.openEditPage}
+                  <Edit3 className="me-2 h-4 w-4" />
+                  {t.editCustomer}
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -858,7 +857,7 @@ export default function CustomerManagementDashboard({
         )
       },
     },
-  ], [basePath, copyCustomerId, data?.currency, locale, openEdit, t])
+  ], [basePath, copyCustomerId, data?.currency, locale, t])
 
   const statsCards = useMemo(() => {
     const summary = data?.summary
@@ -978,9 +977,11 @@ export default function CustomerManagementDashboard({
               <RefreshCw className={cn("h-4 w-4", isFetching && "animate-spin")} />
               {isFetching ? t.refreshing : t.refresh}
             </Button>
-            <Button type="button" onClick={openCreate} className="dashboard-button-create h-10 w-full rounded-lg sm:w-auto">
-              <Plus className="h-4 w-4" />
-              {t.create}
+            <Button asChild className="dashboard-button-create h-10 w-full rounded-lg sm:w-auto">
+              <Link href={`${basePath}/new`}>
+                <Plus className="h-4 w-4" />
+                {t.create}
+              </Link>
             </Button>
           </div>
         </div>
@@ -999,7 +1000,7 @@ export default function CustomerManagementDashboard({
             locale={locale}
             valueFor={(customer) => formatCurrency(customer.totalSalesValue, locale, data?.currency)}
             emptyText={t.noOrdersYet}
-            onOpen={setAnalyticsCustomerId}
+            onOpen={(customerId) => router.push(`${basePath}/${customerId}`)}
           />
           <AnalyticsListCard
             title={t.topBalances}
@@ -1008,7 +1009,7 @@ export default function CustomerManagementDashboard({
             locale={locale}
             valueFor={(customer) => formatCurrency(customer.currentBalance, locale, data?.currency)}
             emptyText={t.noLedgerYet}
-            onOpen={setAnalyticsCustomerId}
+            onOpen={(customerId) => router.push(`${basePath}/${customerId}`)}
           />
         </div>
 
@@ -1087,7 +1088,7 @@ export default function CustomerManagementDashboard({
                 additionalFilters: (
                   <>
                     <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as StatusFilter)}>
-                      <SelectTrigger className="dashboard-control h-9 w-full rounded-lg sm:w-[150px]">
+                      <SelectTrigger aria-label={t.status} className="dashboard-control h-9 w-full rounded-lg sm:w-[150px]">
                         <SelectValue placeholder={t.status} />
                       </SelectTrigger>
                       <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
@@ -1097,7 +1098,7 @@ export default function CustomerManagementDashboard({
                       </SelectContent>
                     </Select>
                     <Select value={activityFilter} onValueChange={(value) => setActivityFilter(value as ActivityFilter)}>
-                      <SelectTrigger className="dashboard-control h-9 w-full rounded-lg sm:w-[170px]">
+                      <SelectTrigger aria-label={t.activity} className="dashboard-control h-9 w-full rounded-lg sm:w-[170px]">
                         <SelectValue placeholder={t.activity} />
                       </SelectTrigger>
                       <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
@@ -1110,7 +1111,7 @@ export default function CustomerManagementDashboard({
                       </SelectContent>
                     </Select>
                     <Select value={localeFilter} onValueChange={(value) => setLocaleFilter(value as LocaleFilter)}>
-                      <SelectTrigger className="dashboard-control h-9 w-full rounded-lg sm:w-[145px]">
+                      <SelectTrigger aria-label={t.language} className="dashboard-control h-9 w-full rounded-lg sm:w-[145px]">
                         <SelectValue placeholder={t.language} />
                       </SelectTrigger>
                       <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">

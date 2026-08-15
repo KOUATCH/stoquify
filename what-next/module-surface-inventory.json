@@ -1,7 +1,7 @@
 {
   "summary": {
-    "generatedAt": "2026-08-06T09:43:22.585Z",
-    "mode": "report",
+    "generatedAt": "2026-08-10T15:54:22.066Z",
+    "mode": "warn",
     "sourceFiles": {
       "sidebar": true,
       "moduleCatalog": true,
@@ -12,28 +12,28 @@
       "apiGuardInventory": true
     },
     "catalogCount": 19,
-    "recordCount": 387,
+    "recordCount": 400,
     "bySurfaceType": {
-      "action": 138,
+      "action": 141,
       "api_evidence": 2,
-      "api": 11,
-      "export_evidence": 8,
-      "export": 4,
+      "api": 14,
+      "export_evidence": 11,
+      "export": 5,
       "layout": 10,
       "module_service": 3,
-      "navigation": 81,
-      "page": 124,
+      "navigation": 82,
+      "page": 126,
       "report_evidence": 3,
       "report": 3
     },
     "byClassification": {
       "not applicable: internal action response helper": 1,
-      "mapped": 353,
-      "enforcement candidate": 257,
-      "unmapped": 6,
+      "mapped": 361,
+      "enforcement candidate": 256,
+      "unmapped": 5,
       "delegated re-export": 7,
       "not applicable: public identity boundary": 1,
-      "missing permission": 4,
+      "missing permission": 10,
       "not applicable: internal display helper": 1,
       "not applicable: cross-module session assurance": 1,
       "not applicable: token-bound invitation acceptance": 1,
@@ -42,11 +42,12 @@
       "not applicable: public email verification": 1,
       "not_applicable_public_service": 1,
       "not_applicable_public": 4,
-      "review_required": 1,
+      "review_required": 4,
       "not_applicable_session_claims": 1,
       "delegated_uploadthing_core": 1,
-      "source_inherited_service": 11,
-      "not applicable: internal module governance contract": 1
+      "source_inherited_service": 14,
+      "not applicable: internal module governance contract": 1,
+      "dashboard-only risk": 5
     }
   },
   "records": [
@@ -105,6 +106,20 @@
       "delegatedTo": [],
       "metadata": {},
       "classification": "mapped, enforcement candidate"
+    },
+    {
+      "file": "actions/accounting/customer-statement.actions.ts",
+      "surface": "accounting/customer-statement.actions.ts",
+      "surfaceType": "action",
+      "moduleApplicability": "required",
+      "moduleSlug": "accounting",
+      "permission": "accounting.exports.create",
+      "guard": "protect",
+      "observeOrEnforce": "enforce",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped"
     },
     {
       "file": "actions/accounting/data-trust.actions.ts",
@@ -485,28 +500,28 @@
       "surface": "customers/customer-management-actions.ts",
       "surfaceType": "action",
       "moduleApplicability": "required",
-      "moduleSlug": null,
-      "permission": ")) {\n      return error.message\n    }\n\n    if (error.message.startsWith(",
-      "guard": "none",
-      "observeOrEnforce": "report-only",
+      "moduleSlug": "sales",
+      "permission": "customers.read",
+      "guard": "protect",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "unmapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/customers/customerAction2.ts",
       "surface": "customers/customerAction2.ts",
       "surfaceType": "action",
       "moduleApplicability": "required",
-      "moduleSlug": null,
+      "moduleSlug": "sales",
       "permission": null,
       "guard": "requirePermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "unmapped, missing permission, enforcement candidate"
+      "classification": "mapped, missing permission"
     },
     {
       "file": "actions/customers/customerActions.ts",
@@ -605,6 +620,20 @@
       "delegatedTo": [],
       "metadata": {},
       "classification": "mapped, enforcement candidate"
+    },
+    {
+      "file": "actions/finance/customer-settlement.actions.ts",
+      "surface": "finance/customer-settlement.actions.ts",
+      "surfaceType": "action",
+      "moduleApplicability": "required",
+      "moduleSlug": "finance",
+      "permission": "finance.receivables.reverse",
+      "guard": "protect",
+      "observeOrEnforce": "enforce",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped"
     },
     {
       "file": "actions/finance/finance-dashboard.actions.ts",
@@ -1575,6 +1604,20 @@
       "classification": "mapped"
     },
     {
+      "file": "actions/referrals/referral-funnel.actions.ts",
+      "surface": "referrals/referral-funnel.actions.ts",
+      "surfaceType": "action",
+      "moduleApplicability": "required",
+      "moduleSlug": null,
+      "permission": "analytics.read",
+      "guard": "requirePermission",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "unmapped, enforcement candidate"
+    },
+    {
       "file": "actions/roles/createRole.ts",
       "surface": "roles/createRole.ts",
       "surfaceType": "action",
@@ -1764,11 +1807,11 @@
       "moduleSlug": "purchasing",
       "permission": "purchases.suppliers.read | purchases.suppliers.create | purchases.suppliers.update | purchases.suppliers.delete",
       "guard": "requireOrg+permission-check",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "actions/taxRate/createActionTaxRate.ts",
@@ -2103,6 +2146,62 @@
       "classification": "not_applicable_public"
     },
     {
+      "file": "app/api/customer-statements/[statementId]/actions/route.ts",
+      "surface": "/api/customer-statements/[statementId]/actions",
+      "surfaceType": "api",
+      "moduleApplicability": "review_required",
+      "moduleSlug": null,
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {
+        "apiClassification": "unclassified",
+        "apiDataClass": "json response",
+        "apiEvidenceFor": null,
+        "apiIssues": [],
+        "apiMethods": [
+          "POST"
+        ],
+        "apiModuleAccess": "none",
+        "apiModuleAccessIntent": null,
+        "apiModuleAccessMode": null,
+        "apiOrgSource": "none",
+        "apiResponseEnvelope": "success envelope with safe error envelope",
+        "apiSurfaceKind": "api_route"
+      },
+      "classification": "review_required"
+    },
+    {
+      "file": "app/api/customer-statements/[statementId]/route.ts",
+      "surface": "/api/customer-statements/[statementId]",
+      "surfaceType": "api",
+      "moduleApplicability": "review_required",
+      "moduleSlug": null,
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {
+        "apiClassification": "unclassified",
+        "apiDataClass": "json response",
+        "apiEvidenceFor": null,
+        "apiIssues": [],
+        "apiMethods": [
+          "GET"
+        ],
+        "apiModuleAccess": "none",
+        "apiModuleAccessIntent": null,
+        "apiModuleAccessMode": null,
+        "apiOrgSource": "none",
+        "apiResponseEnvelope": "success envelope with safe error envelope",
+        "apiSurfaceKind": "api_route"
+      },
+      "classification": "review_required"
+    },
+    {
       "file": "app/api/internal/agents/reconcile-abandoned/route.ts",
       "surface": "/api/internal/agents/reconcile-abandoned",
       "surfaceType": "api",
@@ -2186,6 +2285,34 @@
         "apiSurfaceKind": "api_route"
       },
       "classification": "not_applicable_public"
+    },
+    {
+      "file": "app/api/referrals/[referralCode]/route.ts",
+      "surface": "/api/referrals/[referralCode]",
+      "surfaceType": "api",
+      "moduleApplicability": "review_required",
+      "moduleSlug": null,
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {
+        "apiClassification": "unclassified",
+        "apiDataClass": "response",
+        "apiEvidenceFor": null,
+        "apiIssues": [],
+        "apiMethods": [
+          "GET"
+        ],
+        "apiModuleAccess": "none",
+        "apiModuleAccessIntent": null,
+        "apiModuleAccessMode": null,
+        "apiOrgSource": "none",
+        "apiResponseEnvelope": "success envelope with safe error envelope",
+        "apiSurfaceKind": "api_route"
+      },
+      "classification": "review_required"
     },
     {
       "file": "app/api/security-txt/route.ts",
@@ -2359,6 +2486,27 @@
       "classification": "mapped, enforcement candidate"
     },
     {
+      "file": "services/accounting/ar-open-item-export.service.ts",
+      "surface": "accounting/ar-open-item-export.service.ts",
+      "surfaceType": "export_evidence",
+      "moduleApplicability": "source_inherited_service",
+      "moduleSlug": "accounting",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {
+        "sourceModules": [
+          "accounting"
+        ],
+        "sourceEvidence": "service-owned read model",
+        "reportExportKind": "export",
+        "freshAuthEvidence": false
+      },
+      "classification": "source_inherited_service"
+    },
+    {
       "file": "services/accounting/control-center.service.ts",
       "surface": "accounting/control-center.service.ts",
       "surfaceType": "export_evidence",
@@ -2428,6 +2576,25 @@
       "moduleApplicability": "source_inherited_service",
       "moduleSlug": null,
       "permission": "pos.use",
+      "guard": "none",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {
+        "sourceModules": [],
+        "sourceEvidence": "service-owned read model",
+        "reportExportKind": "export",
+        "freshAuthEvidence": false
+      },
+      "classification": "source_inherited_service"
+    },
+    {
+      "file": "services/customer/customer-export.service.ts",
+      "surface": "customer/customer-export.service.ts",
+      "surfaceType": "export_evidence",
+      "moduleApplicability": "source_inherited_service",
+      "moduleSlug": null,
+      "permission": null,
       "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
@@ -2523,6 +2690,46 @@
       "classification": "source_inherited_service"
     },
     {
+      "file": "services/supplier/supplier-export.service.ts",
+      "surface": "supplier/supplier-export.service.ts",
+      "surfaceType": "export_evidence",
+      "moduleApplicability": "source_inherited_service",
+      "moduleSlug": null,
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {
+        "sourceModules": [],
+        "sourceEvidence": "service-owned read model",
+        "reportExportKind": "export",
+        "freshAuthEvidence": false
+      },
+      "classification": "source_inherited_service"
+    },
+    {
+      "file": "actions/accounting/customer-statement.actions.ts",
+      "surface": "accounting/customer-statement.actions.ts",
+      "surfaceType": "export",
+      "moduleApplicability": "required",
+      "moduleSlug": "accounting",
+      "permission": "accounting.exports.create",
+      "guard": "protect",
+      "observeOrEnforce": "enforce",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {
+        "sourceModules": [
+          "accounting"
+        ],
+        "sourceEvidence": "protected action boundary",
+        "reportExportKind": "export",
+        "freshAuthEvidence": true
+      },
+      "classification": "mapped"
+    },
+    {
       "file": "actions/accounting/data-trust.actions.ts",
       "surface": "accounting/data-trust.actions.ts",
       "surfaceType": "export",
@@ -2614,11 +2821,11 @@
       "moduleSlug": "sales",
       "permission": "customers.read",
       "guard": "checkPermission",
-      "observeOrEnforce": "report-only",
+      "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/inventory/brands/layout.tsx",
@@ -2959,6 +3166,20 @@
     {
       "file": "config/sidebar.ts",
       "surface": "/dashboard/analytics",
+      "surfaceType": "navigation",
+      "moduleApplicability": "required",
+      "moduleSlug": "analytics",
+      "permission": "VIEW_ANALYTICS",
+      "guard": "sidebar-permission-filter",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped, enforcement candidate"
+    },
+    {
+      "file": "config/sidebar.ts",
+      "surface": "/dashboard/analytics/referrals",
       "surfaceType": "navigation",
       "moduleApplicability": "required",
       "moduleSlug": "analytics",
@@ -4119,6 +4340,20 @@
       "classification": "mapped, enforcement candidate"
     },
     {
+      "file": "app/[locale]/(dashboard)/dashboard/analytics/referrals/page.tsx",
+      "surface": "/dashboard/analytics/referrals",
+      "surfaceType": "page",
+      "moduleApplicability": "required",
+      "moduleSlug": "analytics",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
+    },
+    {
       "file": "app/[locale]/(dashboard)/dashboard/analytics/reports/page.tsx",
       "surface": "/dashboard/analytics/reports",
       "surfaceType": "page",
@@ -4208,13 +4443,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "sales",
-      "permission": "customers.update",
-      "guard": "checkPermission",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/customers/[id]/orders/page.tsx",
@@ -4222,13 +4457,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "sales",
-      "permission": "customers.orders.read",
-      "guard": "checkPermission",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/customers/[id]/page.tsx",
@@ -4236,13 +4471,27 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "sales",
-      "permission": "customers.read",
-      "guard": "checkPermission",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
+    },
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/customers/[id]/statement/page.tsx",
+      "surface": "/dashboard/customers/[id]/statement",
+      "surfaceType": "page",
+      "moduleApplicability": "required",
+      "moduleSlug": "sales",
+      "permission": null,
+      "guard": "module-observe",
+      "observeOrEnforce": "enforce",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped, missing permission"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/customers/new/page.tsx",
@@ -4250,13 +4499,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "sales",
-      "permission": "customers.create",
-      "guard": "checkPermission",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/customers/page.tsx",
@@ -5258,8 +5507,8 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "purchasing",
-      "permission": "purchasing.ap.invoice.view",
-      "guard": "requirePermission",
+      "permission": "purchasing.ap.invoice.view | finance.payables.read | purchases.suppliers.read",
+      "guard": "requireAnyPermission",
       "observeOrEnforce": "enforce",
       "dependencyGaps": [],
       "delegatedTo": [],
@@ -5780,5 +6029,765 @@
       },
       "classification": "mapped, enforcement candidate"
     }
-  ]
+  ],
+  "ratchet": {
+    "failed": true,
+    "baselineActiveGapCount": 55,
+    "currentActiveGapCount": 20,
+    "activeGapDelta": -35,
+    "baselineCounts": {
+      "MODULE_SURFACE_UNMAPPED": 34,
+      "MODULE_SURFACE_MISSING_PERMISSION": 16,
+      "MODULE_SURFACE_PROTECTED_GUARD_NONE": 5
+    },
+    "currentCounts": {
+      "MODULE_SURFACE_UNMAPPED": 5,
+      "MODULE_SURFACE_MISSING_PERMISSION": 10,
+      "MODULE_SURFACE_PAGE_GUARD_NONE": 5
+    },
+    "newFindings": [
+      {
+        "surfaceType": "action",
+        "surface": "agents/agent-release-control.actions.ts",
+        "file": "actions/agents/agent-release-control.actions.ts",
+        "moduleSlug": null,
+        "permission": "agent.release.prepare",
+        "guard": "protect",
+        "classification": "unmapped, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "referrals/referral-funnel.actions.ts",
+        "file": "actions/referrals/referral-funnel.actions.ts",
+        "moduleSlug": null,
+        "permission": "analytics.read",
+        "guard": "requirePermission",
+        "classification": "unmapped, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "page",
+        "surface": "/dashboard/analytics/referrals",
+        "file": "app/[locale]/(dashboard)/dashboard/analytics/referrals/page.tsx",
+        "moduleSlug": "analytics",
+        "permission": null,
+        "guard": "none",
+        "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_MISSING_PERMISSION",
+        "reason": "Protected user-facing surface has no RBAC permission evidence."
+      },
+      {
+        "surfaceType": "page",
+        "surface": "/dashboard/analytics/referrals",
+        "file": "app/[locale]/(dashboard)/dashboard/analytics/referrals/page.tsx",
+        "moduleSlug": "analytics",
+        "permission": null,
+        "guard": "none",
+        "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_PAGE_GUARD_NONE",
+        "reason": "Dashboard page has no detected server-side guard."
+      },
+      {
+        "surfaceType": "page",
+        "surface": "/dashboard/customers/[id]/edit",
+        "file": "app/[locale]/(dashboard)/dashboard/customers/[id]/edit/page.tsx",
+        "moduleSlug": "sales",
+        "permission": null,
+        "guard": "none",
+        "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_MISSING_PERMISSION",
+        "reason": "Protected user-facing surface has no RBAC permission evidence."
+      },
+      {
+        "surfaceType": "page",
+        "surface": "/dashboard/customers/[id]/edit",
+        "file": "app/[locale]/(dashboard)/dashboard/customers/[id]/edit/page.tsx",
+        "moduleSlug": "sales",
+        "permission": null,
+        "guard": "none",
+        "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_PAGE_GUARD_NONE",
+        "reason": "Dashboard page has no detected server-side guard."
+      },
+      {
+        "surfaceType": "page",
+        "surface": "/dashboard/customers/[id]/orders",
+        "file": "app/[locale]/(dashboard)/dashboard/customers/[id]/orders/page.tsx",
+        "moduleSlug": "sales",
+        "permission": null,
+        "guard": "none",
+        "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_MISSING_PERMISSION",
+        "reason": "Protected user-facing surface has no RBAC permission evidence."
+      },
+      {
+        "surfaceType": "page",
+        "surface": "/dashboard/customers/[id]/orders",
+        "file": "app/[locale]/(dashboard)/dashboard/customers/[id]/orders/page.tsx",
+        "moduleSlug": "sales",
+        "permission": null,
+        "guard": "none",
+        "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_PAGE_GUARD_NONE",
+        "reason": "Dashboard page has no detected server-side guard."
+      },
+      {
+        "surfaceType": "page",
+        "surface": "/dashboard/customers/[id]",
+        "file": "app/[locale]/(dashboard)/dashboard/customers/[id]/page.tsx",
+        "moduleSlug": "sales",
+        "permission": null,
+        "guard": "none",
+        "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_MISSING_PERMISSION",
+        "reason": "Protected user-facing surface has no RBAC permission evidence."
+      },
+      {
+        "surfaceType": "page",
+        "surface": "/dashboard/customers/[id]",
+        "file": "app/[locale]/(dashboard)/dashboard/customers/[id]/page.tsx",
+        "moduleSlug": "sales",
+        "permission": null,
+        "guard": "none",
+        "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_PAGE_GUARD_NONE",
+        "reason": "Dashboard page has no detected server-side guard."
+      },
+      {
+        "surfaceType": "page",
+        "surface": "/dashboard/customers/[id]/statement",
+        "file": "app/[locale]/(dashboard)/dashboard/customers/[id]/statement/page.tsx",
+        "moduleSlug": "sales",
+        "permission": null,
+        "guard": "module-observe",
+        "classification": "mapped, missing permission",
+        "metadata": {},
+        "category": "MODULE_SURFACE_MISSING_PERMISSION",
+        "reason": "Protected user-facing surface has no RBAC permission evidence."
+      },
+      {
+        "surfaceType": "page",
+        "surface": "/dashboard/customers/new",
+        "file": "app/[locale]/(dashboard)/dashboard/customers/new/page.tsx",
+        "moduleSlug": "sales",
+        "permission": null,
+        "guard": "none",
+        "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_MISSING_PERMISSION",
+        "reason": "Protected user-facing surface has no RBAC permission evidence."
+      },
+      {
+        "surfaceType": "page",
+        "surface": "/dashboard/customers/new",
+        "file": "app/[locale]/(dashboard)/dashboard/customers/new/page.tsx",
+        "moduleSlug": "sales",
+        "permission": null,
+        "guard": "none",
+        "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_PAGE_GUARD_NONE",
+        "reason": "Dashboard page has no detected server-side guard."
+      }
+    ],
+    "resolvedFindings": [
+      {
+        "surfaceType": "action",
+        "surface": "_shared/safe-action-responses.ts",
+        "file": "actions/_shared/safe-action-responses.ts",
+        "moduleSlug": null,
+        "permission": null,
+        "guard": "none",
+        "classification": "unmapped, missing permission, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "_shared/safe-action-responses.ts",
+        "file": "actions/_shared/safe-action-responses.ts",
+        "moduleSlug": null,
+        "permission": null,
+        "guard": "none",
+        "classification": "unmapped, missing permission, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_MISSING_PERMISSION",
+        "reason": "Protected user-facing surface has no RBAC permission evidence."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "analytics/analytics/financial-reports.ts",
+        "file": "actions/analytics/analytics/financial-reports.ts",
+        "moduleSlug": "analytics",
+        "permission": null,
+        "guard": "none",
+        "classification": "mapped, missing permission, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_MISSING_PERMISSION",
+        "reason": "Protected user-facing surface has no RBAC permission evidence."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "analytics/analytics/financial-reports.ts",
+        "file": "actions/analytics/analytics/financial-reports.ts",
+        "moduleSlug": "analytics",
+        "permission": null,
+        "guard": "none",
+        "classification": "mapped, missing permission, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_PROTECTED_GUARD_NONE",
+        "reason": "Module-owned action or API surface has no detected server-side guard."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "analytics/get-sales-analytics.ts",
+        "file": "actions/analytics/get-sales-analytics.ts",
+        "moduleSlug": "analytics",
+        "permission": null,
+        "guard": "none",
+        "classification": "mapped, missing permission, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_MISSING_PERMISSION",
+        "reason": "Protected user-facing surface has no RBAC permission evidence."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "analytics/get-sales-analytics.ts",
+        "file": "actions/analytics/get-sales-analytics.ts",
+        "moduleSlug": "analytics",
+        "permission": null,
+        "guard": "none",
+        "classification": "mapped, missing permission, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_PROTECTED_GUARD_NONE",
+        "reason": "Module-owned action or API surface has no detected server-side guard."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "auth.ts",
+        "file": "actions/auth.ts",
+        "moduleSlug": null,
+        "permission": null,
+        "guard": "none",
+        "classification": "unmapped, missing permission, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "auth.ts",
+        "file": "actions/auth.ts",
+        "moduleSlug": null,
+        "permission": null,
+        "guard": "none",
+        "classification": "unmapped, missing permission, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_MISSING_PERMISSION",
+        "reason": "Protected user-facing surface has no RBAC permission evidence."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "brands/getOrgBrands.ts",
+        "file": "actions/brands/getOrgBrands.ts",
+        "moduleSlug": null,
+        "permission": null,
+        "guard": "none",
+        "classification": "unmapped, missing permission, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "brands/getOrgBrands.ts",
+        "file": "actions/brands/getOrgBrands.ts",
+        "moduleSlug": null,
+        "permission": null,
+        "guard": "none",
+        "classification": "unmapped, missing permission, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_MISSING_PERMISSION",
+        "reason": "Protected user-facing surface has no RBAC permission evidence."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "categories/createBulkCategories.ts",
+        "file": "actions/categories/createBulkCategories.ts",
+        "moduleSlug": null,
+        "permission": null,
+        "guard": "none",
+        "classification": "unmapped, missing permission, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "categories/createBulkCategories.ts",
+        "file": "actions/categories/createBulkCategories.ts",
+        "moduleSlug": null,
+        "permission": null,
+        "guard": "none",
+        "classification": "unmapped, missing permission, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_MISSING_PERMISSION",
+        "reason": "Protected user-facing surface has no RBAC permission evidence."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "categories/createCategory.ts",
+        "file": "actions/categories/createCategory.ts",
+        "moduleSlug": null,
+        "permission": null,
+        "guard": "none",
+        "classification": "unmapped, missing permission, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "categories/createCategory.ts",
+        "file": "actions/categories/createCategory.ts",
+        "moduleSlug": null,
+        "permission": null,
+        "guard": "none",
+        "classification": "unmapped, missing permission, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_MISSING_PERMISSION",
+        "reason": "Protected user-facing surface has no RBAC permission evidence."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "categories/getOrgCategories.ts",
+        "file": "actions/categories/getOrgCategories.ts",
+        "moduleSlug": null,
+        "permission": null,
+        "guard": "none",
+        "classification": "unmapped, missing permission, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "categories/getOrgCategories.ts",
+        "file": "actions/categories/getOrgCategories.ts",
+        "moduleSlug": null,
+        "permission": null,
+        "guard": "none",
+        "classification": "unmapped, missing permission, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_MISSING_PERMISSION",
+        "reason": "Protected user-facing surface has no RBAC permission evidence."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "customers/customer-management-actions.ts",
+        "file": "actions/customers/customer-management-actions.ts",
+        "moduleSlug": null,
+        "permission": ")) {\n      return error.message\n    }\n\n    if (error.message.startsWith(",
+        "guard": "none",
+        "classification": "unmapped, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "customers/customer-management-actions.ts",
+        "file": "actions/customers/customer-management-actions.ts",
+        "moduleSlug": null,
+        "permission": ")) {\n      return error.message\n    }\n\n    if (error.message.startsWith(",
+        "guard": "none",
+        "classification": "unmapped, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_PROTECTED_GUARD_NONE",
+        "reason": "Module-owned action or API surface has no detected server-side guard."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "customers/customerAction2.ts",
+        "file": "actions/customers/customerAction2.ts",
+        "moduleSlug": null,
+        "permission": null,
+        "guard": "requirePermission",
+        "classification": "unmapped, missing permission, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "item-suppliers/addItemSuppliers.ts",
+        "file": "actions/item-suppliers/addItemSuppliers.ts",
+        "moduleSlug": null,
+        "permission": null,
+        "guard": "none",
+        "classification": "unmapped, missing permission, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "item-suppliers/addItemSuppliers.ts",
+        "file": "actions/item-suppliers/addItemSuppliers.ts",
+        "moduleSlug": null,
+        "permission": null,
+        "guard": "none",
+        "classification": "unmapped, missing permission, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_MISSING_PERMISSION",
+        "reason": "Protected user-facing surface has no RBAC permission evidence."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "item-suppliers/getItemWithSuppliers.ts",
+        "file": "actions/item-suppliers/getItemWithSuppliers.ts",
+        "moduleSlug": null,
+        "permission": null,
+        "guard": "none",
+        "classification": "unmapped, missing permission, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "item-suppliers/getItemWithSuppliers.ts",
+        "file": "actions/item-suppliers/getItemWithSuppliers.ts",
+        "moduleSlug": null,
+        "permission": null,
+        "guard": "none",
+        "classification": "unmapped, missing permission, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_MISSING_PERMISSION",
+        "reason": "Protected user-facing surface has no RBAC permission evidence."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "item/items.ts",
+        "file": "actions/item/items.ts",
+        "moduleSlug": null,
+        "permission": "inventory.items.read",
+        "guard": "requirePermission",
+        "classification": "unmapped, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "item/listItemsAction.ts",
+        "file": "actions/item/listItemsAction.ts",
+        "moduleSlug": null,
+        "permission": "inventory.items.read",
+        "guard": "requirePermission",
+        "classification": "unmapped, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "itemsShow/createActionItem.ts",
+        "file": "actions/itemsShow/createActionItem.ts",
+        "moduleSlug": null,
+        "permission": "inventory.items.create",
+        "guard": "requirePermission",
+        "classification": "unmapped, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "itemsShow/deleteItem.ts",
+        "file": "actions/itemsShow/deleteItem.ts",
+        "moduleSlug": null,
+        "permission": "inventory.items.delete",
+        "guard": "requirePermission",
+        "classification": "unmapped, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "itemsShow/getBriefItemById.ts",
+        "file": "actions/itemsShow/getBriefItemById.ts",
+        "moduleSlug": null,
+        "permission": "inventory.items.read",
+        "guard": "requirePermission",
+        "classification": "unmapped, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "itemsShow/getBriefOrgItems.ts",
+        "file": "actions/itemsShow/getBriefOrgItems.ts",
+        "moduleSlug": null,
+        "permission": "inventory.items.read",
+        "guard": "requirePermission",
+        "classification": "unmapped, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "itemsShow/getOrgItems.ts",
+        "file": "actions/itemsShow/getOrgItems.ts",
+        "moduleSlug": null,
+        "permission": "inventory.items.read",
+        "guard": "requirePermission",
+        "classification": "unmapped, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "itemsShow/getOrgItemsWithInventoryLevels.ts",
+        "file": "actions/itemsShow/getOrgItemsWithInventoryLevels.ts",
+        "moduleSlug": null,
+        "permission": "inventory.items.read",
+        "guard": "requirePermission",
+        "classification": "unmapped, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "itemsShow/getOrgItemsWithInventoryLevelsLocation.ts",
+        "file": "actions/itemsShow/getOrgItemsWithInventoryLevelsLocation.ts",
+        "moduleSlug": null,
+        "permission": "inventory.items.read",
+        "guard": "requirePermission",
+        "classification": "unmapped, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "itemsShow/updateItemBasicInfoById.ts",
+        "file": "actions/itemsShow/updateItemBasicInfoById.ts",
+        "moduleSlug": null,
+        "permission": "inventory.items.update",
+        "guard": "requirePermission",
+        "classification": "unmapped, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "itemsShow/updateItemById.ts",
+        "file": "actions/itemsShow/updateItemById.ts",
+        "moduleSlug": null,
+        "permission": "inventory.items.update",
+        "guard": "requirePermission",
+        "classification": "unmapped, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "itemsShow/updateItemItemDetailsById.ts",
+        "file": "actions/itemsShow/updateItemItemDetailsById.ts",
+        "moduleSlug": null,
+        "permission": "inventory.items.update",
+        "guard": "requirePermission",
+        "classification": "unmapped, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "itemsShow/updateItemPricingById.ts",
+        "file": "actions/itemsShow/updateItemPricingById.ts",
+        "moduleSlug": null,
+        "permission": "inventory.items.update",
+        "guard": "requirePermission",
+        "classification": "unmapped, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "itemsShow/updateItemRelationsById.ts",
+        "file": "actions/itemsShow/updateItemRelationsById.ts",
+        "moduleSlug": null,
+        "permission": "inventory.items.update",
+        "guard": "requirePermission",
+        "classification": "unmapped, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "itemsShow/updateItemStockById.ts",
+        "file": "actions/itemsShow/updateItemStockById.ts",
+        "moduleSlug": null,
+        "permission": "inventory.items.update",
+        "guard": "requirePermission",
+        "classification": "unmapped, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "payroll/payroll-country-pack-review-intake.actions.ts",
+        "file": "actions/payroll/payroll-country-pack-review-intake.actions.ts",
+        "moduleSlug": "payroll",
+        "permission": null,
+        "guard": "protect",
+        "classification": "mapped, missing permission, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_MISSING_PERMISSION",
+        "reason": "Protected user-facing surface has no RBAC permission evidence."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "payroll/payroll-setup.actions.ts",
+        "file": "actions/payroll/payroll-setup.actions.ts",
+        "moduleSlug": "payroll",
+        "permission": null,
+        "guard": "protect",
+        "classification": "mapped, missing permission, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_MISSING_PERMISSION",
+        "reason": "Protected user-facing surface has no RBAC permission evidence."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "purchaseOrderWorkflow/GoodsReceiptAndSummary.ts",
+        "file": "actions/purchaseOrderWorkflow/GoodsReceiptAndSummary.ts",
+        "moduleSlug": null,
+        "permission": "purchases.orders.read",
+        "guard": "requirePermission",
+        "classification": "unmapped, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "signals/business-signals.actions.ts",
+        "file": "actions/signals/business-signals.actions.ts",
+        "moduleSlug": null,
+        "permission": "dashboard.read",
+        "guard": "protect",
+        "classification": "unmapped, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "snapshots/snapshot.actions.ts",
+        "file": "actions/snapshots/snapshot.actions.ts",
+        "moduleSlug": null,
+        "permission": "dashboard.read",
+        "guard": "protect",
+        "classification": "unmapped, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "suppliers/itemSupplierActions.ts",
+        "file": "actions/suppliers/itemSupplierActions.ts",
+        "moduleSlug": null,
+        "permission": "readonly string[]",
+        "guard": "none",
+        "classification": "unmapped, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "suppliers/itemSupplierActions.ts",
+        "file": "actions/suppliers/itemSupplierActions.ts",
+        "moduleSlug": null,
+        "permission": "readonly string[]",
+        "guard": "none",
+        "classification": "unmapped, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_PROTECTED_GUARD_NONE",
+        "reason": "Module-owned action or API surface has no detected server-side guard."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "suppliers/supplier-management-actions.ts",
+        "file": "actions/suppliers/supplier-management-actions.ts",
+        "moduleSlug": null,
+        "permission": ")) {\n      return error.message\n    }\n\n    if (\n      error.message.startsWith(",
+        "guard": "none",
+        "classification": "unmapped, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "suppliers/supplier-management-actions.ts",
+        "file": "actions/suppliers/supplier-management-actions.ts",
+        "moduleSlug": null,
+        "permission": ")) {\n      return error.message\n    }\n\n    if (\n      error.message.startsWith(",
+        "guard": "none",
+        "classification": "unmapped, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_PROTECTED_GUARD_NONE",
+        "reason": "Module-owned action or API surface has no detected server-side guard."
+      },
+      {
+        "surfaceType": "action",
+        "surface": "units/unit-management-actions.ts",
+        "file": "actions/units/unit-management-actions.ts",
+        "moduleSlug": null,
+        "permission": "inventory.units.read",
+        "guard": "requirePermission",
+        "classification": "unmapped, enforcement candidate",
+        "metadata": {},
+        "category": "MODULE_SURFACE_UNMAPPED",
+        "reason": "Module-required surface has no canonical module owner."
+      }
+    ],
+    "worsenedCategories": [
+      {
+        "category": "MODULE_SURFACE_PAGE_GUARD_NONE",
+        "baselineCount": 0,
+        "currentCount": 5,
+        "delta": 5
+      }
+    ]
+  }
 }

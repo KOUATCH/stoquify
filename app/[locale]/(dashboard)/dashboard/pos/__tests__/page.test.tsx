@@ -1,11 +1,23 @@
 import { render, screen } from "@testing-library/react"
 
-import { checkPermission } from "@/config/useAuth"
+import { requirePermission } from "@/lib/security/rbac"
 
 import POSPage from "../page"
 
-jest.mock("@/config/useAuth", () => ({
-  checkPermission: jest.fn(),
+jest.mock("@/lib/security/rbac", () => ({
+  RbacError: class MockRbacError extends Error {},
+  requireAllPermissions: jest.fn(),
+  requireAnyPermission: jest.fn(),
+  requirePermission: jest.fn(),
+}))
+
+jest.mock("@/i18n/routing", () => ({
+  localizePath: (href: string, locale: string) => `/${locale}${href}`,
+  pickLocale: (locale: string) => (locale === "fr" ? "fr" : "en"),
+}))
+
+jest.mock("@/components/dashboard/DashboardRouteState", () => ({
+  DashboardRouteState: () => <main />,
 }))
 
 const mockProfessionalPOSSystem = jest.fn(() => <section>POS shell rendered</section>)
@@ -15,28 +27,34 @@ jest.mock("@/components/pos/ProfessionalPOSSystem", () => ({
   default: () => mockProfessionalPOSSystem(),
 }))
 
-const mockCheckPermission = checkPermission as jest.Mock
+const mockRequirePermission = requirePermission as jest.Mock
 
 describe("POSPage", () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockCheckPermission.mockResolvedValue(true)
+    mockRequirePermission.mockResolvedValue({ orgId: "org-1" })
   })
 
   it("requires POS operation permission before rendering the POS shell", async () => {
-    render(await POSPage())
+    render(await POSPage({ params: Promise.resolve({ locale: "en" }) }))
 
-    expect(mockCheckPermission).toHaveBeenCalledWith("OPERATE_POS")
+    expect(mockRequirePermission).toHaveBeenCalledWith("OPERATE_POS", {
+      resource: "POSPage",
+      resourceId: undefined,
+      auditAllowed: true,
+    })
     expect(mockProfessionalPOSSystem).toHaveBeenCalledTimes(1)
     expect(screen.getByText("POS shell rendered")).toBeInTheDocument()
   })
 
   it("stops before rendering the POS shell when the permission guard denies access", async () => {
-    mockCheckPermission.mockRejectedValue(new Error("Forbidden"))
+    mockRequirePermission.mockRejectedValue(new Error("Forbidden"))
 
-    await expect(POSPage()).rejects.toThrow("Forbidden")
+    await expect(POSPage({ params: Promise.resolve({ locale: "en" }) })).rejects.toThrow("Forbidden")
 
-    expect(mockCheckPermission).toHaveBeenCalledWith("OPERATE_POS")
+    expect(mockRequirePermission).toHaveBeenCalledWith("OPERATE_POS", expect.objectContaining({
+      resource: "POSPage",
+    }))
     expect(mockProfessionalPOSSystem).not.toHaveBeenCalled()
   })
 })

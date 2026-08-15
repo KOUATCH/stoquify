@@ -1,4 +1,8 @@
-import { createHmac, timingSafeEqual } from "node:crypto"
+import {
+  configuredExternalAccessSecret,
+  signExternalAccessPayload,
+  verifyExternalAccessSignature,
+} from "@/services/_shared/signed-external-access-token"
 
 const TOKEN_VERSION = "v1"
 const TOKEN_SCOPE = "customer_statement"
@@ -38,26 +42,10 @@ export type CustomerStatementTokenVerification =
     }
 
 function tokenSecret() {
-  const secret =
-    process.env.AQSTOQFLOW_STATEMENT_TOKEN_SECRET ||
-    process.env.STATEMENT_TOKEN_SECRET ||
-    null
-  return secret && secret.length >= 32 ? secret : null
-}
-
-function signatureFor(encodedPayload: string, secret: string) {
-  return createHmac("sha256", secret)
-    .update(encodedPayload)
-    .digest("base64url")
-}
-
-function safeEqual(left: string, right: string) {
-  const leftBuffer = Buffer.from(left)
-  const rightBuffer = Buffer.from(right)
-  return (
-    leftBuffer.length === rightBuffer.length &&
-    timingSafeEqual(leftBuffer, rightBuffer)
-  )
+  return configuredExternalAccessSecret([
+    "AQSTOQFLOW_STATEMENT_TOKEN_SECRET",
+    "STATEMENT_TOKEN_SECRET",
+  ])
 }
 
 function normalizedPermissions(
@@ -133,11 +121,7 @@ export function createCustomerStatementAccessToken(input: {
     iat: nowSeconds,
     exp: nowSeconds + ttlSeconds,
   }
-  const encodedPayload = Buffer.from(
-    JSON.stringify(payload),
-    "utf8",
-  ).toString("base64url")
-  return encodedPayload + "." + signatureFor(encodedPayload, secret)
+  return signExternalAccessPayload(payload, secret)
 }
 
 export function verifyCustomerStatementAccessToken(input: {
@@ -145,20 +129,14 @@ export function verifyCustomerStatementAccessToken(input: {
   statementSnapshotId: string
   now?: Date
 }): CustomerStatementTokenVerification {
-  if (!input.token) return { ok: false, reason: "missing" }
   const secret = tokenSecret()
-  if (!secret) return { ok: false, reason: "not_configured" }
+  const verification = verifyExternalAccessSignature({
+    token: input.token,
+    secret,
+  })
+  if (!verification.ok) return verification
 
-  const [encodedPayload, signature, ...extra] = input.token.split(".")
-  if (!encodedPayload || !signature || extra.length) {
-    return { ok: false, reason: "malformed" }
-  }
-  const expectedSignature = signatureFor(encodedPayload, secret)
-  if (!safeEqual(signature, expectedSignature)) {
-    return { ok: false, reason: "bad_signature" }
-  }
-
-  const payload = parsePayload(encodedPayload)
+  const payload = parsePayload(verification.encodedPayload)
   if (!payload) return { ok: false, reason: "wrong_scope" }
   if (payload.statementSnapshotId !== input.statementSnapshotId) {
     return { ok: false, reason: "statement_mismatch" }

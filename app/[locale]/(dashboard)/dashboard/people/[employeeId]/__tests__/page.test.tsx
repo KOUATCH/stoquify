@@ -168,6 +168,7 @@ describe("EmployeeProfilePage", () => {
 
     expect(mockRequireAnyPermission).toHaveBeenCalledWith(["hris.people.read"], {
       resource: "HrisEmployeeProfile",
+      resourceId: "emp-1",
     })
     expect(mockGetProfile).toHaveBeenCalledWith({
       organizationId: "org-1",

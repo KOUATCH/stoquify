@@ -8,12 +8,13 @@ import { getItemEditDTO } from "@/services/item/item.service"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import { redirect } from "next/navigation"
 import EditItemClient from "./EditItemClient"
+import { routeByKey, withInventorySurfaceAccess } from "../../../inventory-route-access"
 
 interface Props {
   params: Promise<{ id: string; locale: string }>
 }
 
-export default async function ItemsEditPage({ params }: Props) {
+async function ItemsEditPageImpl({ params }: Props) {
   const { id, locale: rawLocale } = await params
   const locale = pickLocale(rawLocale)
   await checkPermission("inventory.items.update")
@@ -70,4 +71,20 @@ export default async function ItemsEditPage({ params }: Props) {
       />
     </main>
   )
+}
+
+
+
+export default async function InventoryRoutePage(props: any = {}) {
+  const surface = routeByKey("inventory-items-edit")
+
+  if (!surface) {
+    throw new Error("Missing inventory route surface definition: inventory-items-edit")
+  }
+
+  return withInventorySurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => ItemsEditPageImpl(props),
+  })
 }

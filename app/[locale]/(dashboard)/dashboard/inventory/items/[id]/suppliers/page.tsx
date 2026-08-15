@@ -12,6 +12,7 @@ import { getOrganizationSettingsForOrg } from "@/services/organization/organizat
 import { Suspense } from "react"
 import AddSuppliersToItemModal from "./AddSuppliersToItemModal"
 import LayoutItemSuppliers from "./LayoutItemSuppliers"
+import { routeByKey, withInventorySurfaceAccess } from "../../../inventory-route-access"
 
 interface ItemDetailspageProps {
   params: Promise<{
@@ -20,7 +21,7 @@ interface ItemDetailspageProps {
   }>
 }
 
-const page = async ({ params }: ItemDetailspageProps) => {
+const pageImpl = async ({ params }: ItemDetailspageProps) => {
   await checkPermission("inventory.items.read")
 
   const { id, locale: rawLocale } = await params
@@ -110,4 +111,18 @@ const page = async ({ params }: ItemDetailspageProps) => {
   )
 }
 
-export default page
+
+
+export default async function InventoryRoutePage(props: any = {}) {
+  const surface = routeByKey("inventory-items-suppliers")
+
+  if (!surface) {
+    throw new Error("Missing inventory route surface definition: inventory-items-suppliers")
+  }
+
+  return withInventorySurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => pageImpl(props),
+  })
+}

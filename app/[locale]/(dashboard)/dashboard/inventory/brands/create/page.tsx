@@ -4,12 +4,13 @@ import Link from "next/link"
 import { ModernBrandForm } from "@/components/brands/ModernBrandForm"
 import { Button } from "@/components/ui/button"
 import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
+import { routeByKey, withInventorySurfaceAccess } from "../../inventory-route-access"
 
 type CreateBrandPageProps = {
   params: Promise<{ locale: string }>
 }
 
-export default async function CreateBrandPage({ params }: CreateBrandPageProps) {
+async function CreateBrandPageImpl({ params }: CreateBrandPageProps) {
   await checkPermission("inventory.brands.create")
 
   const { locale } = await params
@@ -37,4 +38,20 @@ export default async function CreateBrandPage({ params }: CreateBrandPageProps) 
   }
 
   return <ModernBrandForm organizationId={user.organizationId} returnHref={returnHref} />
+}
+
+
+
+export default async function InventoryRoutePage(props: any = {}) {
+  const surface = routeByKey("inventory-brands-create")
+
+  if (!surface) {
+    throw new Error("Missing inventory route surface definition: inventory-brands-create")
+  }
+
+  return withInventorySurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => CreateBrandPageImpl(props),
+  })
 }

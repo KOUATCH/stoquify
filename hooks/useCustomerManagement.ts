@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient, type QueryClient } from "@tansta
 import {
   createManagedCustomer,
   deleteManagedCustomer,
+  getManagedCustomer,
   getCustomerAnalyticsData,
   getCustomerManagementData,
   prepareCustomerExportAction,
@@ -24,6 +25,8 @@ export const customerManagementKeys = {
   all: ["customer-management"] as const,
   dashboard: (organizationId: string) =>
     [...customerManagementKeys.all, "dashboard", organizationId] as const,
+  detail: (organizationId: string, customerId: string) =>
+    [...customerManagementKeys.all, "detail", organizationId, customerId] as const,
   analytics: (organizationId: string, customerId: string) =>
     [...customerManagementKeys.all, "analytics", organizationId, customerId] as const,
 }
@@ -68,11 +71,30 @@ function invalidateCustomerQueries(queryClient: QueryClient, organizationId: str
   queryClient.invalidateQueries({ queryKey: ["orgCustomers", organizationId] })
 
   if (customerId) {
+    queryClient.invalidateQueries({ queryKey: customerManagementKeys.detail(organizationId, customerId) })
     queryClient.invalidateQueries({ queryKey: CustomerKeys.detail(customerId) })
     queryClient.invalidateQueries({ queryKey: customerManagementKeys.analytics(organizationId, customerId) })
     queryClient.invalidateQueries({ queryKey: ["customers", customerId] })
     queryClient.invalidateQueries({ queryKey: ["customer", customerId] })
   }
+}
+
+export function useManagedCustomer(organizationId: string, customerId: string) {
+  return useQuery<CustomerManagementRow | null>({
+    queryKey: customerManagementKeys.detail(organizationId, customerId),
+    queryFn: async () => {
+      const result = await getManagedCustomer(organizationId, customerId)
+
+      if (!result.success) {
+        throw new Error(result.error || "Failed to fetch customer")
+      }
+
+      return result.data ?? null
+    },
+    enabled: !!organizationId && !!customerId,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+  })
 }
 
 function downloadCustomerExport(result: CustomerExportResult) {

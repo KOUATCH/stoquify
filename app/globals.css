@@ -544,6 +544,35 @@
       linear-gradient(180deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.045)),
       rgba(39, 61, 70, 0.94);
   }
+  .cash-drawer-dashboard .dashboard-glass-panel,
+  .cash-drawer-dashboard .dashboard-stat-card {
+    box-shadow:
+      0 10px 28px rgba(5, 14, 19, 0.16),
+      inset 0 1px 0 rgba(255, 255, 255, 0.055);
+    backdrop-filter: blur(12px);
+  }
+
+  .cash-drawer-dashboard .dashboard-stat-card {
+    background:
+      linear-gradient(135deg, var(--stat-soft, rgba(47, 125, 246, 0.13)), transparent 58%),
+      rgba(31, 49, 57, 0.88);
+  }
+
+  .cash-drawer-dashboard .dashboard-stat-card::after {
+    opacity: 0.28;
+  }
+
+  .cash-drawer-dashboard .dashboard-stat-card:hover {
+    transform: none;
+    border-color: color-mix(in srgb, var(--stat-accent, var(--dash-brand)) 52%, var(--dash-border-subtle));
+    background:
+      linear-gradient(135deg, var(--stat-soft, rgba(47, 125, 246, 0.15)), transparent 54%),
+      rgba(34, 53, 62, 0.92);
+  }
+
+  .cash-drawer-dashboard .dashboard-button-primary {
+    box-shadow: 0 10px 24px color-mix(in srgb, var(--dash-brand) 22%, transparent);
+  }
 
   .dashboard-control {
     border: 1px solid var(--dash-border-subtle);

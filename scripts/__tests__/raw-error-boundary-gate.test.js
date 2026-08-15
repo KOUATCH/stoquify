@@ -168,6 +168,47 @@ describe("raw-error-boundary-gate", () => {
     )
   })
 
+  it("allows reviewed Prisma uniqueness rethrows used for immediate idempotency replay", () => {
+    writeFile(
+      root,
+      "services/accounting/settlement.service.ts",
+      'export async function settle() { try { return null } catch (error) { if (isPrismaCode(error, "P2002")) throw error; throw new ApplicationError("INTERNAL_ERROR", "Settlement failed.", 500, false) } }\n',
+    )
+
+    const result = scanRoot(root)
+
+    expect(result.summary.activeViolationCount).toBe(0)
+    expect(result.findings).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          allowed: true,
+          classification: "ALLOWED_PRISMA_CONTROL_FLOW",
+        }),
+      ]),
+    )
+  })
+
+  it("does not allow an unguarded rethrow merely because a nearby branch checks P2002", () => {
+    writeFile(
+      root,
+      "services/accounting/settlement.service.ts",
+      'export async function settle() {\n  try { return null } catch (error) {\n    if (isPrismaCode(error, "P2002")) { markForReplay(error) }\n    throw error\n  }\n}\n',
+    )
+
+    const result = scanRoot(root)
+
+    expect(result.summary.activeViolationCount).toBe(1)
+    expect(result.findings).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          allowed: false,
+          classification: "NEEDS_MIGRATION",
+          pattern: "THROW_ERROR",
+        }),
+      ]),
+    )
+  })
+
   it("renders report-mode migration guidance and supports baseline ratchets", () => {
     writeFile(
       root,

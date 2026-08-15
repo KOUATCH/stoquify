@@ -160,7 +160,7 @@ const Sidebar = ({ session, notifications = [] }: SidebarProps) => {
           </label>
         </div>
 
-        <div className="min-h-0 flex-1 px-2.5 pb-3 lg:px-3">
+        <div className="flex min-h-0 flex-1 flex-col px-2.5 pb-3 lg:px-3">
           <div className="mb-3 flex items-center justify-between px-2">
             <span className="text-[0.66rem] font-bold uppercase tracking-[0.18em] text-[#7f969f]">
               {isSearching ? "Search" : "Modules"}
@@ -175,7 +175,7 @@ const Sidebar = ({ session, notifications = [] }: SidebarProps) => {
 
           <nav
             aria-label="Primary dashboard modules"
-            className="dashboard-sidebar-scroll grid max-h-full min-w-0 max-w-full items-start gap-4 overflow-y-auto overflow-x-hidden pr-1 text-sm font-medium"
+            className="dashboard-sidebar-scroll grid min-h-0 min-w-0 max-w-full flex-1 items-start gap-4 overflow-y-auto overflow-x-hidden pr-1 text-sm font-medium"
           >
             {visibleSections.map((section) => (
               <section key={section.key} aria-labelledby={`sidebar-section-${section.key}`} className="grid min-w-0 gap-1">

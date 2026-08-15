@@ -1,0 +1,369 @@
+{
+  "schemaVersion": 2,
+  "packetId": "MIG-RISK-20260611130000-F7DE8DC7-RECONCILED-2026-08-13",
+  "reconciledAt": "2026-08-13",
+  "status": "BLOCKED_EVIDENCE_INCOMPLETE_NO_DECISION",
+  "recommendedDisposition": "REJECT_AND_REWORK_UNLESS_REQUIRED_EVIDENCE_PROVES_EXACT_HASH_SAFE",
+  "productionExecutionAuthorized": false,
+  "approvalClaimed": false,
+  "migrationModifiedByPacket": false,
+  "repository": {
+    "head": "4a6cc16b56f708fff1130573b60cb6ae6e80a2c6",
+    "worktreeState": "DIRTY_PREEXISTING_CONCURRENT_EDITS",
+    "bindingRule": "Use the per-file SHA-256 values in this packet; repository HEAD alone does not bind dirty-worktree content."
+  },
+  "supersedes": {
+    "markdown": {
+      "path": "docs/blockers/STOQUIFY_MIGRATION_RISK_MAKER_CHECKER_PACKET_2026-08-11.md",
+      "sha256": "39a29b2a0250de247fa9c8770afcb8bb36952ffb81db181c782cea45a0010d69",
+      "bytes": 5347
+    },
+    "json": {
+      "path": "docs/blockers/stoquify-migration-risk-maker-checker-packet-2026-08-11.json",
+      "sha256": "d5985fe42be044a91d493315191e169dcfe1d83411f635dd63a0ba7604f631a5",
+      "bytes": 1606
+    }
+  },
+  "migration": {
+    "path": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+    "sha256": "f7de8dc7ace0a5e063cdb7ecd9527e77807b7f872e474546819e9fca13a273d4",
+    "utf8ByteLength": 24674,
+    "topLevelStatementsWithDestructiveOperations": 4,
+    "destructiveOperationCount": 13,
+    "rules": {
+      "drop_column": 12,
+      "drop_table": 1
+    },
+    "baselineOnly": true,
+    "existingDatabaseInstruction": "VERIFY_SCHEMA_AND_DATA_THEN_PRISMA_MIGRATE_RESOLVE_APPLIED_DO_NOT_EXECUTE",
+    "guardLines": [7, 29],
+    "guardRefusesOn": [
+      "ledger_posting_batches_exists",
+      "verifications_exists",
+      "accounts.accountId_exists",
+      "organizations_nonempty",
+      "users_nonempty",
+      "accounts_nonempty",
+      "sessions_nonempty",
+      "auth_sessions_nonempty"
+    ]
+  },
+  "operationHashing": {
+    "algorithm": "SHA-256",
+    "canonicalization": "UTF-8 canonicalSql, no BOM, no semicolon, no trailing newline",
+    "inventoryDigestCanonicalization": "Concatenate operation sha256 values in D-001 through D-013 order, each followed by LF",
+    "inventorySha256": "55d332c3319b65acfdf415e64042a15504d12861b664429af7e63155296e1ad1"
+  },
+  "destructiveInventory": [
+    {
+      "id": "D-001",
+      "rule": "drop_column",
+      "line": 80,
+      "canonicalSql": "ALTER TABLE \"accounts\" DROP COLUMN \"access_token\"",
+      "sha256": "5f9f80a6ef931e002134e4e2aa220ea9acf22c3c2134496e0671affe147988c0",
+      "source": { "table": "accounts", "column": "access_token", "type": "TEXT" },
+      "replacement": { "column": "accessToken", "type": "TEXT", "line": 89, "dataCopyPresent": false },
+      "affectedData": "OAuth access/bearer tokens",
+      "consumerGroups": ["C-01"],
+      "risk": "EXISTING_TOKEN_VALUE_LOSS",
+      "evidenceDisposition": "BLOCKED"
+    },
+    {
+      "id": "D-002",
+      "rule": "drop_column",
+      "line": 81,
+      "canonicalSql": "ALTER TABLE \"accounts\" DROP COLUMN \"expires_at\"",
+      "sha256": "b7eab3bc9315a06e40938ff57ded5c5431ed2222fe68dd09b3f587aa7c69090f",
+      "source": { "table": "accounts", "column": "expires_at", "type": "INTEGER" },
+      "replacement": { "column": "accessTokenExpiresAt", "type": "TIMESTAMP(3)", "line": 90, "dataCopyPresent": false },
+      "affectedData": "OAuth access-token expiry values",
+      "consumerGroups": ["C-01"],
+      "risk": "VALUE_LOSS_AND_UNPROVED_INTEGER_TO_TIMESTAMP_SEMANTICS",
+      "evidenceDisposition": "BLOCKED"
+    },
+    {
+      "id": "D-003",
+      "rule": "drop_column",
+      "line": 82,
+      "canonicalSql": "ALTER TABLE \"accounts\" DROP COLUMN \"id_token\"",
+      "sha256": "9617601b5fa48b23905e69ab0709e24ac42a9aeac346621a19f4af0d4fa46889",
+      "source": { "table": "accounts", "column": "id_token", "type": "TEXT" },
+      "replacement": { "column": "idToken", "type": "TEXT", "line": 93, "dataCopyPresent": false },
+      "affectedData": "OAuth/OpenID identity tokens",
+      "consumerGroups": ["C-01"],
+      "risk": "EXISTING_IDENTITY_TOKEN_VALUE_LOSS",
+      "evidenceDisposition": "BLOCKED"
+    },
+    {
+      "id": "D-004",
+      "rule": "drop_column",
+      "line": 83,
+      "canonicalSql": "ALTER TABLE \"accounts\" DROP COLUMN \"provider\"",
+      "sha256": "8b5c158498132b69a3f1d9ee8fb82ccc46676000e296d6beead2cf6356a8b26d",
+      "source": { "table": "accounts", "column": "provider", "type": "TEXT NOT NULL" },
+      "replacement": { "column": "providerId", "type": "TEXT NOT NULL", "line": 95, "dataCopyPresent": false },
+      "affectedData": "Authentication provider identity",
+      "consumerGroups": ["C-01", "C-02"],
+      "risk": "ACCOUNT_LINK_IDENTITY_LOSS_AND_NONEMPTY_TABLE_FAILURE_IF_GUARD_BYPASSED",
+      "evidenceDisposition": "BLOCKED"
+    },
+    {
+      "id": "D-005",
+      "rule": "drop_column",
+      "line": 84,
+      "canonicalSql": "ALTER TABLE \"accounts\" DROP COLUMN \"providerAccountId\"",
+      "sha256": "4e87e6a7aa428e2c1ff064889c6b7c140a9e458bbf99ca558d7fe461ad111252",
+      "source": { "table": "accounts", "column": "providerAccountId", "type": "TEXT NOT NULL" },
+      "replacement": { "column": "accountId", "type": "TEXT NOT NULL", "line": 91, "dataCopyPresent": false },
+      "affectedData": "Provider-side subject/account identifier",
+      "consumerGroups": ["C-01", "C-02"],
+      "risk": "ACCOUNT_LINK_IDENTITY_LOSS_AND_NONEMPTY_TABLE_FAILURE_IF_GUARD_BYPASSED",
+      "evidenceDisposition": "BLOCKED"
+    },
+    {
+      "id": "D-006",
+      "rule": "drop_column",
+      "line": 85,
+      "canonicalSql": "ALTER TABLE \"accounts\" DROP COLUMN \"refresh_token\"",
+      "sha256": "eb731b37536517b7ff029fb4029e0413b15b95911de15c47d49adee177966cfc",
+      "source": { "table": "accounts", "column": "refresh_token", "type": "TEXT" },
+      "replacement": { "column": "refreshToken", "type": "TEXT", "line": 96, "dataCopyPresent": false },
+      "affectedData": "OAuth refresh tokens",
+      "consumerGroups": ["C-01"],
+      "risk": "TOKEN_LOSS_AND_REAUTHENTICATION_OR_RELINK_REQUIRED",
+      "evidenceDisposition": "BLOCKED"
+    },
+    {
+      "id": "D-007",
+      "rule": "drop_column",
+      "line": 86,
+      "canonicalSql": "ALTER TABLE \"accounts\" DROP COLUMN \"session_state\"",
+      "sha256": "d78e048f5e398174730608db403aac86b2e829c97c731ef3e872a88683db3b82",
+      "source": { "table": "accounts", "column": "session_state", "type": "TEXT" },
+      "replacement": null,
+      "affectedData": "Legacy OAuth session-state metadata",
+      "consumerGroups": ["C-05"],
+      "risk": "UNPROVED_RETENTION_OR_INTENTIONAL_DELETION",
+      "evidenceDisposition": "BLOCKED"
+    },
+    {
+      "id": "D-008",
+      "rule": "drop_column",
+      "line": 87,
+      "canonicalSql": "ALTER TABLE \"accounts\" DROP COLUMN \"token_type\"",
+      "sha256": "0f20190067a5fe024673fb1985a6d656ac380dca7266d2469ade5831a37a1f3b",
+      "source": { "table": "accounts", "column": "token_type", "type": "TEXT" },
+      "replacement": null,
+      "affectedData": "Legacy OAuth token-type metadata",
+      "consumerGroups": ["C-05"],
+      "risk": "UNPROVED_RETENTION_OR_INTENTIONAL_DELETION",
+      "evidenceDisposition": "BLOCKED"
+    },
+    {
+      "id": "D-009",
+      "rule": "drop_column",
+      "line": 88,
+      "canonicalSql": "ALTER TABLE \"accounts\" DROP COLUMN \"type\"",
+      "sha256": "d57e56dd40511f3240b0efd4eeeb8483d2589e5bef799c7d1fd458a0c8b3a8d6",
+      "source": { "table": "accounts", "column": "type", "type": "TEXT NOT NULL" },
+      "replacement": null,
+      "affectedData": "Legacy account/provider classification",
+      "consumerGroups": ["C-02", "C-05"],
+      "risk": "CLASSIFICATION_VALUE_LOSS",
+      "evidenceDisposition": "BLOCKED"
+    },
+    {
+      "id": "D-010",
+      "rule": "drop_column",
+      "line": 101,
+      "canonicalSql": "ALTER TABLE \"sessions\" DROP COLUMN \"expires\"",
+      "sha256": "84c1f1c438a50d09814575e756f95e636c4d0cbd0b7814eecb622e500bd31a95",
+      "source": { "table": "sessions", "column": "expires", "type": "TIMESTAMP(3) NOT NULL" },
+      "replacement": { "column": "expiresAt", "type": "TIMESTAMP(3) NOT NULL", "line": 104, "dataCopyPresent": false },
+      "affectedData": "Active-session expiry",
+      "consumerGroups": ["C-01", "C-02", "C-03"],
+      "risk": "ACTIVE_SESSION_LOSS_AND_NONEMPTY_TABLE_FAILURE_IF_GUARD_BYPASSED",
+      "evidenceDisposition": "BLOCKED"
+    },
+    {
+      "id": "D-011",
+      "rule": "drop_column",
+      "line": 102,
+      "canonicalSql": "ALTER TABLE \"sessions\" DROP COLUMN \"sessionToken\"",
+      "sha256": "eba142f101ee62145d06759f392bea86a325dade07838aeff2d52be93ac73076",
+      "source": { "table": "sessions", "column": "sessionToken", "type": "TEXT NOT NULL" },
+      "replacement": { "column": "token", "type": "TEXT NOT NULL", "line": 106, "dataCopyPresent": false },
+      "affectedData": "Active-session token",
+      "consumerGroups": ["C-01", "C-02", "C-03"],
+      "risk": "ACTIVE_SESSION_LOSS_AND_NONEMPTY_TABLE_FAILURE_IF_GUARD_BYPASSED",
+      "evidenceDisposition": "BLOCKED"
+    },
+    {
+      "id": "D-012",
+      "rule": "drop_column",
+      "line": 112,
+      "canonicalSql": "ALTER TABLE \"users\" DROP COLUMN \"emailVerified\"",
+      "sha256": "6ee6d1bbaa68a1cba355923e93db7f5489648b2dbe4d3685a0c865d1c36f7d88",
+      "source": { "table": "users", "column": "emailVerified", "type": "TIMESTAMP(3) NULL" },
+      "replacement": { "column": "emailVerified", "type": "BOOLEAN NOT NULL DEFAULT false", "line": 113, "dataCopyPresent": false },
+      "affectedData": "Email-verification timestamps and state",
+      "consumerGroups": ["C-01", "C-04"],
+      "risk": "VERIFIED_USERS_RESET_TO_FALSE",
+      "evidenceDisposition": "BLOCKED"
+    },
+    {
+      "id": "D-013",
+      "rule": "drop_table",
+      "line": 116,
+      "canonicalSql": "DROP TABLE \"auth_sessions\"",
+      "sha256": "0f5eb881cca0bd115195a7aa7f27045beb5d02b8d6dde09684cc190c3a5df3bd",
+      "source": {
+        "table": "auth_sessions",
+        "columns": ["id", "tokenJti", "userId", "organizationId", "lastAuthAt", "ipAddress", "userAgent", "revokedAt", "revokedBy", "revokeReason", "createdAt", "expiresAt", "lastSeenAt"]
+      },
+      "replacement": null,
+      "affectedData": "Legacy session identity, tenant context, fresh-auth time, client metadata, revocation provenance, expiry, and last-seen history",
+      "consumerGroups": ["C-03", "C-05"],
+      "risk": "COMPLETE_SECURITY_PROVENANCE_AND_REVOCATION_HISTORY_LOSS",
+      "evidenceDisposition": "BLOCKED"
+    }
+  ],
+  "consumerGroups": [
+    {
+      "id": "C-01",
+      "name": "Better Auth persistence and API/client boundary",
+      "impact": "Sign-in, OAuth linking, token persistence, session lifecycle, and verification",
+      "files": [
+        { "path": "lib/auth.ts", "sha256": "f25dea0fb814f3be0e32d0431ba50614e53942953d6258a215df3c36f65d5e19" },
+        { "path": "lib/auth-client.ts", "sha256": "282aa45adf3637c7de07beac0233d2167a83518315f795819a0acecedec66948" },
+        { "path": "lib/auth-server.ts", "sha256": "78118c9d861ff17431026e66b7925c36e7b1e664d9f8e495f4ae0c787195f728" },
+        { "path": "app/api/auth/[...all]/route.ts", "sha256": "d97a1513ea50a3d23bd78a155c47893b03a505f0cdb1b524ea5d70274eafb8ee" }
+      ]
+    },
+    {
+      "id": "C-02",
+      "name": "Credential account and password lifecycle",
+      "impact": "Credential upsert/lookup, password verification, session revocation, and security account state",
+      "files": [
+        { "path": "lib/security/auth-credentials.ts", "sha256": "6df9ea6035e96df80968797e17a556bdaf1b63e4c68309f1dbd5509c7e20ed1d" },
+        { "path": "services/security/security-settings.service.ts", "sha256": "1dc701edf320dd0103e9997eeb3b0251c250217f316a98e6b67d773223400279" }
+      ]
+    },
+    {
+      "id": "C-03",
+      "name": "Session assurance, revocation, and fresh-auth controls",
+      "impact": "Session token/expiry validation, assurance, lockout, and revocation",
+      "files": [
+        { "path": "lib/security/auth-session.ts", "sha256": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae" },
+        { "path": "services/security/step-up-auth.service.ts", "sha256": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8" },
+        { "path": "actions/security/step-up-auth.actions.ts", "sha256": "468b73c8676428cdef5785c80dffdd4232150eb7a1a9db896c9ff6fb657af407" }
+      ]
+    },
+    {
+      "id": "C-04",
+      "name": "Email verification, RBAC, user lifecycle, and administration",
+      "impact": "Verification gate, safe projections, lifecycle state, and verified-user UI",
+      "files": [
+        { "path": "lib/security/rbac.ts", "sha256": "e11edcd4856378945a289ec497fc5befbcb67478c4e3f67830a8a7dc3eea2d54" },
+        { "path": "lib/security/server-authz.ts", "sha256": "0fe28bc31098e8112e9a8ca98a68914edd83761ff2acd39719d99386aaec20d5" },
+        { "path": "services/users/user-identity.service.ts", "sha256": "0c799c860493425aff1ae59072d1e99c1ab1e735d72b958607dd3df60e6a60b8" },
+        { "path": "services/users/user-lifecycle.service.ts", "sha256": "e579141db482fcee8b81202f8670a74bd5eadbb34fbcfc7d68a22e3ae1713f1d" },
+        { "path": "app/[locale]/(dashboard)/dashboard/settings/security/page.tsx", "sha256": "707e80cb91e0f2953091c0a81989e98581d6b91a2ef499cec2312ead6c04f0a3" },
+        { "path": "app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx", "sha256": "fc6c34dfda44cbc615f8ed312ffe44ea78a3dc2deb8766a244de9c68a4e0a92b" }
+      ]
+    },
+    {
+      "id": "C-05",
+      "name": "Legacy fields and security provenance",
+      "impact": "No direct current runtime consumer was found for accounts.session_state, accounts.token_type, accounts.type, or auth_sessions; retention remains a data/security decision.",
+      "files": [
+        { "path": "prisma/migrations/20260528124341_refine_item_barcode/migration.sql", "sha256": "038f2cd31f028f9725ac5ec4d91ace9bed34ab05de98bf0600162118aaaa1eb2" },
+        { "path": "prisma/schema.prisma", "sha256": "9156e5ae948854abee5d95adc8c033cdc3cea66bbb50173b078e1c24353f0a54" },
+        { "path": "graphify-out/GRAPH_REPORT.md", "sha256": "dac6e01033f24d9eacda994b5e292613aa98d8ca7caa43117ce26b014c25b024" }
+      ]
+    }
+  ],
+  "evidenceSourceFiles": [
+    { "path": "scripts/prisma-production-migration-gate.js", "sha256": "07a85871bb6e8d1c25b751e5a5e518500b986b023ddfcc2911dd67fdbe904439", "purpose": "Destructive-pattern scanner and exact whole-file hash approval gate" },
+    { "path": "scripts/__tests__/prisma-production-migration-gate.test.js", "sha256": "4d5b5ff58b4400cea1a2810b49ad8907df19492cb8899baf7a7f4ed2270d787e", "purpose": "Focused gate regression suite" },
+    { "path": "docs/operations/runbooks/prisma-production-migrations.md", "sha256": "0bde435900d0a65a57c5a6d2fbb8f94bc4b4ae320b005cebe164a561a8786ad6", "purpose": "Production migration and destructive-approval policy" },
+    { "path": "package.json", "sha256": "7bd88f790793cdc7c7767f5d44ae47c64b1695b9eadac3ab179fee6ebdda8793", "purpose": "Current migration-safety, schema-validation, and policy-gate command wiring" },
+    { "path": "prisma/migration-risk-approvals.json", "sha256": "4030c801dd807691938f6e666990dfae6711cf2710fd76959f48c8c0319d2028", "purpose": "Exact-hash destructive-risk approval registry; currently empty" },
+    { "path": "prisma/migration-history-checksum-approvals.json", "sha256": "4030c801dd807691938f6e666990dfae6711cf2710fd76959f48c8c0319d2028", "purpose": "Migration-history checksum approval registry; currently empty" }
+  ],
+  "evidencePresent": [
+    { "id": "P-01", "status": "PRESENT", "evidence": "Current migration hash and byte length match the predecessor packet", "limitation": "Does not describe database contents" },
+    { "id": "P-02", "status": "PRESENT", "evidence": "Live 2026-08-13 scan: 62 migrations, 13 findings, 0 approved findings, blocked", "limitation": "Static scan only; no database targeted" },
+    { "id": "P-03", "status": "PRESENT", "evidence": "Baseline-only comment and fail-closed transactional guard", "limitation": "No controlled-environment path attestation" },
+    { "id": "P-04", "status": "PRESENT", "evidence": "prisma/migration-risk-approvals.json and prisma/migration-history-checksum-approvals.json contain zero approvals", "limitation": "Proves absence of approval" },
+    { "id": "P-05", "status": "PRESENT", "evidence": "Focused migration-gate suite passed 10/10 on 2026-08-13", "limitation": "Tests gate behavior, not the migration against production-like data" },
+    { "id": "P-06", "status": "PRESENT", "evidence": "npm run prisma:validate passed on 2026-08-13", "limitation": "Schema validity is not data-preservation proof" },
+    { "id": "P-07", "status": "PRESENT", "evidence": "Per-operation source/target and per-file consumer hashes in this packet", "limitation": "Affected row counts and values are unknown" },
+    { "id": "P-08", "status": "PRESENT", "evidence": "Production migration runbook requires compatibility, backfill, backup/restore, and fix-forward review", "limitation": "No completed evidence for this hash" },
+    { "id": "P-09", "status": "PRESENT", "evidence": "Predecessor blocker reports enumerate required evidence", "limitation": "They are requirements, not completed evidence" }
+  ],
+  "requiredEvidenceMissing": {
+    "rehearsal": [
+      { "id": "R-01", "artifact": "environment-census.json", "acceptance": "Every controlled environment records redacted identity, current migration history/checksum, selected EXECUTE_EMPTY_BASELINE or RESOLVE_EXISTING_DATABASE path, and operator" },
+      { "id": "R-02", "artifact": "affected-data-profile.json", "acceptance": "Row/non-null counts, uniqueness/collision checks, conversion semantics, verification/session counts, auth_sessions retention classification, and per-D-001-D-013 disposition" },
+      { "id": "R-03", "artifact": "execute-empty-baseline-rehearsal.log", "acceptance": "On isolated production-like empty database, full chain applies once, second deploy is no-op, schema matches bound Prisma schema, timings/locks/status and auth smoke are recorded" },
+      { "id": "R-04", "artifact": "resolve-existing-database-rehearsal.log", "acceptance": "On isolated restored/clone target-schema database, resolve --applied changes migration history only; application table schema/data/control totals remain unchanged and status is clean" },
+      { "id": "R-05", "artifact": "reconciliation.json", "acceptance": "Deterministic before/after counts and checksums prove intended mapping or intentional zero-row/deletion decision for every destructive ID" },
+      { "id": "R-06", "artifact": "auth-regression.log", "acceptance": "Credential sign-in, configured OAuth linking/refresh, verification gate, session continuity or intentional revocation, password-change revocation, and step-up pass on the selected path" }
+    ],
+    "backupRollbackRecovery": [
+      { "id": "B-01", "artifact": "backup-manifest.json", "acceptance": "Encrypted pre-action snapshot/backup reference with redacted target, timestamp, retention/PITR, integrity ID/hash, size, operator, and access-control/KMS reference" },
+      { "id": "B-02", "artifact": "restore-test.log", "acceptance": "Successful restore to separate isolated database with integrity checks, affected-table and _prisma_migrations totals, measured restore time, and accepted RPO/RTO" },
+      { "id": "B-03", "artifact": "recovery-runbook.md", "acceptance": "Tested snapshot restore plus previous compatible app artifact or reviewed forward-only remediation; stop conditions, operators, and post-checks named" },
+      { "id": "B-04", "artifact": "transaction-failure-injection.log", "acceptance": "Guard/required-column failure produces no partial DDL" },
+      { "id": "B-05", "artifact": "resolve-metadata-recovery.log", "acceptance": "For resolve-only path, tested metadata recovery does not alter application tables" }
+    ],
+    "independentApproval": [
+      { "id": "A-01", "artifact": "maker-attestation.json", "acceptance": "Named maker/role/time, selected environment paths, D-001-D-013 dispositions, and evidence-bundle SHA-256" },
+      { "id": "A-02", "artifact": "checker-decision.json", "acceptance": "Different named authorized checker, independence declaration, exact migration/inventory/packet/evidence hashes, rationale, ISO-8601 time, and exactly one REJECT_AND_REWORK or APPROVE_EXACT_HASH decision" },
+      { "id": "A-03", "artifact": "migration-risk-approval-entry", "acceptance": "Only after APPROVE_EXACT_HASH: exact path/hash, drop_column and drop_table, checker identity, reason referencing evidence-bundle hash" }
+    ]
+  },
+  "approvalRegistry": {
+    "path": "prisma/migration-risk-approvals.json",
+    "sha256": "4030c801dd807691938f6e666990dfae6711cf2710fd76959f48c8c0319d2028",
+    "approvalCount": 0,
+    "entryAddedByPacket": false,
+    "controlLimitation": "The registry records one approvedBy identity and exact whole-file hash/rules, but does not itself prove maker-checker separation or bind rehearsal and restore artifacts."
+  },
+  "historyChecksumRegistry": {
+    "path": "prisma/migration-history-checksum-approvals.json",
+    "sha256": "4030c801dd807691938f6e666990dfae6711cf2710fd76959f48c8c0319d2028",
+    "approvalCount": 0,
+    "entryAddedByPacket": false
+  },
+  "verification": {
+    "migrationSafetyScan": {
+      "runAt": "2026-08-13",
+      "migrationCount": 62,
+      "riskFindingCount": 13,
+      "approvedRiskCount": 0,
+      "status": "blocked",
+      "blockers": ["destructive_sql_is_exact_hash_approved"],
+      "databaseTargeted": false,
+      "execution": "skipped"
+    },
+    "focusedGateTests": { "command": "npm test -- --runInBand scripts/__tests__/prisma-production-migration-gate.test.js", "suites": 1, "tests": 10, "status": "passed" },
+    "prismaValidate": { "command": "npm run prisma:validate", "status": "passed" },
+    "migrationFilesChangedByPacket": 0
+  },
+  "makerChecker": {
+    "maker": { "identity": null, "role": null, "preparedAt": null, "evidenceBundleSha256": null },
+    "checker": { "identity": null, "role": null, "independenceDeclared": null, "decision": null, "decidedAt": null, "decisionArtifactSha256": null },
+    "allowedDecisions": ["REJECT_AND_REWORK", "APPROVE_EXACT_HASH"]
+  },
+  "gateDisposition": {
+    "architectureContext": "PASSED_FOR_PACKET_CONSTRUCTION",
+    "tenantRbacSecurityImpact": "BLOCKED_MISSING_DATA_AND_AUTH_REHEARSAL",
+    "dataIntegrityRecoverability": "BLOCKED_MISSING_RECONCILIATION_BACKUP_RESTORE_RECOVERY",
+    "evidenceObservability": "BLOCKED_MISSING_HASH_BOUND_ENVIRONMENT_AND_REHEARSAL_BUNDLE",
+    "independentApproval": "BLOCKED_NO_MAKER_NO_CHECKER_NO_DECISION",
+    "staticVerification": "PASSED_EXPECTED_FAIL_CLOSED"
+  },
+  "nonClaim": "This packet inventories risk and missing evidence. It does not approve the migration, authorize production targeting or execution, mutate migration history, certify data loss as acceptable, or claim legal/accounting approval."
+}

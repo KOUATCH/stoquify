@@ -1,10 +1,10 @@
 # Enterprise Release External Evidence Intake Readiness
 
-**Evaluated:** 2026-07-27T16:49:17.994Z  
-**Status:** `EXTERNAL_EVIDENCE_REQUIRED`  
-**Release posture:** `DEVELOPMENT_CONTINUES_PILOT_AND_PRODUCTION_FAIL_CLOSED`  
-**Checks passed:** 1/6  
-**Blockers:** 71  
+**Evaluated:** 2026-08-11T13:35:38.171Z
+**Status:** `EXTERNAL_EVIDENCE_REQUIRED`
+**Release posture:** `DEVELOPMENT_CONTINUES_PILOT_AND_PRODUCTION_FAIL_CLOSED`
+**Checks passed:** 1/6
+**Blockers:** 70
 **Activation authorized by this validator:** No
 
 ## Control boundary
@@ -17,7 +17,7 @@ This validator accepts only redacted references and checks them together with th
 |---|---|---:|---:|---|
 | Production database target, backup, and migration evidence | PLATFORM_DATABASE_OWNER | BLOCKED | 12 | `npm run prisma:migration:release:preflight`<br>`npm run prisma:migrate:deploy`<br>`npm run prisma:migration:history:health`<br>`npm run prisma:migrate:status` |
 | Managed production release-secret references | SECURITY_PLATFORM_OWNER | BLOCKED | 19 | `npm run release:secrets:preflight:release`<br>`npm run public-identity:abuse:gate:release`<br>`npm run receipt:token:config-gate:release`<br>`npm run release:evidence:gate:release` |
-| Cameroon source binding and independent expert return | COMPLIANCE_LEGAL_OWNER | BLOCKED | 18 | `npm run statutory:country-pack:review:preflight`<br>`npm run statutory:country-pack:gate` |
+| Cameroon source binding and independent expert return | COMPLIANCE_LEGAL_OWNER | BLOCKED | 17 | `npm run statutory:country-pack:review:preflight`<br>`npm run statutory:country-pack:gate` |
 | Credential rotation and old-version rejection | SECURITY_OWNER_WITH_SERVICE_OWNERS | BLOCKED | 10 | `npm run agent:credential-rotation:evidence:apply`<br>`npm run agent:credential-rotation:gate` |
 | Operational ownership, scheduler, alerting, and CI evidence | RELEASE_MANAGER | BLOCKED | 12 | `npm run agent:operational-release:gate` |
 | Pre-promotion fail-closed boundary | ENTERPRISE_RELEASE_AUTHORITY | READY | 0 | `npm run enterprise:release:blockers:gate` |
@@ -27,8 +27,8 @@ This validator accepts only redacted references and checks them together with th
 | Blocker | Ready | Status | Underlying blockers |
 |---|---:|---|---:|
 | B03 | no | BLOCKED_EXTERNAL_CONFIG | 3 |
-| B04 | no | BLOCKED_EXTERNAL_CONFIG | 6 |
-| B05 | no | REQUIRES_EXPERT_REVIEW | 1 |
+| B04 | no | BLOCKED_EXTERNAL_CONFIG | 16 |
+| B05 | yes | READY | 0 |
 | B06 | no | REQUIRES_EXPERT_REVIEW | 9 |
 | B07 | no | BLOCKED_DEPENDENCY | 31 |
 | B08 | no | BLOCKED_DEPENDENCY | 152 |
@@ -90,7 +90,6 @@ This validator accepts only redacted references and checks them together with th
 - `B05_B06:CHECKER_VERIFICATION_REFERENCE_INVALID`
 - `B05_B06:RUNTIME_AUTHORITY_PROMOTION_REFERENCE_INVALID`
 - `B05_B06:STATUTORY_REVIEWED_AT_INVALID`
-- `B05_B06:AUTHORITATIVE_B05_REQUIRES_EXPERT_REVIEW`
 - `B05_B06:AUTHORITATIVE_B06_REQUIRES_EXPERT_REVIEW`
 - `B07:CREDENTIAL_ROTATION_OWNER_IDENTITY_INVALID`
 - `B07:ACCEPTANCE_REFERENCE_INVALID`

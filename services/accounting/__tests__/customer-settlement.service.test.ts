@@ -9,6 +9,7 @@ import {
   Prisma,
 } from "@prisma/client"
 
+import { NotFoundError } from "@/services/_shared/action-errors"
 import {
   collectCustomerSettlementWithControls,
   CUSTOMER_SETTLEMENT_MAX_SERIALIZABLE_ATTEMPTS,
@@ -736,7 +737,7 @@ describe("customer settlement source command", () => {
   it("fails closed when the configured settlement posting rule is missing", async () => {
     const { tx, client } = buildHarness()
     mockRequireActivePostingRule.mockRejectedValueOnce(
-      new Error("No active posting rule"),
+      new NotFoundError("No active posting rule"),
     )
 
     await expect(

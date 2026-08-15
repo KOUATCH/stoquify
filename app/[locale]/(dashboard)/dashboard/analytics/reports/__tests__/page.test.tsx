@@ -5,7 +5,23 @@ import { requirePermission } from "@/lib/security/rbac"
 import ReportsPage from "../page"
 
 jest.mock("@/lib/security/rbac", () => ({
+  RbacError: class MockRbacError extends Error {},
+  requireAllPermissions: jest.fn(),
+  requireAnyPermission: jest.fn(),
   requirePermission: jest.fn(),
+}))
+
+jest.mock("@/i18n/routing", () => ({
+  localizePath: (href: string, locale: string) => `/${locale}${href}`,
+  pickLocale: (locale: string) => (locale === "fr" ? "fr" : "en"),
+}))
+
+jest.mock("@/services/modules/module-entitlement.service", () => ({
+  observeModuleAccess: jest.fn().mockResolvedValue({ allowed: true }),
+}))
+
+jest.mock("@/components/dashboard/DashboardRouteState", () => ({
+  DashboardRouteState: () => <main />,
 }))
 
 jest.mock("../ReportsClient", () => ({
@@ -47,7 +63,11 @@ describe("ReportsPage", () => {
   it("requires reports read permission before rendering analytics reports", async () => {
     render(await ReportsPage({}))
 
-    expect(mockRequirePermission).toHaveBeenCalledWith("reports.read", { resource: "AnalyticsReports" })
+    expect(mockRequirePermission).toHaveBeenCalledWith("reports.read", {
+      resource: "AnalyticsReports",
+      resourceId: undefined,
+      auditAllowed: true,
+    })
     expect(screen.getByRole("heading", { name: "Analytics reports client" })).toBeInTheDocument()
     expect(screen.getByText("organization:org-rbac")).toBeInTheDocument()
     expect(screen.getByText("location:all")).toBeInTheDocument()
@@ -65,7 +85,11 @@ describe("ReportsPage", () => {
       }),
     )
 
-    expect(mockRequirePermission).toHaveBeenCalledWith("reports.read", { resource: "AnalyticsReports" })
+    expect(mockRequirePermission).toHaveBeenCalledWith("reports.read", {
+      resource: "AnalyticsReports",
+      resourceId: undefined,
+      auditAllowed: true,
+    })
     expect(screen.getByText("organization:org-rbac")).toBeInTheDocument()
     expect(screen.getByText("location:loc-1")).toBeInTheDocument()
     expect(screen.getByText("report:items")).toBeInTheDocument()
@@ -78,6 +102,10 @@ describe("ReportsPage", () => {
 
     await expect(ReportsPage({})).rejects.toThrow("Forbidden")
 
-    expect(mockRequirePermission).toHaveBeenCalledWith("reports.read", { resource: "AnalyticsReports" })
+    expect(mockRequirePermission).toHaveBeenCalledWith("reports.read", {
+      resource: "AnalyticsReports",
+      resourceId: undefined,
+      auditAllowed: true,
+    })
   })
 })

@@ -1,6 +1,6 @@
 "use server"
 
-import { protect } from "@/services/_shared/protect"
+import { protect, type ProtectedActionResponse } from "@/services/_shared/protect"
 import {
   createCopilotProposal,
   decideCopilotProposal,
@@ -18,6 +18,31 @@ const moduleBoundary = {
   moduleSlug: "dashboard" as const,
   surfaceType: "report" as const,
   mode: "enforce" as const,
+}
+
+export type CopilotGuardrailErrorCode =
+  | "FORBIDDEN"
+  | "STEP_UP_REQUIRED"
+  | "MISSING_DOCUMENT"
+  | "SYSTEM_ERROR"
+
+function errorCodeFor(
+  result: Extract<ProtectedActionResponse<unknown>, { success: false }>,
+): CopilotGuardrailErrorCode {
+  if (result.code === "FORBIDDEN") return "FORBIDDEN"
+  if (result.code === "FRESH_AUTH_REQUIRED") return "STEP_UP_REQUIRED"
+  if (result.code === "NOT_FOUND") return "MISSING_DOCUMENT"
+  return "SYSTEM_ERROR"
+}
+
+function withOk<T>(result: ProtectedActionResponse<T>) {
+  return result.success
+    ? { ...result, ok: true as const }
+    : {
+        ...result,
+        ok: false as const,
+        errorCode: errorCodeFor(result),
+      }
 }
 
 const createProposal = protect<unknown, CopilotProposalDto>(
@@ -99,13 +124,13 @@ const listProposals = protect<unknown, CopilotProposalDto[]>(
 )
 
 export async function createCopilotProposalAction(input: unknown) {
-  return createProposal(input)
+  return withOk(await createProposal(input))
 }
 
 export async function decideCopilotProposalAction(input: unknown) {
-  return decideProposal(input)
+  return withOk(await decideProposal(input))
 }
 
 export async function listCopilotProposalsAction(input: unknown = {}) {
-  return listProposals(input)
+  return withOk(await listProposals(input))
 }

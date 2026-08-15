@@ -14,8 +14,8 @@ Fail mode: this gate exits non-zero when any settings surface requires review. M
 
 ## Summary
 
-- Generated at: 2026-08-01T14:34:25.113Z
-- Source inventory generated at: 2026-08-01T14:34:25.078Z
+- Generated at: 2026-08-11T16:06:46.997Z
+- Source inventory generated at: 2026-08-11T16:06:46.943Z
 - Classified records: 37
 - Active review findings: 0
 - Status allowed-public: 4

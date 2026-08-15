@@ -19,8 +19,8 @@ Consolidate the completed leadership-skill sequence into durable release evidenc
 - Skill run reports: 14
 - Readiness artifacts: 10
 - Structural blockers: 0
-- Release blockers: 5
-- Readiness release blockers: 1
+- Release blockers: 7
+- Readiness release blockers: 3
 - Environment release blockers: 4
 - Secret values printed: no
 
@@ -47,20 +47,22 @@ Consolidate the completed leadership-skill sequence into durable release evidenc
 
 | Gate | Status | Checks | Blockers | Warnings |
 | --- | --- | ---: | ---: | ---: |
-| public-identity-abuse | ready | 15/15 | 0 | 1 |
+| public-identity-abuse | blocked | 14/15 | 1 | 0 |
 | ledger-close-truth | ready | 10/10 | 0 | 0 |
-| payment-cash-truth | ready | 11/11 | 0 | 0 |
+| payment-cash-truth | ready | 12/12 | 0 | 0 |
 | purchasing-ap-consolidation | ready | 11/11 | 0 | 0 |
 | offline-pos-fiscal-replay | ready | 16/16 | 0 | 0 |
-| statutory-country-pack-production | blocked | 10/12 | 2 | 0 |
-| report-trust-export | ready | 17/17 | 0 | 0 |
+| statutory-country-pack-production | blocked | 11/12 | 1 | 0 |
+| report-trust-export | ready | 35/35 | 0 | 0 |
 | role-based-operating-cockpit | ready | 9/9 | 0 | 0 |
-| prisma-migration-deployment | ready | 9/9 | 0 | 0 |
+| prisma-migration-deployment | blocked | 7/9 | 3 | 0 |
 | ci-release | ready | 11/11 | 0 | 0 |
 
 ## Readiness Release Blockers
 
+- blocked: readiness:public-identity-abuse
 - blocked: readiness:statutory-country-pack-production
+- blocked: readiness:prisma-migration-deployment
 
 ## Release Conditions
 
@@ -88,7 +90,9 @@ Consolidate the completed leadership-skill sequence into durable release evidenc
 ## Blockers And Residual Risk
 
 - No structural evidence blockers.
+- Release blocker: readiness:public-identity-abuse
 - Release blocker: readiness:statutory-country-pack-production
+- Release blocker: readiness:prisma-migration-deployment
 - Release blocker: public_identity_hash_secret
 - Release blocker: public_receipt_token_secret
 - Release blocker: history_cursor_signing_secret

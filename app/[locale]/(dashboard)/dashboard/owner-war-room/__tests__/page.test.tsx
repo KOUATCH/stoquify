@@ -16,6 +16,7 @@ jest.mock("@/components/owner-war-room/OwnerWarRoomDashboard", () => ({
 
 jest.mock("@/i18n/routing", () => ({
   localizePath: (href: string) => href,
+  pickLocale: (locale: string) => (locale === "fr" ? "fr" : "en"),
 }))
 
 jest.mock("@/lib/security/rbac", () => ({

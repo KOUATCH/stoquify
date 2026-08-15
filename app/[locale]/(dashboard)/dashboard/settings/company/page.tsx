@@ -4,13 +4,14 @@ import OrganizationManagementTable from "@/components/settings/OrganizationManag
 import OrganizationSettingsForm from "@/components/settings/OrganizationSettingsForm"
 import { localizePath, pickLocale } from "@/i18n/routing"
 import { redirect } from "next/navigation"
+import { routeByKey, withSettingsSurfaceAccess } from "../settings-route-access"
 
 export const metadata = {
   title: "Company DNA | Stoquify",
   description: "Manage organization identity, locale, currency, timezone, and operating calendar.",
 }
 
-export default async function CompanySettingsPage({
+async function CompanySettingsPageImpl({
   params,
 }: {
   params: Promise<{ locale: string }>
@@ -45,4 +46,20 @@ export default async function CompanySettingsPage({
       </div>
     </div>
   )
+}
+
+
+
+export default async function SettingsRoutePage(props: any = {}) {
+  const surface = routeByKey("settings-company")
+
+  if (!surface) {
+    throw new Error("Missing settings route surface definition: settings-company")
+  }
+
+  return withSettingsSurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => CompanySettingsPageImpl(props),
+  })
 }

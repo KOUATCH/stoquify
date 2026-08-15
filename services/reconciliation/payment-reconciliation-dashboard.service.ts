@@ -1,5 +1,6 @@
 import {
   ExceptionSeverity,
+  MatchStatus,
   PaymentReconciliationInboxSource,
   PaymentExceptionStatus,
   ReconciliationRunStatus,
@@ -38,6 +39,46 @@ export type PaymentReconciliationDashboardData = {
     currencyCode: string
     railName: string
     railType: string
+  }>
+  statementFiles: Array<{
+    id: string
+    providerAccountId: string
+    providerAccountName: string
+    fileName: string | null
+    sourceType: string
+    status: string
+    periodStart: string
+    periodEnd: string
+    importedAt: string
+    lineCount: number
+  }>
+  manualMatchCandidates: Array<{
+    exceptionId: string
+    providerAccountId: string
+    providerAccountName: string
+    paymentTransactionId: string
+    providerEventId: string | null
+    statementLineId: string | null
+    exceptionType: string
+    severity: string
+    internalReference: string | null
+    externalReference: string | null
+    internalAmount: number
+    externalAmount: number
+    currencyCode: string
+    occurredAt: string | null
+  }>
+  manualMatchProposals: Array<{
+    id: string
+    providerAccountId: string | null
+    providerAccountName: string | null
+    paymentTransactionId: string | null
+    providerEventId: string | null
+    statementLineId: string | null
+    amountMatched: number
+    currencyCode: string
+    matchedById: string | null
+    createdAt: string
   }>
   recentRuns: Array<{
     id: string
@@ -106,6 +147,13 @@ export type PaymentReconciliationDashboardData = {
 function decimalNumber(value: { toNumber: () => number } | number | null | undefined) {
   if (value === null || value === undefined) return 0
   return typeof value === "number" ? value : value.toNumber()
+}
+
+function maskReference(value: string | null | undefined) {
+  const normalized = value?.trim()
+  if (!normalized) return null
+  if (normalized.length <= 4) return "****"
+  return `${normalized.slice(0, 2)}****${normalized.slice(-2)}`
 }
 
 function openExceptionStatuses(): PaymentExceptionStatus[] {
@@ -271,7 +319,18 @@ async function deliverOperationalNotifications(organizationId: string) {
 export async function getPaymentReconciliationDashboardData(organizationId: string): Promise<PaymentReconciliationDashboardData> {
   await deliverOperationalNotifications(organizationId)
 
-  const [providerAccounts, recentRuns, suspenseItems, exceptions, providerEventCount, statementLineCount, inboxItems] = await Promise.all([
+  const [
+    providerAccounts,
+    statementFiles,
+    manualMatchCandidates,
+    manualMatchProposals,
+    recentRuns,
+    suspenseItems,
+    exceptions,
+    providerEventCount,
+    statementLineCount,
+    inboxItems,
+  ] = await Promise.all([
     db.providerAccount.findMany({
       where: { organizationId },
       orderBy: [{ status: "asc" }, { displayName: "asc" }],
@@ -283,6 +342,86 @@ export async function getPaymentReconciliationDashboardData(organizationId: stri
         status: true,
         currencyCode: true,
         paymentRail: { select: { name: true, type: true } },
+      },
+    }),
+    db.statementFile.findMany({
+      where: { organizationId },
+      orderBy: { importedAt: "desc" },
+      take: 10,
+      select: {
+        id: true,
+        providerAccountId: true,
+        fileName: true,
+        sourceType: true,
+        status: true,
+        periodStart: true,
+        periodEnd: true,
+        importedAt: true,
+        providerAccount: { select: { displayName: true } },
+        _count: { select: { lines: true } },
+      },
+    }),
+    db.paymentException.findMany({
+      where: {
+        organizationId,
+        status: { in: openExceptionStatuses() },
+        providerAccountId: { not: null },
+        paymentTransactionId: { not: null },
+        OR: [{ providerEventId: { not: null } }, { statementLineId: { not: null } }],
+      },
+      orderBy: [{ severity: "desc" }, { createdAt: "desc" }],
+      take: 12,
+      select: {
+        id: true,
+        type: true,
+        severity: true,
+        providerAccountId: true,
+        paymentTransactionId: true,
+        providerEventId: true,
+        statementLineId: true,
+        providerAccount: { select: { displayName: true } },
+        paymentTransaction: {
+          select: {
+            amount: true,
+            currencyCode: true,
+            providerTransactionId: true,
+            providerReference: true,
+            occurredAt: true,
+          },
+        },
+        providerEvent: {
+          select: {
+            amount: true,
+            providerTransactionId: true,
+            providerReference: true,
+            occurredAt: true,
+          },
+        },
+        statementLine: {
+          select: {
+            amount: true,
+            providerTransactionId: true,
+            providerReference: true,
+            occurredAt: true,
+          },
+        },
+      },
+    }),
+    db.matchRecord.findMany({
+      where: { organizationId, status: MatchStatus.PROPOSED },
+      orderBy: { createdAt: "desc" },
+      take: 12,
+      select: {
+        id: true,
+        providerAccountId: true,
+        paymentTransactionId: true,
+        providerEventId: true,
+        statementLineId: true,
+        amountMatched: true,
+        currencyCode: true,
+        matchedById: true,
+        createdAt: true,
+        providerAccount: { select: { displayName: true } },
       },
     }),
     db.reconciliationRun.findMany({
@@ -419,6 +558,58 @@ export async function getPaymentReconciliationDashboardData(organizationId: stri
       currencyCode: account.currencyCode,
       railName: account.paymentRail.name,
       railType: account.paymentRail.type,
+    })),
+    statementFiles: statementFiles.map((file) => ({
+      id: file.id,
+      providerAccountId: file.providerAccountId,
+      providerAccountName: file.providerAccount.displayName,
+      fileName: file.fileName,
+      sourceType: file.sourceType,
+      status: file.status,
+      periodStart: file.periodStart.toISOString(),
+      periodEnd: file.periodEnd.toISOString(),
+      importedAt: file.importedAt.toISOString(),
+      lineCount: file._count.lines,
+    })),
+    manualMatchCandidates: manualMatchCandidates.flatMap((candidate) => {
+      if (!candidate.providerAccountId || !candidate.paymentTransactionId || !candidate.paymentTransaction) return []
+      const externalEvidence = candidate.providerEvent ?? candidate.statementLine
+      if (!externalEvidence) return []
+
+      return [{
+        exceptionId: candidate.id,
+        providerAccountId: candidate.providerAccountId,
+        providerAccountName: candidate.providerAccount?.displayName ?? "",
+        paymentTransactionId: candidate.paymentTransactionId,
+        providerEventId: candidate.providerEventId,
+        statementLineId: candidate.statementLineId,
+        exceptionType: candidate.type,
+        severity: candidate.severity,
+        internalReference: maskReference(
+          candidate.paymentTransaction.providerReference ?? candidate.paymentTransaction.providerTransactionId,
+        ),
+        externalReference: maskReference(
+          externalEvidence.providerReference ?? externalEvidence.providerTransactionId,
+        ),
+        internalAmount: decimalNumber(candidate.paymentTransaction.amount),
+        externalAmount: decimalNumber(externalEvidence.amount),
+        currencyCode: candidate.paymentTransaction.currencyCode,
+        occurredAt: (
+          externalEvidence.occurredAt ?? candidate.paymentTransaction.occurredAt
+        )?.toISOString() ?? null,
+      }]
+    }),
+    manualMatchProposals: manualMatchProposals.map((proposal) => ({
+      id: proposal.id,
+      providerAccountId: proposal.providerAccountId,
+      providerAccountName: proposal.providerAccount?.displayName ?? null,
+      paymentTransactionId: proposal.paymentTransactionId,
+      providerEventId: proposal.providerEventId,
+      statementLineId: proposal.statementLineId,
+      amountMatched: decimalNumber(proposal.amountMatched),
+      currencyCode: proposal.currencyCode,
+      matchedById: proposal.matchedById,
+      createdAt: proposal.createdAt.toISOString(),
     })),
     recentRuns: recentRuns.map((run) => ({
       id: run.id,

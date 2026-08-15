@@ -1,6 +1,6 @@
 # Enterprise Release Blocker Status
 
-Generated: 2026-07-27T16:49:27.771Z
+Generated: 2026-08-11T13:31:31.345Z
 Status: `BLOCKED`
 Release posture: `DEVELOPMENT_CONTINUES_PILOT_AND_PRODUCTION_FAIL_CLOSED`
 
@@ -27,10 +27,10 @@ Release posture: `DEVELOPMENT_CONTINUES_PILOT_AND_PRODUCTION_FAIL_CLOSED`
 | ID | Gate | Status | Evidence facts | Next action |
 |---|---|---|---|---|
 | B01 | Ready | READY | buildStatus=passed; buildExitCode=0 | Preserve and bind this evidence to the final candidate. |
-| B02 | Ready | READY | triggers=9/9; blockedMutations=14/14 | Preserve and bind this evidence to the final candidate. |
-| B03 | Blocked | BLOCKED_EXTERNAL_CONFIG | preflight=8/9; history=5/8; historyTarget=local | Provision the approved production target, deploy, and pass direct history health. |
-| B04 | Blocked | BLOCKED_EXTERNAL_CONFIG | secretChecks=2/8 | Provision the three independent managed release secrets and rerun release preflight. |
-| B05 | Blocked | REQUIRES_EXPERT_REVIEW | sourceHashes=0/7 | Return independently recomputed and checker-verified source hashes. |
+| B02 | Blocked | ENGINEERING_BLOCKED | triggers=0/9; blockedMutations=0/14 | Restore the dedicated database proof and rerun payroll immutability. |
+| B03 | Blocked | BLOCKED_EXTERNAL_CONFIG | preflight=8/9; history=7/8; historyTarget=local | Provision the approved production target, deploy, and pass direct history health. |
+| B04 | Blocked | BLOCKED_EXTERNAL_CONFIG | secretChecks=5/21 | Provision the three independent managed release secrets and rerun release preflight. |
+| B05 | Ready | READY | sourceHashes=7/7 | Preserve and bind this evidence to the final candidate. |
 | B06 | Blocked | REQUIRES_EXPERT_REVIEW | reviewChecks=4/12; approvalArtifactVerified=false | Return the authentic signed expert decision and separate checker verification. |
 | B07 | Blocked | BLOCKED_DEPENDENCY | credentialStatus=BLOCKED; credentialBlockers=31 | After stable managed references exist, complete all credential dispositions and evidence. |
 | B08 | Blocked | BLOCKED_DEPENDENCY | operationalStatus=BLOCKED; operationalBlockers=152 | Complete owner, scheduler, alert, CI, governance, and credential evidence. |

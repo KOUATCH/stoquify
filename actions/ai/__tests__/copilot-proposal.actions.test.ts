@@ -6,13 +6,17 @@ jest.mock("@/services/_shared/protect", () => ({
     store.__copilotProposalProtectOptions =
       store.__copilotProposalProtectOptions ?? []
     store.__copilotProposalProtectOptions.push(options)
-    return (input: unknown) =>
-      handler(input, {
+    return async (input: unknown) => ({
+      success: true as const,
+      data: await handler(input, {
         orgId: "org-session",
         userId: "user-session",
         permissions: ["dashboard.read"],
         roles: [{ code: "finance_manager" }],
-      })
+      }),
+      error: null,
+      status: 200 as const,
+    })
   }),
 }))
 
@@ -65,7 +69,7 @@ describe("copilot proposal actions", () => {
     )
 
     mockCreate.mockResolvedValue({ id: "proposal-1" })
-    await createCopilotProposalAction({
+    const result = await createCopilotProposalAction({
       runId: "cm00000000000000000000001",
       proposalType: "NAVIGATE_TO_WORKFLOW",
       targetRoute: "/dashboard/manager-action-center",
@@ -101,12 +105,17 @@ describe("copilot proposal actions", () => {
       organizationId: "org-session",
       roleCodes: ["finance_manager"],
     })
+    expect(result).toMatchObject({
+      success: true,
+      ok: true,
+      data: { id: "proposal-1" },
+    })
   })
 
   it("derives the decision actor and tenant instead of trusting input scope", async () => {
     mockDecide.mockResolvedValue({ id: "proposal-1", status: "REJECTED" })
 
-    await decideCopilotProposalAction({
+    const result = await decideCopilotProposalAction({
       proposalId: "cm00000000000000000000002",
       decision: "REJECTED",
       reason: "Rejected after human review.",
@@ -121,6 +130,11 @@ describe("copilot proposal actions", () => {
         decision: "REJECTED",
       }),
     )
+    expect(result).toMatchObject({
+      success: true,
+      ok: true,
+      data: { id: "proposal-1", status: "REJECTED" },
+    })
   })
 
   it("fails closed before persistence without a governed Phase 3 release", async () => {

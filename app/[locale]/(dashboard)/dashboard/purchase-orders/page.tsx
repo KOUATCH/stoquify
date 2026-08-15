@@ -16,19 +16,18 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { TableLoading } from "@/components/ui/data-table"
-import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
 import PurchaseOrderManagement from "@/components/ui/groups/purchase-orders/PurchaseOrderManagement"
 import { Link } from "@/i18n/navigation"
-import { localizePath, pickLocale } from "@/i18n/routing"
+import { pickLocale } from "@/i18n/routing"
 import { formatCurrency } from "@/lib/i18n/formatters"
-import { RbacError, requirePermission } from "@/lib/security/rbac"
 import {
   getPurchaseOrderFormOptions,
   getSummary,
   listPurchaseOrders,
 } from "@/services/purchase-order/purchase-order.service"
-import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
-import type { Locale } from "@/types/bilingual"
+import { Locale } from "@/types/bilingual"
+
+import { routeByKey, withPurchaseOrdersSurfaceAccess } from "./purchase-orders-route-access"
 
 function MetricCard({
   title,
@@ -79,154 +78,130 @@ function MetricCard({
 }
 
 export default async function PurchaseOrdersPage() {
-  const locale: Locale = pickLocale(await getLocale())
+  const locale = pickLocale(await getLocale())
   const t = await getTranslations("purchaseOrders")
-  let ctx: Awaited<ReturnType<typeof requirePermission>>
+  const surface = routeByKey("purchase-orders-dashboard")
 
-  try {
-    ctx = await requirePermission("purchases.orders.read", {
-      resource: "PurchaseOrder",
-      auditAllowed: true,
-    })
-    await observeModuleAccess({
-      organizationId: ctx.orgId,
-      userId: ctx.userId,
-      actorPermissions: ctx.permissions,
-      moduleSlug: "purchasing",
-      surfaceType: "page",
-      surface: "/dashboard/purchase-orders",
-      accessIntent: "read",
-      mode: "observe",
-    })
-  } catch (error) {
-    if (error instanceof RbacError) {
-      const noActiveOrg = error.code === "NO_ACTIVE_ORG"
-
-      return (
-        <DashboardRouteState
-          kind={noActiveOrg ? "no_active_org" : "permission_denied"}
-          title={noActiveOrg ? "Purchase orders need an active organization" : "Purchase orders are not available for this role"}
-          message={
-            noActiveOrg
-              ? "Refresh your session from the dashboard so purchasing can load tenant-scoped purchase orders."
-              : "Purchase orders require purchasing read access. The denial was recorded by the RBAC guard."
-          }
-          primaryHref={localizePath("/dashboard", locale)}
-        />
-      )
-    }
-
-    throw error
+  if (!surface) {
+    throw new Error("Missing purchase orders route surface definition: purchase-orders-dashboard")
   }
 
-  const organizationId = ctx.orgId
-  const [purchaseOrders, options, summary] = await Promise.all([
-    listPurchaseOrders(organizationId),
-    getPurchaseOrderFormOptions(organizationId),
-    getSummary(organizationId),
-  ])
+  return withPurchaseOrdersSurfaceAccess({
+    params: Promise.resolve({ locale }),
+    surface,
+    permissionOptions: {
+      resource: "PurchaseOrder",
+    },
+    onAllowed: async (_ctx, activeLocale: Locale) => {
+      const [purchaseOrders, options, summary] = await Promise.all([
+        listPurchaseOrders(_ctx.orgId),
+        getPurchaseOrderFormOptions(_ctx.orgId),
+        getSummary(_ctx.orgId),
+      ])
 
-  const totalValue = Number(summary.totalValue)
-  const overdueOrders = summary.overdueOrders
+      const totalValue = Number(summary.totalValue)
+      const overdueOrders = summary.overdueOrders
 
-  return (
-    <div className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
-      <main className="dashboard-landing-content mx-auto w-full max-w-[88rem] min-w-0 space-y-6 px-4 py-6 text-[var(--dash-text)] sm:px-6 sm:py-8">
-        <section className="dashboard-glass-panel rounded-lg p-5 sm:p-6">
-          <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
-            <div className="min-w-0 max-w-3xl">
-              <div className="dashboard-eyebrow mb-4">
-                <span className="dashboard-live-dot" />
-                Purchase workspace
-              </div>
-              <div className="flex min-w-0 items-start gap-4">
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-brand-soft)] shadow-[0_16px_34px_rgba(47,125,246,0.18)]">
-                  <ShoppingCart className="h-5 w-5" />
-                </span>
-                <div className="min-w-0">
-                  <h1 className="text-3xl font-semibold tracking-tight text-[var(--dash-text)] sm:text-4xl">{t("title")}</h1>
-                  <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--dash-text-soft)] sm:text-base">{t("subtitle")}</p>
+      return (
+        <div className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
+          <main className="dashboard-landing-content mx-auto w-full max-w-[88rem] min-w-0 space-y-6 px-4 py-6 text-[var(--dash-text)] sm:px-6 sm:py-8">
+            <section className="dashboard-glass-panel rounded-lg p-5 sm:p-6">
+              <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
+                <div className="min-w-0 max-w-3xl">
+                  <div className="dashboard-eyebrow mb-4">
+                    <span className="dashboard-live-dot" />
+                    Purchase workspace
+                  </div>
+                  <div className="flex min-w-0 items-start gap-4">
+                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-brand-soft)] shadow-[0_16px_34px_rgba(47,125,246,0.18)]">
+                      <ShoppingCart className="h-5 w-5" />
+                    </span>
+                    <div className="min-w-0">
+                      <h1 className="text-3xl font-semibold tracking-tight text-[var(--dash-text)] sm:text-4xl">{t("title")}</h1>
+                      <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--dash-text-soft)] sm:text-base">{t("subtitle")}</p>
+                    </div>
+                  </div>
+                  <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-[var(--dash-text-soft)]">
+                    <Badge variant="outline" className="dashboard-filter-chip gap-1 rounded-lg">
+                      <FileText className="h-3 w-3 text-[var(--dash-info)]" />
+                      {t("stats.totalOrdersBadge", { n: purchaseOrders.length })}
+                    </Badge>
+                    <Badge variant="outline" className="dashboard-filter-chip rounded-lg">
+                      {t("stats.valueLabel", { amount: formatCurrency(totalValue, activeLocale, "USD") })}
+                    </Badge>
+                    {overdueOrders > 0 ? (
+                      <Badge className="rounded-lg border border-[var(--dash-danger)]/35 bg-[var(--dash-danger-soft)] text-[var(--dash-text)] hover:bg-[var(--dash-danger-soft)]">
+                        {t("stats.overdueBadge", { n: overdueOrders })}
+                      </Badge>
+                    ) : null}
+                  </div>
+                </div>
+
+                <div className="flex w-full shrink-0 flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+                  <Button asChild variant="outline" size="sm" className="dashboard-button-secondary h-10 justify-center rounded-lg">
+                    <Link href="/dashboard/purchase-orders/analytics">
+                      <BarChart3 className="h-4 w-4" />
+                      {t("header.analyticsCta")}
+                    </Link>
+                  </Button>
+                  <Button asChild size="sm" className="dashboard-button-create h-10 justify-center rounded-lg px-4">
+                    <Link href="/dashboard/purchase-orders/new">
+                      <Plus className="h-4 w-4" />
+                      {t("header.createCta")}
+                    </Link>
+                  </Button>
                 </div>
               </div>
-              <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-[var(--dash-text-soft)]">
-                <Badge variant="outline" className="dashboard-filter-chip gap-1 rounded-lg">
-                  <FileText className="h-3 w-3 text-[var(--dash-info)]" />
-                  {t("stats.totalOrdersBadge", { n: purchaseOrders.length })}
-                </Badge>
-                <Badge variant="outline" className="dashboard-filter-chip rounded-lg">
-                  {t("stats.valueLabel", { amount: formatCurrency(totalValue, locale, "USD") })}
-                </Badge>
-                {overdueOrders > 0 ? (
-                  <Badge className="rounded-lg border border-[var(--dash-danger)]/35 bg-[var(--dash-danger-soft)] text-[var(--dash-text)] hover:bg-[var(--dash-danger-soft)]">
-                    {t("stats.overdueBadge", { n: overdueOrders })}
+            </section>
+
+            <section className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+              <MetricCard title={t("stats.totalOrders")} value={summary.totalOrders} detail={t("stats.totalOrdersSubtitle")} icon={ShoppingCart} tone="blue" />
+              <MetricCard title={t("stats.totalValue")} value={formatCurrency(totalValue, activeLocale, "USD")} detail={t("stats.totalValueSubtitle")} icon={FileText} tone="slate" />
+              <MetricCard title={t("stats.draftOrders")} value={summary.statusBreakdown.draft} detail={t("stats.draftSubtitle")} icon={Clock} tone="amber" />
+              <MetricCard title={t("stats.received")} value={summary.statusBreakdown.received} detail={t("stats.receivedSubtitle")} icon={CheckCircle2} tone="emerald" />
+              <MetricCard title={t("stats.overdue")} value={overdueOrders} detail={t("stats.overdueSubtitle")} icon={Truck} tone={overdueOrders > 0 ? "rose" : "slate"} />
+            </section>
+
+            <Card className="dashboard-glass-panel min-w-0 overflow-hidden rounded-lg text-[var(--dash-text)]">
+              <div className="border-b border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.58)] px-5 py-4 sm:px-6">
+                <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--dash-spruce-soft)] text-[var(--dash-spruce)]">
+                      <Package className="h-5 w-5" />
+                    </span>
+                    <div className="min-w-0">
+                      <h2 className="text-lg font-semibold text-[var(--dash-text)]">{t("panel.title")}</h2>
+                      <p className="break-words text-sm text-[var(--dash-text-soft)]">
+                        {t("panel.summary", {
+                          n: purchaseOrders.length,
+                          overdue: overdueOrders,
+                          value: formatCurrency(totalValue, activeLocale, "USD"),
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                  <Badge variant="outline" className="dashboard-filter-chip w-fit rounded-lg">
+                    <span className="me-1 h-2 w-2 rounded-full bg-[var(--dash-spruce)]" />
+                    {t("panel.liveData")}
                   </Badge>
-                ) : null}
-              </div>
-            </div>
-
-            <div className="flex w-full shrink-0 flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
-              <Button asChild variant="outline" size="sm" className="dashboard-button-secondary h-10 justify-center rounded-lg">
-                <Link href="/dashboard/finance/payables">
-                  <BarChart3 className="h-4 w-4" />
-                  {t("header.analyticsCta")}
-                </Link>
-              </Button>
-              <Button asChild size="sm" className="dashboard-button-create h-10 justify-center rounded-lg px-4">
-                <Link href="/dashboard/purchase-orders/new">
-                  <Plus className="h-4 w-4" />
-                  {t("header.createCta")}
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </section>
-
-        <section className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-5">
-          <MetricCard title={t("stats.totalOrders")} value={summary.totalOrders} detail={t("stats.totalOrdersSubtitle")} icon={ShoppingCart} tone="blue" />
-          <MetricCard title={t("stats.totalValue")} value={formatCurrency(totalValue, locale, "USD")} detail={t("stats.totalValueSubtitle")} icon={FileText} tone="slate" />
-          <MetricCard title={t("stats.draftOrders")} value={summary.statusBreakdown.draft} detail={t("stats.draftSubtitle")} icon={Clock} tone="amber" />
-          <MetricCard title={t("stats.received")} value={summary.statusBreakdown.received} detail={t("stats.receivedSubtitle")} icon={CheckCircle2} tone="emerald" />
-          <MetricCard title={t("stats.overdue")} value={overdueOrders} detail={t("stats.overdueSubtitle")} icon={Truck} tone={overdueOrders > 0 ? "rose" : "slate"} />
-        </section>
-
-        <Card className="dashboard-glass-panel min-w-0 overflow-hidden rounded-lg text-[var(--dash-text)]">
-          <div className="border-b border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.58)] px-5 py-4 sm:px-6">
-            <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex min-w-0 items-center gap-3">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--dash-spruce-soft)] text-[var(--dash-spruce)]">
-                  <Package className="h-5 w-5" />
-                </span>
-                <div className="min-w-0">
-                  <h2 className="text-lg font-semibold text-[var(--dash-text)]">{t("panel.title")}</h2>
-                  <p className="break-words text-sm text-[var(--dash-text-soft)]">
-                    {t("panel.summary", {
-                      n: purchaseOrders.length,
-                      overdue: overdueOrders,
-                      value: formatCurrency(totalValue, locale, "USD"),
-                    })}
-                  </p>
                 </div>
               </div>
-              <Badge variant="outline" className="dashboard-filter-chip w-fit rounded-lg">
-                <span className="me-1 h-2 w-2 rounded-full bg-[var(--dash-spruce)]" />
-                {t("panel.liveData")}
-              </Badge>
-            </div>
-          </div>
 
-          <Suspense fallback={<div className="p-8"><TableLoading title={t("panel.loading")} /></div>}>
-            <div className="p-5 sm:p-6">
-              <PurchaseOrderManagement
-                title={t("title")}
-                organizationId={organizationId}
-                initialPurchaseOrderData={purchaseOrders}
-                initialSupplierData={options.suppliers}
-                initialLocationData={options.locations}
-              />
-            </div>
-          </Suspense>
-        </Card>
-      </main>
-    </div>
-  )
+              <Suspense fallback={<div className="p-8"><TableLoading title={t("panel.loading")} /></div>}>
+                <div className="p-5 sm:p-6">
+                  <PurchaseOrderManagement
+                    title={t("title")}
+                    organizationId={_ctx.orgId}
+                    initialPurchaseOrderData={purchaseOrders}
+                    initialSupplierData={options.suppliers}
+                    initialLocationData={options.locations}
+                  />
+                </div>
+              </Suspense>
+            </Card>
+          </main>
+        </div>
+      )
+    },
+  })
 }

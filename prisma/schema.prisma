@@ -276,6 +276,7 @@ model Organization {
   taxRates              TaxRate[]
   suppliers             Supplier[]
   customers             Customer[]
+  customerLocations     CustomerLocation[]
   purchaseOrders        PurchaseOrder[]
   salesOrders           SalesOrder[]
   stockAdjustments      StockAdjustment[]
@@ -299,6 +300,12 @@ model Organization {
   customerStatementRecipientActionStates  CustomerStatementRecipientActionState[]
   customerStatementDeliveries             CustomerStatementDelivery[]
   customerStatementDeliveryStates         CustomerStatementDeliveryState[]
+  supplierPoEnvelopes                     SupplierPoEnvelope[]
+  supplierPoAccessTokens                  SupplierPoAccessToken[]
+  supplierPoAccessLogs                    SupplierPoAccessLog[]
+  supplierPoProposals                     SupplierPoProposal[]
+  supplierPoProposalLines                 SupplierPoProposalLine[]
+  supplierPoProposalStates                SupplierPoProposalState[]
   referralAttributions                    ReferralAttribution[]
   referralAttributionEvents               ReferralAttributionEvent[]               @relation("ReferralAttributionSourceOrganization")
   referralConversionEvents                ReferralAttributionEvent[]               @relation("ReferralAttributionTargetOrganization")
@@ -410,6 +417,11 @@ model Organization {
   agentPolicyIncidents                    AgentPolicyIncident[]
   aiActionProposals                       AiActionProposal[]
   agentActivationPackages                 AgentActivationPackage[]
+  onboardingImportMappings                OnboardingImportMapping[]
+  onboardingImportBatches                 OnboardingImportBatch[]
+  onboardingImportRows                    OnboardingImportRow[]
+  onboardingImportIssues                  OnboardingImportIssue[]
+  onboardingReadinessMilestones           OnboardingReadinessMilestone[]
 
   @@unique([slug])
   @@index([slug])
@@ -479,6 +491,7 @@ model Location {
   transfersTo                StockTransfer[]             @relation("TransferTo")
   purchaseOrders             PurchaseOrder[]
   salesOrders                SalesOrder[]
+  customerLocations          CustomerLocation[]
   stockAdjustments           StockAdjustment[]
   goodsReceipts              GoodsReceipt[]
   posStations                POSStation[]
@@ -1054,14 +1067,15 @@ model Supplier {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  supplierItems    ItemSupplier[]
-  purchaseOrders   PurchaseOrder[]
-  expenses         Expense[]
-  ledgerEntries    SupplierLedgerEntry[]
-  bankAccounts     SupplierBankAccount[]
-  bankChanges      SupplierBankChangeRequest[]
-  supplierInvoices SupplierInvoice[]
-  supplierPayments SupplierPayment[]
+  supplierItems              ItemSupplier[]
+  purchaseOrders             PurchaseOrder[]
+  expenses                   Expense[]
+  ledgerEntries              SupplierLedgerEntry[]
+  bankAccounts               SupplierBankAccount[]
+  bankChanges                SupplierBankChangeRequest[]
+  supplierInvoices           SupplierInvoice[]
+  supplierPayments           SupplierPayment[]
+  poAcknowledgementEnvelopes SupplierPoEnvelope[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1122,6 +1136,7 @@ model Customer {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
+  locationAssignments CustomerLocation[]
   salesOrders         SalesOrder[]
   ledgerEntries       CustomerLedgerEntry[]
   receivableDocuments CustomerReceivableDocument[]
@@ -1132,11 +1147,203 @@ model Customer {
   updatedAt DateTime @updatedAt
 
   @@unique([organizationId, code])
+  @@unique([organizationId, id])
   @@index([organizationId])
   @@index([organizationId, isActive, deletedAt])
   @@index([email])
   @@index([phone])
   @@map("customers")
+}
+
+enum CustomerLocationSource {
+  HISTORICAL_SALE
+  POS_CREATION
+  MANUAL
+}
+
+model CustomerLocation {
+  id             String                 @id @default(cuid())
+  organizationId String
+  customerId     String
+  locationId     String
+  source         CustomerLocationSource @default(MANUAL)
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  customer     Customer     @relation(fields: [organizationId, customerId], references: [organizationId, id], onDelete: Cascade)
+  location     Location     @relation(fields: [organizationId, locationId], references: [organizationId, id], onDelete: Cascade)
+
+  @@unique([organizationId, customerId, locationId])
+  @@index([organizationId, locationId, customerId])
+  @@index([organizationId, customerId])
+  @@map("customer_locations")
+}
+
+// ============================================================
+// GOVERNED MASTER-DATA ONBOARDING
+// ============================================================
+
+enum OnboardingImportTarget {
+  CUSTOMER
+  SUPPLIER
+  ITEM
+}
+
+enum OnboardingImportStatus {
+  UPLOADED
+  VALIDATED
+  BLOCKED
+  APPROVED
+  COMMITTING
+  COMMITTED
+}
+
+enum OnboardingImportIssueSeverity {
+  ERROR
+  WARNING
+}
+
+enum OnboardingReadinessState {
+  NOT_STARTED
+  IMPORTED
+  RECONCILED
+  BLOCKED
+  WAIVED
+}
+
+model OnboardingImportMapping {
+  id             String                 @id @default(cuid())
+  organizationId String
+  organization   Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  target         OnboardingImportTarget
+  version        Int
+  schemaVersion  String                 @default("1")
+  fieldMap       Json
+  requiredFields String[]
+  createdById    String
+  createdAt      DateTime               @default(now())
+
+  batches OnboardingImportBatch[]
+
+  @@unique([organizationId, target, version])
+  @@index([organizationId, target, createdAt])
+  @@map("onboarding_import_mappings")
+}
+
+model OnboardingImportBatch {
+  id                        String                  @id @default(cuid())
+  organizationId            String
+  organization              Organization            @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  target                    OnboardingImportTarget
+  status                    OnboardingImportStatus  @default(UPLOADED)
+  sourceFilename            String
+  sourceMimeType            String
+  sourceByteSize            Int
+  contentHash               String
+  mappingId                 String
+  mapping                   OnboardingImportMapping @relation(fields: [mappingId], references: [id], onDelete: Restrict)
+  mappingVersion            Int
+  schemaVersion             String
+  sourceRecordCount         Int                     @default(0)
+  validRecordCount          Int                     @default(0)
+  errorRecordCount          Int                     @default(0)
+  duplicateRecordCount      Int                     @default(0)
+  sourceRequiredFieldTotals Json
+  preCommitRecordCount      Int?
+  postCommitRecordCount     Int?
+  destinationRequiredTotals Json?
+  committedRecordCount      Int                     @default(0)
+  uploadedById              String
+  uploadedAt                DateTime                @default(now())
+  validatedAt               DateTime?
+  approvedById              String?
+  approvedAt                DateTime?
+  approvalDigest            String?
+  commitStartedAt           DateTime?
+  committedAt               DateTime?
+  replayCount               Int                     @default(0)
+  lastReplayedAt            DateTime?
+  evidenceManifest          Json?
+  evidenceHash              String?
+  lastSafeErrorCode         String?
+  retentionExpiresAt        DateTime
+  createdAt                 DateTime                @default(now())
+  updatedAt                 DateTime                @updatedAt
+
+  rows   OnboardingImportRow[]
+  issues OnboardingImportIssue[]
+
+  @@unique([organizationId, target, contentHash, mappingVersion])
+  @@index([organizationId, status, createdAt])
+  @@index([organizationId, target, createdAt])
+  @@map("onboarding_import_batches")
+}
+
+model OnboardingImportRow {
+  id                String                @id @default(cuid())
+  organizationId    String
+  organization      Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  batchId           String
+  batch             OnboardingImportBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  rowNumber         Int
+  sourceRowHash     String
+  businessKey       String?
+  normalizedData    Json
+  valid             Boolean               @default(false)
+  commitAttemptedAt DateTime?
+  committedRecordId String?
+  committedAt       DateTime?
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+
+  issues OnboardingImportIssue[]
+
+  @@unique([batchId, rowNumber])
+  @@index([organizationId, batchId, businessKey])
+  @@index([batchId, committedRecordId])
+  @@map("onboarding_import_rows")
+}
+
+model OnboardingImportIssue {
+  id             String                        @id @default(cuid())
+  organizationId String
+  organization   Organization                  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  batchId        String
+  batch          OnboardingImportBatch         @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  rowId          String?
+  row            OnboardingImportRow?          @relation(fields: [rowId], references: [id], onDelete: Cascade)
+  rowNumber      Int
+  field          String?
+  severity       OnboardingImportIssueSeverity @default(ERROR)
+  code           String
+  safeMessage    String
+  createdAt      DateTime                      @default(now())
+
+  @@index([organizationId, batchId, severity])
+  @@index([batchId, rowNumber])
+  @@map("onboarding_import_issues")
+}
+
+model OnboardingReadinessMilestone {
+  id                String                   @id @default(cuid())
+  organizationId    String
+  organization      Organization             @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  target            OnboardingImportTarget
+  state             OnboardingReadinessState @default(NOT_STARTED)
+  evidenceBatchId   String?
+  sourceRecordCount Int                      @default(0)
+  committedCount    Int                      @default(0)
+  blockerCount      Int                      @default(0)
+  waivedById        String?
+  waivedAt          DateTime?
+  waiverReason      String?
+  updatedAt         DateTime                 @updatedAt
+  createdAt         DateTime                 @default(now())
+
+  @@unique([organizationId, target])
+  @@index([organizationId, state])
+  @@map("onboarding_readiness_milestones")
 }
 
 // ============================================================
@@ -1179,11 +1386,12 @@ model PurchaseOrder {
   approvedBy   User?     @relation("PurchaseOrderApprovedBy", fields: [approvedById], references: [id])
   approvedAt   DateTime?
 
-  lines            PurchaseOrderLine[]
-  goodsReceipts    GoodsReceipt[]
-  payments         Payment[]
-  supplierInvoices SupplierInvoice[]
-  threeWayMatches  ThreeWayMatch[]
+  lines                    PurchaseOrderLine[]
+  goodsReceipts            GoodsReceipt[]
+  payments                 Payment[]
+  supplierInvoices         SupplierInvoice[]
+  threeWayMatches          ThreeWayMatch[]
+  acknowledgementEnvelopes SupplierPoEnvelope[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1231,6 +1439,247 @@ model PurchaseOrderLine {
   @@index([purchaseOrderId])
   @@index([itemId])
   @@map("purchase_order_lines")
+}
+
+enum SupplierPoAccessTokenStatus {
+  ACTIVE
+  REVOKED
+  EXPIRED
+}
+
+enum SupplierPoAccessAction {
+  VIEW
+  RESPOND
+}
+
+enum SupplierPoAccessOutcome {
+  GRANTED
+  DENIED
+}
+
+enum SupplierPoProposalType {
+  ACCEPT
+  REJECT
+  REQUEST_CHANGE
+}
+
+enum SupplierPoProposalStatus {
+  SUBMITTED
+  BUYER_ACCEPTED
+  BUYER_REJECTED
+}
+
+enum SupplierPoProposalActorType {
+  SUPPLIER
+  BUYER
+}
+
+/// Immutable, redacted purchase-order snapshot shared with one supplier.
+/// Purchase-order, stock, AP, and accounting records remain authoritative.
+model SupplierPoEnvelope {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  purchaseOrderId String
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Restrict)
+
+  supplierId String
+  supplier   Supplier @relation(fields: [supplierId], references: [id], onDelete: Restrict)
+
+  preferredLocale Locale @default(EN)
+  payload         Json
+  sourceStateHash String
+  contentHash     String
+
+  idempotencyKey  String
+  correlationId   String
+  businessEventId String
+  createdById     String
+
+  accessTokens SupplierPoAccessToken[]
+  accessLogs   SupplierPoAccessLog[]
+  proposals    SupplierPoProposal[]
+
+  createdAt DateTime @default(now())
+
+  @@unique([organizationId, id])
+  @@unique([organizationId, purchaseOrderId, contentHash])
+  @@unique([organizationId, idempotencyKey])
+  @@unique([organizationId, correlationId])
+  @@index([organizationId, purchaseOrderId, createdAt])
+  @@index([organizationId, supplierId, createdAt])
+  @@map("supplier_po_envelopes")
+}
+
+model SupplierPoAccessToken {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  envelopeId String
+  envelope   SupplierPoEnvelope @relation(fields: [envelopeId], references: [id], onDelete: Restrict)
+
+  tokenHash           String
+  jtiHash             String
+  envelopeContentHash String
+  recipientHash       String?
+
+  allowView    Boolean                     @default(true)
+  allowRespond Boolean                     @default(true)
+  status       SupplierPoAccessTokenStatus @default(ACTIVE)
+
+  idempotencyKey  String
+  correlationId   String
+  businessEventId String
+
+  issuedById String
+  issuedAt   DateTime
+  expiresAt  DateTime
+
+  revokedById      String?
+  revokedAt        DateTime?
+  revocationReason String?
+
+  lastAccessedAt DateTime?
+  accessCount    Int       @default(0)
+  metadata       Json?
+
+  accessLogs SupplierPoAccessLog[]
+  proposal   SupplierPoProposal?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([organizationId, id])
+  @@unique([organizationId, tokenHash])
+  @@unique([organizationId, jtiHash])
+  @@unique([organizationId, idempotencyKey])
+  @@unique([organizationId, correlationId])
+  @@unique([organizationId, businessEventId])
+  @@index([organizationId, envelopeId, status])
+  @@index([organizationId, status, expiresAt])
+  @@map("supplier_po_access_tokens")
+}
+
+/// Append-only, redacted supplier access evidence. Raw tokens and request
+/// metadata are never stored.
+model SupplierPoAccessLog {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  envelopeId String
+  envelope   SupplierPoEnvelope @relation(fields: [envelopeId], references: [id], onDelete: Restrict)
+
+  tokenId String
+  token   SupplierPoAccessToken @relation(fields: [tokenId], references: [id], onDelete: Restrict)
+
+  action  SupplierPoAccessAction
+  outcome SupplierPoAccessOutcome
+
+  envelopeContentHash String
+  tokenHashPrefix     String
+  ipHash              String?
+  userAgentHash       String?
+  responseHash        String?
+  denialReason        String?
+  occurredAt          DateTime
+
+  createdAt DateTime @default(now())
+
+  @@index([organizationId, envelopeId, occurredAt])
+  @@index([organizationId, tokenId, occurredAt])
+  @@map("supplier_po_access_logs")
+}
+
+/// Supplier response is an immutable proposal only; it never updates the PO.
+model SupplierPoProposal {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  envelopeId String
+  envelope   SupplierPoEnvelope @relation(fields: [envelopeId], references: [id], onDelete: Restrict)
+
+  tokenId String                @unique
+  token   SupplierPoAccessToken @relation(fields: [tokenId], references: [id], onDelete: Restrict)
+
+  proposalType          SupplierPoProposalType
+  requestedDeliveryDate DateTime?
+  supplierNote          String?
+  noteHash              String?
+  payloadHash           String
+
+  idempotencyKey  String
+  correlationId   String
+  businessEventId String
+
+  lines  SupplierPoProposalLine[]
+  states SupplierPoProposalState[]
+
+  createdAt DateTime @default(now())
+
+  @@unique([organizationId, id])
+  @@unique([organizationId, envelopeId, idempotencyKey])
+  @@unique([organizationId, correlationId])
+  @@index([organizationId, envelopeId, proposalType, createdAt])
+  @@map("supplier_po_proposals")
+}
+
+model SupplierPoProposalLine {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  proposalId String
+  proposal   SupplierPoProposal @relation(fields: [proposalId], references: [id], onDelete: Restrict)
+
+  purchaseOrderLineId     String
+  originalOrderedQuantity Decimal @db.Decimal(12, 3)
+  requestedQuantity       Decimal @db.Decimal(12, 3)
+
+  createdAt DateTime @default(now())
+
+  @@unique([organizationId, proposalId, purchaseOrderLineId])
+  @@index([organizationId, purchaseOrderLineId])
+  @@map("supplier_po_proposal_lines")
+}
+
+/// Current proposal status is derived from this append-only hash chain.
+model SupplierPoProposalState {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  proposalId String
+  proposal   SupplierPoProposal @relation(fields: [proposalId], references: [id], onDelete: Restrict)
+
+  version Int
+  status  SupplierPoProposalStatus
+
+  effectiveAt DateTime
+  actorType   SupplierPoProposalActorType
+  actorId     String?
+  reason      String?
+
+  previousStateHash String?
+  stateHash         String
+  evidenceHash      String
+  businessEventId   String
+
+  createdAt DateTime @default(now())
+
+  @@unique([organizationId, proposalId, version])
+  @@unique([organizationId, stateHash])
+  @@index([organizationId, proposalId, effectiveAt])
+  @@map("supplier_po_proposal_states")
 }
 
 // ============================================================
@@ -6818,6 +7267,7 @@ enum AccountingSourceType {
   CUSTOMER_STATEMENT
   CUSTOMER_STATEMENT_DELIVERY
   CUSTOMER_STATEMENT_RECIPIENT_ACTION
+  SUPPLIER_PO_ACKNOWLEDGEMENT
   CUSTOMER_SETTLEMENT_ALLOCATION
   CUSTOMER_SETTLEMENT_REVERSAL
   ACCOUNTANT_CLIENT_INVITE

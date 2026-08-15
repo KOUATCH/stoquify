@@ -778,7 +778,10 @@ describe("customer settlement compensating reversal", () => {
 
     await expect(
       reverseCustomerSettlementWithControls(INPUT, control(), client as never),
-    ).rejects.toMatchObject({ code: "P2034" });
+    ).rejects.toMatchObject({
+      code: "CONFLICT",
+      message: "Customer settlement reversal transaction could not be serialized",
+    });
 
     expect(client.$transaction).toHaveBeenCalledTimes(
       CUSTOMER_SETTLEMENT_MAX_SERIALIZABLE_ATTEMPTS,

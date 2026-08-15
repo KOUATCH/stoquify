@@ -4,7 +4,7 @@ Fail mode: this inventory exits non-zero when active guard issues are present.
 
 ## Summary
 
-- Generated at: 2026-08-09T13:37:32.910Z
+- Generated at: 2026-08-12T19:18:08.548Z
 - Status: ready
 - Mode: fail
 - API routes inventoried: 14

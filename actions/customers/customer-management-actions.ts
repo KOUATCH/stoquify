@@ -22,6 +22,7 @@ import {
   createCustomerForManagement,
   getCustomerDetailAnalyticsForOrg,
   getCustomerManagementDataForOrg,
+  getCustomerManagementRowForOrg,
   removeCustomerForManagement,
   updateCustomerForManagement,
   type CustomerDetailAnalytics,
@@ -90,6 +91,31 @@ const getManagementData = protect<unknown, CustomerManagementData>(
 
 export async function getCustomerManagementData(organizationId: string) {
   return getManagementData({ organizationId })
+}
+
+const getManagementCustomer = protect<unknown, CustomerManagementRow | null>(
+  {
+    permission: "customers.read",
+    auditResource: "Customer",
+    auditAllowed: false,
+    module: {
+      moduleSlug: "sales",
+      surface: "customers.read",
+      accessIntent: "read",
+      mode: "enforce",
+    },
+  },
+  async (input, ctx) => {
+    const parsed = customerIdentityInputSchema.parse(input)
+    return getCustomerManagementRowForOrg(ctx.orgId, parsed.customerId)
+  },
+)
+
+export async function getManagedCustomer(
+  organizationId: string,
+  customerId: string,
+) {
+  return getManagementCustomer({ organizationId, customerId })
 }
 
 const getAnalyticsData = protect<unknown, CustomerDetailAnalytics>(

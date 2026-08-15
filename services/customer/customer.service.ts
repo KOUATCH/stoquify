@@ -872,6 +872,13 @@ async function reloadCustomerManagementRow(organizationId: string, customerId: s
   return rows[0] ?? null
 }
 
+export async function getCustomerManagementRowForOrg(
+  organizationId: string,
+  customerId: string,
+): Promise<CustomerManagementRow | null> {
+  return reloadCustomerManagementRow(organizationId, customerId)
+}
+
 export async function createCustomerForManagement(
   organizationId: string,
   input: CustomerCreateInput,

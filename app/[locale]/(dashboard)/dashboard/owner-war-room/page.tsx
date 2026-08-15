@@ -3,8 +3,8 @@ import type { Metadata } from "next"
 import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
 import { OwnerWarRoomDashboard } from "@/components/owner-war-room/OwnerWarRoomDashboard"
 import { localizePath } from "@/i18n/routing"
-import { RbacError, requirePermission } from "@/lib/security/rbac"
 import { getOwnerWarRoomData } from "@/services/owner-war-room/owner-war-room.service"
+import { routeByKey, withOwnerWarRoomSurfaceAccess } from "./owner-war-room-route-access"
 
 export const metadata: Metadata = {
   title: "Owner War Room | Kontava",
@@ -35,47 +35,40 @@ export default async function OwnerWarRoomPage({
 }) {
   const { locale } = await params
   const resolvedLocale = pickLocale(locale)
-  let data: Awaited<ReturnType<typeof getOwnerWarRoomData>>
+  const surface = routeByKey("owner-war-room")
 
-  try {
-    const ctx = await requirePermission("dashboard.read", {
-      resource: "KontavaOwnerWarRoom",
-      auditAllowed: true,
-    })
-    data = await getOwnerWarRoomData({
-      organizationId: ctx.orgId,
-      actorId: ctx.userId,
-      actorPermissions: ctx.permissions,
-      actorRoleCodes: ctx.roles.map((role) => role.code),
-      isSuperUser: ctx.isSuperUser,
-    })
-  } catch (error) {
-    if (error instanceof RbacError) {
-      const noActiveOrg = error.code === "NO_ACTIVE_ORG"
-
-      return (
-        <DashboardRouteState
-          kind={noActiveOrg ? "no_active_org" : "permission_denied"}
-          title={noActiveOrg ? "Owner War Room needs an active organization" : "Owner War Room is not available for this role"}
-          message={
-            noActiveOrg
-              ? "Refresh your session from the dashboard so the command center can load tenant-scoped evidence."
-              : "This read-only tenant command center requires administrator-wide operating authority. The denial was recorded by the RBAC guard."
-          }
-          primaryHref={localizePath("/dashboard", resolvedLocale)}
-        />
-      )
-    }
-
-    throw error
+  if (!surface) {
+    throw new Error("Missing owner war room route surface definition: owner-war-room")
   }
 
-  return (
-    <OwnerWarRoomDashboard
-      data={data}
-      locale={resolvedLocale}
-      title={copy[resolvedLocale].title}
-      subtitle={copy[resolvedLocale].subtitle}
-    />
-  )
+  return withOwnerWarRoomSurfaceAccess({
+    params,
+    surface,
+    onAllowed: async (ctx, _locale) => {
+      const data = await getOwnerWarRoomData({
+        organizationId: ctx.orgId,
+        actorId: ctx.userId,
+        actorPermissions: ctx.permissions,
+        actorRoleCodes: ctx.roles.map((role) => role.code),
+        isSuperUser: ctx.isSuperUser,
+      })
+
+      return (
+        <OwnerWarRoomDashboard
+          data={data}
+          locale={resolvedLocale}
+          title={copy[resolvedLocale].title}
+          subtitle={copy[resolvedLocale].subtitle}
+        />
+      )
+    },
+    onDenied: ({ noActiveOrg, title, message, href }) => (
+      <DashboardRouteState
+        kind={noActiveOrg ? "no_active_org" : "permission_denied"}
+        title={title}
+        message={message}
+        primaryHref={href}
+      />
+    ),
+  })
 }

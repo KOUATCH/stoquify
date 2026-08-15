@@ -1,7 +1,7 @@
 import type { SVGProps } from "react"
 import { render, screen } from "@testing-library/react"
 
-import { requireAnyPermission } from "@/lib/security/rbac"
+import { RbacError, requireAnyPermission } from "@/lib/security/rbac"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 
 import FinanceReconciliationPage from "../page"
@@ -43,6 +43,14 @@ jest.mock("@/lib/security/rbac", () => ({
 
 jest.mock("@/services/modules/module-entitlement.service", () => ({
   observeModuleAccess: jest.fn(),
+}))
+
+jest.mock("@/actions/modules/module-control.actions", () => ({
+  activateTenantModuleAction: jest.fn(),
+}))
+
+jest.mock("@/actions/security/step-up-auth.actions", () => ({
+  stepUpWithPasswordAction: jest.fn(),
 }))
 
 const mockPaymentReconciliationWorkbench = jest.fn(() => (
@@ -125,6 +133,75 @@ describe("FinanceReconciliationPage", () => {
     expect(screen.getByText("Module locked")).toBeInTheDocument()
     expect(screen.getByText("Payment reconciliation is not enabled for this tenant")).toBeInTheDocument()
     expect(screen.queryByText("Payment reconciliation workbench rendered")).not.toBeInTheDocument()
+    expect(mockPaymentReconciliationWorkbench).not.toHaveBeenCalled()
+  })
+
+  it("offers audited activation only to a tenant module administrator", async () => {
+    mockRequireAnyPermission.mockResolvedValue({
+      orgId: "org-session",
+      userId: "user-session",
+      permissions: ["payments.reconciliation.read", "MANAGE_SYSTEM_SETTINGS"],
+    })
+    mockObserveModuleAccess.mockResolvedValue(moduleDecision({
+      result: "deny",
+      allowed: false,
+      wouldBlock: true,
+      reason: "Required module dependencies are missing.",
+    }))
+
+    render(await FinanceReconciliationPage({ params: Promise.resolve({ locale: "en" }) }))
+
+    expect(screen.getByRole("button", { name: "Enable reconciliation" })).toBeInTheDocument()
+  })
+
+  it("localizes the French recovery state and activation control", async () => {
+    mockRequireAnyPermission.mockResolvedValue({
+      orgId: "org-session",
+      userId: "user-session",
+      permissions: ["payments.reconciliation.read", "MANAGE_SYSTEM_SETTINGS"],
+    })
+    mockObserveModuleAccess.mockResolvedValue(moduleDecision({
+      result: "deny",
+      allowed: false,
+      wouldBlock: true,
+      reason: "Required module dependencies are missing.",
+    }))
+
+    render(await FinanceReconciliationPage({ params: Promise.resolve({ locale: "fr" }) }))
+
+    expect(screen.getByText("Module verrouillé")).toBeInTheDocument()
+    expect(
+      screen.getByRole("heading", {
+        name: "Le rapprochement des paiements n’est pas activé pour ce locataire",
+      }),
+    ).toBeInTheDocument()
+    expect(screen.getByText(/Activez le module de rapprochement des paiements/)).toBeInTheDocument()
+    expect(screen.getByRole("link", { name: "Retour au tableau de bord" })).toHaveAttribute(
+      "href",
+      "/fr/dashboard",
+    )
+    expect(screen.getByRole("button", { name: "Activer le rapprochement" })).toBeInTheDocument()
+  })
+
+  it("renders a localized RBAC denial without evaluating module access", async () => {
+    mockRequireAnyPermission.mockRejectedValue(
+      new RbacError("Permission denied", "PERMISSION_DENIED", 403),
+    )
+
+    render(await FinanceReconciliationPage({ params: Promise.resolve({ locale: "fr" }) }))
+
+    expect(screen.getByText("Autorisation requise")).toBeInTheDocument()
+    expect(
+      screen.getByRole("heading", {
+        name: "Le rapprochement des paiements n’est pas accessible à ce rôle",
+      }),
+    ).toBeInTheDocument()
+    expect(screen.getByText(/Le refus a été enregistré par le contrôle RBAC/)).toBeInTheDocument()
+    expect(screen.getByRole("link", { name: "Retour au tableau de bord" })).toHaveAttribute(
+      "href",
+      "/fr/dashboard",
+    )
+    expect(mockObserveModuleAccess).not.toHaveBeenCalled()
     expect(mockPaymentReconciliationWorkbench).not.toHaveBeenCalled()
   })
 })

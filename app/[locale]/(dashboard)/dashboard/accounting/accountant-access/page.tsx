@@ -4,8 +4,9 @@ import { getAccountantAccessRegisterAction } from "@/actions/accounting/accounta
 import { AccountantAccessManager } from "@/components/accounting/AccountantAccessManager"
 import { checkPermission } from "@/config/useAuth"
 import { AccountingPageShell } from "../_components/accounting-ui"
+import { routeByKey, withAccountingSurfaceAccess } from "../accounting-route-access"
 
-export default async function AccountantAccessPage() {
+async function AccountantAccessPageImpl() {
   await checkPermission("accounting.close.accountant.invite")
   const response = await getAccountantAccessRegisterAction()
 
@@ -25,4 +26,20 @@ export default async function AccountantAccessPage() {
       )}
     </AccountingPageShell>
   )
+}
+
+
+
+export default async function AccountingRoutePage(props: any = {}) {
+  const surface = routeByKey("accounting-accountant-access")
+
+  if (!surface) {
+    throw new Error("Missing accounting route surface definition: accounting-accountant-access")
+  }
+
+  return withAccountingSurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => AccountantAccessPageImpl(),
+  })
 }

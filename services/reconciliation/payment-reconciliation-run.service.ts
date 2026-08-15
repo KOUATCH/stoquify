@@ -587,11 +587,71 @@ export async function runPaymentReconciliation(
 }
 
 export async function proposeManualMatch(input: ProposeManualMatchInput) {
-  if (!input.providerEventId && !input.statementLineId) {
-    throw new BusinessRuleError("Manual match requires provider event or statement line evidence.")
+  if (Boolean(input.providerEventId) === Boolean(input.statementLineId)) {
+    throw new BusinessRuleError("Manual match requires exactly one provider event or statement line.")
   }
 
   const correlationId = input.correlationId ?? randomUUID()
+  const [providerAccount, paymentTransaction, providerEvent, statementLine] = await Promise.all([
+    db.providerAccount.findFirst({
+      where: { id: input.providerAccountId, organizationId: input.organizationId },
+      select: { id: true, currencyCode: true, status: true },
+    }),
+    db.paymentTransaction.findFirst({
+      where: {
+        id: input.paymentTransactionId,
+        organizationId: input.organizationId,
+        providerAccountId: input.providerAccountId,
+      },
+      select: { id: true, amount: true, currencyCode: true },
+    }),
+    input.providerEventId
+      ? db.providerEvent.findFirst({
+          where: {
+            id: input.providerEventId,
+            organizationId: input.organizationId,
+            providerAccountId: input.providerAccountId,
+          },
+          select: { id: true, amount: true, currencyCode: true },
+        })
+      : Promise.resolve(null),
+    input.statementLineId
+      ? db.statementLine.findFirst({
+          where: {
+            id: input.statementLineId,
+            organizationId: input.organizationId,
+            providerAccountId: input.providerAccountId,
+          },
+          select: { id: true, amount: true, currencyCode: true },
+        })
+      : Promise.resolve(null),
+  ])
+
+  if (!providerAccount || providerAccount.status !== "ACTIVE") {
+    throw new NotFoundError("Active provider account not found")
+  }
+  if (!paymentTransaction) throw new NotFoundError("Payment transaction not found")
+  if (input.providerEventId && !providerEvent) throw new NotFoundError("Provider event not found")
+  if (input.statementLineId && !statementLine) throw new NotFoundError("Statement line not found")
+
+  const externalEvidence = providerEvent ?? statementLine
+  if (!externalEvidence) throw new NotFoundError("External payment evidence not found")
+
+  const amountMatched = money(input.amountMatched)
+  if (amountMatched.lte(0)) throw new BusinessRuleError("Manual match amount must be greater than zero.")
+  if (amountMatched.gt(paymentTransaction.amount) || amountMatched.gt(externalEvidence.amount ?? 0)) {
+    throw new BusinessRuleError("Manual match amount cannot exceed either evidence amount.")
+  }
+
+  const currencyCode = input.currencyCode ?? paymentTransaction.currencyCode
+  if (
+    currencyCode !== providerAccount.currencyCode
+    || currencyCode !== paymentTransaction.currencyCode
+    || currencyCode !== externalEvidence.currencyCode
+  ) {
+    throw new BusinessRuleError("Manual match evidence must use the same currency.")
+  }
+
   const match = await db.matchRecord.create({
     data: {
       organizationId: input.organizationId,
@@ -602,8 +662,8 @@ export async function proposeManualMatch(input: ProposeManualMatchInput) {
       rule: MatchRule.MANUAL,
       status: MatchStatus.PROPOSED,
       confidence: new Prisma.Decimal(75),
-      amountMatched: money(input.amountMatched),
-      currencyCode: input.currencyCode ?? "XAF",
+      amountMatched,
+      currencyCode,
       matchedById: input.proposedById,
       matchedAt: new Date(),
       correlationId,
@@ -619,8 +679,8 @@ export async function proposeManualMatch(input: ProposeManualMatchInput) {
     type: "payment-reconciliation.manual-match.proposed",
     organizationId: input.organizationId,
     providerAccountId: input.providerAccountId,
-    amount: money(input.amountMatched).toFixed(2),
-    currency: input.currencyCode ?? "XAF",
+    amount: amountMatched.toFixed(2),
+    currency: currencyCode,
     evidenceRef: {
       paymentTransactionId: input.paymentTransactionId,
       providerEventId: input.providerEventId,

@@ -16,6 +16,11 @@ import type {
   ReceiveItemsInput,
   UpdatePurchaseOrderInput,
 } from "./purchase-order.schemas"
+import type {
+  PurchaseOrderAnalyticsData,
+  PurchaseOrderAnalyticsException,
+  PurchaseOrderAnalyticsStatus,
+} from "@/types/purchase-order-analytics"
 
 const toN = (v: Decimal | number | string | null | undefined): number => {
   if (v === null || v === undefined) return 0
@@ -1157,56 +1162,450 @@ export async function getRequiringAttention(organizationId: string, limit = 10) 
   }
 }
 
-export async function getAnalytics(input: POAnalyticsInput) {
-  const where: Prisma.PurchaseOrderWhereInput = { organizationId: input.organizationId, deletedAt: null }
-  if (input.from || input.to) {
-    where.orderDate = {}
-    if (input.from) (where.orderDate as Prisma.DateTimeFilter).gte = new Date(input.from)
-    if (input.to)   (where.orderDate as Prisma.DateTimeFilter).lte = new Date(input.to)
+const ANALYTICS_STATUS_ORDER: PurchaseOrderAnalyticsStatus[] = [
+  "DRAFT",
+  "SUBMITTED",
+  "APPROVED",
+  "PARTIALLY_RECEIVED",
+  "RECEIVED",
+  "COMPLETED",
+  "CANCELLED",
+]
+
+const OPEN_ANALYTICS_STATUSES = new Set<PurchaseOrderAnalyticsStatus>([
+  "DRAFT",
+  "SUBMITTED",
+  "APPROVED",
+  "PARTIALLY_RECEIVED",
+])
+
+function analyticsDate(value: string, inclusiveEnd = false) {
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) {
+    throw new BusinessRuleError(`Invalid purchase-order analytics date: ${value}`)
+  }
+  if (inclusiveEnd && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    date.setUTCHours(23, 59, 59, 999)
+  }
+  return date
+}
+
+function roundMetric(value: number, precision = 2) {
+  if (!Number.isFinite(value)) return 0
+  const factor = 10 ** precision
+  return Math.round(value * factor) / factor
+}
+
+function percentMetric(numerator: number, denominator: number) {
+  return denominator > 0 ? roundMetric((numerator / denominator) * 100, 1) : 0
+}
+
+function percentile(values: number[], percentileValue: number) {
+  if (!values.length) return 0
+  const sorted = [...values].sort((a, b) => a - b)
+  const index = Math.max(0, Math.ceil(percentileValue * sorted.length) - 1)
+  return sorted[index] ?? 0
+}
+
+function daysBetween(earlier: Date, later: Date) {
+  return Math.max(0, Math.floor((later.getTime() - earlier.getTime()) / 86_400_000))
+}
+
+export async function getAnalytics(input: POAnalyticsInput): Promise<PurchaseOrderAnalyticsData> {
+  const from = input.from ? analyticsDate(input.from) : null
+  const to = input.to ? analyticsDate(input.to, true) : null
+  const where: Prisma.PurchaseOrderWhereInput = {
+    organizationId: input.organizationId,
+    deletedAt: null,
+    ...(from || to
+      ? {
+          orderDate: {
+            ...(from ? { gte: from } : {}),
+            ...(to ? { lte: to } : {}),
+          },
+        }
+      : {}),
   }
 
-  const [orders, topAgg] = await Promise.all([
+  const [orders, organization] = await Promise.all([
     db.purchaseOrder.findMany({
       where,
-      select: { orderDate: true, total: true, status: true, createdAt: true, approvedAt: true },
+      select: {
+        id: true,
+        orderNumber: true,
+        status: true,
+        orderDate: true,
+        expectedDeliveryDate: true,
+        actualDeliveryDate: true,
+        createdAt: true,
+        updatedAt: true,
+        approvedAt: true,
+        total: true,
+        supplier: { select: { id: true, name: true, code: true } },
+        location: { select: { id: true, name: true } },
+        lines: {
+          select: {
+            orderedQuantity: true,
+            receivedQuantity: true,
+            unitCost: true,
+            lineTotal: true,
+            item: { select: { id: true, sku: true, nameEn: true, nameFr: true } },
+          },
+        },
+        goodsReceipts: {
+          where: { deletedAt: null, status: { not: "CANCELLED" } },
+          select: { receiptDate: true, createdAt: true, status: true },
+          orderBy: { receiptDate: "asc" },
+        },
+      },
       orderBy: { orderDate: "asc" },
     }),
-    db.purchaseOrder.groupBy({
-      by: ["supplierId"],
-      where: { organizationId: input.organizationId, deletedAt: null },
-      _sum: { total: true },
-      _count: { _all: true },
-      orderBy: { _sum: { total: "desc" } },
-      take: input.topSuppliersLimit ?? 5,
+    db.organization.findFirst({
+      where: { id: input.organizationId },
+      select: { currency: true },
     }),
   ])
 
-  const monthKey = (d: Date) => `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`
-  const monthly: Record<string, { total: number; count: number }> = {}
-  for (const o of orders) {
-    const k = monthKey(o.orderDate ?? o.createdAt)
-    monthly[k] ??= { total: 0, count: 0 }
-    monthly[k].total += toN(o.total)
-    monthly[k].count += 1
+  const now = new Date()
+  const activeOrders = orders.filter(order => order.status !== "CANCELLED")
+  const totalSpend = activeOrders.reduce((sum, order) => sum + toN(order.total), 0)
+  let orderedUnits = 0
+  let receivedUnits = 0
+  let openCommitmentValue = 0
+  let overdueValue = 0
+  let overdueOrders = 0
+  let onTimeOrders = 0
+  let onTimeSampleSize = 0
+
+  const approvalHours = orders
+    .filter(order => order.approvedAt)
+    .map(order => Math.max(0, (order.approvedAt!.getTime() - order.createdAt.getTime()) / 3_600_000))
+
+  const monthlyMap = new Map<string, { orderCount: number; totalSpend: number; receivedOrders: number }>()
+  const statusMap = new Map<PurchaseOrderAnalyticsStatus, { orders: number; totalValue: number }>(
+    ANALYTICS_STATUS_ORDER.map(status => [status, { orders: 0, totalValue: 0 }]),
+  )
+  const supplierMap = new Map<string, {
+    supplierId: string
+    name: string
+    code: string
+    orders: number
+    totalSpend: number
+    openCommitmentValue: number
+    overdueOrders: number
+    orderedUnits: number
+    receivedUnits: number
+    onTimeOrders: number
+    onTimeSampleSize: number
+  }>()
+  const locationMap = new Map<string, {
+    locationId: string
+    name: string
+    orders: number
+    totalSpend: number
+    openCommitmentValue: number
+    overdueOrders: number
+    orderedUnits: number
+    receivedUnits: number
+  }>()
+  const itemMap = new Map<string, {
+    itemId: string
+    sku: string
+    nameEn: string
+    nameFr: string | null
+    orderedUnits: number
+    receivedUnits: number
+    totalSpend: number
+  }>()
+  const agingMap = new Map<"0_7" | "8_30" | "31_60" | "61_PLUS", { orders: number; openCommitmentValue: number }>([
+    ["0_7", { orders: 0, openCommitmentValue: 0 }],
+    ["8_30", { orders: 0, openCommitmentValue: 0 }],
+    ["31_60", { orders: 0, openCommitmentValue: 0 }],
+    ["61_PLUS", { orders: 0, openCommitmentValue: 0 }],
+  ])
+  const exceptions: PurchaseOrderAnalyticsException[] = []
+
+  for (const order of orders) {
+    const status = order.status as PurchaseOrderAnalyticsStatus
+    const isCancelled = status === "CANCELLED"
+    const isOpen = OPEN_ANALYTICS_STATUSES.has(status)
+    const orderValue = toN(order.total)
+    const statusEntry = statusMap.get(status)!
+    statusEntry.orders += 1
+    statusEntry.totalValue += orderValue
+
+    const month = `${order.orderDate.getUTCFullYear()}-${String(order.orderDate.getUTCMonth() + 1).padStart(2, "0")}`
+    const monthEntry = monthlyMap.get(month) ?? { orderCount: 0, totalSpend: 0, receivedOrders: 0 }
+    monthEntry.orderCount += 1
+    if (!isCancelled) monthEntry.totalSpend += orderValue
+    if (status === "RECEIVED" || status === "COMPLETED") monthEntry.receivedOrders += 1
+    monthlyMap.set(month, monthEntry)
+
+    let orderOrderedUnits = 0
+    let orderReceivedUnits = 0
+    let orderOpenCommitment = 0
+    for (const line of order.lines) {
+      const lineOrdered = toN(line.orderedQuantity)
+      const lineReceived = Math.min(lineOrdered, toN(line.receivedQuantity))
+      const remaining = Math.max(0, lineOrdered - lineReceived)
+      const unitCost = toN(line.unitCost)
+      orderOrderedUnits += lineOrdered
+      orderReceivedUnits += lineReceived
+      orderOpenCommitment += remaining * unitCost
+
+      if (!isCancelled) {
+        const itemEntry = itemMap.get(line.item.id) ?? {
+          itemId: line.item.id,
+          sku: line.item.sku,
+          nameEn: line.item.nameEn,
+          nameFr: line.item.nameFr,
+          orderedUnits: 0,
+          receivedUnits: 0,
+          totalSpend: 0,
+        }
+        itemEntry.orderedUnits += lineOrdered
+        itemEntry.receivedUnits += lineReceived
+        itemEntry.totalSpend += toN(line.lineTotal)
+        itemMap.set(line.item.id, itemEntry)
+      }
+    }
+
+    if (!isCancelled) {
+      orderedUnits += orderOrderedUnits
+      receivedUnits += orderReceivedUnits
+      if (isOpen) openCommitmentValue += orderOpenCommitment
+    }
+
+    const isOverdue = Boolean(isOpen && order.expectedDeliveryDate && order.expectedDeliveryDate.getTime() < now.getTime())
+    const daysOpen = daysBetween(order.orderDate, now)
+    const daysOverdue = isOverdue && order.expectedDeliveryDate
+      ? daysBetween(order.expectedDeliveryDate, now)
+      : 0
+    if (isOverdue) {
+      overdueOrders += 1
+      overdueValue += orderOpenCommitment
+    }
+
+    const latestReceipt = order.goodsReceipts.length
+      ? order.goodsReceipts.reduce((latest, receipt) => {
+          const receiptDate = receipt.receiptDate ?? receipt.createdAt
+          return receiptDate.getTime() > latest.getTime() ? receiptDate : latest
+        }, order.goodsReceipts[0]!.receiptDate ?? order.goodsReceipts[0]!.createdAt)
+      : null
+    const deliveryEvidence = order.actualDeliveryDate ?? latestReceipt
+    const hasDeliverySample = Boolean(
+      order.expectedDeliveryDate &&
+      deliveryEvidence &&
+      (status === "RECEIVED" || status === "COMPLETED"),
+    )
+    const deliveredOnTime = Boolean(
+      hasDeliverySample &&
+      deliveryEvidence!.getTime() <= order.expectedDeliveryDate!.getTime(),
+    )
+    if (hasDeliverySample) {
+      onTimeSampleSize += 1
+      if (deliveredOnTime) onTimeOrders += 1
+    }
+
+    const supplierEntry = supplierMap.get(order.supplier.id) ?? {
+      supplierId: order.supplier.id,
+      name: order.supplier.name,
+      code: order.supplier.code ?? "",
+      orders: 0,
+      totalSpend: 0,
+      openCommitmentValue: 0,
+      overdueOrders: 0,
+      orderedUnits: 0,
+      receivedUnits: 0,
+      onTimeOrders: 0,
+      onTimeSampleSize: 0,
+    }
+    supplierEntry.orders += 1
+    if (!isCancelled) {
+      supplierEntry.totalSpend += orderValue
+      supplierEntry.orderedUnits += orderOrderedUnits
+      supplierEntry.receivedUnits += orderReceivedUnits
+      if (isOpen) supplierEntry.openCommitmentValue += orderOpenCommitment
+    }
+    if (isOverdue) supplierEntry.overdueOrders += 1
+    if (hasDeliverySample) {
+      supplierEntry.onTimeSampleSize += 1
+      if (deliveredOnTime) supplierEntry.onTimeOrders += 1
+    }
+    supplierMap.set(order.supplier.id, supplierEntry)
+
+    const locationEntry = locationMap.get(order.location.id) ?? {
+      locationId: order.location.id,
+      name: order.location.name,
+      orders: 0,
+      totalSpend: 0,
+      openCommitmentValue: 0,
+      overdueOrders: 0,
+      orderedUnits: 0,
+      receivedUnits: 0,
+    }
+    locationEntry.orders += 1
+    if (!isCancelled) {
+      locationEntry.totalSpend += orderValue
+      locationEntry.orderedUnits += orderOrderedUnits
+      locationEntry.receivedUnits += orderReceivedUnits
+      if (isOpen) locationEntry.openCommitmentValue += orderOpenCommitment
+    }
+    if (isOverdue) locationEntry.overdueOrders += 1
+    locationMap.set(order.location.id, locationEntry)
+
+    if (isOpen) {
+      const bucket = daysOpen <= 7 ? "0_7" : daysOpen <= 30 ? "8_30" : daysOpen <= 60 ? "31_60" : "61_PLUS"
+      const agingEntry = agingMap.get(bucket)!
+      agingEntry.orders += 1
+      agingEntry.openCommitmentValue += orderOpenCommitment
+
+      const issue = isOverdue
+        ? "OVERDUE"
+        : status === "SUBMITTED" && daysOpen >= 3
+          ? "APPROVAL_WAIT"
+          : status === "PARTIALLY_RECEIVED"
+            ? "PARTIAL_RECEIPT"
+            : status === "APPROVED" && daysOpen >= 7
+              ? "RECEIPT_WAIT"
+              : null
+      if (issue) {
+        exceptions.push({
+          id: order.id,
+          orderNumber: order.orderNumber,
+          supplierName: order.supplier.name,
+          locationName: order.location.name,
+          status,
+          issue,
+          risk: isOverdue && daysOverdue > 7 ? "high" : "medium",
+          orderDate: order.orderDate.toISOString(),
+          expectedDeliveryDate: order.expectedDeliveryDate?.toISOString() ?? null,
+          daysOpen,
+          daysOverdue,
+          totalValue: roundMetric(orderValue),
+          openCommitmentValue: roundMetric(orderOpenCommitment),
+          receiptRate: percentMetric(orderReceivedUnits, orderOrderedUnits),
+        })
+      }
+    }
   }
 
-  const approvalMs = orders.filter(o => o.approvedAt).map(o => o.approvedAt!.getTime() - o.createdAt.getTime())
-  const avgApprovalMs = approvalMs.length ? Math.round(approvalMs.reduce((a, b) => a + b, 0) / approvalMs.length) : 0
+  const supplierPerformance = Array.from(supplierMap.values())
+    .map(entry => ({
+      supplierId: entry.supplierId,
+      name: entry.name,
+      code: entry.code,
+      orders: entry.orders,
+      totalSpend: roundMetric(entry.totalSpend),
+      openCommitmentValue: roundMetric(entry.openCommitmentValue),
+      overdueOrders: entry.overdueOrders,
+      receiptRate: percentMetric(entry.receivedUnits, entry.orderedUnits),
+      onTimeRate: percentMetric(entry.onTimeOrders, entry.onTimeSampleSize),
+      onTimeSampleSize: entry.onTimeSampleSize,
+    }))
+    .sort((a, b) => b.totalSpend - a.totalSpend)
+    .slice(0, input.topSuppliersLimit ?? 5)
 
-  const supplierIds = topAgg.map(x => x.supplierId).filter(Boolean) as string[]
-  const suppliers   = supplierIds.length
-    ? await db.supplier.findMany({ where: { id: { in: supplierIds } }, select: { id: true, name: true, code: true } })
-    : []
+  const approvalAverage = approvalHours.length
+    ? approvalHours.reduce((sum, value) => sum + value, 0) / approvalHours.length
+    : 0
+  const completedOrders = orders.filter(order => order.status === "RECEIVED" || order.status === "COMPLETED").length
+  const cancelledOrders = orders.filter(order => order.status === "CANCELLED").length
+  const expectedDeliverySample = activeOrders.filter(order => order.expectedDeliveryDate).length
+  const approvalEvidencePopulation = orders.filter(order =>
+    ["APPROVED", "PARTIALLY_RECEIVED", "RECEIVED", "COMPLETED"].includes(order.status),
+  )
+  const deliveryEvidencePopulation = orders.filter(order => order.status === "RECEIVED" || order.status === "COMPLETED")
+  const deliveryEvidenceCount = deliveryEvidencePopulation.filter(order =>
+    Boolean(order.actualDeliveryDate || order.goodsReceipts.length),
+  ).length
 
-  const topSuppliers = topAgg.map(x => ({
-    supplierId: x.supplierId,
-    name:   suppliers.find(s => s.id === x.supplierId)?.name ?? "Unknown",
-    code:   suppliers.find(s => s.id === x.supplierId)?.code ?? "",
-    total:  toN(x._sum.total),
-    orders: x._count._all,
-  }))
+  exceptions.sort((a, b) => {
+    if (a.risk !== b.risk) return a.risk === "high" ? -1 : 1
+    return b.daysOverdue - a.daysOverdue || b.daysOpen - a.daysOpen
+  })
 
-  return { monthly, avgApprovalMs, topSuppliers }
+  return {
+    generatedAt: now.toISOString(),
+    currency: organization?.currency?.trim().toUpperCase() || "XAF",
+    period: {
+      from: from?.toISOString() ?? null,
+      to: to?.toISOString() ?? null,
+    },
+    totals: {
+      orders: orders.length,
+      activeOrders: activeOrders.length,
+      totalSpend: roundMetric(totalSpend),
+      averageOrderValue: roundMetric(activeOrders.length ? totalSpend / activeOrders.length : 0),
+      openCommitmentValue: roundMetric(openCommitmentValue),
+      overdueOrders,
+      overdueValue: roundMetric(overdueValue),
+      orderedUnits: roundMetric(orderedUnits, 3),
+      receivedUnits: roundMetric(receivedUnits, 3),
+      receiptRate: percentMetric(receivedUnits, orderedUnits),
+      cancellationRate: percentMetric(cancelledOrders, orders.length),
+      completionRate: percentMetric(completedOrders, activeOrders.length),
+      onTimeRate: percentMetric(onTimeOrders, onTimeSampleSize),
+      onTimeSampleSize,
+      supplierConcentrationRate: percentMetric(supplierPerformance[0]?.totalSpend ?? 0, totalSpend),
+      approvalCycle: {
+        averageHours: roundMetric(approvalAverage, 1),
+        medianHours: roundMetric(percentile(approvalHours, 0.5), 1),
+        p90Hours: roundMetric(percentile(approvalHours, 0.9), 1),
+        sampleSize: approvalHours.length,
+      },
+    },
+    monthly: Array.from(monthlyMap.entries()).map(([month, value]) => ({
+      month,
+      orderCount: value.orderCount,
+      totalSpend: roundMetric(value.totalSpend),
+      receivedOrders: value.receivedOrders,
+    })),
+    statusBreakdown: ANALYTICS_STATUS_ORDER.map(status => ({
+      status,
+      orders: statusMap.get(status)!.orders,
+      totalValue: roundMetric(statusMap.get(status)!.totalValue),
+    })),
+    supplierPerformance,
+    locationPerformance: Array.from(locationMap.values())
+      .map(entry => ({
+        locationId: entry.locationId,
+        name: entry.name,
+        orders: entry.orders,
+        totalSpend: roundMetric(entry.totalSpend),
+        openCommitmentValue: roundMetric(entry.openCommitmentValue),
+        overdueOrders: entry.overdueOrders,
+        receiptRate: percentMetric(entry.receivedUnits, entry.orderedUnits),
+      }))
+      .sort((a, b) => b.totalSpend - a.totalSpend),
+    itemPerformance: Array.from(itemMap.values())
+      .map(entry => ({
+        ...entry,
+        orderedUnits: roundMetric(entry.orderedUnits, 3),
+        receivedUnits: roundMetric(entry.receivedUnits, 3),
+        totalSpend: roundMetric(entry.totalSpend),
+        receiptRate: percentMetric(entry.receivedUnits, entry.orderedUnits),
+      }))
+      .sort((a, b) => b.totalSpend - a.totalSpend)
+      .slice(0, 10),
+    aging: Array.from(agingMap.entries()).map(([bucket, value]) => ({
+      bucket,
+      orders: value.orders,
+      openCommitmentValue: roundMetric(value.openCommitmentValue),
+    })),
+    exceptions: exceptions.slice(0, 12),
+    dataQuality: {
+      expectedDeliveryCoverage: percentMetric(expectedDeliverySample, activeOrders.length),
+      approvalEvidenceCoverage: percentMetric(
+        approvalEvidencePopulation.filter(order => order.approvedAt).length,
+        approvalEvidencePopulation.length,
+      ),
+      deliveryEvidenceCoverage: percentMetric(deliveryEvidenceCount, deliveryEvidencePopulation.length),
+      expectedDeliverySampleSize: activeOrders.length,
+      approvalEvidenceSampleSize: approvalEvidencePopulation.length,
+      deliveryEvidenceSampleSize: deliveryEvidencePopulation.length,
+    },
+  }
 }
 
 export async function getStatusHistory(id: string, organizationId: string) {

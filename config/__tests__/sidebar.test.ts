@@ -273,6 +273,42 @@ describe("sidebar filtering and route matching", () => {
     ]))
   })
 
+  it.each([
+    "purchasing.ap.invoice.view",
+    "finance.payables.read",
+    "purchases.suppliers.read",
+  ])("shows AP history to an authorized %s user", (permission) => {
+    const filtered = filterSidebarLinksByPermission(
+      sidebarLinks,
+      (candidate) => candidate === permission,
+    )
+
+    expect(filtered.find((link) => link.title === "Purchases")?.dropdownMenu).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          title: "AP History",
+          href: "/dashboard/purchases/payables/history",
+        }),
+      ]),
+    )
+  })
+
+  it("keeps the AP history navigation rule aligned with the route boundary", () => {
+    const purchases = sidebarLinks.find((link) => link.title === "Purchases")
+    const history = purchases?.dropdownMenu?.find(
+      (item) => item.href === "/dashboard/purchases/payables/history",
+    )
+
+    expect(history).toEqual(expect.objectContaining({
+      permissions: [
+        "purchasing.ap.invoice.view",
+        "finance.payables.read",
+        "purchases.suppliers.read",
+      ],
+      permissionMode: "any",
+    }))
+  })
+
   it("keeps the default sidebar broad enough for functional testability", () => {
     const focused = getDefaultSidebarLinks(sidebarLinks, "/dashboard")
 

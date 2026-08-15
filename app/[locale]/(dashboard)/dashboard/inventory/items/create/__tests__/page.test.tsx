@@ -11,6 +11,11 @@ import { observeModuleAccess } from "@/services/modules/module-entitlement.servi
 import { getOrganizationSettingsForOrg } from "@/services/organization/organization-settings.service"
 import CreateItemPage from "../page"
 
+jest.mock("@/app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access", () => ({
+  routeByKey: jest.fn(() => ({ key: "inventory-test" })),
+  withInventorySurfaceAccess: jest.fn(({ onAllowed }) => onAllowed({ orgId: "org-1" }, "en")),
+}))
+
 jest.mock("@/actions/item/items", () => ({ createItemAction: jest.fn() }))
 jest.mock("lucide-react", () => ({
   ArrowLeft: (props: React.SVGProps<SVGSVGElement>) => <svg {...props} />,

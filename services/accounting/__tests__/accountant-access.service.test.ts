@@ -331,7 +331,7 @@ describe("accountant access service", () => {
     expect(mockDb.businessEvent.create).not.toHaveBeenCalled()
   })
 
-  it("does not relabel unrelated Prisma uniqueness errors", async () => {
+  it("normalizes unrelated Prisma uniqueness errors as unexposed internal failures", async () => {
     const unrelatedUniqueError = {
       code: "P2002",
       meta: { target: ["anotherUniqueField"] },
@@ -356,7 +356,10 @@ describe("accountant access service", () => {
         },
         now,
       ),
-    ).rejects.toBe(unrelatedUniqueError)
+    ).rejects.toMatchObject({
+      code: "INTERNAL_ERROR",
+      expose: false,
+    })
   })
 
   it("denies a cross-client read when no active consent exists", async () => {

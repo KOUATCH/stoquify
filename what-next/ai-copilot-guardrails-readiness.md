@@ -1,11 +1,11 @@
 # AI Copilot Guardrails Readiness
 
-Generated: 2026-08-03T14:37:28.999Z
+Generated: 2026-08-12T19:18:28.327Z
 Status: ready
 
 ## Summary
 
-- Checks ready: 15/15
+- Checks ready: 18/18
 - Blockers: 0
 - Copilot analysis authority: read-only
 - Proposal execution authority: none
@@ -19,13 +19,16 @@ Status: ready
 - ready: proposal_acceptance_has_no_execution_authority
 - ready: proposal_evidence_is_bound_to_completed_tenant_run
 - ready: unsafe_proposals_are_blocked_and_audited
+- ready: unsafe_action_classification_is_bilingual
 - ready: proposal_actions_require_rbac_fresh_auth_and_server_scope
+- ready: proposal_actions_return_stable_typed_results
 - ready: proposal_phase_is_server_authorized_and_ui_inactive_by_default
 - ready: analysis_and_proposal_events_are_recorded
 - ready: proposal_idempotency_and_hash_evidence_are_durable
 - ready: proposal_notifications_are_outboxed
 - ready: proposal_ui_exposes_loading_error_and_human_decision
 - ready: proposal_schema_has_additive_migration
+- ready: copilot_guardrail_gate_is_policy_wired
 - ready: hallucination_unsafe_tenant_rbac_and_ui_tests_exist
 
 ## Blockers

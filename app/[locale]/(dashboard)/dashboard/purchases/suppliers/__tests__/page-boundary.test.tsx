@@ -187,7 +187,7 @@ describe("purchase supplier route boundaries", () => {
     ["list", PurchaseSuppliersPage, { locale: "en" }, "Supplier management is not available for this role", "/en/dashboard/purchases"],
     ["create", CreatePurchaseSupplierPage, { locale: "en" }, "Supplier creation is not available for this role", "/en/dashboard/purchases/suppliers"],
     ["analytics", PurchaseSupplierAnalyticsPage, { locale: "en", id: "supplier-1" }, "Supplier analytics are not available for this role", "/en/dashboard/purchases/suppliers"],
-    ["edit", EditPurchaseSupplierPage, { locale: "fr", id: "supplier-2" }, "Supplier editing is not available for this role", "/fr/dashboard/purchases/suppliers"],
+    ["edit", EditPurchaseSupplierPage, { locale: "fr", id: "supplier-2" }, "La modification des fournisseurs n'est pas disponible pour ce role", "/fr/dashboard/purchases/suppliers"],
   ])("fails closed before rendering the %s supplier surface when RBAC denies access", async (_name, Page, params, title, href) => {
     mockRequirePermission.mockRejectedValue(new RbacError("Forbidden", "FORBIDDEN", 403))
 

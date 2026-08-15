@@ -208,9 +208,9 @@ describe("Purchases route", () => {
 
     render(await PurchaseOrderPage({ params: params("fr", "po-1") }))
 
-    expect(screen.getByRole("heading", { name: "Purchases are not available for this role" })).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "Purchase order dashboard is not available for this role" })).toBeInTheDocument()
     expect(screen.getByRole("main")).toHaveAttribute("data-kind", "permission_denied")
-    expect(screen.getByRole("link", { name: "Back to purchases" })).toHaveAttribute("href", "/fr/dashboard/purchase-orders")
+    expect(screen.getByRole("link", { name: "Back to purchases" })).toHaveAttribute("href", "/fr/dashboard")
     expect(mockObserveModuleAccess).not.toHaveBeenCalled()
     expect(mockGetPurchaseOrder).not.toHaveBeenCalled()
   })
@@ -220,7 +220,7 @@ describe("Purchases route", () => {
 
     render(await PurchaseOrderPage({ params: params("en", "po-1") }))
 
-    expect(screen.getByRole("heading", { name: "Purchases need an active organization" })).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "Purchase order dashboard needs an active organization" })).toBeInTheDocument()
     expect(screen.getByRole("main")).toHaveAttribute("data-kind", "no_active_org")
     expect(screen.getByRole("link", { name: "Back to purchases" })).toHaveAttribute("href", "/en/dashboard")
     expect(mockObserveModuleAccess).not.toHaveBeenCalled()

@@ -1,7 +1,5 @@
 import TaxRatesManagementDashboard from "@/components/tax-rates/TaxRatesManagementDashboard"
-import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
-import { localizePath, pickLocale } from "@/i18n/routing"
-import { redirect } from "next/navigation"
+import { withFinanceSurfaceAccess, routeByKey } from "../../finance-route-access"
 
 export const metadata = {
   title: "Create Tax Rate | Stoquify",
@@ -13,24 +11,24 @@ export default async function CreateFinanceTaxRatePage({
 }: {
   params: Promise<{ locale: string }>
 }) {
-  const { locale: rawLocale } = await params
-  const locale = pickLocale(rawLocale)
-  await checkPermission("taxes.create")
-  const user = await getAuthenticatedUser()
+  const surface = routeByKey("finance-tax-rates-create")
 
-  if (!user?.organizationId) {
-    redirect(localizePath("/unauthorized", locale))
+  if (!surface) {
+    throw new Error("Missing finance route surface definition: finance-tax-rates-create")
   }
 
-  return (
-    <div className="dashboard-landing-theme min-h-screen overflow-x-hidden">
-      <div className="dashboard-landing-content mx-auto flex w-full max-w-[92rem] min-w-0 flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8">
-        <TaxRatesManagementDashboard
-          organizationId={user.organizationId}
-          locale={locale}
-          initialAction="create"
-        />
-      </div>
-    </div>
-  )
+  return withFinanceSurfaceAccess({
+    params,
+    surface,
+    onAllowed: (context, locale) => {
+      return (
+        <div className="dashboard-landing-theme min-h-screen overflow-x-hidden">
+          <div className="dashboard-landing-content mx-auto flex w-full max-w-[92rem] min-w-0 flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8">
+            <TaxRatesManagementDashboard organizationId={context.orgId} locale={locale} initialAction="create" />
+          </div>
+        </div>
+      )
+    },
+  })
 }
+

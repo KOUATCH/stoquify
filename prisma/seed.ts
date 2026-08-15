@@ -3,6 +3,7 @@ import argon2 from "argon2"
 import {
   AccountingPeriodStatus,
   AccountingSetupStatus,
+  CashDrawerTransactionType,
   ChartAccountNormalBalance,
   ChartAccountType,
   FiscalYearStatus,
@@ -858,6 +859,7 @@ const seedPOS = async (cashierId: string) => {
       locationId: STORE_LOCATION_ID,
       userId: cashierId,
       openingBalance: 50_000,
+      expectedBalance: 50_000,
       organizationId: ORGANIZATION_ID,
       notes: "Seeded active POS session",
       updatedAt: now(),
@@ -872,7 +874,7 @@ const seedPOS = async (cashierId: string) => {
     },
   })
 
-  await prisma.cashDrawer.create({
+  const drawer = await prisma.cashDrawer.create({
     data: {
       id: "cash_drawer_demo_001",
       name: "Main Cash Drawer",
@@ -883,6 +885,19 @@ const seedPOS = async (cashierId: string) => {
       locationId: STORE_LOCATION_ID,
       terminalId: terminal.id,
       updatedAt: now(),
+    },
+  })
+
+  await prisma.cashDrawerTransaction.create({
+    data: {
+      type: CashDrawerTransactionType.OPENING_BALANCE,
+      amount: 50_000,
+      reason: "Seeded shift opening float",
+      cashDrawerId: drawer.id,
+      sessionId: session.id,
+      userId: cashierId,
+      balanceBefore: 0,
+      balanceAfter: 50_000,
     },
   })
 }

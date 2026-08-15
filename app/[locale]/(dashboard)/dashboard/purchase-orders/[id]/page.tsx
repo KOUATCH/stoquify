@@ -1,8 +1,5 @@
-import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
+import { routeByKey, withPurchaseOrdersSurfaceAccess } from "../purchase-orders-route-access"
 import ModernPurchaseOrderDetailPage from "@/components/purchase-orders/ModernPurchaseOrderDetailPage"
-import { localizePath, pickLocale } from "@/i18n/routing"
-import { RbacError, requirePermission } from "@/lib/security/rbac"
-import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import { notFound } from "next/navigation"
 
 interface PurchaseOrderDetailPageProps {
@@ -17,51 +14,26 @@ interface PurchaseOrderDetailPageProps {
 }
 
 export default async function PurchaseOrderDetailPage({ params }: PurchaseOrderDetailPageProps) {
-  const { id, locale: requestedLocale } = await params
-  const locale = pickLocale(requestedLocale)
+  const { id, locale } = await params
 
   if (!id) {
     notFound()
   }
 
-  let ctx: Awaited<ReturnType<typeof requirePermission>>
+  const surface = routeByKey("purchase-orders-detail")
 
-  try {
-    ctx = await requirePermission("purchases.orders.read", {
-      resource: "PurchaseOrder",
-      resourceId: id,
-      auditAllowed: true,
-    })
-    await observeModuleAccess({
-      organizationId: ctx.orgId,
-      userId: ctx.userId,
-      actorPermissions: ctx.permissions,
-      moduleSlug: "purchasing",
-      surfaceType: "page",
-      surface: "/dashboard/purchase-orders/[id]",
-      accessIntent: "read",
-      mode: "observe",
-    })
-  } catch (error) {
-    if (error instanceof RbacError) {
-      const noActiveOrg = error.code === "NO_ACTIVE_ORG"
-
-      return (
-        <DashboardRouteState
-          kind={noActiveOrg ? "no_active_org" : "permission_denied"}
-          title={noActiveOrg ? "Purchase order details need an active organization" : "Purchase order details are not available for this role"}
-          message={
-            noActiveOrg
-              ? "Refresh your session from the dashboard so purchasing can load tenant-scoped purchase order details."
-              : "Viewing purchase order details requires purchasing read access. The denial was recorded by the RBAC guard."
-          }
-          primaryHref={localizePath("/dashboard/purchase-orders", locale)}
-        />
-      )
-    }
-
-    throw error
+  if (!surface) {
+    throw new Error("Missing purchase orders route surface definition: purchase-orders-detail")
   }
 
-  return <ModernPurchaseOrderDetailPage id={id} organizationId={ctx.orgId} />
+  return withPurchaseOrdersSurfaceAccess({
+    params: Promise.resolve({ locale }),
+    surface,
+    permissionOptions: {
+      resourceId: id,
+    },
+    onAllowed: async (ctx) => {
+      return <ModernPurchaseOrderDetailPage id={id} organizationId={ctx.orgId} />
+    },
+  })
 }

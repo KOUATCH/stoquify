@@ -28,6 +28,7 @@ import {
   FileText,
   History,
   MapPin,
+  MessageSquareText,
   Package,
   Phone,
   PlayCircle,
@@ -472,6 +473,19 @@ export default function ModernPurchaseOrderDetailPage({
                 <Copy className="w-4 h-4 mr-2" />
                 Clone
               </Button>
+
+              {purchaseOrder.status === 'APPROVED' && (
+                <Link href={localizedHref(`/dashboard/purchase-orders/${purchaseOrder.id}/supplier-acknowledgement`)}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="dashboard-button-secondary rounded-lg"
+                  >
+                    <MessageSquareText className="w-4 h-4 mr-2" />
+                    Supplier acknowledgement
+                  </Button>
+                </Link>
+              )}
 
               {purchaseOrder.status === 'DRAFT' && (
                 <Link href={localizedHref(`/dashboard/purchase-orders/${purchaseOrder.id}/edit`)}>

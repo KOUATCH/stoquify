@@ -1,9 +1,7 @@
 "use client"
 
-import Link from "next/link"
 import { useLocale, useTranslations } from "next-intl"
 import { useMemo, useState } from "react"
-import type { LucideIcon } from "lucide-react"
 import {
   AlertTriangle,
   ArrowDownRight,
@@ -12,7 +10,6 @@ import {
   Building2,
   CalendarDays,
   CreditCard,
-  ExternalLink,
   FileText,
   Filter,
   HandCoins,
@@ -43,6 +40,11 @@ import {
   type CommandCenterAction,
 } from "@/components/dashboard/primitives"
 import { useNotifications } from "@/components/notifications/NotificationProvider"
+import {
+  FinancePaymentMethodBreakdown,
+  FinanceWorkflowActionPanel,
+  PaymentsTable as FinanceLedgerPaymentsTable,
+} from "@/components/finance/FinanceSpecializedLedgerSurfaces"
 import { useFinanceDashboard } from "@/hooks/finance/useFinanceDashboard"
 import {
   dashboardControlClass,
@@ -70,7 +72,6 @@ import type {
   FinanceAgingSummary,
   FinanceAlert,
   FinanceCounterparty,
-  FinancePaymentMethod,
   FinanceRecentPayment,
   FinanceTrendPoint,
 } from "@/services/finance/finance-dashboard.service"
@@ -121,8 +122,15 @@ function LoadingState() {
   )
 }
 
-export default function FinanceCommandCenterDashboard({ initialView = "overview" }: { initialView?: FinanceDashboardView }) {
+export default function FinanceCommandCenterDashboard({
+  initialView = "overview",
+  layout = "default",
+}: {
+  initialView?: FinanceDashboardView
+  layout?: "default" | "profit-loss" | "costs"
+}) {
   const t = useTranslations("financeDashboard")
+  const surfaceT = useTranslations("financeSurfaces")
   const locale: Locale = pickLocale(useLocale())
   const notifications = useNotifications()
   const [view, setView] = useState<FinanceDashboardView>(initialView)
@@ -239,6 +247,10 @@ export default function FinanceCommandCenterDashboard({ initialView = "overview"
       })
     : []
 
+  const isProfitLossLayout = layout === "profit-loss"
+  const isCostsLayout = layout === "costs"
+  const usesEnhancedPaymentsTable =
+    isProfitLossLayout || isCostsLayout || view === "retail" || view === "sales"
   if (dashboardQuery.isLoading && !dashboard) return <LoadingState />
 
   if (errorMessage && !dashboard) {
@@ -259,6 +271,7 @@ export default function FinanceCommandCenterDashboard({ initialView = "overview"
           { label: t("command.generated"), value: formatDateTime(dashboard.generatedAt), icon: RefreshCw },
         ] : []}
         actions={commandActions}
+        actionsPlacement="below-content"
         proof={dashboard ? {
           state: dashboard.alerts.some((alert) => alert.code !== "READY" && alert.severity === "critical") ? "pending" : "verified",
           label: t("command.proofLabel"),
@@ -373,22 +386,32 @@ export default function FinanceCommandCenterDashboard({ initialView = "overview"
             <KpiTile label={t("metrics.confidence")} value={percent(dashboard.summary.financeConfidence)} detail={t("details.workingCapital", { amount: money(dashboard.summary.workingCapital) })} icon={ShieldCheck} tone={financeConfidenceTone(dashboard.summary.financeConfidence)} proof={{ state: dashboard.summary.financeConfidence >= 85 ? "certified" : "pending", source: t("command.proofSource") }} />
           </section>
 
-          <section className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_420px]">
+          {!isProfitLossLayout ? (
+          <section
+            data-testid={isCostsLayout ? "costs-operating-status" : undefined}
+            className={cn("grid gap-3", !isCostsLayout && "xl:grid-cols-[minmax(0,1fr)_420px]")}
+          >
             <StatusStrip
               title={t("command.statusTitle")}
               detail={t("command.statusDetail")}
               items={statusItems}
             />
-            <ActionQueue
-              title={t("command.actionTitle")}
-              detail={t("command.actionDetail")}
-              emptyTitle={t("command.actionEmptyTitle")}
-              emptyMessage={t("command.actionEmptyMessage")}
-              items={actionQueueItems}
-            />
+            {!isCostsLayout ? (
+              <ActionQueue
+                title={t("command.actionTitle")}
+                detail={t("command.actionDetail")}
+                emptyTitle={t("command.actionEmptyTitle")}
+                emptyMessage={t("command.actionEmptyMessage")}
+                items={actionQueueItems}
+              />
+            ) : null}
           </section>
+          ) : null}
 
-          <section className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_420px]">
+          <section
+            data-testid={isCostsLayout ? "costs-financial-movements" : undefined}
+            className={cn("grid gap-3", !isProfitLossLayout && !isCostsLayout && "xl:grid-cols-[minmax(0,1fr)_420px]")}
+          >
             <Card className={dashboardPanelClass}>
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
@@ -402,19 +425,61 @@ export default function FinanceCommandCenterDashboard({ initialView = "overview"
               </CardContent>
             </Card>
 
-            <EvidenceTimeline
-              title={t("command.evidenceTitle")}
-              detail={t("command.evidenceDetail")}
-              emptyMessage={t("empty.payments")}
-              events={evidenceEvents}
-            />
+            {!isCostsLayout ? (
+              <EvidenceTimeline
+                title={t("command.evidenceTitle")}
+                detail={t("command.evidenceDetail")}
+                emptyMessage={t("empty.payments")}
+                events={isProfitLossLayout ? evidenceEvents.slice(0, 6) : evidenceEvents}
+                className={cn(
+                  isProfitLossLayout &&
+                    "[&>ol]:grid [&>ol]:grid-cols-1 [&>ol]:gap-3 [&>ol]:space-y-0 md:[&>ol]:grid-cols-2 xl:[&>ol]:grid-cols-3",
+                )}
+              />
+            ) : null}
           </section>
+
+          {isCostsLayout ? (
+            <section data-testid="costs-action-evidence-row" className="grid gap-3 xl:grid-cols-2">
+              <ActionQueue
+                title={t("command.actionTitle")}
+                detail={t("command.actionDetail")}
+                emptyTitle={t("command.actionEmptyTitle")}
+                emptyMessage={t("command.actionEmptyMessage")}
+                items={actionQueueItems}
+              />
+              <EvidenceTimeline
+                title={t("command.evidenceTitle")}
+                detail={t("command.evidenceDetail")}
+                emptyMessage={t("empty.payments")}
+                events={evidenceEvents}
+              />
+            </section>
+          ) : null}
+
+          {isProfitLossLayout ? (
+            <section className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_420px]">
+              <StatusStrip
+                title={t("command.statusTitle")}
+                detail={t("command.statusDetail")}
+                items={statusItems}
+              />
+              <ActionQueue
+                title={t("command.actionTitle")}
+                detail={t("command.actionDetail")}
+                emptyTitle={t("command.actionEmptyTitle")}
+                emptyMessage={t("command.actionEmptyMessage")}
+                items={actionQueueItems}
+              />
+            </section>
+          ) : null}
+
           <section className="grid gap-3 xl:grid-cols-2">
             <AgingCard title={t("sections.receivables")} description={t("sections.receivablesDescription")} aging={dashboard.aging.receivables} counterparties={dashboard.topReceivables} money={money} t={t} />
             <AgingCard title={t("sections.payables")} description={t("sections.payablesDescription")} aging={dashboard.aging.payables} counterparties={dashboard.topPayables} money={money} t={t} />
           </section>
 
-          <section className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_380px]">
+          <section data-testid={isCostsLayout ? "costs-payments-stack" : undefined}>
             <Card className={dashboardPanelClass}>
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
@@ -424,29 +489,57 @@ export default function FinanceCommandCenterDashboard({ initialView = "overview"
                 <CardDescription className={dashboardMutedTextClass}>{t("sections.paymentsDescription")}</CardDescription>
               </CardHeader>
               <CardContent>
-                <PaymentsTable payments={dashboard.recentPayments} money={money} formatDateTime={formatDateTime} t={t} />
+                {usesEnhancedPaymentsTable ? (
+                  <FinanceLedgerPaymentsTable
+                    payments={dashboard.recentPayments}
+                    money={money}
+                    formatDateTime={formatDateTime}
+                    t={t}
+                    surfaceT={surfaceT}
+                    empty={t("empty.payments")}
+                  />
+                ) : (
+                  <PaymentsTable payments={dashboard.recentPayments} money={money} formatDateTime={formatDateTime} t={t} />
+                )}
               </CardContent>
             </Card>
+          </section>
 
+          <section data-finance-final-section="operational">
             <Card className={dashboardPanelClass}>
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
                   <ReceiptText className="h-4 w-4 text-[var(--dash-success)]" />
                   {t("sections.methods")}
                 </CardTitle>
-                <CardDescription className={dashboardMutedTextClass}>{t("sections.methodsDescription")}</CardDescription>
+                <CardDescription className={dashboardMutedTextClass}>{surfaceT("payments.sections.methodsDescription")}</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-3">
-                <MethodBreakdown methods={dashboard.paymentMethods} money={money} t={t} />
-                <div className="grid gap-2 pt-2">
-                  <ActionLink href={localizedHref("/dashboard/orders/payments")} icon={CreditCard} label={t("actions.orderPayments")} />
-                  <ActionLink href={localizedHref("/dashboard/finance/reconciliation")} icon={ShieldCheck} label={t("actions.reconciliation")} />
-                  <ActionLink href={localizedHref("/dashboard/finance/cash-drawer")} icon={Wallet} label={t("actions.cashDrawers")} />
-                  <ActionLink href={localizedHref("/dashboard/finance/cash-flow")} icon={LineChart} label={t("actions.cashFlow")} />
-                  <ActionLink href={localizedHref("/dashboard/settings/tax-rates")} icon={Percent} label={t("actions.taxRates")} />
-                </div>
+              <CardContent>
+                <FinancePaymentMethodBreakdown
+                  methods={dashboard.paymentMethods}
+                  money={money}
+                  locale={locale}
+                  t={t}
+                  surfaceT={surfaceT}
+                />
               </CardContent>
             </Card>
+          </section>
+
+          <section data-finance-final-section="workflow">
+            <FinanceWorkflowActionPanel
+              title={t("sections.workflows", { view: t(`views.${view}`) })}
+              description={t("sections.workflowsDescription", { view: t(`views.${view}`) })}
+              localizedHref={localizedHref}
+              layout="row"
+              actions={[
+                { href: "/dashboard/orders/payments", icon: CreditCard, label: t("actions.orderPayments") },
+                { href: "/dashboard/finance/reconciliation", icon: ShieldCheck, label: t("actions.reconciliation") },
+                { href: "/dashboard/finance/cash-drawer", icon: Wallet, label: t("actions.cashDrawers") },
+                { href: "/dashboard/finance/cash-flow", icon: LineChart, label: t("actions.cashFlow") },
+                { href: "/dashboard/settings/tax-rates", icon: Percent, label: t("actions.taxRates") },
+              ]}
+            />
           </section>
         </>
       ) : null}
@@ -618,40 +711,5 @@ function PaymentsTable({
       </table>
       <ScrollBar orientation="horizontal" />
     </ScrollArea>
-  )
-}
-
-function MethodBreakdown({ methods, money, t }: { methods: FinancePaymentMethod[]; money: (value: number | null | undefined) => string; t: ReturnType<typeof useTranslations> }) {
-  const max = Math.max(1, ...methods.map((method) => method.amount))
-  if (methods.length === 0) return <div className={cn(dashboardEmptyClass, "p-6")}>{t("empty.methods")}</div>
-
-  return (
-    <div className="space-y-3">
-      {methods.slice(0, 8).map((method) => (
-        <div key={method.method}>
-          <div className="mb-1 flex items-center justify-between gap-3 text-sm">
-            <span className="font-medium">{t(`methods.${method.method}`)}</span>
-            <span className="text-xs text-[var(--dash-text-soft)]">{money(method.amount)} / {method.count}</span>
-          </div>
-          <div className="h-2 overflow-hidden rounded-full bg-[rgba(37,57,67,0.64)]">
-            <div className="h-full rounded-full bg-[var(--dash-brand)]" style={{ width: `${(method.amount / max) * 100}%` }} />
-          </div>
-        </div>
-      ))}
-    </div>
-  )
-}
-
-function ActionLink({ href, icon: Icon, label }: { href: string; icon: LucideIcon; label: string }) {
-  return (
-    <Button asChild variant="outline" className="dashboard-button-secondary justify-between rounded-lg">
-      <Link href={href}>
-        <span className="flex items-center gap-2">
-          <Icon className="h-4 w-4 text-[var(--dash-brand-strong)]" />
-          {label}
-        </span>
-        <ExternalLink className="h-4 w-4" />
-      </Link>
-    </Button>
   )
 }

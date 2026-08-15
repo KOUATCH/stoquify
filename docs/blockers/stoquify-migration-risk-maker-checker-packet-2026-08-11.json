@@ -1,0 +1,67 @@
+{
+  "packetId": "MIG-RISK-20260611130000-F7DE8DC7-2026-08-11",
+  "preparedAt": "2026-08-11",
+  "status": "BLOCKED_AWAITING_MAKER_CHECKER_DECISION",
+  "recommendedDecision": "HOLD_AND_REWORK",
+  "productionExecutionAuthorized": false,
+  "certificationClaims": false,
+  "migration": {
+    "path": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+    "sha256": "f7de8dc7ace0a5e063cdb7ecd9527e77807b7f872e474546819e9fca13a273d4",
+    "utf8ByteLength": 24674
+  },
+  "gate": {
+    "command": "npm run prisma:migration:safety:gate",
+    "status": "failed",
+    "failureClassification": "expected_fail_closed",
+    "blocker": "destructive_sql_is_exact_hash_approved",
+    "execution": "skipped",
+    "databaseTargeted": false
+  },
+  "findings": {
+    "total": 13,
+    "rules": {
+      "drop_column": 12,
+      "drop_table": 1
+    },
+    "lines": [
+      80,
+      81,
+      82,
+      83,
+      84,
+      85,
+      86,
+      87,
+      88,
+      101,
+      102,
+      112,
+      116
+    ]
+  },
+  "existingApprovals": 0,
+  "requiredActors": {
+    "maker": {
+      "identity": null,
+      "evidenceBundleSha256": null
+    },
+    "checker": {
+      "identity": null,
+      "decision": null,
+      "decidedAt": null
+    }
+  },
+  "allowedDecisions": [
+    "REJECT_AND_REWORK",
+    "APPROVE_EXACT_HASH"
+  ],
+  "releaseOnly": [
+    "production_database_targeting",
+    "production_credentials",
+    "production_deployment",
+    "statutory_approval",
+    "live_authority_conformance"
+  ],
+  "nonClaim": "This packet records risk and required evidence; it does not approve the migration."
+}

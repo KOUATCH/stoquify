@@ -60,7 +60,7 @@ export default function SearchBar<TData>({
         id="search"
         name="search"
         type="text"
-        autoComplete="search"
+        autoComplete="off"
         aria-label={placeholder}
         placeholder={placeholder}
         value={searchTerm}

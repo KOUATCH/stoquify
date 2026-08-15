@@ -9,6 +9,11 @@ import { checkPermission } from "@/config/useAuth"
 
 import NewJournalEntryPage from "../page"
 
+jest.mock("@/app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access", () => ({
+  routeByKey: jest.fn(() => ({ key: "accounting-test" })),
+  withAccountingSurfaceAccess: jest.fn(({ onAllowed }) => onAllowed({ orgId: "org-1" }, "en")),
+}))
+
 jest.mock("@/config/useAuth", () => ({
   checkPermission: jest.fn(),
 }))

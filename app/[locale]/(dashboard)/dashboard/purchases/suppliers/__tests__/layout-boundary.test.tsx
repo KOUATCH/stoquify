@@ -84,7 +84,7 @@ describe("purchase supplier layout boundary", () => {
     })
     render(ui)
 
-    expect(screen.getByRole("heading", { name: "Supplier routes are not available for this role" })).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "Les routes fournisseurs ne sont pas disponibles pour ce role" })).toBeInTheDocument()
     expect(screen.getByRole("main")).toHaveAttribute("data-kind", "permission_denied")
     expect(screen.getByRole("main")).toHaveAttribute("data-primary-href", "/fr/dashboard/purchases")
     expect(screen.queryByText("supplier child route")).not.toBeInTheDocument()

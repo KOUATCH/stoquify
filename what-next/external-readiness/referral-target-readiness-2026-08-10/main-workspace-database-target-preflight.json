@@ -1,0 +1,153 @@
+{
+  "summary": {
+    "generatedAt": "2026-08-10T13:37:16.328Z",
+    "status": "blocked",
+    "checkCount": 9,
+    "readyCount": 7,
+    "blockerCount": 3,
+    "migrationCount": 62,
+    "riskFindingCount": 13,
+    "approvedRiskCount": 0,
+    "secretValuePrinted": false
+  },
+  "deployment": {
+    "environment": "production",
+    "shouldDeploy": true,
+    "reason": "vercel_production",
+    "databaseConfigured": false,
+    "databaseTargetSafe": false,
+    "targetAttestation": null,
+    "blockers": [
+      "database_url_missing"
+    ]
+  },
+  "execution": {
+    "attempted": false,
+    "status": "pending",
+    "exitCode": null
+  },
+  "checks": [
+    {
+      "id": "migration_history_present",
+      "ready": true
+    },
+    {
+      "id": "migration_files_nonempty",
+      "ready": true
+    },
+    {
+      "id": "risk_approval_registry_valid",
+      "ready": true
+    },
+    {
+      "id": "destructive_sql_is_exact_hash_approved",
+      "ready": false
+    },
+    {
+      "id": "deployment_target_is_safe",
+      "ready": false
+    },
+    {
+      "id": "production_build_orders_secret_migration_and_app_gates",
+      "ready": true
+    },
+    {
+      "id": "migration_safety_gate_is_in_policy_chain",
+      "ready": true
+    },
+    {
+      "id": "release_verification_has_migration_preflight",
+      "ready": true
+    },
+    {
+      "id": "protected_verification_has_direct_history_health",
+      "ready": true
+    }
+  ],
+  "findings": [
+    {
+      "migration": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "rule": "drop_table",
+      "line": 116,
+      "approved": false
+    },
+    {
+      "migration": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "rule": "drop_column",
+      "line": 80,
+      "approved": false
+    },
+    {
+      "migration": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "rule": "drop_column",
+      "line": 81,
+      "approved": false
+    },
+    {
+      "migration": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "rule": "drop_column",
+      "line": 82,
+      "approved": false
+    },
+    {
+      "migration": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "rule": "drop_column",
+      "line": 83,
+      "approved": false
+    },
+    {
+      "migration": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "rule": "drop_column",
+      "line": 84,
+      "approved": false
+    },
+    {
+      "migration": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "rule": "drop_column",
+      "line": 85,
+      "approved": false
+    },
+    {
+      "migration": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "rule": "drop_column",
+      "line": 86,
+      "approved": false
+    },
+    {
+      "migration": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "rule": "drop_column",
+      "line": 87,
+      "approved": false
+    },
+    {
+      "migration": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "rule": "drop_column",
+      "line": 88,
+      "approved": false
+    },
+    {
+      "migration": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "rule": "drop_column",
+      "line": 101,
+      "approved": false
+    },
+    {
+      "migration": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "rule": "drop_column",
+      "line": 102,
+      "approved": false
+    },
+    {
+      "migration": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "rule": "drop_column",
+      "line": 112,
+      "approved": false
+    }
+  ],
+  "staleApprovals": [],
+  "blockers": [
+    "destructive_sql_is_exact_hash_approved",
+    "deployment_target_is_safe",
+    "database_url_missing"
+  ]
+}

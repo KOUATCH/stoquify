@@ -190,6 +190,18 @@ describe("POS tender actions", () => {
     expect(mockRevalidateTag).not.toHaveBeenCalled()
   })
 
+  it("does not report an atomic sale as failed when cache revalidation is unavailable", async () => {
+    mockRevalidateTag.mockImplementationOnce(() => {
+      throw new Error("cache unavailable")
+    })
+
+    const result = await commitPOSSaleAction(saleInput)
+
+    expect(result.success).toBe(true)
+    expect(mockCommitPOSSale).toHaveBeenCalledTimes(1)
+    expect(mockRevalidateTag).toHaveBeenCalledWith("pos-cart")
+  })
+
   it("enforces the POS module before refunding a completed sale", async () => {
     mockRequirePermission.mockResolvedValue(rbacContext(["pos.transactions.refund"]))
 

@@ -126,6 +126,15 @@ export type ModuleControlCenterData = {
   items: ModuleControlCenterItem[]
 }
 
+export type TenantModuleActivationResult = {
+  organizationId: string
+  moduleSlug: CommercialModuleSlug
+  addedModules: CommercialModuleSlug[]
+  requestedModules: string[]
+  alreadyActive: boolean
+  activatedAt: string
+}
+
 export type ModuleEntitlementEvaluationInput = {
   organizationId: string
   userId?: string | null
@@ -148,4 +157,3 @@ export type ModuleAccessObserveInput = Omit<ModuleEntitlementEvaluationInput, "r
 export function isCommercialModuleSlug(value: unknown): value is CommercialModuleSlug {
   return typeof value === "string" && COMMERCIAL_MODULE_SLUGS.includes(value as CommercialModuleSlug)
 }
-

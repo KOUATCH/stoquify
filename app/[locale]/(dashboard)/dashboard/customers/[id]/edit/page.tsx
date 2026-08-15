@@ -1,7 +1,5 @@
-import CustomerManagementDashboard from "@/components/customers/CustomerManagementDashboard"
-import { checkAllPermissions, getAuthenticatedUser } from "@/config/useAuth"
-import { localizePath, pickLocale } from "@/i18n/routing"
-import { redirect } from "next/navigation"
+import { CustomerActionPage } from "@/components/customers/CustomerActionPage"
+import { routeByKey, withCustomersSurfaceAccess } from "../../customers-route-access"
 
 interface EditCustomerPageProps {
   params: Promise<{ locale: string; id: string }>
@@ -14,26 +12,20 @@ export const metadata = {
 
 export default async function EditCustomerPage({ params }: EditCustomerPageProps) {
   const { locale: rawLocale, id } = await params
-  const locale = pickLocale(rawLocale)
-  await checkAllPermissions(["customers.read", "customers.update"])
-  const user = await getAuthenticatedUser()
+  const surface = routeByKey("customers-edit")
 
-  if (!user.organizationId) {
-    redirect(localizePath("/unauthorized", locale))
+  if (!surface) {
+    throw new Error("Missing customers route surface definition: customers-edit")
   }
 
-  const basePath = `/${locale}/dashboard/customers`
-
-  return (
-    <div className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
-      <div className="dashboard-landing-content mx-auto flex w-full max-w-[92rem] min-w-0 flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8">
-        <CustomerManagementDashboard
-          organizationId={user.organizationId}
-          locale={locale}
-          basePath={basePath}
-          initialEditId={id}
-        />
-      </div>
-    </div>
-  )
+  return withCustomersSurfaceAccess({
+    params: Promise.resolve({ locale: rawLocale }),
+    surface,
+    permissionOptions: {
+      resourceId: id,
+    },
+    onAllowed: (context, locale) => (
+      <CustomerActionPage mode="edit" organizationId={context.orgId} locale={locale} customerId={id} />
+    ),
+  })
 }

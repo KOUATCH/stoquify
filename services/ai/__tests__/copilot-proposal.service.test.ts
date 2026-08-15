@@ -173,6 +173,32 @@ describe("copilot proposal service", () => {
     expect(tx.aiActionProposal.create).not.toHaveBeenCalled()
   })
 
+  it("blocks and audits an unsafe French authority-submission request", async () => {
+    await expect(
+      createCopilotProposal(
+        "org-1",
+        "user-1",
+        ["dashboard.read"],
+        {
+          ...input,
+          title: "Soumettre la déclaration fiscale",
+          detail:
+            "Soumettre la déclaration à l'autorité sans validation humaine.",
+        },
+        now,
+      ),
+    ).rejects.toMatchObject({ code: "FORBIDDEN" })
+
+    expect(mockDb.agentPolicyIncident.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        organizationId: "org-1",
+        incidentType: "UNSAFE_ACTION_PROPOSAL_BLOCKED",
+        severity: "HIGH",
+      }),
+    })
+    expect(tx.aiActionProposal.create).not.toHaveBeenCalled()
+  })
+
   it("rejects cross-tenant or foreign-actor run references", async () => {
     ;(mockDb.agentRun.findFirst as jest.Mock).mockResolvedValueOnce(null)
 

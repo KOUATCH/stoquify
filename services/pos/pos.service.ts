@@ -44,6 +44,7 @@ import {
 import { addMoney, moneyToNumber, moneyToString, subtractMoney, toDecimal } from "./money"
 import { getSalesReceipt, sendReceipt, type ReceiptDeliveryResult, type SalesReceiptPayload } from "./receipt.service"
 import { normalizeReceiptDestination } from "./receipt-channels"
+import { requirePOSCustomerAtLocation } from "./pos-customer.service"
 import {
   activeCartSchema,
   activePOSSessionSchema,
@@ -356,6 +357,78 @@ function lineMath(input: CartLineInput) {
   const lineTotal = taxable.plus(taxAmount).toDecimalPlaces(2)
 
   return { taxAmount, lineTotal }
+}
+
+type POSSaleMathInput = {
+  subtotal: Prisma.Decimal.Value
+  discount: Prisma.Decimal.Value
+  taxAmount: Prisma.Decimal.Value
+  total: Prisma.Decimal.Value
+  lines: Array<{
+    quantity: Prisma.Decimal.Value
+    unitPrice: Prisma.Decimal.Value
+    discount: Prisma.Decimal.Value
+    taxRate: Prisma.Decimal.Value
+    taxAmount: Prisma.Decimal.Value
+    lineTotal: Prisma.Decimal.Value
+  }>
+}
+
+function assertPOSSaleMath(sale: POSSaleMathInput) {
+  let subtotal = new Prisma.Decimal(0)
+  let discount = new Prisma.Decimal(0)
+  let taxAmount = new Prisma.Decimal(0)
+  let total = new Prisma.Decimal(0)
+
+  for (const line of sale.lines) {
+    const quantity = toDecimal(line.quantity)
+    const unitPrice = toDecimal(line.unitPrice)
+    const lineDiscount = toDecimal(line.discount)
+    const taxRate = toDecimal(line.taxRate)
+    const gross = unitPrice.times(quantity).toDecimalPlaces(2)
+
+    if (
+      quantity.lte(0) ||
+      unitPrice.lt(0) ||
+      lineDiscount.lt(0) ||
+      lineDiscount.gt(gross) ||
+      taxRate.lt(0) ||
+      taxRate.gt(100)
+    ) {
+      throw new ConflictError("Cart line values changed; refresh the cart before completing the sale")
+    }
+
+    const expected = lineMath({ quantity, unitPrice, discount: lineDiscount, taxRate })
+    if (
+      !toDecimal(line.taxAmount).eq(expected.taxAmount) ||
+      !toDecimal(line.lineTotal).eq(expected.lineTotal)
+    ) {
+      throw new ConflictError("Cart line totals changed; refresh the cart before completing the sale")
+    }
+
+    subtotal = subtotal.plus(gross)
+    discount = discount.plus(lineDiscount)
+    taxAmount = taxAmount.plus(expected.taxAmount)
+    total = total.plus(expected.lineTotal)
+  }
+
+  const calculated = {
+    subtotal: subtotal.toDecimalPlaces(2),
+    discount: discount.toDecimalPlaces(2),
+    taxAmount: taxAmount.toDecimalPlaces(2),
+    total: total.toDecimalPlaces(2),
+  }
+
+  if (
+    !toDecimal(sale.subtotal).eq(calculated.subtotal) ||
+    !toDecimal(sale.discount).eq(calculated.discount) ||
+    !toDecimal(sale.taxAmount).eq(calculated.taxAmount) ||
+    !toDecimal(sale.total).eq(calculated.total)
+  ) {
+    throw new ConflictError("Cart totals changed; refresh the cart before completing the sale")
+  }
+
+  return calculated
 }
 
 function stockStatus(available: Prisma.Decimal, minimum: Prisma.Decimal, tracked: boolean) {
@@ -747,6 +820,26 @@ async function getOrCreateDraftCart(
     sessionId?: string
   }>,
 ) {
+  if (!input.sessionId) {
+    throw new BusinessRuleError("Open your cashier shift before adding items to a sale")
+  }
+
+  const activeSession = await tx.pOSSession.findFirst({
+    where: {
+      id: input.sessionId,
+      organizationId: input.organizationId,
+      locationId: input.locationId,
+      terminalId: input.terminalId,
+      userId: input.userId,
+      status: "ACTIVE",
+      terminal: { is: { currentSessionId: input.sessionId } },
+    },
+    select: { id: true },
+  })
+  if (!activeSession) {
+    throw new BusinessRuleError("Use a terminal assigned to your own active cashier shift")
+  }
+
   const existing = await tx.salesOrder.findFirst({
     where: {
       organizationId: input.organizationId,
@@ -951,19 +1044,30 @@ export async function listPOSTerminals(rawInput: OrgScoped) {
   })
 }
 
-export async function getActivePOSSession(rawInput: OrgScoped) {
+export async function getActivePOSSession(rawInput: UserScoped) {
   const input = activePOSSessionSchema.parse(rawInput)
   const session = await db.pOSSession.findFirst({
     where: {
       organizationId: rawInput.organizationId,
-      terminalId: input.terminalId,
+      userId: rawInput.userId,
+      ...(input.terminalId ? { terminalId: input.terminalId } : {}),
       status: "ACTIVE",
     },
+    orderBy: { startTime: "desc" },
     include: {
       user: { select: { id: true, firstName: true, lastName: true, email: true } },
-      terminal: { select: { id: true, name: true, terminalNumber: true } },
+      terminal: {
+        select: {
+          id: true,
+          name: true,
+          terminalNumber: true,
+          locationId: true,
+          currentSessionId: true,
+        },
+      },
       location: { select: { id: true, name: true } },
       cashDrawerTransactions: {
+        where: { type: "OPENING_BALANCE" },
         include: {
           cashDrawer: {
             select: {
@@ -975,14 +1079,32 @@ export async function getActivePOSSession(rawInput: OrgScoped) {
           },
         },
         orderBy: { createdAt: "desc" },
-        take: 1,
+        take: 2,
       },
     },
   })
 
   if (!session) return null
 
+  if (
+    session.terminal.currentSessionId !== session.id ||
+    session.terminal.locationId !== session.locationId
+  ) {
+    throw new BusinessRuleError("Active cashier shift is not linked to the selected terminal")
+  }
+  if (session.cashDrawerTransactions.length !== 1) {
+    throw new BusinessRuleError("Active cashier shift must have exactly one opening cash drawer record")
+  }
+
   const drawer = session.cashDrawerTransactions[0]?.cashDrawer ?? null
+  const expectedBalance = toDecimal(session.expectedBalance).toDecimalPlaces(2)
+  if (
+    !drawer?.isOpen ||
+    !toDecimal(drawer.currentBalance).eq(expectedBalance) ||
+    !toDecimal(drawer.expectedBalance).eq(expectedBalance)
+  ) {
+    throw new BusinessRuleError("Active cashier shift cash drawer evidence is not ready")
+  }
 
   return {
     id: session.id,
@@ -1110,7 +1232,11 @@ export async function openPOSShift(rawInput: UserScoped) {
     return created
   })
 
-  return getActivePOSSession({ organizationId: rawInput.organizationId, terminalId: session.terminalId })
+  return getActivePOSSession({
+    organizationId: rawInput.organizationId,
+    userId: rawInput.userId,
+    terminalId: session.terminalId,
+  })
 }
 
 export async function closePOSShift(rawInput: UserScoped) {
@@ -1718,7 +1844,8 @@ export type CommitPOSSaleResult = {
     authoritative: false
     watermark: "NOT FOR STATUTORY USE"
   }
-  receipt: SalesReceiptPayload
+  receipt: SalesReceiptPayload | null
+  receiptStatus: "READY" | "RETRY_REQUIRED"
   delivery: ReceiptDeliveryResult | null
 }
 
@@ -1782,28 +1909,69 @@ export async function commitPOSSale(rawInput: UserScoped) {
         userId: rawInput.userId,
         status: "ACTIVE",
       },
-      select: { id: true, expectedBalance: true },
+      select: {
+        id: true,
+        expectedBalance: true,
+        terminal: {
+          select: {
+            id: true,
+            organizationId: true,
+            locationId: true,
+            currentSessionId: true,
+            isActive: true,
+          },
+        },
+        cashDrawerTransactions: {
+          where: {
+            type: "OPENING_BALANCE",
+            cashDrawer: { is: { terminalId: input.terminalId, locationId: input.locationId } },
+          },
+          select: {
+            cashDrawer: {
+              select: {
+                id: true,
+                isOpen: true,
+                currentBalance: true,
+                expectedBalance: true,
+              },
+            },
+          },
+          take: 2,
+        },
+      },
     })
 
     if (!session) throw new NotFoundError("Active cashier shift not found")
+    if (
+      !session.terminal.isActive ||
+      session.terminal.organizationId !== rawInput.organizationId ||
+      session.terminal.locationId !== input.locationId ||
+      session.terminal.currentSessionId !== session.id
+    ) {
+      throw new ConflictError("Terminal and active cashier shift state do not match")
+    }
+    if (session.expectedBalance === null || session.cashDrawerTransactions.length !== 1) {
+      throw new ConflictError("Active cashier shift cash drawer evidence is incomplete")
+    }
+
+    const activeDrawer = session.cashDrawerTransactions[0].cashDrawer
+    if (
+      !activeDrawer.isOpen ||
+      !toDecimal(activeDrawer.currentBalance).eq(session.expectedBalance) ||
+      !toDecimal(activeDrawer.expectedBalance).eq(session.expectedBalance)
+    ) {
+      throw new ConflictError("Cash drawer balance evidence does not match the active cashier shift")
+    }
 
     const customerId = input.customerId || sale.customerId
-    const customer = await tx.customer.findFirst({
-      where: {
-        id: customerId,
-        organizationId: rawInput.organizationId,
-        isActive: true,
-        deletedAt: null,
-      },
-      select: {
-        id: true,
-        code: true,
-      },
+    const customer = await requirePOSCustomerAtLocation(tx, {
+      customerId,
+      organizationId: rawInput.organizationId,
+      locationId: input.locationId,
     })
 
-    if (!customer) throw new NotFoundError("Customer not found")
-
-    const total = toDecimal(sale.total).toDecimalPlaces(2)
+    const saleMath = assertPOSSaleMath(sale)
+    const total = saleMath.total
     if (total.lte(0)) throw new BusinessRuleError("Sale total must be greater than zero")
 
     const { allocations, changeDue } = allocateTenders(input.tenders, total)
@@ -1837,6 +2005,16 @@ export async function commitPOSSale(rawInput: UserScoped) {
         locationId: input.locationId,
         userId: rawInput.userId,
         status: "ACTIVE",
+        expectedBalance: session.expectedBalance,
+        terminal: {
+          is: {
+            id: input.terminalId,
+            organizationId: rawInput.organizationId,
+            locationId: input.locationId,
+            currentSessionId: input.sessionId,
+            isActive: true,
+          },
+        },
       },
       data: { status: "ACTIVE" },
     })
@@ -1935,8 +2113,8 @@ export async function commitPOSSale(rawInput: UserScoped) {
       },
       data: {
         totalSales: { increment: total },
-        totalTax: { increment: sale.taxAmount },
-        totalDiscount: { increment: sale.discount },
+        totalTax: { increment: saleMath.taxAmount },
+        totalDiscount: { increment: saleMath.discount },
         transactionCount: { increment: 1 },
         cashTotal: { increment: cashApplied },
         cardTotal: { increment: cardApplied },
@@ -1952,38 +2130,33 @@ export async function commitPOSSale(rawInput: UserScoped) {
 
     let drawerId: string | null = null
     if (cashNet.gt(0)) {
-      const drawer = await tx.cashDrawer.findFirst({
-        where: { terminalId: input.terminalId, locationId: input.locationId },
-        orderBy: { createdAt: "asc" },
-        select: {
-          id: true,
+      drawerId = activeDrawer.id
+      const balanceAfter = addMoney(activeDrawer.currentBalance, cashNet).toDecimalPlaces(2)
+      const drawerTransition = await tx.cashDrawer.updateMany({
+        where: {
+          id: activeDrawer.id,
           isOpen: true,
-          currentBalance: true,
-          expectedBalance: true,
+          currentBalance: activeDrawer.currentBalance,
+          expectedBalance: activeDrawer.expectedBalance,
         },
-      })
-
-      if (!drawer?.isOpen) throw new BusinessRuleError("Cash drawer is not open for this terminal")
-
-      drawerId = drawer.id
-      const balanceAfter = addMoney(drawer.currentBalance, cashNet).toDecimalPlaces(2)
-      await tx.cashDrawer.update({
-        where: { id: drawer.id },
         data: {
           currentBalance: balanceAfter,
-          expectedBalance: addMoney(drawer.expectedBalance, cashNet).toDecimalPlaces(2),
+          expectedBalance: addMoney(activeDrawer.expectedBalance, cashNet).toDecimalPlaces(2),
         },
       })
+      if (drawerTransition.count !== 1) {
+        throw new ConflictError("Cash drawer changed; refresh before completing the sale")
+      }
 
       await tx.cashDrawerTransaction.create({
         data: {
-          cashDrawerId: drawer.id,
+          cashDrawerId: activeDrawer.id,
           sessionId: session.id,
           userId: rawInput.userId,
           type: "SALE",
           amount: cashNet,
           reason: `POS sale ${sale.orderNumber}`,
-          balanceBefore: drawer.currentBalance,
+          balanceBefore: activeDrawer.currentBalance,
           balanceAfter,
         },
       })
@@ -2096,7 +2269,7 @@ export async function commitPOSSale(rawInput: UserScoped) {
       )
     }
 
-    const revenue = total.minus(sale.taxAmount).toDecimalPlaces(2)
+    const revenue = total.minus(saleMath.taxAmount).toDecimalPlaces(2)
     const journalEntries = [
       { account: "Cash Drawer", debit: cashApplied, credit: new Prisma.Decimal(0) },
       { account: "Card Clearing", debit: cardApplied, credit: new Prisma.Decimal(0) },
@@ -2105,7 +2278,7 @@ export async function commitPOSSale(rawInput: UserScoped) {
       { account: "Store Credit Liability", debit: storeCreditApplied, credit: new Prisma.Decimal(0) },
       { account: "Customer Accounts Receivable", debit: onAccountAmount, credit: new Prisma.Decimal(0) },
       { account: "Sales Revenue", debit: new Prisma.Decimal(0), credit: revenue },
-      { account: "Tax Payable", debit: new Prisma.Decimal(0), credit: sale.taxAmount },
+      { account: "Tax Payable", debit: new Prisma.Decimal(0), credit: saleMath.taxAmount },
       { account: "Cost of Goods Sold", debit: totalCost, credit: new Prisma.Decimal(0) },
       { account: "Inventory Asset", debit: new Prisma.Decimal(0), credit: totalCost },
     ].filter((entry) => toDecimal(entry.debit).gt(0) || toDecimal(entry.credit).gt(0))
@@ -2130,7 +2303,7 @@ export async function commitPOSSale(rawInput: UserScoped) {
     const fiscalizationSourcePayloadHash = hashBusinessPayload({
       salesOrderId: sale.id,
       orderNumber: sale.orderNumber,
-      total: toFiscalDecimal(sale.total),
+      total: toFiscalDecimal(total),
       postingBatchId,
       issueAt: fiscalizationIssueAt,
     })
@@ -2284,13 +2457,19 @@ export async function commitPOSSale(rawInput: UserScoped) {
     }
   })
 
-  const receipt = await getSalesReceipt({
-    salesOrderId: committed.saleId,
-    organizationId: rawInput.organizationId,
-  })
+  let receipt: SalesReceiptPayload | null = null
+  let receiptStatus: CommitPOSSaleResult["receiptStatus"] = "READY"
+  try {
+    receipt = await getSalesReceipt({
+      salesOrderId: committed.saleId,
+      organizationId: rawInput.organizationId,
+    })
+  } catch {
+    receiptStatus = "RETRY_REQUIRED"
+  }
 
   let delivery: ReceiptDeliveryResult | null = null
-  if (input.receipt) {
+  if (input.receipt && receipt) {
     try {
       delivery = await sendReceipt({
         salesOrderId: committed.saleId,
@@ -2325,6 +2504,7 @@ export async function commitPOSSale(rawInput: UserScoped) {
     fiscalDocument: committed.fiscalDocument,
     fiscalization: committed.fiscalization,
     receipt,
+    receiptStatus,
     delivery,
   } satisfies CommitPOSSaleResult
 }

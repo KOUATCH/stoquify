@@ -2,6 +2,7 @@ import TaxRatesManagementDashboard from "@/components/tax-rates/TaxRatesManageme
 import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
 import { localizePath, pickLocale } from "@/i18n/routing"
 import { redirect } from "next/navigation"
+import { routeByKey, withSettingsSurfaceAccess } from "../../../settings-route-access"
 
 interface EditTaxRatePageProps {
   params: Promise<{ locale: string; id: string }>
@@ -12,7 +13,7 @@ export const metadata = {
   description: "Edit an organization tax rate and active status.",
 }
 
-export default async function EditTaxRatePage({ params }: EditTaxRatePageProps) {
+async function EditTaxRatePageImpl({ params }: EditTaxRatePageProps) {
   const { locale: rawLocale, id } = await params
   const locale = pickLocale(rawLocale)
   await checkPermission("taxes.update")
@@ -33,4 +34,20 @@ export default async function EditTaxRatePage({ params }: EditTaxRatePageProps) 
       </div>
     </div>
   )
+}
+
+
+
+export default async function SettingsRoutePage(props: any = {}) {
+  const surface = routeByKey("settings-tax-rates-edit")
+
+  if (!surface) {
+    throw new Error("Missing settings route surface definition: settings-tax-rates-edit")
+  }
+
+  return withSettingsSurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => EditTaxRatePageImpl(props),
+  })
 }

@@ -7,12 +7,13 @@ import EnhancedBrandsManagement from "@/components/inventory/EnhancedBrandsManag
 import { Button } from "@/components/ui/button"
 import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
 import { pickLocale } from "@/i18n/routing"
+import { routeByKey, withInventorySurfaceAccess } from "../inventory-route-access"
 
 type BrandsPageProps = {
   params: Promise<{ locale: string }>
 }
 
-export default async function BrandsPage({ params }: BrandsPageProps) {
+async function BrandsPageImpl({ params }: BrandsPageProps) {
   await checkPermission("inventory.brands.read")
 
   const { locale: rawLocale } = await params
@@ -85,4 +86,20 @@ export default async function BrandsPage({ params }: BrandsPageProps) {
       </div>
     </div>
   )
+}
+
+
+
+export default async function InventoryRoutePage(props: any = {}) {
+  const surface = routeByKey("inventory-brands")
+
+  if (!surface) {
+    throw new Error("Missing inventory route surface definition: inventory-brands")
+  }
+
+  return withInventorySurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => BrandsPageImpl(props),
+  })
 }

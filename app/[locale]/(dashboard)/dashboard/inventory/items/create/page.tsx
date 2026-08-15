@@ -16,6 +16,7 @@ import { revalidatePath } from "next/cache"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import { getOrganizationSettingsForOrg } from "@/services/organization/organization-settings.service"
 import { getLocale } from "next-intl/server"
+import { routeByKey, withInventorySurfaceAccess } from "../../inventory-route-access"
 
 async function handleCreateItem(formData: FormData) {
   "use server"
@@ -140,7 +141,7 @@ async function handleCreateItem(formData: FormData) {
   }
 }
 
-export default async function CreateItemPage() {
+async function CreateItemPageImpl() {
   await checkPermission("inventory.items.create")
   const locale = pickLocale(await getLocale())
 
@@ -252,4 +253,20 @@ export default async function CreateItemPage() {
       locale={locale}
     />
   )
+}
+
+
+
+export default async function InventoryRoutePage(props: any = {}) {
+  const surface = routeByKey("inventory-items-create")
+
+  if (!surface) {
+    throw new Error("Missing inventory route surface definition: inventory-items-create")
+  }
+
+  return withInventorySurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => CreateItemPageImpl(),
+  })
 }

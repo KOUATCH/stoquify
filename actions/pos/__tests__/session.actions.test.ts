@@ -19,13 +19,14 @@ jest.mock("@/services/pos/pos.service", () => ({
 import { revalidateTag } from "next/cache"
 import { requirePermission } from "@/lib/security/rbac"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
-import { closePOSShift } from "@/services/pos/pos.service"
-import { closePOSShiftAction } from "../session.actions"
+import { closePOSShift, getActivePOSSession } from "@/services/pos/pos.service"
+import { closePOSShiftAction, getActivePOSSessionAction } from "../session.actions"
 
 const mockRevalidateTag = revalidateTag as jest.Mock
 const mockRequirePermission = requirePermission as jest.Mock
 const mockObserveModuleAccess = observeModuleAccess as jest.Mock
 const mockClosePOSShift = closePOSShift as jest.Mock
+const mockGetActivePOSSession = getActivePOSSession as jest.Mock
 
 const context = {
   orgId: "org-1",
@@ -104,6 +105,18 @@ describe("closePOSShiftAction", () => {
     expect(mockRevalidateTag).not.toHaveBeenCalled()
   })
 
+  it("does not report a committed close as failed when cache revalidation is unavailable", async () => {
+    mockRevalidateTag.mockImplementationOnce(() => {
+      throw new Error("cache unavailable")
+    })
+
+    await expect(closePOSShiftAction({
+      sessionId: "session-1",
+      actualBalance: "100.00",
+    })).resolves.toEqual({ success: true, data: closeResult, error: null })
+    expect(mockClosePOSShift).toHaveBeenCalledTimes(1)
+  })
+
   it("rejects a blank closing count before authorization or service access", async () => {
     const response = await closePOSShiftAction({ sessionId: "session-1", actualBalance: " " })
 
@@ -111,5 +124,33 @@ describe("closePOSShiftAction", () => {
     expect(mockRequirePermission).not.toHaveBeenCalled()
     expect(mockObserveModuleAccess).not.toHaveBeenCalled()
     expect(mockClosePOSShift).not.toHaveBeenCalled()
+  })
+})
+
+describe("getActivePOSSessionAction", () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+    mockRequirePermission.mockResolvedValue(context)
+    mockGetActivePOSSession.mockResolvedValue({ id: "session-1" })
+  })
+
+  it("scopes the active shift to the authenticated cashier", async () => {
+    const response = await getActivePOSSessionAction({ terminalId: "terminal-1" })
+
+    expect(response).toEqual({ success: true, data: { id: "session-1" }, error: null })
+    expect(mockGetActivePOSSession).toHaveBeenCalledWith({
+      terminalId: "terminal-1",
+      organizationId: "org-1",
+      userId: "cashier-1",
+    })
+  })
+
+  it("can find the cashier's current shift before a terminal is selected", async () => {
+    await getActivePOSSessionAction({})
+
+    expect(mockGetActivePOSSession).toHaveBeenCalledWith({
+      organizationId: "org-1",
+      userId: "cashier-1",
+    })
   })
 })

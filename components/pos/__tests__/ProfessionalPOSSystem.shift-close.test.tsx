@@ -40,6 +40,7 @@ jest.mock("@/hooks/posHooks/usePosOperations", () => ({
   useAddPOSCartLine: jest.fn(),
   useClosePOSShift: jest.fn(),
   useCommitPOSSale: jest.fn(),
+  useCurrentUserPOSShift: jest.fn(),
   useOpenPOSShift: jest.fn(),
   usePOSCatalog: jest.fn(),
   usePOSCustomers: jest.fn(),
@@ -107,8 +108,9 @@ function setupHooks(expectedBalance: number, closeResponse: unknown) {
 
   mockHooks.usePOSLocations.mockReturnValue({ data: actionSuccess([]) } as never)
   mockHooks.usePOSTerminals.mockReturnValue({ data: actionSuccess([]) } as never)
+  mockHooks.useCurrentUserPOSShift.mockReturnValue({ data: actionSuccess(shiftFixture(expectedBalance)) } as never)
   mockHooks.useActivePOSShift.mockReturnValue({ data: actionSuccess(shiftFixture(expectedBalance)) } as never)
-  mockHooks.usePOSCustomers.mockReturnValue({ data: actionSuccess([]) } as never)
+  mockHooks.usePOSCustomers.mockReturnValue({ data: actionSuccess({ customers: [], total: 0 }) } as never)
   mockHooks.usePOSCatalog.mockReturnValue({ data: actionSuccess({ categories: [], items: [] }) } as never)
   mockHooks.useActivePOSCart.mockReturnValue({ data: actionSuccess(null) } as never)
   mockHooks.useOpenPOSShift.mockReturnValue(mutationState() as never)
@@ -244,6 +246,54 @@ describe("ProfessionalPOSSystem sale commit", () => {
     jest.clearAllMocks()
   })
 
+  it("keeps seven long-name cart lines and their controls available", () => {
+    setupHooks(700, actionSuccess({ terminalId: "terminal-1" }))
+    mockHooks.useActivePOSCart.mockReturnValue({
+      data: actionSuccess({
+        id: "sale-long-cart",
+        orderNumber: "CART-LONG",
+        status: "DRAFT",
+        locationId: "location-1",
+        terminalId: "terminal-1",
+        sessionId: "session-1",
+        customer: null,
+        subtotal: 700,
+        discount: 0,
+        taxAmount: 0,
+        total: 700,
+        lines: Array.from({ length: 7 }, (_, index) => ({
+          id: `line-${index + 1}`,
+          itemId: `item-${index + 1}`,
+          sku: `SKU-${String(index + 1).padStart(3, "0")}`,
+          barcode: `12345678${index + 1}`,
+          nameEn: `Representative long inventory item name ${index + 1}`,
+          nameFr: `Nom long d'article représentatif ${index + 1}`,
+          thumbnail: null,
+          quantity: 1,
+          unitPrice: 100,
+          discount: 0,
+          taxRate: 0,
+          taxAmount: 0,
+          lineTotal: 100,
+          stock: { trackInventory: true, quantityOnHand: 10, quantityAvailable: 10 },
+        })),
+      }),
+    } as never)
+
+    render(<ProfessionalPOSSystem />)
+
+    expect(screen.getAllByTestId("pos-cart-line")).toHaveLength(7)
+    expect(screen.getAllByRole("button", { name: "cart.removeLine" })).toHaveLength(7)
+    expect(screen.getByText("Representative long inventory item name 1")).toHaveAttribute(
+      "title",
+      "Representative long inventory item name 1",
+    )
+    expect(screen.getByTestId("pos-tender-scroll-region")).toHaveClass("xl:min-h-0", "xl:overflow-y-auto")
+    expect(screen.getByTestId("pos-tender-controls").compareDocumentPosition(screen.getByTestId("receipt-token-history-panel")))
+      .toBe(Node.DOCUMENT_POSITION_FOLLOWING)
+    expect(screen.getByTestId("pos-charge-footer")).toHaveClass("shrink-0")
+  })
+
   it("submits an active cash sale with WhatsApp receipt consent", async () => {
     const commitMutateAsync = jest.fn().mockResolvedValue(actionSuccess({
       saleId: "sale-1",
@@ -319,6 +369,27 @@ describe("ProfessionalPOSSystem sale commit", () => {
 
     render(<ProfessionalPOSSystem />)
 
+    expect(screen.getByTestId("pos-cart-lines")).toHaveClass(
+      "min-h-[18rem]",
+      "xl:min-h-0",
+      "xl:flex-[3_1_20rem]",
+    )
+    expect(screen.getByTestId("pos-payment-panel")).toHaveClass(
+      "xl:min-h-[20rem]",
+      "xl:flex-[2_1_24rem]",
+      "xl:overflow-hidden",
+    )
+    expect(screen.getByTestId("pos-totals-summary")).toHaveClass("grid-cols-2", "sm:grid-cols-4")
+    expect(screen.getByTestId("pos-cart-line")).toHaveClass("py-0.5")
+    expect(screen.getByRole("button", { name: "cart.removeLine" })).toHaveClass("h-7", "w-7")
+    expect(screen.getByRole("button", { name: "charge.cta" })).toHaveClass("h-11")
+
+    fireEvent.click(screen.getByRole("button", { name: "shell.touchMode" }))
+    expect(screen.getByTestId("pos-cart-line")).toHaveClass("py-2")
+    expect(screen.getByRole("spinbutton", { name: "stock.inCart" })).toHaveClass("h-10", "w-24")
+    expect(screen.getByRole("button", { name: "cart.removeLine" })).toHaveClass("h-10", "w-10")
+    expect(screen.getByRole("button", { name: "charge.cta" })).toHaveClass("h-14")
+
     fireEvent.click(screen.getByRole("button", { name: "receipt.channels.PRINT" }))
     expect(screen.queryByPlaceholderText("receipt.destinationPlaceholders.email")).not.toBeInTheDocument()
     expect(screen.queryByPlaceholderText("receipt.destinationPlaceholders.phone")).not.toBeInTheDocument()
@@ -358,6 +429,168 @@ describe("ProfessionalPOSSystem sale commit", () => {
       "notifications.saleSuccessTitle",
       "notifications.saleSuccessMessage",
       { category: "sales", priority: "high", duration: 9000 },
+    )
+  })
+
+  it("selects the authenticated cashier's active location and terminal", async () => {
+    setupHooks(100, actionSuccess({ terminalId: "terminal-2" }))
+    mockHooks.usePOSLocations.mockReturnValue({
+      data: actionSuccess([
+        { id: "location-1", isDefault: true },
+        { id: "location-2", isDefault: false },
+      ]),
+    } as never)
+    mockHooks.usePOSTerminals.mockReturnValue({
+      data: actionSuccess([
+        { id: "terminal-1", locationId: "location-1" },
+        { id: "terminal-2", locationId: "location-2" },
+      ]),
+    } as never)
+    mockHooks.useCurrentUserPOSShift.mockReturnValue({
+      data: actionSuccess({
+        ...shiftFixture(100),
+        id: "session-2",
+        locationId: "location-2",
+        terminalId: "terminal-2",
+      }),
+    } as never)
+
+    render(<ProfessionalPOSSystem />)
+
+    await waitFor(() => expect(mockHooks.usePOSTerminals).toHaveBeenLastCalledWith("location-2"))
+    await waitFor(() => expect(mockHooks.useActivePOSShift).toHaveBeenLastCalledWith("terminal-2"))
+  })
+
+  it("clears the selected customer, search, and dialog when the cashier changes location", async () => {
+    setupHooks(100, actionSuccess({ terminalId: "terminal-1" }))
+    mockHooks.usePOSLocations.mockReturnValue({
+      data: actionSuccess([
+        { id: "location-1", name: "Main shop", isDefault: true },
+        { id: "location-2", name: "West shop", isDefault: false },
+      ]),
+    } as never)
+    mockHooks.usePOSTerminals.mockImplementation((locationId) => ({
+      data: actionSuccess(locationId === "location-2"
+        ? [{ id: "terminal-2", name: "Till 2", terminalNumber: "T02", locationId: "location-2" }]
+        : [{ id: "terminal-1", name: "Till 1", terminalNumber: "T01", locationId: "location-1" }]),
+    }) as never)
+    mockHooks.usePOSCustomers.mockImplementation((params) => ({
+      data: actionSuccess({
+        customers: params.locationId === "location-2"
+          ? [{
+              id: "customer-b",
+              name: "Bob Branch B",
+              code: "B-001",
+              email: null,
+              phone: null,
+              creditLimit: null,
+              isActive: true,
+              totalOrders: 1,
+              totalRevenue: 90,
+            }]
+          : [{
+              id: "customer-a",
+              name: "Alice Branch A",
+              code: "A-001",
+              email: null,
+              phone: null,
+              creditLimit: null,
+              isActive: true,
+              totalOrders: 2,
+              totalRevenue: 125,
+            }],
+        total: 1,
+      }),
+      isLoading: false,
+    }) as never)
+
+    render(<ProfessionalPOSSystem />)
+
+    const locationSelect = await screen.findByLabelText("setup.location")
+    await waitFor(() => expect(locationSelect).toHaveValue("location-1"))
+    fireEvent.click(screen.getByRole("button", { name: "smart.addCustomer" }))
+    const firstDialog = screen.getByRole("dialog")
+    fireEvent.click(within(firstDialog).getByRole("button", { name: /Alice Branch A/ }))
+    expect(screen.getAllByText("Alice Branch A").length).toBeGreaterThan(0)
+
+    fireEvent.click(screen.getByRole("button", { name: "smart.changeCustomer" }))
+    const secondDialog = screen.getByRole("dialog")
+    fireEvent.change(within(secondDialog).getByPlaceholderText("customers.searchPlaceholder"), {
+      target: { value: "stale-a-search" },
+    })
+    fireEvent.change(locationSelect, { target: { value: "location-2" } })
+
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument())
+    await waitFor(() => expect(locationSelect).toHaveValue("location-2"))
+    expect(screen.queryByText("Alice Branch A")).not.toBeInTheDocument()
+    expect(mockHooks.usePOSCustomers).toHaveBeenLastCalledWith({
+      locationId: "location-2",
+      search: "",
+    })
+    expect(mockNotifications.info).toHaveBeenCalledWith(
+      "notifications.customerResetTitle",
+      "notifications.customerResetMessage",
+      { category: "pos" },
+    )
+
+    fireEvent.change(locationSelect, { target: { value: "location-1" } })
+    await waitFor(() => expect(mockHooks.usePOSCustomers).toHaveBeenLastCalledWith({
+      locationId: "location-1",
+      search: "",
+    }))
+  })
+
+  it("blocks a location change while the current draft contains cart lines", async () => {
+    setupHooks(100, actionSuccess({ terminalId: "terminal-1" }))
+    mockHooks.usePOSLocations.mockReturnValue({
+      data: actionSuccess([
+        { id: "location-1", name: "Main shop", isDefault: true },
+        { id: "location-2", name: "West shop", isDefault: false },
+      ]),
+    } as never)
+    mockHooks.useActivePOSCart.mockReturnValue({
+      data: actionSuccess({
+        id: "sale-1",
+        orderNumber: "CART-0001",
+        status: "DRAFT",
+        locationId: "location-1",
+        terminalId: "terminal-1",
+        sessionId: "session-1",
+        customer: null,
+        subtotal: 100,
+        discount: 0,
+        taxAmount: 0,
+        total: 100,
+        lines: [{
+          id: "line-1",
+          itemId: "item-1",
+          sku: "SKU-001",
+          barcode: null,
+          nameEn: "Location-bound cart item",
+          nameFr: null,
+          thumbnail: null,
+          quantity: 1,
+          unitPrice: 100,
+          discount: 0,
+          taxRate: 0,
+          taxAmount: 0,
+          lineTotal: 100,
+          stock: { trackInventory: true, quantityOnHand: 10, quantityAvailable: 10 },
+        }],
+      }),
+    } as never)
+
+    render(<ProfessionalPOSSystem />)
+    const locationSelect = await screen.findByLabelText("setup.location")
+    await waitFor(() => expect(locationSelect).toHaveValue("location-1"))
+
+    fireEvent.change(locationSelect, { target: { value: "location-2" } })
+
+    expect(locationSelect).toHaveValue("location-1")
+    expect(mockNotifications.warning).toHaveBeenCalledWith(
+      "notifications.locationChangeBlockedTitle",
+      "notifications.locationChangeBlockedMessage",
+      { category: "pos", priority: "high" },
     )
   })
 })

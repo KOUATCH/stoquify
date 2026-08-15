@@ -25,6 +25,7 @@ import {
   accountingDate,
   formatAccountingMoney,
 } from "../../_components/accounting-ui";
+import { routeByKey, withAccountingSurfaceAccess } from "../../accounting-route-access"
 
 type ReportView = "overview" | "profit-loss" | "balance-sheet";
 
@@ -556,7 +557,7 @@ function BalanceSheet({ report }: { report: FinancialStatementsReport }) {
   );
 }
 
-export default async function FinancialStatementsPage({
+async function FinancialStatementsPageImpl({
   searchParams,
 }: PageProps) {
   await checkPermission("accounting.reports.read");
@@ -759,4 +760,20 @@ export default async function FinancialStatementsPage({
       )}
     </AccountingPageShell>
   );
+}
+
+
+
+export default async function AccountingRoutePage(props: any = {}) {
+  const surface = routeByKey("accounting-reports-financial-statements")
+
+  if (!surface) {
+    throw new Error("Missing accounting route surface definition: accounting-reports-financial-statements")
+  }
+
+  return withAccountingSurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => FinancialStatementsPageImpl(props),
+  })
 }

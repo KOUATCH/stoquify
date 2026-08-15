@@ -126,12 +126,12 @@ function developmentEvidenceState(root) {
         artifact.reviewStatus === "PENDING_EXPERT_REVIEW",
     );
 
-  const nonClaims = Array.isArray(loaded.manifest.nonClaims)
-    ? loaded.manifest.nonClaims.join(" ")
-    : "";
+  const nonClaimPolicy = loaded.manifest.nonClaimPolicy;
   const legalNonClaimsPreserved =
-    nonClaims.includes("does not certify legal interpretation") &&
-    nonClaims.includes("does not constitute qualified reviewer approval");
+    nonClaimPolicy !== null &&
+    typeof nonClaimPolicy === "object" &&
+    nonClaimPolicy.legalInterpretationCertified === false &&
+    nonClaimPolicy.qualifiedReviewerApprovalClaimed === false;
 
   return {
     manifestPresent: true,

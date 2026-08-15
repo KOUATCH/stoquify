@@ -1,0 +1,18 @@
+{
+  "artifactId": "A-03",
+  "artifactStatus": "NOT_APPLICABLE_PENDING_CHECKER",
+  "conditionalTarget": "prisma/migration-risk-approvals.json",
+  "doNotApplyUnlessCheckerDecisionIs": "APPROVE_EXACT_HASH",
+  "proposedEntry": {
+    "migration": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+    "sha256": "f7de8dc7ace0a5e063cdb7ecd9527e77807b7f872e474546819e9fca13a273d4",
+    "rules": [
+      "drop_column",
+      "drop_table"
+    ],
+    "approvedBy": null,
+    "reason": null,
+    "approvedAt": null
+  },
+  "appliedToRegistry": false
+}

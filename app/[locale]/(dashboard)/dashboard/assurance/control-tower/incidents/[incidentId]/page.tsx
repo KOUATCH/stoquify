@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
 import { AssuranceIncidentDetailView } from "@/components/assurance/AssuranceIncidentDetailView"
-import { requirePermission } from "@/lib/security/rbac"
+import { routeByKey, withAssuranceSurfaceAccess } from "../../../assurance-route-access"
 import { getAssuranceIncidentDetailData } from "@/services/assurance/assurance-control-tower.service"
 
 export const metadata: Metadata = {
@@ -10,27 +10,32 @@ export const metadata: Metadata = {
   description: "Proof-linked workflow assurance incident detail.",
 }
 
-function pickLocale(locale: string) {
-  return locale === "fr" ? "fr" : "en"
-}
-
 export default async function WorkflowAssuranceIncidentDetailPage({
   params,
 }: {
   params: Promise<{ locale: string; incidentId: string }>
 }) {
-  const { locale, incidentId } = await params
-  const ctx = await requirePermission("controls.audit.read", {
-    resource: "WorkflowAssuranceIncident",
-    auditAllowed: true,
-  })
-  const data = await getAssuranceIncidentDetailData({
-    organizationId: ctx.orgId,
-    actorPermissions: ctx.permissions,
-    incidentId,
-  })
+    const { incidentId } = await params
+  const surface = routeByKey("assurance-control-tower-incident")
 
-  if (!data) notFound()
+  if (!surface) {
+    throw new Error("Missing assurance route surface definition: assurance-control-tower-incident")
+  }
 
-  return <AssuranceIncidentDetailView data={data} locale={pickLocale(locale)} />
+  return withAssuranceSurfaceAccess({
+    params,
+    surface,
+    onAllowed: async (ctx, locale) => {
+      const data = await getAssuranceIncidentDetailData({
+        organizationId: ctx.orgId,
+        actorPermissions: ctx.permissions,
+        incidentId,
+      })
+
+      if (!data) notFound()
+
+      return <AssuranceIncidentDetailView data={data} locale={locale} />
+    },
+  })
 }
+

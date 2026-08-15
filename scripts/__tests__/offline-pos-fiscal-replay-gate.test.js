@@ -17,6 +17,7 @@ function write(root, relativePath, source) {
 function writeReadyFixture(root) {
   write(root, "lib/pos/offline-local-queue.ts", [
     "FINAL_FISCAL_KEYS finalFiscalNumber", "assertProvisionalOnly(input)", "PROVISIONAL_ONLY",
+    "finalFiscalNumberingPermitted: false",
     "buildOfflineLocalEventEntryHash payloadHash", "prevHash: state.highWaterHash", "highWaterHash: entryHash",
   ].join("\n"))
   write(root, "services/pos/offline-sync.service.ts", [
@@ -34,6 +35,7 @@ function writeReadyFixture(root) {
     'status: conflictType ? "QUARANTINED" : "PENDING_REPLAY"', "stalePolicyDeviceCount", 'code: "OFFLINE_POLICY_EXPIRED"', "async function refreshCertificate",
   ].join("\n"))
   write(root, "services/pos/receipt.service.ts", "BLOCKED_UNTIL_CERTIFIED")
+  write(root, "services/pos/offline-sync.schemas.ts", '"OFFLINE_POLICY_EXPIRED"')
   write(root, "services/assurance/assurance-registry.service.ts", [
     '"offline_pos.replay_sla.visible"', '"offline_pos.accepted_event_business_event.required"',
     '"offline_pos.sequence_hash_conflict.visible"', '"offline_pos.quarantined_event_conflict.required"',
@@ -72,5 +74,29 @@ describe("offline POS fiscal replay gate", () => {
     write(root, "lib/pos/offline-local-queue.ts", "buildOfflineLocalEventEntryHash payloadHash prevHash: state.highWaterHash highWaterHash: entryHash")
     const report = buildOfflinePOSReplayReadiness(root, { mode: "fail" })
     expect(report.blockers).toContain("provisional_receipt_only_client_policy")
+  })
+
+  it("blocks caller-controlled final fiscal numbering", () => {
+    const root = makeTempRepo()
+    writeReadyFixture(root)
+    const target = path.join(root, "lib/pos/offline-local-queue.ts")
+    const source = fs.readFileSync(target, "utf8")
+    fs.writeFileSync(target, source + "\nallowFinalFiscalNumbering", "utf8")
+
+    const report = buildOfflinePOSReplayReadiness(root, { mode: "fail" })
+
+    expect(report.blockers).toContain("provisional_receipt_only_client_policy")
+    expect(gateResultForReport(report, "fail").exitCode).toBe(1)
+  })
+
+  it("blocks when the policy-expiry conflict schema is incomplete", () => {
+    const root = makeTempRepo()
+    writeReadyFixture(root)
+    write(root, "services/pos/offline-sync.schemas.ts", '"STALE_REFERENCE_SNAPSHOT"')
+
+    const report = buildOfflinePOSReplayReadiness(root, { mode: "fail" })
+
+    expect(report.blockers).toContain("policy_expiry_and_reference_snapshot_quarantine")
+    expect(gateResultForReport(report, "fail").exitCode).toBe(1)
   })
 })

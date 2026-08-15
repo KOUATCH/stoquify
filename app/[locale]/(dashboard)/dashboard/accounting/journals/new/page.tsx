@@ -10,6 +10,7 @@ import {
   AccountingPageShell,
   AccountingPanel,
 } from "../../_components/accounting-ui"
+import { routeByKey, withAccountingSurfaceAccess } from "../../accounting-route-access"
 
 type AccountRow = {
   id: string
@@ -39,7 +40,7 @@ function resultPath(locale: string, ok: boolean, text: string) {
   return `/${locale}/dashboard/accounting/journals${ok ? "" : "/new"}?${key}=${encodeURIComponent(text)}`
 }
 
-export default async function NewJournalEntryPage({ params, searchParams }: PageProps) {
+async function NewJournalEntryPageImpl({ params, searchParams }: PageProps) {
   await checkPermission("accounting.journal.create")
   await checkPermission("accounting.journal.read")
 
@@ -176,3 +177,19 @@ export default async function NewJournalEntryPage({ params, searchParams }: Page
   )
 }
 
+
+
+
+export default async function AccountingRoutePage(props: any = {}) {
+  const surface = routeByKey("accounting-journals-new")
+
+  if (!surface) {
+    throw new Error("Missing accounting route surface definition: accounting-journals-new")
+  }
+
+  return withAccountingSurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => NewJournalEntryPageImpl(props),
+  })
+}

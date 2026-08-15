@@ -1,5 +1,6 @@
 "use server"
 
+import { routeByKey, withInventorySurfaceAccess } from "../inventory-route-access"
 import getOrgBrands from "@/actions/brands/getOrgBrands"
 import getOrgCategories from "@/actions/categories/getOrgCategories"
 import { getOrgItemsWithInventoryLevels } from "@/actions/itemsShow/getOrgItemsWithInventoryLevels"
@@ -112,7 +113,7 @@ function matchesStockFilter(item: ItemWithInventoryLevelsPayload, filter: StockS
   return true
 }
 
-export default async function ItemsPage(props: {
+async function ItemsPageImpl(props: {
   searchParams?: Promise<SearchParams>
 }) {
   await checkPermission("inventory.items.read")
@@ -357,4 +358,20 @@ export default async function ItemsPage(props: {
       </div>
     </div>
   )
+}
+
+
+
+export default async function InventoryRoutePage(props: any = {}) {
+  const surface = routeByKey("inventory-items")
+
+  if (!surface) {
+    throw new Error("Missing inventory route surface definition: inventory-items")
+  }
+
+  return withInventorySurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => ItemsPageImpl(props),
+  })
 }

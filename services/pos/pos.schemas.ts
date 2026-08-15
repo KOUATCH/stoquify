@@ -17,7 +17,7 @@ export const posTerminalListSchema = z.object({
 })
 
 export const activePOSSessionSchema = z.object({
-  terminalId: z.string().min(1, "Terminal is required"),
+  terminalId: z.string().min(1, "Terminal is required").optional(),
 })
 
 export const openShiftSchema = z.object({
@@ -51,6 +51,12 @@ export const posCatalogSchema = z.object({
   search: z.string().trim().max(120).optional(),
   categoryId: z.string().min(1).optional(),
   take: z.coerce.number().int().min(1).max(120).default(48),
+})
+
+export const posCustomerListSchema = z.object({
+  locationId: z.string().min(1, "Location is required"),
+  search: z.string().trim().max(120).optional(),
+  take: z.coerce.number().int().min(1).max(50).default(24),
 })
 
 export const activeCartSchema = z.object({
@@ -230,6 +236,7 @@ export type ActivePOSSessionInput = z.infer<typeof activePOSSessionSchema>
 export type OpenShiftInput = z.infer<typeof openShiftSchema>
 export type CloseShiftInput = z.infer<typeof closeShiftSchema>
 export type POSCatalogInput = z.infer<typeof posCatalogSchema>
+export type POSCustomerListInput = z.infer<typeof posCustomerListSchema>
 export type ActiveCartInput = z.infer<typeof activeCartSchema>
 export type AddCartLineInput = z.infer<typeof addCartLineSchema>
 export type UpdateCartLineInput = z.infer<typeof updateCartLineSchema>

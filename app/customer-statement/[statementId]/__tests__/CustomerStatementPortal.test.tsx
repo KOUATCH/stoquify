@@ -19,7 +19,7 @@ const statement = {
   periodStart: "2026-07-01T00:00:00.000Z",
   periodEnd: "2026-07-31T23:59:59.999Z",
   expiresAt: "2026-12-31T23:59:59.000Z",
-  permissions: ["VIEW", "DISPUTE", "PROMISE_TO_PAY"],
+  permissions: ["view", "dispute", "promise_to_pay"],
   responseHash: "b".repeat(64),
   payload: {
     organization: {
@@ -88,6 +88,37 @@ describe("CustomerStatementPortal", () => {
         referrerPolicy: "no-referrer",
       }),
     )
+  })
+
+  it("announces signed-link verification while the statement is loading", () => {
+    global.fetch = jest.fn(() => new Promise(() => undefined)) as jest.Mock
+
+    render(<CustomerStatementPortal statementId="statement-1" />)
+
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Verifying your secure statement…",
+    )
+  })
+
+  it("renders a generic unavailable-link error without statement data", async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      status: 404,
+      json: async () => ({
+        success: false,
+        error: "Customer statement not found",
+      }),
+    }) as jest.Mock
+
+    render(<CustomerStatementPortal statementId="statement-1" />)
+
+    expect(
+      await screen.findByRole("heading", { name: "Link unavailable" }),
+    ).toBeInTheDocument()
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "Customer statement not found",
+    )
+    expect(screen.queryByText("INV-001")).not.toBeInTheDocument()
   })
 
   it("submits an idempotent promise to pay against the signed endpoint", async () => {

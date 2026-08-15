@@ -3,7 +3,7 @@
 import type { ReactNode } from "react"
 import { AlertTriangle, CalendarClock, ChevronRight, Download, Eye, RefreshCcw, RotateCcw } from "lucide-react"
 
-import { ActionQueue, CommandBriefHeader, DetailDrawer, FilterBar, KpiTile, RouteStatePanel, dashboardPanelClass, dashboardRowClass, type ActionQueueItemData, type CommandMetadataItem, type DashboardTone } from "@/components/dashboard/primitives/command-center-primitives"
+import { ActionQueue, CommandBriefHeader, DetailDrawer, FilterBar, KpiTile, RouteStatePanel, dashboardPanelClass, dashboardRowClass, type ActionQueueItemData, type CommandCenterAction, type CommandMetadataItem, type DashboardTone } from "@/components/dashboard/primitives/command-center-primitives"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -30,11 +30,11 @@ export type TransactionHistoryWorkbenchShellProps<Row> = {
   columns: TransactionHistoryColumn<Row>[]; rows: Row[]; rowIdentity: TransactionHistoryRowIdentity<Row>; selectedRow: Row | null; selectedRowId: string | null
   drawerTitle: (row: Row) => string; drawerDescription?: (row: Row) => string; drawerMetadata: (row: Row) => CommandMetadataItem[]; renderDrawer: (row: Row) => ReactNode
   onFilterChange: (patch: Partial<TransactionHistoryFilters>) => void; onResetFilters: () => void; onSelectRow: (id: string | null) => void; onNextPage: () => void; onRetry: () => void; onExport: () => void
-  isLoading?: boolean; isError?: boolean; errorMessage?: string; hasMore?: boolean; isPartial?: boolean; partialSources?: string[]; noOrganization?: boolean; permissionDenied?: boolean; isExporting?: boolean; exportStatus?: string | null; snapshotMetadata: CommandMetadataItem[]
+  isLoading?: boolean; isError?: boolean; errorMessage?: string; hasMore?: boolean; isPartial?: boolean; partialSources?: string[]; noOrganization?: boolean; permissionDenied?: boolean; isExporting?: boolean; exportStatus?: string | null; snapshotMetadata: CommandMetadataItem[]; headerActions?: CommandCenterAction[]; hideEmptyActionQueue?: boolean
 }
 
 export function TransactionHistoryWorkbenchShell<Row>(props: TransactionHistoryWorkbenchShellProps<Row>) {
-  const { labels, filters, typeOptions, kpis, actionItems, columns, rows, rowIdentity, selectedRow, selectedRowId, drawerTitle, drawerDescription, drawerMetadata, renderDrawer, onFilterChange, onResetFilters, onSelectRow, onNextPage, onRetry, onExport, isLoading = false, isError = false, errorMessage, hasMore = false, isPartial = false, partialSources = [], noOrganization = false, permissionDenied = false, isExporting = false, exportStatus, snapshotMetadata } = props
+  const { labels, filters, typeOptions, kpis, actionItems, columns, rows, rowIdentity, selectedRow, selectedRowId, drawerTitle, drawerDescription, drawerMetadata, renderDrawer, onFilterChange, onResetFilters, onSelectRow, onNextPage, onRetry, onExport, isLoading = false, isError = false, errorMessage, hasMore = false, isPartial = false, partialSources = [], noOrganization = false, permissionDenied = false, isExporting = false, exportStatus, snapshotMetadata, headerActions = [], hideEmptyActionQueue = false } = props
   const hasActiveFilters = Boolean(filters.search || filters.type || filters.dateFrom || filters.dateTo)
   const emptyFiltered = !isLoading && rows.length === 0 && hasActiveFilters
 
@@ -46,7 +46,7 @@ export function TransactionHistoryWorkbenchShell<Row>(props: TransactionHistoryW
         summary={labels.summary}
         state={{ label: isPartial ? labels.partialTitle : labels.scopeLabel, tone: isPartial ? "gold" : "success", icon: isPartial ? AlertTriangle : CalendarClock }}
         metadata={snapshotMetadata}
-        actions={[{ label: isExporting ? labels.exporting : labels.export, icon: Download, onClick: onExport, disabled: isExporting || isLoading || isError || noOrganization || permissionDenied, variant: "primary" }]}
+        actions={[...headerActions, { label: isExporting ? labels.exporting : labels.export, icon: Download, onClick: onExport, disabled: isExporting || isLoading || isError || noOrganization || permissionDenied, variant: "primary" }]}
         proof={{ state: "unavailable", label: labels.proofUnavailableTitle, source: labels.proofUnavailableMessage, ariaLabel: labels.proofUnavailableMessage }}
       />
 
@@ -54,7 +54,7 @@ export function TransactionHistoryWorkbenchShell<Row>(props: TransactionHistoryW
 
       {noOrganization ? <RouteStatePanel kind="no_active_org" title={labels.noOrgTitle} message={labels.noOrgMessage} /> : permissionDenied ? <RouteStatePanel kind="permission_denied" title={labels.permissionTitle} message={labels.permissionMessage} /> : isError ? <RouteStatePanel kind="error" title={labels.errorTitle} message={errorMessage} action={{ label: labels.retry, icon: RefreshCcw, onClick: onRetry }} /> : <>
         <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4" aria-label={labels.resultCount(rows.length)}>{kpis.map((kpi) => <KpiTile key={kpi.id} label={kpi.label} value={kpi.value} detail={kpi.detail} tone={kpi.tone ?? "brand"} />)}</section>
-        <ActionQueue items={actionItems} title={labels.partialTitle} detail={isPartial ? labels.partialMessage : labels.scopeLabel} emptyTitle={labels.scopeLabel} emptyMessage={labels.proofUnavailableMessage} />
+        {actionItems.length || !hideEmptyActionQueue ? <ActionQueue items={actionItems} title={labels.partialTitle} detail={isPartial ? labels.partialMessage : labels.scopeLabel} emptyTitle={labels.scopeLabel} emptyMessage={labels.proofUnavailableMessage} /> : null}
         <FilterBar title={labels.filtersTitle} detail={labels.filtersDetail} search={{ value: filters.search ?? "", label: labels.searchLabel, placeholder: labels.searchPlaceholder, onChange: (search) => onFilterChange({ search }) }} actions={[{ label: labels.resetFilters, icon: RotateCcw, onClick: onResetFilters, disabled: !hasActiveFilters }]}>
           <label className="flex min-w-[min(100%,10rem)] flex-col gap-1 text-xs font-medium text-[var(--dash-text-soft)]">{labels.typeLabel}<Select value={filters.type ?? "all"} onValueChange={(value) => onFilterChange({ type: value === "all" ? undefined : value })}><SelectTrigger className="dashboard-control h-10 rounded-lg"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">{labels.allTypesLabel}</SelectItem>{typeOptions.map((option) => <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>)}</SelectContent></Select></label>
           <LabeledInput label={labels.dateFromLabel} value={filters.dateFrom ?? ""} onChange={(dateFrom) => onFilterChange({ dateFrom })} />

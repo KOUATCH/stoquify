@@ -1,12 +1,12 @@
 # Country Adapter Pilot Readiness Gate
 
-Generated: 2026-08-01T17:39:03.859Z
+Generated: 2026-08-12T19:18:26.128Z
 Mode: fail
 Status: ready
 
 ## Summary
 
-- Checks ready: 14/14
+- Checks ready: 16/16
 - Development blockers: 0
 - Production authority certified: no
 
@@ -21,11 +21,13 @@ Status: ready
 - ready: tenant_disable_control_preserves_pos_posting
 - ready: accept_reject_outage_and_rate_limit_fixtures
 - ready: idempotent_submission_and_hashed_evidence
+- ready: authority_submission_lifecycle_business_events
 - ready: operator_health_queue_age_and_credential_expiry
 - ready: fresh_auth_rbac_and_stable_action_contract
 - ready: durable_compliance_and_adapter_schema_migration
 - ready: country_pack_blocks_unverified_production_automation
 - ready: pilot_runbook_declares_disable_and_production_boundaries
+- ready: country_adapter_gate_is_release_wired
 
 ## Development Blockers
 

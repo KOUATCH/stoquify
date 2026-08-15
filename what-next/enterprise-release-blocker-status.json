@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "generatedAt": "2026-07-27T16:49:27.771Z",
+  "generatedAt": "2026-08-11T13:31:31.345Z",
   "status": "BLOCKED",
   "releasePosture": "DEVELOPMENT_CONTINUES_PILOT_AND_PRODUCTION_FAIL_CLOSED",
   "summary": {
@@ -37,14 +37,16 @@
     {
       "id": "B02",
       "title": "Payroll immutability runtime proof",
-      "ready": true,
-      "status": "READY",
+      "ready": false,
+      "status": "ENGINEERING_BLOCKED",
       "facts": [
-        "triggers=9/9",
-        "blockedMutations=14/14"
+        "triggers=0/9",
+        "blockedMutations=0/14"
       ],
-      "blockers": [],
-      "nextAction": "Preserve and bind this evidence to the final candidate."
+      "blockers": [
+        "payroll_immutability_not_verified"
+      ],
+      "nextAction": "Restore the dedicated database proof and rerun payroll immutability."
     },
     {
       "id": "B03",
@@ -53,7 +55,7 @@
       "status": "BLOCKED_EXTERNAL_CONFIG",
       "facts": [
         "preflight=8/9",
-        "history=5/8",
+        "history=7/8",
         "historyTarget=local"
       ],
       "blockers": [
@@ -69,7 +71,7 @@
       "ready": false,
       "status": "BLOCKED_EXTERNAL_CONFIG",
       "facts": [
-        "secretChecks=2/8"
+        "secretChecks=5/21"
       ],
       "blockers": [
         "public_identity_secret_present",
@@ -77,22 +79,30 @@
         "public_receipt_secret_present",
         "public_receipt_secret_strong",
         "history_cursor_secret_present",
-        "history_cursor_secret_strong"
+        "history_cursor_secret_strong",
+        "statement_token_secret_present",
+        "statement_token_secret_strong",
+        "statement_delivery_encryption_key_present",
+        "statement_delivery_encryption_key_valid",
+        "accountant_invite_encryption_key_present",
+        "accountant_invite_encryption_key_valid",
+        "public_app_url_present",
+        "public_app_url_https",
+        "statement_live_delivery_channel_enabled",
+        "accountant_invite_live_delivery_enabled"
       ],
       "nextAction": "Provision the three independent managed release secrets and rerun release preflight."
     },
     {
       "id": "B05",
       "title": "Cameroon source-artifact hash binding",
-      "ready": false,
-      "status": "REQUIRES_EXPERT_REVIEW",
+      "ready": true,
+      "status": "READY",
       "facts": [
-        "sourceHashes=0/7"
+        "sourceHashes=7/7"
       ],
-      "blockers": [
-        "source_artifact_hash_verification"
-      ],
-      "nextAction": "Return independently recomputed and checker-verified source hashes."
+      "blockers": [],
+      "nextAction": "Preserve and bind this evidence to the final candidate."
     },
     {
       "id": "B06",
@@ -497,16 +507,16 @@
   "evidenceErrors": [],
   "nextActions": [
     {
+      "id": "B02",
+      "action": "Restore the dedicated database proof and rerun payroll immutability."
+    },
+    {
       "id": "B03",
       "action": "Provision the approved production target, deploy, and pass direct history health."
     },
     {
       "id": "B04",
       "action": "Provision the three independent managed release secrets and rerun release preflight."
-    },
-    {
-      "id": "B05",
-      "action": "Return independently recomputed and checker-verified source hashes."
     },
     {
       "id": "B06",

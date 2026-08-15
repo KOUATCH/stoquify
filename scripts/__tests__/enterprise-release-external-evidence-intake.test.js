@@ -204,5 +204,6 @@ describe("enterprise release external evidence intake", () => {
     expect(markdown).toContain("Authoritative B03-B08 snapshot");
     expect(markdown).toContain("Activation authorized by this validator:** No");
     expect(markdown).toContain("authoritative release-gate reruns");
+    expect(markdown).not.toMatch(/[ \t]+$/m);
   });
 });

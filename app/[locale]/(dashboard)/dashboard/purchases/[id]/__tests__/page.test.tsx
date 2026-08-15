@@ -172,9 +172,9 @@ describe("Purchases detail route", () => {
       permissions: ["purchases.orders.read"],
     })
     mockObserveModuleAccess.mockResolvedValue({
-      allowed: false,
-      wouldBlock: true,
-      result: "would_block",
+      allowed: true,
+      wouldBlock: false,
+      result: "allowed",
       mode: "observe",
       moduleSlug: "purchasing",
     })
@@ -203,15 +203,26 @@ describe("Purchases detail route", () => {
     expect(screen.getByRole("heading", { name: "Purchase Order PO-1" })).toBeInTheDocument()
   })
 
+  it("falls back to the uppercase order id suffix when the order number is missing", async () => {
+    mockGetPurchaseOrder.mockResolvedValue({
+      ...purchaseOrder(),
+      orderNumber: "",
+    })
+
+    render(await PurchaseOrderPage({ params: params("en", "po-1") }))
+
+    expect(screen.getByRole("heading", { name: "Purchase Order 12345678" })).toBeInTheDocument()
+  })
+
   it("fails closed before purchase-order access when RBAC denies the detail route", async () => {
     getLocale.mockResolvedValue("fr")
     mockRequirePermission.mockRejectedValue(new RbacError("Forbidden", "FORBIDDEN", 403))
 
     render(await PurchaseOrderPage({ params: params("fr", "po-1") }))
 
-    expect(screen.getByRole("heading", { name: "Purchase details are not available for this role" })).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "Purchase order detail is not available for this role" })).toBeInTheDocument()
     expect(screen.getByRole("main")).toHaveAttribute("data-kind", "permission_denied")
-    expect(screen.getByRole("link", { name: "Back to purchase orders" })).toHaveAttribute("href", "/fr/dashboard/purchase-orders")
+    expect(screen.getByRole("link", { name: "Back to purchase orders" })).toHaveAttribute("href", "/fr/dashboard")
     expect(mockObserveModuleAccess).not.toHaveBeenCalled()
     expect(mockGetPurchaseOrder).not.toHaveBeenCalled()
   })
@@ -221,7 +232,7 @@ describe("Purchases detail route", () => {
 
     render(await PurchaseOrderPage({ params: params("en", "po-1") }))
 
-    expect(screen.getByRole("heading", { name: "Purchase details need an active organization" })).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "Purchase order detail needs an active organization" })).toBeInTheDocument()
     expect(screen.getByRole("main")).toHaveAttribute("data-kind", "no_active_org")
     expect(mockObserveModuleAccess).not.toHaveBeenCalled()
     expect(mockGetPurchaseOrder).not.toHaveBeenCalled()

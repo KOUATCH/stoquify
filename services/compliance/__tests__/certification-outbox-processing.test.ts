@@ -11,7 +11,12 @@ import {
 } from "@prisma/client"
 
 import { resolveEInvoicingMetadata } from "../country-pack-hooks"
-import { processComplianceSubmission } from "../certification-outbox.service"
+import { BusinessRuleError } from "@/services/_shared/action-errors"
+import {
+  leaseComplianceSubmissions,
+  processComplianceSubmission,
+} from "../certification-outbox.service"
+import { cameroonDgiSandboxComplianceAdapter } from "../adapters/cameroon-dgi-sandbox"
 
 function decimal(value: string | number) {
   return new Prisma.Decimal(value)
@@ -21,7 +26,9 @@ function createTx() {
   return {
     complianceSubmission: {
       findFirst: jest.fn(),
+      findMany: jest.fn(),
       update: jest.fn(),
+      updateMany: jest.fn(),
     },
     complianceAdapterConfig: {
       findFirst: jest.fn(),
@@ -180,6 +187,7 @@ function createSubmissionFixture(overrides: Record<string, unknown> = {}) {
 
 function wireTx(tx: ReturnType<typeof createTx>, submission: ReturnType<typeof createSubmissionFixture>) {
   tx.complianceSubmission.findFirst.mockResolvedValue(submission)
+  tx.complianceSubmission.updateMany.mockResolvedValue({ count: 1 })
   tx.complianceSubmission.update.mockImplementation(async (args) => ({
     ...submission,
     ...args.data,
@@ -198,13 +206,67 @@ function wireTx(tx: ReturnType<typeof createTx>, submission: ReturnType<typeof c
 }
 
 describe("compliance submission processing", () => {
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
+
+  it("requires an explicit worker identity before claiming a submission", async () => {
+    const dbLike = { $transaction: jest.fn() }
+
+    await expect(
+      processComplianceSubmission(
+        {
+          organizationId: "org-1",
+          submissionId: "submission-1",
+        },
+        dbLike as never,
+      ),
+    ).rejects.toBeInstanceOf(BusinessRuleError)
+
+    expect(dbLike.$transaction).not.toHaveBeenCalled()
+  })
+
+  it("refuses to run through a caller-owned database transaction", async () => {
+    const tx = createTx()
+
+    await expect(
+      processComplianceSubmission(
+        {
+          organizationId: "org-1",
+          submissionId: "submission-1",
+          processedBy: "worker-1",
+        },
+        tx as never,
+      ),
+    ).rejects.toThrow(
+      "Compliance submissions must be processed outside an existing database transaction.",
+    )
+
+    expect(tx.complianceSubmission.findFirst).not.toHaveBeenCalled()
+  })
+
   it("submits Cameroon sandbox payloads and persists request, response, and artifact evidence", async () => {
     const tx = createTx()
     const submission = createSubmissionFixture()
+    let transactionDepth = 0
     const dbLike = {
-      $transaction: jest.fn(async (callback) => callback(tx)),
+      $transaction: jest.fn(async (callback) => {
+        transactionDepth += 1
+        try {
+          return await callback(tx)
+        } finally {
+          transactionDepth -= 1
+        }
+      }),
     }
     wireTx(tx, submission)
+    const originalSubmit = cameroonDgiSandboxComplianceAdapter.submit
+    jest
+      .spyOn(cameroonDgiSandboxComplianceAdapter, "submit")
+      .mockImplementation(async (payload, context) => {
+        expect(transactionDepth).toBe(0)
+        return originalSubmit(payload, context)
+      })
 
     await processComplianceSubmission(
       {
@@ -253,10 +315,18 @@ describe("compliance submission processing", () => {
         }),
       }),
     )
+    expect(
+      tx.businessEvent.create.mock.calls.map((call) => call[0].data.eventType),
+    ).toEqual(
+      expect.arrayContaining([
+        "AUTHORITY_SUBMISSION_SENT",
+        "AUTHORITY_SUBMISSION_ACCEPTED",
+      ]),
+    )
     expect(tx.businessEvent.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
-          eventType: "compliance.submission.accepted",
+          eventType: "AUTHORITY_SUBMISSION_ACCEPTED",
           payload: expect.objectContaining({
             adapterKey: "CM_DGI_SANDBOX",
             productionCertification: false,
@@ -281,6 +351,7 @@ describe("compliance submission processing", () => {
       {
         organizationId: "org-1",
         submissionId: "submission-1",
+        processedBy: "worker-1",
         now: new Date("2026-06-14T09:35:00.000Z"),
       },
       dbLike as never,
@@ -295,6 +366,9 @@ describe("compliance submission processing", () => {
     expect(tx.complianceEvidence.create.mock.calls.map((call) => call[0].data.evidenceType)).toEqual([
       ComplianceEvidenceType.ERROR_REPORT,
     ])
+    expect(
+      tx.businessEvent.create.mock.calls.map((call) => call[0].data.eventType),
+    ).not.toContain("AUTHORITY_SUBMISSION_SENT")
   })
 
   it("schedules retryable Cameroon sandbox outages without rejecting the fiscal document", async () => {
@@ -313,6 +387,7 @@ describe("compliance submission processing", () => {
       {
         organizationId: "org-1",
         submissionId: "submission-1",
+        processedBy: "worker-1",
         now: new Date("2026-06-14T09:35:00.000Z"),
       },
       dbLike as never,
@@ -329,6 +404,9 @@ describe("compliance submission processing", () => {
       new Date("2026-06-14T09:40:00.000Z"),
     )
     expect(tx.fiscalDocument.update).not.toHaveBeenCalled()
+    expect(
+      tx.businessEvent.create.mock.calls.map((call) => call[0].data.eventType),
+    ).toContain("AUTHORITY_SUBMISSION_SENT")
   })
 
   it("records terminal sandbox rejections as rejected submissions and fiscal documents", async () => {
@@ -347,6 +425,7 @@ describe("compliance submission processing", () => {
       {
         organizationId: "org-1",
         submissionId: "submission-1",
+        processedBy: "worker-1",
         now: new Date("2026-06-14T09:35:00.000Z"),
       },
       dbLike as never,
@@ -365,6 +444,64 @@ describe("compliance submission processing", () => {
         data: expect.objectContaining({
           status: FiscalDocumentStatus.REJECTED,
           rejectionReason: "SANDBOX_FIXTURE_REJECTION",
+        }),
+      }),
+    )
+    expect(
+      tx.businessEvent.create.mock.calls.map((call) => call[0].data.eventType),
+    ).toEqual(
+      expect.arrayContaining([
+        "AUTHORITY_SUBMISSION_SENT",
+        "AUTHORITY_SUBMISSION_REJECTED",
+      ]),
+    )
+  })
+})
+
+describe("compliance submission leasing", () => {
+  it("uses a tenant-scoped compare-and-set claim and reclaims expired leases", async () => {
+    const tx = createTx()
+    const now = new Date("2026-06-14T09:35:00.000Z")
+    const submission = createSubmissionFixture({
+      status: ComplianceSubmissionStatus.LEASED,
+      leasedBy: "stopped-worker",
+      leasedUntil: new Date("2026-06-14T09:34:00.000Z"),
+    })
+
+    tx.complianceSubmission.findMany.mockResolvedValue([submission])
+    tx.complianceSubmission.updateMany.mockResolvedValue({ count: 1 })
+    tx.complianceSubmission.findFirst.mockResolvedValue({
+      ...submission,
+      leasedBy: "worker-2",
+      leasedUntil: new Date("2026-06-14T09:36:00.000Z"),
+    })
+
+    const result = await leaseComplianceSubmissions(
+      {
+        organizationId: "org-1",
+        leasedBy: "worker-2",
+        now,
+      },
+      tx as never,
+    )
+
+    expect(result).toHaveLength(1)
+    expect(tx.complianceSubmission.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          id: "submission-1",
+          organizationId: "org-1",
+          OR: expect.arrayContaining([
+            expect.objectContaining({
+              status: ComplianceSubmissionStatus.LEASED,
+              leasedUntil: { lte: now },
+            }),
+          ]),
+        }),
+        data: expect.objectContaining({
+          status: ComplianceSubmissionStatus.LEASED,
+          leasedBy: "worker-2",
+          attempts: { increment: 1 },
         }),
       }),
     )

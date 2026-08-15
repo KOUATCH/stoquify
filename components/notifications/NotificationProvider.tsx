@@ -1,7 +1,7 @@
 "use client"
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react"
-import { usePathname } from "next/navigation"
+
 import { NotificationData, NotificationSystem } from "./NotificationSystem"
 import { setupErrorNotificationIntegration } from "@/lib/error-handling/notification-integration"
 import {
@@ -113,7 +113,7 @@ export function NotificationProvider({
   maxNotifications = 5,
   defaultSoundEnabled = true
 }: NotificationProviderProps) {
-  const pathname = usePathname()
+
   const [notifications, setNotifications] = useState<NotificationData[]>([])
   const [soundEnabled, setSoundEnabled] = useState(defaultSoundEnabled)
   const notificationCounter = useRef(0)
@@ -916,7 +916,7 @@ export function NotificationProvider({
         soundEnabled={soundEnabled}
         onToggleSound={toggleSound}
         unreadCount={unreadCount}
-        showSoundControl={pathname.split("/").filter(Boolean).includes("dashboard")}
+        showSoundControl={false}
       />
     </NotificationContext.Provider>
   )

@@ -1,8 +1,8 @@
 # Role-Based Operating Cockpit Readiness Gate
 
-Generated: 2026-08-01T14:34:21.870Z
+Generated: 2026-08-12T19:19:06.345Z
 Mode: fail
-Status: ready
+Status: blocked
 
 ## Scope
 
@@ -12,24 +12,25 @@ Status: ready
 
 ## Summary
 
-- Checks ready: 9/9
-- Blockers: 0
+- Checks ready: 7/9
+- Blockers: 2
 
 ## Checks
 
 - ready: tenant_metadata_is_service_owned
-- ready: route_propagates_roles_without_currency_override
+- blocked: route_propagates_roles_without_currency_override
 - ready: digest_configs_are_permission_filtered
 - ready: owner_and_manager_dashboard_roles_are_separated
 - ready: hidden_workspace_evidence_is_explicit
-- ready: no_workspace_permission_and_session_states
+- blocked: no_workspace_permission_and_session_states
 - ready: command_center_anatomy_is_present
 - ready: canonical_dashboard_tokens_and_accessibility
 - ready: cockpit_gate_is_in_policy_chain
 
 ## Blockers
 
-- None
+- route_propagates_roles_without_currency_override
+- no_workspace_permission_and_session_states
 
 ## Boundary
 

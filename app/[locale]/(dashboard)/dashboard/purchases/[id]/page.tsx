@@ -1,8 +1,8 @@
 import { getOrgPurchaseOrderById as getPurchaseOrder } from "@/actions/purchaseOrderWorkflow/newPOActions"
+import { routeByKey, withPurchasesSurfaceAccess } from "../purchases-route-access"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,15 +11,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Separator } from "@/components/ui/separator"
-import { localizePath, pickLocale } from "@/i18n/routing"
 import { formatCurrency } from "@/lib/i18n/formatters"
-import { RbacError, requirePermission } from "@/lib/security/rbac"
-import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import type { PurchaseOrderStatus } from "@/services/purchase-order/purchase-order.schemas"
-import type { Locale } from "@/types/bilingual"
 import { format } from "date-fns"
 import { ArrowLeft, AtSign, Building2, Calendar, CreditCard, DollarSign, Edit, FileText, Hash, Mail, MapPin, MoreHorizontal, Package, Phone, User } from 'lucide-react'
-import { getLocale } from "next-intl/server"
 import { Link } from "@/i18n/navigation"
 import { notFound } from "next/navigation"
 import React from "react"
@@ -192,374 +187,348 @@ interface PurchaseOrderDetailsPageProps {
   params: Promise<{ locale: string; id: string }>
 }
 
-const PurchaseOrderPage = async ({ params }: PurchaseOrderDetailsPageProps) => {
-  const { id: orderId } = await params
-  const locale: Locale = pickLocale(await getLocale())
+export default async function PurchaseOrderPage({ params }: PurchaseOrderDetailsPageProps) {
+  const { id: orderId, locale: rawLocale } = await params
+  const surface = routeByKey("purchases-detail")
+
+  if (!surface) {
+    throw new Error("Missing purchases route surface definition: purchases-detail")
+  }
 
   if (!orderId) {
     notFound()
   }
 
-  let ctx: Awaited<ReturnType<typeof requirePermission>>
-
-  try {
-    ctx = await requirePermission("purchases.orders.read", {
-      resource: "PurchaseOrder",
+  return withPurchasesSurfaceAccess({
+    params: Promise.resolve({ locale: rawLocale }),
+    surface,
+    permissionOptions: {
       resourceId: orderId,
-      auditAllowed: true,
-    })
-    await observeModuleAccess({
-      organizationId: ctx.orgId,
-      userId: ctx.userId,
-      actorPermissions: ctx.permissions,
-      moduleSlug: "purchasing",
-      surfaceType: "page",
-      surface: "/dashboard/purchases/[id]",
-      accessIntent: "read",
-      mode: "observe",
-    })
-  } catch (error) {
-    if (error instanceof RbacError) {
-      const noActiveOrg = error.code === "NO_ACTIVE_ORG"
+    },
+    onAllowed: async (ctx, locale) => {
+      let po: PurchaseOrderDetails | null = null
+
+      try {
+        const response = await getPurchaseOrder(orderId!, ctx.orgId)
+        po = (response ?? null) as PurchaseOrderDetails | null
+      } catch (e) {
+        // handled below
+      }
+
+      if (!po) {
+        notFound()
+      }
+
+      const {
+        supplier,
+        lines,
+        id,
+        createdAt,
+        status,
+        orderNumber,
+        location,
+        createdBy,
+        approvedBy,
+        subtotal,
+        taxAmount,
+        shippingCost,
+        discount,
+        total,
+      } = po!
+
+      // Fallback totals if needed
+      const computedTotalAmount =
+        Array.isArray(lines) && lines.length > 0
+          ? lines.reduce((acc, line) => acc + (Number(line.lineTotal) || 0), 0)
+          : 0
+
+      const displaySubtotal = Number.isFinite(subtotal) ? subtotal : computedTotalAmount
+      const displayTax = Number.isFinite(taxAmount) ? taxAmount : 0
+      const displayShipping = Number.isFinite(shippingCost) ? shippingCost : 0
+      const displayDiscount = Number.isFinite(discount) ? discount : 0
+      const displayGrandTotal =
+        Number.isFinite(total) && total > 0
+          ? total
+          : displaySubtotal + displayTax + displayShipping - displayDiscount
+      const displayOrderNumber = orderNumber || id.slice(-8).toUpperCase()
 
       return (
-        <DashboardRouteState
-          kind={noActiveOrg ? "no_active_org" : "permission_denied"}
-          title={noActiveOrg ? "Purchase details need an active organization" : "Purchase details are not available for this role"}
-          message={
-            noActiveOrg
-              ? "Refresh your session from the dashboard so purchasing can load tenant-scoped purchase order details."
-              : "Viewing purchase details requires purchasing read access. The denial was recorded by the RBAC guard."
-          }
-          primaryHref={localizePath("/dashboard/purchase-orders", locale)}
-        />
-      )
-    }
+        <div className="min-h-screen bg-gray-50/30">
+          <div className="container mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            {/* Header */}
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-4">
+                <Button variant="ghost" size="sm" asChild>
+                  <Link href="/dashboard/purchase-orders" className="text-muted-foreground hover:text-foreground">
+                    <ArrowLeft className="me-2 h-4 w-4" />
+                    Back to Purchase Orders
+                  </Link>
+                </Button>
+              </div>
 
-    throw error
-  }
-
-  let purchaseOrderDetailsData: PurchaseOrderDetails | null = null
-  try {
-    const response = await getPurchaseOrder(orderId, ctx.orgId)
-    purchaseOrderDetailsData = (response ?? null) as PurchaseOrderDetails | null
-  } catch (e) {
-    // handled below
-  }
-
-  if (!purchaseOrderDetailsData) {
-    notFound()
-  }
-
-  const {
-    supplier,
-    lines,
-    id,
-    createdAt,
-    status,
-    orderNumber,
-    location,
-    createdBy,
-    approvedBy,
-    subtotal,
-    taxAmount,
-    shippingCost,
-    discount,
-    total,
-  } = purchaseOrderDetailsData!
-
-  // Fallback totals if needed
-  const computedTotalAmount =
-    Array.isArray(lines) && lines.length > 0
-      ? lines.reduce((acc, line) => acc + (Number(line.lineTotal) || 0), 0)
-      : 0
-
-  const displaySubtotal = Number.isFinite(subtotal) ? subtotal : computedTotalAmount
-  const displayTax = Number.isFinite(taxAmount) ? taxAmount : 0
-  const displayShipping = Number.isFinite(shippingCost) ? shippingCost : 0
-  const displayDiscount = Number.isFinite(discount) ? discount : 0
-  const displayGrandTotal =
-    Number.isFinite(total) && total > 0
-      ? total
-      : displaySubtotal + displayTax + displayShipping - displayDiscount
-
-  return (
-    <div className="min-h-screen bg-gray-50/30">
-      <div className="container mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/dashboard/purchase-orders" className="text-muted-foreground hover:text-foreground">
-                <ArrowLeft className="me-2 h-4 w-4" />
-                Back to Purchase Orders
-              </Link>
-            </Button>
-          </div>
-
-          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
-            {/* Title and Status */}
-            <div className="space-y-1">
-              <h1 className="text-3xl font-bold tracking-tight">
-                {orderNumber ? `Purchase Order ${orderNumber}` : `Purchase Order ${id.slice(-8).toUpperCase()}`}
-              </h1>
-              <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <StatusBadge status={status} />
-                </div>
-                <div className="flex items-center gap-1">
-                  <Calendar className="h-4 w-4" />
-                  <span>
-                    Created{" "}
-                    {(() => {
-                      const d = safeDate(createdAt)
-                      return d ? format(d, "PPP") : "—"
-                    })()}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Hash className="h-4 w-4" />
-                  {id.slice(-8).toUpperCase()}
-                </div>
-                {orderNumber && (
-                  <div className="flex items-center gap-1">
-                    <FileText className="h-4 w-4" />
-                    {orderNumber}
+              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+                {/* Title and Status */}
+                <div className="space-y-1">
+                  <h1 className="text-3xl font-bold tracking-tight">
+                    Purchase Order {displayOrderNumber}
+                  </h1>
+                  <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      <StatusBadge status={status} />
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Calendar className="h-4 w-4" />
+                      <span>
+                        Created{" "}
+                        {(() => {
+                          const d = safeDate(createdAt)
+                          return d ? format(d, "PPP") : "—"
+                        })()}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Hash className="h-4 w-4" />
+                      {id.slice(-8).toUpperCase()}
+                    </div>
+                    {orderNumber && (
+                      <div className="flex items-center gap-1">
+                        <FileText className="h-4 w-4" />
+                        {orderNumber}
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
+
+                {/* Action Buttons */}
+                <ActionButtons />
               </div>
             </div>
 
-            {/* Action Buttons */}
-            <ActionButtons />
-          </div>
-        </div>
+            <Separator className="mb-6" />
 
-        <Separator className="mb-6" />
-
-        {/* Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          {/* Supplier Information */}
-          <InfoCard title="Supplier Information" icon={<Building2 className="h-4 w-4" />}>
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Building2 className="h-4 w-4 text-muted-foreground" />
-                <span className="font-medium">{supplier?.name ?? "Unknown supplier"}</span>
-              </div>
-              {supplier?.email && (
-                <div className="flex items-center gap-2">
-                  <AtSign className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm">{supplier.email}</span>
-                </div>
-              )}
-              {supplier?.phone && (
-                <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm">{supplier.phone}</span>
-                </div>
-              )}
-              {supplier?.contactPerson && (
-                <div className="flex items-center gap-2">
-                  <User className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm">{supplier.contactPerson}</span>
-                </div>
-              )}
-              {supplier?.address && (
-                <div className="flex items-start gap-2">
-                  <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
-                  <span className="text-sm">{supplier.address}</span>
-                </div>
-              )}
-            </div>
-          </InfoCard>
-
-          {/* Delivery Location */}
-          <InfoCard title="Delivery Location" icon={<MapPin className="h-4 w-4" />}>
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-muted-foreground" />
-                <span className="font-medium">{location?.name ?? "Unknown location"}</span>
-              </div>
-              {location?.address && <div className="text-sm text-muted-foreground">{location.address}</div>}
-              {location?.phone && (
-                <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm">{location.phone}</span>
-                </div>
-              )}
-              {location?.email && (
-                <div className="flex items-center gap-2">
-                  <AtSign className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm">{location.email}</span>
-                </div>
-              )}
-            </div>
-          </InfoCard>
-
-          {/* Order Details */}
-          <InfoCard title="Order Details" icon={<DollarSign className="h-4 w-4" />}>
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Total Items:</span>
-                <span className="font-medium">{lines?.length ?? 0}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Total Quantity (Ordered):</span>
-                <span className="font-medium">
-                  {Array.isArray(lines) ? lines.reduce((acc, line) => acc + (line.orderedQuantity || 0), 0) : 0}
-                </span>
-              </div>
-              <Separator />
-              <div className="flex justify-between items-center">
-                <span className="font-medium">Total Amount:</span>
-                <span className="text-lg font-bold text-primary">{formatCurrency(displayGrandTotal, locale, "USD")}</span>
-              </div>
-            </div>
-          </InfoCard>
-        </div>
-
-        {/* Additional Information Row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          {/* Created By */}
-          <InfoCard title="Created By" icon={<User className="h-4 w-4" />}>
-            <div className="space-y-2">
-              {createdBy ? (
-                <>
+            {/* Content Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+              {/* Supplier Information */}
+              <InfoCard title="Supplier Information" icon={<Building2 className="h-4 w-4" />}>
+                <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <User className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">{createdBy.name ?? "Unknown"}</span>
+                    <Building2 className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium">{supplier?.name ?? "Unknown supplier"}</span>
                   </div>
-                  {createdBy.email && (
+                  {supplier?.email && (
                     <div className="flex items-center gap-2">
                       <AtSign className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm">{createdBy.email}</span>
+                      <span className="text-sm">{supplier.email}</span>
                     </div>
                   )}
-                </>
-              ) : (
-                <div className="text-sm text-muted-foreground">Unknown</div>
+                  {supplier?.phone && (
+                    <div className="flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm">{supplier.phone}</span>
+                    </div>
+                  )}
+                  {supplier?.contactPerson && (
+                    <div className="flex items-center gap-2">
+                      <User className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm">{supplier.contactPerson}</span>
+                    </div>
+                  )}
+                  {supplier?.address && (
+                    <div className="flex items-start gap-2">
+                      <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
+                      <span className="text-sm">{supplier.address}</span>
+                    </div>
+                  )}
+                </div>
+              </InfoCard>
+
+              {/* Delivery Location */}
+              <InfoCard title="Delivery Location" icon={<MapPin className="h-4 w-4" />}>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium">{location?.name ?? "Unknown location"}</span>
+                  </div>
+                  {location?.address && <div className="text-sm text-muted-foreground">{location.address}</div>}
+                  {location?.phone && (
+                    <div className="flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm">{location.phone}</span>
+                    </div>
+                  )}
+                  {location?.email && (
+                    <div className="flex items-center gap-2">
+                      <AtSign className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm">{location.email}</span>
+                    </div>
+                  )}
+                </div>
+              </InfoCard>
+
+              {/* Order Details */}
+              <InfoCard title="Order Details" icon={<DollarSign className="h-4 w-4" />}>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Total Items:</span>
+                    <span className="font-medium">{lines?.length ?? 0}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Total Quantity (Ordered):</span>
+                    <span className="font-medium">
+                      {Array.isArray(lines) ? lines.reduce((acc, line) => acc + (line.orderedQuantity || 0), 0) : 0}
+                    </span>
+                  </div>
+                  <Separator />
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Total Amount:</span>
+                    <span className="text-lg font-bold text-primary">{formatCurrency(displayGrandTotal, locale, "USD")}</span>
+                  </div>
+                </div>
+              </InfoCard>
+            </div>
+
+            {/* Additional Information Row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              {/* Created By */}
+              <InfoCard title="Created By" icon={<User className="h-4 w-4" />}>
+                <div className="space-y-2">
+                  {createdBy ? (
+                    <>
+                      <div className="flex items-center gap-2">
+                        <User className="h-4 w-4 text-muted-foreground" />
+                        <span className="font-medium">{createdBy.name ?? "Unknown"}</span>
+                      </div>
+                      {createdBy.email && (
+                        <div className="flex items-center gap-2">
+                          <AtSign className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm">{createdBy.email}</span>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="text-sm text-muted-foreground">Unknown</div>
+                  )}
+                </div>
+              </InfoCard>
+
+              {/* Approved By */}
+              {approvedBy && (
+                <InfoCard title="Approved By" icon={<User className="h-4 w-4" />}>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <User className="h-4 w-4 text-muted-foreground" />
+                      <span className="font-medium">{approvedBy.name ?? "Unknown"}</span>
+                    </div>
+                    {approvedBy.email && (
+                      <div className="flex items-center gap-2">
+                        <AtSign className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm">{approvedBy.email}</span>
+                      </div>
+                    )}
+                  </div>
+                </InfoCard>
               )}
             </div>
-          </InfoCard>
 
-          {/* Approved By */}
-          {approvedBy && (
-            <InfoCard title="Approved By" icon={<User className="h-4 w-4" />}>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <User className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">{approvedBy.name ?? "Unknown"}</span>
-                </div>
-                {approvedBy.email && (
-                  <div className="flex items-center gap-2">
-                    <AtSign className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">{approvedBy.email}</span>
-                  </div>
-                )}
-              </div>
-            </InfoCard>
-          )}
-        </div>
-
-        {/* Order Lines Table */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Package className="h-4 w-4" />
-              Order Items
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto rounded-md border bg-white">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b bg-muted/40">
-                    <th className="text-start py-2 px-4">Item</th>
-                    <th className="text-start py-2 px-4">SKU</th>
-                    <th className="text-end py-2 px-4">Quantity</th>
-                    <th className="text-end py-2 px-4">Unit Cost</th>
-                    <th className="text-end py-2 px-4">Line Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {Array.isArray(lines) && lines.length > 0 ? (
-                    lines.map((line, index) => {
-                      const itemName = line.item?.name ?? "Unknown Item"
-                      const sku = line.item?.sku ?? "N/A"
-                      const qty = line.orderedQuantity ?? 0
-                      const unitCost = Number(line.unitCost) || 0
-                      const lineTotal = Number(line.lineTotal) || unitCost * qty
-                      return (
-                        <tr key={line.id} className={index % 2 === 0 ? "bg-gray-50/50" : ""}>
-                          <td className="py-3 px-4">
-                            <div>
-                              <div className="font-medium">{itemName}</div>
-                              {line.notes && <div className="text-sm text-muted-foreground">{line.notes}</div>}
-                            </div>
+            {/* Order Lines Table */}
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Package className="h-4 w-4" />
+                  Order Items
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto rounded-md border bg-white">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b bg-muted/40">
+                        <th className="text-start py-2 px-4">Item</th>
+                        <th className="text-start py-2 px-4">SKU</th>
+                        <th className="text-end py-2 px-4">Quantity</th>
+                        <th className="text-end py-2 px-4">Unit Cost</th>
+                        <th className="text-end py-2 px-4">Line Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Array.isArray(lines) && lines.length > 0 ? (
+                        lines.map((line, index) => {
+                          const itemName = line.item?.name ?? "Unknown Item"
+                          const sku = line.item?.sku ?? "N/A"
+                          const qty = line.orderedQuantity ?? 0
+                          const unitCost = Number(line.unitCost) || 0
+                          const lineTotal = Number(line.lineTotal) || unitCost * qty
+                          return (
+                            <tr key={line.id} className={index % 2 === 0 ? "bg-gray-50/50" : ""}>
+                              <td className="py-3 px-4">
+                                <div>
+                                  <div className="font-medium">{itemName}</div>
+                                  {line.notes && <div className="text-sm text-muted-foreground">{line.notes}</div>}
+                                </div>
+                              </td>
+                              <td className="py-3 px-4 text-sm text-muted-foreground">{sku}</td>
+                              <td className="py-3 px-4 text-end font-medium">{qty}</td>
+                              <td className="py-3 px-4 text-end">{formatCurrency(unitCost, locale, "USD")}</td>
+                              <td className="py-3 px-4 text-end font-medium">{formatCurrency(lineTotal, locale, "USD")}</td>
+                            </tr>
+                          )
+                        })
+                      ) : (
+                        <tr>
+                          <td colSpan={5} className="py-6 px-4 text-center text-muted-foreground">
+                            No line items
                           </td>
-                          <td className="py-3 px-4 text-sm text-muted-foreground">{sku}</td>
-                          <td className="py-3 px-4 text-end font-medium">{qty}</td>
-                          <td className="py-3 px-4 text-end">{formatCurrency(unitCost, locale, "USD")}</td>
-                          <td className="py-3 px-4 text-end font-medium">{formatCurrency(lineTotal, locale, "USD")}</td>
                         </tr>
-                      )
-                    })
-                  ) : (
-                    <tr>
-                      <td colSpan={5} className="py-6 px-4 text-center text-muted-foreground">
-                        No line items
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-                <tfoot>
-                  <tr className="border-t-2 font-bold">
-                    <td colSpan={4} className="py-3 px-4 text-end">
-                      Total:
-                    </td>
-                    <td className="py-3 px-4 text-end text-lg">{formatCurrency(displayGrandTotal, locale, "USD")}</td>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
+                      )}
+                    </tbody>
+                    <tfoot>
+                      <tr className="border-t-2 font-bold">
+                        <td colSpan={4} className="py-3 px-4 text-end">
+                          Total:
+                        </td>
+                        <td className="py-3 px-4 text-end text-lg">{formatCurrency(displayGrandTotal, locale, "USD")}</td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
 
-        {/* Summary */}
-        <div className="flex items-center justify-end">
-          <div className="w-full max-w-xs">
-            <div className="rounded-lg bg-muted/40 p-4 shadow-sm">
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Subtotal:</span>
-                  <span className="text-muted-foreground">{formatCurrency(displaySubtotal, locale, "USD")}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Tax Amount:</span>
-                  <span className="text-muted-foreground">{formatCurrency(displayTax, locale, "USD")}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Shipping:</span>
-                  <span className="text-muted-foreground">{formatCurrency(displayShipping, locale, "USD")}</span>
-                </div>
-                {displayDiscount > 0 && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Discount:</span>
-                    <span className="text-destructive">-{formatCurrency(displayDiscount, locale, "USD")}</span>
+            {/* Summary */}
+            <div className="flex items-center justify-end">
+              <div className="w-full max-w-xs">
+                <div className="rounded-lg bg-muted/40 p-4 shadow-sm">
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Subtotal:</span>
+                      <span className="text-muted-foreground">{formatCurrency(displaySubtotal, locale, "USD")}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Tax Amount:</span>
+                      <span className="text-muted-foreground">{formatCurrency(displayTax, locale, "USD")}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Shipping:</span>
+                      <span className="text-muted-foreground">{formatCurrency(displayShipping, locale, "USD")}</span>
+                    </div>
+                    {displayDiscount > 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Discount:</span>
+                        <span className="text-destructive">-{formatCurrency(displayDiscount, locale, "USD")}</span>
+                      </div>
+                    )}
+                    <Separator />
+                    <div className="flex justify-between font-bold">
+                      <span>Total Amount:</span>
+                      <span className="text-primary">{formatCurrency(displayGrandTotal, locale, "USD")}</span>
+                    </div>
                   </div>
-                )}
-                <Separator />
-                <div className="flex justify-between font-bold">
-                  <span>Total Amount:</span>
-                  <span className="text-primary">{formatCurrency(displayGrandTotal, locale, "USD")}</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  )
+      )
+    },
+  })
 }
-
-export default PurchaseOrderPage

@@ -3,37 +3,65 @@
 import Link from "next/link"
 import { useLocale, useTranslations } from "next-intl"
 import { useMemo, useState, type ReactNode } from "react"
+import {
+  flexRender,
+  getCoreRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+  type ColumnDef,
+  type SortingState,
+  type VisibilityState,
+} from "@tanstack/react-table"
 import type { LucideIcon } from "lucide-react"
 import {
   AlertTriangle,
+  ArrowUpDown,
   ArrowDownRight,
   ArrowUpRight,
   Building2,
   CalendarDays,
   CheckCircle2,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
   CreditCard,
   ExternalLink,
   FileText,
   Filter,
+  FilterX,
   HandCoins,
+  History,
   Landmark,
   LineChart,
   MapPin,
   Percent,
   ReceiptText,
   RefreshCw,
+  Search,
   ShieldCheck,
+  SlidersHorizontal,
   TrendingUp,
   Wallet,
+  X,
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DashboardErrorState } from "@/components/dashboard/DashboardErrorState"
 import { useNotifications } from "@/components/notifications/NotificationProvider"
 import { useFinanceDashboard } from "@/hooks/finance/useFinanceDashboard"
@@ -287,7 +315,7 @@ function SurfaceFilters({ context }: { context: FinanceSurfaceContext }) {
           {t("filters.location")}
         </div>
         <Select value={locationId} onValueChange={setLocationId}>
-          <SelectTrigger className={dashboardControlClass}>
+          <SelectTrigger aria-label={t("filters.location")} className={dashboardControlClass}>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -307,7 +335,7 @@ function SurfaceFilters({ context }: { context: FinanceSurfaceContext }) {
           {t("filters.period")}
         </div>
         <Select value={period} onValueChange={(value) => setPeriod(value as FinanceDashboardPeriod)}>
-          <SelectTrigger className={dashboardControlClass}>
+          <SelectTrigger aria-label={t("filters.period")} className={dashboardControlClass}>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -325,12 +353,14 @@ function SurfaceFilters({ context }: { context: FinanceSurfaceContext }) {
           <>
             <Input
               type="date"
+              aria-label={t("filters.startDate")}
               value={customRange.start}
               onChange={(event) => setCustomRange((current) => ({ ...current, start: event.target.value }))}
               className={cn(dashboardControlClass, "w-36")}
             />
             <Input
               type="date"
+              aria-label={t("filters.endDate")}
               value={customRange.end}
               onChange={(event) => setCustomRange((current) => ({ ...current, end: event.target.value }))}
               className={cn(dashboardControlClass, "w-36")}
@@ -473,16 +503,18 @@ function LedgerPanel({
   )
 }
 
-function ActionPanel({
+export function FinanceWorkflowActionPanel({
   title,
   description,
   actions,
   localizedHref,
+  layout = "stacked",
 }: {
   title: string
   description: string
   actions: Array<{ href: string; icon: LucideIcon; label: string }>
   localizedHref: (href: string) => string
+  layout?: "stacked" | "row"
 }) {
   return (
     <Card className={dashboardPanelClass}>
@@ -493,15 +525,26 @@ function ActionPanel({
         </CardTitle>
         <CardDescription className={dashboardMutedTextClass}>{description}</CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-2">
+      <CardContent
+        data-finance-workflow-actions
+        className={cn(
+          "grid gap-2",
+          layout === "row" && "sm:grid-cols-2 xl:auto-cols-fr xl:grid-flow-col xl:grid-cols-none",
+        )}
+      >
         {actions.map((action) => (
-          <Button key={action.href} asChild variant="outline" className="dashboard-button-secondary justify-between rounded-lg">
+          <Button
+            key={action.href}
+            asChild
+            variant="outline"
+            className="dashboard-button-secondary h-auto min-h-10 justify-between rounded-lg px-3 py-2 text-left"
+          >
             <Link href={localizedHref(action.href)}>
-              <span className="flex items-center gap-2">
-                <action.icon className="h-4 w-4 text-[var(--dash-brand-strong)]" />
-                {action.label}
+              <span className="flex min-w-0 items-center gap-2">
+                <action.icon className="h-4 w-4 shrink-0 text-[var(--dash-brand-strong)]" />
+                <span className="min-w-0 leading-tight">{action.label}</span>
               </span>
-              <ExternalLink className="h-4 w-4" />
+              <ExternalLink className="h-4 w-4 shrink-0" />
             </Link>
           </Button>
         ))}
@@ -510,81 +553,671 @@ function ActionPanel({
   )
 }
 
-function PaymentsTable({
+type LedgerSortableColumn = {
+  getIsSorted: () => false | "asc" | "desc"
+  toggleSorting: (descending?: boolean) => void
+}
+
+function LedgerSortButton({
+  column,
+  label,
+  sortLabel,
+  align = "left",
+}: {
+  column: LedgerSortableColumn
+  label: string
+  sortLabel: string
+  align?: "left" | "right"
+}) {
+  const sorted = column.getIsSorted()
+
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="sm"
+      aria-label={sortLabel}
+      onClick={() => column.toggleSorting(sorted === "asc")}
+      className={cn(
+        "-ml-3 h-8 gap-1.5 px-3 text-xs font-semibold text-[var(--dash-text-soft)] hover:bg-[var(--dash-brand-soft)] hover:text-[var(--dash-text)]",
+        align === "right" && "ml-auto",
+      )}
+    >
+      {label}
+      <ArrowUpDown className={cn("h-3.5 w-3.5", sorted && "text-[var(--dash-brand-strong)]")} />
+    </Button>
+  )
+}
+
+export function PaymentsTable({
   payments,
   money,
   formatDateTime,
   t,
+  surfaceT,
   empty,
 }: {
   payments: FinanceRecentPayment[]
   money: (value: number | null | undefined) => string
   formatDateTime: (value: string | null | undefined) => string
   t: ReturnType<typeof useTranslations>
+  surfaceT: ReturnType<typeof useTranslations>
   empty: string
 }) {
-  if (payments.length === 0) {
-    return <div className={dashboardEmptyClass}>{empty}</div>
+  const [sorting, setSorting] = useState<SortingState>([{ id: "createdAt", desc: true }])
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [searchTerm, setSearchTerm] = useState("")
+  const [statusFilter, setStatusFilter] = useState("all")
+  const [methodFilter, setMethodFilter] = useState("all")
+  const [startDate, setStartDate] = useState("")
+  const [endDate, setEndDate] = useState("")
+
+  const methodOptions = useMemo(
+    () => Array.from(new Set(payments.map((payment) => payment.method))).sort(),
+    [payments],
+  )
+  const statusOptions = useMemo(
+    () => Array.from(new Set(payments.map((payment) => payment.status))).sort(),
+    [payments],
+  )
+
+  const filteredPayments = useMemo(() => {
+    const normalizedSearch = searchTerm.trim().toLocaleLowerCase()
+    const startBoundary = startDate ? new Date(`${startDate}T00:00:00`).getTime() : null
+    const endBoundary = endDate ? new Date(`${endDate}T23:59:59.999`).getTime() : null
+
+    return payments.filter((payment) => {
+      if (statusFilter !== "all" && payment.status !== statusFilter) return false
+      if (methodFilter !== "all" && payment.method !== methodFilter) return false
+
+      const paymentTime = new Date(payment.createdAt).getTime()
+      if (startBoundary !== null && paymentTime < startBoundary) return false
+      if (endBoundary !== null && paymentTime > endBoundary) return false
+
+      if (!normalizedSearch) return true
+
+      return [
+        payment.paymentNumber,
+        payment.counterparty,
+        payment.processedBy,
+        payment.method,
+        payment.status,
+        t(`methods.${payment.method}`),
+        t(`statuses.${payment.status}`),
+        payment.amount,
+      ]
+        .join(" ")
+        .toLocaleLowerCase()
+        .includes(normalizedSearch)
+    })
+  }, [endDate, methodFilter, payments, searchTerm, startDate, statusFilter, t])
+
+  const columns = useMemo<ColumnDef<FinanceRecentPayment>[]>(
+    () => [
+      {
+        accessorKey: "paymentNumber",
+        enableHiding: false,
+        header: ({ column }) => (
+          <LedgerSortButton
+            column={column}
+            label={t("table.payment")}
+            sortLabel={surfaceT("payments.ledger.sortBy", { column: t("table.payment") })}
+          />
+        ),
+        cell: ({ row }) => {
+          const payment = row.original
+          return (
+            <div>
+              <div className="flex items-center gap-2 font-medium">
+                {payment.direction === "out" ? (
+                  <ArrowDownRight className="h-4 w-4 text-[var(--dash-danger)]" />
+                ) : (
+                  <ArrowUpRight className="h-4 w-4 text-[var(--dash-success)]" />
+                )}
+                {payment.paymentNumber}
+              </div>
+              <div className="mt-1 text-xs text-[var(--dash-text-soft)]">{payment.processedBy}</div>
+            </div>
+          )
+        },
+      },
+      {
+        accessorKey: "counterparty",
+        header: ({ column }) => (
+          <LedgerSortButton
+            column={column}
+            label={t("table.counterparty")}
+            sortLabel={surfaceT("payments.ledger.sortBy", { column: t("table.counterparty") })}
+          />
+        ),
+      },
+      {
+        accessorKey: "method",
+        header: ({ column }) => (
+          <LedgerSortButton
+            column={column}
+            label={t("table.method")}
+            sortLabel={surfaceT("payments.ledger.sortBy", { column: t("table.method") })}
+          />
+        ),
+        cell: ({ row }) => t(`methods.${row.original.method}`),
+      },
+      {
+        accessorKey: "status",
+        header: ({ column }) => (
+          <LedgerSortButton
+            column={column}
+            label={t("table.status")}
+            sortLabel={surfaceT("payments.ledger.sortBy", { column: t("table.status") })}
+          />
+        ),
+        cell: ({ row }) => {
+          const status = row.original.status
+          return (
+            <Badge
+              variant="outline"
+              className={cn(
+                status === "PAID"
+                  ? dashboardSeverityClass("success")
+                  : status === "PENDING"
+                    ? dashboardSeverityClass("warning")
+                    : status === "CANCELLED"
+                      ? dashboardSeverityClass("critical")
+                      : dashboardSeverityClass("info"),
+              )}
+            >
+              {t(`statuses.${status}`)}
+            </Badge>
+          )
+        },
+      },
+      {
+        accessorKey: "amount",
+        header: ({ column }) => (
+          <LedgerSortButton
+            column={column}
+            label={t("table.amount")}
+            sortLabel={surfaceT("payments.ledger.sortBy", { column: t("table.amount") })}
+            align="right"
+          />
+        ),
+        cell: ({ row }) => (
+          <div
+            className={cn(
+              "text-right font-semibold tabular-nums",
+              row.original.direction === "out" ? "text-[var(--dash-danger)]" : "text-[var(--dash-success)]",
+            )}
+          >
+            {money(row.original.amount)}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "createdAt",
+        sortingFn: (rowA, rowB) =>
+          new Date(rowA.original.createdAt).getTime() - new Date(rowB.original.createdAt).getTime(),
+        header: ({ column }) => (
+          <LedgerSortButton
+            column={column}
+            label={t("table.time")}
+            sortLabel={surfaceT("payments.ledger.sortBy", { column: t("table.time") })}
+          />
+        ),
+        cell: ({ row }) => (
+          <span className="whitespace-nowrap text-xs text-[var(--dash-text-soft)]">
+            {formatDateTime(row.original.createdAt)}
+          </span>
+        ),
+      },
+    ],
+    [formatDateTime, money, surfaceT, t],
+  )
+
+  const table = useReactTable({
+    data: filteredPayments,
+    columns,
+    state: {
+      sorting,
+      columnVisibility,
+    },
+    onSortingChange: setSorting,
+    onColumnVisibilityChange: setColumnVisibility,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    initialState: {
+      pagination: {
+        pageIndex: 0,
+        pageSize: 10,
+      },
+    },
+  })
+
+  const hasActiveFilters = Boolean(
+    searchTerm.trim() ||
+      statusFilter !== "all" ||
+      methodFilter !== "all" ||
+      startDate ||
+      endDate,
+  )
+  const columnLabels: Record<string, string> = {
+    paymentNumber: t("table.payment"),
+    counterparty: t("table.counterparty"),
+    method: t("table.method"),
+    status: t("table.status"),
+    amount: t("table.amount"),
+    createdAt: t("table.time"),
+  }
+
+  const resetFilters = () => {
+    setSearchTerm("")
+    setStatusFilter("all")
+    setMethodFilter("all")
+    setStartDate("")
+    setEndDate("")
+    table.setPageIndex(0)
   }
 
   return (
-    <ScrollArea className="w-full">
-      <table className="w-full min-w-[860px] text-sm">
-        <thead className="text-left text-xs text-[var(--dash-text-soft)]">
-          <tr className="border-b border-[var(--dash-border-subtle)]">
-            <th className="py-2 pr-3 font-medium">{t("table.payment")}</th>
-            <th className="py-2 pr-3 font-medium">{t("table.counterparty")}</th>
-            <th className="py-2 pr-3 font-medium">{t("table.method")}</th>
-            <th className="py-2 pr-3 font-medium">{t("table.status")}</th>
-            <th className="py-2 pr-3 text-right font-medium">{t("table.amount")}</th>
-            <th className="py-2 pr-3 font-medium">{t("table.time")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {payments.slice(0, 14).map((payment) => (
-            <tr key={payment.id} className="border-b border-[var(--dash-border-subtle)] last:border-0">
-              <td className="py-3 pr-3">
-                <div className="flex items-center gap-2 font-medium">
-                  {payment.direction === "out" ? <ArrowDownRight className="h-4 w-4 text-[var(--dash-danger)]" /> : <ArrowUpRight className="h-4 w-4 text-[var(--dash-success)]" />}
-                  {payment.paymentNumber}
-                </div>
-                <div className="mt-1 text-xs text-[var(--dash-text-soft)]">{payment.processedBy}</div>
-              </td>
-              <td className="py-3 pr-3">{payment.counterparty}</td>
-              <td className="py-3 pr-3">{t(`methods.${payment.method}`)}</td>
-              <td className="py-3 pr-3">
-                <Badge variant="outline" className={cn(payment.status === "PAID" ? dashboardSeverityClass("success") : payment.status === "PENDING" ? dashboardSeverityClass("warning") : dashboardSeverityClass("info"))}>
-                  {t(`statuses.${payment.status}`)}
-                </Badge>
-              </td>
-              <td className={cn("py-3 pr-3 text-right font-semibold tabular-nums", payment.direction === "out" ? "text-[var(--dash-danger)]" : "text-[var(--dash-success)]")}>{money(payment.amount)}</td>
-              <td className="py-3 pr-3 text-xs text-[var(--dash-text-soft)]">{formatDateTime(payment.createdAt)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <ScrollBar orientation="horizontal" />
-    </ScrollArea>
+    <div className="w-full min-w-0 space-y-3">
+      <div className="dashboard-table-toolbar flex flex-col gap-3 rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)]/70 p-3 xl:flex-row xl:items-center xl:justify-between">
+        <div className="relative w-full min-w-0 flex-1 xl:min-w-[18rem]">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--dash-text-faint)]" />
+          <Input
+            type="search"
+            value={searchTerm}
+            aria-label={surfaceT("payments.ledger.searchLabel")}
+            placeholder={surfaceT("payments.ledger.searchPlaceholder")}
+            onChange={(event) => {
+              setSearchTerm(event.target.value)
+              table.setPageIndex(0)
+            }}
+            className="dashboard-control h-9 w-full rounded-lg pl-9 pr-9"
+          />
+          {searchTerm ? (
+            <button
+              type="button"
+              aria-label={surfaceT("payments.ledger.clearSearch")}
+              onClick={() => {
+                setSearchTerm("")
+                table.setPageIndex(0)
+              }}
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-[var(--dash-text-faint)] transition hover:bg-[var(--dash-brand-soft)] hover:text-[var(--dash-text)]"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          ) : null}
+        </div>
+
+        <div className="flex w-full min-w-0 flex-wrap items-center gap-2 xl:w-auto xl:justify-end">
+          <Select
+            value={statusFilter}
+            onValueChange={(value) => {
+              setStatusFilter(value)
+              table.setPageIndex(0)
+            }}
+          >
+            <SelectTrigger
+              aria-label={surfaceT("payments.ledger.statusFilter")}
+              className="dashboard-control h-9 w-full rounded-lg sm:w-[160px]"
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{surfaceT("payments.ledger.allStatuses")}</SelectItem>
+              {statusOptions.map((status) => (
+                <SelectItem key={status} value={status}>
+                  {t(`statuses.${status}`)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={methodFilter}
+            onValueChange={(value) => {
+              setMethodFilter(value)
+              table.setPageIndex(0)
+            }}
+          >
+            <SelectTrigger
+              aria-label={surfaceT("payments.ledger.methodFilter")}
+              className="dashboard-control h-9 w-full rounded-lg sm:w-[170px]"
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{surfaceT("payments.ledger.allMethods")}</SelectItem>
+              {methodOptions.map((method) => (
+                <SelectItem key={method} value={method}>
+                  {t(`methods.${method}`)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Input
+            type="date"
+            value={startDate}
+            aria-label={surfaceT("payments.ledger.dateFrom")}
+            title={surfaceT("payments.ledger.dateFrom")}
+            onChange={(event) => {
+              setStartDate(event.target.value)
+              table.setPageIndex(0)
+            }}
+            className="dashboard-control h-9 w-full rounded-lg sm:w-[150px]"
+          />
+          <Input
+            type="date"
+            value={endDate}
+            aria-label={surfaceT("payments.ledger.dateTo")}
+            title={surfaceT("payments.ledger.dateTo")}
+            onChange={(event) => {
+              setEndDate(event.target.value)
+              table.setPageIndex(0)
+            }}
+            className="dashboard-control h-9 w-full rounded-lg sm:w-[150px]"
+          />
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button type="button" variant="outline" size="sm" className="dashboard-button-secondary h-9 rounded-lg">
+                <SlidersHorizontal className="mr-2 h-4 w-4" />
+                {surfaceT("payments.ledger.columns")}
+                <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]"
+            >
+              <DropdownMenuLabel>{surfaceT("payments.ledger.visibleColumns")}</DropdownMenuLabel>
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) => column.toggleVisibility(Boolean(value))}
+                  >
+                    {columnLabels[column.id] ?? column.id}
+                  </DropdownMenuCheckboxItem>
+                ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {hasActiveFilters ? (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={resetFilters}
+              className="h-9 rounded-lg text-[var(--dash-text-soft)] hover:bg-[var(--dash-brand-soft)] hover:text-[var(--dash-text)]"
+            >
+              <FilterX className="mr-2 h-4 w-4" />
+              {surfaceT("payments.ledger.reset")}
+            </Button>
+          ) : null}
+        </div>
+      </div>
+
+      <div className="dashboard-table-shell dashboard-data-table min-w-0 overflow-hidden rounded-lg">
+        <div className="w-full overflow-x-auto">
+          <Table className="min-w-[960px]">
+            <TableHeader className="sticky top-0 z-10 bg-[rgba(16,27,32,0.94)] backdrop-blur">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id} className="whitespace-nowrap px-3">
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(header.column.columnDef.header, header.getContext())}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    className="border-[var(--dash-border-subtle)] hover:bg-[var(--dash-brand-soft)]"
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id} className="px-3 py-3 align-middle">
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={table.getVisibleLeafColumns().length} className="h-48 text-center">
+                    <div className="mx-auto flex max-w-md flex-col items-center gap-3 py-8">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-brand-soft)] text-[var(--dash-brand-strong)]">
+                        <FilterX className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <div className="font-semibold text-[var(--dash-text)]">
+                          {hasActiveFilters ? surfaceT("payments.ledger.noResultsTitle") : empty}
+                        </div>
+                        {hasActiveFilters ? (
+                          <p className="mt-1 text-sm text-[var(--dash-text-soft)]">
+                            {surfaceT("payments.ledger.noResultsDescription")}
+                          </p>
+                        ) : null}
+                      </div>
+                      {hasActiveFilters ? (
+                        <Button type="button" variant="outline" size="sm" onClick={resetFilters} className="dashboard-button-secondary rounded-lg">
+                          {surfaceT("payments.ledger.reset")}
+                        </Button>
+                      ) : null}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+
+      {filteredPayments.length > 0 ? (
+        <div className="dashboard-table-pagination flex min-w-0 flex-col gap-3 px-2 text-[var(--dash-text-soft)] sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm">
+            {surfaceT("payments.ledger.resultCount", {
+              visible: filteredPayments.length,
+              total: payments.length,
+            })}
+          </p>
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium">{surfaceT("payments.ledger.rowsPerPage")}</span>
+              <Select
+                value={String(table.getState().pagination.pageSize)}
+                onValueChange={(value) => table.setPageSize(Number(value))}
+              >
+                <SelectTrigger
+                  aria-label={surfaceT("payments.ledger.rowsPerPage")}
+                  className="dashboard-control h-8 w-[72px] rounded-lg border-[var(--dash-border-subtle)]"
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent side="top">
+                  {[5, 10, 20, 50].map((pageSize) => (
+                    <SelectItem key={pageSize} value={String(pageSize)}>
+                      {pageSize}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <span className="min-w-[110px] text-center text-sm font-medium">
+              {surfaceT("payments.ledger.pageOf", {
+                page: table.getState().pagination.pageIndex + 1,
+                total: table.getPageCount(),
+              })}
+            </span>
+            <div className="flex items-center gap-1.5">
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                aria-label={surfaceT("payments.ledger.firstPage")}
+                onClick={() => table.setPageIndex(0)}
+                disabled={!table.getCanPreviousPage()}
+                className="dashboard-button-secondary hidden h-8 w-8 rounded-lg lg:inline-flex"
+              >
+                <ChevronsLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                aria-label={surfaceT("payments.ledger.previousPage")}
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+                className="dashboard-button-secondary h-8 w-8 rounded-lg"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                aria-label={surfaceT("payments.ledger.nextPage")}
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+                className="dashboard-button-secondary h-8 w-8 rounded-lg"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                aria-label={surfaceT("payments.ledger.lastPage")}
+                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+                disabled={!table.getCanNextPage()}
+                className="dashboard-button-secondary hidden h-8 w-8 rounded-lg lg:inline-flex"
+              >
+                <ChevronsRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </div>
   )
 }
 
-function MethodBreakdown({ methods, money, t }: { methods: FinancePaymentMethod[]; money: (value: number | null | undefined) => string; t: ReturnType<typeof useTranslations> }) {
+function PaymentMixStat({
+  icon: Icon,
+  label,
+  value,
+  detail,
+}: {
+  icon: LucideIcon
+  label: string
+  value: string
+  detail: string
+}) {
+  return (
+    <div className={cn(dashboardRowClass, "flex h-full min-h-[116px] min-w-0 flex-col justify-between gap-3 p-3.5")}>
+      <div className="flex min-w-0 items-start gap-3">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-brand-soft)]">
+          <Icon className="h-4 w-4 text-[var(--dash-brand-strong)]" />
+        </span>
+        <div className="min-w-0">
+          <p className="truncate text-xs font-semibold text-[var(--dash-text-soft)]">{label}</p>
+          <p className="mt-1 truncate text-lg font-semibold tabular-nums">{value}</p>
+        </div>
+      </div>
+      <p className="line-clamp-2 text-xs leading-4 text-[var(--dash-text-faint)]">{detail}</p>
+    </div>
+  )
+}
+
+export function FinancePaymentMethodBreakdown({
+  methods,
+  money,
+  locale,
+  t,
+  surfaceT,
+}: {
+  methods: FinancePaymentMethod[]
+  money: (value: number | null | undefined) => string
+  locale: Locale
+  t: ReturnType<typeof useTranslations>
+  surfaceT: ReturnType<typeof useTranslations>
+}) {
   const max = Math.max(1, ...methods.map((method) => method.amount))
   if (methods.length === 0) return <div className={cn(dashboardEmptyClass, "p-6")}>{t("empty.methods")}</div>
 
+  const totalAmount = methods.reduce((total, method) => total + method.amount, 0)
+  const totalCount = methods.reduce((total, method) => total + method.count, 0)
+  const averagePayment = totalCount > 0 ? totalAmount / totalCount : 0
+  const leadingMethod = methods.reduce((leading, method) => method.amount > leading.amount ? method : leading)
+  const leadingShare = totalAmount > 0 ? Math.round((leadingMethod.amount / totalAmount) * 100) : 0
+
   return (
-    <div className="space-y-3">
-      {methods.slice(0, 8).map((method) => (
-        <div key={method.method}>
-          <div className="mb-1 flex items-center justify-between gap-3 text-sm">
-            <span className="font-medium">{t(`methods.${method.method}`)}</span>
-            <span className="text-xs text-[var(--dash-text-soft)]">{money(method.amount)} / {method.count}</span>
+    <div
+      data-testid="payment-mix-grid"
+      className="grid items-stretch gap-3"
+      style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 13.5rem), 1fr))" }}
+    >
+      <PaymentMixStat
+        icon={Wallet}
+        label={surfaceT("payments.mix.capturedVolume")}
+        value={money(totalAmount)}
+        detail={surfaceT("payments.mix.capturedVolumeDetail")}
+      />
+      <PaymentMixStat
+        icon={ReceiptText}
+        label={surfaceT("payments.mix.transactions")}
+        value={totalCount.toLocaleString(locale)}
+        detail={surfaceT("payments.mix.transactionsDetail")}
+      />
+      <PaymentMixStat
+        icon={TrendingUp}
+        label={surfaceT("payments.mix.averagePayment")}
+        value={money(averagePayment)}
+        detail={surfaceT("payments.mix.averagePaymentDetail")}
+      />
+      <PaymentMixStat
+        icon={CreditCard}
+        label={surfaceT("payments.mix.leadingMethod")}
+        value={t(`methods.${leadingMethod.method}`)}
+        detail={surfaceT("payments.mix.share", { share: leadingShare })}
+      />
+
+      {methods.slice(0, 8).map((method) => {
+        const share = totalAmount > 0 ? Math.round((method.amount / totalAmount) * 100) : 0
+
+        return (
+          <div key={method.method} className={cn(dashboardRowClass, "flex h-full min-h-[116px] min-w-0 flex-col justify-between gap-3 p-3.5")}>
+            <div className="flex min-w-0 items-start gap-3">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-brand-soft)]">
+                <CreditCard className="h-4 w-4 text-[var(--dash-brand-strong)]" />
+              </span>
+              <div className="min-w-0">
+                <p className="truncate text-xs font-semibold text-[var(--dash-text-soft)]">{t(`methods.${method.method}`)}</p>
+                <p className="mt-1 truncate text-lg font-semibold tabular-nums">{money(method.amount)}</p>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between gap-3 text-xs text-[var(--dash-text-faint)]">
+                <span>{surfaceT("payments.mix.paymentCount", { count: method.count })}</span>
+                <span className="shrink-0 tabular-nums">{surfaceT("payments.mix.share", { share })}</span>
+              </div>
+              <div className="h-1.5 overflow-hidden rounded-full bg-[rgba(37,57,67,0.64)]">
+                <div className="h-full rounded-full bg-[var(--dash-brand)]" style={{ width: `${(method.amount / max) * 100}%` }} />
+              </div>
+            </div>
           </div>
-          <div className="h-2 overflow-hidden rounded-full bg-[rgba(37,57,67,0.64)]">
-            <div className="h-full rounded-full bg-[var(--dash-brand)]" style={{ width: `${(method.amount / max) * 100}%` }} />
-          </div>
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }
@@ -664,7 +1297,7 @@ function AgingPanel({
 
 export function FinancePaymentsSurface() {
   const context = useSpecializedFinanceDashboard("payments")
-  const { dashboard, money, percent, t, surfaceT, formatDateTime, localizedHref } = context
+  const { dashboard, money, percent, locale, t, surfaceT, formatDateTime, localizedHref } = context
   if (!dashboard && context.dashboardQuery.isLoading) return <LoadingState />
 
   const inboundRecent = dashboard?.recentPayments.filter((payment) => payment.direction === "in") ?? []
@@ -681,36 +1314,7 @@ export function FinancePaymentsSurface() {
             <MetricCard title={t("metrics.confidence")} value={percent(dashboard.summary.financeConfidence)} detail={t("details.workingCapital", { amount: money(dashboard.summary.workingCapital) })} icon={ShieldCheck} accent={dashboard.summary.financeConfidence >= 85 ? "success" : "gold"} />
           </section>
 
-          <section className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_420px]">
-            <Card className={dashboardPanelClass}>
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <ReceiptText className="h-4 w-4 text-[var(--dash-brand-strong)]" />
-                  {surfaceT("payments.sections.ledger")}
-                </CardTitle>
-                <CardDescription className={dashboardMutedTextClass}>{surfaceT("payments.sections.ledgerDescription")}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <PaymentsTable payments={dashboard.recentPayments} money={money} formatDateTime={formatDateTime} t={t} empty={t("empty.payments")} />
-              </CardContent>
-            </Card>
-
-            <div className="space-y-3">
-              <AssurancePanel context={context} />
-              <LedgerPanel
-                title={surfaceT("payments.sections.posting")}
-                description={surfaceT("payments.sections.postingDescription")}
-                lines={[
-                  { label: surfaceT("payments.summary.inboundRecent"), value: money(sumPayments(inboundRecent)), tone: "text-[var(--dash-success)]" },
-                  { label: surfaceT("payments.summary.outboundRecent"), value: money(sumPayments(outboundRecent)), tone: "text-[var(--dash-danger)]" },
-                  { label: t("summary.refunds"), value: money(dashboard.summary.refunds) },
-                  { label: t("summary.drawerVariance"), value: money(dashboard.summary.drawerVariance), tone: dashboardValueTone(dashboard.summary.drawerVariance) },
-                ]}
-              />
-            </div>
-          </section>
-
-          <section className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_420px]">
+          <section>
             <Card className={dashboardPanelClass}>
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
@@ -720,13 +1324,53 @@ export function FinancePaymentsSurface() {
                 <CardDescription className={dashboardMutedTextClass}>{surfaceT("payments.sections.methodsDescription")}</CardDescription>
               </CardHeader>
               <CardContent>
-                <MethodBreakdown methods={dashboard.paymentMethods} money={money} t={t} />
+                <FinancePaymentMethodBreakdown methods={dashboard.paymentMethods} money={money} locale={locale} t={t} surfaceT={surfaceT} />
               </CardContent>
             </Card>
-            <ActionPanel
+          </section>
+
+          <section className="grid gap-3 xl:grid-cols-2">
+            <AssurancePanel context={context} />
+            <LedgerPanel
+              title={surfaceT("payments.sections.posting")}
+              description={surfaceT("payments.sections.postingDescription")}
+              lines={[
+                { label: surfaceT("payments.summary.inboundRecent"), value: money(sumPayments(inboundRecent)), tone: "text-[var(--dash-success)]" },
+                { label: surfaceT("payments.summary.outboundRecent"), value: money(sumPayments(outboundRecent)), tone: "text-[var(--dash-danger)]" },
+                { label: t("summary.refunds"), value: money(dashboard.summary.refunds) },
+                { label: t("summary.drawerVariance"), value: money(dashboard.summary.drawerVariance), tone: dashboardValueTone(dashboard.summary.drawerVariance) },
+              ]}
+            />
+          </section>
+
+          <section data-finance-final-section="operational">
+            <Card className={dashboardPanelClass}>
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <ReceiptText className="h-4 w-4 text-[var(--dash-brand-strong)]" />
+                  {surfaceT("payments.sections.ledger")}
+                </CardTitle>
+                <CardDescription className={dashboardMutedTextClass}>{surfaceT("payments.sections.ledgerDescription")}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PaymentsTable
+                  payments={dashboard.recentPayments}
+                  money={money}
+                  formatDateTime={formatDateTime}
+                  t={t}
+                  surfaceT={surfaceT}
+                  empty={t("empty.payments")}
+                />
+              </CardContent>
+            </Card>
+          </section>
+
+          <section data-finance-final-section="workflow">
+            <FinanceWorkflowActionPanel
               title={surfaceT("payments.sections.workflows")}
               description={surfaceT("payments.sections.workflowsDescription")}
               localizedHref={localizedHref}
+              layout="row"
               actions={[
                 { href: "/dashboard/pos", icon: CreditCard, label: surfaceT("actions.pos") },
                 { href: "/dashboard/finance/reconciliation", icon: ShieldCheck, label: t("actions.reconciliation") },
@@ -787,7 +1431,7 @@ export function FinanceReceivablesSurface() {
             </div>
           </section>
 
-          <section className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_420px]">
+          <section data-finance-final-section="operational">
             <Card className={dashboardPanelClass}>
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
@@ -797,13 +1441,16 @@ export function FinanceReceivablesSurface() {
                 <CardDescription className={dashboardMutedTextClass}>{surfaceT("receivables.sections.receiptsDescription")}</CardDescription>
               </CardHeader>
               <CardContent>
-                <PaymentsTable payments={inboundPayments} money={money} formatDateTime={formatDateTime} t={t} empty={surfaceT("empty.receipts")} />
+                <PaymentsTable payments={inboundPayments} money={money} formatDateTime={formatDateTime} t={t} surfaceT={surfaceT} empty={surfaceT("empty.receipts")} />
               </CardContent>
             </Card>
-            <ActionPanel
+          </section>
+          <section data-finance-final-section="workflow">
+            <FinanceWorkflowActionPanel
               title={surfaceT("receivables.sections.workflows")}
               description={surfaceT("receivables.sections.workflowsDescription")}
               localizedHref={localizedHref}
+              layout="row"
               actions={[
                 { href: "/dashboard/customers", icon: HandCoins, label: surfaceT("actions.customers") },
                 { href: "/dashboard/sales", icon: TrendingUp, label: surfaceT("actions.sales") },
@@ -857,31 +1504,35 @@ export function FinancePayablesSurface() {
                 lines={[
                   { label: t("metrics.payables"), value: money(dashboard.summary.payables) },
                   { label: surfaceT("payables.summary.overdue"), value: money(dashboard.summary.overduePayableAmount), tone: dashboard.summary.overduePayableAmount > 0 ? "text-[var(--dash-danger)]" : undefined },
-                  { label: surfaceT("payables.summary.recentDisbursements"), value: money(sumPayments(outboundPayments)), tone: "text-[var(--dash-danger)]" },
+                  { label: surfaceT("payables.summary.recentDisbursements"), value: money(sumPayments(outboundPayments)), tone: "text-[var(--dash-success)]" },
                   { label: t("summary.tax"), value: money(dashboard.summary.taxCollected - dashboard.summary.taxOnPurchases) },
                 ]}
               />
             </div>
           </section>
 
-          <section className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_420px]">
+          <section data-finance-final-section="operational">
             <Card className={dashboardPanelClass}>
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
-                  <ReceiptText className="h-4 w-4 text-[var(--dash-danger)]" />
+                  <ReceiptText className="h-4 w-4 text-[var(--dash-success)]" />
                   {surfaceT("payables.sections.disbursements")}
                 </CardTitle>
                 <CardDescription className={dashboardMutedTextClass}>{surfaceT("payables.sections.disbursementsDescription")}</CardDescription>
               </CardHeader>
               <CardContent>
-                <PaymentsTable payments={outboundPayments} money={money} formatDateTime={formatDateTime} t={t} empty={surfaceT("empty.disbursements")} />
+                <PaymentsTable payments={outboundPayments} money={money} formatDateTime={formatDateTime} t={t} surfaceT={surfaceT} empty={surfaceT("empty.disbursements")} />
               </CardContent>
             </Card>
-            <ActionPanel
+          </section>
+          <section data-finance-final-section="workflow">
+            <FinanceWorkflowActionPanel
               title={surfaceT("payables.sections.workflows")}
               description={surfaceT("payables.sections.workflowsDescription")}
               localizedHref={localizedHref}
+              layout="row"
               actions={[
+                { href: "/dashboard/purchases/payables/history", icon: History, label: surfaceT("actions.apHistory") },
                 { href: "/dashboard/purchases/payables", icon: FileText, label: surfaceT("actions.apWorkbench") },
                 { href: "/dashboard/purchase-orders", icon: ReceiptText, label: surfaceT("actions.purchaseOrders") },
                 { href: "/dashboard/purchases/suppliers", icon: Building2, label: surfaceT("actions.suppliers") },

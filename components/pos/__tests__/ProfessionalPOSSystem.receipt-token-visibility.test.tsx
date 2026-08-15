@@ -40,6 +40,7 @@ jest.mock("@/components/pos/offline/OfflineSyncStatusStrip", () => ({
 jest.mock("@/hooks/posHooks/usePosOperations", () => ({
   useActivePOSCart: jest.fn(),
   useActivePOSShift: jest.fn(),
+  useCurrentUserPOSShift: jest.fn(),
   useAddPOSCartLine: jest.fn(),
   useClosePOSShift: jest.fn(),
   useCommitPOSSale: jest.fn(),
@@ -84,8 +85,9 @@ function mutationState() {
 function setupHooks(capability: CapabilityState) {
   mockHooks.usePOSLocations.mockReturnValue({ data: actionSuccess([]) } as never)
   mockHooks.usePOSTerminals.mockReturnValue({ data: actionSuccess([]) } as never)
+  mockHooks.useCurrentUserPOSShift.mockReturnValue({ data: actionSuccess(null) } as never)
   mockHooks.useActivePOSShift.mockReturnValue({ data: actionSuccess(null) } as never)
-  mockHooks.usePOSCustomers.mockReturnValue({ data: actionSuccess([]) } as never)
+  mockHooks.usePOSCustomers.mockReturnValue({ data: actionSuccess({ customers: [], total: 0 }) } as never)
   mockHooks.usePOSCatalog.mockReturnValue({ data: actionSuccess({ categories: [], items: [] }) } as never)
   mockHooks.useActivePOSCart.mockReturnValue({ data: actionSuccess(null) } as never)
   mockHooks.useOpenPOSShift.mockReturnValue(mutationState() as never)

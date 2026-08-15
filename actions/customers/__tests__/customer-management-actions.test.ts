@@ -7,9 +7,11 @@ import { prepareCustomerExport } from "@/services/customer/customer-export.servi
 import {
   createCustomerForManagement,
   getCustomerManagementDataForOrg,
+  getCustomerManagementRowForOrg,
 } from "@/services/customer/customer.service"
 import {
   createManagedCustomer,
+  getManagedCustomer,
   getCustomerManagementData,
   prepareCustomerExportAction,
 } from "../customer-management-actions"
@@ -70,6 +72,7 @@ jest.mock("@/services/customer/customer.service", () => ({
   createCustomerForManagement: jest.fn(),
   getCustomerDetailAnalyticsForOrg: jest.fn(),
   getCustomerManagementDataForOrg: jest.fn(),
+  getCustomerManagementRowForOrg: jest.fn(),
   removeCustomerForManagement: jest.fn(),
   updateCustomerForManagement: jest.fn(),
 }))
@@ -80,6 +83,7 @@ const mockAssertCanUseOrganization = assertCanUseOrganization as jest.Mock
 const mockObserveModuleAccess = observeModuleAccess as jest.Mock
 const mockPrepareCustomerExport = prepareCustomerExport as jest.Mock
 const mockGetCustomerManagementData = getCustomerManagementDataForOrg as jest.Mock
+const mockGetCustomerManagementRow = getCustomerManagementRowForOrg as jest.Mock
 const mockCreateCustomer = createCustomerForManagement as jest.Mock
 const mockRevalidatePath = revalidatePath as jest.Mock
 
@@ -115,6 +119,28 @@ describe("customer management protected actions", () => {
       topBySales: [],
       topByBalance: [],
     })
+  })
+
+  it("loads one customer through the tenant-scoped protected read boundary", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext(["customers.read"]))
+    mockGetCustomerManagementRow.mockResolvedValue({ id: "customer-1", name: "Test customer" })
+
+    const result = await getManagedCustomer("org-1", "customer-1")
+
+    expect(result).toEqual(expect.objectContaining({
+      success: true,
+      data: expect.objectContaining({ id: "customer-1" }),
+    }))
+    expect(mockAssertCanUseOrganization).toHaveBeenCalledWith(
+      expect.objectContaining({ orgId: "org-1" }),
+      "org-1",
+    )
+    expect(mockGetCustomerManagementRow).toHaveBeenCalledWith("org-1", "customer-1")
+    expect(mockObserveModuleAccess).toHaveBeenCalledWith(expect.objectContaining({
+      organizationId: "org-1",
+      moduleSlug: "sales",
+      surface: "customers.read",
+    }))
   })
 
   it("derives the tenant for reads and enforces the sales module", async () => {

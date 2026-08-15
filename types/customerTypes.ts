@@ -64,5 +64,6 @@ export interface CustomerOrdersResult {
     totalOrders: number
     totalRevenue: number
     averageOrderValue: number
+    deliveredOrders: number
   }
 }

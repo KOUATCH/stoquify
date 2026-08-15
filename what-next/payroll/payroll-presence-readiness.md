@@ -1,6 +1,6 @@
 # Payroll Presence Readiness Gate
 
-Generated: 2026-08-01T16:25:17.558Z
+Generated: 2026-08-11T16:07:03.105Z
 Mode: fail
 Status: ready
 

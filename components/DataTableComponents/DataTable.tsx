@@ -74,6 +74,7 @@ interface DataTableProps<TData> {
   emptyMessage?: string;
   searchKey?: keyof TData | string;
   searchPlaceholder?: string;
+  searchContainerClassName?: string;
   showSearch?: boolean;
   showDateFilters?: boolean;
   showToolbar?: boolean;
@@ -160,6 +161,7 @@ export default function DataTable<TData>({
   emptyMessage = "No results.",
   searchKey,
   searchPlaceholder,
+  searchContainerClassName,
   showSearch = true,
   showDateFilters = true,
   showToolbar = true,
@@ -303,7 +305,7 @@ export default function DataTable<TData>({
           )}
         >
           {showSearch ? (
-            <div className="w-full min-w-0 flex-1 lg:min-w-[18rem]">
+            <div className={cn("w-full min-w-0 flex-1", searchContainerClassName ?? "lg:min-w-[18rem]")}>
               <SearchBar
                 data={data}
                 onSearch={setSearchResults}
@@ -314,7 +316,7 @@ export default function DataTable<TData>({
             </div>
           ) : null}
           {(showDateFilters || showToolbar || filters?.additionalFilters) ? (
-            <div className="flex w-full shrink-0 flex-wrap items-center gap-2 lg:w-auto lg:justify-end">
+            <div className="flex w-full min-w-0 flex-wrap items-center gap-2 lg:w-auto lg:flex-1 lg:justify-end">
               {showDateFilters ? (
                 <>
                   <DateRangeFilter

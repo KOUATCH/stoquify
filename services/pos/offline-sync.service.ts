@@ -1293,6 +1293,33 @@ export async function replayPendingOfflineSaleEnvelope(input: UserScoped<ReplayO
       userId: input.userId,
     })
 
+    if (!committed.receipt) {
+      const completedAfterCommit = await findCompletedReplayOutcome({
+        organizationId: input.organizationId,
+        event,
+        commitInput,
+      })
+
+      if (!completedAfterCommit) {
+        throw new BusinessRuleError(
+          "POS_SALE_COMMITTED_RECEIPT_RETRY_REQUIRED: the sale is complete, but its receipt evidence must be hydrated before the offline event can be acknowledged.",
+        )
+      }
+
+      return markOfflineSaleReplayed({
+        context: { organizationId: input.organizationId, userId: input.userId },
+        event,
+        receipt: completedAfterCommit.receipt,
+        result: replayResultFromReceipt({
+          offlineEventId: event.id,
+          saleId: completedAfterCommit.saleId,
+          orderNumber: completedAfterCommit.orderNumber,
+          postingBatchId: completedAfterCommit.postingBatchId,
+          receipt: completedAfterCommit.receipt,
+        }),
+      })
+    }
+
     return markOfflineSaleReplayed({
       context: { organizationId: input.organizationId, userId: input.userId },
       event,

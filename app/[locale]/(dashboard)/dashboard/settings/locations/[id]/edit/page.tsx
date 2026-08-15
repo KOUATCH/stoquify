@@ -2,6 +2,7 @@ import LocationsManagementDashboard from "@/components/locations/LocationsManage
 import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
 import { localizePath, pickLocale } from "@/i18n/routing"
 import { redirect } from "next/navigation"
+import { routeByKey, withSettingsSurfaceAccess } from "../../../settings-route-access"
 
 interface EditLocationPageProps {
   params: Promise<{ locale: string; id: string }>
@@ -12,7 +13,7 @@ export const metadata = {
   description: "Edit an organization location with operating policies and management settings.",
 }
 
-export default async function EditLocationPage({ params }: EditLocationPageProps) {
+async function EditLocationPageImpl({ params }: EditLocationPageProps) {
   const { locale: rawLocale, id } = await params
   const locale = pickLocale(rawLocale)
   await checkPermission("locations.update")
@@ -33,4 +34,20 @@ export default async function EditLocationPage({ params }: EditLocationPageProps
       </div>
     </div>
   )
+}
+
+
+
+export default async function SettingsRoutePage(props: any = {}) {
+  const surface = routeByKey("settings-locations-edit")
+
+  if (!surface) {
+    throw new Error("Missing settings route surface definition: settings-locations-edit")
+  }
+
+  return withSettingsSurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => EditLocationPageImpl(props),
+  })
 }

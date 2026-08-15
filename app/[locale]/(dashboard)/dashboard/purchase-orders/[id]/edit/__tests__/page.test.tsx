@@ -135,16 +135,18 @@ describe("PurchaseOrderEditPage", () => {
       resourceId: "po-1",
       auditAllowed: true,
     })
-    expect(mockObserveModuleAccess).toHaveBeenCalledWith(expect.objectContaining({
-      organizationId: "org-1",
-      userId: "user-1",
-      actorPermissions: ["purchases.orders.update"],
-      moduleSlug: "purchasing",
-      surfaceType: "page",
-      surface: "/dashboard/purchase-orders/[id]/edit",
-      accessIntent: "write",
-      mode: "observe",
-    }))
+    expect(mockObserveModuleAccess).toHaveBeenCalledWith(
+      expect.objectContaining({
+        organizationId: "org-1",
+        userId: "user-1",
+        actorPermissions: ["purchases.orders.update"],
+        moduleSlug: "purchasing",
+        surfaceType: "page",
+        surface: "/dashboard/purchase-orders/[id]/edit",
+        accessIntent: "write",
+        mode: "observe",
+      }),
+    )
     expect(mockGetPurchaseOrderById).toHaveBeenCalledWith("po-1", "org-1")
     expect(mockGetPurchaseOrderFormOptions).toHaveBeenCalledWith("org-1")
     expect(screen.getByRole("heading", { name: "Purchase order edit form rendered" })).toBeInTheDocument()
@@ -157,9 +159,9 @@ describe("PurchaseOrderEditPage", () => {
 
     render(await PurchaseOrderEditPage({ params: params("fr", "po-1") }))
 
-    expect(screen.getByRole("heading", { name: "Purchase order editing is not available for this role" })).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "Edit purchase order is not available for this role" })).toBeInTheDocument()
     expect(screen.getByRole("main")).toHaveAttribute("data-kind", "permission_denied")
-    expect(screen.getByRole("link", { name: "Back to purchase orders" })).toHaveAttribute("href", "/fr/dashboard/purchase-orders")
+    expect(screen.getByRole("link", { name: "Back to purchase orders" })).toHaveAttribute("href", "/fr/dashboard")
     expect(mockObserveModuleAccess).not.toHaveBeenCalled()
     expect(mockGetPurchaseOrderById).not.toHaveBeenCalled()
     expect(mockGetPurchaseOrderFormOptions).not.toHaveBeenCalled()
@@ -171,7 +173,7 @@ describe("PurchaseOrderEditPage", () => {
 
     render(await PurchaseOrderEditPage({ params: params("en", "po-1") }))
 
-    expect(screen.getByRole("heading", { name: "Purchase order editing needs an active organization" })).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "Edit purchase order needs an active organization" })).toBeInTheDocument()
     expect(screen.getByRole("main")).toHaveAttribute("data-kind", "no_active_org")
     expect(mockObserveModuleAccess).not.toHaveBeenCalled()
     expect(mockGetPurchaseOrderById).not.toHaveBeenCalled()

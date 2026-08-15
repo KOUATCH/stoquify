@@ -12,6 +12,7 @@ export default async function Layout({
 }) {
   const { locale: rawLocale } = await params
   const locale = pickLocale(rawLocale)
+  const isFrench = locale === "fr"
 
   try {
     await requireAnyPermission([
@@ -28,11 +29,23 @@ export default async function Layout({
       return (
         <DashboardRouteState
           kind={noActiveOrg ? "no_active_org" : "permission_denied"}
-          title={noActiveOrg ? "Supplier routes need an active organization" : "Supplier routes are not available for this role"}
+          title={
+            noActiveOrg
+              ? isFrench
+                ? "Les routes fournisseurs necessitent une organisation active"
+                : "Supplier routes need an active organization"
+              : isFrench
+                ? "Les routes fournisseurs ne sont pas disponibles pour ce role"
+                : "Supplier routes are not available for this role"
+          }
           message={
             noActiveOrg
-              ? "Refresh your session from the dashboard so purchasing can load tenant-scoped supplier routes."
-              : "Supplier routes require purchasing supplier read, create, or update access. The denial was recorded by the RBAC guard."
+              ? isFrench
+                ? "Actualisez votre session depuis le tableau de bord afin que les achats puissent charger les routes fournisseurs de votre organisation."
+                : "Refresh your session from the dashboard so purchasing can load tenant-scoped supplier routes."
+              : isFrench
+                ? "Les routes fournisseurs necessitent un acces en lecture, creation ou modification. Le refus a ete enregistre par le controle RBAC."
+                : "Supplier routes require purchasing supplier read, create, or update access. The denial was recorded by the RBAC guard."
           }
           primaryHref={localizePath("/dashboard/purchases", locale)}
         />

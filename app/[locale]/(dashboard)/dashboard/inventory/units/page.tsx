@@ -2,13 +2,14 @@ import UnitsManagementDashboard from "@/components/units/UnitsManagementDashboar
 import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
 import { localizePath, pickLocale } from "@/i18n/routing"
 import { redirect } from "next/navigation"
+import { routeByKey, withInventorySurfaceAccess } from "../inventory-route-access"
 
 export const metadata = {
   title: "Units | Stoquify",
   description: "Manage organization measurement units, conversions, status, and item usage.",
 }
 
-export default async function UnitsPage({
+async function UnitsPageImpl({
   params,
 }: {
   params: Promise<{ locale: string }>
@@ -29,4 +30,20 @@ export default async function UnitsPage({
       </div>
     </div>
   )
+}
+
+
+
+export default async function InventoryRoutePage(props: any = {}) {
+  const surface = routeByKey("inventory-units")
+
+  if (!surface) {
+    throw new Error("Missing inventory route surface definition: inventory-units")
+  }
+
+  return withInventorySurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => UnitsPageImpl(props),
+  })
 }

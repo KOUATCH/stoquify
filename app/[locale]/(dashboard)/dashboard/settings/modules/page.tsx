@@ -4,6 +4,7 @@ import { requirePermission } from "@/lib/security/rbac"
 import { getModuleControlCenterData } from "@/services/modules/module-entitlement.service"
 import type { Locale } from "@/types/bilingual"
 import { AlertTriangle, Boxes, LockKeyhole, Network, ShieldCheck } from "lucide-react"
+import { routeByKey, withSettingsSurfaceAccess } from "../settings-route-access"
 
 export const metadata = {
   title: "Module Control Center | Kontava",
@@ -83,7 +84,7 @@ function riskClass(risk: string) {
   return "border-[#2dd4bf]/35 bg-[rgba(45,212,191,0.12)] text-[#b5f5ee]"
 }
 
-export default async function ModuleSettingsPage({ params }: PageProps) {
+async function ModuleSettingsPageImpl({ params }: PageProps) {
   const { locale: rawLocale } = await params
   const locale = pickLocale(rawLocale)
   const labels = t(locale)
@@ -222,4 +223,20 @@ function Metric({ label, value }: { label: string; value: string }) {
       <p className="mt-2 truncate text-sm font-semibold text-[var(--dash-text)]">{value}</p>
     </div>
   )
+}
+
+
+
+export default async function SettingsRoutePage(props: any = {}) {
+  const surface = routeByKey("settings-modules")
+
+  if (!surface) {
+    throw new Error("Missing settings route surface definition: settings-modules")
+  }
+
+  return withSettingsSurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => ModuleSettingsPageImpl(props),
+  })
 }

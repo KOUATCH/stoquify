@@ -11,6 +11,11 @@ import { redirect } from "next/navigation"
 
 import ItemsEditPage from "../page"
 
+jest.mock("@/app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access", () => ({
+  routeByKey: jest.fn(() => ({ key: "inventory-test" })),
+  withInventorySurfaceAccess: jest.fn(({ onAllowed }) => onAllowed({ orgId: "org-1" }, "en")),
+}))
+
 const mockEditItemClient = jest.fn(() => <div data-testid="edit-item-client">Edit item form</div>)
 
 jest.mock("../EditItemClient", () => ({

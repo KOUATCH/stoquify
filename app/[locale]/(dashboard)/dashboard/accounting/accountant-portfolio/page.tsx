@@ -4,8 +4,9 @@ import { getAccountantPortfolioAction } from "@/actions/accounting/accountant-ac
 import { AccountantPortfolio } from "@/components/accounting/AccountantPortfolio"
 import { checkPermission } from "@/config/useAuth"
 import { AccountingPageShell } from "../_components/accounting-ui"
+import { routeByKey, withAccountingSurfaceAccess } from "../accounting-route-access"
 
-export default async function AccountantPortfolioPage() {
+async function AccountantPortfolioPageImpl() {
   await checkPermission("accounting.audit.read")
   const response = await getAccountantPortfolioAction()
 
@@ -25,4 +26,20 @@ export default async function AccountantPortfolioPage() {
       )}
     </AccountingPageShell>
   )
+}
+
+
+
+export default async function AccountingRoutePage(props: any = {}) {
+  const surface = routeByKey("accounting-accountant-portfolio")
+
+  if (!surface) {
+    throw new Error("Missing accounting route surface definition: accounting-accountant-portfolio")
+  }
+
+  return withAccountingSurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => AccountantPortfolioPageImpl(),
+  })
 }

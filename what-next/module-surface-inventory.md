@@ -1,21 +1,22 @@
 # Module Surface Inventory
 
-Report mode: this inventory is read-only and does not enforce module entitlements.
+Warn mode: this inventory compares against the saved baseline and does not enforce module entitlements.
 
 ## Summary
 
-- Generated at: 2026-08-06T09:43:22.585Z
+- Generated at: 2026-08-10T15:54:22.066Z
 - Catalog modules: 19
-- Surfaces inventoried: 387
+- Surfaces inventoried: 400
 - Source coverage: sidebar=present, moduleCatalog=present, dashboardRoot=present, actionsRoot=present, reportExportSurfaces=present, apiRoutes=present, apiGuardInventory=present
 
 ## Classification Counts
 
+- dashboard-only risk: 5
 - delegated re-export: 7
 - delegated_uploadthing_core: 1
-- enforcement candidate: 257
-- mapped: 353
-- missing permission: 4
+- enforcement candidate: 256
+- mapped: 361
+- missing permission: 10
 - not applicable: cross-module session assurance: 1
 - not applicable: internal action response helper: 1
 - not applicable: internal display helper: 1
@@ -28,9 +29,40 @@ Report mode: this inventory is read-only and does not enforce module entitlement
 - not_applicable_public: 4
 - not_applicable_public_service: 1
 - not_applicable_session_claims: 1
-- review_required: 1
-- source_inherited_service: 11
-- unmapped: 6
+- review_required: 4
+- source_inherited_service: 14
+- unmapped: 5
+
+## Baseline Ratchet
+
+- Ratchet status: failed
+- Baseline active gaps: 55
+- Current active gaps: 20
+- Active gap delta: -35
+- New gaps: 13
+- Resolved gaps: 48
+
+### Worsened Categories
+
+- MODULE_SURFACE_PAGE_GUARD_NONE: 0 -> 5 (+5)
+
+### New Gaps
+
+| Category | Surface Type | Surface | File | Reason |
+|---|---|---|---|---|
+| MODULE_SURFACE_UNMAPPED | action | agents/agent-release-control.actions.ts | actions/agents/agent-release-control.actions.ts | Module-required surface has no canonical module owner. |
+| MODULE_SURFACE_UNMAPPED | action | referrals/referral-funnel.actions.ts | actions/referrals/referral-funnel.actions.ts | Module-required surface has no canonical module owner. |
+| MODULE_SURFACE_MISSING_PERMISSION | page | /dashboard/analytics/referrals | app/[locale]/(dashboard)/dashboard/analytics/referrals/page.tsx | Protected user-facing surface has no RBAC permission evidence. |
+| MODULE_SURFACE_PAGE_GUARD_NONE | page | /dashboard/analytics/referrals | app/[locale]/(dashboard)/dashboard/analytics/referrals/page.tsx | Dashboard page has no detected server-side guard. |
+| MODULE_SURFACE_MISSING_PERMISSION | page | /dashboard/customers/[id]/edit | app/[locale]/(dashboard)/dashboard/customers/[id]/edit/page.tsx | Protected user-facing surface has no RBAC permission evidence. |
+| MODULE_SURFACE_PAGE_GUARD_NONE | page | /dashboard/customers/[id]/edit | app/[locale]/(dashboard)/dashboard/customers/[id]/edit/page.tsx | Dashboard page has no detected server-side guard. |
+| MODULE_SURFACE_MISSING_PERMISSION | page | /dashboard/customers/[id]/orders | app/[locale]/(dashboard)/dashboard/customers/[id]/orders/page.tsx | Protected user-facing surface has no RBAC permission evidence. |
+| MODULE_SURFACE_PAGE_GUARD_NONE | page | /dashboard/customers/[id]/orders | app/[locale]/(dashboard)/dashboard/customers/[id]/orders/page.tsx | Dashboard page has no detected server-side guard. |
+| MODULE_SURFACE_MISSING_PERMISSION | page | /dashboard/customers/[id] | app/[locale]/(dashboard)/dashboard/customers/[id]/page.tsx | Protected user-facing surface has no RBAC permission evidence. |
+| MODULE_SURFACE_PAGE_GUARD_NONE | page | /dashboard/customers/[id] | app/[locale]/(dashboard)/dashboard/customers/[id]/page.tsx | Dashboard page has no detected server-side guard. |
+| MODULE_SURFACE_MISSING_PERMISSION | page | /dashboard/customers/[id]/statement | app/[locale]/(dashboard)/dashboard/customers/[id]/statement/page.tsx | Protected user-facing surface has no RBAC permission evidence. |
+| MODULE_SURFACE_MISSING_PERMISSION | page | /dashboard/customers/new | app/[locale]/(dashboard)/dashboard/customers/new/page.tsx | Protected user-facing surface has no RBAC permission evidence. |
+| MODULE_SURFACE_PAGE_GUARD_NONE | page | /dashboard/customers/new | app/[locale]/(dashboard)/dashboard/customers/new/page.tsx | Dashboard page has no detected server-side guard. |
 
 ## Surfaces
 
@@ -40,6 +72,7 @@ Report mode: this inventory is read-only and does not enforce module entitlement
 | action | accounting/accountant-access.actions.ts | accounting | accounting.close.accountant.invite | protect | mapped, enforcement candidate | actions/accounting/accountant-access.actions.ts |
 | action | accounting/accounts.actions.ts | accounting | accounting.accounts.read | protect | mapped, enforcement candidate | actions/accounting/accounts.actions.ts |
 | action | accounting/close-assurance.actions.ts | accounting | accounting.close.read | protect | mapped, enforcement candidate | actions/accounting/close-assurance.actions.ts |
+| action | accounting/customer-statement.actions.ts | accounting | accounting.exports.create | protect | mapped | actions/accounting/customer-statement.actions.ts |
 | action | accounting/data-trust.actions.ts | accounting | accounting.audit.read | protect | mapped, enforcement candidate | actions/accounting/data-trust.actions.ts |
 | action | accounting/journals.actions.ts | accounting | accounting.journal.read | protect | mapped, enforcement candidate | actions/accounting/journals.actions.ts |
 | action | accounting/reports.actions.ts | accounting | accounting.reports.read | protect | mapped, enforcement candidate | actions/accounting/reports.actions.ts |
@@ -66,12 +99,8 @@ Report mode: this inventory is read-only and does not enforce module entitlement
 | action | categories/getOrgCategories.ts | inventory | inventory.categories.read | inventory.categories.create | inventory.categories.update | inventory.categories.delete | delegated-re-export | mapped, delegated re-export | actions/categories/getOrgCategories.ts |
 | action | compliance/compliance-center.actions.ts | compliance | compliance.documents.read | protect | mapped | actions/compliance/compliance-center.actions.ts |
 | action | compliance/country-adapter-pilot.actions.ts | compliance | compliance.adapters.manage | protect | mapped | actions/compliance/country-adapter-pilot.actions.ts |
-| action | customers/customer-management-actions.ts |  | )) {
-      return error.message
-    }
-
-    if (error.message.startsWith( | none | unmapped, enforcement candidate | actions/customers/customer-management-actions.ts |
-| action | customers/customerAction2.ts |  |  | requirePermission | unmapped, missing permission, enforcement candidate | actions/customers/customerAction2.ts |
+| action | customers/customer-management-actions.ts | sales | customers.read | protect | mapped | actions/customers/customer-management-actions.ts |
+| action | customers/customerAction2.ts | sales |  | requirePermission | mapped, missing permission | actions/customers/customerAction2.ts |
 | action | customers/customerActions.ts |  |  | none | unmapped, missing permission, enforcement candidate | actions/customers/customerActions.ts |
 | action | dashboard/getDashboardData.ts | dashboard | dashboard.read | requirePermission | mapped | actions/dashboard/getDashboardData.ts |
 | action | end-of-day-close/branch-daily-close-completion.actions.ts | dashboard | dashboard.read | protect | mapped | actions/end-of-day-close/branch-daily-close-completion.actions.ts |
@@ -79,6 +108,7 @@ Report mode: this inventory is read-only and does not enforce module entitlement
 | action | end-of-day-close/branch-daily-close-sign-off.actions.ts | dashboard | branch.daily-close.sign | protect | mapped | actions/end-of-day-close/branch-daily-close-sign-off.actions.ts |
 | action | evidence/proof-trail.actions.ts |  |  | protect | unmapped, missing permission, enforcement candidate | actions/evidence/proof-trail.actions.ts |
 | action | finance/ar-history.actions.ts | finance | finance.receivables.read | finance.read | requireAnyPermission | mapped, enforcement candidate | actions/finance/ar-history.actions.ts |
+| action | finance/customer-settlement.actions.ts | finance | finance.receivables.reverse | protect | mapped | actions/finance/customer-settlement.actions.ts |
 | action | finance/finance-dashboard.actions.ts | finance | getFinanceDashboardViewPermissions(parsed.view) | requireAnyPermission | mapped, enforcement candidate | actions/finance/finance-dashboard.actions.ts |
 | action | hris/approval-inbox.actions.ts | payroll | hris.people.read | protect | mapped, enforcement candidate | actions/hris/approval-inbox.actions.ts |
 | action | hris/compensation.actions.ts | payroll | hris.people.read | protect | mapped, enforcement candidate | actions/hris/compensation.actions.ts |
@@ -148,6 +178,7 @@ Report mode: this inventory is read-only and does not enforce module entitlement
 | action | purchaseOrderWorkflow/purchaseOrderSystemAction.ts | purchasing | purchases.orders.read | purchases.orders.create | purchases.orders.update | purchases.delete | purchases.orders.approve | purchases.orders.cancel | purchases.orders.receive | requirePermission | mapped, enforcement candidate | actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts |
 | action | purchasing/ap-control.actions.ts | purchasing | purchasing.ap.invoice.view | protect | mapped, enforcement candidate | actions/purchasing/ap-control.actions.ts |
 | action | purchasing/ap-history.actions.ts | purchasing | finance.reports.export | reports.export | requireAnyPermission | mapped | actions/purchasing/ap-history.actions.ts |
+| action | referrals/referral-funnel.actions.ts |  | analytics.read | requirePermission | unmapped, enforcement candidate | actions/referrals/referral-funnel.actions.ts |
 | action | roles/createRole.ts | settings | roles.create | requirePermission | mapped | actions/roles/createRole.ts |
 | action | roles/getOrgRoles.ts | settings | roles.read | requirePermission | mapped | actions/roles/getOrgRoles.ts |
 | action | roles/getRoleById.ts | settings | roles.read | requirePermission | mapped | actions/roles/getRoleById.ts |
@@ -161,7 +192,7 @@ Report mode: this inventory is read-only and does not enforce module entitlement
 | action | storage/storage-config-actions.ts | settings | inventory.items.create | inventory.items.update | system.settings.read | system.settings.update | requireAnyPermission | mapped | actions/storage/storage-config-actions.ts |
 | action | suppliers/getOrgSuppliers.ts | purchasing | purchases.suppliers.read | requirePermission | mapped | actions/suppliers/getOrgSuppliers.ts |
 | action | suppliers/itemSupplierActions.ts | purchasing | inventory.items.read | purchases.suppliers.read | inventory.items.update | purchases.suppliers.create | purchases.suppliers.update | purchases.suppliers.delete | requireAllPermissions | mapped, enforcement candidate | actions/suppliers/itemSupplierActions.ts |
-| action | suppliers/supplier-management-actions.ts | purchasing | purchases.suppliers.read | purchases.suppliers.create | purchases.suppliers.update | purchases.suppliers.delete | requireOrg+permission-check | mapped, enforcement candidate | actions/suppliers/supplier-management-actions.ts |
+| action | suppliers/supplier-management-actions.ts | purchasing | purchases.suppliers.read | purchases.suppliers.create | purchases.suppliers.update | purchases.suppliers.delete | requireOrg+permission-check | mapped | actions/suppliers/supplier-management-actions.ts |
 | action | taxRate/createActionTaxRate.ts | settings | taxes.create | requirePermission | mapped | actions/taxRate/createActionTaxRate.ts |
 | action | taxRate/getOrgTaxRates.ts | settings | taxes.read | requirePermission | mapped | actions/taxRate/getOrgTaxRates.ts |
 | action | taxRate/tax-rate-management-actions.ts | settings | taxes.read | requirePermission | mapped | actions/taxRate/tax-rate-management-actions.ts |
@@ -182,28 +213,35 @@ Report mode: this inventory is read-only and does not enforce module entitlement
 | api_evidence | app/api/receipts/[receiptId]/route.ts |  |  | assertPublicReceiptAccessToken | not_applicable_public_service | services/pos/receipt.service.ts |
 | api | /.well-known/security.txt |  |  | none | not_applicable_public | app/.well-known/security.txt/route.ts |
 | api | /api/auth/[...all] |  |  | none | not_applicable_public | app/api/auth/[...all]/route.ts |
+| api | /api/customer-statements/[statementId]/actions |  |  | none | review_required | app/api/customer-statements/[statementId]/actions/route.ts |
+| api | /api/customer-statements/[statementId] |  |  | none | review_required | app/api/customer-statements/[statementId]/route.ts |
 | api | /api/internal/agents/reconcile-abandoned |  |  | none | review_required | app/api/internal/agents/reconcile-abandoned/route.ts |
 | api | /api/me/permissions |  |  | getOptionalRbacContext | not_applicable_session_claims | app/api/me/permissions/route.ts |
 | api | /api/receipts/[receiptId] |  |  | none | not_applicable_public | app/api/receipts/[receiptId]/route.ts |
+| api | /api/referrals/[referralCode] |  |  | none | review_required | app/api/referrals/[referralCode]/route.ts |
 | api | /api/security-txt |  |  | none | not_applicable_public | app/api/security-txt/route.ts |
 | api | /api/uploads/[...path] | dashboard | dashboard.read | requireApiSessionForCurrentOrg | mapped, enforcement candidate | app/api/uploads/[...path]/route.ts |
 | api | /api/uploadthing |  |  | none | delegated_uploadthing_core | app/api/uploadthing/route.ts |
 | api | /api/v1/organisations/[id]/briefItems | inventory | inventory.items.read | requireApiSessionForOrg | mapped, enforcement candidate | app/api/v1/organisations/[id]/briefItems/route.ts |
 | api | /api/v1/organisations/[id]/items | inventory | inventory.items.read | requireApiSessionForOrg | mapped, enforcement candidate | app/api/v1/organisations/[id]/items/route.ts |
 | api | /api/v1/organisations | settings | MANAGE_SYSTEM_SETTINGS | requireApiSessionForCurrentOrg | mapped, enforcement candidate | app/api/v1/organisations/route.ts |
+| export_evidence | accounting/ar-open-item-export.service.ts | accounting |  | none | source_inherited_service | services/accounting/ar-open-item-export.service.ts |
 | export_evidence | accounting/control-center.service.ts | accounting |  | none | source_inherited_service | services/accounting/control-center.service.ts |
 | export_evidence | accounting/data-trust.service.ts | accounting | accounting.exports.create | none | source_inherited_service | services/accounting/data-trust.service.ts |
 | export_evidence | accounting/reports.service.ts | accounting |  | none | source_inherited_service | services/accounting/reports.service.ts |
 | export_evidence | controls/sensitive-action.service.ts |  | pos.use | none | source_inherited_service | services/controls/sensitive-action.service.ts |
+| export_evidence | customer/customer-export.service.ts |  |  | none | source_inherited_service | services/customer/customer-export.service.ts |
 | export_evidence | inventory/inventory-history-background-export.service.ts | inventory | inventory.levels.read | none | source_inherited_service | services/inventory/inventory-history-background-export.service.ts |
 | export_evidence | inventory/inventory-history-export-artifact-store.ts | inventory |  | none | source_inherited_service | services/inventory/inventory-history-export-artifact-store.ts |
 | export_evidence | inventory/inventory-history-export.service.ts | inventory | inventory.levels.read | none | source_inherited_service | services/inventory/inventory-history-export.service.ts |
 | export_evidence | security/export-safety.service.ts |  |  | none | source_inherited_service | services/security/export-safety.service.ts |
+| export_evidence | supplier/supplier-export.service.ts |  |  | none | source_inherited_service | services/supplier/supplier-export.service.ts |
+| export | accounting/customer-statement.actions.ts | accounting | accounting.exports.create | protect | mapped | actions/accounting/customer-statement.actions.ts |
 | export | accounting/data-trust.actions.ts | accounting | accounting.exports.create | protect | mapped, enforcement candidate | actions/accounting/data-trust.actions.ts |
 | export | accounting/reports.actions.ts | accounting | accounting.exports.create | protect | mapped, enforcement candidate | actions/accounting/reports.actions.ts |
 | export | inventory/inventoryMovementHistoryBackgroundExportActions.ts | inventory | reports.export | protect | mapped | actions/inventory/inventoryMovementHistoryBackgroundExportActions.ts |
 | export | payroll/payroll-register.actions.ts | payroll | payroll.exports.create | protect | mapped | actions/payroll/payroll-register.actions.ts |
-| layout | /dashboard/customers | sales | customers.read | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/customers/layout.tsx |
+| layout | /dashboard/customers | sales | customers.read | checkPermission | mapped | app/[locale]/(dashboard)/dashboard/customers/layout.tsx |
 | layout | /dashboard/inventory/brands | inventory |  | none | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/inventory/brands/layout.tsx |
 | layout | /dashboard/inventory/categories | inventory |  | none | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/inventory/categories/layout.tsx |
 | layout | /dashboard/inventory/units | inventory |  | none | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/inventory/units/layout.tsx |
@@ -229,6 +267,7 @@ Report mode: this inventory is read-only and does not enforce module entitlement
 | navigation | /dashboard/accounting/reports/trial-balance | accounting | accounting.reports.read | sidebar-permission-filter | mapped, enforcement candidate | config/sidebar.ts |
 | navigation | /dashboard/accounting/setup | accounting | accounting.setup.manage | sidebar-permission-filter | mapped, enforcement candidate | config/sidebar.ts |
 | navigation | /dashboard/analytics | analytics | VIEW_ANALYTICS | sidebar-permission-filter | mapped, enforcement candidate | config/sidebar.ts |
+| navigation | /dashboard/analytics/referrals | analytics | VIEW_ANALYTICS | sidebar-permission-filter | mapped, enforcement candidate | config/sidebar.ts |
 | navigation | /dashboard/analytics/reports | analytics | VIEW_ANALYTICS | sidebar-permission-filter | mapped, enforcement candidate | config/sidebar.ts |
 | navigation | /dashboard/assurance/control-tower | close_assurance | controls.audit.read | sidebar-permission-filter | mapped, enforcement candidate | config/sidebar.ts |
 | navigation | /dashboard/change-password | settings | PASSWORD_READ | sidebar-permission-filter | mapped, enforcement candidate | config/sidebar.ts |
@@ -311,16 +350,18 @@ Report mode: this inventory is read-only and does not enforce module entitlement
 | page | /dashboard/accounting/reports/trial-balance | accounting | accounting.reports.read | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/page.tsx |
 | page | /dashboard/accounting/setup | accounting | accounting.setup.manage | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx |
 | page | /dashboard/analytics | analytics | reports.read | dashboard.read | requireAnyPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/analytics/page.tsx |
+| page | /dashboard/analytics/referrals | analytics |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/analytics/referrals/page.tsx |
 | page | /dashboard/analytics/reports | analytics | reports.read | requirePermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/analytics/reports/page.tsx |
 | page | /dashboard/assurance/control-tower/incidents/[incidentId] | dashboard | controls.audit.read | requirePermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/assurance/control-tower/incidents/[incidentId]/page.tsx |
 | page | /dashboard/assurance/control-tower | dashboard | controls.audit.read | requirePermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/assurance/control-tower/page.tsx |
 | page | /dashboard/cashDrawer | cash_drawer | finance.cash-drawer.read | finance.read | requireAnyPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/cashDrawer/page.tsx |
 | page | /dashboard/change-password | settings | PASSWORD_READ | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/change-password/page.tsx |
 | page | /dashboard/compliance | compliance | compliance.documents.read | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/compliance/page.tsx |
-| page | /dashboard/customers/[id]/edit | sales | customers.update | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/customers/[id]/edit/page.tsx |
-| page | /dashboard/customers/[id]/orders | sales | customers.orders.read | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/customers/[id]/orders/page.tsx |
-| page | /dashboard/customers/[id] | sales | customers.read | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/customers/[id]/page.tsx |
-| page | /dashboard/customers/new | sales | customers.create | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/customers/new/page.tsx |
+| page | /dashboard/customers/[id]/edit | sales |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/customers/[id]/edit/page.tsx |
+| page | /dashboard/customers/[id]/orders | sales |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/customers/[id]/orders/page.tsx |
+| page | /dashboard/customers/[id] | sales |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/customers/[id]/page.tsx |
+| page | /dashboard/customers/[id]/statement | sales |  | module-observe | mapped, missing permission | app/[locale]/(dashboard)/dashboard/customers/[id]/statement/page.tsx |
+| page | /dashboard/customers/new | sales |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/customers/new/page.tsx |
 | page | /dashboard/customers | sales | customers.read | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/customers/page.tsx |
 | page | /dashboard/daily-digest | dashboard | dashboard.read | finance.read | accounting.close.read | inventory.read | analytics.read | requireAnyPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx |
 | page | /dashboard/finance/analytics | finance | financeViewPermissions(analytics) | FinanceRouteAccess | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/analytics/page.tsx |
@@ -392,7 +433,7 @@ Report mode: this inventory is read-only and does not enforce module entitlement
 | page | /dashboard/purchase-orders | purchasing | purchases.orders.read | requirePermission | mapped | app/[locale]/(dashboard)/dashboard/purchase-orders/page.tsx |
 | page | /dashboard/purchases/[id] | purchasing | purchases.orders.read | requirePermission | mapped | app/[locale]/(dashboard)/dashboard/purchases/[id]/page.tsx |
 | page | /dashboard/purchases | purchasing | purchases.orders.read | requirePermission | mapped | app/[locale]/(dashboard)/dashboard/purchases/page.tsx |
-| page | /dashboard/purchases/payables/history | purchasing | purchasing.ap.invoice.view | requirePermission | mapped | app/[locale]/(dashboard)/dashboard/purchases/payables/history/page.tsx |
+| page | /dashboard/purchases/payables/history | purchasing | purchasing.ap.invoice.view | finance.payables.read | purchases.suppliers.read | requireAnyPermission | mapped | app/[locale]/(dashboard)/dashboard/purchases/payables/history/page.tsx |
 | page | /dashboard/purchases/payables | purchasing | purchasing.ap.invoice.view | requirePermission | mapped | app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx |
 | page | /dashboard/purchases/suppliers/[id]/edit | purchasing | purchases.suppliers.update | requirePermission | mapped | app/[locale]/(dashboard)/dashboard/purchases/suppliers/[id]/edit/page.tsx |
 | page | /dashboard/purchases/suppliers/[id] | purchasing | purchases.suppliers.read | requirePermission | mapped | app/[locale]/(dashboard)/dashboard/purchases/suppliers/[id]/page.tsx |
