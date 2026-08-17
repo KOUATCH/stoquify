@@ -1,4 +1,7 @@
 const {
+  assertSafeName,
+  canonicalizeRows,
+  normalizeConstraintRow,
   parseArgs,
   redactedTarget,
   rewritePublicReferences,
@@ -53,8 +56,56 @@ describe("POS G0 schema-rebound certification harness", () => {
 
   it("requires an explicit supported mode", () => {
     expect(parseArgs(["node", "script", "--mode", "execute"]).mode).toBe("execute")
-    expect(() => parseArgs(["node", "script", "--mode", "reset"])).toThrow(
-      /preflight or execute/,
+    expect(parseArgs(["node", "script", "--mode", "reassess"]).mode).toBe(
+      "reassess",
     )
+    expect(() => parseArgs(["node", "script", "--mode", "reset"])).toThrow(
+      /preflight, execute, or reassess/,
+    )
+  })
+
+  it("accepts the approved r2 restore suffix during argument parsing", () => {
+    const restoreSchema = parseArgs([
+      "node",
+      "script",
+      "--restore-schema",
+      "codex_pos_commit_result_restore_20260817_r2",
+    ]).restoreSchema
+    expect(restoreSchema).toBe("codex_pos_commit_result_restore_20260817_r2")
+    expect(() => assertSafeName(restoreSchema, "restore schema")).not.toThrow()
+  })
+
+  it("canonicalizes fingerprint rows independently of database row order", () => {
+    const left = canonicalizeRows([
+      { table_name: "z", constraint_type: "FOREIGN KEY" },
+      { table_name: "a", constraint_type: "PRIMARY KEY" },
+    ])
+    const right = canonicalizeRows([
+      { constraint_type: "PRIMARY KEY", table_name: "a" },
+      { constraint_type: "FOREIGN KEY", table_name: "z" },
+    ])
+
+    expect(left).toEqual(right)
+  })
+
+  it("normalizes only PostgreSQL-generated NOT NULL constraint names", () => {
+    expect(
+      normalizeConstraintRow({
+        table_name: "sales",
+        constraint_name: "589320_589321_1_not_null",
+        constraint_type: "CHECK",
+      }),
+    ).toEqual({
+      table_name: "sales",
+      constraint_name: "<generated-not-null>",
+      constraint_type: "CHECK",
+    })
+    expect(
+      normalizeConstraintRow({
+        table_name: "sales",
+        constraint_name: "sales_total_nonnegative",
+        constraint_type: "CHECK",
+      }).constraint_name,
+    ).toBe("sales_total_nonnegative")
   })
 })

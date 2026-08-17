@@ -14,8 +14,6 @@ export default defineConfig({
   use: {
     ...devices["Desktop Chrome"],
     baseURL,
-    storageState,
-    channel: process.env.PLAYWRIGHT_CHANNEL ?? "msedge",
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
     video: "retain-on-failure",
@@ -30,8 +28,18 @@ export default defineConfig({
       },
   projects: [
     {
+      name: "pos-g0-auth-setup",
+      testMatch: /pos-g0-auth\.setup\.ts/,
+    },
+    {
       name: "pos-g0-authenticated-edge",
       testMatch: /pos-g0-authenticated-smoke\.spec\.ts/,
+      dependencies: ["pos-g0-auth-setup"],
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState,
+        channel: process.env.PLAYWRIGHT_CHANNEL ?? "msedge",
+      },
     },
   ],
 })

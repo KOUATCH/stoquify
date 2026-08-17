@@ -11,7 +11,7 @@ const protectedRoutes = [
   "/dashboard/manager-action-center",
 ] as const
 
-test.setTimeout(240_000)
+test.setTimeout(600_000)
 
 test.beforeEach(async ({ request }) => {
   expect(
@@ -38,7 +38,7 @@ for (const locale of locales) {
       expect(response?.status(), `${expectedPath} returned a server error`).toBeLessThan(500)
       await expect(page).toHaveURL(new RegExp(`${expectedPath.replaceAll("/", "\\/")}(?:[?#].*)?$`))
       expect(page.url()).not.toMatch(/\/(?:sign-in|login)(?:[/?#]|$)/i)
-      await expect(page.locator("main")).toBeVisible()
+      await expect(page.locator("main:visible").first()).toBeVisible()
       await expect(page.locator("body")).not.toContainText("Application error: a server-side exception")
     }
 

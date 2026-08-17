@@ -6,7 +6,7 @@ const { spawnSync } = require("node:child_process")
 const { Client } = require("pg")
 
 const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "::1"])
-const SAFE_SCHEMA = /^codex_pos_commit_result_(?:cert|restore)_\d{8}$/
+const SAFE_SCHEMA = /^codex_pos_commit_result_(?:cert|restore)_\d{8}(?:_r\d+)?$/
 
 function parseArgs(argv) {
   const args = { mode: "preflight" }
@@ -19,8 +19,8 @@ function parseArgs(argv) {
     else if (value === "--evidence-dir") args.evidenceDir = argv[++index]
     else throw new Error(`Unknown argument: ${value}`)
   }
-  if (!["preflight", "execute"].includes(args.mode)) {
-    throw new Error("--mode must be preflight or execute")
+  if (!["preflight", "execute", "reassess"].includes(args.mode)) {
+    throw new Error("--mode must be preflight, execute, or reassess")
   }
   return args
 }
@@ -42,6 +42,26 @@ function quoteIdentifier(value) {
 
 function sha256(value) {
   return crypto.createHash("sha256").update(value).digest("hex")
+}
+
+function canonicalizeRows(rows) {
+  return rows
+    .map((row) =>
+      Object.fromEntries(
+        Object.entries(row).sort(([left], [right]) => left.localeCompare(right)),
+      ),
+    )
+    .sort((left, right) => JSON.stringify(left).localeCompare(JSON.stringify(right)))
+}
+
+function normalizeConstraintRow(row) {
+  if (
+    row.constraint_type === "CHECK" &&
+    /^\d+_\d+_\d+_not_null$/.test(row.constraint_name)
+  ) {
+    return { ...row, constraint_name: "<generated-not-null>" }
+  }
+  return row
 }
 
 function resolveConnection(args, schema) {
@@ -205,7 +225,7 @@ function runMigrationProjection(root, urlValue, schemaPath) {
   return { exitCode: result.status, command: "prisma migrate deploy --schema <temporary projection>" }
 }
 
-async function schemaFingerprint(urlValue, schema) {
+async function readSchemaShape(urlValue, schema) {
   const client = new Client({ connectionString: urlValue })
   await client.connect()
   try {
@@ -227,19 +247,29 @@ async function schemaFingerprint(urlValue, schema) {
       "SELECT tablename, indexname FROM pg_indexes WHERE schemaname = $1 ORDER BY tablename, indexname",
       [schema],
     )
-    const canonical = JSON.stringify({
-      columns: columns.rows,
-      constraints: constraints.rows,
-      indexes: indexes.rows,
-    })
     return {
-      sha256: sha256(canonical),
-      columnCount: columns.rowCount,
-      constraintCount: constraints.rowCount,
-      indexCount: indexes.rowCount,
+      columns: canonicalizeRows(columns.rows),
+      constraints: canonicalizeRows(constraints.rows.map(normalizeConstraintRow)),
+      indexes: canonicalizeRows(indexes.rows),
     }
   } finally {
     await client.end()
+  }
+}
+
+async function schemaFingerprint(urlValue, schema) {
+  const shape = await readSchemaShape(urlValue, schema)
+  const canonical = JSON.stringify(shape)
+  return {
+    sha256: sha256(canonical),
+    columnCount: shape.columns.length,
+    constraintCount: shape.constraints.length,
+    indexCount: shape.indexes.length,
+    componentSha256: {
+      columns: sha256(JSON.stringify(shape.columns)),
+      constraints: sha256(JSON.stringify(shape.constraints)),
+      indexes: sha256(JSON.stringify(shape.indexes)),
+    },
   }
 }
 
@@ -263,6 +293,41 @@ async function main() {
   const targetBefore = await inspectSchema(targetUrl, targetSchema)
   const restoreBefore = await inspectSchema(restoreUrl, restoreSchema)
   const historyBefore = await migrationHistory(targetUrl, targetSchema)
+  if (args.mode === "reassess") {
+    const restoreFingerprint = await schemaFingerprint(restoreUrl, restoreSchema)
+    const targetFingerprint = await schemaFingerprint(targetUrl, targetSchema)
+    const expectedMigrationCount = fs
+      .readdirSync(path.join(root, "prisma", "migrations"), { withFileTypes: true })
+      .filter(
+        (entry) =>
+          entry.isDirectory() &&
+          fs.existsSync(path.join(root, "prisma", "migrations", entry.name, "migration.sql")),
+      ).length
+    const finishedMigrationCount = historyBefore.filter(
+      (entry) => entry.finishedAt && !entry.rolledBackAt,
+    ).length
+    const fingerprintsMatch = restoreFingerprint.sha256 === targetFingerprint.sha256
+    const reassessment = {
+      observedAt,
+      mode: args.mode,
+      restore: redactedTarget(restoreUrl),
+      target: redactedTarget(targetUrl),
+      databaseMutationPerformed: false,
+      expectedMigrationCount,
+      finishedMigrationCount,
+      restoreFingerprint,
+      targetFingerprint,
+      fingerprintsMatch,
+    }
+    writeJson(evidenceDir, "schema-fingerprint-reassessment.json", reassessment)
+    if (finishedMigrationCount !== expectedMigrationCount || !fingerprintsMatch) {
+      throw new Error("Migration history or reassessed schema fingerprint did not certify")
+    }
+    process.stdout.write(
+      `POS G0 read-only schema fingerprint reassessment passed (${finishedMigrationCount} migrations).\n`,
+    )
+    return
+  }
   const verification = {
     observedAt,
     mode: args.mode,
@@ -350,7 +415,13 @@ if (require.main === module) {
 }
 
 module.exports = {
+  assertSafeName,
+  canonicalizeRows,
+  normalizeConstraintRow,
   parseArgs,
+  readSchemaShape,
   redactedTarget,
+  resolveConnection,
   rewritePublicReferences,
+  schemaFingerprint,
 }
