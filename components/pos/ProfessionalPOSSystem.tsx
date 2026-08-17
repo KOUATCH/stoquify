@@ -47,10 +47,9 @@ import { useNotifications } from "@/components/notifications/NotificationProvide
 import { OfflineSyncStatusStrip } from "@/components/pos/offline/OfflineSyncStatusStrip"
 import { ReceiptTokenHistoryPanel, type ReceiptTokenSaleSearchItem } from "@/components/pos/ReceiptTokenHistoryPanel"
 import { ReceiptTokenControlStrip, type ReceiptTokenControlItem } from "@/components/pos/ReceiptTokenControlStrip"
+import { currencyFractionDigits } from "@/lib/i18n/organization-money"
 import { cn } from "@/lib/utils"
 import {
-  RECEIPT_CHANNEL_UI_ORDER,
-  normalizeReceiptDestination,
   receiptChannelRequiresDestination,
   receiptDestinationKind,
   type ReceiptChannel,
@@ -82,6 +81,9 @@ type TenderMethod = "CASH" | "CARD" | "MOBILE_MONEY" | "BANK_TRANSFER" | "STORE_
 type CatalogView = "all" | "favorites" | "recent"
 
 type CommitSaleResult = {
+  clientCommitId: string
+  resultSchemaVersion: 1
+  replayed: boolean
   saleId: string
   orderNumber: string
   status: string
@@ -295,8 +297,8 @@ function toErrorMessage(error: unknown, fallback: string) {
   return fallback
 }
 
-const tenderMethods: TenderMethod[] = ["CASH", "CARD", "MOBILE_MONEY", "BANK_TRANSFER", "STORE_CREDIT", "ON_ACCOUNT"]
-const receiptChannels = RECEIPT_CHANNEL_UI_ORDER
+const tenderMethods: TenderMethod[] = ["CASH"]
+const receiptChannels: ReceiptChannel[] = ["NONE"]
 const posSurfaceClass =
   "dashboard-glass-panel overflow-hidden rounded-lg text-[var(--dash-text)]"
 const posPanelClass =
@@ -357,6 +359,7 @@ export default function ProfessionalPOSSystem() {
   const tenderAmountRef = useRef<HTMLInputElement>(null)
   const currentShiftDefaultAppliedRef = useRef(false)
   const previousCustomerLocationIdRef = useRef("")
+  const pendingCommitRef = useRef<{ salesOrderId: string; clientCommitId: string } | null>(null)
   const [selectedLocationId, setSelectedLocationId] = useState("")
   const [selectedTerminalId, setSelectedTerminalId] = useState("")
   const [selectedCategoryId, setSelectedCategoryId] = useState("")
@@ -454,6 +457,7 @@ export default function ProfessionalPOSSystem() {
 
   const selectedLocation = locations.find((location) => location.id === selectedLocationId)
   const selectedTerminal = terminals.find((terminal) => terminal.id === selectedTerminalId)
+  const selectedTerminalOccupied = !activeShift && Boolean(selectedTerminal?.currentSessionId)
   const selectedCustomer = customers.find((customer) => customer.id === selectedCustomerId)
   const selectedProduct = (catalog.items as CatalogItem[]).find((item) => item.id === selectedProductId) || null
   const currency = selectedLocation?.organization?.currency || "USD"
@@ -461,6 +465,7 @@ export default function ProfessionalPOSSystem() {
     () => new Intl.NumberFormat(locale, { style: "currency", currency }),
     [currency, locale],
   )
+  const cashFractionDigits = useMemo(() => currencyFractionDigits(currency), [currency])
   const receiptTokenLabels = useMemo(() => ({
     title: t("receipt.tokens.title"),
     loading: t("receipt.tokens.loading"),
@@ -539,7 +544,8 @@ export default function ProfessionalPOSSystem() {
 
   useEffect(() => {
     if (terminals.length > 0 && !terminals.some((terminal) => terminal.id === selectedTerminalId)) {
-      setSelectedTerminalId(terminals[0].id)
+      const availableTerminal = terminals.find((terminal) => !terminal.currentSessionId)
+      setSelectedTerminalId((availableTerminal ?? terminals[0]).id)
     }
   }, [selectedTerminalId, terminals])
 
@@ -651,8 +657,10 @@ export default function ProfessionalPOSSystem() {
   const closingBalanceInput = closingBalance.trim()
   const hasValidCloseBalance = /^\d{1,12}(?:\.\d{1,2})?$/.test(closingBalanceInput)
   const parsedCloseBalance = hasValidCloseBalance ? Number(closingBalanceInput) : null
-  const closeVariance = parsedCloseBalance === null ? null : parsedCloseBalance - expectedCloseBalance
-  const needsVarianceExplanation = closeVariance !== null && Math.abs(closeVariance) >= 0.005
+  const closeVariance = parsedCloseBalance === null
+    ? null
+    : Number(parsedCloseBalance.toFixed(cashFractionDigits)) - Number(expectedCloseBalance.toFixed(cashFractionDigits))
+  const needsVarianceExplanation = closeVariance !== null && closeVariance !== 0
   const canSubmitCloseShift = hasValidCloseBalance && (!needsVarianceExplanation || varianceExplanation.trim().length > 0)
   const hardwareStatuses = [
     { label: t("hardware.scanner"), value: canSell ? t("hardware.ready") : t("hardware.waiting"), ready: canSell },
@@ -664,6 +672,12 @@ export default function ProfessionalPOSSystem() {
   async function handleOpenShift() {
     if (!selectedLocationId || !selectedTerminalId) {
       notifications.warning(t("notifications.setupRequiredTitle"), t("notifications.setupRequiredMessage"), { category: "pos" })
+      return
+    }
+    if (selectedTerminalOccupied) {
+      notifications.warning(t("shift.occupied"), t("shift.occupiedDescription", {
+        number: selectedTerminal?.currentSession?.sessionNumber ?? selectedTerminal?.terminalNumber ?? "",
+      }), { category: "pos" })
       return
     }
 
@@ -946,7 +960,12 @@ export default function ProfessionalPOSSystem() {
     )
 
     try {
+      const clientCommitId = pendingCommitRef.current?.salesOrderId === cart.id
+        ? pendingCommitRef.current.clientCommitId
+        : `pos:${globalThis.crypto.randomUUID()}`
+      pendingCommitRef.current = { salesOrderId: cart.id, clientCommitId }
       const response = await commitSale.mutateAsync({
+        clientCommitId,
         salesOrderId: cart.id,
         locationId: selectedLocationId,
         terminalId: selectedTerminalId,
@@ -954,10 +973,8 @@ export default function ProfessionalPOSSystem() {
         customerId: selectedCustomer?.id || undefined,
         tenders: tenderPreview.tenders,
         receipt: {
-          channel: receiptChannel,
-          destination: normalizeReceiptDestination(receiptChannel, receiptDestination),
+          channel: "NONE",
           locale: locale === "fr" ? "FR" : "EN",
-          whatsAppCustomerOptInConfirmed: isWhatsAppReceiptChannel ? whatsAppCustomerOptInConfirmed : undefined,
         },
       })
       const error = actionError(response)
@@ -972,6 +989,7 @@ export default function ProfessionalPOSSystem() {
       }
 
       setLastSale(response.data)
+      pendingCommitRef.current = null
       setTenderLines([createTenderLine()])
       setReceiptChannel("NONE")
       setReceiptDestination("")
@@ -1133,7 +1151,7 @@ export default function ProfessionalPOSSystem() {
   }
 
   function addTenderLine() {
-    setTenderLines((current) => [...current, createTenderLine(current.some((line) => line.method === "CASH") ? "CARD" : "CASH")])
+    setTenderLines((current) => [...current, createTenderLine("CASH")])
   }
 
   function removeTenderLine(id: string) {
@@ -1263,6 +1281,7 @@ export default function ProfessionalPOSSystem() {
                     {terminals.map((terminal) => (
                       <option key={terminal.id} value={terminal.id}>
                         {terminal.terminalNumber} - {terminal.name}
+                        {terminal.currentSessionId ? ` - ${t("setup.terminalOccupied")}` : ""}
                       </option>
                     ))}
                   </select>
@@ -1282,7 +1301,7 @@ export default function ProfessionalPOSSystem() {
                   </p>
                 </div>
                 <Badge variant={activeShift ? "outline" : "secondary"}>
-                  {activeShift ? t("shift.active") : t("shift.notOpen")}
+                  {activeShift ? t("shift.active") : selectedTerminalOccupied ? t("shift.occupied") : t("shift.notOpen")}
                 </Badge>
               </div>
 
@@ -1320,7 +1339,7 @@ export default function ProfessionalPOSSystem() {
                       inputMode="decimal"
                       min="0"
                       max="999999999999.99"
-                      step="0.01"
+                      step={cashFractionDigits === 0 ? "1" : "0.01"}
                       aria-label={t("shift.countedCash")}
                       aria-invalid={closingBalanceInput !== "" && !hasValidCloseBalance}
                       onChange={(event) => {
@@ -1341,6 +1360,12 @@ export default function ProfessionalPOSSystem() {
                     </POSButton>
                   </div>
                 </div>
+              ) : selectedTerminalOccupied ? (
+                <div role="status" className={cn("rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900", "dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-100")}>
+                  {t("shift.occupiedDescription", {
+                    number: selectedTerminal?.currentSession?.sessionNumber ?? selectedTerminal?.terminalNumber ?? "",
+                  })}
+                </div>
               ) : (
                 <div className="flex gap-2">
                   <Input
@@ -1356,7 +1381,7 @@ export default function ProfessionalPOSSystem() {
                     type="button"
                     className={posButtonPrimaryClass}
                     onClick={handleOpenShift}
-                    disabled={!selectedTerminalId || openShift.isPending}
+                    disabled={!selectedTerminalId || selectedTerminalOccupied || openShift.isPending}
                   >
                     {t("shift.openCta")}
                   </POSButton>
@@ -1884,7 +1909,7 @@ export default function ProfessionalPOSSystem() {
                   posDividerClass,
                 )}
               >
-                <div data-testid="pos-totals-summary" className="grid grid-cols-2 gap-2 px-3 py-1 text-xs tabular-nums sm:grid-cols-4 xl:gap-1.5">
+                <div data-testid="pos-totals-summary" className="grid grid-cols-2 gap-2 px-3 py-1 text-xs tabular-nums xl:gap-1.5">
                     <div className={cn("rounded-md border bg-[rgba(37,57,67,0.42)] px-2 py-1", posDividerClass)}>
                       <div className={posMutedTextClass}>{t("totals.subtotal")}</div>
                       <div className="mt-0.5 truncate font-semibold">{money.format(cart?.subtotal ?? 0)}</div>
@@ -2167,24 +2192,22 @@ export default function ProfessionalPOSSystem() {
                 </div>
 
                 <div data-testid="pos-charge-footer" className={cn("shrink-0 border-t px-3 py-1", posDividerClass)}>
-                  <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_minmax(9.5rem,1.25fr)] xl:items-center xl:gap-2">
-                    <div className="grid grid-cols-3 gap-2 text-center text-xs tabular-nums">
-                      <div>
-                        <div className={posMutedTextClass}>{t("tender.paid")}</div>
-                        <div className="mt-0.5 font-semibold">{money.format(paidPreview)}</div>
-                      </div>
-                      <div>
-                        <div className={posMutedTextClass}>{t("tender.due")}</div>
-                        <div className="mt-0.5 font-semibold">{money.format(balancePreview)}</div>
-                      </div>
-                      <div>
-                        <div className={posMutedTextClass}>{t("tender.change")}</div>
-                        <div className="mt-0.5 font-semibold">{money.format(changePreview)}</div>
-                      </div>
+                  <div data-testid="pos-charge-summary" className="grid grid-cols-2 items-center gap-2 text-center text-xs tabular-nums">
+                    <div className={cn("rounded-md border bg-[rgba(37,57,67,0.42)] px-2 py-1", posDividerClass)}>
+                      <div className={posMutedTextClass}>{t("tender.paid")}</div>
+                      <div className="mt-0.5 font-semibold">{money.format(paidPreview)}</div>
+                    </div>
+                    <div className={cn("rounded-md border bg-[rgba(37,57,67,0.42)] px-2 py-1", posDividerClass)}>
+                      <div className={posMutedTextClass}>{t("tender.due")}</div>
+                      <div className="mt-0.5 font-semibold">{money.format(balancePreview)}</div>
+                    </div>
+                    <div className={cn("rounded-md border bg-[rgba(37,57,67,0.42)] px-2 py-1", posDividerClass)}>
+                      <div className={posMutedTextClass}>{t("tender.change")}</div>
+                      <div className="mt-0.5 font-semibold">{money.format(changePreview)}</div>
                     </div>
                     <POSButton
                       type="button"
-                      className={cn("mt-1.5 h-11 w-full justify-center text-base xl:mt-0", posButtonPrimaryClass, touchMode && "h-14")}
+                      className={cn(posButtonPrimaryClass, "h-11 w-full justify-center rounded-md border text-base", posDividerClass, touchMode && "h-14")}
                       disabled={!canCommitSale}
                       onClick={handleCommitSale}
                     >
@@ -2301,7 +2324,7 @@ export default function ProfessionalPOSSystem() {
                   inputMode="decimal"
                   min="0"
                   max="999999999999.99"
-                  step="0.01"
+                  step={cashFractionDigits === 0 ? "1" : "0.01"}
                   aria-invalid={closingBalanceInput !== "" && !hasValidCloseBalance}
                   onChange={(event) => {
                     setClosingBalance(event.target.value)

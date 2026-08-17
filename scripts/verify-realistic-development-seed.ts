@@ -9,8 +9,10 @@ import { verifyUserCredentialPassword } from "@/lib/security/auth-credentials";
 import { db } from "@/prisma/db";
 import {
   addPOSCartLine,
+  closePOSShift,
   commitPOSSale,
   listPOSCatalogItems,
+  openPOSShift,
 } from "@/services/pos/pos.service";
 
 const prisma = new PrismaClient();
@@ -129,16 +131,15 @@ async function verifyPOSFlow(credentials: Credential[]) {
     },
     select: { id: true, terminalNumber: true },
   });
-  const session = await prisma.pOSSession.findFirstOrThrow({
-    where: {
-      organizationId: cashierCredential.organizationId,
-      locationId: location.id,
-      terminalId: terminal.id,
-      userId: cashier.id,
-      status: "ACTIVE",
-    },
-    select: { id: true, sessionNumber: true },
+  const session = await openPOSShift({
+    organizationId: cashierCredential.organizationId,
+    userId: cashier.id,
+    locationId: location.id,
+    terminalId: terminal.id,
+    openingBalance: 20_000,
+    notes: "Automated realistic seed verification shift.",
   });
+  if (!session) throw new Error("The POS service did not return the newly opened shift.");
 
   const catalog = await listPOSCatalogItems({
     organizationId: cashierCredential.organizationId,
@@ -186,6 +187,7 @@ async function verifyPOSFlow(credentials: Credential[]) {
   const committed = await commitPOSSale({
     organizationId: cashierCredential.organizationId,
     userId: cashier.id,
+    clientCommitId: `seed:${cart.id}`,
     salesOrderId: cart.id,
     locationId: location.id,
     terminalId: terminal.id,
@@ -229,6 +231,25 @@ async function verifyPOSFlow(credentials: Credential[]) {
     throw new Error("The seven-item POS sale did not persist as completed and paid.");
   }
 
+  const closingSession = await prisma.pOSSession.findUniqueOrThrow({
+    where: { id: session.id },
+    select: { expectedBalance: true },
+  });
+  const closedSession = await closePOSShift({
+    organizationId: cashierCredential.organizationId,
+    userId: cashier.id,
+    sessionId: session.id,
+    actualBalance: String(closingSession.expectedBalance ?? 0),
+    notes: "Automated realistic seed verification close.",
+  });
+  const closedState = await prisma.pOSSession.findUniqueOrThrow({
+    where: { id: closedSession.sessionId },
+    select: { status: true },
+  });
+  if (closedState.status !== "CLOSED") {
+    throw new Error(`The POS shift remained ${closedState.status} after close.`);
+  }
+
   return {
     organizationId: cashierCredential.organizationId,
     location,
@@ -242,6 +263,7 @@ async function verifyPOSFlow(credentials: Credential[]) {
     total: committed.total,
     status: committed.status,
     paymentStatus: committed.paymentStatus,
+    shiftCloseStatus: closedState.status,
     inventoryDecrementVerified: true,
   };
 }

@@ -174,6 +174,7 @@ model User {
 
   // POS relationships
   posSessions            POSSession[]
+  posCommitResults       POSCommitResult[]
   cashDrawerTransactions CashDrawerTransaction[]
   paymentsProcessed      Payment[]
   refundsProcessed       PaymentRefund[]
@@ -339,6 +340,7 @@ model Organization {
   posOfflineEvents                        POSOfflineEvent[]
   posOfflineSyncConflicts                 POSOfflineSyncConflict[]
   posOfflineSyncCertificates              POSOfflineSyncCertificate[]
+  posCommitResults                         POSCommitResult[]
   payrollEmployees                        PayrollEmployee[]
   hrisOrgUnits                            HrisOrgUnit[]
   hrisPositions                           HrisPosition[]
@@ -501,6 +503,7 @@ model Location {
   posOfflineDevices          POSOfflineDevice[]
   posOfflineEvents           POSOfflineEvent[]
   posOfflineSyncCertificates POSOfflineSyncCertificate[]
+  posCommitResults           POSCommitResult[]
   expenses                   Expense[]
   serialNumbers              SerialNumber[]
   stockCountSessions         StockCountSession[]
@@ -3608,6 +3611,7 @@ model SalesOrder {
   lines                         SalesOrderLine[]
   payments                      Payment[]
   publicReceiptAccessTokens     PublicReceiptAccessToken[]
+  posCommitResults              POSCommitResult[]
   customerReceivableDocuments   CustomerReceivableDocument[]
   customerSettlementAllocations CustomerSettlementAllocation[]
 
@@ -4106,6 +4110,7 @@ model POSStation {
   offlineDevices          POSOfflineDevice[]
   offlineEvents           POSOfflineEvent[]
   offlineSyncCertificates POSOfflineSyncCertificate[]
+  posCommitResults        POSCommitResult[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -4153,6 +4158,7 @@ model POSSession {
   organizationId String
 
   salesOrders            SalesOrder[]
+  posCommitResults       POSCommitResult[]
   cashDrawerTransactions CashDrawerTransaction[]
   offlineEvents          POSOfflineEvent[]
 
@@ -4174,6 +4180,53 @@ enum POSSessionStatus {
   SUSPENDED
   CLOSED
   RECONCILED
+}
+
+enum POSCommitResultStatus {
+  CLAIMED
+  COMMITTED
+  COMPLETED
+}
+
+model POSCommitResult {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  locationId String
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Restrict)
+
+  terminalId String
+  terminal   POSStation @relation(fields: [terminalId], references: [id], onDelete: Restrict)
+
+  sessionId String
+  session   POSSession @relation(fields: [sessionId], references: [id], onDelete: Restrict)
+
+  salesOrderId String
+  salesOrder   SalesOrder @relation(fields: [salesOrderId], references: [id], onDelete: Restrict)
+
+  actorId String
+  actor   User   @relation(fields: [actorId], references: [id], onDelete: Restrict)
+
+  clientCommitId       String @db.VarChar(191)
+  requestHash          String @db.VarChar(64)
+  requestSchemaVersion Int    @default(1)
+
+  status         POSCommitResultStatus @default(CLAIMED)
+  resultEnvelope Json?
+  resultHash     String?               @db.VarChar(64)
+  committedAt   DateTime?
+  completedAt   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([organizationId, terminalId, clientCommitId])
+  @@index([organizationId, locationId, status, createdAt])
+  @@index([organizationId, salesOrderId])
+  @@index([organizationId, sessionId, createdAt])
+  @@map("pos_commit_results")
 }
 
 model CashDrawer {

@@ -140,6 +140,14 @@ export const commitSaleReceiptSchema = z.object({
 }).superRefine(validateReceiptDestination)
 
 export const commitSaleSchema = z.object({
+  clientCommitId: z.string()
+    .trim()
+    .min(8, "Commit identifier must be at least 8 characters")
+    .max(191, "Commit identifier must not exceed 191 characters")
+    .regex(
+      /^[A-Za-z0-9][A-Za-z0-9._:-]*$/,
+      "Commit identifier contains unsupported characters",
+    ),
   salesOrderId: z.string().min(1, "Cart is required"),
   locationId: z.string().min(1, "Location is required"),
   terminalId: z.string().min(1, "Terminal is required"),

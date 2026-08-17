@@ -63,14 +63,14 @@ const mockRefundPOSSale = refundPOSSale as jest.Mock
 const mockVoidPOSSale = voidPOSSale as jest.Mock
 
 const saleInput = {
+  clientCommitId: "pos-commit-1",
   salesOrderId: "sale-1",
   locationId: "loc-1",
   terminalId: "terminal-1",
   sessionId: "session-1",
   tenders: [{ method: "CASH", amount: 100 }],
   receipt: {
-    channel: "EMAIL",
-    destination: "customer@example.test",
+    channel: "NONE",
     locale: "EN",
   },
 }
@@ -117,17 +117,13 @@ describe("POS tender actions", () => {
     mockRequirePermission.mockResolvedValue(rbacContext())
     mockObserveModuleAccess.mockResolvedValue({ allowed: true, wouldBlock: false })
     mockCommitPOSSale.mockResolvedValue({
+      clientCommitId: "pos-commit-1",
+      resultSchemaVersion: 1,
+      replayed: false,
       saleId: "sale-1",
       orderNumber: "SO-001",
-      receipt: { digitalReceiptUrl: "https://example.test/receipts/sale-1" },
-      delivery: {
-        channel: "EMAIL",
-        status: "PENDING",
-        destination: "customer@example.test",
-        retryable: false,
-        message: "EMAIL receipt provider is not configured; delivery attempt was recorded.",
-        digitalReceiptUrl: "https://example.test/receipts/sale-1",
-      },
+      receipt: { digitalReceiptUrl: "" },
+      delivery: null,
     })
     mockRefundPOSSale.mockResolvedValue({
       saleId: "sale-1",
@@ -142,23 +138,19 @@ describe("POS tender actions", () => {
     })
   })
 
-  it("passes receipt requests through the service-owned POS sale workflow", async () => {
+  it("passes the client commit identity through the protected cash-sale workflow", async () => {
     const result = await commitPOSSaleAction(saleInput)
 
     expect(result).toEqual({
       success: true,
       data: {
+        clientCommitId: "pos-commit-1",
+        resultSchemaVersion: 1,
+        replayed: false,
         saleId: "sale-1",
         orderNumber: "SO-001",
-        receipt: { digitalReceiptUrl: "https://example.test/receipts/sale-1" },
-        delivery: {
-          channel: "EMAIL",
-          status: "PENDING",
-          destination: "customer@example.test",
-          retryable: false,
-          message: "EMAIL receipt provider is not configured; delivery attempt was recorded.",
-          digitalReceiptUrl: "https://example.test/receipts/sale-1",
-        },
+        receipt: { digitalReceiptUrl: "" },
+        delivery: null,
       },
       error: null,
       status: 200,
