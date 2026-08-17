@@ -1,0 +1,31 @@
+{
+  "observedAt": "2026-08-17T10:51:51.367Z",
+  "mode": "execute",
+  "target": {
+    "protocol": "postgresql:",
+    "host": "localhost",
+    "port": "5432",
+    "database": "stoquify_dev_migrated_20260814",
+    "schema": "codex_pos_commit_result_cert_20260817"
+  },
+  "targetBefore": {
+    "database": "stoquify_dev_migrated_20260814",
+    "databaseRole": "postgres",
+    "schema": "codex_pos_commit_result_cert_20260817",
+    "schemaPresent": true,
+    "tableCount": 0,
+    "tables": []
+  },
+  "restoreBefore": {
+    "database": "stoquify_dev_migrated_20260814",
+    "databaseRole": "postgres",
+    "schema": "codex_pos_commit_result_restore_20260817_r2",
+    "schemaPresent": false,
+    "tableCount": 0,
+    "tables": []
+  },
+  "emptyTargetVerified": true,
+  "emptyRestoreVerified": true,
+  "publicSchemaAccessed": false,
+  "realDataUsed": false
+}
