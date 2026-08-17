@@ -417,6 +417,8 @@ if (require.main === module) {
 module.exports = {
   assertSafeName,
   canonicalizeRows,
+  inspectSchema,
+  migrationHistory,
   normalizeConstraintRow,
   parseArgs,
   readSchemaShape,
