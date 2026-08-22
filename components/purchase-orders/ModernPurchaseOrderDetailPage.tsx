@@ -11,7 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { getLocaleFromPathname, localizePath } from "@/i18n/routing"
-import { formatCurrency } from "@/lib/formatCurrency"
+import { formatCurrency as formatMoney } from "@/lib/i18n/formatters"
 import { DEFAULT_LOCALE } from "@/types/bilingual"
 import { format, formatDate } from "date-fns"
 import {
@@ -45,15 +45,15 @@ import {
 import { useSession } from "@/lib/auth-client"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { useCallback, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { ModernStatusBadge } from "./ModernStatusBadge"
+import { resolveReceiveDeepLink } from "./purchase-order-deep-links"
 
 // Import real hooks
 import {
   useApprovePurchaseOrder,
   useCancelPurchaseOrder,
   useClosePurchaseOrder,
-  useDeletePurchaseOrder,
   useGoodsReceiptsForPurchaseOrder,
   usePurchaseOrderById,
   useReceiveItems,
@@ -63,6 +63,7 @@ import {
 interface ModernPurchaseOrderDetailPageProps {
   id: string
   organizationId?: string
+  requestedAction?: "receive"
 }
 
 // Status configuration with modern styling
@@ -180,7 +181,8 @@ const toNumber = (value: NumericLike): number => {
 
 export default function ModernPurchaseOrderDetailPage({
   id,
-  organizationId
+  organizationId,
+  requestedAction,
 }: ModernPurchaseOrderDetailPageProps) {
   const router = useRouter()
   const pathname = usePathname()
@@ -197,16 +199,38 @@ export default function ModernPurchaseOrderDetailPage({
   const [showCompleteDialog, setShowCompleteDialog] = useState(false)
   const [cancelReason, setCancelReason] = useState("")
   const [receiveItems, setReceiveItems] = useState<Record<string, ReceiveItemDraft>>({})
+  const [inspectionOutcome, setInspectionOutcome] = useState<"PASSED" | "FAILED" | "INCOMPLETE" | "">("")
+  const [inspectionReason, setInspectionReason] = useState("")
+  const [inspectionEvidenceNotes, setInspectionEvidenceNotes] = useState("")
+  const receiveIdempotencyKeyRef = useRef<string | null>(null)
 
   // Hooks for data and mutations
   const { data: purchaseOrder, isLoading, error, refetch } = usePurchaseOrderById(id, organizationId)
   const { data: goodsReceipts, isLoading: receiptsLoading } = useGoodsReceiptsForPurchaseOrder(id, organizationId)
   const approveMutation = useApprovePurchaseOrder()
   const cancelMutation = useCancelPurchaseOrder()
-  const deleteMutation = useDeletePurchaseOrder()
   const submitMutation = useSubmitPurchaseOrder()
   const receiveItemsMutation = useReceiveItems()
   const completeMutation = useClosePurchaseOrder()
+  const receiveDeepLinkHandledRef = useRef(false)
+  const receiveDeepLink = purchaseOrder
+    ? resolveReceiveDeepLink(requestedAction, purchaseOrder.capabilities.receive)
+    : null
+
+  useEffect(() => {
+    receiveIdempotencyKeyRef.current = null
+  }, [inspectionEvidenceNotes, inspectionOutcome, inspectionReason, receiveItems])
+
+  useEffect(() => {
+    if (!receiveDeepLink || receiveDeepLinkHandledRef.current) return
+    receiveDeepLinkHandledRef.current = true
+    if (receiveDeepLink.open) setShowReceiveDialog(true)
+  }, [receiveDeepLink])
+
+  const formatCurrency = useCallback((amount: number) => {
+    if (!purchaseOrder?.currency) return "—"
+    return formatMoney(amount, locale, purchaseOrder.currency)
+  }, [locale, purchaseOrder?.currency])
 
   // Action handlers
   const handleApprove = useCallback(async () => {
@@ -327,15 +351,40 @@ export default function ModernPurchaseOrderDetailPage({
         return
       }
 
+      if (!inspectionOutcome) {
+        warning("Inspection Required", "Record the receiving inspection outcome before submitting.", {
+          duration: 4000,
+          sound: false,
+        })
+        return
+      }
+      if (inspectionOutcome !== "PASSED" && !inspectionReason.trim()) {
+        warning("Inspection Reason Required", "Explain why the inspection failed or remains incomplete.", {
+          duration: 4000,
+          sound: false,
+        })
+        return
+      }
+
+      const idempotencyKey = receiveIdempotencyKeyRef.current ?? `receipt:${crypto.randomUUID()}`
+      receiveIdempotencyKeyRef.current = idempotencyKey
       await receiveItemsMutation.mutateAsync({
         id: purchaseOrder.id,
         organizationId,
         receivedBy: currentUserId,
+        idempotencyKey,
         notes: 'Items received via workflow',
+        inspectionOutcome,
+        inspectionReason: inspectionReason.trim() || undefined,
+        inspectionEvidenceNotes: inspectionEvidenceNotes.trim() || undefined,
         items: itemsToReceive
       })
       setShowReceiveDialog(false)
       setReceiveItems({})
+      setInspectionOutcome("")
+      setInspectionReason("")
+      setInspectionEvidenceNotes("")
+      receiveIdempotencyKeyRef.current = null
       success(
         "Items Received",
         `Items for purchase order ${purchaseOrder.orderNumber} have been received successfully`,
@@ -348,7 +397,7 @@ export default function ModernPurchaseOrderDetailPage({
         { duration: 6000, sound: true }
       )
     }
-  }, [currentUserId, notifyError, organizationId, purchaseOrder, receiveItems, receiveItemsMutation, success, warning])
+  }, [currentUserId, inspectionEvidenceNotes, inspectionOutcome, inspectionReason, notifyError, organizationId, purchaseOrder, receiveItems, receiveItemsMutation, success, warning])
 
   const handleComplete = useCallback(async () => {
     if (!purchaseOrder || !organizationId) return
@@ -464,15 +513,17 @@ export default function ModernPurchaseOrderDetailPage({
                 Print
               </Button>
 
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleClone}
-                className="dashboard-button-secondary rounded-lg"
-              >
-                <Copy className="w-4 h-4 mr-2" />
-                Clone
-              </Button>
+              {purchaseOrder.capabilities.clone.allowed ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleClone}
+                  className="dashboard-button-secondary rounded-lg"
+                >
+                  <Copy className="w-4 h-4 mr-2" />
+                  Clone
+                </Button>
+              ) : null}
 
               {purchaseOrder.status === 'APPROVED' && (
                 <Link href={localizedHref(`/dashboard/purchase-orders/${purchaseOrder.id}/supplier-acknowledgement`)}>
@@ -487,7 +538,7 @@ export default function ModernPurchaseOrderDetailPage({
                 </Link>
               )}
 
-              {purchaseOrder.status === 'DRAFT' && (
+              {purchaseOrder.capabilities.edit.allowed && (
                 <Link href={localizedHref(`/dashboard/purchase-orders/${purchaseOrder.id}/edit`)}>
                   <Button
                     size="sm"
@@ -499,7 +550,7 @@ export default function ModernPurchaseOrderDetailPage({
                 </Link>
               )}
 
-              {purchaseOrder.status === 'SUBMITTED' && (
+              {purchaseOrder.capabilities.approve.allowed && (
                 <Dialog open={showApproveDialog} onOpenChange={setShowApproveDialog}>
                   <DialogTrigger asChild>
                     <Button
@@ -535,7 +586,7 @@ export default function ModernPurchaseOrderDetailPage({
               )}
 
               {/* Submit Button - Only for DRAFT status */}
-              {purchaseOrder.status === 'DRAFT' && (
+              {purchaseOrder.capabilities.submit.allowed && (
                 <Dialog open={showSubmitDialog} onOpenChange={setShowSubmitDialog}>
                   <DialogTrigger asChild>
                     <Button
@@ -571,7 +622,7 @@ export default function ModernPurchaseOrderDetailPage({
               )}
 
               {/* Receive Items Button - For APPROVED and PARTIALLY_RECEIVED status */}
-              {(purchaseOrder.status === 'APPROVED' || purchaseOrder.status === 'PARTIALLY_RECEIVED') && (
+              {purchaseOrder.capabilities.receive.allowed && (
                 <Dialog open={showReceiveDialog} onOpenChange={setShowReceiveDialog}>
                   <DialogTrigger asChild>
                     <Button
@@ -876,6 +927,49 @@ export default function ModernPurchaseOrderDetailPage({
                           </Table>
                           </div>
 
+                          <div className="space-y-3 rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(24,38,45,0.58)] p-4">
+                            <label className="block text-sm font-medium text-[var(--dash-text-soft)]">
+                              Receiving inspection outcome
+                              <select
+                                value={inspectionOutcome}
+                                onChange={(event) => setInspectionOutcome(event.target.value as typeof inspectionOutcome)}
+                                className="dashboard-control mt-1 w-full rounded-lg px-3 py-2"
+                                required
+                              >
+                                <option value="">Select an inspection outcome</option>
+                                <option value="PASSED">Passed — release to available inventory</option>
+                                <option value="FAILED">Failed — hold inventory</option>
+                                <option value="INCOMPLETE">Incomplete — hold pending resolution</option>
+                              </select>
+                            </label>
+                            {inspectionOutcome && inspectionOutcome !== "PASSED" ? (
+                              <label className="block text-sm font-medium text-[var(--dash-text-soft)]">
+                                Hold reason
+                                <Textarea
+                                  value={inspectionReason}
+                                  onChange={(event) => setInspectionReason(event.target.value)}
+                                  placeholder="Describe the failed check, damage, or missing inspection evidence"
+                                  className="dashboard-control mt-1 min-h-20 rounded-lg"
+                                  required
+                                />
+                              </label>
+                            ) : null}
+                            <label className="block text-sm font-medium text-[var(--dash-text-soft)]">
+                              Inspection evidence notes (optional)
+                              <Textarea
+                                value={inspectionEvidenceNotes}
+                                onChange={(event) => setInspectionEvidenceNotes(event.target.value)}
+                                placeholder="Record packaging, count, condition, lot, or supporting evidence notes"
+                                className="dashboard-control mt-1 min-h-20 rounded-lg"
+                              />
+                            </label>
+                            {inspectionOutcome && inspectionOutcome !== "PASSED" ? (
+                              <p className="text-xs text-[var(--dash-warning)]">
+                                This receipt will remain held. Inventory and supplier-invoice matching stay blocked until an authorized resolution is recorded.
+                              </p>
+                            ) : null}
+                          </div>
+
                           {/* Summary Section */}
                           <div className="mt-6 rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(24,38,45,0.58)] p-4">
                             <h4 className="font-semibold mb-3">Receiving Summary</h4>
@@ -930,7 +1024,9 @@ export default function ModernPurchaseOrderDetailPage({
                           onClick={handleReceive}
                           disabled={
                             receiveItemsMutation.isPending ||
-                            Object.values(receiveItems).every(item => item.received === 0)
+                            Object.values(receiveItems).every(item => item.received === 0) ||
+                            !inspectionOutcome ||
+                            (inspectionOutcome !== "PASSED" && !inspectionReason.trim())
                           }
                           className="dashboard-button-primary rounded-lg disabled:opacity-50"
                         >
@@ -942,45 +1038,18 @@ export default function ModernPurchaseOrderDetailPage({
                 </Dialog>
               )}
 
-              {/* Force Complete Button - For PARTIALLY_RECEIVED status */}
+              {/* Short-close is intentionally unavailable until its control contract exists. */}
               {purchaseOrder.status === 'PARTIALLY_RECEIVED' && (
-                <Dialog open={showCompleteDialog} onOpenChange={setShowCompleteDialog}>
-                  <DialogTrigger asChild>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="dashboard-button-secondary rounded-lg text-[var(--dash-warning)]"
-                    >
-                      <CheckCircle className="w-4 h-4 mr-2" />
-                      Force Complete
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="dashboard-glass-panel rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]">
-                    <DialogHeader>
-                      <DialogTitle>Force Complete Purchase Order</DialogTitle>
-                      <DialogDescription>
-                        This order is only partially received. Are you sure you want to mark it as completed?
-                        This will close the order and prevent further receiving.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="flex justify-end gap-2 mt-4">
-                      <Button variant="outline" onClick={() => setShowCompleteDialog(false)} className="dashboard-button-secondary rounded-lg">
-                        Cancel
-                      </Button>
-                      <Button
-                        onClick={handleComplete}
-                        disabled={completeMutation.isPending}
-                        className="dashboard-button-primary rounded-lg"
-                      >
-                        {completeMutation.isPending ? "Completing..." : "Force Complete"}
-                      </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
+                <p
+                  role="status"
+                  className="max-w-md rounded-lg border border-[var(--dash-warning)]/35 bg-[var(--dash-warning-soft)] px-3 py-2 text-xs text-[var(--dash-text-soft)]"
+                >
+                  {purchaseOrder.capabilities.complete.reason}
+                </p>
               )}
 
               {/* Complete Order Button - Only for RECEIVED status */}
-              {purchaseOrder.status === 'RECEIVED' && (
+              {purchaseOrder.capabilities.complete.allowed && (
                 <Dialog open={showCompleteDialog} onOpenChange={setShowCompleteDialog}>
                   <DialogTrigger asChild>
                     <Button
@@ -1015,7 +1084,7 @@ export default function ModernPurchaseOrderDetailPage({
                 </Dialog>
               )}
 
-              {!['RECEIVED', 'COMPLETED', 'CANCELLED'].includes(purchaseOrder.status) && (
+              {purchaseOrder.capabilities.cancel.allowed && (
                 <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
                   <DialogTrigger asChild>
                     <Button
@@ -1064,6 +1133,15 @@ export default function ModernPurchaseOrderDetailPage({
             </div>
           </div>
         </div>
+
+        {receiveDeepLink?.explanation ? (
+          <div
+            role="alert"
+            className="rounded-lg border border-[var(--dash-warning)]/35 bg-[var(--dash-warning-soft)] px-4 py-3 text-sm text-[var(--dash-text-soft)]"
+          >
+            Receiving is unavailable: {receiveDeepLink.explanation}
+          </div>
+        ) : null}
 
         {/* Stats Overview */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">

@@ -17,6 +17,7 @@ const FORBIDDEN_MUTATIONS = [
 ]
 
 const IGNORE_DIRS = new Set([
+  ".codex-tmp",
   ".git",
   ".next",
   ".turbo",

@@ -1,0 +1,48 @@
+{
+  "status": "PASS",
+  "checkedAt": "2026-08-16T16:46:37.727Z",
+  "workflowKey": "governed_master_data_onboarding",
+  "canonicalModule": "settings",
+  "fixture": {
+    "source": "scripts/inventory-items-e2e-fixture.js",
+    "productionBackfill": false,
+    "permissions": [
+      "inventory.items.read",
+      "inventory.items.create"
+    ]
+  },
+  "results": [
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "state": "empty",
+      "screenshot": "what-next/evidence/master-data-onboarding-2026-08-16/en-desktop-empty.png",
+      "seriousViolationCount": 0,
+      "hasDocumentOverflow": false
+    },
+    {
+      "locale": "en",
+      "viewport": "mobile",
+      "state": "empty",
+      "screenshot": "what-next/evidence/master-data-onboarding-2026-08-16/en-mobile-empty.png",
+      "seriousViolationCount": 0,
+      "hasDocumentOverflow": false
+    },
+    {
+      "locale": "fr",
+      "viewport": "desktop",
+      "state": "empty",
+      "screenshot": "what-next/evidence/master-data-onboarding-2026-08-16/fr-desktop-empty.png",
+      "seriousViolationCount": 0,
+      "hasDocumentOverflow": false
+    },
+    {
+      "locale": "fr",
+      "viewport": "mobile",
+      "state": "empty",
+      "screenshot": "what-next/evidence/master-data-onboarding-2026-08-16/fr-mobile-empty.png",
+      "seriousViolationCount": 0,
+      "hasDocumentOverflow": false
+    }
+  ]
+}

@@ -1090,6 +1090,7 @@
       "terminal": "Terminal",
       "chooseLocation": "Choose location",
       "chooseTerminal": "Choose terminal",
+      "terminalOccupied": "In use",
       "noLocation": "No location selected",
       "noTerminal": "No terminal selected",
       "activeRegister": "Active register",
@@ -1101,6 +1102,8 @@
       "closed": "No open shift",
       "active": "Open",
       "notOpen": "Closed",
+      "occupied": "In use",
+      "occupiedDescription": "This terminal is already assigned to shift {number}. Choose an available terminal or close that shift first.",
       "hud": "{count} txns - {gross} gross",
       "cashOnHand": "Cash on hand: {amount}",
       "openingPlaceholder": "Opening float",
@@ -1222,6 +1225,10 @@
       "removeTender": "Remove tender",
       "reference": "Reference",
       "referencePlaceholder": "Auth, transfer, or mobile reference",
+      "providerEvidence": "Provider payment evidence ID",
+      "providerEvidencePlaceholder": "Confirmed payment transaction ID",
+      "providerEvidenceHelp": "Use the transaction ID returned by the provider-authorized payment flow. A manual reference is not payment authority.",
+      "providerEvidenceRequired": "Electronic tenders require a provider-confirmed payment transaction before the sale can be charged.",
       "splitTender": "{count} tenders",
       "methods": {
         "CASH": "Cash",
@@ -3576,6 +3583,173 @@
       "reviewed": "Buyer decision recorded. No authoritative record was changed.",
       "actionFailed": "The action could not be completed.",
       "hash": "Evidence hash"
+    }
+  },
+  "masterDataOnboarding": {
+    "eyebrow": "Governed onboarding",
+    "title": "Master-data import readiness",
+    "description": "Validate tenant CSVs, bind approval to dry-run evidence, and commit only customer, supplier, or item records through their canonical domain owners.",
+    "targets": {
+      "CUSTOMER": "Customers",
+      "SUPPLIER": "Suppliers",
+      "ITEM": "Items"
+    },
+    "milestoneStates": {
+      "NOT_STARTED": "Not started",
+      "IMPORTED": "Imported",
+      "RECONCILED": "Reconciled",
+      "BLOCKED": "Blocked",
+      "WAIVED": "Waived"
+    },
+    "batchStatuses": {
+      "UPLOADED": "Uploaded",
+      "VALIDATED": "Validated",
+      "BLOCKED": "Blocked",
+      "APPROVED": "Approved",
+      "COMMITTING": "Committing",
+      "COMMITTED": "Committed"
+    },
+    "readiness": {
+      "title": "Readiness milestones",
+      "milestone": "Tenant readiness milestone"
+    },
+    "stage": {
+      "title": "1. Template and dry run",
+      "description": "Files are hashed and staged per tenant. A dry run never writes business truth."
+    },
+    "fields": {
+      "target": "Target",
+      "csvFile": "CSV file",
+      "csvHelp": "Choose a CSV file of up to 5 MB and 1,000 rows."
+    },
+    "metrics": {
+      "source": "Source",
+      "committed": "Committed",
+      "blockers": "Blockers",
+      "status": "Status",
+      "sourceRows": "Source rows",
+      "valid": "Valid",
+      "errorRows": "Error rows",
+      "duplicates": "Duplicates"
+    },
+    "actions": {
+      "backToDashboard": "Back to dashboard",
+      "downloadTemplate": "Download template",
+      "working": "Working…",
+      "runValidation": "Run dry validation",
+      "recordApproval": "Record explicit approval",
+      "commit": "Commit through domain owners",
+      "exportEvidence": "Export evidence manifest"
+    },
+    "notices": {
+      "operationFailed": "The governed operation could not be completed. Review the batch state and safe row issues, then retry.",
+      "templateDownloaded": "Downloaded the tenant-scoped {target} template.",
+      "chooseFile": "Choose a CSV file before running validation.",
+      "batchReplayed": "Existing hash-bound batch replayed without duplicate writes.",
+      "dryRunRecorded": "Dry run recorded. No master data was written.",
+      "approvalRecorded": "Approval recorded against the exact source hash, mapping version, risk decision, and dry-run controls.",
+      "commitReconciled": "Commit reconciled and evidence sealed.",
+      "commitPaused": "Commit paused at a governed control boundary.",
+      "evidenceExported": "Evidence manifest exported without raw source rows."
+    },
+    "states": {
+      "loading": {
+        "title": "Preparing governed data onboarding",
+        "message": "Tenant-scoped readiness, permissions, and recent batch evidence are loading."
+      },
+      "error": {
+        "title": "Data onboarding could not load",
+        "message": "The tenant-scoped onboarding evidence is temporarily unavailable. Retry without uploading another file.",
+        "retry": "Try again",
+        "dashboard": "Back to dashboard"
+      },
+      "empty": {
+        "eyebrow": "No authorized targets",
+        "title": "No onboarding target is available",
+        "message": "This role cannot read customer, supplier, or item master data. Ask an administrator for the required access."
+      },
+      "partial": {
+        "title": "Some targets are read-only",
+        "message": "You can inspect readiness and evidence for every visible target, but imports are enabled only where this role has create permission."
+      },
+      "noBatch": {
+        "title": "No batch selected",
+        "message": "Download a tenant template and run dry validation to create the first governed batch."
+      },
+      "readOnly": "This target is read-only for your role. You can inspect evidence but cannot stage or commit a batch."
+    },
+    "risk": {
+      "label": "Batch risk decision",
+      "levels": {
+        "STANDARD": "Standard risk",
+        "HIGH": "High risk"
+      },
+      "reasons": {
+        "BULK_BATCH": "100 or more rows",
+        "SUPPLIER_CREATION": "Supplier creation",
+        "CUSTOMER_CREDIT_LIMIT": "Customer credit limit",
+        "ITEM_PRICING": "Item pricing"
+      },
+      "separateApproverTitle": "Separate approver required",
+      "separateApproverReady": "You are not the uploader. Confirm the exact dry-run evidence before approving.",
+      "separateApproverBlocked": "The uploader cannot approve this high-risk batch. Ask another authorized user to review and approve it."
+    },
+    "approval": {
+      "title": "2. Controls, approval, and commit",
+      "batch": "Batch {id} · mapping v{version}",
+      "confirmation": "I approve this exact source hash, mapping version, risk decision, record count, required-field totals, and zero-error dry run."
+    },
+    "controls": {
+      "requiredFields": "Required-field controls",
+      "fieldTotal": "{field}: {count}/{total}",
+      "prePost": "Pre/post record controls",
+      "prePostValues": "Before: {before} · After: {after}",
+      "pending": "pending"
+    },
+    "issues": {
+      "title": "Safe row issues",
+      "row": "row",
+      "rowPrefix": "Row {row}",
+      "unterminatedQuote": "The CSV contains an unterminated quoted field.",
+      "duplicateHeader": "Each CSV header must be unique.",
+      "missingMappedColumn": "A mapped CSV column is missing from the header.",
+      "unmappedColumn": "Every source column must be included in the selected mapping version.",
+      "rowLimit": "This first slice accepts at most 1,000 rows per batch.",
+      "columnCount": "The row column count does not match the CSV header.",
+      "formulaRejected": "Spreadsheet formulas are not accepted in onboarding imports.",
+      "requiredField": "The {field} field is required.",
+      "duplicateInFile": "The {field} is duplicated within this file.",
+      "duplicateInTenant": "The {field} already exists in this tenant.",
+      "fieldInvalid": "The {field} field is invalid.",
+      "generic": "The row could not be accepted by the governed import contract."
+    },
+    "adoption": {
+      "title": "Focused adoption evidence",
+      "description": "A tenant-scoped snapshot of the 12 most recent batches. It is operating evidence, not a release certification.",
+      "batches": "Recent batches",
+      "committed": "Committed batches",
+      "blocked": "Blocked batches",
+      "highRiskApproved": "High-risk approvals"
+    },
+    "boundary": {
+      "title": "Exact control boundary",
+      "description": "This milestone is readiness evidence, not an accounting or statutory certification.",
+      "included": "Included",
+      "excluded": "Excluded",
+      "includedItems": [
+        "Customer identity and contact master data",
+        "Supplier identity and contact master data",
+        "Item catalogue identity, descriptions, and prices",
+        "Tenant-scoped staging, mappings, validation, approvals, controls, evidence, and readiness"
+      ],
+      "excludedItems": [
+        "Customer or supplier current balances",
+        "Opening accounting balances",
+        "Inventory opening quantities or stock movements",
+        "Journal or ledger postings",
+        "Historical transaction or statutory-document migration",
+        "Updates, merges, hard deletes, destructive resets, or automatic rollback"
+      ]
     }
   }
 }

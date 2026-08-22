@@ -171,6 +171,59 @@ describe("ProfessionalPOSSystem shift close", () => {
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument())
   })
 
+  it("does not require an explanation when a sub-franc XAF difference displays as zero", async () => {
+    const closeMutateAsync = setupHooks(100.49, actionSuccess({ terminalId: "terminal-1" }))
+    mockHooks.usePOSLocations.mockReturnValue({
+      data: actionSuccess([{
+        id: "location-1",
+        name: "Main shop",
+        isDefault: true,
+        organization: { name: "Stoquify", currency: "XAF", defaultLocale: "EN" },
+      }]),
+    } as never)
+
+    render(<ProfessionalPOSSystem />)
+    const dialog = openCloseDialog()
+    const submit = within(dialog).getByRole("button", { name: "shift.close" })
+
+    fireEvent.change(within(dialog).getByLabelText("shift.countedCash"), { target: { value: "100" } })
+
+    expect(within(dialog).queryByText("shift.varianceWarning")).not.toBeInTheDocument()
+    expect(within(dialog).queryByLabelText("shift.varianceExplanation")).not.toBeInTheDocument()
+    expect(submit).toBeEnabled()
+    fireEvent.click(submit)
+
+    await waitFor(() => {
+      expect(closeMutateAsync).toHaveBeenCalledWith({
+        sessionId: "session-1",
+        actualBalance: "100",
+        notes: undefined,
+      })
+    })
+  })
+
+  it("retains cent-level variance controls for currencies with decimal minor units", () => {
+    setupHooks(100.01, actionSuccess({ terminalId: "terminal-1" }))
+    mockHooks.usePOSLocations.mockReturnValue({
+      data: actionSuccess([{
+        id: "location-1",
+        name: "Main shop",
+        isDefault: true,
+        organization: { name: "Stoquify", currency: "USD", defaultLocale: "EN" },
+      }]),
+    } as never)
+
+    render(<ProfessionalPOSSystem />)
+    const dialog = openCloseDialog()
+    const submit = within(dialog).getByRole("button", { name: "shift.close" })
+
+    fireEvent.change(within(dialog).getByLabelText("shift.countedCash"), { target: { value: "100.00" } })
+
+    expect(within(dialog).getByText("shift.varianceWarning")).toBeInTheDocument()
+    expect(within(dialog).getByLabelText("shift.varianceExplanation")).toBeInTheDocument()
+    expect(submit).toBeDisabled()
+  })
+
   it("requires a variance explanation and keeps the dialog open when the server rejects the close", async () => {
     const closeMutateAsync = setupHooks(100, {
       success: false,
@@ -241,9 +294,142 @@ describe("ProfessionalPOSSystem shift close", () => {
   })
 })
 
+describe("ProfessionalPOSSystem terminal availability", () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
+  it("prefers an available terminal and labels a terminal occupied by another shift", async () => {
+    setupHooks(0, actionSuccess({ terminalId: "terminal-2" }))
+    mockHooks.usePOSLocations.mockReturnValue({
+      data: actionSuccess([{
+        id: "location-1",
+        name: "Main shop",
+        isDefault: true,
+        organization: { name: "Stoquify", currency: "XAF", defaultLocale: "EN" },
+      }]),
+    } as never)
+    mockHooks.usePOSTerminals.mockReturnValue({
+      data: actionSuccess([
+        {
+          id: "terminal-1",
+          terminalNumber: "T01",
+          name: "Till 1",
+          locationId: "location-1",
+          currentSessionId: "other-session",
+          currentSession: {
+            id: "other-session",
+            sessionNumber: "SHIFT-OTHER",
+            status: "ACTIVE",
+            startTime: "2026-08-16T08:00:00.000Z",
+          },
+        },
+        {
+          id: "terminal-2",
+          terminalNumber: "T02",
+          name: "Till 2",
+          locationId: "location-1",
+          currentSessionId: null,
+          currentSession: null,
+        },
+      ]),
+    } as never)
+    mockHooks.useCurrentUserPOSShift.mockReturnValue({ data: actionSuccess(null) } as never)
+    mockHooks.useActivePOSShift.mockReturnValue({ data: actionSuccess(null) } as never)
+
+    render(<ProfessionalPOSSystem />)
+
+    await waitFor(() => expect(mockHooks.useActivePOSShift).toHaveBeenLastCalledWith("terminal-2"))
+    expect(screen.getByLabelText("setup.terminal")).toHaveValue("terminal-2")
+    expect(screen.getByRole("option", { name: "T01 - Till 1 - setup.terminalOccupied" })).toBeInTheDocument()
+  })
+
+  it("explains an occupied terminal without offering a misleading open action", async () => {
+    setupHooks(0, actionSuccess({ terminalId: "terminal-1" }))
+    mockHooks.usePOSLocations.mockReturnValue({
+      data: actionSuccess([{
+        id: "location-1",
+        name: "Main shop",
+        isDefault: true,
+        organization: { name: "Stoquify", currency: "XAF", defaultLocale: "EN" },
+      }]),
+    } as never)
+    mockHooks.usePOSTerminals.mockReturnValue({
+      data: actionSuccess([{
+        id: "terminal-1",
+        terminalNumber: "T01",
+        name: "Till 1",
+        locationId: "location-1",
+        currentSessionId: "other-session",
+        currentSession: {
+          id: "other-session",
+          sessionNumber: "SHIFT-OTHER",
+          status: "ACTIVE",
+          startTime: "2026-08-16T08:00:00.000Z",
+        },
+      }]),
+    } as never)
+    mockHooks.useCurrentUserPOSShift.mockReturnValue({ data: actionSuccess(null) } as never)
+    mockHooks.useActivePOSShift.mockReturnValue({ data: actionSuccess(null) } as never)
+
+    render(<ProfessionalPOSSystem />)
+
+    expect(await screen.findByText("shift.occupied")).toBeInTheDocument()
+    expect(screen.getByRole("status")).toHaveTextContent("shift.occupiedDescription")
+    expect(screen.queryByRole("button", { name: "shift.openCta" })).not.toBeInTheDocument()
+  })
+})
+
 describe("ProfessionalPOSSystem sale commit", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+  })
+
+  it("adds an in-stock catalog item when the cashier selects the product card", async () => {
+    const addMutateAsync = jest.fn().mockResolvedValue(actionSuccess({ id: "cart-1" }))
+    setupHooks(0, actionSuccess({ terminalId: "terminal-1" }))
+    mockHooks.usePOSCatalog.mockReturnValue({
+      data: actionSuccess({
+        categories: [],
+        items: [{
+          id: "item-1",
+          sku: "SKU-001",
+          barcode: "123456789",
+          nameEn: "Coffee",
+          nameFr: "Cafe",
+          thumbnail: null,
+          sellingPrice: 100,
+          costPrice: 60,
+          taxRate: 0,
+          trackInventory: true,
+          category: null,
+          brand: null,
+          stock: {
+            quantityOnHand: 10,
+            quantityAvailable: 10,
+            reorderPoint: 2,
+            status: "available",
+          },
+        }],
+      }),
+      isLoading: false,
+    } as never)
+    mockHooks.useAddPOSCartLine.mockReturnValue(mutationState(addMutateAsync) as never)
+
+    render(<ProfessionalPOSSystem />)
+
+    const productCardAction = await screen.findByRole("button", { name: "catalog.add Coffee" })
+    fireEvent.click(productCardAction)
+
+    await waitFor(() => {
+      expect(addMutateAsync).toHaveBeenCalledWith({
+        locationId: "location-1",
+        terminalId: "terminal-1",
+        sessionId: "session-1",
+        itemId: "item-1",
+        quantity: 1,
+      })
+    })
   })
 
   it("keeps seven long-name cart lines and their controls available", () => {
@@ -294,8 +480,11 @@ describe("ProfessionalPOSSystem sale commit", () => {
     expect(screen.getByTestId("pos-charge-footer")).toHaveClass("shrink-0")
   })
 
-  it("submits an active cash sale with WhatsApp receipt consent", async () => {
+  it("submits an active cash sale with a replay-safe non-statutory receipt", async () => {
     const commitMutateAsync = jest.fn().mockResolvedValue(actionSuccess({
+      clientCommitId: "pos:test-commit-id",
+      resultSchemaVersion: 1,
+      replayed: false,
       saleId: "sale-1",
       orderNumber: "SALE-0001",
       status: "COMPLETED",
@@ -304,6 +493,9 @@ describe("ProfessionalPOSSystem sale commit", () => {
       amountPaid: 100,
       onAccountAmount: 0,
       changeDue: 0,
+      receipt: { digitalReceiptUrl: "" },
+      receiptStatus: "READY",
+      delivery: null,
     }))
 
     setupHooks(100, actionSuccess({ terminalId: "terminal-1" }))
@@ -379,10 +571,20 @@ describe("ProfessionalPOSSystem sale commit", () => {
       "xl:flex-[2_1_24rem]",
       "xl:overflow-hidden",
     )
-    expect(screen.getByTestId("pos-totals-summary")).toHaveClass("grid-cols-2", "sm:grid-cols-4")
+    expect(screen.getByTestId("pos-totals-summary")).toHaveClass("grid-cols-2")
+    expect(screen.getByTestId("pos-totals-summary")).not.toHaveClass("sm:grid-cols-4")
+    expect(screen.getByTestId("pos-charge-summary")).toHaveClass("grid", "grid-cols-2")
+    expect(screen.getByText("tender.paid").parentElement).toHaveClass("rounded-md", "border")
+    expect(screen.getByText("tender.due").parentElement).toHaveClass("rounded-md", "border")
+    expect(screen.getByText("tender.change").parentElement).toHaveClass("rounded-md", "border")
+    expect(
+      within(screen.getByLabelText("tender.method"))
+        .getAllByRole("option")
+        .map((option) => option.getAttribute("value")),
+    ).toEqual(["CASH"])
     expect(screen.getByTestId("pos-cart-line")).toHaveClass("py-0.5")
     expect(screen.getByRole("button", { name: "cart.removeLine" })).toHaveClass("h-7", "w-7")
-    expect(screen.getByRole("button", { name: "charge.cta" })).toHaveClass("h-11")
+    expect(screen.getByRole("button", { name: "charge.cta" })).toHaveClass("h-11", "rounded-md", "border")
 
     fireEvent.click(screen.getByRole("button", { name: "shell.touchMode" }))
     expect(screen.getByTestId("pos-cart-line")).toHaveClass("py-2")
@@ -390,27 +592,19 @@ describe("ProfessionalPOSSystem sale commit", () => {
     expect(screen.getByRole("button", { name: "cart.removeLine" })).toHaveClass("h-10", "w-10")
     expect(screen.getByRole("button", { name: "charge.cta" })).toHaveClass("h-14")
 
-    fireEvent.click(screen.getByRole("button", { name: "receipt.channels.PRINT" }))
+    expect(screen.queryByRole("button", { name: "receipt.channels.PRINT" })).not.toBeInTheDocument()
+    expect(screen.queryByRole("button", { name: "receipt.channels.WHATSAPP" })).not.toBeInTheDocument()
     expect(screen.queryByPlaceholderText("receipt.destinationPlaceholders.email")).not.toBeInTheDocument()
     expect(screen.queryByPlaceholderText("receipt.destinationPlaceholders.phone")).not.toBeInTheDocument()
 
-    fireEvent.click(screen.getByRole("button", { name: "receipt.channels.WHATSAPP" }))
+    fireEvent.click(screen.getByRole("button", { name: "tender.exact" }))
     const chargeButton = screen.getByRole("button", { name: "charge.cta" })
-    expect(chargeButton).toBeDisabled()
-    expect(screen.getByRole("alert")).toHaveTextContent("receipt.destinationRequired")
-
-    fireEvent.change(screen.getByPlaceholderText("receipt.destinationPlaceholders.whatsapp"), {
-      target: { value: "+237699000000" },
-    })
-    expect(chargeButton).toBeDisabled()
-    expect(screen.getByRole("alert")).toHaveTextContent("receipt.whatsAppConsentRequired")
-
-    fireEvent.click(screen.getByRole("checkbox", { name: "receipt.whatsAppConsent" }))
     expect(chargeButton).toBeEnabled()
     fireEvent.click(chargeButton)
 
     await waitFor(() => {
-      expect(commitMutateAsync).toHaveBeenCalledWith({
+      expect(commitMutateAsync).toHaveBeenCalledWith(expect.objectContaining({
+        clientCommitId: expect.stringMatching(/^pos:[0-9a-f-]{36}$/),
         salesOrderId: "sale-1",
         locationId: "location-1",
         terminalId: "terminal-1",
@@ -418,12 +612,10 @@ describe("ProfessionalPOSSystem sale commit", () => {
         customerId: undefined,
         tenders: [{ method: "CASH", amount: 100, reference: undefined }],
         receipt: {
-          channel: "WHATSAPP",
-          destination: "+237699000000",
+          channel: "NONE",
           locale: "EN",
-          whatsAppCustomerOptInConfirmed: true,
         },
-      })
+      }))
     })
     expect(mockNotifications.success).toHaveBeenCalledWith(
       "notifications.saleSuccessTitle",

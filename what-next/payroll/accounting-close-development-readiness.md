@@ -1,6 +1,6 @@
 # Payroll Accounting-Close Development Readiness
 
-Generated: 2026-07-26T17:01:13.459Z
+Generated: 2026-08-20T11:08:12.401Z
 Mode: fail
 Status: READY_FOR_DEVELOPMENT_ACCOUNTING_CLOSE_ASSURANCE
 
@@ -17,7 +17,7 @@ Status: READY_FOR_DEVELOPMENT_ACCOUNTING_CLOSE_ASSURANCE
 - Checks ready: 10/10
 - Development blockers: 0
 - Upstream production status: blocked
-- Upstream production blockers: source_artifact_hash_verification, source_artifact_expert_approval
+- Upstream production blockers: source_artifact_expert_approval
 
 ## Checks
 

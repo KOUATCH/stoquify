@@ -1,0 +1,166 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-08-19T16:24:20.212Z",
+  "fields": [
+    {
+      "field": "legalEmployerName",
+      "populatedValue": null,
+      "classification": "UNRESOLVED_GOVERNANCE_EVIDENCE_REQUIRED",
+      "evidence": "Two application tenants exist; neither is verified as the Cameroon legal employer.",
+      "owner": "Corporate governance/legal",
+      "sourcePath": "docs/blockers-and-gates/hris-payroll-compliance-prefill/HRIS_PAYROLL_DATABASE_READ_ONLY_SNAPSHOT_2026-08-19.json",
+      "sourceSha256": "99b93844054b7f66945c2ae1527f15abb2e16a048bb3eea031fc0e2c1038dbdd",
+      "resolutionAction": "Obtain primary evidence and independent verification; do not guess."
+    },
+    {
+      "field": "tenantOrOrganizationId",
+      "populatedValue": null,
+      "classification": "UNRESOLVED_GOVERNANCE_EVIDENCE_REQUIRED",
+      "evidence": "Candidate application tenant IDs: rds_org_001, rds_org_002",
+      "owner": "Governance/platform owner",
+      "sourcePath": "docs/blockers-and-gates/hris-payroll-compliance-prefill/HRIS_PAYROLL_DATABASE_READ_ONLY_SNAPSHOT_2026-08-19.json",
+      "sourceSha256": "99b93844054b7f66945c2ae1527f15abb2e16a048bb3eea031fc0e2c1038dbdd",
+      "resolutionAction": "Obtain primary evidence and independent verification; do not guess."
+    },
+    {
+      "field": "cnpsEmployerReference",
+      "populatedValue": null,
+      "classification": "UNRESOLVED_GOVERNANCE_EVIDENCE_REQUIRED",
+      "evidence": "No CNPS employer registration record found.",
+      "owner": "Payroll/compliance",
+      "sourcePath": "docs/blockers-and-gates/hris-payroll-compliance-prefill/HRIS_PAYROLL_DATABASE_READ_ONLY_SNAPSHOT_2026-08-19.json",
+      "sourceSha256": "99b93844054b7f66945c2ae1527f15abb2e16a048bb3eea031fc0e2c1038dbdd",
+      "resolutionAction": "Obtain primary evidence and independent verification; do not guess."
+    },
+    {
+      "field": "dgiTaxpayerReference",
+      "populatedValue": null,
+      "classification": "UNRESOLVED_GOVERNANCE_EVIDENCE_REQUIRED",
+      "evidence": "Two masked application tax identifiers exist; no selected legal entity or DGI-issued evidence.",
+      "owner": "Tax/legal",
+      "sourcePath": "docs/blockers-and-gates/hris-payroll-compliance-prefill/HRIS_PAYROLL_DATABASE_READ_ONLY_SNAPSHOT_2026-08-19.json",
+      "sourceSha256": "99b93844054b7f66945c2ae1527f15abb2e16a048bb3eea031fc0e2c1038dbdd",
+      "resolutionAction": "Obtain primary evidence and independent verification; do not guess."
+    },
+    {
+      "field": "hrEvidenceCustodian",
+      "populatedValue": null,
+      "classification": "UNRESOLVED_GOVERNANCE_EVIDENCE_REQUIRED",
+      "evidence": "No application role assignments or governance appointment evidence found.",
+      "owner": "HR/governance",
+      "sourcePath": "docs/blockers-and-gates/hris-payroll-compliance-prefill/HRIS_PAYROLL_DATABASE_READ_ONLY_SNAPSHOT_2026-08-19.json",
+      "sourceSha256": "99b93844054b7f66945c2ae1527f15abb2e16a048bb3eea031fc0e2c1038dbdd",
+      "resolutionAction": "Obtain primary evidence and independent verification; do not guess."
+    },
+    {
+      "field": "governanceCustodian",
+      "populatedValue": null,
+      "classification": "UNRESOLVED_GOVERNANCE_EVIDENCE_REQUIRED",
+      "evidence": "No governance authority registry or appointment found.",
+      "owner": "Corporate governance",
+      "sourcePath": "docs/blockers-and-gates/hris-payroll-compliance-prefill/HRIS_PAYROLL_DATABASE_READ_ONLY_SNAPSHOT_2026-08-19.json",
+      "sourceSha256": "99b93844054b7f66945c2ae1527f15abb2e16a048bb3eea031fc0e2c1038dbdd",
+      "resolutionAction": "Obtain primary evidence and independent verification; do not guess."
+    },
+    {
+      "field": "stableSubjectId",
+      "populatedValue": null,
+      "classification": "UNRESOLVED_GOVERNANCE_EVIDENCE_REQUIRED",
+      "evidence": "0/17 exact database name matches and 0 linked payroll employees.",
+      "owner": "HR/security",
+      "sourcePath": "docs/blockers-and-gates/hris-payroll-compliance-prefill/HRIS_PAYROLL_DATABASE_READ_ONLY_SNAPSHOT_2026-08-19.json",
+      "sourceSha256": "99b93844054b7f66945c2ae1527f15abb2e16a048bb3eea031fc0e2c1038dbdd",
+      "resolutionAction": "Obtain primary evidence and independent verification; do not guess."
+    },
+    {
+      "field": "payrollEmployeeId",
+      "populatedValue": null,
+      "classification": "UNRESOLVED_GOVERNANCE_EVIDENCE_REQUIRED",
+      "evidence": "24 draft records exist, but none maps to a page-6 identity.",
+      "owner": "HR",
+      "sourcePath": "docs/blockers-and-gates/hris-payroll-compliance-prefill/HRIS_PAYROLL_DATABASE_READ_ONLY_SNAPSHOT_2026-08-19.json",
+      "sourceSha256": "99b93844054b7f66945c2ae1527f15abb2e16a048bb3eea031fc0e2c1038dbdd",
+      "resolutionAction": "Obtain primary evidence and independent verification; do not guess."
+    },
+    {
+      "field": "employmentAssignmentId",
+      "populatedValue": null,
+      "classification": "UNRESOLVED_GOVERNANCE_EVIDENCE_REQUIRED",
+      "evidence": "No org units, positions or employment assignments exist.",
+      "owner": "HR",
+      "sourcePath": "docs/blockers-and-gates/hris-payroll-compliance-prefill/HRIS_PAYROLL_DATABASE_READ_ONLY_SNAPSHOT_2026-08-19.json",
+      "sourceSha256": "99b93844054b7f66945c2ae1527f15abb2e16a048bb3eea031fc0e2c1038dbdd",
+      "resolutionAction": "Obtain primary evidence and independent verification; do not guess."
+    },
+    {
+      "field": "authorityReference",
+      "populatedValue": null,
+      "classification": "UNRESOLVED_GOVERNANCE_EVIDENCE_REQUIRED",
+      "evidence": "No exact G1 appointment or bounded delegation exists.",
+      "owner": "Governance",
+      "sourcePath": "docs/blockers-and-gates/hris-payroll-compliance-prefill/HRIS_PAYROLL_DATABASE_READ_ONLY_SNAPSHOT_2026-08-19.json",
+      "sourceSha256": "99b93844054b7f66945c2ae1527f15abb2e16a048bb3eea031fc0e2c1038dbdd",
+      "resolutionAction": "Obtain primary evidence and independent verification; do not guess."
+    },
+    {
+      "field": "sodCoiResult",
+      "populatedValue": null,
+      "classification": "UNRESOLVED_GOVERNANCE_EVIDENCE_REQUIRED",
+      "evidence": "Stable identities and independent checker are absent.",
+      "owner": "Controls reviewer",
+      "sourcePath": "docs/blockers-and-gates/hris-payroll-compliance-prefill/HRIS_PAYROLL_DATABASE_READ_ONLY_SNAPSHOT_2026-08-19.json",
+      "sourceSha256": "99b93844054b7f66945c2ae1527f15abb2e16a048bb3eea031fc0e2c1038dbdd",
+      "resolutionAction": "Obtain primary evidence and independent verification; do not guess."
+    },
+    {
+      "field": "freshAuthenticatedAt",
+      "populatedValue": null,
+      "classification": "UNRESOLVED_GOVERNANCE_EVIDENCE_REQUIRED",
+      "evidence": "No fresh-assurance sessions exist in the current snapshot.",
+      "owner": "IAM/security",
+      "sourcePath": "docs/blockers-and-gates/hris-payroll-compliance-prefill/HRIS_PAYROLL_DATABASE_READ_ONLY_SNAPSHOT_2026-08-19.json",
+      "sourceSha256": "99b93844054b7f66945c2ae1527f15abb2e16a048bb3eea031fc0e2c1038dbdd",
+      "resolutionAction": "Obtain primary evidence and independent verification; do not guess."
+    },
+    {
+      "field": "contractArtifactId",
+      "populatedValue": "STOQUIFY-POS-G1-CONTRACT-FREEZE-0.2.0-20260817",
+      "classification": "AUTHORITATIVE_VERIFIED",
+      "evidence": "Frozen contract artifact.",
+      "owner": "G1 contract owner",
+      "sourcePath": "docs/pos-enterprise-grade-audit/EXECUTION_06_G1_CONTRACT_FREEZE_V0_2_0.json",
+      "sourceSha256": "11434eb3e1af1826516426e90d2d53a2faa47ade361d91191b5f3e0c950a36db",
+      "resolutionAction": "Retain verified value and rehash on use."
+    },
+    {
+      "field": "contractVersion",
+      "populatedValue": "0.2.0",
+      "classification": "AUTHORITATIVE_VERIFIED",
+      "evidence": "Frozen contract version.",
+      "owner": "G1 contract owner",
+      "sourcePath": "docs/pos-enterprise-grade-audit/EXECUTION_06_G1_CONTRACT_FREEZE_V0_2_0.json",
+      "sourceSha256": "11434eb3e1af1826516426e90d2d53a2faa47ade361d91191b5f3e0c950a36db",
+      "resolutionAction": "Retain verified value and rehash on use."
+    },
+    {
+      "field": "contractPath",
+      "populatedValue": "docs/pos-enterprise-grade-audit/EXECUTION_06_G1_CONTRACT_FREEZE_V0_2_0.json",
+      "classification": "AUTHORITATIVE_VERIFIED",
+      "evidence": "Repository path resolved.",
+      "owner": "G1 contract owner",
+      "sourcePath": "docs/pos-enterprise-grade-audit/EXECUTION_06_G1_CONTRACT_FREEZE_V0_2_0.json",
+      "sourceSha256": "11434eb3e1af1826516426e90d2d53a2faa47ade361d91191b5f3e0c950a36db",
+      "resolutionAction": "Retain verified value and rehash on use."
+    },
+    {
+      "field": "contractSha256",
+      "populatedValue": "11434eb3e1af1826516426e90d2d53a2faa47ade361d91191b5f3e0c950a36db",
+      "classification": "AUTHORITATIVE_VERIFIED",
+      "evidence": "Recomputed content hash.",
+      "owner": "Independent verifier",
+      "sourcePath": "docs/pos-enterprise-grade-audit/EXECUTION_06_G1_CONTRACT_FREEZE_V0_2_0.json",
+      "sourceSha256": "11434eb3e1af1826516426e90d2d53a2faa47ade361d91191b5f3e0c950a36db",
+      "resolutionAction": "Retain verified value and rehash on use."
+    }
+  ]
+}

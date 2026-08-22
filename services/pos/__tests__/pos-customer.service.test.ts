@@ -45,7 +45,7 @@ describe("POS customer location scope", () => {
     mockDb.customer.count.mockResolvedValue(1)
   })
 
-  it("returns only customers explicitly assigned to Location A and scopes statistics to A", async () => {
+  it("returns current-location and unassigned tenant customers while scoping statistics to Location A", async () => {
     mockDb.customer.findMany.mockResolvedValue([customer("customer-a", "Alice A", 125)])
 
     const result = await listPOSCustomers({
@@ -70,9 +70,20 @@ describe("POS customer location scope", () => {
     expect(mockDb.customer.findMany).toHaveBeenCalledWith(expect.objectContaining({
       where: expect.objectContaining({
         organizationId: "org-a",
-        locationAssignments: {
-          some: { organizationId: "org-a", locationId: "loc-a" },
-        },
+        AND: expect.arrayContaining([{
+          OR: expect.arrayContaining([
+            {
+              locationAssignments: {
+                some: { organizationId: "org-a", locationId: "loc-a" },
+              },
+            },
+            {
+              locationAssignments: {
+                none: { organizationId: "org-a" },
+              },
+            },
+          ]),
+        }]),
       }),
       include: {
         salesOrders: {
@@ -93,9 +104,13 @@ describe("POS customer location scope", () => {
     expect(mockDb.customer.findMany).toHaveBeenCalledWith(expect.objectContaining({
       where: expect.objectContaining({
         organizationId: "org-a",
-        locationAssignments: {
-          some: { organizationId: "org-a", locationId: "loc-b" },
-        },
+        AND: expect.arrayContaining([{
+          OR: expect.arrayContaining([{
+            locationAssignments: {
+              some: { organizationId: "org-a", locationId: "loc-b" },
+            },
+          }]),
+        }]),
       }),
     }))
   })
@@ -126,6 +141,10 @@ describe("POS customer location scope", () => {
           locationAssignments: {
             some: { organizationId: "org-a", locationId: "loc-a" },
           },
+        }, {
+          locationAssignments: {
+            none: { organizationId: "org-a" },
+          },
         }]),
       }),
     }))
@@ -153,6 +172,33 @@ describe("POS customer location scope", () => {
     expect(client.customer.findFirst).toHaveBeenCalledWith(expect.objectContaining({
       where: expect.objectContaining({
         OR: expect.arrayContaining([{ code: "WALK_IN" }]),
+      }),
+    }))
+  })
+
+  it("accepts a tenant customer with no location assignment for a first POS sale", async () => {
+    const unassigned = {
+      id: "customer-new",
+      code: "CUSTOMER-NEW",
+      currentBalance: new Prisma.Decimal(0),
+      creditLimit: null,
+    }
+    const client = { customer: { findFirst: jest.fn().mockResolvedValue(unassigned) } }
+
+    await expect(requirePOSCustomerAtLocation(client as never, {
+      organizationId: "org-a",
+      locationId: "loc-a",
+      customerId: "customer-new",
+    })).resolves.toEqual(unassigned)
+
+    expect(client.customer.findFirst).toHaveBeenCalledWith(expect.objectContaining({
+      where: expect.objectContaining({
+        organizationId: "org-a",
+        OR: expect.arrayContaining([{
+          locationAssignments: {
+            none: { organizationId: "org-a" },
+          },
+        }]),
       }),
     }))
   })

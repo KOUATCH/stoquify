@@ -1,0 +1,50 @@
+{
+  "evidenceVersion": 1,
+  "recordedDate": "2026-08-17",
+  "status": "BLOCKED_FAIL_CLOSED_BEFORE_DATABASE_CONNECTION",
+  "target": {
+    "host": "localhost",
+    "port": 5432,
+    "database": "stoquify_dev_migrated_20260814",
+    "schema": "codex_pos_commit_result_cert_20260817",
+    "configuredApplicationSchema": "public"
+  },
+  "authorization": {
+    "applyRepositoryMigrationsToTargetSchema": true,
+    "createSyntheticFixtures": true,
+    "runPOSCommitConcurrencyTests": true,
+    "accessOrModifyPublicSchema": false,
+    "accessOrModifyProductionSchemas": false,
+    "useRealCustomerOrPaymentData": false
+  },
+  "databaseConnectionOpened": false,
+  "databaseMutationPerformed": false,
+  "blocker": {
+    "code": "MIGRATION_HISTORY_EXPLICIT_PUBLIC_REFERENCES",
+    "summary": "Nine repository migrations contain explicit public-schema probes or operations that are not redirected by DATABASE_URL schema selection.",
+    "highestRiskMigration": "prisma/migrations/20260726190000_retire_production_bom_capability/migration.sql",
+    "risk": "An unchanged full-history deployment could inspect, rename, or comment on objects in the existing public schema."
+  },
+  "affectedMigrations": [
+    "20260611130000_accounting_auth_baseline_bridge",
+    "20260618160000_payroll_foundation_bridge",
+    "20260618161000_ap_stock_count_foundation_bridge",
+    "20260625110000_payroll_kernel_immutability",
+    "20260726140000_business_event_foundation_bridge",
+    "20260726190000_retire_production_bom_capability",
+    "20260730150000_organization_onboarding_entitlement_bridge",
+    "20260801153000_certified_fiscal_evidence_immutability",
+    "20260815190000_payment_reconciliation_evidence_immutability"
+  ],
+  "recommendedResolution": "CONTROLLED_SCHEMA_REBOUND_CERTIFICATION_PROJECTION",
+  "requiredNextAuthority": [
+    "Authorize a controlled schema-rebound projection or a dedicated disposable PostgreSQL instance",
+    "Name the migration checker and role"
+  ],
+  "claimsProhibited": [
+    "migration applied",
+    "PostgreSQL certification passed",
+    "production migration portability",
+    "database certification complete"
+  ]
+}

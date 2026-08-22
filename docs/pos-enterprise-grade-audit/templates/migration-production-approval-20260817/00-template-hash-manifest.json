@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "1.0.0",
+  "artifactStatus": "PRESENT_VALID_TEMPLATE_HASH_MANIFEST",
+  "scope": "Unsigned direct-fill templates with machine-verifiable technical fields refreshed on 2026-08-17; recompute all hashes after any human or production field is completed.",
+  "files": [
+    { "path": "README.md", "sha256": "d539692d4fa2b5cb95e9e9d5ba2bbc498b3d320a10c97dd6546afe0288bf1885", "bytes": 3250 },
+    { "path": "01-destructive-finding-inventory.json", "sha256": "cb549001aef5ba40974e68e331fbb3e6fd24f2120b43264e5964c5c2f35aa952", "bytes": 7619 },
+    { "path": "02-maker-attestation.json", "sha256": "d8bdcf5dda8f9215328c6ae8760a5db81968f6629ad9a880c5e1c307b09477f9", "bytes": 6061 },
+    { "path": "03-checker-decision.json", "sha256": "18da014672fc49b3e736140c34741f3721e35dcfdac04dc8fbd789a52bfbc539", "bytes": 3256 },
+    { "path": "04-proposed-approval-registry-entries.json", "sha256": "7b0cab5fe02b0ab2f5ea8459a607f50b2e1de8e5a1bb8a0d5843a4078e74db6b", "bytes": 7407 },
+    { "path": "05-production-restore-evidence.json", "sha256": "d7ed30669d655bb2963204771a4c53442f1e438f14bbdf5c42f9cbac106023ce", "bytes": 6355 }
+  ],
+  "limitations": [
+    "These hashes bind unsigned templates, not completed approval evidence.",
+    "The final manifest must be regenerated after production evidence and signatures are complete."
+  ]
+}

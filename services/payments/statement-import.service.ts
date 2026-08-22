@@ -93,6 +93,17 @@ export async function importProviderStatement(
     fileName: input.fileName,
   })
   const fileHash = sha256(input.rawContent)
+  if (parsed.lines.length === 0) {
+    throw new PaymentIngestionError(
+      "INVALID_PAYLOAD",
+      "Statement file did not contain importable lines.",
+      {
+        correlationId,
+        providerCode: input.adapter.providerCode,
+        fileHash,
+      },
+    )
+  }
   const preparedLines = parsed.lines.map((line) => {
     const fingerprint = input.adapter.fingerprintStatementLine(line)
     return {

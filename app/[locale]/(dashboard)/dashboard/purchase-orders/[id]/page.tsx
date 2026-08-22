@@ -13,8 +13,9 @@ interface PurchaseOrderDetailPageProps {
   }>
 }
 
-export default async function PurchaseOrderDetailPage({ params }: PurchaseOrderDetailPageProps) {
+export default async function PurchaseOrderDetailPage({ params, searchParams }: PurchaseOrderDetailPageProps) {
   const { id, locale } = await params
+  const { tab } = (await searchParams) ?? {}
 
   if (!id) {
     notFound()
@@ -33,7 +34,13 @@ export default async function PurchaseOrderDetailPage({ params }: PurchaseOrderD
       resourceId: id,
     },
     onAllowed: async (ctx) => {
-      return <ModernPurchaseOrderDetailPage id={id} organizationId={ctx.orgId} />
+      return (
+        <ModernPurchaseOrderDetailPage
+          id={id}
+          organizationId={ctx.orgId}
+          requestedAction={tab === "receive" ? "receive" : undefined}
+        />
+      )
     },
   })
 }

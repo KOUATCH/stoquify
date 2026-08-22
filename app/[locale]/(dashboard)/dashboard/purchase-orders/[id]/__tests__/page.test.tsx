@@ -41,11 +41,20 @@ jest.mock("@/services/modules/module-entitlement.service", () => ({
 
 jest.mock("@/components/purchase-orders/ModernPurchaseOrderDetailPage", () => ({
   __esModule: true,
-  default: ({ id, organizationId }: { id: string; organizationId?: string }) => (
+  default: ({
+    id,
+    organizationId,
+    requestedAction,
+  }: {
+    id: string
+    organizationId?: string
+    requestedAction?: "receive"
+  }) => (
     <section>
       <h1>Purchase order detail rendered</h1>
       <p>{id}</p>
       <p>{organizationId}</p>
+      <p>{requestedAction ?? "no-requested-action"}</p>
     </section>
   ),
 }))
@@ -128,6 +137,15 @@ describe("PurchaseOrderDetailPage", () => {
 
     expect(screen.getByText("org-1")).toBeInTheDocument()
     expect(screen.queryByText("attacker-org")).not.toBeInTheDocument()
+  })
+
+  it("passes the supported receive deep link to the capability-aware detail component", async () => {
+    render(await PurchaseOrderDetailPage({
+      params: params("fr", "po-1"),
+      searchParams: Promise.resolve({ tab: "receive" }),
+    }))
+
+    expect(screen.getByText("receive")).toBeInTheDocument()
   })
 
   it("stops before module observation and detail rendering when RBAC denies access", async () => {

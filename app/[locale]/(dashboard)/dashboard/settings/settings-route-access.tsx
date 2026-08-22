@@ -33,15 +33,32 @@ type SettingsRouteAccessResult =
       locale: Locale
     }
 
-const NO_ACTIVE_ORG_TITLE_SUFFIX = "needs an active organization"
-const PERMISSION_DENIED_TITLE_SUFFIX = "is not available for this role"
-const NO_ACTIVE_ORG_MESSAGE =
-  "Refresh your session from the dashboard so this route can load tenant-scoped settings data."
-const PERMISSION_DENIED_MESSAGE =
-  "This route is protected by the server permission layer and cannot be loaded without the required access."
-const DEFAULT_MODULE_LOCKED_TITLE_SUFFIX = "is not enabled for this tenant"
-const DEFAULT_MODULE_LOCKED_MESSAGE =
-  "This workflow is protected by a module entitlement gate. Enable the required module before using this surface."
+const ACCESS_COPY = {
+  en: {
+    noActiveOrgEyebrow: "Organization required",
+    noActiveOrgTitleSuffix: "needs an active organization",
+    noActiveOrgMessage: "Refresh your session from the dashboard so this route can load tenant-scoped settings data.",
+    permissionEyebrow: "Permission required",
+    permissionTitleSuffix: "is not available for this role",
+    permissionMessage: "This route is protected by the server permission layer and cannot be loaded without the required access.",
+    moduleEyebrow: "Module locked",
+    moduleTitleSuffix: "is not enabled for this tenant",
+    moduleMessage: "This workflow is protected by a module entitlement gate. Enable the required module before using this surface.",
+    dashboardLabel: "Back to dashboard",
+  },
+  fr: {
+    noActiveOrgEyebrow: "Organisation requise",
+    noActiveOrgTitleSuffix: "nécessite une organisation active",
+    noActiveOrgMessage: "Actualisez votre session depuis le tableau de bord pour charger les données de paramètres propres à l’organisation.",
+    permissionEyebrow: "Autorisation requise",
+    permissionTitleSuffix: "n’est pas disponible pour ce rôle",
+    permissionMessage: "Cette page est protégée par les autorisations du serveur et ne peut pas être chargée sans l’accès requis.",
+    moduleEyebrow: "Module verrouillé",
+    moduleTitleSuffix: "n’est pas activée pour cette organisation",
+    moduleMessage: "Ce workflow est protégé par les droits du module. Activez le module requis avant d’utiliser cette page.",
+    dashboardLabel: "Retour au tableau de bord",
+  },
+} as const
 
 function getModuleRequirements(surface: SettingsRouteSurface): SettingsRouteSurfaceModule[] {
   if (surface.modules && surface.modules.length > 0) return surface.modules
@@ -55,6 +72,8 @@ async function evaluateSettingsRouteAccess(
 ): Promise<SettingsRouteAccessResult> {
   const { locale: rawLocale } = await localePromise
   const locale = pickLocale(rawLocale)
+  const copy = ACCESS_COPY[locale]
+  const surfaceTitle = locale === "fr" ? (surface.titleFr ?? surface.title) : surface.title
 
   let context: SettingsRouteContext
 
@@ -93,9 +112,11 @@ async function evaluateSettingsRouteAccess(
         node: (
           <DashboardRouteState
             kind={noActiveOrg ? "no_active_org" : "permission_denied"}
-            title={noActiveOrg ? `${surface.title} ${NO_ACTIVE_ORG_TITLE_SUFFIX}` : `${surface.title} ${PERMISSION_DENIED_TITLE_SUFFIX}`}
-            message={noActiveOrg ? NO_ACTIVE_ORG_MESSAGE : PERMISSION_DENIED_MESSAGE}
+            eyebrow={noActiveOrg ? copy.noActiveOrgEyebrow : copy.permissionEyebrow}
+            title={noActiveOrg ? `${surfaceTitle} ${copy.noActiveOrgTitleSuffix}` : `${surfaceTitle} ${copy.permissionTitleSuffix}`}
+            message={noActiveOrg ? copy.noActiveOrgMessage : copy.permissionMessage}
             primaryHref={localizePath("/dashboard", locale)}
+            primaryLabel={copy.dashboardLabel}
           />
         ),
       }
@@ -125,9 +146,11 @@ async function evaluateSettingsRouteAccess(
         node: (
           <DashboardRouteState
             kind="locked_module"
-            title={moduleRequirement.moduleLockedTitle ?? `${surface.title} ${DEFAULT_MODULE_LOCKED_TITLE_SUFFIX}`}
-            message={moduleRequirement.moduleLockedMessage ?? DEFAULT_MODULE_LOCKED_MESSAGE}
+            eyebrow={copy.moduleEyebrow}
+            title={moduleRequirement.moduleLockedTitle ?? `${surfaceTitle} ${copy.moduleTitleSuffix}`}
+            message={moduleRequirement.moduleLockedMessage ?? copy.moduleMessage}
             primaryHref={localizePath("/dashboard", locale)}
+            primaryLabel={copy.dashboardLabel}
           />
         ),
       }

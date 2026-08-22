@@ -1263,6 +1263,22 @@ describe("workflow assurance registry service", () => {
         failed: 1,
       }),
     })
+    expect(mockDb.payrollPaymentBatch.count).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        where: expect.objectContaining({
+          OR: expect.arrayContaining([
+            {
+              payrollRun: {
+                is: {
+                  status: { notIn: ["POSTED", "PAID", "ARCHIVED"] },
+                },
+              },
+            },
+          ]),
+        }),
+      }),
+    )
   })
 
   it("flags payroll payment reconciliation exceptions for operations triage", async () => {

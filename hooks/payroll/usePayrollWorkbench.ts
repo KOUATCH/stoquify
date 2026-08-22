@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import {
-  approveAndPostPayrollRunAction,
+  approvePayrollRunAction,
   calculatePayrollRunAction,
   getPayrollWorkbenchAction,
   preparePayrollDeclarationsAction,
@@ -53,13 +53,13 @@ export function useCalculatePayrollRun() {
   })
 }
 
-export function useApproveAndPostPayrollRun() {
+export function useApprovePayrollRun() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (input: unknown) => {
-      const result = await approveAndPostPayrollRunAction(input)
+      const result = await approvePayrollRunAction(input)
       if (!result.success || !result.data) {
-        throw new Error(actionErrorMessage(result.error, "Failed to approve and post payroll run"))
+        throw new Error(actionErrorMessage(result.error, "Failed to approve payroll run"))
       }
       return result.data
     },

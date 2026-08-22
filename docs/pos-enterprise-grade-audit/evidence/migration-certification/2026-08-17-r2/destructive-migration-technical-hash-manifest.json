@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "artifactStatus": "CURRENT_DEVELOPMENT_TECHNICAL_BINDINGS_NOT_APPROVAL",
+  "observedAt": "2026-08-17T15:03:37.757Z",
+  "packetId": "MIG-RISK-20260611130000-F7DE8DC7-RECONCILED-2026-08-13",
+  "migration": {
+    "path": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+    "utf8ByteLength": 24674,
+    "rawFileSha256": "f7de8dc7ace0a5e063cdb7ecd9527e77807b7f872e474546819e9fca13a273d4",
+    "canonicalLfSha256": "2fde92f4ad0cbb1a2a517b12e71c38997dc4956c9d57d70ff1ae0c636ff2f191",
+    "destructiveInventorySha256": "55d332c3319b65acfdf415e64042a15504d12861b664429af7e63155296e1ad1"
+  },
+  "technicalArtifacts": [
+    {
+      "path": "docs/blockers/STOQUIFY_MIGRATION_RISK_MAKER_CHECKER_PACKET_2026-08-13.md",
+      "sha256": "2cdd4c3037c5a6574eebadb1473879cf99b554010ded8ae78dd47389ee912708"
+    },
+    {
+      "path": "docs/blockers/stoquify-migration-risk-maker-checker-packet-2026-08-13.json",
+      "sha256": "ca401617bd7449a1d5d0df419370d3ff0566b812cb19f911250ce7c01a322413"
+    },
+    {
+      "path": "what-next/prisma-migration-risk-review-packet.md",
+      "sha256": "fa5eba96f0a1cb699028581e0337d56e859f0da5bbea3d6f3d6e243ec1abd0fa"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "cdbc9c64e88d642f2bfc716ee4fda2e8b7dfbfc26f08a5170645311268ae8af9"
+    },
+    {
+      "path": "prisma/migration-risk-approvals.json",
+      "sha256": "6d386babbd94bcc3eabbdae9ba493717bbe47a12aa769a6cf7ed23ff85fc2192"
+    },
+    {
+      "path": "docs/reconcile-destructive-migration/evidence/MIG-RISK-20260611130000-F7DE8DC7-RECONCILED-2026-08-13/evidence-manifest.json",
+      "sha256": "37c4b416c2e58609866770bef995f85ec35839ecd8b0c497e760487b52a41911",
+      "status": "CURRENT_DEVELOPMENT_BINDING_NOT_PRODUCTION"
+    },
+    {
+      "path": "docs/pos-enterprise-grade-audit/evidence/migration-certification/2026-08-17-r2/target-verification.json",
+      "sha256": "15d2b01dffffea239841c65cbff91eec20325f60c99a3f58ade0f0dc7ad8319c"
+    },
+    {
+      "path": "docs/pos-enterprise-grade-audit/evidence/migration-certification/2026-08-17-r2/migration-history-before.json",
+      "sha256": "1ad0fc48f66ea29845f3f168e3d0adf511b3d7980cfcde27198c564823417d78"
+    },
+    {
+      "path": "docs/pos-enterprise-grade-audit/evidence/migration-certification/2026-08-17-r2/migration-history-after.json",
+      "sha256": "5cda1d63f324057b137aee82c54a1b2968509304d3f16025686d58eba26e5069"
+    },
+    {
+      "path": "docs/pos-enterprise-grade-audit/evidence/migration-certification/2026-08-17-r2/restore-rehearsal-result.json",
+      "sha256": "a0796eb9fcc9d3744deb2c32d4a60583c8b070981bedc089375b8000c0684f89",
+      "status": "PRESERVED_SUPERSEDED_FALSE_NEGATIVE"
+    },
+    {
+      "path": "docs/pos-enterprise-grade-audit/evidence/migration-certification/2026-08-17-r2/schema-fingerprint-reassessment.json",
+      "sha256": "c593b8c7aedd8202e0713cc5944a33f4fe20b0ec31306007ba2916f74272d441",
+      "status": "PASS_READ_ONLY_REASSESSMENT"
+    },
+    {
+      "path": "docs/pos-enterprise-grade-audit/evidence/migration-certification/2026-08-17-r2/post-execution-boundary-verification.json",
+      "sha256": "fc075fe4dc040401165774357289f2449fa3c2d8ec5f1bd7a29ae7df284cb86c"
+    },
+    {
+      "path": "docs/pos-enterprise-grade-audit/evidence/migration-certification/2026-08-17-r2/schema-rebound-projection-manifest.json",
+      "sha256": "4eb7eb68d3fb8b11f5c6c3c0fa842605886ef60998cde8e5557474a833a4a92e"
+    },
+    {
+      "path": "docs/pos-enterprise-grade-audit/evidence/migration-certification/2026-08-17-r2/authenticated-edge-report.html",
+      "sha256": "fcb109ac5e434c032846cbb3b133b7c8615dc09df923b26caaaa83738c596036"
+    },
+    {
+      "path": "docs/pos-enterprise-grade-audit/EXECUTION_05_G0_FINAL_REASSESSMENT_REPORT.md",
+      "sha256": "ec4d30dd91798fe0c828e1acdfd4e65147580bb96edcf1788064429a74046de5"
+    },
+    {
+      "path": "docs/pos-enterprise-grade-audit/EXECUTION_05_G0_FINAL_REASSESSMENT_GATE_EVIDENCE.json",
+      "sha256": "1aa862367a92e188b1fb41f84dc86e213f573c05fcf1dcf6cf4af3dae6f1ac35"
+    }
+  ],
+  "restoreReplay": {
+    "migrationExitCode": 0,
+    "finishedMigrationCount": 67,
+    "expectedMigrationCount": 67,
+    "canonicalFingerprintSha256": "4490e390ea32a96b7a18e0b75e3a2490db70210e4353a488162ccb13b4162086",
+    "fingerprintsMatch": true,
+    "scope": "LOCAL_SYNTHETIC_DEVELOPMENT_ONLY"
+  },
+  "approvalState": {
+    "riskFindings": 13,
+    "approvedFindings": 0,
+    "makerSignaturePresent": false,
+    "checkerSignaturePresent": false,
+    "finalCondition": "REJECTED_PENDING_PRODUCTION_EVIDENCE_AND_SIGNED_APPROVAL",
+    "productionExecutionAuthorizedByEvidence": false
+  }
+}

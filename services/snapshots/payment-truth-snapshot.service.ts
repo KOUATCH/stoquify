@@ -41,6 +41,7 @@ const OPEN_SUSPENSE_STATUSES = [
 const PENDING_PAYMENT_STATES = [
   PaymentTransactionState.PENDING,
   PaymentTransactionState.PROCESSING,
+  PaymentTransactionState.UNKNOWN,
   PaymentTransactionState.SUSPENSE,
   PaymentTransactionState.DISPUTED,
 ]
@@ -301,4 +302,3 @@ function paymentEvidenceGrade(metrics: PaymentTruthMetrics): EvidenceGrade {
   if (metrics.recentRunCount > 0) return "operational"
   return metrics.activeProviderAccountCount > 0 ? "raw" : "raw"
 }
-

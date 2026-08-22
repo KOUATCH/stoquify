@@ -1,0 +1,80 @@
+{
+  "artifactId": "A-01",
+  "artifactStatus": "TEMPLATE_NOT_EVIDENCE",
+  "packetId": "MIG-RISK-20260611130000-F7DE8DC7-PRODUCTION-<FINAL_DATE>",
+  "organization": "Stoquify",
+  "maker": {
+    "identity": "SANGO MALO",
+    "role": "Database administrator / engineering lead",
+    "authorityScope": "Production migration preparation and recovery evidence",
+    "freshAuthentication": { "method": null, "authenticatedAt": null, "immutableRecordId": null, "recordSha256": null },
+    "preparedAt": null,
+    "signature": { "method": null, "detachedSignaturePathOrApprovalRecordId": null, "signatureSha256": null, "signingKeyFingerprintOrIdentityProvider": null, "signedAt": null }
+  },
+  "makerIsNotChecker": null,
+  "makerIsNotExecutionChecker": null,
+  "finalCandidate": {
+    "commit": "35b4cc6a06a50ee11de5bfce6b04993e38bd589a",
+    "tree": "7efce91d5ba871e91470f60ed3b53833a1c3b4b4",
+    "dirty": true,
+    "migrationPath": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+    "migrationCanonicalLfSha256": "2fde92f4ad0cbb1a2a517b12e71c38997dc4956c9d57d70ff1ae0c636ff2f191",
+    "migrationRawFileSha256": "f7de8dc7ace0a5e063cdb7ecd9527e77807b7f872e474546819e9fca13a273d4",
+    "destructiveInventorySha256": "55d332c3319b65acfdf415e64042a15504d12861b664429af7e63155296e1ad1",
+    "prismaSchemaSha256": "cdbc9c64e88d642f2bfc716ee4fda2e8b7dfbfc26f08a5170645311268ae8af9"
+  },
+  "technicalSnapshot": {
+    "recordedAt": "2026-08-17T16:11:10Z",
+    "classification": "DEVELOPMENT_ROLLING_NOT_PRODUCTION_APPROVAL",
+    "packetBindingsReady": true,
+    "boundFileCount": 27,
+    "boundFileMismatchCount": 0,
+    "evidenceManifestStructureReady": true,
+    "completedProductionArtifacts": 0,
+    "requiredProductionArtifacts": 14,
+    "approvedDestructiveFindings": 0,
+    "requiredDestructiveFindings": 13,
+    "rollingEvidenceManifestPath": "docs/reconcile-destructive-migration/evidence/MIG-RISK-20260611130000-F7DE8DC7-RECONCILED-2026-08-13/evidence-manifest.json",
+    "rollingEvidenceManifestSha256": "37c4b416c2e58609866770bef995f85ec35839ecd8b0c497e760487b52a41911",
+    "developmentTechnicalManifestPath": "docs/pos-enterprise-grade-audit/evidence/migration-certification/2026-08-17-r2/destructive-migration-technical-hash-manifest.json",
+    "developmentTechnicalManifestSha256": "956fc6789101b39c57c6cad00e0a237f309c7557cd0fe8b6c76fcd1b7712f66d"
+  },
+  "selectedProductionPath": null,
+  "allowedProductionPaths": ["EMPTY_TARGET_EXECUTE", "EXISTING_TARGET_RESOLVE_ONLY"],
+  "productionTarget": { "redactedTargetId": null, "engineAndVersion": null, "region": null, "schema": null, "targetProfileEvidencePath": null, "targetProfileEvidenceSha256": null },
+  "operationDispositions": [
+    { "id": "D-001", "findingSha256": "4781af03745e807d47ccdc89b62f0562b923707465d36d215cbeaea3e3e164fb", "disposition": null, "evidenceReference": null, "accepted": null },
+    { "id": "D-002", "findingSha256": "277a312724a1c524d910f7c5966d70170825cf1d6a60679269b2388a6c9f3e55", "disposition": null, "evidenceReference": null, "accepted": null },
+    { "id": "D-003", "findingSha256": "5807ad92f5163c0922dce2373dd15df9d064a28a61b1601e063a510448c52c13", "disposition": null, "evidenceReference": null, "accepted": null },
+    { "id": "D-004", "findingSha256": "fbc401c6980f7b01658bb2b2f3702c618e2378e92395b4caee631fd8d8bee2cb", "disposition": null, "evidenceReference": null, "accepted": null },
+    { "id": "D-005", "findingSha256": "b5d38ed4fd3e87f368f0948c54731873ffdbec440832c219a078af57364ec76b", "disposition": null, "evidenceReference": null, "accepted": null },
+    { "id": "D-006", "findingSha256": "07a6cfdfae6507d5572505bc8a0505c74d4f0f1b496f0864b1e2d4e537ce1492", "disposition": null, "evidenceReference": null, "accepted": null },
+    { "id": "D-007", "findingSha256": "6ad18571cee52ce1386eacb37d9b18e40c4d6ffbb3b3166de4ffe4710df83988", "disposition": null, "evidenceReference": null, "accepted": null },
+    { "id": "D-008", "findingSha256": "42bf676feeb19705c6bd4a57cf83ac0f99d8cbb830b46cd42b1f980243a31165", "disposition": null, "evidenceReference": null, "accepted": null },
+    { "id": "D-009", "findingSha256": "5f168672b10fcdcbe1af94b0da9d9ead18688f6254a326c146ccb1aecda6d9de", "disposition": null, "evidenceReference": null, "accepted": null },
+    { "id": "D-010", "findingSha256": "8f4f2215000c21bc293358a28c8c4f8df6b90abdbc7c5200cb0b4e7d814807b9", "disposition": null, "evidenceReference": null, "accepted": null },
+    { "id": "D-011", "findingSha256": "ec44f20e8dd677d05d2303eef1758a22bebb08077983362349f6d9c5e4fd9178", "disposition": null, "evidenceReference": null, "accepted": null },
+    { "id": "D-012", "findingSha256": "4b1479492af21a9dd97c0a5212afe7c7383b8cd3b31045310e8ab0e0143bc95d", "disposition": null, "evidenceReference": null, "accepted": null },
+    { "id": "D-013", "findingSha256": "69294f51328a0a7575cff0524e5196accf0159913177b11dd249b65e554295fe", "disposition": null, "evidenceReference": null, "accepted": null }
+  ],
+  "evidenceBindings": {
+    "finalEvidenceManifestPath": null,
+    "finalEvidenceManifestSha256": null,
+    "productionRestoreEvidencePath": null,
+    "productionRestoreEvidenceSha256": null,
+    "backupManifestPath": null,
+    "backupManifestSha256": null,
+    "recoveryRunbookPath": null,
+    "recoveryRunbookSha256": null,
+    "authRegressionEvidencePath": null,
+    "authRegressionEvidenceSha256": null
+  },
+  "knownLimitations": [
+    "The current source worktree is dirty and cannot be the final production signature subject.",
+    "The localhost R2 replay is synthetic development evidence, not a production restore.",
+    "No fresh-auth record, maker signature, checker decision, or exact-hash approval exists.",
+    "Production target path and per-finding data dispositions remain unresolved."
+  ],
+  "attestation": null,
+  "completionRule": "Set artifactStatus to PRESENT_VALID only after every null is resolved, all 13 dispositions are evidence-backed, the final manifest is frozen, fresh authentication is proven, and the signature is independently verifiable."
+}

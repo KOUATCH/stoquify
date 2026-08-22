@@ -1,8 +1,9 @@
-import { Prisma } from "@prisma/client"
+import { AccountingPostingPurpose, AccountingSourceType, Prisma } from "@prisma/client"
 
 import { db } from "@/prisma/db"
 import {
   DEFAULT_AP_POSTING_RULES,
+  DEFAULT_DELIVERY_ORDER_POSTING_RULES,
   DEFAULT_PAYROLL_POSTING_RULES,
   DEFAULT_POS_POSTING_RULES,
   DEFAULT_POSTING_RULES,
@@ -58,6 +59,10 @@ export function getDefaultPOSPostingRuleTemplates(): readonly DefaultPostingRule
 
 export function getDefaultAPPostingRuleTemplates(): readonly DefaultPostingRuleTemplate[] {
   return DEFAULT_AP_POSTING_RULES
+}
+
+export function getDefaultDeliveryOrderPostingRuleTemplates(): readonly DefaultPostingRuleTemplate[] {
+  return DEFAULT_DELIVERY_ORDER_POSTING_RULES
 }
 
 export function getDefaultPayrollPostingRuleTemplates(): readonly DefaultPostingRuleTemplate[] {
@@ -166,6 +171,58 @@ export async function ensureDefaultAPPostingRules(
   }
 
   return ensured
+}
+
+export async function ensureDefaultDeliveryOrderPostingRules(
+  organizationId: string,
+  actorId?: string | null,
+  tx: Prisma.TransactionClient | typeof db = db,
+) {
+  const ensured = []
+
+  for (const template of DEFAULT_DELIVERY_ORDER_POSTING_RULES) {
+    const existing = await tx.postingRule.findFirst({
+      where: { organizationId, code: template.code },
+      include: postingRuleInclude,
+    })
+
+    if (existing) {
+      await validatePostingRuleLines(organizationId, existing.lines, tx)
+      ensured.push(existing)
+      continue
+    }
+
+    ensured.push(await createDefaultPostingRule(organizationId, template, actorId, tx))
+  }
+
+  return ensured
+}
+
+export async function ensureDefaultDeliveryOrderPostingRule(
+  organizationId: string,
+  input: {
+    sourceType: AccountingSourceType
+    postingPurpose: AccountingPostingPurpose
+  },
+  actorId?: string | null,
+  tx: Prisma.TransactionClient | typeof db = db,
+) {
+  const template = DEFAULT_DELIVERY_ORDER_POSTING_RULES.find(
+    (candidate) =>
+      candidate.sourceType === input.sourceType &&
+      candidate.postingPurpose === input.postingPurpose,
+  )
+  if (!template) throw new Error("Default delivery posting rule is not registered")
+
+  const existing = await tx.postingRule.findFirst({
+    where: { organizationId, code: template.code },
+    include: postingRuleInclude,
+  })
+  if (existing) {
+    await validatePostingRuleLines(organizationId, existing.lines, tx)
+    return existing
+  }
+  return createDefaultPostingRule(organizationId, template, actorId, tx)
 }
 
 export async function ensureDefaultPayrollPostingRules(

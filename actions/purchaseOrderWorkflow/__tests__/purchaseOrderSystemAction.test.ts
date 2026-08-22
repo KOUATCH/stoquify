@@ -3,6 +3,7 @@ import {
   bulkUpdatePurchaseOrderStatus,
   deletePurchaseOrder,
   receiveItems,
+  resolveGoodsReceiptInspection,
 } from "../purchaseOrderSystemAction"
 import { requirePermission } from "@/lib/security/rbac"
 import {
@@ -10,6 +11,7 @@ import {
   bulkUpdateStatus,
   deletePurchaseOrder as deletePurchaseOrderService,
   receiveItems as receiveItemsService,
+  resolveGoodsReceiptInspection as resolveGoodsReceiptInspectionService,
 } from "@/services/purchase-order/purchase-order.service"
 
 jest.mock("@/lib/security/rbac", () => ({
@@ -38,6 +40,7 @@ jest.mock("@/services/purchase-order/purchase-order.service", () => ({
   getSummary: jest.fn(),
   listPurchaseOrders: jest.fn(),
   receiveItems: jest.fn(),
+  resolveGoodsReceiptInspection: jest.fn(),
   searchLocations: jest.fn(),
   submitPurchaseOrder: jest.fn(),
   updatePurchaseOrder: jest.fn(),
@@ -48,6 +51,7 @@ const mockApprovePurchaseOrderService = approvePurchaseOrderService as jest.Mock
 const mockBulkUpdateStatus = bulkUpdateStatus as jest.Mock
 const mockDeletePurchaseOrderService = deletePurchaseOrderService as jest.Mock
 const mockReceiveItemsService = receiveItemsService as jest.Mock
+const mockResolveGoodsReceiptInspectionService = resolveGoodsReceiptInspectionService as jest.Mock
 
 const approvedPurchaseOrder = {
   id: "po-1",
@@ -65,7 +69,21 @@ beforeEach(() => {
   mockApprovePurchaseOrderService.mockResolvedValue(approvedPurchaseOrder)
   mockBulkUpdateStatus.mockResolvedValue({ updated: ["po-1"], failed: [] })
   mockDeletePurchaseOrderService.mockResolvedValue("PO-000001")
-  mockReceiveItemsService.mockResolvedValue({ ...approvedPurchaseOrder, status: "RECEIVED" })
+  mockReceiveItemsService.mockResolvedValue({
+    purchaseOrder: { ...approvedPurchaseOrder, status: "RECEIVED" },
+    receiptNumber: "GR-000001",
+    receiptStatus: "RECEIVED",
+    inspectionOutcome: "PASSED",
+    replayed: false,
+  })
+  mockResolveGoodsReceiptInspectionService.mockResolvedValue({
+    goodsReceiptId: "receipt-1",
+    receiptNumber: "GR-000001",
+    purchaseOrderId: "po-1",
+    receiptStatus: "RECEIVED",
+    decision: "ACCEPT",
+    replayed: false,
+  })
 })
 
 describe("purchaseOrderSystemAction controls", () => {
@@ -145,6 +163,8 @@ describe("purchaseOrderSystemAction controls", () => {
       id: "po-1",
       organizationId: "org-session",
       receivedBy: "client-user",
+      idempotencyKey: "receipt:command-1",
+      inspectionOutcome: "PASSED",
       items: [{ lineId: "line-1", receivedQuantity: 2 }],
     })
 
@@ -157,11 +177,96 @@ describe("purchaseOrderSystemAction controls", () => {
       purchaseOrderId: "po-1",
       organizationId: "org-session",
       receivedById: "actor-session",
+      idempotencyKey: "receipt:command-1",
       locationId: undefined,
       notes: undefined,
+      inspectionOutcome: "PASSED",
+      inspectionReason: undefined,
+      inspectionEvidenceNotes: undefined,
       items: [{ lineId: "line-1", receivedQuantity: 2 }],
     })
     expect(result.success).toBe(true)
+  })
+
+  it("does not record a receiving inspection when receive permission is denied", async () => {
+    mockRequirePermission.mockRejectedValueOnce(new Error("Permission denied"))
+
+    const result = await receiveItems({
+      id: "po-1",
+      organizationId: "org-session",
+      idempotencyKey: "receipt:command-denied",
+      inspectionOutcome: "PASSED",
+      items: [{ lineId: "line-1", receivedQuantity: 2 }],
+    })
+
+    expect(result).toMatchObject({ success: false, error: "Permission denied" })
+    expect(mockReceiveItemsService).not.toHaveBeenCalled()
+  })
+
+  it("requires the authorized receiver to record an inspection outcome", async () => {
+    const result = await receiveItems({
+      id: "po-1",
+      organizationId: "org-session",
+      receivedBy: "client-user",
+      idempotencyKey: "receipt:missing-inspection-1",
+      items: [{ lineId: "line-1", receivedQuantity: 2 }],
+    } as Parameters<typeof receiveItems>[0])
+
+    expect(result.success).toBe(false)
+    expect(mockReceiveItemsService).not.toHaveBeenCalled()
+  })
+
+  it("resolves a held receipt with the canonical receive permission and RBAC actor", async () => {
+    const result = await resolveGoodsReceiptInspection({
+      goodsReceiptId: "receipt-1",
+      organizationId: "org-session",
+      decision: "ACCEPT",
+      reason: "Condition verified by warehouse lead",
+      idempotencyKey: "inspection-resolution:1",
+    })
+
+    expect(mockRequirePermission).toHaveBeenCalledWith("purchases.orders.receive", {
+      resource: "GoodsReceipt",
+      resourceId: "receipt-1",
+      auditAllowed: true,
+    })
+    expect(mockResolveGoodsReceiptInspectionService).toHaveBeenCalledWith({
+      goodsReceiptId: "receipt-1",
+      organizationId: "org-session",
+      resolvedById: "actor-session",
+      decision: "ACCEPT",
+      reason: "Condition verified by warehouse lead",
+      idempotencyKey: "inspection-resolution:1",
+    })
+    expect(result).toMatchObject({ success: true, data: { receiptStatus: "RECEIVED" } })
+  })
+
+  it("rejects cross-tenant inspection resolution before calling the service", async () => {
+    const result = await resolveGoodsReceiptInspection({
+      goodsReceiptId: "receipt-1",
+      organizationId: "other-org",
+      decision: "REJECT",
+      reason: "Damaged on arrival",
+      idempotencyKey: "inspection-resolution:2",
+    })
+
+    expect(result).toMatchObject({ success: false, error: "You do not have access to this organization" })
+    expect(mockResolveGoodsReceiptInspectionService).not.toHaveBeenCalled()
+  })
+
+  it("does not call inspection resolution when permission is denied", async () => {
+    mockRequirePermission.mockRejectedValueOnce(new Error("Permission denied"))
+
+    const result = await resolveGoodsReceiptInspection({
+      goodsReceiptId: "receipt-1",
+      organizationId: "org-session",
+      decision: "ACCEPT",
+      reason: "Condition verified",
+      idempotencyKey: "inspection-resolution:3",
+    })
+
+    expect(result).toMatchObject({ success: false, error: "Permission denied" })
+    expect(mockResolveGoodsReceiptInspectionService).not.toHaveBeenCalled()
   })
 
   it("rejects mismatched tenant scope before calling the service", async () => {

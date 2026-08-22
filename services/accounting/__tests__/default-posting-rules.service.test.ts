@@ -1,4 +1,9 @@
-import { PostingRuleAmountSource, PostingRuleLineSide } from "@prisma/client";
+import {
+  AccountingPostingPurpose,
+  AccountingSourceType,
+  PostingRuleAmountSource,
+  PostingRuleLineSide,
+} from "@prisma/client";
 
 jest.mock("@/prisma/db", () => ({
   db: {
@@ -13,8 +18,10 @@ jest.mock("@/prisma/db", () => ({
 
 import {
   ensureDefaultAPPostingRules,
+  ensureDefaultDeliveryOrderPostingRule,
   ensureDefaultPayrollPostingRules,
   ensureDefaultPOSPostingRules,
+  getDefaultDeliveryOrderPostingRuleTemplates,
   getDefaultPostingRuleTemplates,
 } from "../default-posting-rules.service";
 
@@ -27,11 +34,36 @@ const mockTx = {
   },
 };
 
+it("separates delivery goods-issue cost posting from invoice AR and revenue posting", () => {
+  const rules = getDefaultDeliveryOrderPostingRuleTemplates();
+
+  expect(rules).toHaveLength(2);
+  expect(rules[0]).toMatchObject({
+    sourceType: "DELIVERY_GOODS_ISSUE",
+    postingPurpose: "GOODS_ISSUE",
+    lines: expect.arrayContaining([
+      expect.objectContaining({ mappingKey: "COGS", amountSource: "COST_AMOUNT" }),
+      expect.objectContaining({ mappingKey: "INVENTORY", amountSource: "COST_AMOUNT" }),
+    ]),
+  });
+  expect(rules[1]).toMatchObject({
+    sourceType: "DELIVERY_INVOICE",
+    postingPurpose: "SALES_INVOICE",
+    lines: expect.arrayContaining([
+      expect.objectContaining({ mappingKey: "ACCOUNTS_RECEIVABLE", amountSource: "GROSS_AMOUNT" }),
+      expect.objectContaining({ mappingKey: "SALES_REVENUE", amountSource: "NET_AMOUNT" }),
+      expect.objectContaining({ mappingKey: "OUTPUT_VAT", amountSource: "TAX_AMOUNT" }),
+    ]),
+  });
+});
+
 const mappedAccounts = [
   "ACCOUNTS_RECEIVABLE",
   "SALES_REVENUE",
   "OUTPUT_VAT",
   "ACCOUNTS_PAYABLE",
+  "GRNI",
+  "SUPPLIER_RETURN_CLAIM",
   "INPUT_VAT",
   "COGS",
   "INVENTORY",
@@ -84,6 +116,26 @@ describe("default POS posting rules", () => {
         resolveMappedAccounts(where.mappingKey.in),
     );
     mockTx.ledgerAuditEvent.create.mockResolvedValue({ id: "audit-1" });
+  });
+
+  it("ensures only the posting rule required by the current delivery event", async () => {
+    const rule = await ensureDefaultDeliveryOrderPostingRule(
+      "org-1",
+      {
+        sourceType: AccountingSourceType.DELIVERY_GOODS_ISSUE,
+        postingPurpose: AccountingPostingPurpose.GOODS_ISSUE,
+      },
+      "user-1",
+      mockTx as never,
+    );
+
+    expect(rule).toMatchObject({ code: "DELIVERY-GOODS-ISSUE" });
+    expect(mockTx.postingRule.create).toHaveBeenCalledTimes(1);
+    expect(mockTx.postingRule.create).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ code: "DELIVERY-SALES-INVOICE" }),
+      }),
+    );
   });
 
   it("creates the sale, payment, refund, and void posting rules when they are missing", async () => {
@@ -281,9 +333,14 @@ describe("default POS posting rules", () => {
       mockTx as never,
     );
 
-    expect(apRules).toHaveLength(2);
+    expect(apRules).toHaveLength(4);
     expect(getDefaultPostingRuleTemplates().map((rule) => rule.code)).toEqual(
-      expect.arrayContaining(["AP-SUPPLIER-INVOICE", "AP-SUPPLIER-PAYMENT"]),
+      expect.arrayContaining([
+        "AP-SUPPLIER-INVOICE",
+        "AP-SUPPLIER-PAYMENT",
+        "AP-PURCHASE-RETURN",
+        "AP-SUPPLIER-CREDIT-NOTE",
+      ]),
     );
     expect(mockTx.postingRule.create).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -306,6 +363,34 @@ describe("default POS posting rules", () => {
                 side: PostingRuleLineSide.CREDIT,
                 amountSource: PostingRuleAmountSource.GROSS_AMOUNT,
               }),
+            ]),
+          }),
+        }),
+      }),
+    );
+    expect(mockTx.postingRule.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          code: "AP-PURCHASE-RETURN",
+          lines: expect.objectContaining({
+            create: expect.arrayContaining([
+              expect.objectContaining({ mappingKey: "SUPPLIER_RETURN_CLAIM", side: PostingRuleLineSide.DEBIT }),
+              expect.objectContaining({ mappingKey: "GRNI", side: PostingRuleLineSide.DEBIT }),
+              expect.objectContaining({ mappingKey: "INVENTORY", side: PostingRuleLineSide.CREDIT }),
+            ]),
+          }),
+        }),
+      }),
+    );
+    expect(mockTx.postingRule.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          code: "AP-SUPPLIER-CREDIT-NOTE",
+          lines: expect.objectContaining({
+            create: expect.arrayContaining([
+              expect.objectContaining({ mappingKey: "ACCOUNTS_PAYABLE", side: PostingRuleLineSide.DEBIT }),
+              expect.objectContaining({ mappingKey: "SUPPLIER_RETURN_CLAIM", side: PostingRuleLineSide.CREDIT }),
+              expect.objectContaining({ mappingKey: "INPUT_VAT", side: PostingRuleLineSide.CREDIT }),
             ]),
           }),
         }),

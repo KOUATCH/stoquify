@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "1.0.0",
+  "programId": "STOQUIFY-POS-SALES-TO-CASH",
+  "asOf": "2026-08-17T04:16:25.9946457Z",
+  "lastUpdatedAt": "2026-08-17T05:47:13.4724149Z",
+  "latestExecutionEvidence": {
+    "report": "docs/pos-enterprise-grade-audit/EXECUTION_02_M2_CLIENT_COMMIT_REPLAY_REPORT.md",
+    "gateEvidence": "docs/pos-enterprise-grade-audit/EXECUTION_02_M2_GATE_EVIDENCE.json",
+    "status": "M2_A01_A04_COMPLETE_LOCAL_G2_BLOCKED"
+  },
+  "taxonomy": {
+    "LOCAL_STATIC": "Source inspection or deterministic static gate; not runtime or production proof.",
+    "LOCAL_UNIT": "Isolated automated test evidence; mocks do not prove external or database behavior.",
+    "LOCAL_POSTGRES": "Real local PostgreSQL race, migration or transaction evidence.",
+    "LOCAL_BROWSER": "Authenticated local browser evidence for a named locale, role and viewport.",
+    "STAGING_SANDBOX": "Named provider/fiscal sandbox evidence with configuration version.",
+    "REFERENCE_HARDWARE": "Named supported device and peripheral evidence.",
+    "PRODUCTION_OBSERVATION": "Redacted evidence from the exact deployed candidate and eligible cohort.",
+    "QUALIFIED_REVIEW": "Dated approval from an accountable legal, accounting, country-pack, security or accessibility reviewer."
+  },
+  "redactionRules": [
+    "Exclude secrets, access tokens, webhook signatures, PAN, CVV, PIN and raw payment credentials.",
+    "Exclude unnecessary customer and employee PII; use stable redacted references.",
+    "Inspect console logs, traces, screenshots, fixtures and exported JSON before retention.",
+    "A redaction failure invalidates the evidence artifact."
+  ],
+  "gateEvidence": [
+    { "gate": "G0", "status": "BLOCKED", "required": ["Candidate hash", "typecheck", "Prisma validation", "migration safety", "real PostgreSQL harness", "authenticated EN/FR browser harness", "evidence schema", "named pilot matrix"] },
+    { "gate": "G1", "status": "REQUIRES_EXPERT_REVIEW", "required": ["Approved decisions D-01 through D-11", "Versioned state and command contracts", "Accounting/inventory event matrix", "Access and capability matrix", "Receipt/fiscal and offline policies"] },
+    { "gate": "G2", "status": "BLOCKED_PARTIAL_IMPLEMENTATION", "required": ["Execute real PostgreSQL duplicate race and rollback certification on an authorized isolated target", "cart version and stale-write conflicts", "duplicate scan and oversell prevention", "authenticated tenant/location/terminal negative matrix", "complete access/privacy surface matrix", "balanced postings"] },
+    { "gate": "G3A", "status": "BLOCKED_DEPENDENCY", "required": ["Named provider contract", "signed callbacks", "unknown/pending", "capture-after-timeout", "refund/reversal", "statement reconciliation"] },
+    { "gate": "G3B", "status": "BLOCKED_DEPENDENCY", "required": ["Immutable receipt/fiscal source", "authority replay", "delivery failure", "correction lineage", "public-token abuse tests"] },
+    { "gate": "G4", "status": "BLOCKED_DEPENDENCY", "required": ["EN/FR authenticated workstation matrix", "keyboard/accessibility", "reference devices", "offline conflicts", "refresh/crash recovery"] },
+    { "gate": "G5", "status": "BLOCKED_DEPENDENCY", "required": ["Blind declarations", "business-day close", "provider statements", "suspense", "X/Z country review", "accounting close blockers"] },
+    { "gate": "G6", "status": "BLOCKED_DEPENDENCY", "required": ["Reservation races", "goods issue exactly once", "partial fulfillment", "backorder", "cancellation/reversal", "unsupported capability rejection"] },
+    { "gate": "G7", "status": "BLOCKED_DEPENDENCY", "required": ["Invoice eligibility", "AR posting", "partial allocation", "return disposition", "credit/refund lineage", "maker-checker"] },
+    { "gate": "G8", "status": "BLOCKED_DEPENDENCY", "required": ["SLO/load", "failure/recovery drills", "restore proof", "security/privacy/accessibility", "observe-mode assurance", "support timeline"] },
+    { "gate": "G9", "status": "BLOCKED_DEPENDENCY", "required": ["Country/provider approvals", "narrow pilot cycles", "production tie-outs", "error budgets", "rollback evidence", "formal expansion decision"] }
+  ]
+}

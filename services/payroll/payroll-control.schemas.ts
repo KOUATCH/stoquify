@@ -66,31 +66,67 @@ export const approveAndPostPayrollRunInputSchema = z.object({
   metadata: z.unknown().optional(),
 });
 
-export const releasePayrollPaymentBatchInputSchema = z.object({
+const payrollRunTransitionInputSchema = z.object({
+  organizationId: idSchema,
+  payrollRunId: idSchema,
+  expectedVersion: z.number().int().positive(),
+  idempotencyKey: idSchema,
+  actorId: idSchema,
+  actorPermissions: z.array(z.string().trim().min(1)).default([]),
+  lastAuthAt: dateInputSchema.optional(),
+  now: dateInputSchema.optional(),
+  correlationId: idSchema.optional(),
+  evidenceHash: z.string().trim().min(1).optional(),
+  documentHash: z.string().trim().min(1).optional(),
+  metadata: z.unknown().optional(),
+});
+
+export const reviewPayrollRunInputSchema = payrollRunTransitionInputSchema;
+export const approvePayrollRunInputSchema = payrollRunTransitionInputSchema;
+export const emitPayrollPayslipsInputSchema = payrollRunTransitionInputSchema;
+export const postPayrollRunInputSchema = payrollRunTransitionInputSchema;
+
+const payrollPaymentAllocationInputSchema = z.object({
+  payslipId: idSchema,
+  employeeId: idSchema,
+  amount: decimalInputSchema,
+});
+
+export const requestPayrollPaymentBatchInputSchema = z.object({
   organizationId: idSchema,
   payrollRunId: idSchema,
   requestedById: idSchema,
-  approvedById: idSchema,
-  releasedById: idSchema.optional(),
   method: z.nativeEnum(PaymentMethod),
   paymentDate: dateInputSchema,
   idempotencyKey: idSchema,
   bankFileHash: z.string().trim().min(1).optional(),
   documentHash: z.string().trim().min(1).optional(),
-  allocations: z
-    .array(
-      z.object({
-        payslipId: idSchema,
-        employeeId: idSchema,
-        amount: decimalInputSchema,
-      }),
-    )
-    .min(1),
+  allocations: z.array(payrollPaymentAllocationInputSchema).min(1),
   actorPermissions: z.array(z.string().trim().min(1)).default([]),
   lastAuthAt: dateInputSchema.optional(),
   now: dateInputSchema.optional(),
   notes: z.string().trim().optional(),
   metadata: z.unknown().optional(),
+});
+
+export const approvePayrollPaymentBatchInputSchema = z.object({
+  organizationId: idSchema,
+  payrollPaymentBatchId: idSchema,
+  approvedById: idSchema,
+  actorPermissions: z.array(z.string().trim().min(1)).default([]),
+  lastAuthAt: dateInputSchema.optional(),
+  now: dateInputSchema.optional(),
+  idempotencyKey: idSchema,
+});
+
+export const releasePayrollPaymentBatchInputSchema = z.object({
+  organizationId: idSchema,
+  payrollPaymentBatchId: idSchema,
+  releasedById: idSchema,
+  actorPermissions: z.array(z.string().trim().min(1)).default([]),
+  lastAuthAt: dateInputSchema.optional(),
+  now: dateInputSchema.optional(),
+  idempotencyKey: idSchema,
 });
 
 export const preparePayrollDeclarationsInputSchema = z.object({
@@ -113,6 +149,20 @@ export type CalculatePayrollRunInput = z.input<
 >;
 export type ApproveAndPostPayrollRunInput = z.input<
   typeof approveAndPostPayrollRunInputSchema
+>;
+export type ReviewPayrollRunInput = z.input<typeof reviewPayrollRunInputSchema>;
+export type ApprovePayrollRunInput = z.input<
+  typeof approvePayrollRunInputSchema
+>;
+export type EmitPayrollPayslipsInput = z.input<
+  typeof emitPayrollPayslipsInputSchema
+>;
+export type PostPayrollRunInput = z.input<typeof postPayrollRunInputSchema>;
+export type RequestPayrollPaymentBatchInput = z.input<
+  typeof requestPayrollPaymentBatchInputSchema
+>;
+export type ApprovePayrollPaymentBatchInput = z.input<
+  typeof approvePayrollPaymentBatchInputSchema
 >;
 export type ReleasePayrollPaymentBatchInput = z.input<
   typeof releasePayrollPaymentBatchInputSchema

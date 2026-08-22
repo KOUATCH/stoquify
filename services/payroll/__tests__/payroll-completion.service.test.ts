@@ -73,7 +73,9 @@ import { resolveRegulatoryParameter } from "@/services/regulatory/regulatory-cap
 import { BusinessRuleError } from "@/services/_shared/action-errors";
 
 import {
+  approvePayrollPaymentBatch,
   preparePayrollDeclarations,
+  requestPayrollPaymentBatch,
   releasePayrollPaymentBatch,
 } from "../payroll-control.service";
 
@@ -101,6 +103,7 @@ function buildTx() {
       findFirst: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
+      updateMany: jest.fn(),
     },
     payrollPaymentAllocation: {
       findMany: jest.fn(),
@@ -418,6 +421,60 @@ function postedNegativeCorrectionPayrollRun() {
     ],
   };
 }
+
+function approvedPayrollPaymentBatch(
+  run = postedPayrollRun(),
+  options: {
+    bankFileHash?: string | null;
+    metadata?: Record<string, unknown>;
+  } = {},
+) {
+  return {
+    id: "batch-1",
+    organizationId: "org-1",
+    payrollRunId: run.id,
+    batchNumber: "PAYMENT-20260630-0001",
+    status: PayrollPaymentBatchStatus.APPROVED,
+    method: PaymentMethod.BANK_TRANSFER,
+    amount: run.netPayableAmount,
+    currency: run.currency,
+    paymentDate: run.payrollPeriod.payDate,
+    idempotencyKey: "payroll-payment-request-key-1",
+    bankFileHash:
+      options.bankFileHash === undefined
+        ? "sha256:bank-file"
+        : options.bankFileHash,
+    documentHash: "sha256:payment-document",
+    evidenceHash: "sha256:payment-evidence",
+    requestedById: "preparer-1",
+    approvedById: "treasury-1",
+    releasedById: null,
+    approvedAt: new Date("2026-06-30T00:00:30.000Z"),
+    releasedAt: null,
+    ledgerPostingBatchId: null,
+    postedBusinessEventId: null,
+    paymentTransactionId: null,
+    paymentExceptionId: null,
+    reconciliationStatus: null,
+    metadata:
+      options.metadata ?? {
+        ...PAYROLL_PAYMENT_RUN_PROOF_METADATA,
+        ...PAYMENT_ADAPTER_PROOF_METADATA,
+      },
+    allocations: run.payslips.map((payslip, index) => ({
+      id: `allocation-${index + 1}`,
+      organizationId: "org-1",
+      payrollPaymentBatchId: "batch-1",
+      payslipId: payslip.id,
+      employeeId: payslip.employeeId,
+      amount: new Prisma.Decimal(payslip.netPayableAmount).abs(),
+      currency: payslip.currency,
+      metadata: {},
+    })),
+    payrollRun: run,
+  };
+}
+
 function payrollPaymentPostingRule() {
   return {
     code: "PAYROLL-PAYMENT",
@@ -488,11 +545,12 @@ describe("payroll completion service", () => {
     });
   });
 
-  it("releases posted payroll payment batches with ledger and reconciliation evidence", async () => {
+  it("persists a draft payment request before approval or release", async () => {
     const tx = buildTx();
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
+    const run = postedPayrollRun();
     tx.payrollPaymentBatch.findFirst.mockResolvedValue(null);
-    tx.payrollRun.findFirst.mockResolvedValue(postedPayrollRun());
+    tx.payrollRun.findFirst.mockResolvedValue(run);
     tx.payrollPaymentAllocation.findMany.mockResolvedValue([]);
     tx.payrollEmployee.findFirst.mockResolvedValue({
       id: "employee-1",
@@ -526,6 +584,174 @@ describe("payroll completion service", () => {
         ),
       }),
     );
+    tx.payrollPaymentBatch.update.mockImplementation(
+      async ({ data }: { data: any }) => ({
+        id: "batch-1",
+        status: PayrollPaymentBatchStatus.DRAFT,
+        ...data,
+        allocations: [{ id: "allocation-1" }],
+      }),
+    );
+    tx.auditLog.create.mockResolvedValue({ id: "audit-1" });
+
+    const result = await requestPayrollPaymentBatch({
+      organizationId: "org-1",
+      payrollRunId: "run-1",
+      requestedById: "preparer-1",
+      method: PaymentMethod.BANK_TRANSFER,
+      paymentDate: "2026-06-30",
+      bankFileHash: "sha256:bank-file",
+      idempotencyKey: "payroll-payment-request-key-1",
+      actorPermissions: ["payroll.payments.request"],
+      lastAuthAt: "2026-06-30T00:00:00.000Z",
+      now: "2026-06-30T00:01:00.000Z",
+      allocations: [
+        {
+          payslipId: "payslip-1",
+          employeeId: "employee-1",
+          amount: "95800.00",
+        },
+      ],
+      metadata: CERTIFIED_PAYMENT_ADAPTER_REQUEST_METADATA,
+    });
+
+    expect(result.created).toBe(true);
+    expect(tx.payrollPaymentBatch.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          status: PayrollPaymentBatchStatus.DRAFT,
+          requestedById: "preparer-1",
+          approvedById: null,
+          releasedById: null,
+          allocations: expect.any(Object),
+        }),
+      }),
+    );
+    expect(mockedRecordBusinessEventInTx).toHaveBeenCalledWith(
+      tx,
+      expect.objectContaining({
+        eventType: "payroll.payment_batch.requested",
+        actorId: "preparer-1",
+      }),
+    );
+    expect(mockDb.$transaction).toHaveBeenCalledWith(expect.any(Function), {
+      isolationLevel: "Serializable",
+    });
+    expect(mockedCreateLedgerPostingBatch).not.toHaveBeenCalled();
+    expect(tx.paymentTransaction.create).not.toHaveBeenCalled();
+  });
+
+  it("rejects a concurrently claimed payment approval before emitting approval evidence", async () => {
+    const tx = buildTx();
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
+    tx.payrollPaymentBatch.findFirst.mockResolvedValue({
+      ...approvedPayrollPaymentBatch(),
+      status: PayrollPaymentBatchStatus.DRAFT,
+      approvedById: null,
+      approvedAt: null,
+    });
+    tx.payrollPaymentBatch.updateMany.mockResolvedValue({ count: 0 });
+    tx.auditLog.create.mockResolvedValue({ id: "audit-control-1" });
+
+    await expect(
+      approvePayrollPaymentBatch({
+        organizationId: "org-1",
+        payrollPaymentBatchId: "batch-1",
+        approvedById: "treasury-1",
+        actorPermissions: ["payroll.payments.approve"],
+        lastAuthAt: "2026-06-30T00:00:00.000Z",
+        now: "2026-06-30T00:01:00.000Z",
+        idempotencyKey: "payroll-payment-approve-key-1",
+      }),
+    ).rejects.toThrow("changed concurrently");
+
+    expect(tx.payrollPaymentBatch.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          organizationId: "org-1",
+          status: PayrollPaymentBatchStatus.DRAFT,
+          approvedById: null,
+        }),
+      }),
+    );
+    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
+    expect(tx.payrollPaymentBatch.update).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    {
+      label: "releaser equals requester",
+      releasedById: "preparer-1",
+      requestedById: "preparer-1",
+      approvedById: "treasury-1",
+    },
+    {
+      label: "releaser equals approver",
+      releasedById: "treasury-1",
+      requestedById: "preparer-1",
+      approvedById: "treasury-1",
+    },
+    {
+      label: "stored requester equals approver",
+      releasedById: "treasury-release-1",
+      requestedById: "treasury-1",
+      approvedById: "treasury-1",
+    },
+  ])("rejects payment release when $label", async (actors) => {
+    const tx = buildTx();
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
+    tx.payrollPaymentBatch.findFirst.mockResolvedValue({
+      ...approvedPayrollPaymentBatch(),
+      requestedById: actors.requestedById,
+      approvedById: actors.approvedById,
+    });
+
+    await expect(
+      releasePayrollPaymentBatch({
+        organizationId: "org-1",
+        payrollPaymentBatchId: "batch-1",
+        releasedById: actors.releasedById,
+        idempotencyKey: `payroll-payment-sod-${actors.label}`,
+        actorPermissions: ["payroll.payments.release"],
+        lastAuthAt: "2026-06-30T00:00:00.000Z",
+        now: "2026-06-30T00:01:00.000Z",
+      }),
+    ).rejects.toThrow(
+      "requester, approver, and releaser must be separate authenticated actors",
+    );
+
+    expect(mockedCreateLedgerPostingBatch).not.toHaveBeenCalled();
+    expect(tx.paymentTransaction.create).not.toHaveBeenCalled();
+    expect(tx.payrollPaymentBatch.update).not.toHaveBeenCalled();
+  });
+
+  it("releases posted payroll payment batches with ledger and reconciliation evidence", async () => {
+    const tx = buildTx();
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
+    const run = postedPayrollRun();
+    tx.payrollPaymentBatch.findFirst.mockResolvedValue(
+      approvedPayrollPaymentBatch(run),
+    );
+    tx.payrollPaymentAllocation.findMany.mockResolvedValue([]);
+    tx.payrollEmployee.findFirst.mockResolvedValue({
+      id: "employee-1",
+      displayName: "Ada Payroll",
+      paymentDestinationHash: "employee-destination-hash",
+      metadata: {
+        approvedPaymentDestinationEvidence: {
+          requestId: "dest-change-1",
+          paymentDestinationHash: "employee-destination-hash",
+          evidenceDocumentHash: "sha256:payment-destination-evidence",
+          approvalEvidenceHash: "sha256:payment-destination-approval",
+        },
+      },
+    });
+    tx.payrollPaymentDestinationChangeRequest.findFirst.mockResolvedValue({
+      id: "dest-change-1",
+      evidenceDocumentHash: "sha256:payment-destination-evidence",
+      approvalEvidenceHash: "sha256:payment-destination-approval",
+      appliedBusinessEventId: "event-destination-applied",
+    });
     tx.journal.findFirst.mockResolvedValue({
       id: "bank-journal",
       type: JournalType.BANK,
@@ -569,52 +795,16 @@ describe("payroll completion service", () => {
 
     const result = await releasePayrollPaymentBatch({
       organizationId: "org-1",
-      payrollRunId: "run-1",
-      requestedById: "preparer-1",
-      approvedById: "treasury-1",
-      method: PaymentMethod.BANK_TRANSFER,
-      paymentDate: "2026-06-30",
-      bankFileHash: "sha256:bank-file",
+      payrollPaymentBatchId: "batch-1",
+      releasedById: "treasury-release-1",
       idempotencyKey: "payroll-payment-key-1",
       actorPermissions: ["payroll.payments.release"],
       lastAuthAt: "2026-06-30T00:00:00.000Z",
       now: "2026-06-30T00:01:00.000Z",
-      allocations: [
-        {
-          payslipId: "payslip-1",
-          employeeId: "employee-1",
-          amount: "95800.00",
-        },
-      ],
-      metadata: CERTIFIED_PAYMENT_ADAPTER_REQUEST_METADATA,
     });
 
     expect(result.ledgerStatus).toBe("POSTED");
-    expect(tx.payrollPaymentBatch.create).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expect.objectContaining({
-          metadata: expect.objectContaining({
-            ...PAYROLL_PAYMENT_RUN_PROOF_METADATA,
-            ...PAYMENT_ADAPTER_PROOF_METADATA,
-            paymentAdapterProofHash: expect.stringMatching(/^sha256:/),
-            paymentAdapterRegistryVersion: 1,
-            paymentProviderAdapterContractHash:
-              expect.stringMatching(/^sha256:/),
-          }),
-        }),
-      }),
-    );
-    const createdBatchData =
-      tx.payrollPaymentBatch.create.mock.calls[0][0].data;
-    expect(createdBatchData.allocations.create[0].metadata).toEqual(
-      expect.objectContaining({
-        ...PAYROLL_PAYMENT_RUN_PROOF_METADATA,
-        ...PAYMENT_ADAPTER_PROOF_METADATA,
-        paymentAdapterProofHash: expect.stringMatching(/^sha256:/),
-        paymentAdapterRegistryVersion: 1,
-        paymentProviderAdapterContractHash: expect.stringMatching(/^sha256:/),
-      }),
-    );
+    expect(tx.payrollPaymentBatch.create).not.toHaveBeenCalled();
     expect(tx.journalEntry.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
@@ -724,7 +914,7 @@ describe("payroll completion service", () => {
         correlationId: "payroll-payment-key-1",
       }),
       expect.objectContaining({
-        actorId: "treasury-1",
+        actorId: "treasury-release-1",
         now: expect.any(Date),
       }),
     );
@@ -733,33 +923,24 @@ describe("payroll completion service", () => {
   it("blocks certified production payment release when adapter chaos gate proof is missing", async () => {
     const tx = buildTx();
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
-    tx.payrollPaymentBatch.findFirst.mockResolvedValue(null);
-    tx.payrollRun.findFirst.mockResolvedValue(postedPayrollRun());
-
-    await expect(
-      releasePayrollPaymentBatch({
-        organizationId: "org-1",
-        payrollRunId: "run-1",
-        requestedById: "preparer-1",
-        approvedById: "treasury-1",
-        method: PaymentMethod.BANK_TRANSFER,
-        paymentDate: "2026-06-30",
-        bankFileHash: "sha256:bank-file",
-        idempotencyKey: "payroll-payment-key-1",
-        actorPermissions: ["payroll.payments.release"],
-        lastAuthAt: "2026-06-30T00:00:00.000Z",
-        now: "2026-06-30T00:01:00.000Z",
-        allocations: [
-          {
-            payslipId: "payslip-1",
-            employeeId: "employee-1",
-            amount: "95800.00",
-          },
-        ],
+    tx.payrollPaymentBatch.findFirst.mockResolvedValue(
+      approvedPayrollPaymentBatch(postedPayrollRun(), {
         metadata: {
           ...CERTIFIED_PAYMENT_ADAPTER_REQUEST_METADATA,
           adapterChaosReleaseGateHash: undefined,
         },
+      }),
+    );
+
+    await expect(
+      releasePayrollPaymentBatch({
+        organizationId: "org-1",
+        payrollPaymentBatchId: "batch-1",
+        releasedById: "treasury-release-1",
+        idempotencyKey: "payroll-payment-key-1",
+        actorPermissions: ["payroll.payments.release"],
+        lastAuthAt: "2026-06-30T00:00:00.000Z",
+        now: "2026-06-30T00:01:00.000Z",
       }),
     ).rejects.toThrow("adapter chaos release gate proof");
 
@@ -767,31 +948,98 @@ describe("payroll completion service", () => {
     expect(tx.paymentTransaction.create).not.toHaveBeenCalled();
   });
 
-  it("requires disbursement file evidence for bank and mobile-money payroll release", async () => {
+  it("does not commit batch or run release state when reconciliation persistence fails", async () => {
     const tx = buildTx();
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
-    tx.payrollPaymentBatch.findFirst.mockResolvedValue(null);
-    tx.payrollRun.findFirst.mockResolvedValue(postedPayrollRun());
+    tx.payrollPaymentBatch.findFirst.mockResolvedValue(
+      approvedPayrollPaymentBatch(),
+    );
+    tx.payrollPaymentAllocation.findMany.mockResolvedValue([]);
+    tx.payrollEmployee.findFirst.mockResolvedValue({
+      id: "employee-1",
+      displayName: "Ada Payroll",
+      paymentDestinationHash: "employee-destination-hash",
+      metadata: {
+        approvedPaymentDestinationEvidence: {
+          requestId: "dest-change-1",
+          paymentDestinationHash: "employee-destination-hash",
+          evidenceDocumentHash: "sha256:payment-destination-evidence",
+          approvalEvidenceHash: "sha256:payment-destination-approval",
+        },
+      },
+    });
+    tx.payrollPaymentDestinationChangeRequest.findFirst.mockResolvedValue({
+      id: "dest-change-1",
+      evidenceDocumentHash: "sha256:payment-destination-evidence",
+      approvalEvidenceHash: "sha256:payment-destination-approval",
+      appliedBusinessEventId: "event-destination-applied",
+    });
+    tx.journal.findFirst.mockResolvedValue({
+      id: "bank-journal",
+      type: JournalType.BANK,
+    });
+    tx.chartOfAccount.findMany.mockResolvedValue(mappedAccounts());
+    tx.ledgerPostingBatch.update.mockResolvedValue({
+      id: "payment-ledger-batch",
+      status: LedgerPostingBatchStatus.POSTED,
+    });
+    tx.journalEntry.count.mockResolvedValue(0);
+    tx.journalEntry.create.mockImplementation(
+      async ({ data }: { data: any }) => ({
+        id: "payment-journal-entry",
+        ...data,
+        lines: data.lines.create,
+      }),
+    );
+    tx.paymentTransaction.findFirst.mockResolvedValue(null);
+    tx.paymentTransaction.create.mockResolvedValue({
+      id: "payment-transaction-1",
+    });
+    tx.paymentException.findFirst.mockResolvedValue(null);
+    tx.paymentException.create.mockRejectedValue(
+      new Error("reconciliation persistence failed"),
+    );
 
     await expect(
       releasePayrollPaymentBatch({
         organizationId: "org-1",
-        payrollRunId: "run-1",
-        requestedById: "preparer-1",
-        approvedById: "treasury-1",
-        method: PaymentMethod.BANK_TRANSFER,
-        paymentDate: "2026-06-30",
+        payrollPaymentBatchId: "batch-1",
+        releasedById: "treasury-release-1",
+        idempotencyKey: "payroll-payment-release-rollback-key-1",
+        actorPermissions: ["payroll.payments.release"],
+        lastAuthAt: "2026-06-30T00:00:00.000Z",
+        now: "2026-06-30T00:01:00.000Z",
+      }),
+    ).rejects.toThrow("reconciliation persistence failed");
+
+    expect(mockDb.$transaction).toHaveBeenCalledWith(expect.any(Function), {
+      isolationLevel: "Serializable",
+    });
+    expect(tx.payrollPaymentBatch.update).not.toHaveBeenCalled();
+    expect(tx.payrollRun.update).not.toHaveBeenCalled();
+    expect(tx.payrollPeriod.update).not.toHaveBeenCalled();
+    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
+  });
+
+  it("requires disbursement file evidence for bank and mobile-money payroll release", async () => {
+    const tx = buildTx();
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
+    tx.payrollPaymentBatch.findFirst.mockResolvedValue(
+      approvedPayrollPaymentBatch(postedPayrollRun(), {
+        bankFileHash: null,
+        metadata: {},
+      }),
+    );
+
+    await expect(
+      releasePayrollPaymentBatch({
+        organizationId: "org-1",
+        payrollPaymentBatchId: "batch-1",
+        releasedById: "treasury-release-1",
         idempotencyKey: "payroll-payment-key-1",
         actorPermissions: ["payroll.payments.release"],
         lastAuthAt: "2026-06-30T00:00:00.000Z",
         now: "2026-06-30T00:01:00.000Z",
-        allocations: [
-          {
-            payslipId: "payslip-1",
-            employeeId: "employee-1",
-            amount: "95800.00",
-          },
-        ],
       }),
     ).rejects.toThrow("disbursement file evidence");
 
@@ -802,31 +1050,21 @@ describe("payroll completion service", () => {
   it("blocks payroll payment release when posted run component proof is missing", async () => {
     const tx = buildTx();
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
-    tx.payrollPaymentBatch.findFirst.mockResolvedValue(null);
-    tx.payrollRun.findFirst.mockResolvedValue(
-      postedPayrollRun("employee-destination-hash", {}),
+    tx.payrollPaymentBatch.findFirst.mockResolvedValue(
+      approvedPayrollPaymentBatch(
+        postedPayrollRun("employee-destination-hash", {}),
+      ),
     );
 
     await expect(
       releasePayrollPaymentBatch({
         organizationId: "org-1",
-        payrollRunId: "run-1",
-        requestedById: "preparer-1",
-        approvedById: "treasury-1",
-        method: PaymentMethod.BANK_TRANSFER,
-        paymentDate: "2026-06-30",
-        bankFileHash: "sha256:bank-file",
+        payrollPaymentBatchId: "batch-1",
+        releasedById: "treasury-release-1",
         idempotencyKey: "payroll-payment-key-1",
         actorPermissions: ["payroll.payments.release"],
         lastAuthAt: "2026-06-30T00:00:00.000Z",
         now: "2026-06-30T00:01:00.000Z",
-        allocations: [
-          {
-            payslipId: "payslip-1",
-            employeeId: "employee-1",
-            amount: "95800.00",
-          },
-        ],
       }),
     ).rejects.toThrow("component register proof");
 
@@ -837,9 +1075,9 @@ describe("payroll completion service", () => {
   it("blocks payroll payment release when certified input proof is missing", async () => {
     const tx = buildTx();
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
-    tx.payrollPaymentBatch.findFirst.mockResolvedValue(null);
-    tx.payrollRun.findFirst.mockResolvedValue(
-      postedPayrollRun("employee-destination-hash", {
+    tx.payrollPaymentBatch.findFirst.mockResolvedValue(
+      approvedPayrollPaymentBatch(
+        postedPayrollRun("employee-destination-hash", {
         payrollInputReadinessHash: "sha256:payroll-input-readiness",
         payrollEngineInputHashes: ["sha256:payroll-engine-input-employee-1"],
         payrollEngineInputSnapshotHash: "sha256:payroll-engine-input-snapshot",
@@ -847,29 +1085,19 @@ describe("payroll completion service", () => {
         componentRegisterProofStatus: "MATCHED",
         payrollComponentMappingHash: "sha256:component-mapping",
         payrollComponentMappingStatus: "BLOCKED_REQUIRES_EXPERT_REVIEW",
-      }),
+        }),
+      ),
     );
 
     await expect(
       releasePayrollPaymentBatch({
         organizationId: "org-1",
-        payrollRunId: "run-1",
-        requestedById: "preparer-1",
-        approvedById: "treasury-1",
-        method: PaymentMethod.BANK_TRANSFER,
-        paymentDate: "2026-06-30",
-        bankFileHash: "sha256:bank-file",
+        payrollPaymentBatchId: "batch-1",
+        releasedById: "treasury-release-1",
         idempotencyKey: "payroll-payment-key-1",
         actorPermissions: ["payroll.payments.release"],
         lastAuthAt: "2026-06-30T00:00:00.000Z",
         now: "2026-06-30T00:01:00.000Z",
-        allocations: [
-          {
-            payslipId: "payslip-1",
-            employeeId: "employee-1",
-            amount: "95800.00",
-          },
-        ],
       }),
     ).rejects.toThrow("certified HRIS input readiness");
 
@@ -880,31 +1108,19 @@ describe("payroll completion service", () => {
   it("blocks payment release for negative correction runs with receivable workflow guidance", async () => {
     const tx = buildTx();
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
-    tx.payrollPaymentBatch.findFirst.mockResolvedValue(null);
-    tx.payrollRun.findFirst.mockResolvedValue(
-      postedNegativeCorrectionPayrollRun(),
+    tx.payrollPaymentBatch.findFirst.mockResolvedValue(
+      approvedPayrollPaymentBatch(postedNegativeCorrectionPayrollRun()),
     );
 
     await expect(
       releasePayrollPaymentBatch({
         organizationId: "org-1",
-        payrollRunId: "correction-run-1",
-        requestedById: "preparer-1",
-        approvedById: "treasury-1",
-        method: PaymentMethod.BANK_TRANSFER,
-        paymentDate: "2026-07-31",
-        bankFileHash: "sha256:bank-file",
+        payrollPaymentBatchId: "batch-1",
+        releasedById: "treasury-release-1",
         idempotencyKey: "payroll-payment-key-correction-1",
         actorPermissions: ["payroll.payments.release"],
         lastAuthAt: "2026-07-31T00:00:00.000Z",
         now: "2026-07-31T00:01:00.000Z",
-        allocations: [
-          {
-            payslipId: "payslip-correction-1",
-            employeeId: "employee-1",
-            amount: "9580.00",
-          },
-        ],
       }),
     ).rejects.toThrow("employee receivable or refund workflow");
 
@@ -915,30 +1131,20 @@ describe("payroll completion service", () => {
   it("blocks payroll payment release when employee payment destination evidence is missing", async () => {
     const tx = buildTx();
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
-    tx.payrollPaymentBatch.findFirst.mockResolvedValue(null);
-    tx.payrollRun.findFirst.mockResolvedValue(postedPayrollRun(null));
+    tx.payrollPaymentBatch.findFirst.mockResolvedValue(
+      approvedPayrollPaymentBatch(postedPayrollRun(null)),
+    );
     tx.payrollPaymentAllocation.findMany.mockResolvedValue([]);
 
     await expect(
       releasePayrollPaymentBatch({
         organizationId: "org-1",
-        payrollRunId: "run-1",
-        requestedById: "preparer-1",
-        approvedById: "treasury-1",
-        method: PaymentMethod.BANK_TRANSFER,
-        paymentDate: "2026-06-30",
-        bankFileHash: "sha256:bank-file",
+        payrollPaymentBatchId: "batch-1",
+        releasedById: "treasury-release-1",
         idempotencyKey: "payroll-payment-key-1",
         actorPermissions: ["payroll.payments.release"],
         lastAuthAt: "2026-06-30T00:00:00.000Z",
         now: "2026-06-30T00:01:00.000Z",
-        allocations: [
-          {
-            payslipId: "payslip-1",
-            employeeId: "employee-1",
-            amount: "95800.00",
-          },
-        ],
       }),
     ).rejects.toBeInstanceOf(BusinessRuleError);
 

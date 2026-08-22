@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-08-19T16:24:20.212Z",
+  "g1Passed": false,
+  "items": [
+    {
+      "id": "EMPLOYER-01",
+      "unresolved": "Confirm the exact Cameroon legal employer and establishment",
+      "owner": "Corporate governance/legal",
+      "acceptanceEvidence": "Signed corporate decision plus registry evidence",
+      "status": "OPEN"
+    },
+    {
+      "id": "TENANT-01",
+      "unresolved": "Select the application tenant that represents that legal employer",
+      "owner": "Governance/platform owner",
+      "acceptanceEvidence": "Tenant-to-legal-entity binding",
+      "status": "OPEN"
+    },
+    {
+      "id": "CNPS-01",
+      "unresolved": "Obtain the CNPS employer registration reference and current-status evidence",
+      "owner": "Payroll/compliance",
+      "acceptanceEvidence": "CNPS-issued evidence, masked/hash recorded",
+      "status": "OPEN"
+    },
+    {
+      "id": "DGI-01",
+      "unresolved": "Confirm the DGI taxpayer reference for the selected legal employer",
+      "owner": "Tax/legal",
+      "acceptanceEvidence": "DGI-issued evidence reconciled to legal entity",
+      "status": "OPEN"
+    },
+    {
+      "id": "OWNER-01",
+      "unresolved": "Appoint accountable HR and governance evidence custodians",
+      "owner": "Corporate governance",
+      "acceptanceEvidence": "Stable IDs, authority references, scope and dates",
+      "status": "OPEN"
+    },
+    {
+      "id": "IDENTITY-01",
+      "unresolved": "Verify all 17 page-6 people",
+      "owner": "HR/security",
+      "acceptanceEvidence": "Controlled identity evidence and exact User.id↔PayrollEmployee.id binding",
+      "status": "OPEN"
+    },
+    {
+      "id": "EMPLOYMENT-01",
+      "unresolved": "Activate evidence-backed employee masters",
+      "owner": "HR",
+      "acceptanceEvidence": "Employment source evidence, active status and signed-document hash",
+      "status": "OPEN"
+    },
+    {
+      "id": "ASSIGN-01",
+      "unresolved": "Create effective-dated org units, positions and assignments",
+      "owner": "HR",
+      "acceptanceEvidence": "Approved assignment records; termination/suspension fail-closed",
+      "status": "OPEN"
+    },
+    {
+      "id": "AUTH-01",
+      "unresolved": "Issue 17 exact G1 role appointments or bounded delegations",
+      "owner": "Governance",
+      "acceptanceEvidence": "Issuer authority, tenant, scope, dates and evidence hash",
+      "status": "OPEN"
+    },
+    {
+      "id": "SOD-01",
+      "unresolved": "Run independent SoD/COI and qualification checks",
+      "owner": "Controls reviewer",
+      "acceptanceEvidence": "Stable-ID results and approved exceptions if any",
+      "status": "OPEN"
+    },
+    {
+      "id": "APPROVAL-01",
+      "unresolved": "Collect 33 deliberate fresh-authenticated approvals",
+      "owner": "Human signers/IAM",
+      "acceptanceEvidence": "Ten-minute window, explicit intent and exact contract hash",
+      "status": "OPEN"
+    },
+    {
+      "id": "VERIFY-01",
+      "unresolved": "Independently resolve and rehash every evidence envelope",
+      "owner": "Independent verifier",
+      "acceptanceEvidence": "Pass/fail verification record",
+      "status": "OPEN"
+    }
+  ]
+}

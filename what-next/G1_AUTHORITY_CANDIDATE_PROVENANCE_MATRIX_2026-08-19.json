@@ -1,0 +1,295 @@
+{
+  "schemaVersion": "1.0.0",
+  "artifactId": "STOQUIFY-G1-AUTHORITY-CANDIDATE-PROVENANCE-MATRIX-20260819",
+  "generatedAt": "2026-08-19T11:37:25.393Z",
+  "status": "GOVERNANCE_INPUT_REQUIRED_NO_APPROVAL_CREDIT",
+  "selectedExecutionLane": "BLOCKED_ON_GOVERNANCE_INPUT",
+  "productionAuthorized": false,
+  "g1Approved": false,
+  "approvalCredit": {
+    "approvedDecisions": 0,
+    "requiredDecisions": 11,
+    "completedRoleObligations": 0,
+    "requiredRoleObligations": 33
+  },
+  "classifications": [
+    "AUTHORITATIVE_VERIFIED",
+    "STRUCTURAL_CONTRACT_VALUE",
+    "CANDIDATE_UNVERIFIED",
+    "CONFLICTING_EVIDENCE",
+    "MISSING_HUMAN_INPUT",
+    "SYSTEM_GENERATED_AT_APPROVAL"
+  ],
+  "contractBinding": {
+    "artifactId": "STOQUIFY-POS-G1-CONTRACT-FREEZE-0.2.0-20260817",
+    "version": "0.2.0",
+    "path": "docs/pos-enterprise-grade-audit/EXECUTION_06_G1_CONTRACT_FREEZE_V0_2_0.json",
+    "sha256": "11434eb3e1af1826516426e90d2d53a2faa47ade361d91191b5f3e0c950a36db",
+    "classification": "AUTHORITATIVE_VERIFIED",
+    "permittedUse": "Bind the preparation packet and any future authentic approval envelope. Do not edit the frozen bytes."
+  },
+  "sourceArtifacts": [
+    {
+      "path": "docs/pos-enterprise-grade-audit/EXECUTION_06_G1_CONTRACT_FREEZE_V0_2_0.json",
+      "sha256": "11434eb3e1af1826516426e90d2d53a2faa47ade361d91191b5f3e0c950a36db",
+      "classification": "AUTHORITATIVE_VERIFIED",
+      "permittedUse": "Authoritative source for decision IDs, selected options, exact required role labels and contract binding."
+    },
+    {
+      "path": "docs/pos-enterprise-grade-audit/EXECUTION_06_G1_CONTRACT_APPROVAL_REGISTER.json",
+      "sha256": "49e19d9ed6c83df23010264ffff4bb92dbe63ba4c2e7a8e3acdc42c0e4fe8340",
+      "classification": "AUTHORITATIVE_VERIFIED",
+      "permittedUse": "Stable empty live register. Populate only after authentic evidence and independent verification."
+    },
+    {
+      "path": "docs/blockers-and-gates/G1_DECISION_APPROVAL_WORKING_TEMPLATE_20260818.json",
+      "sha256": "00494ca9b8c367fea575b0569807d3aa578e0aa34afb3e2ef3d7a9418f11fad0",
+      "classification": "STRUCTURAL_CONTRACT_VALUE",
+      "permittedUse": "Signer preparation only. It correctly represents 11 decisions and 33 obligations but is not approval evidence."
+    },
+    {
+      "path": "docs/Compliance/Complaince authorization validation.docx",
+      "sha256": "cdca6c7d2bf6513b84301713e529cfea9d6dc8f218a4acdb8d51bc538d626f3f",
+      "classification": "CANDIDATE_UNVERIFIED",
+      "permittedUse": "Stable documentary source for candidate names, asserted roles and media-byte provenance only. Zero G1 approval credit."
+    },
+    {
+      "path": "docs/pos-enterprise-grade-audit/evidence/migration-certification/2026-08-18/compliance-authorization-document-validation.json",
+      "classification": "AUTHORITATIVE_VERIFIED",
+      "permittedUse": "Repository validation of DOCX package structure, identity conflicts and zero-credit disposition."
+    }
+  ],
+  "fieldProvenanceRules": [
+    {
+      "fields": [
+        "contractArtifactId",
+        "contractVersion",
+        "contractPath",
+        "contractSha256",
+        "decisionId",
+        "selectedOption",
+        "approverRole"
+      ],
+      "classification": "STRUCTURAL_CONTRACT_VALUE",
+      "source": "Frozen G1 contract and structurally matched working template",
+      "permittedUse": "Safe to prefill exactly; these fields are already correctly populated in the preparation packet."
+    },
+    {
+      "fields": [
+        "rationale",
+        "effectiveVersion",
+        "reviewOrExpiryAt",
+        "evidenceLinks",
+        "affectedCapabilities",
+        "rollbackOrDisablePolicy"
+      ],
+      "classification": "STRUCTURAL_CONTRACT_VALUE",
+      "source": "Working template, subject to accountable human confirmation",
+      "permittedUse": "Preparation content only. Draft rationale and null review/expiry values do not create approval credit."
+    },
+    {
+      "fields": [
+        "accountableApprover",
+        "authorityReference"
+      ],
+      "classification": "MISSING_HUMAN_INPUT",
+      "source": "Future authoritative identity and governance appointment records",
+      "permittedUse": "Must remain null until an authorized governance/HR/security owner confirms stable identity and scoped authority."
+    },
+    {
+      "fields": [
+        "freshAuthenticatedAt",
+        "approvedAt",
+        "signatureReference",
+        "signatureEvidenceSha256"
+      ],
+      "classification": "SYSTEM_GENERATED_AT_APPROVAL",
+      "source": "Future controlled approval workflow and immutable final evidence bytes",
+      "permittedUse": "Must remain null until a real signer completes a fresh-authenticated deliberate approval and the final evidence is exported, hashed and independently verified."
+    }
+  ],
+  "candidateIdentities": [
+    {
+      "name": "SANGO MALO",
+      "assertedRole": "Migration operator; Database administrator / engineering lead",
+      "sourcePath": "docs/Compliance/Complaince authorization validation.docx",
+      "sourceSha256": "cdca6c7d2bf6513b84301713e529cfea9d6dc8f218a4acdb8d51bc538d626f3f",
+      "intendedDestination": "Destructive-migration maker/operator identity, not a G1 role",
+      "classification": "CANDIDATE_UNVERIFIED",
+      "conflict": "A separate Maker field names Tamen Marceline.",
+      "requiredResolution": "An authorized governance or migration-risk owner must provide a stable identity reference, exact authority scope and an artifact-hash-bound maker decision.",
+      "permittedUse": "Candidate/provenance display only; no authority assignment, signature mapping or gate credit."
+    },
+    {
+      "name": "MAXIMILLIANO BONGA",
+      "assertedRole": "Migration checker; Database administrator / engineering lead",
+      "sourcePath": "docs/Compliance/Complaince authorization validation.docx",
+      "sourceSha256": "cdca6c7d2bf6513b84301713e529cfea9d6dc8f218a4acdb8d51bc538d626f3f",
+      "intendedDestination": "Destructive-migration independent checker identity, not a G1 role",
+      "classification": "CANDIDATE_UNVERIFIED",
+      "conflict": "A separate Checker field names Yonga Springfield.",
+      "requiredResolution": "An authorized governance or migration-risk owner must provide a stable identity reference, proof of independence, exact authority scope and an artifact-hash-bound checker decision.",
+      "permittedUse": "Candidate/provenance display only; no authority assignment, signature mapping or gate credit."
+    },
+    {
+      "name": "Tamen Marceline",
+      "assertedRole": "Maker",
+      "sourcePath": "docs/Compliance/Complaince authorization validation.docx",
+      "sourceSha256": "cdca6c7d2bf6513b84301713e529cfea9d6dc8f218a4acdb8d51bc538d626f3f",
+      "intendedDestination": "Destructive-migration maker identity, not a G1 role",
+      "classification": "CONFLICTING_EVIDENCE",
+      "conflict": "Conflicts with the SANGO MALO migration-operator/maker proposal; neither handwritten image is reliably bound to either person.",
+      "requiredResolution": "Return an authority-backed identity resolution and exact-hash approval evidence.",
+      "permittedUse": "Conflict/provenance display only."
+    },
+    {
+      "name": "Yonga Springfield",
+      "assertedRole": "Checker",
+      "sourcePath": "docs/Compliance/Complaince authorization validation.docx",
+      "sourceSha256": "cdca6c7d2bf6513b84301713e529cfea9d6dc8f218a4acdb8d51bc538d626f3f",
+      "intendedDestination": "Destructive-migration checker identity, not a G1 role",
+      "classification": "CONFLICTING_EVIDENCE",
+      "conflict": "Conflicts with the MAXIMILLIANO BONGA migration-checker proposal; neither handwritten image is reliably bound to either person.",
+      "requiredResolution": "Return an authority-backed identity resolution, proof of independence and exact-hash approval evidence.",
+      "permittedUse": "Conflict/provenance display only."
+    },
+    {
+      "name": "KOUATCHOUA MARK",
+      "assertedRole": "Product approver; Product Owner or Financial Controller",
+      "sourcePath": "docs/Compliance/Complaince authorization validation.docx",
+      "sourceSha256": "cdca6c7d2bf6513b84301713e529cfea9d6dc8f218a4acdb8d51bc538d626f3f",
+      "intendedDestination": "Possible Product owner or Financial controller G1 authority",
+      "classification": "CANDIDATE_UNVERIFIED",
+      "conflict": "The asserted role is ambiguous; DOCX creator/last-modifier metadata proves authorship only, not role authority or decision intent.",
+      "requiredResolution": "An authorized governance owner must bind a stable identity subject to one or more exact G1 authority codes, effective scope/dates, SoD outcome and appointment evidence.",
+      "permittedUse": "Candidate/provenance display only; do not populate accountableApprover or authorityReference."
+    },
+    {
+      "name": "KOUATCHOUA MARCELINE",
+      "assertedRole": "Controller approver; SYSTEM ADMINISTRATION",
+      "sourcePath": "docs/Compliance/Complaince authorization validation.docx",
+      "sourceSha256": "cdca6c7d2bf6513b84301713e529cfea9d6dc8f218a4acdb8d51bc538d626f3f",
+      "intendedDestination": "Possible Financial controller or other financial G1 authority",
+      "classification": "CANDIDATE_UNVERIFIED",
+      "conflict": "SYSTEM ADMINISTRATION does not prove Financial controller, Accounting owner or Treasury owner authority.",
+      "requiredResolution": "An authorized governance/finance owner must provide a stable identity reference and explicit financial authority appointment with scope, dates and SoD result.",
+      "permittedUse": "Candidate/provenance display only; do not populate accountableApprover or authorityReference."
+    }
+  ],
+  "signatureMedia": [
+    {
+      "sourcePackage": "docs/Compliance/Complaince authorization validation.docx",
+      "path": "word/media/image1.jpeg",
+      "bytes": 268495,
+      "sha256": "aa77607039406b919bef4d65fc16424aea9f45b10de39fa47415a98a1e8a864a",
+      "classification": "CANDIDATE_UNVERIFIED",
+      "conflict": "Located with image2 in one unlabelled drawing paragraph; not bound to a person, role, decision, fresh-auth event or G1 contract hash.",
+      "permittedUse": "Preserve byte provenance only. Do not copy, export or use as a portable signature token. Zero approval credit."
+    },
+    {
+      "sourcePackage": "docs/Compliance/Complaince authorization validation.docx",
+      "path": "word/media/image2.jpeg",
+      "bytes": 180993,
+      "sha256": "cdfd3824056ea30ea941c0ed8395cf75ad07d632e53e1c7812c59c9f64072b29",
+      "classification": "CANDIDATE_UNVERIFIED",
+      "conflict": "Located with image1 in one unlabelled drawing paragraph; not bound to a person, role, decision, fresh-auth event or G1 contract hash.",
+      "permittedUse": "Preserve byte provenance only. Do not copy, export or use as a portable signature token. Zero approval credit."
+    }
+  ],
+  "docxSignatureInspection": {
+    "ooxmlDigitalSignatureParts": 0,
+    "certificateRelationships": 0,
+    "signatureOriginRelationships": 0,
+    "detachedSignatureReferences": 0,
+    "embeddedImmutableApprovalIdentifiers": 0,
+    "classification": "AUTHORITATIVE_VERIFIED",
+    "permittedUse": "Supports rejection of the DOCX as authentic G1 approval evidence."
+  },
+  "roleCoverage": [
+    {"role":"Accounting owner","obligations":1,"confirmedAuthorities":0,"classification":"MISSING_HUMAN_INPUT"},
+    {"role":"Financial controller","obligations":5,"confirmedAuthorities":0,"classification":"MISSING_HUMAN_INPUT"},
+    {"role":"Fulfillment owner","obligations":1,"confirmedAuthorities":0,"classification":"MISSING_HUMAN_INPUT"},
+    {"role":"Inventory controller","obligations":1,"confirmedAuthorities":0,"classification":"MISSING_HUMAN_INPUT"},
+    {"role":"Order-to-cash product owner","obligations":1,"confirmedAuthorities":0,"classification":"MISSING_HUMAN_INPUT"},
+    {"role":"Payments owner","obligations":2,"confirmedAuthorities":0,"classification":"MISSING_HUMAN_INPUT"},
+    {"role":"POS architect","obligations":1,"confirmedAuthorities":0,"classification":"MISSING_HUMAN_INPUT"},
+    {"role":"Product owner","obligations":4,"confirmedAuthorities":0,"classification":"MISSING_HUMAN_INPUT"},
+    {"role":"QA owner","obligations":1,"confirmedAuthorities":0,"classification":"MISSING_HUMAN_INPUT"},
+    {"role":"Qualified accounting reviewer","obligations":1,"confirmedAuthorities":0,"classification":"MISSING_HUMAN_INPUT"},
+    {"role":"Qualified Cameroon country-pack reviewer","obligations":1,"confirmedAuthorities":0,"classification":"MISSING_HUMAN_INPUT"},
+    {"role":"Retail operations owner","obligations":5,"confirmedAuthorities":0,"classification":"MISSING_HUMAN_INPUT"},
+    {"role":"Risk owner","obligations":2,"confirmedAuthorities":0,"classification":"MISSING_HUMAN_INPUT"},
+    {"role":"Security owner","obligations":2,"confirmedAuthorities":0,"classification":"MISSING_HUMAN_INPUT"},
+    {"role":"SRE owner","obligations":1,"confirmedAuthorities":0,"classification":"MISSING_HUMAN_INPUT"},
+    {"role":"Support owner","obligations":2,"confirmedAuthorities":0,"classification":"MISSING_HUMAN_INPUT"},
+    {"role":"Treasury owner","obligations":2,"confirmedAuthorities":0,"classification":"MISSING_HUMAN_INPUT"}
+  ],
+  "obligationFieldPolicy": {
+    "structuralFields": {
+      "classification": "STRUCTURAL_CONTRACT_VALUE",
+      "fields": ["decisionId", "selectedOption", "approverRole"]
+    },
+    "humanAuthorityFields": {
+      "classification": "MISSING_HUMAN_INPUT",
+      "fields": ["accountableApprover", "authorityReference"]
+    },
+    "approvalEventFields": {
+      "classification": "SYSTEM_GENERATED_AT_APPROVAL",
+      "fields": ["freshAuthenticatedAt", "approvedAt", "signatureReference", "signatureEvidenceSha256"]
+    }
+  },
+  "decisionRoleObligations": [
+    {"decisionId":"D-01","selectedOption":"DISABLE_HIDE_AND_REJECT_STORE_CREDIT","approverRole":"Product owner","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-01","selectedOption":"DISABLE_HIDE_AND_REJECT_STORE_CREDIT","approverRole":"Financial controller","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-01","selectedOption":"DISABLE_HIDE_AND_REJECT_STORE_CREDIT","approverRole":"Payments owner","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-02","selectedOption":"TERMINAL_CURRENT_SESSION_CAS_PLUS_ONE_SESSION_DRAWER_OPENING_CLAIM","approverRole":"Retail operations owner","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-02","selectedOption":"TERMINAL_CURRENT_SESSION_CAS_PLUS_ONE_SESSION_DRAWER_OPENING_CLAIM","approverRole":"POS architect","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-02","selectedOption":"TERMINAL_CURRENT_SESSION_CAS_PLUS_ONE_SESSION_DRAWER_OPENING_CLAIM","approverRole":"Security owner","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-03","selectedOption":"ELECTRONIC_TENDER_DISABLED_UNTIL_NAMED_PROVIDER_APPROVED","approverRole":"Payments owner","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-03","selectedOption":"ELECTRONIC_TENDER_DISABLED_UNTIL_NAMED_PROVIDER_APPROVED","approverRole":"Treasury owner","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-03","selectedOption":"ELECTRONIC_TENDER_DISABLED_UNTIL_NAMED_PROVIDER_APPROVED","approverRole":"Security owner","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-04","selectedOption":"OFFLINE_CAPTURE_DISABLED","approverRole":"Product owner","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-04","selectedOption":"OFFLINE_CAPTURE_DISABLED","approverRole":"Risk owner","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-04","selectedOption":"OFFLINE_CAPTURE_DISABLED","approverRole":"Retail operations owner","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-05","selectedOption":"EDGE_151_WINDOWS_10_25H2_SIMULATED_DESKTOP_PDF_ONLY_DEVELOPMENT","approverRole":"Retail operations owner","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-05","selectedOption":"EDGE_151_WINDOWS_10_25H2_SIMULATED_DESKTOP_PDF_ONLY_DEVELOPMENT","approverRole":"QA owner","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-05","selectedOption":"EDGE_151_WINDOWS_10_25H2_SIMULATED_DESKTOP_PDF_ONLY_DEVELOPMENT","approverRole":"Support owner","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-06","selectedOption":"LINKED_COMPENSATING_FULL_SALE_REFUND_AND_VOID_CURRENT_SCOPE","approverRole":"Financial controller","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-06","selectedOption":"LINKED_COMPENSATING_FULL_SALE_REFUND_AND_VOID_CURRENT_SCOPE","approverRole":"Retail operations owner","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-06","selectedOption":"LINKED_COMPENSATING_FULL_SALE_REFUND_AND_VOID_CURRENT_SCOPE","approverRole":"Risk owner","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-07","selectedOption":"CAMEROON_XAF_EN_FR_DEVELOPMENT_ONLY","approverRole":"Product owner","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-07","selectedOption":"CAMEROON_XAF_EN_FR_DEVELOPMENT_ONLY","approverRole":"Financial controller","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-07","selectedOption":"CAMEROON_XAF_EN_FR_DEVELOPMENT_ONLY","approverRole":"Qualified Cameroon country-pack reviewer","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-08","selectedOption":"NO_PRODUCTION_SLO_UNTIL_D05_MATRIX_AND_MEASURED_BASELINE","approverRole":"SRE owner","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-08","selectedOption":"NO_PRODUCTION_SLO_UNTIL_D05_MATRIX_AND_MEASURED_BASELINE","approverRole":"Product owner","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-08","selectedOption":"NO_PRODUCTION_SLO_UNTIL_D05_MATRIX_AND_MEASURED_BASELINE","approverRole":"Support owner","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-09","selectedOption":"ORDER_CONFIRMATION_NON_POSTING_INVOICE_FROM_ACCEPTED_DELIVERED_QUANTITY","approverRole":"Financial controller","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-09","selectedOption":"ORDER_CONFIRMATION_NON_POSTING_INVOICE_FROM_ACCEPTED_DELIVERED_QUANTITY","approverRole":"Order-to-cash product owner","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-09","selectedOption":"ORDER_CONFIRMATION_NON_POSTING_INVOICE_FROM_ACCEPTED_DELIVERED_QUANTITY","approverRole":"Qualified accounting reviewer","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-10","selectedOption":"RESERVATION_AFFECTS_AVAILABILITY_ONLY_PHYSICAL_ISSUE_OWNS_STOCK_AND_COGS","approverRole":"Inventory controller","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-10","selectedOption":"RESERVATION_AFFECTS_AVAILABILITY_ONLY_PHYSICAL_ISSUE_OWNS_STOCK_AND_COGS","approverRole":"Fulfillment owner","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-10","selectedOption":"RESERVATION_AFFECTS_AVAILABILITY_ONLY_PHYSICAL_ISSUE_OWNS_STOCK_AND_COGS","approverRole":"Accounting owner","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-11","selectedOption":"KEEP_SESSION_DRAWER_BUSINESS_DAY_STATEMENT_RECONCILIATION_AND_CLOSE_SEPARATE","approverRole":"Financial controller","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-11","selectedOption":"KEEP_SESSION_DRAWER_BUSINESS_DAY_STATEMENT_RECONCILIATION_AND_CLOSE_SEPARATE","approverRole":"Treasury owner","status":"MISSING_HUMAN_INPUT"},
+    {"decisionId":"D-11","selectedOption":"KEEP_SESSION_DRAWER_BUSINESS_DAY_STATEMENT_RECONCILIATION_AND_CLOSE_SEPARATE","approverRole":"Retail operations owner","status":"MISSING_HUMAN_INPUT"}
+  ],
+  "governancePrerequisites": [
+    "Name the owner of the canonical authority roster.",
+    "Approve stable G1 authority codes, role scope and bounded delegation rules.",
+    "Confirm the real people holding every required authority using stable identity references.",
+    "Approve same-person and segregation-of-duties combinations.",
+    "Define accepted Cameroon and accounting qualification evidence.",
+    "Approve retention, redaction, immutable export and verification rules.",
+    "Decide which decisions use internal attestation and which, if any, require external e-signature evidence.",
+    "Approve fresh-authentication assurance levels and sensitive permissions.",
+    "Independently review the additive schema and rollback design before Phase 1 implementation."
+  ],
+  "safeDisposition": {
+    "workingTemplateChanged": false,
+    "frozenContractChanged": false,
+    "liveApprovalRegisterChanged": false,
+    "candidateNamesInsertedAsApprovers": false,
+    "signatureImagesCopied": false,
+    "nextPermittedStep": "Complete Phase 0 governance inputs. Then authorize either an organization-controlled approval workflow or the bounded app-native G1 pilot."
+  }
+}

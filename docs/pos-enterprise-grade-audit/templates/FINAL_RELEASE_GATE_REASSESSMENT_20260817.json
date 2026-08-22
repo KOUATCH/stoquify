@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "1.0.0",
+  "observedAt": "2026-08-17T16:43:00.575Z",
+  "status": "REJECTED_NO_GO",
+  "developmentContinuation": "AUTHORIZED_WITHIN_EXISTING_DEVELOPMENT_ONLY_SCOPE",
+  "migrationEvidenceGate": {
+    "status": "REJECTED_BLOCKED_EVIDENCE_INCOMPLETE",
+    "packetBindingsReady": true,
+    "boundFiles": 27,
+    "boundFileMismatches": 0,
+    "destructiveFindings": 13,
+    "approvedFindings": 0,
+    "requiredProductionArtifacts": 14,
+    "completedProductionArtifacts": 0,
+    "candidateMode": "DEVELOPMENT_ROLLING",
+    "candidateDirty": true,
+    "liveDirtyPathCount": 253,
+    "productionExecutionAuthorized": false
+  },
+  "cameroonProductionGate": {
+    "status": "BLOCKED",
+    "ready": 11,
+    "checks": 12,
+    "soleTechnicalBlocker": "source_artifact_expert_approval"
+  },
+  "enterpriseGate": {
+    "status": "BLOCKED",
+    "ready": 3,
+    "gates": 12,
+    "open": 9,
+    "readyToFreeze": false,
+    "readyToRequestGate017": false,
+    "readyForPhase2bReview": false,
+    "readyForPhase3Review": false,
+    "activationAuthorized": false,
+    "openGateIds": ["B03","B04","B06","B07","B08","B09","B10","B11","B12"]
+  },
+  "completionPacketIntegrity": {
+    "checkedFiles": 4,
+    "matchingFiles": 4,
+    "mismatches": 0
+  },
+  "assessment": "Repository-verifiable fields are populated and hash-bound. Remaining failures represent authentic external or human events and cannot be closed by generating placeholder values."
+}

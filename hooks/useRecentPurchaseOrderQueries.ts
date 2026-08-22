@@ -22,6 +22,7 @@ import {
 } from "@/actions/purchaseOrderWorkflow/GoodsReceiptAndSummary";
 import { CreatePurchaseOrderPayload, PaginatedPurchaseOrdersResponse, PurchaseOrderFilters, PurchaseOrderResponse, PurchaseOrderWithRelations, UpdatePurchaseOrderDTO } from "@/types/purchase-orders-system-types";
 import type { PurchaseOrderStatus } from "@/services/purchase-order/purchase-order.schemas";
+import type { PurchaseOrderPresentation } from "@/services/purchase-order/purchase-order-capabilities";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useMemo } from "react";
@@ -139,14 +140,14 @@ export function usePurchaseOrderById(
     [id],
   );
 
-  return useQuery<PurchaseOrderWithRelations, QueryError>({
+  return useQuery<PurchaseOrderWithRelations & PurchaseOrderPresentation, QueryError>({
     queryKey,
     queryFn: async () => {
       if (!id || !organizationId) {
         throw new Error("Purchase order ID and organization ID are required");
       }
       const result = await getOrgPurchaseOrderById(id, organizationId);
-      return result as unknown as PurchaseOrderWithRelations;
+      return result as unknown as PurchaseOrderWithRelations & PurchaseOrderPresentation;
     },
     enabled: !!id && !!organizationId,
     staleTime: 2 * 60 * 1000, // 2 minutes

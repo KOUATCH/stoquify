@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "1.0.0",
+  "artifactId": "CM-2026.1-QUALIFIED-REVIEW-RETURN-PREFILLED-20260817",
+  "status": "TEMPLATE_NOT_EXPERT_APPROVAL",
+  "productionUseAllowed": false,
+  "countryCode": "CM",
+  "countryPackVersion": "CM-2026.1",
+  "reviewPackageId": "CM-2026.1-CNPS-INDEPENDENT-REVIEW-2026-07-26",
+  "reviewPackageIndex": {
+    "path": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package/evidence-index.json",
+    "sha256": "aad222adbc409daebe41729b716f41b12af8633b18c75cc82b54b31d43c4a720"
+  },
+  "machineVerifiedSources": [
+    {"legalRef":"CM_CNPS_CONTRIBUTION_DECREE_2016","file":"CNPS-Decree-2016-072-contribution-rates.pdf","expectedSha256":"1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61","actualSha256":"1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61","bytes":2608628,"result":"MACHINE_MATCH","reviewerRecomputed":false},
+    {"legalRef":"CM_CNPS_EMPLOYER_RULES","file":"CNPS-employer-general-rules.html","expectedSha256":"bc51f74de8dd3b0c7babd86e8f98d92dbdbece214480f66ac89c42d3e894a868","actualSha256":"bc51f74de8dd3b0c7babd86e8f98d92dbdbece214480f66ac89c42d3e894a868","bytes":248633,"result":"MACHINE_MATCH","reviewerRecomputed":false},
+    {"legalRef":"CM_CNPS_STATISTICAL_YEARBOOK_2025","file":"CNPS-Statistical-Yearbook-2025.pdf","expectedSha256":"53a22ebb9a9bf31bc0c7c60f8cc0eed9383192ef4f0d6a309f2782ad60875504","actualSha256":"53a22ebb9a9bf31bc0c7c60f8cc0eed9383192ef4f0d6a309f2782ad60875504","bytes":2895247,"result":"MACHINE_MATCH","reviewerRecomputed":false},
+    {"legalRef":"CM_CNPS_EMPLOYER_OBLIGATIONS_CURRENT","file":"CNPS-Employer-Obligations-current-2026-07-26.html","expectedSha256":"8e319e856a0f473accac53587708523b7080c5aac5f6d8eb4e8bd5cb5bb8d743","actualSha256":"8e319e856a0f473accac53587708523b7080c5aac5f6d8eb4e8bd5cb5bb8d743","bytes":231875,"result":"MACHINE_MATCH","reviewerRecomputed":false},
+    {"legalRef":"CM_CNPS_OFFICIAL_FAQ_DECREE_2016_072","file":"CNPS-Official-FAQ-Decree-2016-072.pdf","expectedSha256":"166f12931df869f4a6f96a977342ce18600ece1361535c96fc2e841f2ffb7d5d","actualSha256":"166f12931df869f4a6f96a977342ce18600ece1361535c96fc2e841f2ffb7d5d","bytes":380118,"result":"MACHINE_MATCH","reviewerRecomputed":false},
+    {"legalRef":"CM_CNPS_CONTRIBUTION_SCALE_OFFICIAL_2025","file":"CNPS-Contribution-Scale-official-2025.jpg","expectedSha256":"ae152e77b7a26ab2a2270d032a256815e8f3544e66700f207191edf584ed2259","actualSha256":"ae152e77b7a26ab2a2270d032a256815e8f3544e66700f207191edf584ed2259","bytes":1476553,"result":"MACHINE_MATCH","reviewerRecomputed":false}
+  ],
+  "reviewer": {
+    "fullName": null,
+    "professionalCapacity": null,
+    "organization": null,
+    "qualificationReference": null,
+    "qualificationEvidenceSha256": null,
+    "conflictOfInterestDeclaration": null
+  },
+  "reviewWindow": {"startedAt":null,"completedAt":null},
+  "requiredFixtureFamilyDecisions": [
+    {"fixtureFamily":"payroll.cnps.pensionRatesBps","decision":null,"sourceProvision":null,"effectiveFrom":null,"effectiveTo":null,"independentTieOutSha256":null},
+    {"fixtureFamily":"payroll.cnps.familyAllowanceRatesBps","decision":null,"sourceProvision":null,"effectiveFrom":null,"effectiveTo":null,"independentTieOutSha256":null},
+    {"fixtureFamily":"payroll.cnps.occupationalRiskRatesBps","decision":null,"sourceProvision":null,"effectiveFrom":null,"effectiveTo":null,"independentTieOutSha256":null},
+    {"fixtureFamily":"payroll.cnps.employerRules","decision":null,"sourceProvision":null,"effectiveFrom":null,"effectiveTo":null,"independentTieOutSha256":null}
+  ],
+  "fixtureWorkbookTemplate": {
+    "path": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package/fixture-review-workbook.template.json",
+    "sha256": "f28e3968c33c65828cb021262ea36ccda50d173c7e4cf0f0c2633f3d7035482b"
+  },
+  "finalDecision": {"decision":null,"approvedFixtureFamilies":[],"excludedFixtureFamilies":[],"effectiveFrom":null,"effectiveTo":null,"conditions":null},
+  "signedApprovalArtifact": {"path":null,"sha256":null,"signedAt":null,"signatureMethod":null},
+  "independentChecker": {"fullName":null,"role":null,"verifiedAt":null,"verificationMethod":null,"credentialOrKeyFingerprint":null,"conflictDeclaration":null,"evidencePath":null,"evidenceSha256":null},
+  "scopeGapsRequiringSeparateDecision": [
+    "2026 DGI/MINFI tax and IRPP authorities are not captured and hash-bound in this CNPS package.",
+    "DGI electronic invoicing and authority-submission technical conformance is not certified.",
+    "Labor, time, leave, declarations, payslip, fiscal receipt, retention, privacy and correction rules require separately qualified scope coverage."
+  ],
+  "completionRule": "A qualified reviewer must independently recompute the source digests, complete every legal conclusion, sign the resulting artifact, and an independent checker must verify the signature. Do not replace nulls with guessed values."
+}

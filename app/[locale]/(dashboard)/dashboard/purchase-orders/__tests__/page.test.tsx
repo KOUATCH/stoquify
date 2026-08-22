@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react"
 import { RbacError, requirePermission } from "@/lib/security/rbac"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import {
+  getPurchaseOrderCurrency,
   getPurchaseOrderFormOptions,
   getSummary,
   listPurchaseOrders,
@@ -67,8 +68,25 @@ jest.mock("@/services/modules/module-entitlement.service", () => ({
 
 jest.mock("@/services/purchase-order/purchase-order.service", () => ({
   listPurchaseOrders: jest.fn(),
+  getPurchaseOrderCurrency: jest.fn(),
   getPurchaseOrderFormOptions: jest.fn(),
   getSummary: jest.fn(),
+}))
+
+jest.mock("@/services/purchase-order/purchase-order-capabilities", () => ({
+  derivePurchaseOrderCreateCapability: jest.fn((permissions: string[]) => ({
+    allowed: permissions.includes("purchases.orders.create"),
+    reason: null,
+  })),
+  projectPurchaseOrderForActor: jest.fn((
+    order: Record<string, unknown>,
+    _actor: Record<string, unknown>,
+    currency: string,
+  ) => ({
+    ...order,
+    currency,
+    capabilities: {},
+  })),
 }))
 
 jest.mock("@/components/ui/groups/purchase-orders/PurchaseOrderManagement", () => ({
@@ -78,11 +96,15 @@ jest.mock("@/components/ui/groups/purchase-orders/PurchaseOrderManagement", () =
     initialPurchaseOrderData,
     initialSupplierData,
     initialLocationData,
+    currency,
+    canCreate,
   }: {
     organizationId: string
     initialPurchaseOrderData: Array<{ id: string }>
     initialSupplierData: Array<{ id: string }>
     initialLocationData: Array<{ id: string }>
+    currency: string
+    canCreate: boolean
   }) => (
     <section>
       <h2>Purchase order management rendered</h2>
@@ -90,6 +112,8 @@ jest.mock("@/components/ui/groups/purchase-orders/PurchaseOrderManagement", () =
       <p>{initialPurchaseOrderData.length} purchase orders</p>
       <p>{initialSupplierData.length} suppliers</p>
       <p>{initialLocationData.length} locations</p>
+      <p>currency:{currency}</p>
+      <p>can-create:{String(canCreate)}</p>
     </section>
   ),
 }))
@@ -124,6 +148,7 @@ const mockObserveModuleAccess = observeModuleAccess as jest.Mock
 const mockListPurchaseOrders = listPurchaseOrders as jest.Mock
 const mockGetPurchaseOrderFormOptions = getPurchaseOrderFormOptions as jest.Mock
 const mockGetSummary = getSummary as jest.Mock
+const mockGetPurchaseOrderCurrency = getPurchaseOrderCurrency as jest.Mock
 
 describe("PurchaseOrdersPage", () => {
   beforeEach(() => {
@@ -162,6 +187,7 @@ describe("PurchaseOrdersPage", () => {
         received: 0,
       },
     })
+    mockGetPurchaseOrderCurrency.mockResolvedValue("XAF")
   })
 
   it("enforces purchasing RBAC, observes module access in report mode, and loads tenant-scoped purchase-order data", async () => {
@@ -186,8 +212,25 @@ describe("PurchaseOrdersPage", () => {
     expect(mockListPurchaseOrders).toHaveBeenCalledWith("org-1")
     expect(mockGetPurchaseOrderFormOptions).toHaveBeenCalledWith("org-1")
     expect(mockGetSummary).toHaveBeenCalledWith("org-1")
+    expect(mockGetPurchaseOrderCurrency).toHaveBeenCalledWith("org-1")
     expect(screen.getByRole("heading", { name: "Purchase order management rendered" })).toBeInTheDocument()
     expect(screen.getByText("org-1")).toBeInTheDocument()
+  })
+
+  it("uses the organization-owned currency and server-derived create capability", async () => {
+    mockRequirePermission.mockResolvedValue({
+      orgId: "org-1",
+      userId: "buyer-1",
+      permissions: ["purchases.orders.read", "purchases.orders.create"],
+    })
+    mockGetPurchaseOrderCurrency.mockResolvedValue("XOF")
+
+    render(await PurchaseOrdersPage())
+
+    expect(screen.getByText("currency:XOF")).toBeInTheDocument()
+    expect(screen.getByText("can-create:true")).toBeInTheDocument()
+    expect(screen.getAllByText(/en:XOF:1200/).length).toBeGreaterThan(0)
+    expect(screen.queryByText(/USD/)).not.toBeInTheDocument()
   })
 
   it("stops before module observation and purchase-order services when RBAC denies access", async () => {
@@ -203,6 +246,7 @@ describe("PurchaseOrdersPage", () => {
     expect(mockListPurchaseOrders).not.toHaveBeenCalled()
     expect(mockGetPurchaseOrderFormOptions).not.toHaveBeenCalled()
     expect(mockGetSummary).not.toHaveBeenCalled()
+    expect(mockGetPurchaseOrderCurrency).not.toHaveBeenCalled()
   })
 
   it("fails closed without purchase-order service access when no active organization is available", async () => {
@@ -216,5 +260,6 @@ describe("PurchaseOrdersPage", () => {
     expect(mockListPurchaseOrders).not.toHaveBeenCalled()
     expect(mockGetPurchaseOrderFormOptions).not.toHaveBeenCalled()
     expect(mockGetSummary).not.toHaveBeenCalled()
+    expect(mockGetPurchaseOrderCurrency).not.toHaveBeenCalled()
   })
 })

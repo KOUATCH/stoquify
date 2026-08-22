@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-08-17T14:30:00Z",
+  "candidateCommit": "35b4cc6a06a50ee11de5bfce6b04993e38bd589a",
+  "decision": "BLOCKED_EXTERNAL_CONFIGURATION",
+  "maturity": "EVIDENCE_CAPTURE",
+  "credentialAccessed": false,
+  "realPaymentDataUsed": false,
+  "productionCertified": false,
+  "internalGate": {
+    "status": "PASS",
+    "readyCount": 14,
+    "checkCount": 14,
+    "observedAt": "2026-08-17T14:16:59.089Z",
+    "sourcePath": "what-next/payment-cash-truth-readiness.json",
+    "sourceSha256": "6f885cb0ef7ba899a608f03def8024eaec914f4d745b9d8cc03575ad21a45466"
+  },
+  "firstRail": {
+    "type": "MOBILE_MONEY",
+    "currency": "XAF",
+    "environment": "SANDBOX_OR_UAT_NO_FINANCIAL_EFFECT",
+    "adapterBoundary": "services/payments/adapters/mobile-money-hmac.adapter.ts",
+    "namedProductionProvider": null,
+    "status": "BLOCKED_EXTERNAL_CONFIGURATION"
+  },
+  "requiredExternalEvidence": [
+    "provider technical contract and state map",
+    "managed credential reference and rotation/revocation proof",
+    "signed callback and replay conformance results",
+    "provider-originated redacted statement samples and settlement receipts",
+    "fee/net/gross and batch-decomposition tie-out",
+    "production settlement ledger-account maker-checker approval",
+    "three successful monitored reconciliation windows",
+    "alert acknowledgement, dead-letter recovery and outage exercise",
+    "backup/restore/reconciliation recovery evidence",
+    "treasury, security, controller and independent release approvals"
+  ],
+  "approval": {
+    "status": "REQUIRES_QUALIFIED_HUMAN_REVIEW",
+    "owner": "Treasury/controller, security and independent release checker",
+    "reason": "No production provider contract, credential, settlement evidence or artifact-bound sign-off was supplied.",
+    "requiredEvidence": ["exact candidate digest", "exact evidence-bundle digest", "signed decisions after evidence freeze"],
+    "acceptanceTest": "All mandatory scenarios pass against the approved provider sandbox and the three-leg internal/provider/ledger totals reconcile exactly for the bounded pilot.",
+    "evidencePath": null,
+    "evidenceSha256": null,
+    "approvalReference": null,
+    "nextAction": "Select a contracted provider sandbox, provision managed non-production credentials outside the repository, and execute the redacted conformance matrix."
+  }
+}

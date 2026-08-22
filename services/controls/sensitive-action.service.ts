@@ -31,7 +31,12 @@ export type SensitiveActionId =
   | "supplier.payment.release"
   | "customer.settlement.collect"
   | "customer.settlement.reverse"
+  | "payroll.run.review"
   | "payroll.run.approve"
+  | "payroll.payslips.emit"
+  | "payroll.run.post"
+  | "payroll.payment.request"
+  | "payroll.payment.approve"
   | "payroll.payment.release"
   | "payroll.payment.reconcile"
   | "payroll.declaration.lifecycle"
@@ -122,7 +127,11 @@ export const SENSITIVE_ACTION_POLICIES: Record<SensitiveActionId, SensitiveActio
     freshAuthMaxAgeSeconds: 300,
     blockSelfApproval: true,
     auditAction: "PAYMENT_PROVIDER_ACCOUNT_MANAGE_CONTROL",
-    detectorSignals: ["settlement_account_changed", "suspense_account_changed", "provider_mapping_changed"],
+    detectorSignals: [
+      "settlement_account_changed",
+      "suspense_account_changed",
+      "provider_mapping_changed",
+    ],
   },
   "payment.reconciliation.import": {
     action: "payment.reconciliation.import",
@@ -130,7 +139,11 @@ export const SENSITIVE_ACTION_POLICIES: Record<SensitiveActionId, SensitiveActio
     riskTier: "high",
     requiredAssurance: "L0",
     auditAction: "PAYMENT_RECONCILIATION_IMPORT_CONTROL",
-    detectorSignals: ["duplicate_statement_file", "provider_signature_invalid", "replayed_provider_event"],
+    detectorSignals: [
+      "duplicate_statement_file",
+      "provider_signature_invalid",
+      "replayed_provider_event",
+    ],
   },
   "payment.reconciliation.run": {
     action: "payment.reconciliation.run",
@@ -146,7 +159,11 @@ export const SENSITIVE_ACTION_POLICIES: Record<SensitiveActionId, SensitiveActio
     riskTier: "high",
     requiredAssurance: "L0",
     auditAction: "PAYMENT_RECONCILIATION_MATCH_CONTROL",
-    detectorSignals: ["low_confidence_match", "manual_match_cluster", "amount_match_tolerance_used"],
+    detectorSignals: [
+      "low_confidence_match",
+      "manual_match_cluster",
+      "amount_match_tolerance_used",
+    ],
   },
   "payment.reconciliation.override": {
     action: "payment.reconciliation.override",
@@ -172,7 +189,11 @@ export const SENSITIVE_ACTION_POLICIES: Record<SensitiveActionId, SensitiveActio
     riskTier: "high",
     requiredAssurance: "L0",
     auditAction: "PAYMENT_RECONCILIATION_EXCEPTION_RESOLVE_CONTROL",
-    detectorSignals: ["critical_exception_resolved", "resolution_without_evidence", "reopened_exception"],
+    detectorSignals: [
+      "critical_exception_resolved",
+      "resolution_without_evidence",
+      "reopened_exception",
+    ],
   },
   "payment.reconciliation.suspense.propose": {
     action: "payment.reconciliation.suspense.propose",
@@ -180,7 +201,11 @@ export const SENSITIVE_ACTION_POLICIES: Record<SensitiveActionId, SensitiveActio
     riskTier: "high",
     requiredAssurance: "L0",
     auditAction: "PAYMENT_RECONCILIATION_SUSPENSE_PROPOSE_CONTROL",
-    detectorSignals: ["suspense_candidate_created", "aged_unmatched_amount", "suspense_threshold_exceeded"],
+    detectorSignals: [
+      "suspense_candidate_created",
+      "aged_unmatched_amount",
+      "suspense_threshold_exceeded",
+    ],
   },
   "payment.reconciliation.suspense.post": {
     action: "payment.reconciliation.suspense.post",
@@ -250,7 +275,11 @@ export const SENSITIVE_ACTION_POLICIES: Record<SensitiveActionId, SensitiveActio
     freshAuthMaxAgeSeconds: 300,
     blockSelfApproval: true,
     auditAction: "SUPPLIER_BANK_CHANGE_APPROVE_CONTROL",
-    detectorSignals: ["supplier_bank_change_approval", "self_approval_attempt", "payment_after_bank_change"],
+    detectorSignals: [
+      "supplier_bank_change_approval",
+      "self_approval_attempt",
+      "payment_after_bank_change",
+    ],
   },
   "supplier.payment.approve": {
     action: "supplier.payment.approve",
@@ -260,7 +289,11 @@ export const SENSITIVE_ACTION_POLICIES: Record<SensitiveActionId, SensitiveActio
     freshAuthMaxAgeSeconds: 300,
     blockSelfApproval: true,
     auditAction: "SUPPLIER_PAYMENT_APPROVE_CONTROL",
-    detectorSignals: ["supplier_payment_approval", "self_approval_attempt", "payment_threshold_review"],
+    detectorSignals: [
+      "supplier_payment_approval",
+      "self_approval_attempt",
+      "payment_threshold_review",
+    ],
   },
   "supplier.payment.release": {
     action: "supplier.payment.release",
@@ -270,7 +303,11 @@ export const SENSITIVE_ACTION_POLICIES: Record<SensitiveActionId, SensitiveActio
     freshAuthMaxAgeSeconds: 300,
     blockSelfApproval: true,
     auditAction: "SUPPLIER_PAYMENT_RELEASE_CONTROL",
-    detectorSignals: ["supplier_payment_release", "payment_after_bank_change", "after_hours_disbursement"],
+    detectorSignals: [
+      "supplier_payment_release",
+      "payment_after_bank_change",
+      "after_hours_disbursement",
+    ],
   },
   "customer.settlement.collect": {
     action: "customer.settlement.collect",
@@ -279,7 +316,11 @@ export const SENSITIVE_ACTION_POLICIES: Record<SensitiveActionId, SensitiveActio
     requiredAssurance: "L1",
     freshAuthMaxAgeSeconds: 300,
     auditAction: "CUSTOMER_SETTLEMENT_COLLECT_CONTROL",
-    detectorSignals: ["customer_settlement_collection", "allocation_overpayment_attempt", "duplicate_collection_reference"],
+    detectorSignals: [
+      "customer_settlement_collection",
+      "allocation_overpayment_attempt",
+      "duplicate_collection_reference",
+    ],
   },
   "customer.settlement.reverse": {
     action: "customer.settlement.reverse",
@@ -289,7 +330,21 @@ export const SENSITIVE_ACTION_POLICIES: Record<SensitiveActionId, SensitiveActio
     freshAuthMaxAgeSeconds: 300,
     blockSelfApproval: true,
     auditAction: "CUSTOMER_SETTLEMENT_REVERSE_CONTROL",
-    detectorSignals: ["customer_settlement_reversal", "self_reversal_attempt", "duplicate_reversal_attempt"],
+    detectorSignals: [
+      "customer_settlement_reversal",
+      "self_reversal_attempt",
+      "duplicate_reversal_attempt",
+    ],
+  },
+  "payroll.run.review": {
+    action: "payroll.run.review",
+    permission: "payroll.runs.review",
+    riskTier: "critical",
+    requiredAssurance: "L1",
+    freshAuthMaxAgeSeconds: 300,
+    blockSelfApproval: true,
+    auditAction: "PAYROLL_RUN_REVIEW_CONTROL",
+    detectorSignals: ["payroll_run_review", "self_review_attempt", "missing_preparer_evidence"],
   },
   "payroll.run.approve": {
     action: "payroll.run.approve",
@@ -301,6 +356,52 @@ export const SENSITIVE_ACTION_POLICIES: Record<SensitiveActionId, SensitiveActio
     auditAction: "PAYROLL_RUN_APPROVE_CONTROL",
     detectorSignals: ["payroll_run_approval", "self_approval_attempt", "ghost_employee_risk"],
   },
+  "payroll.payslips.emit": {
+    action: "payroll.payslips.emit",
+    permission: "payroll.payslips.emit",
+    riskTier: "critical",
+    requiredAssurance: "L1",
+    freshAuthMaxAgeSeconds: 300,
+    auditAction: "PAYROLL_PAYSLIPS_EMIT_CONTROL",
+    detectorSignals: ["payslip_emission", "approved_batch_drift", "missing_document_hash"],
+  },
+  "payroll.run.post": {
+    action: "payroll.run.post",
+    permission: "payroll.runs.post",
+    riskTier: "critical",
+    requiredAssurance: "L1",
+    freshAuthMaxAgeSeconds: 300,
+    blockSelfApproval: true,
+    auditAction: "PAYROLL_RUN_POST_CONTROL",
+    detectorSignals: ["payroll_run_posting", "self_post_attempt", "ledger_evidence_missing"],
+  },
+  "payroll.payment.request": {
+    action: "payroll.payment.request",
+    permission: "payroll.payments.request",
+    riskTier: "critical",
+    requiredAssurance: "L1",
+    freshAuthMaxAgeSeconds: 300,
+    auditAction: "PAYROLL_PAYMENT_REQUEST_CONTROL",
+    detectorSignals: [
+      "payroll_payment_request",
+      "bank_file_divergence",
+      "destination_evidence_missing",
+    ],
+  },
+  "payroll.payment.approve": {
+    action: "payroll.payment.approve",
+    permission: "payroll.payments.approve",
+    riskTier: "critical",
+    requiredAssurance: "L1",
+    freshAuthMaxAgeSeconds: 300,
+    blockSelfApproval: true,
+    auditAction: "PAYROLL_PAYMENT_APPROVE_CONTROL",
+    detectorSignals: [
+      "payroll_payment_approval",
+      "self_approval_attempt",
+      "payment_threshold_review",
+    ],
+  },
   "payroll.payment.release": {
     action: "payroll.payment.release",
     permission: "payroll.payments.release",
@@ -309,7 +410,11 @@ export const SENSITIVE_ACTION_POLICIES: Record<SensitiveActionId, SensitiveActio
     freshAuthMaxAgeSeconds: 300,
     blockSelfApproval: true,
     auditAction: "PAYROLL_PAYMENT_RELEASE_CONTROL",
-    detectorSignals: ["payroll_payment_release", "bank_file_divergence", "after_hours_disbursement"],
+    detectorSignals: [
+      "payroll_payment_release",
+      "bank_file_divergence",
+      "after_hours_disbursement",
+    ],
   },
   "payroll.payment.reconcile": {
     action: "payroll.payment.reconcile",
@@ -319,7 +424,11 @@ export const SENSITIVE_ACTION_POLICIES: Record<SensitiveActionId, SensitiveActio
     freshAuthMaxAgeSeconds: 300,
     blockSelfApproval: true,
     auditAction: "PAYROLL_PAYMENT_RECONCILIATION_CONTROL",
-    detectorSignals: ["payroll_payment_settlement", "provider_evidence_match", "cash_movement_proof"],
+    detectorSignals: [
+      "payroll_payment_settlement",
+      "provider_evidence_match",
+      "cash_movement_proof",
+    ],
   },
   "payroll.declaration.lifecycle": {
     action: "payroll.declaration.lifecycle",
@@ -329,7 +438,11 @@ export const SENSITIVE_ACTION_POLICIES: Record<SensitiveActionId, SensitiveActio
     freshAuthMaxAgeSeconds: 300,
     blockSelfApproval: true,
     auditAction: "PAYROLL_DECLARATION_LIFECYCLE_CONTROL",
-    detectorSignals: ["payroll_declaration_transition", "manual_authority_evidence", "statutory_close_impact"],
+    detectorSignals: [
+      "payroll_declaration_transition",
+      "manual_authority_evidence",
+      "statutory_close_impact",
+    ],
   },
   "payroll.payslip.self.export": {
     action: "payroll.payslip.self.export",
@@ -473,7 +586,9 @@ function toMillis(value: Date | number | string | null | undefined) {
 }
 
 function cleanJson(input: Record<string, unknown>): Prisma.JsonObject {
-  return Object.fromEntries(Object.entries(input).filter(([, value]) => value !== undefined)) as Prisma.JsonObject
+  return Object.fromEntries(
+    Object.entries(input).filter(([, value]) => value !== undefined),
+  ) as Prisma.JsonObject
 }
 
 function buildDetectorInputs(input: SensitiveActionEvaluationInput, policy: SensitiveActionPolicy) {
@@ -484,7 +599,10 @@ function buildDetectorInputs(input: SensitiveActionEvaluationInput, policy: Sens
     resourceType: input.resourceType,
     resourceId: input.resourceId,
     subjectActorId: input.subjectActorId,
-    amount: input.amount !== null && input.amount !== undefined ? new Prisma.Decimal(input.amount).toFixed(2) : undefined,
+    amount:
+      input.amount !== null && input.amount !== undefined
+        ? new Prisma.Decimal(input.amount).toFixed(2)
+        : undefined,
     currency: input.currency,
     exportContext: input.exportContext,
     detectorSignals: policy.detectorSignals,
@@ -496,7 +614,9 @@ export function getSensitiveActionPolicy(action: SensitiveActionId) {
   return SENSITIVE_ACTION_POLICIES[action]
 }
 
-export function evaluateSensitiveAction(input: SensitiveActionEvaluationInput): SensitiveActionDecision {
+export function evaluateSensitiveAction(
+  input: SensitiveActionEvaluationInput,
+): SensitiveActionDecision {
   const policy = getSensitiveActionPolicy(input.action)
   const detectorInputs = buildDetectorInputs(input, policy)
 
@@ -511,7 +631,12 @@ export function evaluateSensitiveAction(input: SensitiveActionEvaluationInput): 
     }
   }
 
-  if (policy.blockSelfApproval && input.actorId && input.subjectActorId && input.subjectActorId === input.actorId) {
+  if (
+    policy.blockSelfApproval &&
+    input.actorId &&
+    input.subjectActorId &&
+    input.subjectActorId === input.actorId
+  ) {
     return {
       allowed: false,
       reasonCode: "SELF_APPROVAL_BLOCKED",
@@ -526,7 +651,11 @@ export function evaluateSensitiveAction(input: SensitiveActionEvaluationInput): 
     const nowMs = toMillis(input.now) ?? Date.now()
     const lastAuthAtMs = toMillis(input.lastAuthAt)
 
-    if (!lastAuthAtMs || lastAuthAtMs > nowMs || nowMs - lastAuthAtMs > policy.freshAuthMaxAgeSeconds * 1000) {
+    if (
+      !lastAuthAtMs ||
+      lastAuthAtMs > nowMs ||
+      nowMs - lastAuthAtMs > policy.freshAuthMaxAgeSeconds * 1000
+    ) {
       return {
         allowed: false,
         reasonCode: "FRESH_AUTH_REQUIRED",
@@ -555,7 +684,9 @@ export async function auditSensitiveActionDecision(
     data: {
       entityType: decision.input.resourceType || "SensitiveAction",
       entityId: decision.input.resourceId || decision.input.action,
-      action: decision.allowed ? decision.policy.auditAction : `${decision.policy.auditAction}_DENIED`,
+      action: decision.allowed
+        ? decision.policy.auditAction
+        : `${decision.policy.auditAction}_DENIED`,
       organizationId: decision.input.organizationId,
       userId: decision.input.actorId || null,
       changes: cleanJson({

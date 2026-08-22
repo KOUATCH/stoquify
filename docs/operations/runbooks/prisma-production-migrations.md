@@ -16,32 +16,44 @@ The gate does not read `.env`. Release credentials must be injected through the 
 
 ## Release sequence
 
-1. Commit `prisma/schema.prisma`, every new `prisma/migrations/*/migration.sql`, and any required exact-hash risk approval together.
-2. Run `npm run prisma:migration:safety:gate`. The report must show all checks ready and zero unapproved risk findings.
-3. Run `npm run policy:gates` and complete review before merging.
-4. Confirm Vercel Production owns a non-local PostgreSQL `DATABASE_URL` and the dedicated release secrets.
-5. Merge the approved commit. Vercel invokes `npm run build`.
-6. The build runs the release-secret preflight, then `prisma:migrate:deploy:safe`, then lint and the application build. A failed preflight or migration stops the deployment.
-7. Archive `what-next/prisma-migration-deployment-readiness.md` and its JSON companion with the release evidence.
+1. Commit `prisma/schema.prisma` and every new `prisma/migrations/*/migration.sql`.
+2. Run `npm run prisma:migration:risk:review` and send the generated packet to the accountable human reviewer when destructive findings exist.
+3. The reviewer manually authors one registry entry per reviewed finding in `prisma/migration-risk-approvals.json`; generators and templates never write approvals.
+4. Run `npm run prisma:migration:safety:gate`. The report must show all checks ready and zero unapproved, stale, expired, or revoked risk findings.
+5. Run `npm run policy:gates` and complete review before merging.
+6. Confirm Vercel Production owns a non-local PostgreSQL `DATABASE_URL` and the dedicated release secrets.
+7. Merge the approved commit. Vercel invokes `npm run build`.
+8. The build runs the release-secret preflight, then `prisma:migrate:deploy:safe`, then lint and the application build. A failed preflight or migration stops the deployment.
+9. Archive `what-next/prisma-migration-deployment-readiness.md`, its JSON companion, and the exact review packet with the release evidence.
 
 Prisma documents `migrate deploy` as the production/staging command and recommends running it in CI/CD rather than by temporarily placing a production URL on a developer machine. See [Prisma migrate deploy](https://www.prisma.io/docs/cli/migrate/deploy) and [deploying database changes](https://docs.prisma.io/docs/orm/prisma-client/deployment/deploy-database-changes-with-prisma-migrate).
 
 ## Destructive SQL approvals
 
-The gate blocks DROP, TRUNCATE, DELETE, column-type changes, and table/column rename patterns unless an approval in `prisma/migration-risk-approvals.json` matches the exact migration path, SHA-256 file hash, and risk rule.
+The gate blocks DROP, TRUNCATE, DELETE, column-type changes, and table/column rename patterns unless every finding has its own valid approval in `prisma/migration-risk-approvals.json`. Each decision is bound to the canonical migration hash and the finding hash derived from the exact clause and stated consequence.
 
 ```json
 {
   "migration": "prisma/migrations/<timestamp>_<name>/migration.sql",
-  "sha256": "<64 lowercase hex characters>",
-  "rules": ["drop_column"],
+  "migrationSha256": "<64 lowercase hex characters from the review packet>",
+  "findingSha256": "<64 lowercase hex characters from the review packet>",
+  "rule": "drop_column",
+  "humanAuthored": true,
+  "consequenceAcknowledged": true,
   "approvedBy": "<accountable reviewer>",
-  "reason": "<backfill, compatibility, backup, and rollback evidence>",
-  "approvedAt": "YYYY-MM-DD"
+  "reviewerRole": "<accountable role>",
+  "reason": "<target-specific compatibility, backup, recovery, and fix-forward rationale>",
+  "approvedAt": "YYYY-MM-DDTHH:mm:ssZ",
+  "expiresAt": null,
+  "revocation": null
 }
 ```
 
-Changing the SQL after approval invalidates the approval. Do not approve a destructive migration until data backfill, lock impact, compatibility window, backup/restore evidence, and fix-forward steps have been reviewed.
+`humanAuthored: true` and `consequenceAcknowledged: true` are reviewer attestations; placeholders and legacy migration-wide rule arrays are rejected. Changing the SQL after approval invalidates the approval. An optional `expiresAt` makes time-bounded approval explicit.
+
+To revoke without erasing the audit trail, the same human-controlled record receives a `revocation` object with `humanAuthored: true`, `revokedBy`, `revokedAt`, and `reason`. Revoked entries never satisfy the gate.
+
+Do not approve a destructive migration until data backfill, lock impact, compatibility window, backup/restore evidence, and fix-forward steps have been reviewed.
 
 ## Failure handling
 
@@ -54,6 +66,7 @@ Changing the SQL after approval invalidates the approval. Do not approve a destr
 
 ```powershell
 npm run prisma:migration:safety:gate
+npm run prisma:migration:risk:review
 npm run prisma:migration:release:preflight
 npm run policy:gates
 ```

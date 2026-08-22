@@ -42,6 +42,8 @@ const mockDb = db as unknown as {
 }
 const mockCommitPOSSale = commitPOSSale as jest.Mock
 const mockGetSalesReceipt = getSalesReceipt as jest.Mock
+const previousOfflineReplayTestAuthorization =
+  process.env.AQSTOQFLOW_ENABLE_OFFLINE_POS_REPLAY_TESTS
 
 const mockTx = {
   pOSStation: { findFirst: jest.fn() },
@@ -261,6 +263,19 @@ function commitResult(overrides: Record<string, unknown> = {}) {
 }
 
 describe("offline POS sync service", () => {
+  beforeAll(() => {
+    process.env.AQSTOQFLOW_ENABLE_OFFLINE_POS_REPLAY_TESTS = "1"
+  })
+
+  afterAll(() => {
+    if (previousOfflineReplayTestAuthorization === undefined) {
+      delete process.env.AQSTOQFLOW_ENABLE_OFFLINE_POS_REPLAY_TESTS
+    } else {
+      process.env.AQSTOQFLOW_ENABLE_OFFLINE_POS_REPLAY_TESTS =
+        previousOfflineReplayTestAuthorization
+    }
+  })
+
   beforeEach(() => {
     jest.clearAllMocks()
     resetMockTx()
@@ -558,6 +573,7 @@ describe("offline POS sync service", () => {
       legalDeliveryBlocked: false,
     })
     expect(mockCommitPOSSale).toHaveBeenCalledWith({
+      clientCommitId: `offline:${event.id}`,
       salesOrderId: "sale-1",
       locationId: "loc-1",
       terminalId: "terminal-1",

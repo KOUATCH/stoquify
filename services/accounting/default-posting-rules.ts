@@ -336,6 +336,68 @@ export const DEFAULT_POS_POSTING_RULES: DefaultPostingRuleTemplate[] = [
   },
 ];
 
+export const DEFAULT_DELIVERY_ORDER_POSTING_RULES: DefaultPostingRuleTemplate[] = [
+  {
+    code: "DELIVERY-GOODS-ISSUE",
+    nameEn: "Delivery goods issue",
+    nameFr: "Sortie de marchandises livraison",
+    descriptionEn: "Recognizes COGS and inventory relief when reserved goods physically leave the location.",
+    descriptionFr: "Comptabilise le cout des ventes et la sortie de stock lors de la livraison physique.",
+    sourceType: AccountingSourceType.DELIVERY_GOODS_ISSUE,
+    postingPurpose: AccountingPostingPurpose.GOODS_ISSUE,
+    priority: 10,
+    lines: [
+      {
+        lineNumber: 1,
+        side: PostingRuleLineSide.DEBIT,
+        mappingKey: "COGS",
+        amountSource: PostingRuleAmountSource.COST_AMOUNT,
+        description: "Recognize delivered-goods cost",
+      },
+      {
+        lineNumber: 2,
+        side: PostingRuleLineSide.CREDIT,
+        mappingKey: "INVENTORY",
+        amountSource: PostingRuleAmountSource.COST_AMOUNT,
+        description: "Relieve delivered inventory",
+      },
+    ],
+  },
+  {
+    code: "DELIVERY-SALES-INVOICE",
+    nameEn: "Delivery sales invoice",
+    nameFr: "Facture client sur livraison",
+    descriptionEn: "Recognizes AR, revenue, and output VAT only for quantities already delivered.",
+    descriptionFr: "Comptabilise la creance, le produit et la TVA uniquement sur les quantites livrees.",
+    sourceType: AccountingSourceType.DELIVERY_INVOICE,
+    postingPurpose: AccountingPostingPurpose.SALES_INVOICE,
+    priority: 10,
+    lines: [
+      {
+        lineNumber: 1,
+        side: PostingRuleLineSide.DEBIT,
+        mappingKey: "ACCOUNTS_RECEIVABLE",
+        amountSource: PostingRuleAmountSource.GROSS_AMOUNT,
+        description: "Recognize delivery customer receivable",
+      },
+      {
+        lineNumber: 2,
+        side: PostingRuleLineSide.CREDIT,
+        mappingKey: "SALES_REVENUE",
+        amountSource: PostingRuleAmountSource.NET_AMOUNT,
+        description: "Recognize delivered-goods revenue",
+      },
+      {
+        lineNumber: 3,
+        side: PostingRuleLineSide.CREDIT,
+        mappingKey: "OUTPUT_VAT",
+        amountSource: PostingRuleAmountSource.TAX_AMOUNT,
+        description: "Recognize delivery output VAT",
+      },
+    ],
+  },
+];
+
 export const DEFAULT_AP_POSTING_RULES: DefaultPostingRuleTemplate[] = [
   {
     code: "AP-SUPPLIER-INVOICE",
@@ -430,6 +492,76 @@ export const DEFAULT_AP_POSTING_RULES: DefaultPostingRuleTemplate[] = [
         amountSource: PostingRuleAmountSource.SOURCE_AMOUNT,
         condition: { paymentMethod: "CHEQUE" },
         description: "Release cheque payment to supplier",
+      },
+    ],
+  },
+  {
+    code: "AP-PURCHASE-RETURN",
+    nameEn: "Purchase return posting",
+    nameFr: "Comptabilisation retour fournisseur",
+    descriptionEn:
+      "Relieves returned inventory against an invoiced supplier claim or uninvoiced goods-received liability.",
+    descriptionFr:
+      "Sort le stock retourne contre une creance fournisseur facturee ou une dette de reception non facturee.",
+    sourceType: AccountingSourceType.PURCHASE_RETURN,
+    postingPurpose: AccountingPostingPurpose.PURCHASE_RETURN,
+    priority: 10,
+    lines: [
+      {
+        lineNumber: 1,
+        side: PostingRuleLineSide.DEBIT,
+        mappingKey: "SUPPLIER_RETURN_CLAIM",
+        amountSource: PostingRuleAmountSource.NET_AMOUNT,
+        description: "Recognize the claim for invoiced goods returned to supplier",
+      },
+      {
+        lineNumber: 2,
+        side: PostingRuleLineSide.DEBIT,
+        mappingKey: "GRNI",
+        amountSource: PostingRuleAmountSource.VARIANCE_AMOUNT,
+        description: "Reverse goods received not invoiced for returned quantity",
+      },
+      {
+        lineNumber: 3,
+        side: PostingRuleLineSide.CREDIT,
+        mappingKey: "INVENTORY",
+        amountSource: PostingRuleAmountSource.COST_AMOUNT,
+        description: "Relieve returned inventory at source receipt cost",
+      },
+    ],
+  },
+  {
+    code: "AP-SUPPLIER-CREDIT-NOTE",
+    nameEn: "Supplier credit note posting",
+    nameFr: "Comptabilisation avoir fournisseur",
+    descriptionEn:
+      "Clears supplier payable and the source-linked return claim, including deductible input VAT.",
+    descriptionFr:
+      "Solde la dette fournisseur et la creance de retour sourcee, TVA deductible comprise.",
+    sourceType: AccountingSourceType.SUPPLIER_CREDIT_NOTE,
+    postingPurpose: AccountingPostingPurpose.SUPPLIER_CREDIT_NOTE,
+    priority: 10,
+    lines: [
+      {
+        lineNumber: 1,
+        side: PostingRuleLineSide.DEBIT,
+        mappingKey: "ACCOUNTS_PAYABLE",
+        amountSource: PostingRuleAmountSource.GROSS_AMOUNT,
+        description: "Reduce supplier payable with supplier-issued credit",
+      },
+      {
+        lineNumber: 2,
+        side: PostingRuleLineSide.CREDIT,
+        mappingKey: "SUPPLIER_RETURN_CLAIM",
+        amountSource: PostingRuleAmountSource.NET_AMOUNT,
+        description: "Clear the source-linked supplier return claim",
+      },
+      {
+        lineNumber: 3,
+        side: PostingRuleLineSide.CREDIT,
+        mappingKey: "INPUT_VAT",
+        amountSource: PostingRuleAmountSource.TAX_AMOUNT,
+        description: "Reverse deductible input VAT for credited goods",
       },
     ],
   },
@@ -689,6 +821,7 @@ export const DEFAULT_PAYROLL_POSTING_RULES: DefaultPostingRuleTemplate[] = [
 
 export const DEFAULT_POSTING_RULES: DefaultPostingRuleTemplate[] = [
   ...DEFAULT_POS_POSTING_RULES,
+  ...DEFAULT_DELIVERY_ORDER_POSTING_RULES,
   ...DEFAULT_AP_POSTING_RULES,
   ...DEFAULT_CUSTOMER_SETTLEMENT_POSTING_RULES,
   ...DEFAULT_PAYROLL_POSTING_RULES,

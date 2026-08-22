@@ -293,6 +293,108 @@ describe("durable payment reconciliation run service", () => {
     )
   })
 
+  it("creates an exception when a statement-only match has a conflicting amount", async () => {
+    mockedDb.paymentTransaction.findMany.mockResolvedValue([
+      {
+        id: "payment-transaction-1",
+        amount: amount(10000),
+        currencyCode: "XAF",
+        providerTransactionId: "txn-1",
+        providerReference: "ref-1",
+        direction: PaymentDirection.INBOUND,
+        state: PaymentTransactionState.CONFIRMED,
+      },
+    ])
+    mockedDb.providerEvent.findMany.mockResolvedValue([])
+    mockedDb.statementLine.findMany.mockResolvedValue([
+      {
+        id: "statement-line-1",
+        fingerprint: "fp-1",
+        providerTransactionId: "txn-1",
+        providerReference: "ref-1",
+        amount: amount(9000),
+        currencyCode: "XAF",
+        direction: StatementLineDirection.CREDIT,
+        status: StatementLineStatus.UNMATCHED,
+      },
+    ])
+
+    const result = await runPaymentReconciliation({
+      organizationId: "org-1",
+      providerAccountId: "provider-account-1",
+      businessDate: new Date("2026-06-14T09:00:00Z"),
+    })
+
+    expect(result).toMatchObject({
+      status: ReconciliationRunStatus.NEEDS_REVIEW,
+      matchCount: 0,
+      exceptionCount: 1,
+      suspenseCount: 1,
+    })
+    expect(mockedDb.matchRecord.create).not.toHaveBeenCalled()
+    expect(mockedDb.paymentException.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          type: PaymentExceptionType.AMOUNT_MISMATCH,
+          evidence: expect.objectContaining({
+            mismatchReasons: ["STATEMENT_LINE_AMOUNT"],
+          }),
+        }),
+      }),
+    )
+  })
+
+  it("creates an exception when external evidence uses a different currency", async () => {
+    mockedDb.paymentTransaction.findMany.mockResolvedValue([
+      {
+        id: "payment-transaction-1",
+        amount: amount(10000),
+        currencyCode: "XAF",
+        providerTransactionId: "txn-1",
+        providerReference: "ref-1",
+        direction: PaymentDirection.INBOUND,
+        state: PaymentTransactionState.CONFIRMED,
+      },
+    ])
+    mockedDb.providerEvent.findMany.mockResolvedValue([
+      {
+        id: "provider-event-1",
+        providerEventId: "evt-1",
+        providerTransactionId: "txn-1",
+        providerReference: "ref-1",
+        amount: amount(10000),
+        currencyCode: "EUR",
+        direction: PaymentDirection.INBOUND,
+        status: ProviderEventStatus.VERIFIED,
+      },
+    ])
+    mockedDb.statementLine.findMany.mockResolvedValue([])
+
+    const result = await runPaymentReconciliation({
+      organizationId: "org-1",
+      providerAccountId: "provider-account-1",
+      businessDate: new Date("2026-06-14T09:00:00Z"),
+    })
+
+    expect(result).toMatchObject({
+      status: ReconciliationRunStatus.NEEDS_REVIEW,
+      matchCount: 0,
+      exceptionCount: 1,
+      suspenseCount: 1,
+    })
+    expect(mockedDb.matchRecord.create).not.toHaveBeenCalled()
+    expect(mockedDb.paymentException.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          type: PaymentExceptionType.AMOUNT_MISMATCH,
+          evidence: expect.objectContaining({
+            mismatchReasons: ["PROVIDER_EVENT_CURRENCY"],
+          }),
+        }),
+      }),
+    )
+  })
+
   it("requires maker-checker separation for manual match approval", async () => {
     mockedDb.matchRecord.create.mockResolvedValueOnce({ id: "proposed-match-1" })
 

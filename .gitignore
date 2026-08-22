@@ -60,6 +60,9 @@ outputs/
 
 # Synthetic development seed credentials (plaintext, local-only)
 .seed-artifacts/
+# Generated plaintext development credential handoff (explicitly requested;
+# local-only even though it is stored beside the compliance document).
+/docs/blockers-and-gates/Development database roles and passwords.docx
 # playwright
 /test-results/
 /playwright-report/

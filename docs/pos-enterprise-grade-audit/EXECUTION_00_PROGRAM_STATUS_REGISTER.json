@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "1.0.0",
+  "programId": "STOQUIFY-POS-SALES-TO-CASH",
+  "capturedAt": "2026-08-17T04:16:25.9946457Z",
+  "lastUpdatedAt": "2026-08-17T05:47:13.4724149Z",
+  "status": "DEVELOPMENT_EXECUTION_RESUMED_PRODUCTION_BLOCKED",
+  "currentMilestone": "M2",
+  "currentSkill": "002-aqstoqflow-control-plane",
+  "blockedAudit": {
+    "consecutiveGoalTurns": 3,
+    "lastCheckedAt": "2026-08-17T04:30:15.8725462Z",
+    "externalStateChanged": false,
+    "reason": "No target-specific migration disposition, exact-finding-hash approval, accountable D-01/D-02/D-07 decision, country-pack review or pilot matrix was supplied across three consecutive execution turns.",
+    "supersededForDevelopmentByResumptionAt": "2026-08-17T05:21:10.8894399Z"
+  },
+  "resumption": {
+    "resumedAt": "2026-08-17T05:21:10.8894399Z",
+    "scope": "Development-only M2",
+    "authority": "Direct user instruction",
+    "productionHoldsRetained": true,
+    "placeholderValuesTreatedAsApprovals": false
+  },
+  "authority": {
+    "masterRoadmap": {
+      "path": "docs/pos-enterprise-grade-audit/STOQUIFY_POS_AND_SALES_TO_CASH_MASTER_IMPLEMENTATION_ROADMAP_2026-08-17.md",
+      "sha256": "fbb79383004caedd5104f975f0823ba892571abb9477eb139d16ade0058a937b"
+    },
+    "audit": {
+      "path": "docs/pos-enterprise-grade-audit/STOQUIFY_ENTERPRISE_SALES_TO_CASH_AUDIT_AND_MODERNIZATION_2026-08-16.md",
+      "sha256": "0caad54d5cbc133e844b59eae4d8a332969b11a290cd01883193d2109810dc07"
+    },
+    "existingPosProgram": {
+      "statusPath": "what-next/pos-9-plus-program/program-status-register.json",
+      "statusSha256": "de39785d845408cbaa4c0ac69dcc2a624194d7bc610b7a9b30c22b4c2fd75121",
+      "decisionPath": "what-next/pos-9-plus-program/decision-register.json",
+      "decisionSha256": "d32517e4ed4a8f381d6d21cfa8f7b3c2b94db93775b3914aaf45005669bd11"
+    }
+  },
+  "candidate": {
+    "branch": "codex/service-boundary-burndown",
+    "commit": "35b4cc6a06a50ee11de5bfce6b04993e38bd589a",
+    "tree": "7efce91d5ba871e91470f60ed3b53833a1c3b4b4",
+    "dirty": true,
+    "changedPathCount": 134,
+    "modifiedPathCount": 63,
+    "untrackedPathCount": 71,
+    "statusSha256": "f03d0b60371361ec39696057cc89604394ddb43f635373e17c023958a68ace02",
+    "sourceHashes": {
+      "package.json": "fe6be01a083ca291389aa5613e251db9b98ab244ff122a45b9a762a370c58320",
+      "prisma/schema.prisma": "7e71e8b4950d54fb3434241563aff697f06683912ead49a2346f99bed1924f83"
+    },
+    "attributionRule": "All pre-existing modified and untracked paths are user-owned. This program may edit only paths explicitly listed in its execution reports and must not revert or absorb unrelated changes."
+  },
+  "executionAuthorization": {
+    "planningAndReadOnlyVerification": true,
+    "additiveGovernanceArtifacts": true,
+    "applicationMutation": true,
+    "applicationMutationScope": "M2-A01 through M2-A04 with direct control-plane dependencies only",
+    "additiveMigrationDefinition": true,
+    "databaseMigration": false,
+    "providerActivation": false,
+    "offlineSellingActivation": false,
+    "fiscalProductionClaim": false,
+    "reason": "Development-only M2 was explicitly authorized. Production deployment, historical migration execution, provider activation, offline capture and statutory claims remain unauthorized."
+  },
+  "milestones": [
+    { "id": "M0", "status": "DEVELOPMENT_CONDITIONAL_PASS", "gate": "G0", "owner": "Program architecture", "verification": "Local baseline accepted for development; production evidence remains blocked" },
+    { "id": "M1", "status": "IN_PROGRESS", "gate": "G1", "owner": "Product, accounting, inventory, security", "verification": "Versioned state, command, capability and control contracts" },
+    { "id": "M2", "status": "A01_A04_COMPLETE_DEVELOPMENT_G2_BLOCKED", "gate": "G2", "owner": "POS platform", "verification": "Local result replay, conflict, policy and control tests pass; additive migration and guarded PostgreSQL harness exist but are unapplied/unexecuted" },
+    { "id": "M3A", "status": "BLOCKED_DEPENDENCY", "gate": "G3A", "owner": "Payments", "verification": "Named provider sandbox and reconciliation evidence" },
+    { "id": "M3B", "status": "BLOCKED_DEPENDENCY", "gate": "G3B", "owner": "Fiscal and receipts", "verification": "Immutable source and delivery failure evidence" },
+    { "id": "M4", "status": "BLOCKED_DEPENDENCY", "gate": "G4", "owner": "POS product", "verification": "Authenticated EN/FR workstation matrix" },
+    { "id": "M5", "status": "BLOCKED_DEPENDENCY", "gate": "G5", "owner": "Controller and treasury", "verification": "Business-day, statement, reconciliation and close tie-out" },
+    { "id": "M6", "status": "BLOCKED_DEPENDENCY", "gate": "G6", "owner": "Order-to-cash and inventory", "verification": "Reservation and physical fulfillment truth" },
+    { "id": "M7", "status": "BLOCKED_DEPENDENCY", "gate": "G7", "owner": "Accounting, AR and returns", "verification": "Invoice, allocation and compensating correction tie-out" },
+    { "id": "M8", "status": "BLOCKED_DEPENDENCY", "gate": "G8", "owner": "SRE, security and assurance", "verification": "Hardening, recovery and operational readiness" },
+    { "id": "M9", "status": "BLOCKED_DEPENDENCY", "gate": "G9", "owner": "Release authority", "verification": "Country pilot and production expansion decision" }
+  ],
+  "activeHolds": [
+    {
+      "id": "HP-1",
+      "severity": "HIGH",
+      "source": "what-next/pos-9-plus-program/program-status-register.json",
+      "condition": "D-01, D-02 and D-07 are authorized only for development. Named accountable approvers and the remaining G1/G2/G5 contract approvals are still required for production or broader specialist implementation."
+    },
+    {
+      "id": "STC-HOLD-COUNTRY",
+      "severity": "HIGH",
+      "condition": "Cameroon/XAF is only a repository-backed development candidate; fiscal, tax, rounding, receipt, correction and retention conclusions require dated qualified-human review."
+    },
+    {
+      "id": "STC-HOLD-PROVIDER",
+      "severity": "HIGH",
+      "condition": "No named launch payment provider, merchant account, sandbox contract, webhook secret custody, status mapping or statement source is approved."
+    },
+    {
+      "id": "STC-HOLD-HARNESS",
+      "severity": "HIGH",
+      "condition": "A guarded POS commit PostgreSQL harness now exists but cannot run until an isolated migration target is authorized. The POS-specific authenticated EN/FR browser/OS/location/terminal matrix remains unspecified and unproven."
+    },
+    {
+      "id": "STC-HOLD-MIGRATION-SAFETY",
+      "severity": "HIGH",
+      "condition": "The local migration safety gate found 13 destructive clauses in migration 20260611130000_accounting_auth_baseline_bridge and zero effective exact-finding-hash approvals. A named checker decision is required; generated templates are not approvals."
+    }
+  ],
+  "nextPermittedActions": [
+    "Select a target-specific EMPTY_TARGET_EXECUTE, EXISTING_TARGET_RESOLVE_ONLY, ALREADY_APPLIED_VERIFY or REJECT_TARGET disposition and obtain a named checker decision for each of the 13 exact finding hashes; do not edit the historical migration or manufacture approval evidence.",
+    "Authorize a verified-empty isolated schema named codex_pos_commit_result_cert_20260817, provide backup/restore/history/authentication evidence and name the migration checker before applying the new additive registry migration or running its PostgreSQL certification harness.",
+    "Complete the M1 contract draft and submit the development decisions plus remaining production decisions for accountable approval.",
+    "Name the pilot location, terminal, browser/OS and hardware matrix and product/controller approvers.",
+    "Separately authorize M2-A05 through M2-A09 and M2-B01 through M2-B09 before expanding beyond the completed A01-A04 development slice.",
+    "Keep provider, offline, public receipt delivery and statutory/fiscal production capabilities disabled until their dedicated gates and approvals pass."
+  ]
+}

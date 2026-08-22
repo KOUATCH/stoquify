@@ -54,7 +54,7 @@ describe("branch operating snapshot payroll allocation proof", () => {
     setupBranchData();
   });
 
-  it("surfaces approved aggregate payroll cost allocation for branch profitability", async () => {
+  it("surfaces posted aggregate payroll cost allocation for branch profitability", async () => {
     const result = await getBranchOperatingSnapshot({
       organizationId: "org-1",
       locationId: "loc-1",
@@ -67,6 +67,9 @@ describe("branch operating snapshot payroll allocation proof", () => {
       expect.objectContaining({
         where: expect.objectContaining({
           organizationId: "org-1",
+          payrollRun: expect.objectContaining({
+            status: { in: ["POSTED", "PAID", "ARCHIVED"] },
+          }),
           employee: expect.objectContaining({ locationId: "loc-1" }),
         }),
         _sum: expect.objectContaining({

@@ -1,6 +1,6 @@
 # Stoquify Agent Runtime Phase 3 Entry Decision
 
-**Evaluated:** 2026-08-03T14:37:38.523Z<br>
+**Evaluated:** 2026-08-18T04:52:17.009Z<br>
 **Status:** `BLOCKED`<br>
 **Eligible:** No<br>
 **Activation authorized by gate:** No<br>

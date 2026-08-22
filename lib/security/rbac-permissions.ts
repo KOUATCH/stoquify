@@ -73,6 +73,8 @@ const EXPLICIT_PERMISSION_RISKS = {
   "payments.reconciliation.certificate.export": "crit",
   "payments.export": "crit",
   "purchasing.ap.invoice.post": "high",
+  "purchasing.returns.post": "high",
+  "purchasing.ap.credit.post": "crit",
   "purchasing.ap.match.review": "high",
   "purchasing.supplier.bank.approve": "crit",
   "purchasing.ap.payment.approve": "crit",
@@ -98,6 +100,8 @@ const EXPLICIT_PERMISSION_RISKS = {
   "payroll.payslips.self.read": "low",
   "payroll.payslips.self.export": "crit",
   "payroll.payslips.emit": "crit",
+  "payroll.payments.request": "crit",
+  "payroll.payments.approve": "crit",
   "payroll.payments.release": "crit",
 
   "payroll.payments.reconcile": "crit",
@@ -201,8 +205,18 @@ export const PERMISSION_ALIASES = {
   "purchases.suppliers.create": ["CREATE_SUPPLIERS"],
   "purchases.suppliers.update": ["UPDATE_SUPPLIERS"],
   "purchases.suppliers.delete": ["DELETE_SUPPLIERS"],
-  "purchasing.ap.invoice.view": ["SUPPLIER_PAYABLES_READ", "READ_PURCHASE_ORDERS", "finance.payables.read"],
-  "purchasing.ap.invoice.post": ["SUPPLIER_PAYABLES_MANAGE", "SUPPLIER_PAYMENTS_MANAGE", "finance.payables.create"],
+  "purchasing.ap.invoice.view": [
+    "SUPPLIER_PAYABLES_READ",
+    "READ_PURCHASE_ORDERS",
+    "finance.payables.read",
+  ],
+  "purchasing.ap.invoice.post": [
+    "SUPPLIER_PAYABLES_MANAGE",
+    "SUPPLIER_PAYMENTS_MANAGE",
+    "finance.payables.create",
+  ],
+  "purchasing.returns.post": ["RECEIVE_PURCHASE_ORDERS", "CREATE_STOCK_ADJUSTMENTS"],
+  "purchasing.ap.credit.post": ["SUPPLIER_PAYABLES_MANAGE", "MANAGE_FINANCIAL_CONTROLS"],
   "purchasing.ap.match.review": ["APPROVE_PURCHASE_ORDERS", "MANAGE_FINANCIAL_CONTROLS"],
   "purchasing.supplier.bank.request": ["UPDATE_SUPPLIERS", "SUPPLIER_PAYMENTS_MANAGE"],
   "purchasing.supplier.bank.approve": ["SUPPLIER_PAYMENTS_MANAGE", "MANAGE_FINANCIAL_CONTROLS"],
@@ -219,25 +233,50 @@ export const PERMISSION_ALIASES = {
   "customers.orders.read": ["READ_SALES_ORDERS"],
 
   "finance.read": ["FINANCE_READ", "FINANCIAL_READ"],
-  "finance.dashboard.read": ["FINANCIAL_DASHBOARD_ACCESS", "VIEW_FINANCIAL_DASHBOARD", "FINANCIAL_READ", "FINANCE_READ"],
-  "finance.payments.read": ["FINANCIAL_READ", "FINANCE_READ", "CUSTOMER_PAYMENTS_PROCESS", "SUPPLIER_PAYMENTS_READ"],
+  "finance.dashboard.read": [
+    "FINANCIAL_DASHBOARD_ACCESS",
+    "VIEW_FINANCIAL_DASHBOARD",
+    "FINANCIAL_READ",
+    "FINANCE_READ",
+  ],
+  "finance.payments.read": [
+    "FINANCIAL_READ",
+    "FINANCE_READ",
+    "CUSTOMER_PAYMENTS_PROCESS",
+    "SUPPLIER_PAYMENTS_READ",
+  ],
   "finance.payables.read": ["SUPPLIER_PAYABLES_READ"],
   "finance.receivables.read": ["CUSTOMER_RECEIVABLES_READ"],
   "finance.receivables.collect": ["CUSTOMER_PAYMENTS_PROCESS"],
   "finance.cash-flow.read": ["CASH_FLOW_READ", "CASH_POSITION_READ", "CASH_PROJECTIONS_READ"],
   "finance.cash-drawer.read": ["CASH_DRAWER_READ", "CASH_SYSTEM_READ"],
   "finance.costs.read": ["COST_ANALYTICS_READ", "PURCHASE_ANALYTICS_READ", "INVENTORY_COST_READ"],
-  "finance.profitability.read": ["PROFITABILITY_ANALYTICS_READ", "PROFIT_ANALYTICS_READ", "MARGIN_ANALYSIS_READ", "PROFITABILITY_REPORTS"],
+  "finance.profitability.read": [
+    "PROFITABILITY_ANALYTICS_READ",
+    "PROFIT_ANALYTICS_READ",
+    "MARGIN_ANALYSIS_READ",
+    "PROFITABILITY_REPORTS",
+  ],
   "finance.reports.read": ["FINANCIAL_REPORTS_READ", "VIEW_FINANCIAL_REPORTS"],
   "finance.reports.export": ["FINANCIAL_REPORTS_EXPORT"],
   "reports.financial.export": ["FINANCIAL_REPORTS_EXPORT", "EXPORT_DATA"],
   "reports.audit.view": ["VIEW_AUDIT_LOGS", "VIEW_FINANCIAL_AUDIT_TRAIL"],
-  "finance.analytics.read": ["FINANCIAL_KPI_READ", "ANALYTICS_READ", "COST_ANALYTICS_READ", "PROFITABILITY_ANALYTICS_READ", "CASH_FLOW_READ"],
+  "finance.analytics.read": [
+    "FINANCIAL_KPI_READ",
+    "ANALYTICS_READ",
+    "COST_ANALYTICS_READ",
+    "PROFITABILITY_ANALYTICS_READ",
+    "CASH_FLOW_READ",
+  ],
   "finance.taxes.read": ["TAX_RATES_READ"],
   "finance.taxes.manage": ["CREATE_TAX_RATES", "UPDATE_TAX_RATES", "DELETE_TAX_RATES"],
   "payments.provider-account.read": ["FINANCE_READ", "VIEW_FINANCIAL_DASHBOARD"],
   "payments.provider-account.manage": ["PAYMENT_PROVIDER_ACCOUNT_MANAGE"],
-  "payments.reconciliation.read": ["FINANCE_READ", "VIEW_FINANCIAL_DASHBOARD", "VIEW_FINANCIAL_AUDIT_TRAIL"],
+  "payments.reconciliation.read": [
+    "FINANCE_READ",
+    "VIEW_FINANCIAL_DASHBOARD",
+    "VIEW_FINANCIAL_AUDIT_TRAIL",
+  ],
   "payments.reconciliation.run": ["MANAGE_FINANCIAL_CONTROLS", "MANAGE_CASH_TRANSACTIONS"],
   "payments.reconciliation.import": ["PAYMENT_RECONCILIATION_IMPORT"],
   "payments.reconciliation.match": ["PAYMENT_RECONCILIATION_MATCH"],
@@ -275,7 +314,10 @@ export const PERMISSION_ALIASES = {
   "accounting.close.export": ["FINANCIAL_REPORTS_EXPORT", "EXPORT_DATA"],
   "accounting.close.accountant.review": ["VIEW_FINANCIAL_AUDIT_TRAIL", "VIEW_FINANCIAL_REPORTS"],
   "accounting.close.accountant.comment": ["VIEW_FINANCIAL_AUDIT_TRAIL"],
-  "accounting.close.accountant.invite": ["MANAGE_FINANCIAL_PERMISSIONS", "MANAGE_FINANCIAL_CONTROLS"],
+  "accounting.close.accountant.invite": [
+    "MANAGE_FINANCIAL_PERMISSIONS",
+    "MANAGE_FINANCIAL_CONTROLS",
+  ],
 
   "compliance.documents.read": ["FINANCE_READ", "VIEW_FINANCIAL_AUDIT_TRAIL"],
   "compliance.documents.issue": ["MANAGE_FINANCIAL_CONTROLS"],
@@ -296,16 +338,24 @@ export const PERMISSION_ALIASES = {
   "payroll.salary_changes.read": ["EMPLOYEE_SALARY_READ"],
   "payroll.salary_changes.request": ["PAYROLL_UPDATE", "EMPLOYEE_SALARY_UPDATE"],
   "payroll.salary_changes.approve": ["PAYROLL_APPROVE", "MANAGE_FINANCIAL_CONTROLS"],
-  "payroll.salary_changes.apply": ["PAYROLL_APPROVE", "PAYROLL_UPDATE", "MANAGE_FINANCIAL_CONTROLS"],
+  "payroll.salary_changes.apply": [
+    "PAYROLL_APPROVE",
+    "PAYROLL_UPDATE",
+    "MANAGE_FINANCIAL_CONTROLS",
+  ],
   "payroll.payment_destination.read": ["PAYROLL_READ", "EMPLOYEE_SALARY_READ"],
   "payroll.payment_destination.request": ["PAYROLL_UPDATE", "EMPLOYEE_SALARY_UPDATE"],
   "payroll.payment_destination.approve": ["PAYROLL_APPROVE", "MANAGE_FINANCIAL_CONTROLS"],
-  "payroll.payment_destination.apply": ["PAYROLL_APPROVE", "PAYROLL_UPDATE", "MANAGE_FINANCIAL_CONTROLS"],
+  "payroll.payment_destination.apply": [
+    "PAYROLL_APPROVE",
+    "PAYROLL_UPDATE",
+    "MANAGE_FINANCIAL_CONTROLS",
+  ],
   "payroll.attendance.freeze": ["PAYROLL_PROCESS", "MANAGE_ATTENDANCE_REPORTS"],
   "payroll.attendance.readiness.read": ["PAYROLL_READ", "MANAGE_ATTENDANCE_REPORTS"],
   "payroll.command.read": ["PAYROLL_REPORTS_READ", "PAYROLL_ANALYTICS_READ"],
   "payroll.runs.calculate": ["PAYROLL_PROCESS"],
-  "payroll.runs.review": ["PAYROLL_READ", "PAYROLL_REPORTS_READ"],
+  "payroll.runs.review": ["PAYROLL_PROCESS", "PAYROLL_APPROVE", "MANAGE_FINANCIAL_CONTROLS"],
   "payroll.runs.approve": ["PAYROLL_APPROVE", "MANAGE_FINANCIAL_CONTROLS"],
   "payroll.run.approve": ["PAYROLL_APPROVE", "MANAGE_FINANCIAL_CONTROLS"],
   "payroll.runs.post": ["PAYROLL_APPROVE", "POST_JOURNAL_ENTRIES", "MANAGE_FINANCIAL_CONTROLS"],
@@ -313,9 +363,19 @@ export const PERMISSION_ALIASES = {
   "payroll.payslips.self.read": ["PAYROLL_READ", "EMPLOYEE_SALARY_READ"],
   "payroll.payslips.self.export": [],
   "payroll.payslips.emit": ["PAYROLL_APPROVE", "PAYROLL_PROCESS"],
-  "payroll.payments.release": ["PAYROLL_APPROVE", "SUPPLIER_PAYMENTS_MANAGE", "MANAGE_FINANCIAL_CONTROLS"],
+  "payroll.payments.request": ["PAYROLL_PROCESS", "SUPPLIER_PAYMENTS_MANAGE"],
+  "payroll.payments.approve": ["PAYROLL_APPROVE", "MANAGE_FINANCIAL_CONTROLS"],
+  "payroll.payments.release": [
+    "PAYROLL_APPROVE",
+    "SUPPLIER_PAYMENTS_MANAGE",
+    "MANAGE_FINANCIAL_CONTROLS",
+  ],
 
-  "payroll.payments.reconcile": ["PAYROLL_APPROVE", "PAYMENT_RECONCILIATION_SIGN", "MANAGE_FINANCIAL_CONTROLS"],
+  "payroll.payments.reconcile": [
+    "PAYROLL_APPROVE",
+    "PAYMENT_RECONCILIATION_SIGN",
+    "MANAGE_FINANCIAL_CONTROLS",
+  ],
   "payroll.declarations.prepare": ["PAYROLL_REPORTS_READ", "MANAGE_FINANCIAL_CONTROLS"],
   "payroll.declarations.manage": ["PAYROLL_APPROVE", "MANAGE_FINANCIAL_CONTROLS"],
   "payroll.reports.read": ["PAYROLL_REPORTS_READ", "PAYROLL_ANALYTICS_READ"],
@@ -404,7 +464,9 @@ export function expandPermissions(permissions: readonly string[] | null | undefi
   return Array.from(
     new Set(
       permissions.flatMap((permission) =>
-        permission === WILDCARD_PERMISSION ? [WILDCARD_PERMISSION] : permissionCandidates(permission),
+        permission === WILDCARD_PERMISSION
+          ? [WILDCARD_PERMISSION]
+          : permissionCandidates(permission),
       ),
     ),
   )
@@ -456,7 +518,9 @@ export function isKnownPermission(permission: string) {
 export function permissionRisk(permission: string): PermissionRisk {
   const candidates = permissionCandidates(permission)
   const explicitRisk = candidates
-    .map((candidate) => EXPLICIT_PERMISSION_RISKS[candidate as keyof typeof EXPLICIT_PERMISSION_RISKS])
+    .map(
+      (candidate) => EXPLICIT_PERMISSION_RISKS[candidate as keyof typeof EXPLICIT_PERMISSION_RISKS],
+    )
     .find(Boolean)
 
   if (explicitRisk) return explicitRisk

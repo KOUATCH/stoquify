@@ -93,6 +93,24 @@ function hasPaymentReconciliationFoundationMigration(root) {
   return hasFoundation && hasLeaseMigration
 }
 
+function hasPaymentReconciliationEvidenceImmutabilityMigration(root) {
+  const immutabilityMarkers = [
+    'CREATE OR REPLACE FUNCTION "payment_reconciliation_assert_immutable_evidence"',
+    'CREATE OR REPLACE FUNCTION "payment_reconciliation_provider_events_prevent_evidence_mutation"',
+    'CREATE OR REPLACE FUNCTION "payment_reconciliation_statement_files_prevent_evidence_mutation"',
+    'CREATE OR REPLACE FUNCTION "payment_reconciliation_statement_lines_prevent_evidence_mutation"',
+    'BEFORE UPDATE OR DELETE ON "provider_events"',
+    'BEFORE UPDATE OR DELETE ON "statement_files"',
+    'BEFORE UPDATE OR DELETE ON "statement_lines"',
+    'Cannot modify immutable payment reconciliation evidence',
+    'Cannot delete immutable payment reconciliation evidence',
+  ]
+
+  return listMigrationSources(root).some((migration) =>
+    immutabilityMarkers.every((marker) => migration.source.includes(marker)),
+  )
+}
+
 function markersInOrder(source, markers) {
   let cursor = -1
   for (const marker of markers) {
@@ -127,6 +145,20 @@ function buildPaymentCashTruthReadiness(root = process.cwd(), options = {}) {
         "const existingRun = await tx.reconciliationRun.findFirst(",
         "run = await tx.reconciliationRun.create(",
       ]),
+    },
+    {
+      id: "auto_match_requires_amount_and_currency_agreement",
+      ready: run.includes('"PROVIDER_EVENT_AMOUNT"') &&
+        run.includes('"STATEMENT_LINE_AMOUNT"') &&
+        run.includes('"PROVIDER_EVENT_CURRENCY"') &&
+        run.includes('"STATEMENT_LINE_CURRENCY"') &&
+        markersInOrder(run, [
+          "const mismatchReasons = [",
+          "if (mismatchReasons.length > 0)",
+          "type: PaymentExceptionType.AMOUNT_MISMATCH",
+          "if (event || line)",
+          "status: MatchStatus.AUTO_MATCHED",
+        ]),
     },
     {
       id: "redacted_material_evidence_manifest",
@@ -184,6 +216,10 @@ function buildPaymentCashTruthReadiness(root = process.cwd(), options = {}) {
     {
       id: "durable_payment_reconciliation_schema_migration",
       ready: hasPaymentReconciliationFoundationMigration(root),
+    },
+    {
+      id: "provider_and_statement_evidence_is_database_immutable",
+      ready: hasPaymentReconciliationEvidenceImmutabilityMigration(root),
     },
   ]
 
@@ -267,4 +303,5 @@ module.exports = {
   parseArgs,
   renderMarkdown,
   hasPaymentReconciliationFoundationMigration,
+  hasPaymentReconciliationEvidenceImmutabilityMigration,
 }

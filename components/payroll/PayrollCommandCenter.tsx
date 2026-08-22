@@ -262,6 +262,15 @@ function buildProofSubjects(data: PayrollCommandReadModel, locale: Locale): Proo
         { label: "Country pack hash", value: data.evidence.latestRun.countryPackResolutionHash },
         { label: "Ledger batch", value: data.evidence.latestRun.ledgerPostingBatchId },
         { label: "Posted event", value: data.evidence.latestRun.postedBusinessEventId },
+        { label: "Run version", value: String(data.evidence.latestRun.lifecycle.version) },
+        { label: "Transition proof", value: data.evidence.latestRun.lifecycle.transitionEvidence },
+        { label: "Trust Spine writes", value: data.evidence.latestRun.lifecycle.writeEnabled ? "Enabled" : "Disabled" },
+        ...data.evidence.latestRun.lifecycle.stages.flatMap((stage) => [
+          { label: stage.stage + " event", value: stage.businessEventId },
+          { label: stage.stage + " at", value: stage.transitionedAt },
+          { label: stage.stage + " evidence", value: stage.evidenceStatus },
+          { label: stage.stage + " actor", value: stage.actorPresent ? "Present" : null },
+        ]),
       ],
     })
   }
@@ -693,13 +702,20 @@ function ActionBoard({ data, locale }: { data: PayrollCommandReadModel; locale: 
                 <div className="flex min-w-0 flex-wrap items-center gap-2">
                   <p className="truncate text-sm font-semibold text-white">{action.label}</p>
                   <Badge value={action.priority} />
+                  {action.requiresFreshAuth ? <Badge value="Fresh auth" /> : null}
+                  {action.requiresSeparateApprover ? <Badge value="Maker-checker" /> : null}
                 </div>
                 <p className="mt-1 break-words text-xs text-slate-400">{action.source} / {action.requiredPermission}</p>
                 {action.blockedBy.length ? (
                   <p className="mt-2 break-words text-xs text-amber-100">{action.blockedBy.join(", ")}</p>
                 ) : null}
               </div>
-              {route && action.allowed ? (
+              {route && !action.allowed && action.source === "payroll.run_lifecycle" && action.blockedBy.length ? (
+                <span className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-amber-400/20 bg-amber-400/10 px-3 text-sm font-semibold text-amber-100">
+                  <LockKeyhole className="h-4 w-4" aria-hidden="true" />
+                  Blocked
+                </span>
+              ) : route && action.allowed ? (
                 <Link
                   href={localizePath(route, locale)}
                   className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-white/12 bg-white/10 px-3 text-sm font-semibold text-white transition hover:bg-white/15"
@@ -795,6 +811,7 @@ function ReviewShell({ data, proofSubjects, onProof }: { data: PayrollCommandRea
                 <Badge value={run.status} />
                 <Badge value={run.ledgerPostingBatchId ? "LEDGER_EVIDENCE" : "LEDGER_PENDING"} />
                 <Badge value={run.postedBusinessEventId ? "EVENT_POSTED" : "EVENT_PENDING"} />
+                {run.id === data.evidence.latestRun?.id ? <Badge value={data.evidence.latestRun.lifecycle.transitionEvidence} /> : null}
               </div>
               <div className="flex min-w-0 items-center justify-between gap-3 xl:justify-end">
                 <div className="min-w-0 text-sm font-semibold text-white">{money(run.netPayableAmount, run.currency)}</div>
@@ -1316,6 +1333,7 @@ export default function PayrollCommandCenter({ data, error, locale }: Props) {
         </div>
         <div className="flex flex-wrap gap-2">
           <Badge value={data.redaction.payrollAmounts.mode} />
+          <Badge value={data.evidence.latestRun?.lifecycle.transitionEvidence ?? "NO_RUN"} />
           <Badge value={data.evidence.pilotCertification.status} />
           <ProofButton subject={pilotProof} onClick={setSelectedProof} />
           <ProofButton subject={periodProof} onClick={setSelectedProof} />

@@ -29,8 +29,10 @@ jest.mock("@/prisma/db", () => {
 })
 
 import {
+  approveMasterDataImport,
   buildMasterDataApprovalDigest,
   buildMasterDataEvidenceManifest,
+  classifyMasterDataImportRisk,
   commitMasterDataImport,
   createMasterDataImportMapping,
 } from "../master-data-import.service"
@@ -38,7 +40,7 @@ import { defaultFieldMap } from "../master-data-csv"
 
 const mockDb = (jest.requireMock("@/prisma/db") as {
   db: {
-    onboardingImportBatch: { findFirst: jest.Mock }
+    onboardingImportBatch: { findFirst: jest.Mock; update: jest.Mock }
     onboardingImportMapping: { aggregate: jest.Mock; create: jest.Mock }
   }
 }).db
@@ -64,6 +66,8 @@ function batch(overrides: Record<string, unknown> = {}) {
     validRecordCount: 1,
     errorRecordCount: 0,
     duplicateRecordCount: 0,
+    riskLevel: "STANDARD",
+    riskReasons: [],
     sourceRequiredFieldTotals: { code: 1, name: 1 },
     preCommitRecordCount: null,
     postCommitRecordCount: null,
@@ -110,6 +114,90 @@ describe("master-data approval and replay guards", () => {
       expectedApprovalDigest: record.approvalDigest,
     })).rejects.toThrow("Commit requires the current explicit approval")
     expect(mockCreateCustomer).not.toHaveBeenCalled()
+  })
+
+  it("requires a different authorized approver for a high-risk batch", async () => {
+    const record = batch({
+      riskLevel: "HIGH",
+      riskReasons: ["SUPPLIER_CREATION"],
+      uploadedById: "maker-1",
+    })
+    mockBatchDelegate.findFirst.mockResolvedValue(record)
+
+    await expect(approveMasterDataImport({
+      organizationId: "org-1",
+      batchId: "batch-1",
+      expectedTarget: "CUSTOMER",
+      actorId: "maker-1",
+      expectedApprovalDigest: record.approvalDigest,
+    })).rejects.toThrow("requires approval by a different authorized user")
+  })
+
+  it("records approval when a different authorized user reviews the high-risk batch", async () => {
+    let record = batch({
+      riskLevel: "HIGH",
+      riskReasons: ["SUPPLIER_CREATION"],
+      uploadedById: "maker-1",
+    })
+    mockBatchDelegate.findFirst.mockImplementation(async () => record)
+    mockBatchDelegate.update.mockImplementation(async ({ data }: { data: Record<string, unknown> }) => {
+      record = { ...record, ...data }
+      return record
+    })
+
+    const result = await approveMasterDataImport({
+      organizationId: "org-1",
+      batchId: "batch-1",
+      expectedTarget: "CUSTOMER",
+      actorId: "checker-1",
+      expectedApprovalDigest: record.approvalDigest,
+    })
+
+    expect(result).toMatchObject({
+      status: "APPROVED",
+      risk: { level: "HIGH", separateApproverRequired: true },
+      approval: { approvedById: "checker-1" },
+    })
+  })
+
+  it("refuses a high-risk commit if stored approval evidence names the uploader", async () => {
+    const record = batch({
+      riskLevel: "HIGH",
+      riskReasons: ["CUSTOMER_CREDIT_LIMIT"],
+      uploadedById: "maker-1",
+      approvedById: "maker-1",
+      approvedAt: new Date("2026-08-15T10:05:00.000Z"),
+      status: "APPROVED",
+    })
+    mockBatchDelegate.findFirst.mockResolvedValue(record)
+
+    await expect(commitMasterDataImport({
+      organizationId: "org-1",
+      batchId: "batch-1",
+      expectedTarget: "CUSTOMER",
+      actorId: "committer-1",
+      expectedApprovalDigest: record.approvalDigest,
+    })).rejects.toThrow("requires a separate approver before commit")
+    expect(mockCreateCustomer).not.toHaveBeenCalled()
+  })
+
+  it("classifies material master-data changes and bulk files as high risk", () => {
+    const customerRisk = classifyMasterDataImportRisk({
+      target: "CUSTOMER",
+      rows: [{ valid: true, normalizedData: { creditLimit: 500 } }] as never,
+    })
+    const supplierRisk = classifyMasterDataImportRisk({
+      target: "SUPPLIER",
+      rows: [{ valid: true, normalizedData: {} }] as never,
+    })
+    const bulkRisk = classifyMasterDataImportRisk({
+      target: "CUSTOMER",
+      rows: Array.from({ length: 100 }, () => ({ valid: true, normalizedData: {} })) as never,
+    })
+
+    expect(customerRisk).toEqual({ level: "HIGH", reasons: ["CUSTOMER_CREDIT_LIMIT"] })
+    expect(supplierRisk).toEqual({ level: "HIGH", reasons: ["SUPPLIER_CREATION"] })
+    expect(bulkRisk).toEqual({ level: "HIGH", reasons: ["BULK_BATCH"] })
   })
 
   it("refuses a batch target outside the permission-scoped command", async () => {

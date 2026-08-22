@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "envelope": {
+    "required": [
+      "organizationId",
+      "eventId",
+      "eventType",
+      "aggregateType",
+      "aggregateId",
+      "occurredAt",
+      "actorUserId",
+      "idempotencyKey",
+      "correlationId",
+      "payloadVersion",
+      "payloadHash"
+    ],
+    "transactionalEvidence": ["businessEvent", "outbox", "audit"]
+  },
+  "events": {
+    "LEAVE_APPROVED": {
+      "aggregateType": "HrisTimeRequest",
+      "payloadVersion": 1,
+      "requiredPayload": [
+        "requestId",
+        "employeeId",
+        "leaveType",
+        "startDate",
+        "endDate",
+        "decisionAt",
+        "decisionByUserId"
+      ]
+    },
+    "PAYROLL_RUN_REVIEWED": {
+      "aggregateType": "PayrollRun",
+      "payloadVersion": 1,
+      "requiredPayload": [
+        "payrollRunId",
+        "periodId",
+        "fromStatus",
+        "toStatus",
+        "expectedVersion",
+        "resultingVersion",
+        "reviewedAt",
+        "reviewedByUserId"
+      ]
+    },
+    "PAYROLL_RUN_APPROVED": {
+      "aggregateType": "PayrollRun",
+      "payloadVersion": 1,
+      "requiredPayload": [
+        "payrollRunId",
+        "periodId",
+        "fromStatus",
+        "toStatus",
+        "expectedVersion",
+        "resultingVersion",
+        "approvedAt",
+        "approvedByUserId",
+        "calculationHash"
+      ]
+    },
+    "PAYSLIP_EMITTED": {
+      "aggregateType": "PayrollRun",
+      "payloadVersion": 1,
+      "requiredPayload": [
+        "payrollRunId",
+        "periodId",
+        "fromStatus",
+        "toStatus",
+        "expectedVersion",
+        "resultingVersion",
+        "emittedAt",
+        "emittedByUserId",
+        "payslipCount",
+        "batchHash",
+        "documentHashes"
+      ]
+    },
+    "PAYROLL_POSTED": {
+      "aggregateType": "PayrollRun",
+      "payloadVersion": 1,
+      "requiredPayload": [
+        "payrollRunId",
+        "periodId",
+        "fromStatus",
+        "toStatus",
+        "expectedVersion",
+        "resultingVersion",
+        "postedAt",
+        "postedByUserId",
+        "journalEntryId",
+        "postingSourceLinkId",
+        "postingEvidenceId",
+        "postingDocumentHash"
+      ]
+    }
+  }
+}

@@ -33,6 +33,8 @@ import {
   prepareSupplierInvoice,
   releaseSupplierPayment,
   releaseSupplierPaymentWithControls,
+  requestSupplierInvoiceMatchException,
+  reviewSupplierInvoiceMatchException,
 } from "../ap-control.service"
 
 jest.mock("@/prisma/db", () => ({
@@ -100,6 +102,12 @@ function buildTx() {
     },
     threeWayMatch: {
       create: jest.fn(),
+      updateMany: jest.fn(),
+    },
+    supplierInvoiceMatchException: {
+      findFirst: jest.fn(),
+      create: jest.fn(),
+      updateMany: jest.fn(),
     },
     supplierLedgerEntry: {
       create: jest.fn(),
@@ -382,6 +390,49 @@ describe("ap-control.service", () => {
     expect(tx.supplierInvoice.create).not.toHaveBeenCalled()
   })
 
+  it("excludes held inspection receipts from supplier-invoice and accounting evidence", async () => {
+    const tx = buildTx()
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
+    tx.supplier.findFirst.mockResolvedValue(supplier)
+    tx.purchaseOrder.findFirst.mockResolvedValue({ id: "po-1", status: "RECEIVED" })
+    tx.goodsReceiptLine.findFirst.mockResolvedValue(null)
+
+    await expect(
+      prepareSupplierInvoice({
+        organizationId: "org-1",
+        supplierId: "supplier-1",
+        purchaseOrderId: "po-1",
+        invoiceNumber: "INV-HELD-001",
+        invoiceDate: "2026-06-15",
+        createdById: "buyer-1",
+        lines: [
+          {
+            purchaseOrderLineId: "po-line-1",
+            goodsReceiptLineId: "gr-line-held",
+            itemId: "item-1",
+            description: "Held inspection stock",
+            quantity: "1.000",
+            unitCost: "100.00",
+          },
+        ],
+      }),
+    ).rejects.toThrow("Supplier invoice line requires received goods evidence")
+
+    expect(tx.goodsReceiptLine.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          id: "gr-line-held",
+          goodsReceipt: expect.objectContaining({
+            organizationId: "org-1",
+            status: { in: ["RECEIVED", "COMPLETED"] },
+          }),
+        }),
+      }),
+    )
+    expect(tx.supplierInvoice.create).not.toHaveBeenCalled()
+    expect(mockedCreateLedgerPostingBatch).not.toHaveBeenCalled()
+  })
+
   it("prepares matched invoice evidence without supplier or accounting ledger effects", async () => {
     const tx = buildTx()
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
@@ -442,6 +493,71 @@ describe("ap-control.service", () => {
     expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled()
   })
 
+  it("keeps exact matching as default and prepares price variance as disputed exception evidence", async () => {
+    const tx = buildTx()
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
+    tx.supplier.findFirst.mockResolvedValue(supplier)
+    tx.purchaseOrder.findFirst.mockResolvedValue({ id: "po-1", status: "RECEIVED" })
+    tx.goodsReceiptLine.findFirst.mockResolvedValue(mockReceiptLine())
+    tx.supplierInvoiceLine.aggregate.mockResolvedValue({ _sum: { quantity: "0.000" } })
+    tx.supplierInvoice.findFirst.mockResolvedValue(null)
+    tx.supplierInvoice.create.mockResolvedValue({
+      id: "invoice-disputed",
+      invoiceNumber: "INV-VARIANCE",
+      status: "DISPUTED",
+      lines: [{ id: "invoice-line-variance" }],
+    })
+    tx.threeWayMatch.create.mockResolvedValue({
+      id: "match-exception",
+      status: "EXCEPTION",
+      varianceAmount: new Prisma.Decimal("20.00"),
+      priceVariance: new Prisma.Decimal("20.00"),
+    })
+
+    const result = await prepareSupplierInvoice({
+      organizationId: "org-1",
+      supplierId: "supplier-1",
+      purchaseOrderId: "po-1",
+      invoiceNumber: "INV-VARIANCE",
+      invoiceDate: "2026-06-15",
+      createdById: "maker-1",
+      lines: [
+        {
+          purchaseOrderLineId: "po-line-1",
+          goodsReceiptLineId: "gr-line-1",
+          itemId: "item-1",
+          description: "Received stock with supplier variance",
+          quantity: "2.000",
+          unitCost: "110.00",
+        },
+      ],
+    })
+
+    expect(result.ledgerStatus).toBe("PENDING_MATCH_EXCEPTION")
+    expect(tx.supplierInvoice.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          status: "DISPUTED",
+          lines: {
+            create: [expect.objectContaining({ matchStatus: "EXCEPTION" })],
+          },
+        }),
+      }),
+    )
+    expect(tx.threeWayMatch.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          status: "EXCEPTION",
+          varianceAmount: new Prisma.Decimal("20.00"),
+          priceVariance: new Prisma.Decimal("20.00"),
+          toleranceAmount: new Prisma.Decimal(0),
+        }),
+      }),
+    )
+    expect(tx.supplier.update).not.toHaveBeenCalled()
+    expect(mockedCreateLedgerPostingBatch).not.toHaveBeenCalled()
+  })
+
   it("rejects a supplier invoice when maker and approver are the same actor", async () => {
     await expect(
       postSupplierInvoice({
@@ -463,6 +579,264 @@ describe("ap-control.service", () => {
     ).rejects.toThrow("independent approver")
 
     expect(mockDb.$transaction).not.toHaveBeenCalled()
+  })
+
+  it("rejects duplicate active match exceptions for the same tenant-scoped match", async () => {
+    const tx = buildTx()
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
+    tx.supplierInvoiceMatchException.updateMany.mockResolvedValue({ count: 0 })
+    tx.supplierInvoice.findFirst.mockResolvedValue({
+      id: "invoice-disputed",
+      organizationId: "org-1",
+      purchaseOrderId: "po-1",
+      invoiceNumber: "INV-VARIANCE",
+      status: "DISPUTED",
+      createdById: "maker-1",
+      threeWayMatches: [
+        {
+          id: "match-exception",
+          status: "EXCEPTION",
+          varianceAmount: new Prisma.Decimal("20.00"),
+          priceVariance: new Prisma.Decimal("20.00"),
+        },
+      ],
+    })
+    tx.supplierInvoiceMatchException.findFirst.mockResolvedValue({
+      id: "exception-existing",
+      status: "OPEN",
+    })
+
+    await expect(
+      requestSupplierInvoiceMatchException({
+        organizationId: "org-1",
+        supplierInvoiceId: "invoice-disputed",
+        requestedById: "maker-1",
+        reason: "Supplier documented a temporary price variance.",
+        evidenceReference: "artifact://supplier/invoice-variance-proof",
+        expiresAt: "2099-06-30T00:00:00.000Z",
+      }),
+    ).rejects.toBeInstanceOf(ConflictError)
+
+    expect(tx.supplierInvoiceMatchException.create).not.toHaveBeenCalled()
+  })
+
+  it("keeps match-exception reads tenant scoped", async () => {
+    const tx = buildTx()
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
+    tx.supplierInvoiceMatchException.updateMany.mockResolvedValue({ count: 0 })
+    tx.supplierInvoice.findFirst.mockResolvedValue(null)
+
+    await expect(
+      requestSupplierInvoiceMatchException({
+        organizationId: "org-2",
+        supplierInvoiceId: "invoice-org-1",
+        requestedById: "maker-2",
+        reason: "Tenant-isolated variance request.",
+        evidenceReference: "artifact://org-2/variance-proof",
+        expiresAt: "2099-06-30T00:00:00.000Z",
+      }),
+    ).rejects.toThrow("not found for this organization")
+
+    expect(tx.supplierInvoice.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          id: "invoice-org-1",
+          organizationId: "org-2",
+        }),
+      }),
+    )
+    expect(tx.supplierInvoiceMatchException.create).not.toHaveBeenCalled()
+  })
+
+  it("enforces maker-checker separation on match-exception review", async () => {
+    const tx = buildTx()
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
+    tx.supplierInvoiceMatchException.findFirst.mockResolvedValue({
+      id: "exception-1",
+      organizationId: "org-1",
+      supplierInvoiceId: "invoice-disputed",
+      threeWayMatchId: "match-exception",
+      status: "OPEN",
+      policyVersion: "EXACT_THREE_WAY_MATCH_EXCEPTION_V1",
+      requestedById: "maker-1",
+      expiresAt: new Date("2099-06-30T00:00:00.000Z"),
+    })
+
+    await expect(
+      reviewSupplierInvoiceMatchException({
+        organizationId: "org-1",
+        matchExceptionId: "exception-1",
+        reviewedById: "maker-1",
+        decision: "APPROVE",
+      }),
+    ).rejects.toThrow("independent approver")
+
+    expect(tx.supplierInvoiceMatchException.updateMany).not.toHaveBeenCalled()
+  })
+
+  it("materializes expiry and blocks review of an expired match exception", async () => {
+    const tx = buildTx()
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
+    tx.supplierInvoiceMatchException.findFirst.mockResolvedValue({
+      id: "exception-expired",
+      organizationId: "org-1",
+      supplierInvoiceId: "invoice-disputed",
+      threeWayMatchId: "match-exception",
+      status: "OPEN",
+      policyVersion: "EXACT_THREE_WAY_MATCH_EXCEPTION_V1",
+      requestedById: "maker-1",
+      expiresAt: new Date("2020-01-01T00:00:00.000Z"),
+    })
+    tx.supplierInvoiceMatchException.updateMany.mockResolvedValue({ count: 1 })
+
+    await expect(
+      reviewSupplierInvoiceMatchException({
+        organizationId: "org-1",
+        matchExceptionId: "exception-expired",
+        reviewedById: "checker-1",
+        decision: "APPROVE",
+      }),
+    ).rejects.toThrow("has expired")
+
+    expect(tx.supplierInvoiceMatchException.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          organizationId: "org-1",
+          status: "OPEN",
+        }),
+        data: { status: "EXPIRED" },
+      }),
+    )
+    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled()
+  })
+
+  it("blocks disputed invoice posting without an approved active exception", async () => {
+    const tx = buildTx()
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
+    tx.supplierInvoice.findFirst.mockResolvedValue({
+      id: "invoice-disputed",
+      organizationId: "org-1",
+      supplierId: "supplier-1",
+      purchaseOrderId: "po-1",
+      invoiceNumber: "INV-VARIANCE",
+      invoiceDate: new Date("2026-06-15T00:00:00.000Z"),
+      status: "DISPUTED",
+      subtotal: new Prisma.Decimal("220.00"),
+      taxAmount: new Prisma.Decimal("0.00"),
+      total: new Prisma.Decimal("220.00"),
+      currency: "XAF",
+      documentHash: "sha256:variance-document",
+      createdById: "maker-1",
+      approvedById: null,
+      ledgerPostingBatchId: null,
+      postedBusinessEventId: null,
+      metadata: { gate: "011-purchasing-ap-controls" },
+      lines: [{ id: "invoice-line-variance" }],
+      threeWayMatches: [{ id: "match-exception", status: "EXCEPTION" }],
+      supplier,
+    })
+    tx.supplierInvoiceMatchException.findFirst.mockResolvedValue(null)
+
+    await expect(
+      approveSupplierInvoice({
+        organizationId: "org-1",
+        supplierInvoiceId: "invoice-disputed",
+        approvedById: "checker-1",
+      }),
+    ).rejects.toThrow("approved active exception")
+
+    expect(tx.supplierInvoice.updateMany).not.toHaveBeenCalled()
+    expect(tx.supplier.update).not.toHaveBeenCalled()
+    expect(tx.supplierLedgerEntry.create).not.toHaveBeenCalled()
+    expect(mockedCreateLedgerPostingBatch).not.toHaveBeenCalled()
+  })
+
+  it("posts through an approved active exception and resolves only its match lifecycle", async () => {
+    const tx = buildTx()
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
+    const disputedInvoice = {
+      id: "invoice-disputed",
+      organizationId: "org-1",
+      supplierId: "supplier-1",
+      purchaseOrderId: "po-1",
+      invoiceNumber: "INV-VARIANCE",
+      invoiceDate: new Date("2026-06-15T00:00:00.000Z"),
+      status: "DISPUTED",
+      subtotal: new Prisma.Decimal("220.00"),
+      taxAmount: new Prisma.Decimal("0.00"),
+      total: new Prisma.Decimal("220.00"),
+      currency: "XAF",
+      documentHash: "sha256:variance-document",
+      createdById: "maker-1",
+      approvedById: null,
+      ledgerPostingBatchId: null,
+      postedBusinessEventId: null,
+      metadata: { gate: "011-purchasing-ap-controls" },
+      lines: [{ id: "invoice-line-variance" }],
+      threeWayMatches: [{ id: "match-exception", status: "EXCEPTION" }],
+      supplier,
+    }
+    tx.supplierInvoice.findFirst.mockResolvedValue(disputedInvoice)
+    tx.supplierInvoiceMatchException.findFirst.mockResolvedValue({
+      id: "exception-approved",
+      expiresAt: new Date("2099-06-30T00:00:00.000Z"),
+    })
+    tx.supplierInvoice.updateMany.mockResolvedValue({ count: 1 })
+    tx.supplierInvoiceMatchException.updateMany.mockResolvedValue({ count: 1 })
+    tx.threeWayMatch.updateMany.mockResolvedValue({ count: 1 })
+    tx.ledgerPostingBatch.update.mockResolvedValue({
+      id: "batch-1",
+      status: LedgerPostingBatchStatus.FAILED,
+    })
+    tx.supplierInvoice.update.mockResolvedValue({
+      ...disputedInvoice,
+      status: "POSTED",
+      approvedById: "checker-1",
+      ledgerPostingBatchId: "batch-1",
+      postedBusinessEventId: "event-1",
+    })
+
+    const result = await approveSupplierInvoice({
+      organizationId: "org-1",
+      supplierInvoiceId: "invoice-disputed",
+      approvedById: "checker-1",
+    })
+
+    expect(result.threeWayMatch).toEqual(
+      expect.objectContaining({ id: "match-exception", status: "APPROVED_EXCEPTION" }),
+    )
+    expect(tx.supplierInvoiceMatchException.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          id: "exception-approved",
+          organizationId: "org-1",
+          status: "APPROVED",
+          expiresAt: { gt: expect.any(Date) },
+        }),
+        data: expect.objectContaining({
+          status: "RESOLVED",
+          resolvedById: "checker-1",
+          resolvedAt: expect.any(Date),
+        }),
+      }),
+    )
+    expect(tx.threeWayMatch.updateMany).toHaveBeenCalledWith({
+      where: {
+        id: "match-exception",
+        organizationId: "org-1",
+        status: "EXCEPTION",
+      },
+      data: { status: "APPROVED_EXCEPTION" },
+    })
+    expect(mockedRecordBusinessEventInTx).toHaveBeenCalledWith(
+      tx,
+      expect.objectContaining({
+        payload: expect.objectContaining({
+          matchExceptionId: "exception-approved",
+          matchStatus: "APPROVED_EXCEPTION",
+        }),
+      }),
+    )
   })
 
   it("atomically approves a prepared invoice and creates ledger and audit evidence as a separate checker", async () => {

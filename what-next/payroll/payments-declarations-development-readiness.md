@@ -1,6 +1,6 @@
 # Payroll Payments and Declarations Development Readiness
 
-Generated: 2026-07-26T17:01:15.291Z
+Generated: 2026-08-20T11:08:12.398Z
 Mode: fail
 Status: READY_FOR_DEVELOPMENT_AND_SANDBOX_PROOF
 
@@ -18,7 +18,7 @@ Status: READY_FOR_DEVELOPMENT_AND_SANDBOX_PROOF
 - Checks ready: 9/9
 - Development blockers: 0
 - Upstream production status: blocked
-- Upstream production blockers: source_artifact_hash_verification, source_artifact_expert_approval
+- Upstream production blockers: source_artifact_expert_approval
 
 ## Checks
 

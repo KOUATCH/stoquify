@@ -27,6 +27,10 @@ import { getPayrollAdapterOperationsReadModel, type PayrollAdapterOperationsRead
 import { getPayrollEmployeeBalanceWorkbenchData } from "./payroll-employee-balance.service"
 import { getPayrollWorkbenchData, type PayrollWorkbenchData } from "./payroll-control.service"
 import {
+  buildPayrollRunLifecycleReadModel,
+  type PayrollRunLifecycleReadModel,
+} from "./payroll-run-lifecycle-read-model"
+import {
   buildPayrollFinalReleaseReadinessPack,
   type PayrollFinalReleaseReadinessPack,
 } from "./payroll-final-release-readiness.service"
@@ -118,6 +122,8 @@ export type PayrollCommandNextAction = {
   blockedBy: string[]
   href: string | null
   allowed: boolean
+  requiresFreshAuth: boolean
+  requiresSeparateApprover: boolean
 }
 
 export type PayrollCommandReadiness = {
@@ -155,6 +161,8 @@ export type PayrollCommandReadModel = {
     canReviewRuns: boolean
     canCalculateRuns: boolean
     canApproveRuns: boolean
+    canEmitPayslips: boolean
+    canPostRuns: boolean
     canReleasePayments: boolean
     canPrepareDeclarations: boolean
     canExportPayroll: boolean
@@ -214,6 +222,7 @@ export type PayrollCommandReadModel = {
       paymentBatchCount: number
       declarationCount: number
       updatedAt: string
+      lifecycle: PayrollRunLifecycleReadModel
     } | null
     latestPaymentBatch: {
       id: string
@@ -621,6 +630,8 @@ function routeForNextAction(source: string) {
     "payroll.payments": "/dashboard/finance/payments",
     "payroll.declarations": "/dashboard/payroll/declarations",
     "payroll.periods": "/dashboard/payroll/setup",
+    "payroll.runs": "/dashboard/payroll/runs",
+    "payroll.run_lifecycle": "/dashboard/payroll/runs",
   }
 
   return routesBySource[source] ?? null
@@ -629,12 +640,28 @@ function routeForNextAction(source: string) {
 function addAction(
   actions: PayrollCommandNextAction[],
   actorPermissions: readonly string[],
-  action: Omit<PayrollCommandNextAction, "href" | "allowed"> & { href?: string | null },
+  action: Omit<
+    PayrollCommandNextAction,
+    "href" | "allowed" | "requiresFreshAuth" | "requiresSeparateApprover"
+  > & {
+    href?: string | null
+    available?: boolean
+    requiresFreshAuth?: boolean
+    requiresSeparateApprover?: boolean
+  },
 ) {
+  const {
+    available = true,
+    requiresFreshAuth = false,
+    requiresSeparateApprover = false,
+    ...actionData
+  } = action
   actions.push({
-    ...action,
+    ...actionData,
     href: action.href ?? routeForNextAction(action.source),
-    allowed: can(actorPermissions, [action.requiredPermission]),
+    allowed: available && can(actorPermissions, [action.requiredPermission]),
+    requiresFreshAuth,
+    requiresSeparateApprover,
   })
 }
 
@@ -783,7 +810,22 @@ export async function getPayrollCommandReadModel(
   const currentRuns = currentPeriod
     ? await client.payrollRun.findMany({
         where: { organizationId: parsed.organizationId, deletedAt: null, payrollPeriodId: currentPeriod.id },
-        include: { _count: { select: { lines: true, payslips: true, paymentBatches: true, declarations: true } } },
+        include: {
+          _count: { select: { lines: true, payslips: true, paymentBatches: true, declarations: true } },
+          transitions: {
+            orderBy: { sequence: "asc" },
+            select: {
+              toStatus: true,
+              fromVersion: true,
+              toVersion: true,
+              actorId: true,
+              transitionedAt: true,
+              businessEventId: true,
+              origin: true,
+              evidenceStatus: true,
+            },
+          },
+        },
         orderBy: [{ createdAt: "desc" }],
         take: parsed.limit,
       })
@@ -828,6 +870,14 @@ export async function getPayrollCommandReadModel(
   const latestDeclaration = currentDeclarations[0] ?? null
   const latestDeclarationCountryPackProof = latestDeclaration
     ? declarationCountryPackProof(latestDeclaration.metadata)
+    : null
+  const latestRunLifecycle = latestRun
+    ? buildPayrollRunLifecycleReadModel({
+        status: latestRun.status,
+        version: latestRun.version,
+        transitions: latestRun.transitions,
+        writeEnabled: process.env.PAYROLL_TRUST_SPINE_WRITES_ENABLED === "true",
+      })
     : null
   const [latestPilotCertificationAudit, latestProofBackfillAudit] = await Promise.all([
     latestRun
@@ -884,6 +934,48 @@ export async function getPayrollCommandReadModel(
   )
   const paymentMissing = paymentEvidence.summary.missingPaymentDestinationCount
   const paymentPending = paymentEvidence.summary.pendingPaymentDestinationCount
+  if (latestRunLifecycle) {
+    for (const code of latestRunLifecycle.blockerCodes) {
+      const blocker = code === "PAYROLL_TRANSITION_PROOF_MISSING"
+        ? {
+            code,
+            severity: "critical" as const,
+            message: "The latest payroll run is missing complete runtime transition-ledger proof.",
+          }
+        : code === "PAYROLL_TRANSITION_PROOF_LEGACY_PARTIAL"
+          ? {
+              code,
+              severity: "high" as const,
+              message: "The latest payroll run has explicit legacy partial transition evidence.",
+            }
+          : {
+              code,
+              severity: "high" as const,
+              message: "Payroll Trust Spine writes are disabled for this environment.",
+            }
+      addBlocker(blockers, {
+        ...blocker,
+        domain: "payroll",
+        source: "services/payroll/payroll-run-lifecycle-read-model.ts",
+        count: 1,
+      })
+    }
+
+    if (latestRunLifecycle.nextAction) {
+      addAction(nextActions, parsed.actorPermissions, {
+        id: `payroll-run-${latestRunLifecycle.nextAction.id}`,
+        label: latestRunLifecycle.nextAction.label,
+        priority: latestRunLifecycle.nextAction.id === "post" ? "critical" : "high",
+        requiredPermission: latestRunLifecycle.nextAction.requiredPermission,
+        source: "payroll.run_lifecycle",
+        blockedBy: latestRunLifecycle.blockerCodes,
+        href: latestRunLifecycle.nextAction.href,
+        available: latestRunLifecycle.blockerCodes.length === 0,
+        requiresFreshAuth: latestRunLifecycle.nextAction.requiresFreshAuth,
+        requiresSeparateApprover: latestRunLifecycle.nextAction.requiresSeparateApprover,
+      })
+    }
+  }
 
   if (activeEmployees === 0) {
     addBlocker(blockers, { code: "PAYROLL_ACTIVE_EMPLOYEE_SOURCE_EMPTY", domain: "hr", severity: "critical", message: "No active payroll employees are available for the command center.", source: "services/payroll/employee.service.ts" })
@@ -1020,6 +1112,30 @@ export async function getPayrollCommandReadModel(
   const pilotCertificationBlockerCodes = blockers
     .filter((blocker) => blocker.code.startsWith("PAYROLL_PILOT_CYCLE_"))
     .map((blocker) => blocker.code)
+  const payrollRunState: ReadinessState = !currentPeriod
+    ? "BLOCKED"
+    : !latestRun
+      ? "ACTION_REQUIRED"
+      : latestRunLifecycle?.blockerCodes.length
+        ? "BLOCKED"
+        : latestRunLifecycle?.nextAction
+          ? "ACTION_REQUIRED"
+          : latestRunLifecycle?.complete
+            ? "READY"
+            : latestRun.status === PayrollRunStatus.CANCELLED
+              ? "BLOCKED"
+              : "UNKNOWN"
+  const payrollRunMessage = !currentPeriod
+    ? "A payroll period is required."
+    : !latestRun
+      ? "The current-period payroll run has not been calculated yet."
+      : latestRunLifecycle?.blockerCodes.length
+        ? "The current payroll lifecycle is blocked by transition proof or rollout controls."
+        : latestRunLifecycle?.nextAction
+          ? `${latestRunLifecycle.nextAction.label} is the next legal persisted stage.`
+          : latestRunLifecycle?.complete
+            ? "The current payroll lifecycle has complete verified transition proof."
+            : "The current payroll lifecycle has no executable next stage."
   const pilotCertificationState: ReadinessState = !latestRun ? "UNKNOWN" : pilotCertification.status === "CERTIFIED_FOR_PRODUCTION_RELEASE_REVIEW" ? "READY" : pilotCertification.status === "BLOCKED" ? "BLOCKED" : "ACTION_REQUIRED"
   const finalReleaseState: ReadinessState = finalRelease.decision === "READY_FOR_FULL_PRODUCTION_APPROVAL" ? "READY" : finalRelease.criticalBlockerCount > 0 ? "BLOCKED" : "ACTION_REQUIRED"
   const finalReleaseMessage = finalRelease.decision === "READY_FOR_FULL_PRODUCTION_APPROVAL"
@@ -1063,6 +1179,8 @@ export async function getPayrollCommandReadModel(
       canReviewRuns: can(parsed.actorPermissions, ["payroll.runs.review"]),
       canCalculateRuns: can(parsed.actorPermissions, ["payroll.runs.calculate"]),
       canApproveRuns: can(parsed.actorPermissions, ["payroll.runs.approve"]),
+      canEmitPayslips: can(parsed.actorPermissions, ["payroll.payslips.emit"]),
+      canPostRuns: can(parsed.actorPermissions, ["payroll.runs.post"]),
       canReleasePayments: can(parsed.actorPermissions, ["payroll.payments.release"]),
       canPrepareDeclarations: can(parsed.actorPermissions, ["payroll.declarations.prepare"]),
       canExportPayroll: can(parsed.actorPermissions, ["payroll.exports.create"]),
@@ -1087,7 +1205,7 @@ export async function getPayrollCommandReadModel(
       attendance: readiness(attendanceGap > 0 || paymentEvidence.summary.attendanceDriftCount > 0 ? "ACTION_REQUIRED" : activeEmployees === 0 ? "UNKNOWN" : "READY", "payroll.attendance_readiness", attendanceGap > 0 ? "Attendance freeze coverage is incomplete." : paymentEvidence.summary.attendanceDriftCount > 0 ? "Attendance source drift requires review." : "Attendance readiness is ready for command composition.", blockerCodes("attendance"), { frozenAttendanceSnapshots, attendanceGap, attendanceDriftEmployees: paymentEvidence.summary.attendanceDriftCount }),
       paymentDestinations: readiness(paymentMissing + paymentPending + pendingPaymentDestinationChanges > 0 ? "ACTION_REQUIRED" : activeEmployees === 0 ? "UNKNOWN" : "READY", "payroll.payment_destination", paymentMissing + paymentPending + pendingPaymentDestinationChanges > 0 ? "Payment destination evidence requires approval/application." : "Payment destination evidence is ready for command composition.", blockerCodes("payment"), { approvedPaymentDestinations: paymentEvidence.summary.approvedPaymentDestinationCount, paymentMissing, paymentPending }),
       employeeBalances: readiness(employeeBalanceWorkbench.summary.activeCases > 0 ? "ACTION_REQUIRED" : "READY", "payroll.employee_balance", employeeBalanceWorkbench.summary.activeCases > 0 ? "Employee balance recovery cases require settlement or review before close/payment certification." : "Employee balance recovery cases are clear.", employeeBalanceBlockerCodes, { activeCases: employeeBalanceWorkbench.summary.activeCases, openCases: employeeBalanceWorkbench.summary.openCases, partiallySettledCases: employeeBalanceWorkbench.summary.partiallySettledCases }),
-      payrollRun: readiness(!currentPeriod ? "BLOCKED" : latestRun ? "READY" : "ACTION_REQUIRED", "payroll.runs", !currentPeriod ? "A payroll period is required." : latestRun ? "Current-period payroll run data is available." : "The current-period payroll run has not been calculated yet.", blockerCodes("payroll"), { currentPeriodRuns: currentRuns.length }),
+      payrollRun: readiness(payrollRunState, "payroll.run_lifecycle", payrollRunMessage, blockerCodes("payroll"), { currentPeriodRuns: currentRuns.length, runVersion: latestRunLifecycle?.version ?? 0, completedLifecycleStages: latestRunLifecycle?.stages.filter((stage) => stage.completed).length ?? 0 }),
       payrollRegister: readiness(!latestRun ? "UNKNOWN" : latestRun._count.lines > 0 ? "READY" : "BLOCKED", "payroll.register", !latestRun ? "Register readiness waits for a current payroll run." : latestRun._count.lines > 0 ? "Payroll register lines are present." : "The payroll register is empty.", blockerCodes("register"), { lineCount: latestRun?._count.lines ?? 0, payslipCount: latestRun?._count.payslips ?? 0 }),
       payments: readiness(workbench.counts.reconciliationExceptions > 0 ? "ACTION_REQUIRED" : currentPaymentBatches.length > 0 ? "READY" : latestRun ? "ACTION_REQUIRED" : "UNKNOWN", "payroll.payments", workbench.counts.reconciliationExceptions > 0 ? "Payroll payment reconciliation exceptions are open." : currentPaymentBatches.length > 0 ? "Payment batch data is available." : "Payment batch creation waits for a payroll run.", blockerCodes("payment"), { currentPeriodPaymentBatches: currentPaymentBatches.length, reconciliationExceptions: workbench.counts.reconciliationExceptions }),
       declarations: readiness(latestDeclaration?.status === PayrollDeclarationStatus.REJECTED || latestDeclaration?.status === PayrollDeclarationStatus.PAYMENT_DUE ? "ACTION_REQUIRED" : currentDeclarations.length > 0 ? "READY" : latestRun ? "ACTION_REQUIRED" : "UNKNOWN", "payroll.declarations", currentDeclarations.length > 0 ? "Declaration data is available for the current period." : "Declaration preparation waits for a posted payroll run.", blockerCodes("declaration"), { currentPeriodDeclarations: currentDeclarations.length, openDeclarations: workbench.counts.openDeclarations }),
@@ -1125,6 +1243,7 @@ export async function getPayrollCommandReadModel(
             paymentBatchCount: latestRun._count.paymentBatches,
             declarationCount: latestRun._count.declarations,
             updatedAt: latestRun.updatedAt.toISOString(),
+            lifecycle: latestRunLifecycle!,
           }
         : null,
       latestPaymentBatch: latestPaymentBatch

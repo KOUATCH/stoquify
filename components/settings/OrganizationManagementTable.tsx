@@ -95,7 +95,6 @@ type CreateOrganizationFormState = {
   address: string
   currency: string
   timezone: string
-  defaultLocale: Locale
 }
 
 const DASHBOARD_SEGMENT = "dashboard"
@@ -186,7 +185,6 @@ const copy = {
       address: "Business address",
       currency: "Default currency",
       timezone: "Timezone",
-      defaultLocale: "Default language",
     },
     placeholders: {
       name: "Acme Retail Group",
@@ -275,7 +273,6 @@ const copy = {
       address: "Adresse professionnelle",
       currency: "Devise par defaut",
       timezone: "Fuseau horaire",
-      defaultLocale: "Langue par defaut",
     },
     placeholders: {
       name: "Acme Retail Group",
@@ -338,7 +335,7 @@ function getInitials(name: string) {
     .toUpperCase() || "SF"
 }
 
-function getDefaultCreateForm(locale: Locale): CreateOrganizationFormState {
+function getDefaultCreateForm(): CreateOrganizationFormState {
   return {
     name: "",
     industry: "",
@@ -347,7 +344,6 @@ function getDefaultCreateForm(locale: Locale): CreateOrganizationFormState {
     address: "",
     currency: "XAF",
     timezone: "Africa/Douala",
-    defaultLocale: locale,
   }
 }
 
@@ -371,7 +367,7 @@ export default function OrganizationManagementTable({
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [createOpen, setCreateOpen] = useState(false)
-  const [createForm, setCreateForm] = useState<CreateOrganizationFormState>(() => getDefaultCreateForm(locale))
+  const [createForm, setCreateForm] = useState<CreateOrganizationFormState>(getDefaultCreateForm)
 
   const {
     data = [],
@@ -461,10 +457,10 @@ export default function OrganizationManagementTable({
         address: createForm.address,
         currency: createForm.currency,
         timezone: createForm.timezone,
-        defaultLocale: createForm.defaultLocale,
+        defaultLocale: locale,
       })
       setCreateOpen(false)
-      setCreateForm(getDefaultCreateForm(locale))
+      setCreateForm(getDefaultCreateForm())
     } catch {
       // The mutation hook sends the localized notification.
     }
@@ -1027,7 +1023,7 @@ export default function OrganizationManagementTable({
         onOpenChange={(open) => {
           setCreateOpen(open)
           if (!open && !createOrganizationMutation.isPending) {
-            setCreateForm(getDefaultCreateForm(locale))
+            setCreateForm(getDefaultCreateForm())
           }
         }}
       >
@@ -1099,33 +1095,21 @@ export default function OrganizationManagementTable({
                   </SelectContent>
                 </Select>
               </CreateField>
-              <CreateField label={t.fields.defaultLocale}>
-                <Select value={createForm.defaultLocale} onValueChange={(value) => updateCreateField("defaultLocale", value as Locale)}>
+              <CreateField label={t.fields.timezone}>
+                <Select value={createForm.timezone} onValueChange={(value) => updateCreateField("timezone", value)}>
                   <SelectTrigger className="dashboard-control h-11 rounded-lg">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
-                    <SelectItem value="en">English</SelectItem>
-                    <SelectItem value="fr">Francais</SelectItem>
+                    {TIMEZONES.map((timezone) => (
+                      <SelectItem key={timezone} value={timezone}>
+                        {timezone}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </CreateField>
             </div>
-
-            <CreateField label={t.fields.timezone}>
-              <Select value={createForm.timezone} onValueChange={(value) => updateCreateField("timezone", value)}>
-                <SelectTrigger className="dashboard-control h-11 rounded-lg">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
-                  {TIMEZONES.map((timezone) => (
-                    <SelectItem key={timezone} value={timezone}>
-                      {timezone}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </CreateField>
 
             <CreateField label={t.fields.address}>
               <Textarea

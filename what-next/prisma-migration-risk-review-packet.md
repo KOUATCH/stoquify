@@ -1,0 +1,38 @@
+# Destructive SQL Risk Review Packet
+
+Generated: 2026-08-18T04:50:20.300Z
+Decision status: `0/13 approved`; `13` require a current human decision.
+
+This packet is review evidence only. It does not approve a finding, execute SQL, or authorize deployment. The generator never writes `prisma/migration-risk-approvals.json`.
+
+## Exact findings
+
+| # | State | Rule / location | Exact SQL clause | Consequence | Finding SHA-256 |
+|---:|---|---|---|---|---|
+| 1 | `pending` | `drop_table`<br>`prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql:116` | `DROP TABLE "auth_sessions";` | Permanently removes "auth_sessions" and all of its rows, indexes, triggers, and constraints. | `69294f51328a0a7575cff0524e5196accf0159913177b11dd249b65e554295fe` |
+| 2 | `pending` | `drop_column`<br>`prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql:80` | `DROP COLUMN "access_token"` | Permanently removes "accounts"."access_token" and its stored values; owned indexes/constraints may also be removed. | `4781af03745e807d47ccdc89b62f0562b923707465d36d215cbeaea3e3e164fb` |
+| 3 | `pending` | `drop_column`<br>`prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql:81` | `DROP COLUMN "expires_at"` | Permanently removes "accounts"."expires_at" and its stored values; owned indexes/constraints may also be removed. | `277a312724a1c524d910f7c5966d70170825cf1d6a60679269b2388a6c9f3e55` |
+| 4 | `pending` | `drop_column`<br>`prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql:82` | `DROP COLUMN "id_token"` | Permanently removes "accounts"."id_token" and its stored values; owned indexes/constraints may also be removed. | `5807ad92f5163c0922dce2373dd15df9d064a28a61b1601e063a510448c52c13` |
+| 5 | `pending` | `drop_column`<br>`prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql:83` | `DROP COLUMN "provider"` | Permanently removes "accounts"."provider" and its stored values; owned indexes/constraints may also be removed. | `fbc401c6980f7b01658bb2b2f3702c618e2378e92395b4caee631fd8d8bee2cb` |
+| 6 | `pending` | `drop_column`<br>`prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql:84` | `DROP COLUMN "providerAccountId"` | Permanently removes "accounts"."providerAccountId" and its stored values; owned indexes/constraints may also be removed. | `b5d38ed4fd3e87f368f0948c54731873ffdbec440832c219a078af57364ec76b` |
+| 7 | `pending` | `drop_column`<br>`prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql:85` | `DROP COLUMN "refresh_token"` | Permanently removes "accounts"."refresh_token" and its stored values; owned indexes/constraints may also be removed. | `07a6cfdfae6507d5572505bc8a0505c74d4f0f1b496f0864b1e2d4e537ce1492` |
+| 8 | `pending` | `drop_column`<br>`prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql:86` | `DROP COLUMN "session_state"` | Permanently removes "accounts"."session_state" and its stored values; owned indexes/constraints may also be removed. | `6ad18571cee52ce1386eacb37d9b18e40c4d6ffbb3b3166de4ffe4710df83988` |
+| 9 | `pending` | `drop_column`<br>`prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql:87` | `DROP COLUMN "token_type"` | Permanently removes "accounts"."token_type" and its stored values; owned indexes/constraints may also be removed. | `42bf676feeb19705c6bd4a57cf83ac0f99d8cbb830b46cd42b1f980243a31165` |
+| 10 | `pending` | `drop_column`<br>`prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql:88` | `DROP COLUMN "type"` | Permanently removes "accounts"."type" and its stored values; owned indexes/constraints may also be removed. | `5f168672b10fcdcbe1af94b0da9d9ead18688f6254a326c146ccb1aecda6d9de` |
+| 11 | `pending` | `drop_column`<br>`prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql:101` | `DROP COLUMN "expires"` | Permanently removes "sessions"."expires" and its stored values; owned indexes/constraints may also be removed. | `8f4f2215000c21bc293358a28c8c4f8df6b90abdbc7c5200cb0b4e7d814807b9` |
+| 12 | `pending` | `drop_column`<br>`prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql:102` | `DROP COLUMN "sessionToken"` | Permanently removes "sessions"."sessionToken" and its stored values; owned indexes/constraints may also be removed. | `ec44f20e8dd677d05d2303eef1758a22bebb08077983362349f6d9c5e4fd9178` |
+| 13 | `pending` | `drop_column`<br>`prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql:112` | `DROP COLUMN "emailVerified"` | Permanently removes "users"."emailVerified" and its stored values; owned indexes/constraints may also be removed. | `4b1479492af21a9dd97c0a5212afe7c7383b8cd3b31045310e8ab0e0143bc95d` |
+
+## Hash and decision contract
+
+- `prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql` migration SHA-256: `2fde92f4ad0cbb1a2a517b12e71c38997dc4956c9d57d70ff1ae0c636ff2f191`
+- Finding SHA-256 is SHA-256 of `migration path`, `migration SHA-256`, `rule`, `clause SHA-256`, and `consequence`, joined in that order by LF with no trailing LF.
+- One registry entry is required per finding SHA-256; rule-level or migration-wide blanket approvals are rejected.
+- A reviewer must manually author `humanAuthored`, identity, role, rationale, consequence acknowledgement, and UTC timestamp fields in the registry.
+- Hashes use the exact SQL text with line endings canonicalized to LF, so Windows and CI checkouts agree. Any other migration or clause change makes the old entry stale.
+- An optional `expiresAt` in the past also makes an approval stale.
+- Adding a human-authored `revocation` object preserves the original decision but immediately makes the finding unapproved.
+
+## Required human review
+
+Before authoring any approval, independently verify the target schema/data state, authentication compatibility, backup/restore evidence, and fix-forward plan. Existing non-empty databases must follow the migration's guarded adoption decision; this packet does not authorize `migrate resolve` or execution.

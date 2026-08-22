@@ -1,5 +1,3 @@
-import { PaymentMethod } from "@prisma/client"
-
 jest.mock("@/prisma/db", () => ({
   db: {
     $transaction: jest.fn(),
@@ -141,44 +139,31 @@ describe("payroll tenant-boundary guards", () => {
     expect(tx.auditLog.create).not.toHaveBeenCalled()
   })
 
-  it("blocks releasing payments for a payroll run outside the caller organization", async () => {
+  it("blocks releasing a payment batch outside the caller organization", async () => {
     const tx = buildTenantBoundaryTx()
     useTransaction(tx)
 
     await expect(
       releasePayrollPaymentBatch({
         organizationId: "org-1",
-        payrollRunId: "run-other-org",
-        requestedById: "payroll-1",
-        approvedById: "treasury-1",
+        payrollPaymentBatchId: "batch-other-org",
         releasedById: "treasury-release-1",
-        method: PaymentMethod.BANK_TRANSFER,
-        paymentDate: "2026-06-30",
         idempotencyKey: "payment-other-org",
         actorPermissions: ["payroll.payments.release"],
         lastAuthAt: "2026-06-30T00:00:00.000Z",
         now: "2026-06-30T00:01:00.000Z",
-        allocations: [{ payslipId: "payslip-1", employeeId: "employee-1", amount: "95800.00" }],
       }),
-    ).rejects.toThrow("Payroll run not found")
+    ).rejects.toThrow("Payroll payment batch not found")
 
     expect(tx.payrollPaymentBatch.findFirst).toHaveBeenCalledWith(
       expect.objectContaining({
         where: {
+          id: "batch-other-org",
           organizationId: "org-1",
-          idempotencyKey: "payment-other-org",
         },
       }),
     )
-    expect(tx.payrollRun.findFirst).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: {
-          id: "run-other-org",
-          organizationId: "org-1",
-          deletedAt: null,
-        },
-      }),
-    )
+    expect(tx.payrollRun.findFirst).not.toHaveBeenCalled()
     expect(mockedEvaluateSensitiveAction).not.toHaveBeenCalled()
     expect(mockedAuditSensitiveActionDecision).not.toHaveBeenCalled()
     expect(mockedCreateLedgerPostingBatch).not.toHaveBeenCalled()

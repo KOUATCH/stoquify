@@ -3,10 +3,12 @@ import type { PrismaClient } from "@prisma/client";
 type SeedQuality = Array<{
   organizationId: string;
   defaultLocationId: string;
+  locationCount: number;
   categoryCount: number;
   unitCount: number;
   activeItemCount: number;
   posReadyItemCount: number;
+  minimumPosReadyItemCount: number;
 }>;
 
 export async function reuseCompleteRealisticSeed(input: {
@@ -14,6 +16,8 @@ export async function reuseCompleteRealisticSeed(input: {
   organizationIdPrefix: string;
   expectedOrganizationCount: number;
   password: string;
+  minimumRoleCountPerOrganization?: number;
+  minimumUserCountPerOrganization?: number;
 }) {
   const organizationCount = await input.prisma.organization.count({
     where: { id: { startsWith: input.organizationIdPrefix } },
@@ -63,8 +67,12 @@ export async function reuseCompleteRealisticSeed(input: {
         }),
       ]);
     const minimums = {
-      roles: input.expectedOrganizationCount * 12,
-      users: input.expectedOrganizationCount * 14,
+      roles:
+        input.expectedOrganizationCount *
+        (input.minimumRoleCountPerOrganization ?? 12),
+      users:
+        input.expectedOrganizationCount *
+        (input.minimumUserCountPerOrganization ?? 14),
       categories: input.expectedOrganizationCount * 7,
       units: input.expectedOrganizationCount * 7,
       items: input.expectedOrganizationCount * 12,
@@ -99,19 +107,22 @@ export async function reuseCompleteRealisticSeed(input: {
       select: {
         id: true,
         locations: {
-          where: { isDefault: true, isActive: true, deletedAt: null },
-          select: { id: true },
-          take: 1,
+          where: { isActive: true, deletedAt: null },
+          orderBy: [{ isDefault: "desc" }, { id: "asc" }],
+          select: { id: true, isDefault: true },
         },
       },
     });
     const quality: SeedQuality = [];
     for (const organization of organizations) {
-      const defaultLocationId = organization.locations[0]?.id;
-      if (!defaultLocationId) {
-        throw new Error(`Default active location missing for ${organization.id}.`);
+      const defaultLocations = organization.locations.filter((location) => location.isDefault);
+      if (defaultLocations.length !== 1) {
+        throw new Error(
+          `Expected exactly one active default location for ${organization.id}; found ${defaultLocations.length}.`,
+        );
       }
-      const [categories, units, items, posReady] = await Promise.all([
+      const defaultLocationId = defaultLocations[0].id;
+      const [categories, units, items, posReadyByLocation, seededActiveSessions] = await Promise.all([
         input.prisma.category.count({
           where: { organizationId: organization.id, isActive: true, deletedAt: null },
         }),
@@ -126,31 +137,55 @@ export async function reuseCompleteRealisticSeed(input: {
             deletedAt: null,
           },
         }),
-        input.prisma.inventoryLevel.count({
-          where: {
-            locationId: defaultLocationId,
-            quantityAvailable: { gte: 20 },
-            item: {
-              is: {
-                organizationId: organization.id,
-                isActive: true,
-                isDiscontinued: false,
-                deletedAt: null,
+        Promise.all(
+          organization.locations.map((location) =>
+            input.prisma.inventoryLevel.count({
+              where: {
+                locationId: location.id,
+                quantityAvailable: { gte: 20 },
+                item: {
+                  is: {
+                    organizationId: organization.id,
+                    isActive: true,
+                    isDiscontinued: false,
+                    deletedAt: null,
+                  },
+                },
               },
-            },
+            }),
+          ),
+        ),
+        input.prisma.pOSSession.count({
+          where: {
+            organizationId: organization.id,
+            id: { startsWith: `${organization.id}_pos_session_` },
+            status: "ACTIVE",
           },
         }),
       ]);
-      if (categories < 7 || units < 7 || items < 12 || posReady < 10) {
+      const defaultLocationIndex = organization.locations.findIndex(
+        (location) => location.id === defaultLocationId,
+      );
+      const posReadyItemCount = posReadyByLocation[defaultLocationIndex] ?? 0;
+      const minimumPosReadyItemCount = Math.min(...posReadyByLocation);
+      if (
+        categories < 7 ||
+        units < 7 ||
+        items < 12 ||
+        minimumPosReadyItemCount < 10 ||
+        seededActiveSessions > 0
+      ) {
         throw new Error(`Seed quality is incomplete for ${organization.id}.`);
       }
       quality.push({
         organizationId: organization.id,
         defaultLocationId,
+        locationCount: organization.locations.length,
         categoryCount: categories,
         unitCount: units,
         activeItemCount: items,
-        posReadyItemCount: posReady,
+        posReadyItemCount,
+        minimumPosReadyItemCount,
       });
     }
     const users = await input.prisma.user.findMany({

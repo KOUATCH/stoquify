@@ -22,6 +22,7 @@ import { createHash, randomUUID } from "node:crypto";
 
 import { db } from "@/prisma/db";
 import { recordBusinessEventInTx } from "@/services/events/business-event.service";
+import { summarizePayrollTransitionEvidence } from "@/services/payroll/payroll-transition-evidence";
 import { BusinessRuleError } from "@/services/_shared/action-errors";
 import {
   assertSensitiveActionAllowed,
@@ -200,6 +201,7 @@ const DATA_TRUST_SOURCE_TABLES = [
   "supplier_invoices",
   "supplier_payments",
   "payroll_runs",
+  "payroll_run_transitions",
   "payroll_run_lines",
   "payroll_payslips",
   "payroll_declarations",
@@ -736,6 +738,7 @@ export async function getAccountantPortalData(
     payrollPaymentUnsettledCount,
     payrollPaymentReconciliationEvidenceMissingCount,
     payrollPaymentAllocationMissingCount,
+    payrollTransitionEvidenceRuns,
     payrollPostedRunMissingLedgerCount,
     payrollPostedRunComponentProofMissingCount,
     payrollPostedRunCertifiedInputProofMissingCount,
@@ -1209,6 +1212,39 @@ export async function getAccountantPortalData(
         ...createdAtFilter(scope),
       },
     }),
+    client.payrollRun.findMany({
+      where: {
+        organizationId: scope.organizationId,
+        status: {
+          in: [
+            PayrollRunStatus.REVIEWED,
+            PayrollRunStatus.APPROVED,
+            PayrollRunStatus.EMITTED,
+            PayrollRunStatus.POSTED,
+            PayrollRunStatus.PAID,
+            PayrollRunStatus.ARCHIVED,
+          ],
+        },
+        deletedAt: null,
+        ...createdAtFilter(scope),
+      },
+      select: {
+        status: true,
+        transitions: {
+          orderBy: { sequence: "asc" },
+          select: {
+            toStatus: true,
+            fromVersion: true,
+            toVersion: true,
+            actorId: true,
+            transitionedAt: true,
+            businessEventId: true,
+            origin: true,
+            evidenceStatus: true,
+          },
+        },
+      },
+    }),
     client.payrollRun.count({
       where: {
         organizationId: scope.organizationId,
@@ -1478,6 +1514,9 @@ export async function getAccountantPortalData(
     }),
   ]);
 
+  const payrollTransitionEvidence = summarizePayrollTransitionEvidence(
+    payrollTransitionEvidenceRuns,
+  );
   const blockers: DataTrustBlocker[] = [];
   const currency = settings?.baseCurrency || "XAF";
   const periodStatus: PeriodStatus = period?.status ?? "UNAVAILABLE";
@@ -1852,6 +1891,43 @@ export async function getAccountantPortalData(
     });
   }
 
+  if (payrollTransitionEvidence.emittedUnpostedCount > 0) {
+    addBlocker(blockers, {
+      id: "payroll-emitted-runs-unposted",
+      severity: "critical",
+      gate: "payroll.lifecycle.posting",
+      title: "Emitted payroll runs are not posted",
+      detail: String(payrollTransitionEvidence.emittedUnpostedCount) + " emitted payroll run has payslip evidence but no completed ledger posting transition.",
+      sourceTables: [
+        "payroll_runs",
+        "payroll_run_transitions",
+        "payroll_payslips",
+      ],
+    });
+  }
+
+  if (payrollTransitionEvidence.missingPostCutoverProofCount > 0) {
+    addBlocker(blockers, {
+      id: "payroll-transition-proof-missing",
+      severity: "critical",
+      gate: "payroll.lifecycle.transition-proof",
+      title: "Payroll lifecycle transition proof is missing",
+      detail: String(payrollTransitionEvidence.missingPostCutoverProofCount) + " post-cutover payroll run lacks a complete verified review, approval, emission, or posting transition ledger.",
+      sourceTables: ["payroll_runs", "payroll_run_transitions"],
+    });
+  }
+
+  if (payrollTransitionEvidence.legacyPartialEvidenceCount > 0) {
+    addBlocker(blockers, {
+      id: "payroll-transition-proof-legacy-partial",
+      severity: "medium",
+      gate: "payroll.lifecycle.legacy-disclosure",
+      title: "Historical payroll transition proof is partial",
+      detail: String(payrollTransitionEvidence.legacyPartialEvidenceCount) + " historical payroll run is explicitly disclosed as legacy partial evidence and cannot be represented as verified runtime proof.",
+      sourceTables: ["payroll_runs", "payroll_run_transitions"],
+    });
+  }
+
   if (payrollPostedRunMissingLedgerCount > 0) {
     addBlocker(blockers, {
       id: "payroll-runs-without-ledger",
@@ -2133,14 +2209,17 @@ export async function getAccountantPortalData(
     {
       module: "payroll",
       status: statusFor(
-        payrollPostedRunMissingLedgerCount > 0 ||
+        payrollTransitionEvidence.emittedUnpostedCount > 0 ||
+          payrollTransitionEvidence.missingPostCutoverProofCount > 0 ||
+          payrollPostedRunMissingLedgerCount > 0 ||
           payrollPostedRunComponentProofMissingCount > 0 ||
           payrollPostedRunCertifiedInputProofMissingCount > 0 ||
           payrollEffectiveComponentProofMissingCount > 0 ||
           payrollPostedRunLineMissingPayslipCount > 0 ||
           payrollPaymentMissingLedgerCount > 0 ||
           payrollPostedLedgerMissingSourceLinkCount > 0,
-        payrollDeclarationRejectedCount > 0 ||
+        payrollTransitionEvidence.legacyPartialEvidenceCount > 0 ||
+          payrollDeclarationRejectedCount > 0 ||
           payrollDeclarationLifecycleEvidenceMissingCount > 0 ||
           payrollDeclarationRegisterProofMissingCount > 0 ||
           payrollDeclarationCountryPackRegisterProofMissingCount > 0 ||
@@ -2159,8 +2238,20 @@ export async function getAccountantPortalData(
       ),
       label: "Payroll and declarations",
       detail:
-        "Payroll certified HRIS input proof, register tie-out, payslip proof, payment reconciliation/component proof, ledger source-link, and declaration lifecycle evidence is consumed from payroll services.",
+        "Payroll lifecycle transition proof, certified HRIS input proof, register tie-out, payslip proof, payment reconciliation/component proof, ledger source-link, and declaration lifecycle evidence is consumed from payroll services.",
       facts: [
+        {
+          label: "Emitted runs awaiting posting",
+          value: payrollTransitionEvidence.emittedUnpostedCount,
+        },
+        {
+          label: "Post-cutover transition proof gaps",
+          value: payrollTransitionEvidence.missingPostCutoverProofCount,
+        },
+        {
+          label: "Legacy partial transition disclosures",
+          value: payrollTransitionEvidence.legacyPartialEvidenceCount,
+        },
         {
           label: "Prepared declarations",
           value: payrollDeclarationPreparedCount,

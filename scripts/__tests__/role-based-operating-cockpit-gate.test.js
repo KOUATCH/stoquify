@@ -24,6 +24,12 @@ function writeReadyFixture(root) {
   write(root, "package.json", '{"scripts":{"role:cockpit:gate":"node gate","policy:gates":"npm run role:cockpit:gate"}}')
 }
 
+function moveAccessContractsToRouteHelpers(root) {
+  write(root, "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx", 'actorRoleCodes: ctx.roles.map actorPermissions: ctx.permissions')
+  write(root, "app/[locale]/(dashboard)/dashboard/daily-digest/daily-digest-route-data-access.ts", 'permissions: ["dashboard.read", "analytics.read"]')
+  write(root, "app/[locale]/(dashboard)/dashboard/daily-digest/daily-digest-route-access.tsx", 'kind={noActiveOrg ? "no_active_org" : "permission_denied"}')
+}
+
 describe("role-based operating cockpit gate", () => {
   it("passes a permission-aware Daily Digest cockpit", () => {
     const root = makeTempRepo()
@@ -47,6 +53,27 @@ describe("role-based operating cockpit gate", () => {
     writeReadyFixture(root)
     write(root, "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx", 'actorRoleCodes: ctx.roles.map actorPermissions: ctx.permissions "analytics.read" currency: "XAF"')
     const report = buildRoleCockpitReadiness(root, { mode: "fail" })
+    expect(report.blockers).toContain("route_propagates_roles_without_currency_override")
+  })
+
+  it("accepts permission and session-state contracts owned by route helpers", () => {
+    const root = makeTempRepo()
+    writeReadyFixture(root)
+    moveAccessContractsToRouteHelpers(root)
+
+    const report = buildRoleCockpitReadiness(root, { mode: "fail" })
+
+    expect(report.summary).toMatchObject({ status: "ready", readyCount: 9, blockerCount: 0 })
+  })
+
+  it("blocks when route helpers omit the analytics permission contract", () => {
+    const root = makeTempRepo()
+    writeReadyFixture(root)
+    moveAccessContractsToRouteHelpers(root)
+    write(root, "app/[locale]/(dashboard)/dashboard/daily-digest/daily-digest-route-data-access.ts", 'permissions: ["dashboard.read"]')
+
+    const report = buildRoleCockpitReadiness(root, { mode: "fail" })
+
     expect(report.blockers).toContain("route_propagates_roles_without_currency_override")
   })
 })

@@ -6,6 +6,10 @@ import {
 } from "@prisma/client"
 
 import { resolveHrisPeopleAccessScope } from "@/services/hris/org.service"
+import {
+  markBusinessEventAppliedInTx,
+  recordBusinessEventInTx,
+} from "@/services/events/business-event.service"
 
 import {
   buildOperationalAttendanceCertification,
@@ -18,8 +22,14 @@ jest.mock("@/prisma/db", () => ({ db: { $transaction: jest.fn() } }))
 jest.mock("@/services/hris/org.service", () => ({
   resolveHrisPeopleAccessScope: jest.fn(),
 }))
+jest.mock("@/services/events/business-event.service", () => ({
+  recordBusinessEventInTx: jest.fn(),
+  markBusinessEventAppliedInTx: jest.fn(),
+}))
 
 const mockScope = resolveHrisPeopleAccessScope as jest.Mock
+const mockRecordEvent = recordBusinessEventInTx as jest.Mock
+const mockMarkEvent = markBusinessEventAppliedInTx as jest.Mock
 
 function managerScope() {
   return {
@@ -35,6 +45,11 @@ describe("HRIS operational time management", () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockScope.mockResolvedValue(managerScope())
+    mockRecordEvent.mockResolvedValue({
+      event: { id: "event-leave-approved-1" },
+      created: true,
+    })
+    mockMarkEvent.mockResolvedValue({ id: "event-leave-approved-1", status: "APPLIED" })
   })
 
   it("derives the employee for self-service and creates a pending leave request", async () => {
@@ -116,6 +131,147 @@ describe("HRIS operational time management", () => {
 
     expect(client.hrisLeaveBalanceEntry.aggregate).not.toHaveBeenCalled()
     expect(client.hrisTimeRequest.update).not.toHaveBeenCalled()
+  })
+
+  it("commits canonical LEAVE_APPROVED evidence, request linkage, balance debit, audit, and applied status in one tenant-scoped transaction", async () => {
+    const request = {
+      id: "request-1",
+      organizationId: "org-1",
+      employeeId: "emp-1",
+      leavePolicyId: "policy-1",
+      requestedById: "employee-user-1",
+      type: HrisTimeRequestType.LEAVE,
+      status: HrisTimeRequestStatus.REQUESTED,
+      periodStart: new Date("2026-08-03T00:00:00.000Z"),
+      periodEnd: new Date("2026-08-04T00:00:00.000Z"),
+      requestedMinutes: 480,
+      requestEvidenceHash: "sha256:request-proof",
+      sourceHash: "sha256:leave-source-proof",
+    }
+    const client = {
+      hrisTimeRequest: {
+        findFirst: jest.fn().mockResolvedValue(request),
+        update: jest.fn().mockImplementation(({ data }) => ({ ...request, ...data })),
+      },
+      hrisLeaveBalanceEntry: {
+        aggregate: jest.fn().mockResolvedValue({ _sum: { deltaMinutes: 960 } }),
+        create: jest.fn().mockResolvedValue({ id: "leave-debit-1" }),
+      },
+      auditLog: { create: jest.fn().mockResolvedValue({ id: "audit-1" }) },
+    }
+
+    const result = await decideOperationalTimeRequest({
+      organizationId: "org-1",
+      actorId: "manager-1",
+      actorPermissions: ["hris.people.manage"],
+      requestId: "request-1",
+      employeeId: "emp-1",
+      decision: "APPROVE",
+      decisionReason: "Approved with documented coverage",
+      approvalEvidenceHash: "sha256:approval-proof",
+    }, client as never)
+
+    expect(mockRecordEvent).toHaveBeenCalledWith(client, expect.objectContaining({
+      organizationId: "org-1",
+      eventType: "LEAVE_APPROVED",
+      eventSource: "INTERNAL",
+      idempotencyKey: "hris-leave-approved:org-1:request-1",
+      actorId: "manager-1",
+      sourceId: "request-1",
+      documentHash: "sha256:approval-proof",
+      payload: expect.objectContaining({
+        requestId: "request-1",
+        employeeId: "emp-1",
+        leavePolicyId: "policy-1",
+        requestedMinutes: 480,
+        sourceHash: "sha256:leave-source-proof",
+      }),
+      outboxMessages: [expect.objectContaining({
+        channel: "NOTIFICATION",
+        eventName: "LEAVE_APPROVED",
+        destination: "payroll",
+      })],
+    }))
+    expect(client.hrisTimeRequest.update).toHaveBeenCalledWith({
+      where: { id: "request-1", organizationId: "org-1" },
+      data: expect.objectContaining({
+        status: HrisTimeRequestStatus.APPROVED,
+        reviewedById: "manager-1",
+        approvalEvidenceHash: "sha256:approval-proof",
+        decisionBusinessEventId: "event-leave-approved-1",
+      }),
+    })
+    expect(client.hrisLeaveBalanceEntry.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        organizationId: "org-1",
+        employeeId: "emp-1",
+        entryType: "LEAVE_APPROVED",
+        sourceId: "request-1",
+        deltaMinutes: -480,
+      }),
+    })
+    expect(client.auditLog.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        organizationId: "org-1",
+        entityId: "request-1",
+        action: "HRIS_LEAVE_APPROVED",
+        changes: expect.objectContaining({ businessEventId: "event-leave-approved-1" }),
+      }),
+    })
+    expect(mockMarkEvent).toHaveBeenCalledWith(client, "org-1", "event-leave-approved-1")
+    expect(mockRecordEvent.mock.invocationCallOrder[0])
+      .toBeLessThan(client.hrisTimeRequest.update.mock.invocationCallOrder[0])
+    expect(mockMarkEvent.mock.invocationCallOrder[0])
+      .toBeGreaterThan(client.auditLog.create.mock.invocationCallOrder[0])
+    expect(result).toMatchObject({
+      status: HrisTimeRequestStatus.APPROVED,
+      decisionBusinessEventId: "event-leave-approved-1",
+    })
+  })
+
+  it("fails leave approval before persistence when canonical event creation fails", async () => {
+    mockRecordEvent.mockRejectedValue(new Error("event persistence failed"))
+    const request = {
+      id: "request-1",
+      organizationId: "org-1",
+      employeeId: "emp-1",
+      leavePolicyId: "policy-1",
+      requestedById: "employee-user-1",
+      type: HrisTimeRequestType.LEAVE,
+      status: HrisTimeRequestStatus.REQUESTED,
+      periodStart: new Date("2026-08-03T00:00:00.000Z"),
+      periodEnd: new Date("2026-08-04T00:00:00.000Z"),
+      requestedMinutes: 480,
+      requestEvidenceHash: "sha256:request-proof",
+      sourceHash: "sha256:leave-source-proof",
+    }
+    const client = {
+      hrisTimeRequest: {
+        findFirst: jest.fn().mockResolvedValue(request),
+        update: jest.fn(),
+      },
+      hrisLeaveBalanceEntry: {
+        aggregate: jest.fn().mockResolvedValue({ _sum: { deltaMinutes: 960 } }),
+        create: jest.fn(),
+      },
+      auditLog: { create: jest.fn() },
+    }
+
+    await expect(decideOperationalTimeRequest({
+      organizationId: "org-1",
+      actorId: "manager-1",
+      actorPermissions: ["hris.people.manage"],
+      requestId: "request-1",
+      employeeId: "emp-1",
+      decision: "APPROVE",
+      decisionReason: "Approved with documented coverage",
+      approvalEvidenceHash: "sha256:approval-proof",
+    }, client as never)).rejects.toThrow("event persistence failed")
+
+    expect(client.hrisTimeRequest.update).not.toHaveBeenCalled()
+    expect(client.hrisLeaveBalanceEntry.create).not.toHaveBeenCalled()
+    expect(client.auditLog.create).not.toHaveBeenCalled()
+    expect(mockMarkEvent).not.toHaveBeenCalled()
   })
 
   it("validates imports and creates an anomaly queue for unreconciled rows", async () => {

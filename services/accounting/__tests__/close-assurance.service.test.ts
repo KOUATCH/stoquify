@@ -743,6 +743,71 @@ describe("close assurance service", () => {
     )
   })
 
+  it("projects missing payroll transition proof as a critical close blocker", async () => {
+    const dataTrust = cleanDataTrust()
+    mockGetAccountantPortalData.mockResolvedValue({
+      ...dataTrust,
+      source: {
+        ...dataTrust.source,
+        trustLevel: "T0",
+        certificationStatus: "NON_COMPLIANT",
+      },
+      certificate: {
+        ...dataTrust.certificate,
+        level: "T0",
+        verdict: "NON_COMPLIANT",
+      },
+      summary: {
+        ...dataTrust.summary,
+        blockerCount: 1,
+        criticalBlockers: 1,
+      },
+      moduleEvidence: dataTrust.moduleEvidence.map((module) =>
+        module.module === "payroll"
+          ? { ...module, status: "blocked" }
+          : module,
+      ),
+      blockers: [
+        {
+          id: "payroll-transition-proof-missing",
+          severity: "critical",
+          gate: "payroll.lifecycle.transition-proof",
+          title: "Payroll lifecycle transition proof is missing",
+          detail:
+            "One post-cutover payroll run lacks complete verified lifecycle proof.",
+          sourceTables: ["payroll_runs", "payroll_run_transitions"],
+        },
+      ],
+      exportReadiness: {
+        ...dataTrust.exportReadiness,
+        canExportCertifiedPack: false,
+        disabledReason: "Critical payroll transition proof is missing.",
+      },
+    })
+
+    const result = await getCloseAssuranceDashboard("org-1", period.id)
+
+    expect(result.run.status).toBe("BLOCKED")
+    expect(result.checklist).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          key: "data-trust-provenance",
+          status: "FAILED",
+        }),
+      ]),
+    )
+    expect(result.findings).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          domain: "PAYROLL",
+          severity: "CRITICAL",
+          sourceType: "payroll.lifecycle.transition-proof",
+          sourceId: "payroll-transition-proof-missing",
+        }),
+      ]),
+    )
+  })
+
   it("blocks close readiness when payroll finance forecast proof is incomplete", async () => {
     mockGetTenantOperatingSnapshot.mockResolvedValue(
       tenantOperatingSnapshot({

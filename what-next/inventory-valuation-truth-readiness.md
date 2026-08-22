@@ -1,6 +1,6 @@
 # Inventory Valuation Truth Gate
 
-Generated: 2026-08-12T19:18:02.272Z
+Generated: 2026-08-22T09:02:40.932Z
 Mode: fail
 Status: ready
 

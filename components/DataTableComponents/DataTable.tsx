@@ -75,6 +75,7 @@ interface DataTableProps<TData> {
   searchKey?: keyof TData | string;
   searchPlaceholder?: string;
   searchContainerClassName?: string;
+  singleRowControls?: boolean;
   showSearch?: boolean;
   showDateFilters?: boolean;
   showToolbar?: boolean;
@@ -162,6 +163,7 @@ export default function DataTable<TData>({
   searchKey,
   searchPlaceholder,
   searchContainerClassName,
+  singleRowControls = false,
   showSearch = true,
   showDateFilters = true,
   showToolbar = true,
@@ -301,11 +303,17 @@ export default function DataTable<TData>({
         <div
           className={cn(
             "dashboard-table-toolbar flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between",
-            isLanding && "rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)]/70 p-3"
+            isLanding && "rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)]/70 p-3",
+            singleRowControls && "xl:flex-nowrap"
           )}
         >
           {showSearch ? (
-            <div className={cn("w-full min-w-0 flex-1", searchContainerClassName ?? "lg:min-w-[18rem]")}>
+            <div
+              className={cn(
+                "w-full min-w-0 flex-1",
+                searchContainerClassName ?? (singleRowControls ? "xl:min-w-0" : "lg:min-w-[18rem]")
+              )}
+            >
               <SearchBar
                 data={data}
                 onSearch={setSearchResults}
@@ -316,7 +324,12 @@ export default function DataTable<TData>({
             </div>
           ) : null}
           {(showDateFilters || showToolbar || filters?.additionalFilters) ? (
-            <div className="flex w-full min-w-0 flex-wrap items-center gap-2 lg:w-auto lg:flex-1 lg:justify-end">
+            <div
+              className={cn(
+                "flex w-full min-w-0 flex-wrap items-center gap-2 lg:w-auto lg:flex-1 lg:justify-end",
+                singleRowControls && "xl:flex-none xl:flex-nowrap"
+              )}
+            >
               {showDateFilters ? (
                 <>
                   <DateRangeFilter
@@ -324,12 +337,14 @@ export default function DataTable<TData>({
                     onFilter={setDateFilteredData}
                     setIsDateFilterActive={setIsDateFilterActive}
                     variant={variant}
+                    className={singleRowControls ? "xl:w-36 xl:shrink-0 xl:[&_button]:w-36 xl:[&_button]:overflow-hidden xl:[&_button]:whitespace-nowrap" : undefined}
                   />
                   <DateFilters
                     data={data}
                     onFilter={setDateFilteredData}
                     setIsDateFilterActive={setIsDateFilterActive}
                     variant={variant}
+                    className={singleRowControls ? "xl:w-28 xl:shrink-0" : undefined}
                   />
                 </>
               ) : null}

@@ -1,0 +1,63 @@
+{
+  "artifactId": "A-02",
+  "artifactStatus": "TEMPLATE_NOT_EVIDENCE",
+  "packetId": "MIG-RISK-20260611130000-F7DE8DC7-PRODUCTION-<FINAL_DATE>",
+  "organization": "Stoquify",
+  "checker": {
+    "identity": "MAXIMILLIANO BONGA",
+    "role": "Database administrator / engineering lead",
+    "authority": "Independent production migration risk decision",
+    "freshAuthentication": { "method": null, "authenticatedAt": null, "immutableRecordId": null, "recordSha256": null },
+    "independenceDeclared": null,
+    "conflictDisclosure": null,
+    "signature": { "method": null, "detachedSignaturePathOrApprovalRecordId": null, "signatureSha256": null, "signingKeyFingerprintOrIdentityProvider": null, "signedAt": null }
+  },
+  "checkerIsNotMakerOrExecutionOperator": null,
+  "finalCandidate": { "commitVerified": null, "treeVerified": null, "cleanWorktreeVerified": null },
+  "technicalSnapshotPresentedForFutureVerification": {
+    "commit": "35b4cc6a06a50ee11de5bfce6b04993e38bd589a",
+    "tree": "7efce91d5ba871e91470f60ed3b53833a1c3b4b4",
+    "dirty": true,
+    "migrationCanonicalLfSha256": "2fde92f4ad0cbb1a2a517b12e71c38997dc4956c9d57d70ff1ae0c636ff2f191",
+    "migrationRawFileSha256": "f7de8dc7ace0a5e063cdb7ecd9527e77807b7f872e474546819e9fca13a273d4",
+    "destructiveInventorySha256": "55d332c3319b65acfdf415e64042a15504d12861b664429af7e63155296e1ad1",
+    "prismaSchemaSha256": "cdbc9c64e88d642f2bfc716ee4fda2e8b7dfbfc26f08a5170645311268ae8af9",
+    "rollingEvidenceManifestSha256": "37c4b416c2e58609866770bef995f85ec35839ecd8b0c497e760487b52a41911",
+    "verificationStatus": "NOT_VERIFIED_BY_CHECKER"
+  },
+  "hashVerification": {
+    "migrationCanonicalLfSha256Expected": "2fde92f4ad0cbb1a2a517b12e71c38997dc4956c9d57d70ff1ae0c636ff2f191",
+    "migrationCanonicalLfSha256Verified": null,
+    "migrationRawFileSha256Expected": "f7de8dc7ace0a5e063cdb7ecd9527e77807b7f872e474546819e9fca13a273d4",
+    "migrationRawFileSha256Verified": null,
+    "destructiveInventorySha256Expected": "55d332c3319b65acfdf415e64042a15504d12861b664429af7e63155296e1ad1",
+    "destructiveInventorySha256Verified": null,
+    "all13FindingHashesVerified": null,
+    "prismaSchemaSha256Verified": null,
+    "finalEvidenceManifestSha256": null,
+    "finalEvidenceManifestSha256Verified": null,
+    "productionRestoreEvidenceSha256": null,
+    "productionRestoreEvidenceSha256Verified": null,
+    "makerAttestationSha256": null,
+    "makerSignatureVerified": null
+  },
+  "controlResults": {
+    "productionTargetPathIsCorrect": null,
+    "aggregateDataImpactProfilePassed": null,
+    "backupIntegrityPassed": null,
+    "independentRestorePassed": null,
+    "rpoRtoAccepted": null,
+    "schemaAndMigrationHistoryPassed": null,
+    "all13ReconciliationsPassed": null,
+    "authenticationRegressionPassed": null,
+    "failureInjectionPassed": null,
+    "rollbackOrFixForwardRehearsed": null,
+    "secretsAndPiiRedactionPassed": null
+  },
+  "decision": null,
+  "allowedDecisions": ["REJECT_AND_REWORK", "APPROVE_EXACT_HASH"],
+  "conditions": [],
+  "rationale": null,
+  "decidedAt": null,
+  "completionRule": "Set artifactStatus to PRESENT_VALID only after independent verification of the frozen bundle, a signature after the maker timestamp, and exactly one allowed decision."
+}

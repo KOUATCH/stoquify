@@ -325,4 +325,31 @@ describe("statement import ingestion", () => {
     })
     expect(mockedDb.statementFile.create).not.toHaveBeenCalled()
   })
+
+  it("rejects an adapter result with no statement lines before persistence", async () => {
+    const emptyAdapter = Object.create(adapter) as MobileMoneyHmacAdapter
+    emptyAdapter.parseStatement = jest.fn().mockReturnValue({
+      sourceType: "EMPTY_TEST_STATEMENT",
+      lines: [],
+    })
+
+    await expect(
+      importProviderStatement({
+        organizationId: "org-1",
+        providerAccountId: "provider-account-1",
+        adapter: emptyAdapter,
+        rawContent: "[]",
+        correlationId: "corr-empty",
+      }),
+    ).rejects.toMatchObject({
+      reason: "INVALID_PAYLOAD",
+      safeDetails: expect.objectContaining({
+        correlationId: "corr-empty",
+        providerCode: adapter.providerCode,
+        fileHash: sha256("[]"),
+      }),
+    })
+    expect(mockedDb.$transaction).not.toHaveBeenCalled()
+    expect(mockedDb.statementFile.create).not.toHaveBeenCalled()
+  })
 })

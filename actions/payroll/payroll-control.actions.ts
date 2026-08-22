@@ -3,13 +3,18 @@
 import { revalidatePath } from "next/cache";
 
 import {
-  approveAndPostPayrollRun,
+  approvePayrollPaymentBatch,
+  approvePayrollRun,
   calculatePayrollRun,
+  emitPayrollPayslips,
   getPayrollRunWorkbenchData,
   getPayrollWorkbenchData,
   payrollRunWorkbenchInputSchema,
+  postPayrollRun,
   preparePayrollDeclarations,
+  requestPayrollPaymentBatch,
   releasePayrollPaymentBatch,
+  reviewPayrollRun,
   type PayrollWorkbenchData,
 } from "@/services/payroll/payroll-control.service";
 import {
@@ -35,12 +40,18 @@ import {
   settlePayrollEmployeeBalanceCaseInputSchema,
 } from "@/services/payroll/payroll-employee-balance.service";
 import {
-  approveAndPostPayrollRunInputSchema,
+  approvePayrollPaymentBatchInputSchema,
+  approvePayrollRunInputSchema,
   calculatePayrollRunInputSchema,
+  emitPayrollPayslipsInputSchema,
+  postPayrollRunInputSchema,
   preparePayrollDeclarationsInputSchema,
+  requestPayrollPaymentBatchInputSchema,
   releasePayrollPaymentBatchInputSchema,
+  reviewPayrollRunInputSchema,
 } from "@/services/payroll/payroll-control.schemas";
 import { protect } from "@/services/_shared/protect";
+import { FreshAuthRequiredError } from "@/lib/security/auth-session";
 
 export type { PayrollWorkbenchData };
 export type PayrollRunWorkbenchResult = Awaited<
@@ -132,14 +143,50 @@ export async function calculatePayrollRunAction(input: unknown) {
   return calculateRun(input);
 }
 
+const reviewRun = protect<
+  unknown,
+  Awaited<ReturnType<typeof reviewPayrollRun>>
+>(
+  {
+    permission: "payroll.runs.review",
+    auditResource: "PayrollRun",
+    freshAuth: { maxAgeSeconds: 300 },
+    tenantGuard: "handler-derived",
+    module: {
+      moduleSlug: "payroll",
+      surface: "payroll.runs.review",
+      accessIntent: "write",
+      mode: "enforce",
+    },
+  },
+  async (input, ctx) => {
+    if (!ctx.freshAuth) throw new FreshAuthRequiredError();
+    const parsed = reviewPayrollRunInputSchema.parse({
+      ...asRecord(input),
+      organizationId: ctx.orgId,
+      actorId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      lastAuthAt: ctx.freshAuth.lastAuthAt,
+      now: new Date(),
+    });
+    const result = await reviewPayrollRun(parsed);
+    revalidatePayrollPaths();
+    return result;
+  },
+);
+
+export async function reviewPayrollRunAction(input: unknown) {
+  return reviewRun(input);
+}
+
 const approveRun = protect<
   unknown,
-  Awaited<ReturnType<typeof approveAndPostPayrollRun>>
+  Awaited<ReturnType<typeof approvePayrollRun>>
 >(
   {
     permission: "payroll.runs.approve",
     auditResource: "PayrollRun",
-    freshAuth: true,
+    freshAuth: { maxAgeSeconds: 300 },
     tenantGuard: "handler-derived",
     module: {
       moduleSlug: "payroll",
@@ -149,21 +196,160 @@ const approveRun = protect<
     },
   },
   async (input, ctx) => {
-    const parsed = approveAndPostPayrollRunInputSchema.parse({
+    if (!ctx.freshAuth) throw new FreshAuthRequiredError();
+    const parsed = approvePayrollRunInputSchema.parse({
+      ...asRecord(input),
+      organizationId: ctx.orgId,
+      actorId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      lastAuthAt: ctx.freshAuth.lastAuthAt,
+      now: new Date(),
+    });
+    const result = await approvePayrollRun(parsed);
+    revalidatePayrollPaths();
+    return result;
+  },
+);
+
+export async function approvePayrollRunAction(input: unknown) {
+  return approveRun(input);
+}
+
+const emitPayslips = protect<
+  unknown,
+  Awaited<ReturnType<typeof emitPayrollPayslips>>
+>(
+  {
+    permission: "payroll.payslips.emit",
+    auditResource: "PayrollRun",
+    freshAuth: { maxAgeSeconds: 300 },
+    tenantGuard: "handler-derived",
+    module: {
+      moduleSlug: "payroll",
+      surface: "payroll.payslips.emit",
+      accessIntent: "write",
+      mode: "enforce",
+    },
+  },
+  async (input, ctx) => {
+    if (!ctx.freshAuth) throw new FreshAuthRequiredError();
+    const parsed = emitPayrollPayslipsInputSchema.parse({
+      ...asRecord(input),
+      organizationId: ctx.orgId,
+      actorId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      lastAuthAt: ctx.freshAuth.lastAuthAt,
+      now: new Date(),
+    });
+    const result = await emitPayrollPayslips(parsed);
+    revalidatePayrollPaths();
+    return result;
+  },
+);
+
+export async function emitPayrollPayslipsAction(input: unknown) {
+  return emitPayslips(input);
+}
+
+const postRun = protect<unknown, Awaited<ReturnType<typeof postPayrollRun>>>(
+  {
+    permission: "payroll.runs.post",
+    auditResource: "PayrollRun",
+    freshAuth: { maxAgeSeconds: 300 },
+    tenantGuard: "handler-derived",
+    module: {
+      moduleSlug: "payroll",
+      surface: "payroll.runs.post",
+      accessIntent: "write",
+      mode: "enforce",
+    },
+  },
+  async (input, ctx) => {
+    if (!ctx.freshAuth) throw new FreshAuthRequiredError();
+    const parsed = postPayrollRunInputSchema.parse({
+      ...asRecord(input),
+      organizationId: ctx.orgId,
+      actorId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      lastAuthAt: ctx.freshAuth.lastAuthAt,
+      now: new Date(),
+    });
+    const result = await postPayrollRun(parsed);
+    revalidatePayrollPaths();
+    return result;
+  },
+);
+
+export async function postPayrollRunAction(input: unknown) {
+  return postRun(input);
+}
+
+const requestPaymentBatch = protect<
+  unknown,
+  Awaited<ReturnType<typeof requestPayrollPaymentBatch>>
+>(
+  {
+    permission: "payroll.payments.request",
+    auditResource: "PayrollPaymentBatch",
+    freshAuth: true,
+    tenantGuard: "handler-derived",
+    module: {
+      moduleSlug: "payroll",
+      surface: "payroll.payments.request",
+      accessIntent: "write",
+      mode: "enforce",
+    },
+  },
+  async (input, ctx) => {
+    const parsed = requestPayrollPaymentBatchInputSchema.parse({
+      ...asRecord(input),
+      organizationId: ctx.orgId,
+      requestedById: ctx.userId,
+      actorPermissions: ctx.permissions,
+      lastAuthAt: ctx.freshAuth?.lastAuthAt ?? new Date(),
+    });
+    const result = await requestPayrollPaymentBatch(parsed);
+    revalidatePayrollPaths();
+    return result;
+  },
+);
+
+export async function requestPayrollPaymentBatchAction(input: unknown) {
+  return requestPaymentBatch(input);
+}
+
+const approvePaymentBatch = protect<
+  unknown,
+  Awaited<ReturnType<typeof approvePayrollPaymentBatch>>
+>(
+  {
+    permission: "payroll.payments.approve",
+    auditResource: "PayrollPaymentBatch",
+    freshAuth: true,
+    tenantGuard: "handler-derived",
+    module: {
+      moduleSlug: "payroll",
+      surface: "payroll.payments.approve",
+      accessIntent: "write",
+      mode: "enforce",
+    },
+  },
+  async (input, ctx) => {
+    const parsed = approvePayrollPaymentBatchInputSchema.parse({
       ...asRecord(input),
       organizationId: ctx.orgId,
       approvedById: ctx.userId,
       actorPermissions: ctx.permissions,
       lastAuthAt: ctx.freshAuth?.lastAuthAt ?? new Date(),
     });
-    const result = await approveAndPostPayrollRun(parsed);
+    const result = await approvePayrollPaymentBatch(parsed);
     revalidatePayrollPaths();
     return result;
   },
 );
 
-export async function approveAndPostPayrollRunAction(input: unknown) {
-  return approveRun(input);
+export async function approvePayrollPaymentBatchAction(input: unknown) {
+  return approvePaymentBatch(input);
 }
 
 const releasePaymentBatch = protect<
@@ -186,7 +372,6 @@ const releasePaymentBatch = protect<
     const parsed = releasePayrollPaymentBatchInputSchema.parse({
       ...asRecord(input),
       organizationId: ctx.orgId,
-      approvedById: ctx.userId,
       releasedById: ctx.userId,
       actorPermissions: ctx.permissions,
       lastAuthAt: ctx.freshAuth?.lastAuthAt ?? new Date(),
@@ -405,6 +590,7 @@ const prepareDeclarations = protect<
   {
     permission: "payroll.declarations.prepare",
     auditResource: "PayrollDeclaration",
+    freshAuth: true,
     tenantGuard: "handler-derived",
     module: {
       moduleSlug: "payroll",

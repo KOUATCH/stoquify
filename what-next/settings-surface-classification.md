@@ -14,14 +14,14 @@ Fail mode: this gate exits non-zero when any settings surface requires review. M
 
 ## Summary
 
-- Generated at: 2026-08-11T16:06:46.997Z
-- Source inventory generated at: 2026-08-11T16:06:46.943Z
-- Classified records: 37
+- Generated at: 2026-08-22T07:59:36.476Z
+- Source inventory generated at: 2026-08-22T07:59:36.455Z
+- Classified records: 38
 - Active review findings: 0
 - Status allowed-public: 4
 - Status delegated: 3
 - Status helper: 2
-- Status protected: 27
+- Status protected: 28
 - Status protected-mixed: 1
 
 ## Reviewed Public And Token Boundaries
@@ -64,6 +64,7 @@ Fail mode: this gate exits non-zero when any settings surface requires review. M
 | actions/locations/location-management-actions.ts | server-action | rbac-protected | protected | required-and-present | module-observed | not-detected | assertCanUseOrganization( | present |
 | actions/locations/updateLocationById.ts | server-action | rbac-protected | protected | required-and-present | module-observed | not-detected | ctx.orgId | present |
 | actions/modules/module-control.actions.ts | server-action | rbac-protected | protected | required-and-present | module-observed | not-detected | ctx.orgId | present |
+| actions/onboarding/master-data-onboarding.actions.ts | server-action | rbac-protected | protected | required-and-present | module-observed | not-detected | ctx.orgId | present |
 | actions/organization/organization-settings-actions.ts | server-action | rbac-protected | protected | required-and-present | module-observed | present | assertCanUseOrganization(; ctx.orgId | present |
 | actions/roles/createRole.ts | server-action | rbac-protected | protected | required-and-present | module-observed | present | ctx.orgId | present |
 | actions/roles/getOrgRoles.ts | server-action | rbac-protected | protected | required-and-present | module-observed | not-detected | ctx.orgId | present |

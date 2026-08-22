@@ -450,6 +450,7 @@ const CLOSE_SOURCE_TABLES = [
   "stock_count_sessions",
   "payroll_periods",
   "payroll_runs",
+  "payroll_run_transitions",
   "payroll_payment_batches",
   "payroll_declarations",
   "payroll_declaration_evidence",

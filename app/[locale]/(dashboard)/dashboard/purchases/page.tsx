@@ -12,13 +12,14 @@ import {
 
 import { getOrgPurchaseOrderById as getPurchaseOrder } from "@/actions/purchaseOrderWorkflow/newPOActions"
 import { routeByKey, withPurchasesSurfaceAccess } from "./purchases-route-access"
+import { buildPurchaseOrderRedirect, type PurchaseRouteSearchParams } from "./purchase-route-redirect"
 import { Separator } from "@/components/ui/separator"
 import { formatCurrency } from "@/lib/i18n/formatters"
 import type { PurchaseOrderStatus } from "@/services/purchase-order/purchase-order.schemas"
 import { format } from "date-fns"
 import { ArrowLeft, AtSign, Building2, Calendar, CreditCard, DollarSign, Edit, FileText, Hash, Mail, MapPin, MoreHorizontal, Package, Phone, User } from 'lucide-react'
 import { Link } from "@/i18n/navigation"
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 import React from "react"
 
 // Utilities
@@ -180,10 +181,12 @@ type PurchaseOrderDetails = {
 
 interface PurchaseOrderDetailsPageProps {
   params: Promise<{ locale: string; id?: string }>
+  searchParams?: Promise<PurchaseRouteSearchParams>
 }
 
-export default async function PurchaseOrderPage({ params }: PurchaseOrderDetailsPageProps) {
+export default async function PurchaseOrderPage({ params, searchParams }: PurchaseOrderDetailsPageProps) {
   const { id: orderId, locale: rawLocale } = await params
+  const query = await searchParams
   const surface = routeByKey("purchases-dashboard")
 
   if (!surface) {
@@ -197,9 +200,7 @@ export default async function PurchaseOrderPage({ params }: PurchaseOrderDetails
       resourceId: orderId,
     },
     onAllowed: async (ctx, locale) => {
-      if (!orderId) {
-        notFound()
-      }
+      redirect(buildPurchaseOrderRedirect({ locale, searchParams: query }))
 
       let po: PurchaseOrderDetails | null = null
       try {
@@ -286,7 +287,7 @@ export default async function PurchaseOrderPage({ params }: PurchaseOrderDetails
                         Created{" "}
                         {(() => {
                           const d = safeDate(createdAt)
-                          return d ? format(d, "PPP") : "—"
+                          return d ? format(d!, "PPP") : "—"
                         })()}
                       </span>
                     </div>
@@ -322,25 +323,25 @@ export default async function PurchaseOrderPage({ params }: PurchaseOrderDetails
                   {supplier?.email && (
                     <div className="flex items-center gap-2">
                       <AtSign className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm">{supplier.email}</span>
+                      <span className="text-sm">{supplier!.email}</span>
                     </div>
                   )}
                   {supplier?.phone && (
                     <div className="flex items-center gap-2">
                       <Phone className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm">{supplier.phone}</span>
+                      <span className="text-sm">{supplier!.phone}</span>
                     </div>
                   )}
                   {supplier?.contactPerson && (
                     <div className="flex items-center gap-2">
                       <User className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm">{supplier.contactPerson}</span>
+                      <span className="text-sm">{supplier!.contactPerson}</span>
                     </div>
                   )}
                   {supplier?.address && (
                     <div className="flex items-start gap-2">
                       <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
-                      <span className="text-sm">{supplier.address}</span>
+                      <span className="text-sm">{supplier!.address}</span>
                     </div>
                   )}
                 </div>
@@ -353,17 +354,17 @@ export default async function PurchaseOrderPage({ params }: PurchaseOrderDetails
                     <MapPin className="h-4 w-4 text-muted-foreground" />
                     <span className="font-medium">{resolvedLocation?.name ?? "Unknown location"}</span>
                   </div>
-                  {resolvedLocation?.address && <div className="text-sm text-muted-foreground">{resolvedLocation.address}</div>}
+                  {resolvedLocation?.address && <div className="text-sm text-muted-foreground">{resolvedLocation!.address}</div>}
                   {resolvedLocation?.phone && (
                     <div className="flex items-center gap-2">
                       <Phone className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm">{resolvedLocation.phone}</span>
+                      <span className="text-sm">{resolvedLocation!.phone}</span>
                     </div>
                   )}
                   {resolvedLocation?.email && (
                     <div className="flex items-center gap-2">
                       <AtSign className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm">{resolvedLocation.email}</span>
+                      <span className="text-sm">{resolvedLocation!.email}</span>
                     </div>
                   )}
                 </div>

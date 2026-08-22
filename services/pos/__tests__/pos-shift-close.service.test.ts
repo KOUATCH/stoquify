@@ -346,12 +346,62 @@ describe("POS shift close evidence", () => {
   })
 
   it("requires an explanation before recording a cash shortage or overage", async () => {
-    await expect(closePOSShift(closeInput("99.50"))).rejects.toThrow(/variance explanation is required/i)
+    await expect(closePOSShift(closeInput("99.00"))).rejects.toThrow(/variance explanation is required/i)
 
     expect(mockTx.pOSSession.updateMany).not.toHaveBeenCalled()
     expect(mockTx.cashDrawerTransaction.create).not.toHaveBeenCalled()
     expect(mockTx.businessEvent.create).not.toHaveBeenCalled()
     expect(mockTx.auditLog.create).not.toHaveBeenCalled()
+  })
+
+  it("treats a sub-franc XAF difference as balanced without a manager explanation", async () => {
+    const session = { ...activeSession(), expectedBalance: decimal("100.49") }
+    mockTx.pOSSession.findFirst.mockResolvedValue(session)
+    mockTx.cashDrawerTransaction.findMany.mockResolvedValue([
+      {
+        cashDrawer: {
+          id: "drawer-1",
+          isOpen: true,
+          currentBalance: decimal("100.49"),
+          expectedBalance: decimal("100.49"),
+        },
+      },
+    ])
+
+    const result = await closePOSShift(closeInput("100.00"))
+
+    expect(result).toMatchObject({ variance: 0, varianceDirection: "BALANCED" })
+    expect(mockTx.pOSSession.updateMany).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({ variance: decimal(0), notes: null }),
+    }))
+    expect(createdEvent?.payload).toMatchObject({
+      countedBalance: "100.00",
+      expectedBalance: "100.49",
+      variance: "0.00",
+      varianceDirection: "BALANCED",
+      explanation: null,
+    })
+  })
+
+  it("retains cent-level variance controls for currencies with decimal minor units", async () => {
+    const session = { ...activeSession(), expectedBalance: decimal("100.01") }
+    mockTx.pOSSession.findFirst.mockResolvedValue(session)
+    mockTx.cashDrawerTransaction.findMany.mockResolvedValue([
+      {
+        cashDrawer: {
+          id: "drawer-1",
+          isOpen: true,
+          currentBalance: decimal("100.01"),
+          expectedBalance: decimal("100.01"),
+        },
+      },
+    ])
+    mockTx.organization.findUnique.mockResolvedValue({ currency: "USD" })
+
+    await expect(closePOSShift(closeInput("100.00"))).rejects.toThrow(/variance explanation is required/i)
+
+    expect(mockTx.pOSSession.updateMany).not.toHaveBeenCalled()
+    expect(mockTx.businessEvent.create).not.toHaveBeenCalled()
   })
 
   it("stops before close audit when the event cannot reach APPLIED", async () => {

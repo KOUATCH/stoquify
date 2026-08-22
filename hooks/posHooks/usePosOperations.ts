@@ -138,6 +138,7 @@ export function useOpenPOSShift() {
     onSuccess: (_result, variables: any) => {
       queryClient.invalidateQueries({ queryKey: posOperationsKeys.terminals(variables.locationId) })
       queryClient.invalidateQueries({ queryKey: posOperationsKeys.activeSession(variables.terminalId) })
+      queryClient.invalidateQueries({ queryKey: posOperationsKeys.currentUserSession() })
     },
   })
 }

@@ -22,15 +22,56 @@ function writeReadyFixture(root) {
       "po.createdById === approvedById",
       "must be approved by a different user",
       'action: "APPROVE_PURCHASE_ORDER"',
-      "postGoodsReceiptStock(",
+      "async function applyInventoryReceipt",
+      "await postGoodsReceiptStock(",
+      "idempotencyKey:",
+      "tx,",
+      "// ── DTO transformer",
       "Cannot replace purchase order lines after receipt or invoice evidence exists.",
       "export async function receiveItems",
       "db.$transaction(async (tx)",
+      '"organizationId" = ${input.organizationId}',
+      "FOR UPDATE",
+      "idempotencyKey: input.idempotencyKey",
       "tx.goodsReceipt.create(",
       "tx.goodsReceiptLine.create(",
-      "tx.purchaseOrderLine.update(",
+      "tx.purchaseOrderLine.updateMany(",
       "await applyInventoryReceipt(tx,",
+      "function inspectionResolutionPayloadHash",
+      "export async function resolveGoodsReceiptInspection",
+      "db.$transaction(async (tx)",
+      'FROM "goods_receipts"',
+      '"organizationId" = ${input.organizationId}',
+      "FOR UPDATE",
+      'FROM "purchase_orders"',
+      '"organizationId" = ${input.organizationId}',
+      "FOR UPDATE",
+      "tx.goodsReceiptInspectionResolution.create(",
+      "tx.purchaseOrderLine.updateMany(",
+      "await applyInventoryReceipt(tx,",
+      "tx.goodsReceipt.update(",
       "export async function bulkUpdateStatus",
+    ].join("\n"),
+  )
+  write(
+    root,
+    "services/inventory/inventory-stock-event.service.ts",
+    [
+      "if (hasTransaction(client)) return client.$transaction(run)",
+      "return run(client)",
+      "export function postGoodsReceiptStock",
+      "return postInventoryStockEvent(",
+      "client,",
+      "export function postPurchaseReturnStock",
+    ].join("\n"),
+  )
+  write(
+    root,
+    "services/purchase-order/__tests__/purchase-receiving.postgres.test.ts",
+    [
+      'it("commits receipt evidence, ordered quantity, and stock posting as one unit"',
+      'it("rolls back receipt evidence and ordered quantity when stock posting fails"',
+      'it("holds failed inspection stock and releases it exactly once through authorized resolution"',
     ].join("\n"),
   )
   write(
@@ -43,7 +84,11 @@ function writeReadyFixture(root) {
       "makerCheckerVerified: true",
       "tx.goodsReceiptLine.findFirst(",
       "Supplier invoice quantity exceeds received and uninvoiced goods.",
-      "Supplier invoice unit cost does not match goods receipt cost",
+      "const requiresMatchException = varianceAmount.gt(0)",
+      "EXACT_THREE_WAY_MATCH_EXCEPTION_POLICY_VERSION",
+      "Supplier invoice posting is blocked until its exact-match variance has an approved active exception.",
+      "status: SupplierInvoiceMatchExceptionStatus.APPROVED",
+      "expiresAt: { gt: approvalAt }",
       "tx.threeWayMatch.create(",
       "ThreeWayMatchStatus.MATCHED",
       "threeWayMatchId: match.id",
@@ -76,6 +121,7 @@ function writeReadyFixture(root) {
       "freshAuth: true",
       "approveSupplierInvoice(parsed)",
       "export async function postSupplierInvoiceAction",
+      'permission: "purchasing.ap.match.review"',
       "const requestBankChange",
     ].join("\n"),
   )
@@ -87,7 +133,10 @@ function writeReadyFixture(root) {
   write(
     root,
     "services/purchasing/__tests__/ap-control.service.test.ts",
-    ["rejects a supplier invoice when maker and approver are the same actor"].join("\n"),
+    [
+      "rejects a supplier invoice when maker and approver are the same actor",
+      "blocks disputed invoice posting without an approved active exception",
+    ].join("\n"),
   )
   write(
     root,
@@ -159,6 +208,88 @@ describe("purchasing AP consolidation gate", () => {
     const report = buildPurchasingAPReadiness(root, { mode: "fail" })
 
     expect(report.blockers).toContain("supplier_invoice_receipt_and_variance_controls")
+  })
+
+  it("blocks when invoice variance posting loses its approved-active exception gate", () => {
+    const root = makeTempRepo()
+    writeReadyFixture(root)
+    const target = path.join(root, "services/purchasing/ap-control.service.ts")
+    fs.writeFileSync(
+      target,
+      fs
+        .readFileSync(target, "utf8")
+        .replace(
+          "Supplier invoice posting is blocked until its exact-match variance has an approved active exception.",
+          "exception gate missing",
+        ),
+      "utf8",
+    )
+
+    const report = buildPurchasingAPReadiness(root, { mode: "fail" })
+
+    expect(report.blockers).toContain("supplier_invoice_receipt_and_variance_controls")
+  })
+
+  it("blocks when receipt finalization loses its PostgreSQL row lock", () => {
+    const root = makeTempRepo()
+    writeReadyFixture(root)
+    const target = path.join(root, "services/purchase-order/purchase-order.service.ts")
+    fs.writeFileSync(target, fs.readFileSync(target, "utf8").replace("FOR UPDATE", "lock missing"), "utf8")
+
+    const report = buildPurchasingAPReadiness(root, { mode: "fail" })
+
+    expect(report.blockers).toContain("goods_receipt_atomic_stock_posting")
+    expect(gateResultForReport(report, "fail").exitCode).toBe(1)
+  })
+
+  it("blocks when receipt evidence is no longer persisted before ordered quantity and stock posting", () => {
+    const root = makeTempRepo()
+    writeReadyFixture(root)
+    const target = path.join(root, "services/purchase-order/purchase-order.service.ts")
+    fs.writeFileSync(
+      target,
+      fs.readFileSync(target, "utf8").replace("tx.goodsReceiptLine.create(", "receipt line persistence missing"),
+      "utf8",
+    )
+
+    const report = buildPurchasingAPReadiness(root, { mode: "fail" })
+
+    expect(report.blockers).toContain("goods_receipt_atomic_stock_posting")
+  })
+
+  it("blocks when the inventory kernel stops consuming the caller transaction", () => {
+    const root = makeTempRepo()
+    writeReadyFixture(root)
+    const target = path.join(root, "services/inventory/inventory-stock-event.service.ts")
+    fs.writeFileSync(
+      target,
+      fs.readFileSync(target, "utf8").replace("return run(client)", "return db.$transaction(run)"),
+      "utf8",
+    )
+
+    const report = buildPurchasingAPReadiness(root, { mode: "fail" })
+
+    expect(report.blockers).toContain("goods_receipt_atomic_stock_posting")
+  })
+
+  it("blocks when receipt rollback certification evidence is removed", () => {
+    const root = makeTempRepo()
+    writeReadyFixture(root)
+    const target = path.join(root, "services/purchase-order/__tests__/purchase-receiving.postgres.test.ts")
+    fs.writeFileSync(
+      target,
+      fs
+        .readFileSync(target, "utf8")
+        .replace(
+          'it("rolls back receipt evidence and ordered quantity when stock posting fails"',
+          'it("rollback evidence removed"',
+        ),
+      "utf8",
+    )
+
+    const report = buildPurchasingAPReadiness(root, { mode: "fail" })
+
+    expect(report.blockers).toContain("goods_receipt_atomic_stock_posting")
   })
 
   it("blocks when supplier invoice approval loses fresh-auth maker-checker enforcement", () => {

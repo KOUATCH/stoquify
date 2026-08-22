@@ -1,18 +1,19 @@
 # Payment Cash Truth Readiness Gate
 
-Generated: 2026-08-15T16:51:51.599Z
+Generated: 2026-08-22T09:02:48.527Z
 Mode: fail
 Status: ready
 
 ## Summary
 
-- Checks ready: 12/12
+- Checks ready: 14/14
 - Blockers: 0
 
 ## Checks
 
 - ready: provider_account_readiness_contract
 - ready: run_blocks_unready_provider_before_creation
+- ready: auto_match_requires_amount_and_currency_agreement
 - ready: redacted_material_evidence_manifest
 - ready: deterministic_source_hash
 - ready: signoff_rechecks_provider_readiness
@@ -23,6 +24,7 @@ Status: ready
 - ready: scheduled_assurance_recomputes_source_evidence
 - ready: policy_gate_wiring
 - ready: durable_payment_reconciliation_schema_migration
+- ready: provider_and_statement_evidence_is_database_immutable
 
 ## Blockers
 

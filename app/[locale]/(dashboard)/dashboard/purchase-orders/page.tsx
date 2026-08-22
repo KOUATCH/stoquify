@@ -21,10 +21,15 @@ import { Link } from "@/i18n/navigation"
 import { pickLocale } from "@/i18n/routing"
 import { formatCurrency } from "@/lib/i18n/formatters"
 import {
+  getPurchaseOrderCurrency,
   getPurchaseOrderFormOptions,
   getSummary,
   listPurchaseOrders,
 } from "@/services/purchase-order/purchase-order.service"
+import {
+  derivePurchaseOrderCreateCapability,
+  projectPurchaseOrderForActor,
+} from "@/services/purchase-order/purchase-order-capabilities"
 import { Locale } from "@/types/bilingual"
 
 import { routeByKey, withPurchaseOrdersSurfaceAccess } from "./purchase-orders-route-access"
@@ -93,11 +98,16 @@ export default async function PurchaseOrdersPage() {
       resource: "PurchaseOrder",
     },
     onAllowed: async (_ctx, activeLocale: Locale) => {
-      const [purchaseOrders, options, summary] = await Promise.all([
+      const [purchaseOrders, options, summary, currency] = await Promise.all([
         listPurchaseOrders(_ctx.orgId),
         getPurchaseOrderFormOptions(_ctx.orgId),
         getSummary(_ctx.orgId),
+        getPurchaseOrderCurrency(_ctx.orgId),
       ])
+      const createCapability = derivePurchaseOrderCreateCapability(_ctx.permissions)
+      const presentedPurchaseOrders = purchaseOrders.map((order) =>
+        projectPurchaseOrderForActor(order, _ctx, currency),
+      )
 
       const totalValue = Number(summary.totalValue)
       const overdueOrders = summary.overdueOrders
@@ -127,7 +137,7 @@ export default async function PurchaseOrdersPage() {
                       {t("stats.totalOrdersBadge", { n: purchaseOrders.length })}
                     </Badge>
                     <Badge variant="outline" className="dashboard-filter-chip rounded-lg">
-                      {t("stats.valueLabel", { amount: formatCurrency(totalValue, activeLocale, "USD") })}
+                      {t("stats.valueLabel", { amount: formatCurrency(totalValue, activeLocale, currency) })}
                     </Badge>
                     {overdueOrders > 0 ? (
                       <Badge className="rounded-lg border border-[var(--dash-danger)]/35 bg-[var(--dash-danger-soft)] text-[var(--dash-text)] hover:bg-[var(--dash-danger-soft)]">
@@ -144,19 +154,21 @@ export default async function PurchaseOrdersPage() {
                       {t("header.analyticsCta")}
                     </Link>
                   </Button>
-                  <Button asChild size="sm" className="dashboard-button-create h-10 justify-center rounded-lg px-4">
-                    <Link href="/dashboard/purchase-orders/new">
-                      <Plus className="h-4 w-4" />
-                      {t("header.createCta")}
-                    </Link>
-                  </Button>
+                  {createCapability.allowed ? (
+                    <Button asChild size="sm" className="dashboard-button-create h-10 justify-center rounded-lg px-4">
+                      <Link href="/dashboard/purchase-orders/new">
+                        <Plus className="h-4 w-4" />
+                        {t("header.createCta")}
+                      </Link>
+                    </Button>
+                  ) : null}
                 </div>
               </div>
             </section>
 
             <section className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-5">
               <MetricCard title={t("stats.totalOrders")} value={summary.totalOrders} detail={t("stats.totalOrdersSubtitle")} icon={ShoppingCart} tone="blue" />
-              <MetricCard title={t("stats.totalValue")} value={formatCurrency(totalValue, activeLocale, "USD")} detail={t("stats.totalValueSubtitle")} icon={FileText} tone="slate" />
+              <MetricCard title={t("stats.totalValue")} value={formatCurrency(totalValue, activeLocale, currency)} detail={t("stats.totalValueSubtitle")} icon={FileText} tone="slate" />
               <MetricCard title={t("stats.draftOrders")} value={summary.statusBreakdown.draft} detail={t("stats.draftSubtitle")} icon={Clock} tone="amber" />
               <MetricCard title={t("stats.received")} value={summary.statusBreakdown.received} detail={t("stats.receivedSubtitle")} icon={CheckCircle2} tone="emerald" />
               <MetricCard title={t("stats.overdue")} value={overdueOrders} detail={t("stats.overdueSubtitle")} icon={Truck} tone={overdueOrders > 0 ? "rose" : "slate"} />
@@ -175,7 +187,7 @@ export default async function PurchaseOrdersPage() {
                         {t("panel.summary", {
                           n: purchaseOrders.length,
                           overdue: overdueOrders,
-                          value: formatCurrency(totalValue, activeLocale, "USD"),
+                          value: formatCurrency(totalValue, activeLocale, currency),
                         })}
                       </p>
                     </div>
@@ -192,9 +204,11 @@ export default async function PurchaseOrdersPage() {
                   <PurchaseOrderManagement
                     title={t("title")}
                     organizationId={_ctx.orgId}
-                    initialPurchaseOrderData={purchaseOrders}
+                    initialPurchaseOrderData={presentedPurchaseOrders}
                     initialSupplierData={options.suppliers}
                     initialLocationData={options.locations}
+                    currency={currency}
+                    canCreate={createCapability.allowed}
                   />
                 </div>
               </Suspense>

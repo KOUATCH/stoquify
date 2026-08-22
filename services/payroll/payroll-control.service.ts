@@ -24,6 +24,8 @@ import {
   PayrollRubriqueStatus,
   PayrollRubriqueValueType,
   PayrollRunStatus,
+  PayrollRunTransitionEvidenceStatus,
+  PayrollRunTransitionOrigin,
   PayrollRunType,
   PayrollSalaryChangeStatus,
   PostingRuleAmountSource,
@@ -42,6 +44,7 @@ import {
 import { getOpenPeriodForDate } from "@/services/accounting/periods.service";
 import { getActivePostingRule } from "@/services/accounting/posting-rules.service";
 import {
+  ApplicationError,
   BusinessRuleError,
   ConflictError,
   ForbiddenError,
@@ -77,6 +80,10 @@ import {
   type RedactionDecision,
 } from "@/services/security/redaction-policy.service";
 import { assertApprovedPaymentDestinationEvidence } from "./payment-evidence.service";
+import {
+  buildPayrollRunLifecycleReadModel,
+  type PayrollRunLifecycleReadModel,
+} from "./payroll-run-lifecycle-read-model";
 import { evaluatePayrollTaxRule } from "./payroll-tax-rule-evaluator";
 import { resolvePayrollPaymentProviderAdapterContract } from "./payroll-adapter-registry.service";
 import {
@@ -85,17 +92,29 @@ import {
 } from "./payroll-statutory-scenario-coverage.service";
 
 import {
+  approvePayrollPaymentBatchInputSchema,
   approveAndPostPayrollRunInputSchema,
+  approvePayrollRunInputSchema,
   calculatePayrollRunInputSchema,
   createPayrollPeriodInputSchema,
   freezeAttendanceSnapshotInputSchema,
+  emitPayrollPayslipsInputSchema,
+  postPayrollRunInputSchema,
   preparePayrollDeclarationsInputSchema,
+  reviewPayrollRunInputSchema,
+  requestPayrollPaymentBatchInputSchema,
   releasePayrollPaymentBatchInputSchema,
+  type ApprovePayrollPaymentBatchInput,
   type ApproveAndPostPayrollRunInput,
+  type ApprovePayrollRunInput,
   type CalculatePayrollRunInput,
   type CreatePayrollPeriodInput,
   type FreezeAttendanceSnapshotInput,
+  type EmitPayrollPayslipsInput,
+  type PostPayrollRunInput,
   type PreparePayrollDeclarationsInput,
+  type ReviewPayrollRunInput,
+  type RequestPayrollPaymentBatchInput,
   type ReleasePayrollPaymentBatchInput,
 } from "./payroll-control.schemas";
 
@@ -181,8 +200,7 @@ type PayrollCountryPackRegisterProof = {
 };
 
 type PayrollComponentReviewStatus =
-  | "REVIEWED"
-  | "BLOCKED_REQUIRES_EXPERT_REVIEW";
+  "REVIEWED" | "BLOCKED_REQUIRES_EXPERT_REVIEW";
 
 type PayrollComponentMapping = {
   kind: "AQSTOQFLOW_PAYROLL_COMPONENT_MAPPING";
@@ -410,6 +428,7 @@ export type PayrollRunWorkbenchData = {
       approvedAt: string | null;
       emittedAt: string | null;
       postedAt: string | null;
+      lifecycle: PayrollRunLifecycleReadModel;
     };
     correction: {
       correctionRun: boolean;
@@ -471,6 +490,11 @@ export type PayrollRunWorkbenchData = {
       paymentTransactionId: string | null;
       paymentExceptionId: string | null;
       reconciliationStatus: string | null;
+      requestedById: string;
+      approvedById: string | null;
+      releasedById: string | null;
+      approvedAt: string | null;
+      releasedAt: string | null;
       latestSettlementSourceRegisterHash: string | null;
     }>;
     paymentAllocationCandidates: Array<{
@@ -501,6 +525,8 @@ export type PayrollRunWorkbenchData = {
       requiresFreshAuth: boolean;
       requiresSeparateApprover: boolean;
       href: string | null;
+      allowed: boolean;
+      blockedBy: string[];
     }>;
     blockers: Array<{
       id: string;
@@ -548,9 +574,7 @@ type PayrollIncomeTaxRules = {
 };
 
 type CnpsFamilyAllowanceSector =
-  | "GENERAL"
-  | "AGRICULTURE"
-  | "PRIVATE_EDUCATION";
+  "GENERAL" | "AGRICULTURE" | "PRIVATE_EDUCATION";
 type CnpsOccupationalRiskGroup = "A" | "B" | "C";
 
 type PayrollStatutoryLegalProvenanceEntry = {
@@ -1438,6 +1462,88 @@ async function inTransaction<T>(
   return work(client as Prisma.TransactionClient);
 }
 
+async function inSerializableTransaction<T>(
+  client: DbClient,
+  work: (tx: Prisma.TransactionClient) => Promise<T>,
+) {
+  if (hasTransaction(client)) {
+    return client.$transaction((tx) => work(tx), {
+      isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+    });
+  }
+
+  return work(client as Prisma.TransactionClient);
+}
+
+type PayrollTrustSpineErrorCode =
+  | "INVALID_TRANSITION"
+  | "CONCURRENCY_CONFLICT"
+  | "IDEMPOTENCY_CONFLICT"
+  | "SOD_VIOLATION"
+  | "TENANT_SCOPE_VIOLATION"
+  | "PAYROLL_TRANSITION_EVIDENCE_MISSING"
+  | "PAYROLL_LIFECYCLE_WRITES_DISABLED";
+
+function payrollTrustSpineError(
+  code: PayrollTrustSpineErrorCode,
+  message: string,
+  status: 409 | 422 | 503 = 422,
+) {
+  return new ApplicationError(code, message, status, true, {
+    domain: "payroll_trust_spine",
+  });
+}
+
+function prismaConflictCode(error: unknown) {
+  if (!error || typeof error !== "object") return null;
+  const code = (error as { code?: unknown }).code;
+  return typeof code === "string" ? code : null;
+}
+
+async function inPayrollTransitionTransaction<T>(
+  client: DbClient,
+  work: (tx: Prisma.TransactionClient) => Promise<T>,
+) {
+  if (!hasTransaction(client)) {
+    return work(client as Prisma.TransactionClient);
+  }
+
+  const maximumAttempts = 3;
+  for (let attempt = 1; attempt <= maximumAttempts; attempt += 1) {
+    try {
+      return await client.$transaction((tx) => work(tx), {
+        isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+      });
+    } catch (error) {
+      const code = prismaConflictCode(error);
+      const retryable = code === "P2002" || code === "P2034";
+      if (!retryable) throw error;
+      if (attempt === maximumAttempts) {
+        throw payrollTrustSpineError(
+          "CONCURRENCY_CONFLICT",
+          "Payroll run changed concurrently. Refresh the run and retry.",
+          409,
+        );
+      }
+    }
+  }
+
+  throw payrollTrustSpineError(
+    "CONCURRENCY_CONFLICT",
+    "Payroll run changed concurrently. Refresh the run and retry.",
+    409,
+  );
+}
+
+function assertPayrollTrustSpineWritesEnabled() {
+  if (process.env.PAYROLL_TRUST_SPINE_WRITES_ENABLED === "true") return;
+  throw payrollTrustSpineError(
+    "PAYROLL_LIFECYCLE_WRITES_DISABLED",
+    "Payroll lifecycle writes are temporarily disabled.",
+    503,
+  );
+}
+
 function safeJson(value: unknown): Prisma.InputJsonValue {
   return value as Prisma.InputJsonValue;
 }
@@ -1995,8 +2101,7 @@ const PAYROLL_COMPONENT_PROOF_REQUIRED_AMOUNT_KEYS =
   );
 
 type PayrollYearToDateAmountKey =
-  | PayrollComponentProofAmountKey
-  | "statutoryPayableAmount";
+  PayrollComponentProofAmountKey | "statutoryPayableAmount";
 
 const PAYROLL_YEAR_TO_DATE_AMOUNT_KEYS: PayrollYearToDateAmountKey[] = [
   ...PAYROLL_COMPONENT_PROOF_AMOUNT_KEYS,
@@ -3766,6 +3871,18 @@ function assertIdempotencyPayloadMatches(
     "idempotencyPayloadHash",
   );
   if (existingPayloadHash && existingPayloadHash !== requestPayloadHash) {
+    throw new ConflictError(message);
+  }
+}
+
+function assertMetadataPayloadMatches(
+  metadata: unknown,
+  key: string,
+  requestPayloadHash: string,
+  message: string,
+) {
+  const existingPayloadHash = metadataString(metadata, key);
+  if (!existingPayloadHash || existingPayloadHash !== requestPayloadHash) {
     throw new ConflictError(message);
   }
 }
@@ -6385,11 +6502,1291 @@ export async function calculatePayrollRun(
   });
 }
 
+type ParsedPayrollRunTransitionInput = z.output<
+  typeof reviewPayrollRunInputSchema
+>;
+
+type PayrollRunTransitionReplay = {
+  payrollRunId: string;
+  toStatus: PayrollRunStatus;
+  payloadHash: string | null;
+  businessEventId: string | null;
+};
+
+async function findPayrollRunTransitionReplay(
+  tx: Prisma.TransactionClient,
+  input: ParsedPayrollRunTransitionInput,
+  toStatus: PayrollRunStatus,
+  payloadHash: string,
+) {
+  const existing = await tx.payrollRunTransition.findUnique({
+    where: {
+      organizationId_idempotencyKey: {
+        organizationId: input.organizationId,
+        idempotencyKey: input.idempotencyKey,
+      },
+    },
+    select: {
+      payrollRunId: true,
+      toStatus: true,
+      payloadHash: true,
+      businessEventId: true,
+    },
+  });
+  if (!existing) return null;
+
+  const replay = existing as PayrollRunTransitionReplay;
+  if (
+    replay.payrollRunId !== input.payrollRunId ||
+    replay.toStatus !== toStatus ||
+    replay.payloadHash !== payloadHash ||
+    !replay.businessEventId
+  ) {
+    throw payrollTrustSpineError(
+      "IDEMPOTENCY_CONFLICT",
+      "Payroll transition idempotency key was reused with a different payload.",
+      409,
+    );
+  }
+  return replay;
+}
+
+async function nextPayrollRunTransitionSequence(
+  tx: Prisma.TransactionClient,
+  organizationId: string,
+  payrollRunId: string,
+) {
+  const latest = await tx.payrollRunTransition.findFirst({
+    where: { organizationId, payrollRunId },
+    orderBy: { sequence: "desc" },
+    select: { sequence: true },
+  });
+  return (latest?.sequence ?? 0) + 1;
+}
+
+async function authorizePayrollRunTransition(
+  tx: Prisma.TransactionClient,
+  input: ParsedPayrollRunTransitionInput,
+  action:
+    | "payroll.run.review"
+    | "payroll.run.approve"
+    | "payroll.payslips.emit"
+    | "payroll.run.post",
+  run: {
+    id: string;
+    runNumber: string;
+    payrollPeriodId: string;
+    netPayableAmount: Prisma.Decimal.Value;
+    currency: string;
+  },
+  subjectActorId?: string | null,
+) {
+  const decision = evaluateSensitiveAction({
+    action,
+    actorId: input.actorId,
+    organizationId: input.organizationId,
+    actorPermissions: input.actorPermissions,
+    lastAuthAt: input.lastAuthAt,
+    now: input.now,
+    resourceType: "PayrollRun",
+    resourceId: run.id,
+    subjectActorId,
+    amount: run.netPayableAmount,
+    currency: run.currency,
+    metadata: {
+      runNumber: run.runNumber,
+      payrollPeriodId: run.payrollPeriodId,
+    },
+  });
+  await auditSensitiveActionDecision(tx, decision);
+  if (!decision.allowed && decision.reasonCode === "SELF_APPROVAL_BLOCKED") {
+    throw payrollTrustSpineError(
+      "SOD_VIOLATION",
+      "Payroll transition requires an independent actor.",
+    );
+  }
+  assertSensitiveActionAllowed(decision);
+}
+
+function assertPayrollTransitionSource(
+  run: { status: PayrollRunStatus; version: number },
+  input: ParsedPayrollRunTransitionInput,
+  fromStatus: PayrollRunStatus,
+) {
+  if (run.version !== input.expectedVersion) {
+    throw payrollTrustSpineError(
+      "CONCURRENCY_CONFLICT",
+      "Payroll run version changed. Refresh the run and retry.",
+      409,
+    );
+  }
+  if (run.status !== fromStatus) {
+    throw payrollTrustSpineError(
+      "INVALID_TRANSITION",
+      `Payroll run must be ${fromStatus} before this transition.`,
+    );
+  }
+}
+
+function assertDistinctPayrollActors(
+  actorId: string,
+  actors: Array<{ id?: string | null; label: string }>,
+) {
+  const missing = actors.find((actor) => !actor.id);
+  if (missing) {
+    throw payrollTrustSpineError(
+      "PAYROLL_TRANSITION_EVIDENCE_MISSING",
+      `Payroll transition requires persisted ${missing.label} evidence.`,
+    );
+  }
+  if (actors.some((actor) => actor.id === actorId)) {
+    throw payrollTrustSpineError(
+      "SOD_VIOLATION",
+      "Payroll transition violates separation of duties.",
+    );
+  }
+}
+
+async function persistPayrollRunTransition(
+  tx: Prisma.TransactionClient,
+  input: {
+    command: string;
+    organizationId: string;
+    payrollRunId: string;
+    actorId: string;
+    expectedVersion: number;
+    fromStatus: PayrollRunStatus;
+    toStatus: PayrollRunStatus;
+    transitionedAt: Date;
+    businessEventId: string;
+    idempotencyKey: string;
+    payloadHash: string;
+    correlationId?: string;
+    metadata?: unknown;
+    updateData: Omit<
+      Prisma.PayrollRunUncheckedUpdateManyInput,
+      | "organizationId"
+      | "payrollPeriodId"
+      | "originalRunId"
+      | "id"
+      | "status"
+      | "version"
+    >;
+    auditAction: string;
+    auditAfter?: Record<string, unknown>;
+    afterCompareAndSet?: () => Promise<void>;
+  },
+) {
+  const sequence = await nextPayrollRunTransitionSequence(
+    tx,
+    input.organizationId,
+    input.payrollRunId,
+  );
+
+  await tx.payrollRunTransition.create({
+    data: {
+      organizationId: input.organizationId,
+      payrollRunId: input.payrollRunId,
+      sequence,
+      fromStatus: input.fromStatus,
+      toStatus: input.toStatus,
+      fromVersion: input.expectedVersion,
+      toVersion: input.expectedVersion + 1,
+      actorId: input.actorId,
+      transitionedAt: input.transitionedAt,
+      businessEventId: input.businessEventId,
+      idempotencyKey: input.idempotencyKey,
+      payloadHash: input.payloadHash,
+      origin: PayrollRunTransitionOrigin.RUNTIME,
+      evidenceStatus: PayrollRunTransitionEvidenceStatus.VERIFIED,
+      metadata: safeJson({
+        command: input.command,
+        correlationId: input.correlationId ?? null,
+        requestedMetadata: input.metadata ?? null,
+      }),
+    },
+  });
+
+  const compareAndSet = await tx.payrollRun.updateMany({
+    where: {
+      id: input.payrollRunId,
+      organizationId: input.organizationId,
+      status: input.fromStatus,
+      version: input.expectedVersion,
+      deletedAt: null,
+    },
+    data: {
+      ...input.updateData,
+      status: input.toStatus,
+      version: { increment: 1 },
+    },
+  });
+  if (compareAndSet.count !== 1) {
+    throw payrollTrustSpineError(
+      "CONCURRENCY_CONFLICT",
+      "Payroll run changed concurrently. Refresh the run and retry.",
+      409,
+    );
+  }
+
+  await input.afterCompareAndSet?.();
+
+  await writeAudit(tx, {
+    organizationId: input.organizationId,
+    entityType: "PayrollRun",
+    entityId: input.payrollRunId,
+    action: input.auditAction,
+    actorId: input.actorId,
+    changes: safeJson({
+      before: {
+        status: input.fromStatus,
+        version: input.expectedVersion,
+      },
+      after: {
+        status: input.toStatus,
+        version: input.expectedVersion + 1,
+        businessEventId: input.businessEventId,
+        ...input.auditAfter,
+      },
+      payloadHash: input.payloadHash,
+      correlationId: input.correlationId ?? null,
+    }),
+  });
+
+  await markBusinessEventAppliedInTx(
+    tx as unknown as BusinessEventTx,
+    input.organizationId,
+    input.businessEventId,
+  );
+}
+
+async function requireTransitionedPayrollRun(
+  tx: Prisma.TransactionClient,
+  organizationId: string,
+  payrollRunId: string,
+  _expectedStatus: PayrollRunStatus,
+) {
+  const run = await tx.payrollRun.findFirst({
+    where: {
+      id: payrollRunId,
+      organizationId,
+      deletedAt: null,
+    },
+  });
+  if (!run) {
+    throw payrollTrustSpineError(
+      "PAYROLL_TRANSITION_EVIDENCE_MISSING",
+      "Payroll transition committed without a readable tenant-scoped run.",
+    );
+  }
+  return run;
+}
+
+export async function reviewPayrollRun(
+  input: ReviewPayrollRunInput,
+  client: DbClient = db,
+) {
+  const parsed = reviewPayrollRunInputSchema.parse(input);
+  assertPayrollTrustSpineWritesEnabled();
+  const reviewedAt = parseDate(parsed.now);
+  const payloadHash = prefixedHash({
+    operation: "reviewPayrollRun",
+    payrollRunId: parsed.payrollRunId,
+    expectedVersion: parsed.expectedVersion,
+    actorId: parsed.actorId,
+    evidenceHash: parsed.evidenceHash ?? null,
+  });
+
+  return inPayrollTransitionTransaction(client, async (tx) => {
+    const replay = await findPayrollRunTransitionReplay(
+      tx,
+      parsed,
+      PayrollRunStatus.REVIEWED,
+      payloadHash,
+    );
+    if (replay) {
+      const payrollRun = await requireTransitionedPayrollRun(
+        tx,
+        parsed.organizationId,
+        parsed.payrollRunId,
+        PayrollRunStatus.REVIEWED,
+      );
+      return {
+        payrollRun,
+        businessEventId: replay.businessEventId,
+        idempotent: true,
+      };
+    }
+
+    const run = await tx.payrollRun.findFirst({
+      where: {
+        id: parsed.payrollRunId,
+        organizationId: parsed.organizationId,
+        deletedAt: null,
+      },
+    });
+    if (!run) throw new NotFoundError("Payroll run not found");
+    assertPayrollTransitionSource(run, parsed, PayrollRunStatus.CALCULATED);
+    assertDistinctPayrollActors(parsed.actorId, [
+      { id: run.preparedById, label: "preparer" },
+    ]);
+    await authorizePayrollRunTransition(
+      tx,
+      parsed,
+      "payroll.run.review",
+      run,
+      run.preparedById,
+    );
+
+    const eventPayload = {
+      payloadVersion: 1,
+      payrollRunId: run.id,
+      periodId: run.payrollPeriodId,
+      fromStatus: PayrollRunStatus.CALCULATED,
+      toStatus: PayrollRunStatus.REVIEWED,
+      expectedVersion: parsed.expectedVersion,
+      resultingVersion: parsed.expectedVersion + 1,
+      reviewedAt: reviewedAt.toISOString(),
+      reviewedByUserId: parsed.actorId,
+      calculationHash: run.calculationHash,
+      evidenceHash: parsed.evidenceHash ?? null,
+      correlationId: parsed.correlationId ?? null,
+    };
+    const eventResult = await recordBusinessEventInTx(
+      tx as unknown as BusinessEventTx,
+      {
+        organizationId: parsed.organizationId,
+        eventType: "PAYROLL_RUN_REVIEWED",
+        eventSource: "INTERNAL",
+        schemaVersion: 1,
+        idempotencyKey: `payroll-transition:${parsed.idempotencyKey}`,
+        payload: eventPayload,
+        occurredAt: reviewedAt,
+        actorId: parsed.actorId,
+        sourceType: AccountingSourceType.PAYROLL_RUN,
+        sourceId: run.id,
+        documentHash: parsed.documentHash,
+        metadata: {
+          gate: "payroll-trust-spine",
+          correlationId: parsed.correlationId ?? null,
+          commandPayloadHash: payloadHash,
+        },
+        outboxMessages: [
+          {
+            channel: "NOTIFICATION",
+            eventName: "payroll_run.reviewed",
+            destination: "payroll",
+            payload: {
+              severity: "info",
+              payrollRunId: run.id,
+              runNumber: run.runNumber,
+              actionRequired: "APPROVE",
+            },
+          },
+        ],
+      },
+    );
+
+    await persistPayrollRunTransition(tx, {
+      command: "reviewPayrollRun",
+      organizationId: parsed.organizationId,
+      payrollRunId: run.id,
+      actorId: parsed.actorId,
+      expectedVersion: parsed.expectedVersion,
+      fromStatus: PayrollRunStatus.CALCULATED,
+      toStatus: PayrollRunStatus.REVIEWED,
+      transitionedAt: reviewedAt,
+      businessEventId: eventResult.event.id,
+      idempotencyKey: parsed.idempotencyKey,
+      payloadHash,
+      correlationId: parsed.correlationId,
+      metadata: parsed.metadata,
+      updateData: {
+        reviewedById: parsed.actorId,
+        reviewedAt,
+        reviewedBusinessEventId: eventResult.event.id,
+        evidenceHash: parsed.evidenceHash ?? run.evidenceHash,
+        metadata: safeJson({
+          ...asRecord(run.metadata),
+          payrollReviewPayloadHash: payloadHash,
+          payrollReviewBusinessEventId: eventResult.event.id,
+        }),
+      },
+      auditAction: "PAYROLL_RUN_REVIEWED",
+    });
+
+    const payrollRun = await requireTransitionedPayrollRun(
+      tx,
+      parsed.organizationId,
+      run.id,
+      PayrollRunStatus.REVIEWED,
+    );
+    return {
+      payrollRun,
+      businessEventId: eventResult.event.id,
+      idempotent: false,
+    };
+  });
+}
+
+export async function approvePayrollRun(
+  input: ApprovePayrollRunInput,
+  client: DbClient = db,
+) {
+  const parsed = approvePayrollRunInputSchema.parse(input);
+  assertPayrollTrustSpineWritesEnabled();
+  const approvedAt = parseDate(parsed.now);
+  const payloadHash = prefixedHash({
+    operation: "approvePayrollRun",
+    payrollRunId: parsed.payrollRunId,
+    expectedVersion: parsed.expectedVersion,
+    actorId: parsed.actorId,
+    evidenceHash: parsed.evidenceHash ?? null,
+    documentHash: parsed.documentHash ?? null,
+    correlationId: parsed.correlationId ?? null,
+    metadata: parsed.metadata ?? null,
+  });
+
+  return inPayrollTransitionTransaction(client, async (tx) => {
+    const replay = await findPayrollRunTransitionReplay(
+      tx,
+      parsed,
+      PayrollRunStatus.APPROVED,
+      payloadHash,
+    );
+    if (replay) {
+      const payrollRun = await requireTransitionedPayrollRun(
+        tx,
+        parsed.organizationId,
+        parsed.payrollRunId,
+        PayrollRunStatus.APPROVED,
+      );
+      return {
+        payrollRun,
+        businessEventId: replay.businessEventId,
+        idempotent: true,
+      };
+    }
+
+    const run = await tx.payrollRun.findFirst({
+      where: {
+        id: parsed.payrollRunId,
+        organizationId: parsed.organizationId,
+        deletedAt: null,
+      },
+      include: { payrollPeriod: true },
+    });
+    if (!run) throw new NotFoundError("Payroll run not found");
+    assertPayrollTransitionSource(run, parsed, PayrollRunStatus.REVIEWED);
+    if (!run.reviewedAt || !run.reviewedBusinessEventId) {
+      throw payrollTrustSpineError(
+        "PAYROLL_TRANSITION_EVIDENCE_MISSING",
+        "Payroll approval requires persisted review event and timestamp evidence.",
+      );
+    }
+    assertDistinctPayrollActors(parsed.actorId, [
+      { id: run.preparedById, label: "preparer" },
+      { id: run.reviewedById, label: "reviewer" },
+    ]);
+    await authorizePayrollRunTransition(
+      tx,
+      parsed,
+      "payroll.run.approve",
+      run,
+      run.preparedById,
+    );
+
+    const eventPayload = {
+      payloadVersion: 1,
+      payrollRunId: run.id,
+      periodId: run.payrollPeriodId,
+      fromStatus: PayrollRunStatus.REVIEWED,
+      toStatus: PayrollRunStatus.APPROVED,
+      expectedVersion: parsed.expectedVersion,
+      resultingVersion: parsed.expectedVersion + 1,
+      approvedAt: approvedAt.toISOString(),
+      approvedByUserId: parsed.actorId,
+      calculationHash: run.calculationHash,
+      reviewedBusinessEventId: run.reviewedBusinessEventId,
+      evidenceHash: parsed.evidenceHash ?? null,
+      correlationId: parsed.correlationId ?? null,
+    };
+    const eventResult = await recordBusinessEventInTx(
+      tx as unknown as BusinessEventTx,
+      {
+        organizationId: parsed.organizationId,
+        eventType: "PAYROLL_RUN_APPROVED",
+        eventSource: "INTERNAL",
+        schemaVersion: 1,
+        idempotencyKey: `payroll-transition:${parsed.idempotencyKey}`,
+        payload: eventPayload,
+        occurredAt: approvedAt,
+        actorId: parsed.actorId,
+        sourceType: AccountingSourceType.PAYROLL_RUN,
+        sourceId: run.id,
+        documentHash: parsed.documentHash,
+        metadata: {
+          gate: "payroll-trust-spine",
+          correlationId: parsed.correlationId ?? null,
+          commandPayloadHash: payloadHash,
+        },
+        outboxMessages: [
+          {
+            channel: "NOTIFICATION",
+            eventName: "payroll_run.approved",
+            destination: "payroll",
+            payload: {
+              severity: "info",
+              payrollRunId: run.id,
+              runNumber: run.runNumber,
+              actionRequired: "EMIT_PAYSLIPS",
+            },
+          },
+        ],
+      },
+    );
+
+    await persistPayrollRunTransition(tx, {
+      command: "approvePayrollRun",
+      organizationId: parsed.organizationId,
+      payrollRunId: run.id,
+      actorId: parsed.actorId,
+      expectedVersion: parsed.expectedVersion,
+      fromStatus: PayrollRunStatus.REVIEWED,
+      toStatus: PayrollRunStatus.APPROVED,
+      transitionedAt: approvedAt,
+      businessEventId: eventResult.event.id,
+      idempotencyKey: parsed.idempotencyKey,
+      payloadHash,
+      correlationId: parsed.correlationId,
+      metadata: parsed.metadata,
+      updateData: {
+        approvedById: parsed.actorId,
+        approvedAt,
+        approvedBusinessEventId: eventResult.event.id,
+        evidenceHash: parsed.evidenceHash ?? run.evidenceHash,
+        metadata: safeJson({
+          ...asRecord(run.metadata),
+          payrollApprovalPayloadHash: payloadHash,
+          payrollApprovalBusinessEventId: eventResult.event.id,
+        }),
+      },
+      auditAction: "PAYROLL_RUN_APPROVED",
+      afterCompareAndSet: async () => {
+        const periodUpdate = await tx.payrollPeriod.updateMany({
+          where: {
+            id: run.payrollPeriodId,
+            organizationId: parsed.organizationId,
+          },
+          data: {
+            status: PayrollPeriodStatus.APPROVED,
+            approvedAt,
+            approvedById: parsed.actorId,
+          },
+        });
+        if (periodUpdate.count !== 1) {
+          throw payrollTrustSpineError(
+            "TENANT_SCOPE_VIOLATION",
+            "Payroll period does not belong to the payroll run tenant.",
+          );
+        }
+
+        await recordCloseCertificationInvalidationsForSourceInTx(
+          tx,
+          parsed.organizationId,
+          {
+            sourceCode: "PAYROLL_RUN_APPROVED",
+            sourceId: run.id,
+            periodId: run.payrollPeriod.accountingPeriodId,
+            periodStart: run.payrollPeriod.periodStart,
+            periodEnd: run.payrollPeriod.periodEnd,
+            staleReason:
+              "Payroll run approval changed certified close evidence.",
+            newEvidenceHash:
+              parsed.documentHash ??
+              parsed.evidenceHash ??
+              run.documentHash ??
+              run.calculationHash,
+            correlationId:
+              parsed.correlationId ??
+              parsed.idempotencyKey ??
+              eventResult.event.id,
+          },
+          { actorId: parsed.actorId, now: approvedAt },
+        );
+      },
+    });
+
+    const payrollRun = await requireTransitionedPayrollRun(
+      tx,
+      parsed.organizationId,
+      run.id,
+      PayrollRunStatus.APPROVED,
+    );
+    return {
+      payrollRun,
+      businessEventId: eventResult.event.id,
+      idempotent: false,
+    };
+  });
+}
+
+export async function emitPayrollPayslips(
+  input: EmitPayrollPayslipsInput,
+  client: DbClient = db,
+) {
+  const parsed = emitPayrollPayslipsInputSchema.parse(input);
+  assertPayrollTrustSpineWritesEnabled();
+  const emittedAt = parseDate(parsed.now);
+  const payloadHash = prefixedHash({
+    operation: "emitPayrollPayslips",
+    payrollRunId: parsed.payrollRunId,
+    expectedVersion: parsed.expectedVersion,
+    actorId: parsed.actorId,
+    documentHash: parsed.documentHash ?? null,
+  });
+
+  return inPayrollTransitionTransaction(client, async (tx) => {
+    const replay = await findPayrollRunTransitionReplay(
+      tx,
+      parsed,
+      PayrollRunStatus.EMITTED,
+      payloadHash,
+    );
+    if (replay) {
+      const payrollRun = await tx.payrollRun.findFirst({
+        where: {
+          id: parsed.payrollRunId,
+          organizationId: parsed.organizationId,
+          deletedAt: null,
+        },
+        include: { payslips: true },
+      });
+      if (
+        !payrollRun ||
+        payrollRun.emittedBusinessEventId !== replay.businessEventId
+      ) {
+        throw payrollTrustSpineError(
+          "PAYROLL_TRANSITION_EVIDENCE_MISSING",
+          "Emitted payroll run evidence is missing.",
+        );
+      }
+      return {
+        payrollRun,
+        businessEventId: replay.businessEventId,
+        idempotent: true,
+      };
+    }
+
+    const run = await tx.payrollRun.findFirst({
+      where: {
+        id: parsed.payrollRunId,
+        organizationId: parsed.organizationId,
+        deletedAt: null,
+      },
+      include: {
+        lines: {
+          include: { employee: true },
+          orderBy: { createdAt: "asc" },
+        },
+        payslips: true,
+        payrollPeriod: true,
+      },
+    });
+    if (!run) throw new NotFoundError("Payroll run not found");
+    assertPayrollTransitionSource(run, parsed, PayrollRunStatus.APPROVED);
+    if (!run.approvedById || !run.approvedAt || !run.approvedBusinessEventId) {
+      throw payrollTrustSpineError(
+        "PAYROLL_TRANSITION_EVIDENCE_MISSING",
+        "Payslip emission requires persisted payroll approval evidence.",
+      );
+    }
+    if (run.lines.length === 0 || run.payslips.length > 0) {
+      throw payrollTrustSpineError(
+        "PAYROLL_TRANSITION_EVIDENCE_MISSING",
+        "Payslip emission requires calculated lines and no pre-existing payslip batch.",
+      );
+    }
+    await authorizePayrollRunTransition(
+      tx,
+      parsed,
+      "payroll.payslips.emit",
+      run,
+    );
+
+    const legalProvenance = legalProvenanceFromMetadata(run.metadata);
+    const legalProvenanceHash = prefixedHash(legalProvenance);
+    const roundingPolicyMetadata = payrollRoundingPolicyProofMetadata(
+      run.metadata,
+    );
+    const yearToDateProofMetadata = payrollYearToDateProofMetadata(
+      run.metadata,
+    );
+    const correctionMetadata = payrollRunCorrectionMetadata(run);
+    const payslipPlans = run.lines.map((line, index) => {
+      const payslipNumber = `${run.runNumber}-${String(index + 1).padStart(4, "0")}`;
+      const documentHash = prefixedHash({
+        payslipNumber,
+        payrollRunId: run.id,
+        runLineId: line.id,
+        employeeId: line.employeeId,
+        grossAmount: decimal2(line.grossAmount).toFixed(2),
+        employeeDeductionAmount: decimal2(line.employeeDeductionAmount).toFixed(
+          2,
+        ),
+        employerChargeAmount: decimal2(line.employerChargeAmount).toFixed(2),
+        netPayableAmount: decimal2(line.netPayableAmount).toFixed(2),
+        ruleSetHash: run.ruleSetHash,
+        countryPackVersion: run.countryPackVersion,
+        countryPackSchemaVersion: run.countryPackSchemaVersion,
+        countryPackResolutionHash: run.countryPackResolutionHash,
+        legalProvenanceHash,
+        ...roundingPolicyMetadata,
+        ...yearToDateProofMetadata,
+        ...correctionMetadata,
+      });
+      return { line, payslipNumber, documentHash };
+    });
+    const batchHash = prefixedHash({
+      payrollRunId: run.id,
+      calculationHash: run.calculationHash,
+      documentHashes: payslipPlans.map((plan) => plan.documentHash),
+    });
+
+    const eventPayload = {
+      payloadVersion: 1,
+      payrollRunId: run.id,
+      periodId: run.payrollPeriodId,
+      fromStatus: PayrollRunStatus.APPROVED,
+      toStatus: PayrollRunStatus.EMITTED,
+      expectedVersion: parsed.expectedVersion,
+      resultingVersion: parsed.expectedVersion + 1,
+      emittedAt: emittedAt.toISOString(),
+      emittedByUserId: parsed.actorId,
+      payslipCount: payslipPlans.length,
+      batchHash,
+      documentHashes: payslipPlans.map((plan) => plan.documentHash),
+      approvedBusinessEventId: run.approvedBusinessEventId,
+      correlationId: parsed.correlationId ?? null,
+    };
+    const eventResult = await recordBusinessEventInTx(
+      tx as unknown as BusinessEventTx,
+      {
+        organizationId: parsed.organizationId,
+        eventType: "PAYSLIP_EMITTED",
+        eventSource: "INTERNAL",
+        schemaVersion: 1,
+        idempotencyKey: `payroll-transition:${parsed.idempotencyKey}`,
+        payload: eventPayload,
+        occurredAt: emittedAt,
+        actorId: parsed.actorId,
+        sourceType: AccountingSourceType.PAYROLL_RUN,
+        sourceId: run.id,
+        documentHash: parsed.documentHash ?? batchHash,
+        metadata: {
+          gate: "payroll-trust-spine",
+          correlationId: parsed.correlationId ?? null,
+          commandPayloadHash: payloadHash,
+          batchHash,
+        },
+        outboxMessages: [
+          {
+            channel: "NOTIFICATION",
+            eventName: "payslips.emitted",
+            destination: "payroll",
+            payload: {
+              severity: "info",
+              payrollRunId: run.id,
+              runNumber: run.runNumber,
+              payslipCount: payslipPlans.length,
+              batchHash,
+            },
+          },
+        ],
+      },
+    );
+
+    for (const plan of payslipPlans) {
+      await tx.payrollPayslip.create({
+        data: {
+          organizationId: parsed.organizationId,
+          payrollRunId: run.id,
+          runLineId: plan.line.id,
+          employeeId: plan.line.employeeId,
+          payslipNumber: plan.payslipNumber,
+          status: PayrollPayslipStatus.EMITTED,
+          issuedAt: emittedAt,
+          countryCode: run.countryCode,
+          countryPackVersion: run.countryPackVersion,
+          countryPackSchemaVersion: run.countryPackSchemaVersion,
+          countryPackResolutionHash: run.countryPackResolutionHash,
+          ruleSetHash: run.ruleSetHash,
+          grossAmount: plan.line.grossAmount,
+          employeeDeductionAmount: plan.line.employeeDeductionAmount,
+          employerChargeAmount: plan.line.employerChargeAmount,
+          netPayableAmount: plan.line.netPayableAmount,
+          currency: plan.line.currency,
+          documentHash: plan.documentHash,
+          emittedBusinessEventId: eventResult.event.id,
+          metadata: safeJson({
+            gate: "payroll-trust-spine",
+            payrollRunId: run.id,
+            runLineId: plan.line.id,
+            employeeNumber: plan.line.employee?.employeeNumber ?? null,
+            countryPackCapabilityStatus: run.countryPackCapabilityStatus,
+            legalProvenanceHash,
+            legalProvenance,
+            batchHash,
+            ...roundingPolicyMetadata,
+            ...yearToDateProofMetadata,
+            ...correctionMetadata,
+          }),
+          lines: {
+            create: buildPayrollPayslipLines({
+              organizationId: parsed.organizationId,
+              runLineId: plan.line.id,
+              currency: plan.line.currency,
+              grossAmount: plan.line.grossAmount,
+              employeeDeductionAmount: plan.line.employeeDeductionAmount,
+              employerChargeAmount: plan.line.employerChargeAmount,
+              netPayableAmount: plan.line.netPayableAmount,
+              calculationSnapshot: plan.line.calculationSnapshot,
+            }),
+          },
+        },
+      });
+    }
+
+    await persistPayrollRunTransition(tx, {
+      command: "emitPayrollPayslips",
+      organizationId: parsed.organizationId,
+      payrollRunId: run.id,
+      actorId: parsed.actorId,
+      expectedVersion: parsed.expectedVersion,
+      fromStatus: PayrollRunStatus.APPROVED,
+      toStatus: PayrollRunStatus.EMITTED,
+      transitionedAt: emittedAt,
+      businessEventId: eventResult.event.id,
+      idempotencyKey: parsed.idempotencyKey,
+      payloadHash,
+      correlationId: parsed.correlationId,
+      metadata: parsed.metadata,
+      updateData: {
+        emittedById: parsed.actorId,
+        emittedAt,
+        emittedBusinessEventId: eventResult.event.id,
+        documentHash: parsed.documentHash ?? run.documentHash,
+        metadata: safeJson({
+          ...asRecord(run.metadata),
+          payrollEmissionPayloadHash: payloadHash,
+          payrollEmissionBusinessEventId: eventResult.event.id,
+          payrollPayslipBatchHash: batchHash,
+          payrollPayslipCount: payslipPlans.length,
+        }),
+      },
+      auditAction: "PAYSLIP_BATCH_EMITTED",
+      auditAfter: { payslipCount: payslipPlans.length, batchHash },
+      afterCompareAndSet: async () => {
+        await recordCloseCertificationInvalidationsForSourceInTx(
+          tx,
+          parsed.organizationId,
+          {
+            sourceCode: "PAYSLIP_EMITTED",
+            sourceId: run.id,
+            periodId: run.payrollPeriod.accountingPeriodId,
+            periodStart: run.payrollPeriod.periodStart,
+            periodEnd: run.payrollPeriod.periodEnd,
+            staleReason:
+              "Payroll payslip emission changed certified close evidence.",
+            newEvidenceHash: batchHash,
+            correlationId:
+              parsed.correlationId ??
+              parsed.idempotencyKey ??
+              eventResult.event.id,
+          },
+          { actorId: parsed.actorId, now: emittedAt },
+        );
+      },
+    });
+
+    const payrollRun = await tx.payrollRun.findFirst({
+      where: {
+        id: run.id,
+        organizationId: parsed.organizationId,
+        status: PayrollRunStatus.EMITTED,
+        deletedAt: null,
+      },
+      include: { payslips: true },
+    });
+    if (!payrollRun || payrollRun.payslips.length !== payslipPlans.length) {
+      throw payrollTrustSpineError(
+        "PAYROLL_TRANSITION_EVIDENCE_MISSING",
+        "Payslip emission evidence did not reconcile to the payroll run.",
+      );
+    }
+    return {
+      payrollRun,
+      businessEventId: eventResult.event.id,
+      batchHash,
+      idempotent: false,
+    };
+  });
+}
+
+export async function postPayrollRun(
+  input: PostPayrollRunInput,
+  client: DbClient = db,
+) {
+  const parsed = postPayrollRunInputSchema.parse(input);
+  assertPayrollTrustSpineWritesEnabled();
+  const postedAt = parseDate(parsed.now);
+  const payloadHash = prefixedHash({
+    operation: "postPayrollRun",
+    payrollRunId: parsed.payrollRunId,
+    expectedVersion: parsed.expectedVersion,
+    actorId: parsed.actorId,
+    documentHash: parsed.documentHash ?? null,
+  });
+
+  return inPayrollTransitionTransaction(client, async (tx) => {
+    const replay = await findPayrollRunTransitionReplay(
+      tx,
+      parsed,
+      PayrollRunStatus.POSTED,
+      payloadHash,
+    );
+    if (replay) {
+      const payrollRun = await tx.payrollRun.findFirst({
+        where: {
+          id: parsed.payrollRunId,
+          organizationId: parsed.organizationId,
+          deletedAt: null,
+        },
+        include: { payslips: true },
+      });
+      if (!payrollRun || !payrollRun.ledgerPostingBatchId) {
+        throw payrollTrustSpineError(
+          "PAYROLL_TRANSITION_EVIDENCE_MISSING",
+          "Posted payroll run ledger evidence is missing.",
+        );
+      }
+      return {
+        payrollRun,
+        ledgerPostingBatchId: payrollRun.ledgerPostingBatchId,
+        businessEventId: replay.businessEventId,
+        ledgerStatus: "IDEMPOTENT_REPLAY" as const,
+        idempotent: true,
+      };
+    }
+
+    const run = await tx.payrollRun.findFirst({
+      where: {
+        id: parsed.payrollRunId,
+        organizationId: parsed.organizationId,
+        deletedAt: null,
+      },
+      include: {
+        payrollPeriod: true,
+        lines: {
+          include: { employee: true },
+          orderBy: { createdAt: "asc" },
+        },
+        payslips: true,
+      },
+    });
+    if (!run) throw new NotFoundError("Payroll run not found");
+    assertPayrollTransitionSource(run, parsed, PayrollRunStatus.EMITTED);
+    assertDistinctPayrollActors(parsed.actorId, [
+      { id: run.preparedById, label: "preparer" },
+      { id: run.approvedById, label: "approver" },
+    ]);
+    if (
+      !run.emittedAt ||
+      !run.emittedById ||
+      !run.emittedBusinessEventId ||
+      run.lines.length === 0 ||
+      run.payslips.length !== run.lines.length ||
+      run.payslips.some(
+        (payslip) =>
+          payslip.status !== PayrollPayslipStatus.EMITTED ||
+          payslip.emittedBusinessEventId !== run.emittedBusinessEventId,
+      )
+    ) {
+      throw payrollTrustSpineError(
+        "PAYROLL_TRANSITION_EVIDENCE_MISSING",
+        "Payroll posting requires a complete emitted payslip batch bound to its canonical event.",
+      );
+    }
+    await authorizePayrollRunTransition(
+      tx,
+      parsed,
+      "payroll.run.post",
+      run,
+      run.approvedById,
+    );
+
+    const accountingPeriod = await getOpenPeriodForDate(
+      parsed.organizationId,
+      run.payrollPeriod.payDate,
+      tx,
+    );
+    const legalProvenance = legalProvenanceFromMetadata(run.metadata);
+    const legalProvenanceHash = prefixedHash(legalProvenance);
+    const roundingPolicyMetadata = payrollRoundingPolicyProofMetadata(
+      run.metadata,
+    );
+    const yearToDateProofMetadata = payrollYearToDateProofMetadata(
+      run.metadata,
+    );
+    const correctionMetadata = payrollRunCorrectionMetadata(run);
+    const documentHash =
+      parsed.documentHash ??
+      run.documentHash ??
+      prefixedHash({
+        payrollRunId: run.id,
+        calculationHash: run.calculationHash,
+      });
+    const componentRegisterProof = buildPayrollComponentPostingProof({
+      payrollRunId: run.id,
+      runNumber: run.runNumber,
+      lines: run.lines,
+    });
+    if (componentRegisterProof.status !== "MATCHED") {
+      throw new BusinessRuleError(
+        "Payroll posting requires matched statutory component register proof.",
+      );
+    }
+    const payrollComponentMapping = buildPayrollComponentMapping({
+      payrollRunId: run.id,
+      runNumber: run.runNumber,
+      currency: run.currency,
+      lines: run.lines,
+      componentProof: componentRegisterProof,
+    });
+    const componentRegisterProofMetadata = {
+      componentRegisterProofHash: componentRegisterProof.proofHash,
+      componentRegisterProofStatus: componentRegisterProof.status,
+      componentRegisterProofLineCount: componentRegisterProof.lineCount,
+      componentRegisterProofMatchedLineCount:
+        componentRegisterProof.matchedLineCount,
+      componentRegisterProofMissingLineCount:
+        componentRegisterProof.missingLineCount,
+      componentRegisterProofMismatchedLineCount:
+        componentRegisterProof.mismatchedLineCount,
+      blockedStatutoryComponentCount:
+        componentRegisterProof.blockedStatutoryComponentCount,
+      payrollComponentMappingHash: payrollComponentMapping.componentMappingHash,
+      payrollComponentMappingStatus: payrollComponentMapping.reviewStatus,
+      payrollComponentMapping,
+    };
+
+    const postingResult = await createPayrollLedgerPosting(tx, {
+      organizationId: parsed.organizationId,
+      periodId: accountingPeriod.id,
+      payrollRunId: run.id,
+      runNumber: run.runNumber,
+      entryDate: run.payrollPeriod.payDate,
+      actorId: parsed.actorId,
+      currency: run.currency,
+      documentHash,
+      amounts: {
+        sourceAmount: decimal2(run.netPayableAmount),
+        grossAmount: decimal2(run.grossAmount),
+        employeeDeductionAmount: decimal2(run.employeeDeductionAmount),
+        employerChargeAmount: decimal2(run.employerChargeAmount),
+        netPayableAmount: decimal2(run.netPayableAmount),
+      },
+      metadata: {
+        payrollPeriodId: run.payrollPeriodId,
+        runNumber: run.runNumber,
+        countryPackVersion: run.countryPackVersion,
+        countryPackResolutionHash: run.countryPackResolutionHash,
+        countryPackSchemaVersion: run.countryPackSchemaVersion,
+        countryPackCapabilityStatus: run.countryPackCapabilityStatus,
+        legalProvenanceHash,
+        emittedBusinessEventId: run.emittedBusinessEventId,
+        ...roundingPolicyMetadata,
+        ...yearToDateProofMetadata,
+        ...correctionMetadata,
+        ...componentRegisterProofMetadata,
+      },
+    });
+
+    const eventPayload = {
+      payloadVersion: 1,
+      payrollRunId: run.id,
+      periodId: run.payrollPeriodId,
+      fromStatus: PayrollRunStatus.EMITTED,
+      toStatus: PayrollRunStatus.POSTED,
+      expectedVersion: parsed.expectedVersion,
+      resultingVersion: parsed.expectedVersion + 1,
+      postedAt: postedAt.toISOString(),
+      postedByUserId: parsed.actorId,
+      journalEntryId: postingResult.journalEntry.id,
+      postingSourceLinkId: postingResult.accountingSourceLinkId,
+      postingEvidenceId: postingResult.ledgerBatch.id,
+      postingDocumentHash: documentHash,
+      ledgerPostingBatchId: postingResult.ledgerBatch.id,
+      emittedBusinessEventId: run.emittedBusinessEventId,
+      correlationId: parsed.correlationId ?? null,
+      ...correctionMetadata,
+      ...componentRegisterProofMetadata,
+    };
+    const eventResult = await recordBusinessEventInTx(
+      tx as unknown as BusinessEventTx,
+      {
+        organizationId: parsed.organizationId,
+        eventType: "PAYROLL_POSTED",
+        eventSource: "INTERNAL",
+        schemaVersion: 1,
+        idempotencyKey: `payroll-transition:${parsed.idempotencyKey}`,
+        payload: eventPayload,
+        occurredAt: postedAt,
+        actorId: parsed.actorId,
+        sourceType: AccountingSourceType.PAYROLL_RUN,
+        sourceId: run.id,
+        postingBatchId: postingResult.ledgerBatch.id,
+        documentHash,
+        metadata: {
+          gate: "payroll-trust-spine",
+          correlationId: parsed.correlationId ?? null,
+          commandPayloadHash: payloadHash,
+        },
+        outboxMessages: [
+          {
+            channel: "NOTIFICATION",
+            eventName: "payroll_run.posted",
+            destination: "accounting",
+            payload: {
+              severity: "info",
+              payrollRunId: run.id,
+              runNumber: run.runNumber,
+              ledgerPostingBatchId: postingResult.ledgerBatch.id,
+              journalEntryId: postingResult.journalEntry.id,
+            },
+          },
+        ],
+      },
+    );
+
+    await persistPayrollRunTransition(tx, {
+      command: "postPayrollRun",
+      organizationId: parsed.organizationId,
+      payrollRunId: run.id,
+      actorId: parsed.actorId,
+      expectedVersion: parsed.expectedVersion,
+      fromStatus: PayrollRunStatus.EMITTED,
+      toStatus: PayrollRunStatus.POSTED,
+      transitionedAt: postedAt,
+      businessEventId: eventResult.event.id,
+      idempotencyKey: parsed.idempotencyKey,
+      payloadHash,
+      correlationId: parsed.correlationId,
+      metadata: parsed.metadata,
+      updateData: {
+        postedById: parsed.actorId,
+        postedAt,
+        ledgerPostingBatchId: postingResult.ledgerBatch.id,
+        journalEntryId: postingResult.journalEntry.id,
+        accountingSourceLinkId: postingResult.accountingSourceLinkId,
+        postedBusinessEventId: eventResult.event.id,
+        documentHash,
+        metadata: safeJson({
+          ...asRecord(run.metadata),
+          payrollPostingPayloadHash: payloadHash,
+          payrollPostingBusinessEventId: eventResult.event.id,
+          ledgerPostingBatchId: postingResult.ledgerBatch.id,
+          journalEntryId: postingResult.journalEntry.id,
+          accountingSourceLinkId: postingResult.accountingSourceLinkId,
+          ...yearToDateProofMetadata,
+          ...correctionMetadata,
+          ...componentRegisterProofMetadata,
+        }),
+      },
+      auditAction: "PAYROLL_RUN_POSTED",
+      auditAfter: {
+        ledgerPostingBatchId: postingResult.ledgerBatch.id,
+        journalEntryId: postingResult.journalEntry.id,
+        accountingSourceLinkId: postingResult.accountingSourceLinkId,
+      },
+      afterCompareAndSet: async () => {
+        const periodUpdate = await tx.payrollPeriod.updateMany({
+          where: {
+            id: run.payrollPeriodId,
+            organizationId: parsed.organizationId,
+          },
+          data: { status: PayrollPeriodStatus.POSTED },
+        });
+        if (periodUpdate.count !== 1) {
+          throw payrollTrustSpineError(
+            "TENANT_SCOPE_VIOLATION",
+            "Payroll period does not belong to the payroll run tenant.",
+          );
+        }
+
+        await recordCloseCertificationInvalidationsForSourceInTx(
+          tx,
+          parsed.organizationId,
+          {
+            sourceCode: "PAYROLL_RUN_POSTED",
+            sourceId: run.id,
+            periodId: accountingPeriod.id,
+            periodStart: run.payrollPeriod.payDate,
+            periodEnd: run.payrollPeriod.payDate,
+            staleReason:
+              "Payroll run posting changed certified close evidence.",
+            newEvidenceHash: documentHash,
+            correlationId:
+              parsed.correlationId ??
+              parsed.idempotencyKey ??
+              eventResult.event.id,
+          },
+          { actorId: parsed.actorId, now: postedAt },
+        );
+      },
+    });
+
+    const payrollRun = await tx.payrollRun.findFirst({
+      where: {
+        id: run.id,
+        organizationId: parsed.organizationId,
+        status: PayrollRunStatus.POSTED,
+        deletedAt: null,
+      },
+      include: { payslips: true },
+    });
+    if (!payrollRun) {
+      throw payrollTrustSpineError(
+        "PAYROLL_TRANSITION_EVIDENCE_MISSING",
+        "Posted payroll run evidence is missing.",
+      );
+    }
+    return {
+      payrollRun,
+      ledgerPostingBatchId: postingResult.ledgerBatch.id,
+      businessEventId: eventResult.event.id,
+      ledgerStatus: "POSTED" as const,
+      idempotent: false,
+    };
+  });
+}
+
+/**
+ * @deprecated The external action is removed at Payroll Trust Spine cutover.
+ * New callers must use the four independent lifecycle commands above.
+ */
 export async function approveAndPostPayrollRun(
   input: ApproveAndPostPayrollRunInput,
   client: DbClient = db,
 ) {
   const parsed = approveAndPostPayrollRunInputSchema.parse(input);
+  if (process.env.PAYROLL_TRUST_SPINE_WRITES_ENABLED === "true") {
+    throw payrollTrustSpineError(
+      "INVALID_TRANSITION",
+      "Combined payroll approval and posting is disabled. Use the independent payroll lifecycle commands.",
+      409,
+    );
+  }
   const approvedAt = parseDate(parsed.now);
   const approvalPayloadHash = prefixedHash({
     operation: "approveAndPostPayrollRun",
@@ -6792,14 +8189,7 @@ export async function approveAndPostPayrollRun(
   });
 }
 
-export async function releasePayrollPaymentBatch(
-  input: ReleasePayrollPaymentBatchInput,
-  client: DbClient = db,
-) {
-  const parsed = releasePayrollPaymentBatchInputSchema.parse(input);
-  const paymentDate = parseDate(parsed.paymentDate);
-  const releasedById = parsed.releasedById ?? parsed.approvedById;
-  const method = parsed.method as PaymentMethod;
+function assertSupportedPayrollPaymentMethod(method: PaymentMethod) {
   const supportedMethods = new Set<PaymentMethod>([
     PaymentMethod.CASH,
     PaymentMethod.BANK_TRANSFER,
@@ -6811,15 +8201,23 @@ export async function releasePayrollPaymentBatch(
       "Payroll payment method is not configured for salary disbursement posting.",
     );
   }
+}
 
-  const idempotencyPayloadHash = prefixedHash({
-    operation: "releasePayrollPaymentBatch",
+export async function requestPayrollPaymentBatch(
+  input: RequestPayrollPaymentBatchInput,
+  client: DbClient = db,
+) {
+  const parsed = requestPayrollPaymentBatchInputSchema.parse(input);
+  const paymentDate = parseDate(parsed.paymentDate);
+  const method = parsed.method as PaymentMethod;
+  assertSupportedPayrollPaymentMethod(method);
+
+  const requestPayloadHash = prefixedHash({
+    operation: "requestPayrollPaymentBatch",
     payrollRunId: parsed.payrollRunId,
     method,
     paymentDate: paymentDate.toISOString(),
     requestedById: parsed.requestedById,
-    approvedById: parsed.approvedById,
-    releasedById,
     bankFileHash: parsed.bankFileHash ?? null,
     documentHash: parsed.documentHash ?? null,
     allocations: [...parsed.allocations]
@@ -6831,7 +8229,7 @@ export async function releasePayrollPaymentBatch(
       .sort((left, right) => left.payslipId.localeCompare(right.payslipId)),
   });
 
-  return inTransaction(client, async (tx) => {
+  return inSerializableTransaction(client, async (tx) => {
     const existing = await tx.payrollPaymentBatch.findFirst({
       where: {
         organizationId: parsed.organizationId,
@@ -6840,31 +8238,20 @@ export async function releasePayrollPaymentBatch(
       include: { allocations: true },
     });
     if (existing) {
-      assertIdempotencyPayloadMatches(
+      assertMetadataPayloadMatches(
         existing.metadata,
-        idempotencyPayloadHash,
-        "Payroll payment batch idempotency key was reused with a different payload.",
+        "requestPayloadHash",
+        requestPayloadHash,
+        "Payroll payment request idempotency key was reused with a different payload.",
       );
       return {
         payrollPaymentBatch: existing,
-        postingBatchId: existing.ledgerPostingBatchId,
-        businessEventId: existing.postedBusinessEventId,
-        ledgerStatus:
-          metadataString(existing.metadata, "ledgerStatus") ??
-          "IDEMPOTENT_REPLAY",
-        paymentTransactionId: existing.paymentTransactionId,
-        paymentExceptionId: existing.paymentExceptionId,
-        reconciliationStatus: existing.reconciliationStatus,
+        created: false,
+        businessEventId: metadataString(
+          existing.metadata,
+          "requestBusinessEventId",
+        ),
       };
-    }
-
-    if (
-      parsed.requestedById === parsed.approvedById ||
-      parsed.requestedById === releasedById
-    ) {
-      throw new BusinessRuleError(
-        "A separate approver and releaser are required before releasing payroll payments.",
-      );
     }
 
     const run = await tx.payrollRun.findFirst({
@@ -6925,15 +8312,14 @@ export async function releasePayrollPaymentBatch(
     });
 
     const controlDecision = evaluateSensitiveAction({
-      action: "payroll.payment.release",
-      actorId: releasedById,
+      action: "payroll.payment.request",
+      actorId: parsed.requestedById,
       organizationId: parsed.organizationId,
       actorPermissions: parsed.actorPermissions,
       lastAuthAt: parsed.lastAuthAt,
       now: parseDate(parsed.now, paymentDate),
       resourceType: "PayrollRun",
       resourceId: run.id,
-      subjectActorId: parsed.requestedById,
       amount: run.netPayableAmount,
       currency: run.currency,
       metadata: {
@@ -7082,14 +8468,14 @@ export async function releasePayrollPaymentBatch(
         documentHash,
         evidenceHash,
         requestedById: parsed.requestedById,
-        approvedById: parsed.approvedById,
-        releasedById,
-        approvedAt: paymentDate,
-        releasedAt: paymentDate,
+        approvedById: null,
+        releasedById: null,
+        approvedAt: null,
+        releasedAt: null,
         notes: parsed.notes ?? null,
         metadata: safeJson({
           gate: "012-payroll-presence-completion-gate",
-          idempotencyPayloadHash,
+          requestPayloadHash,
           payrollRunDocumentHash: run.documentHash,
           ...yearToDateProofMetadata,
           ...correctionMetadata,
@@ -7120,13 +8506,530 @@ export async function releasePayrollPaymentBatch(
       include: { allocations: true },
     });
 
+    const eventResult = await recordBusinessEventInTx(
+      tx as unknown as BusinessEventTx,
+      {
+        organizationId: parsed.organizationId,
+        eventType: "payroll.payment_batch.requested",
+        eventSource: "INTERNAL",
+        schemaVersion: 1,
+        idempotencyKey: parsed.idempotencyKey,
+        payload: {
+          payrollPaymentBatchId: paymentBatch.id,
+          payrollRunId: run.id,
+          batchNumber: paymentBatch.batchNumber,
+          amount: totalPayment.toFixed(2),
+          method,
+          allocationIds: paymentBatch.allocations.map(
+            (allocation) => allocation.id,
+          ),
+          requestPayloadHash,
+        },
+        occurredAt: parseDate(parsed.now, paymentDate),
+        actorId: parsed.requestedById,
+        sourceType: AccountingSourceType.PAYROLL_PAYMENT,
+        sourceId: paymentBatch.id,
+        documentHash,
+        metadata: {
+          gate: "012-payroll-presence-completion-gate",
+          requestPayloadHash,
+        },
+        outboxMessages: [
+          {
+            channel: "NOTIFICATION",
+            eventName: "payroll_payment_batch.approval_required",
+            destination: "payroll",
+            payload: {
+              severity: "warning",
+              payrollPaymentBatchId: paymentBatch.id,
+              payrollRunId: run.id,
+              amount: totalPayment.toFixed(2),
+              actionRequired: "INDEPENDENT_APPROVAL",
+            },
+          },
+        ],
+      },
+    );
+    await markBusinessEventAppliedInTx(
+      tx as unknown as BusinessEventTx,
+      parsed.organizationId,
+      eventResult.event.id,
+    );
+
+    const requestedBatch = await tx.payrollPaymentBatch.update({
+      where: { id: paymentBatch.id },
+      data: {
+        metadata: safeJson({
+          ...asRecord(paymentBatch.metadata),
+          requestPayloadHash,
+          requestBusinessEventId: eventResult.event.id,
+        }),
+      },
+      include: { allocations: true },
+    });
+
+    await writeAudit(tx, {
+      organizationId: parsed.organizationId,
+      entityType: "PayrollPaymentBatch",
+      entityId: paymentBatch.id,
+      action: "PAYROLL_PAYMENT_BATCH_REQUESTED",
+      actorId: parsed.requestedById,
+      changes: safeJson({
+        after: {
+          payrollRunId: run.id,
+          status: PayrollPaymentBatchStatus.DRAFT,
+          amount: totalPayment.toFixed(2),
+          batchNumber: paymentBatch.batchNumber,
+          businessEventId: eventResult.event.id,
+          requestPayloadHash,
+        },
+      }),
+    });
+
+    return {
+      payrollPaymentBatch: requestedBatch,
+      created: true,
+      businessEventId: eventResult.event.id,
+    };
+  });
+}
+
+export async function approvePayrollPaymentBatch(
+  input: ApprovePayrollPaymentBatchInput,
+  client: DbClient = db,
+) {
+  const parsed = approvePayrollPaymentBatchInputSchema.parse(input);
+  const approvedAt = parseDate(parsed.now);
+  const approvalPayloadHash = prefixedHash({
+    operation: "approvePayrollPaymentBatch",
+    payrollPaymentBatchId: parsed.payrollPaymentBatchId,
+    approvedById: parsed.approvedById,
+    idempotencyKey: parsed.idempotencyKey,
+  });
+
+  return inTransaction(client, async (tx) => {
+    const paymentBatch = await tx.payrollPaymentBatch.findFirst({
+      where: {
+        id: parsed.payrollPaymentBatchId,
+        organizationId: parsed.organizationId,
+      },
+      include: { allocations: true },
+    });
+    if (!paymentBatch)
+      throw new NotFoundError("Payroll payment batch not found");
+
+    if (
+      paymentBatch.status === PayrollPaymentBatchStatus.APPROVED ||
+      paymentBatch.status === PayrollPaymentBatchStatus.RELEASED ||
+      paymentBatch.status === PayrollPaymentBatchStatus.PARTIALLY_SETTLED ||
+      paymentBatch.status === PayrollPaymentBatchStatus.SETTLED
+    ) {
+      assertMetadataPayloadMatches(
+        paymentBatch.metadata,
+        "approvalPayloadHash",
+        approvalPayloadHash,
+        "Payroll payment approval idempotency key was reused with a different payload.",
+      );
+      return {
+        payrollPaymentBatch: paymentBatch,
+        approved: false,
+        businessEventId: metadataString(
+          paymentBatch.metadata,
+          "approvalBusinessEventId",
+        ),
+      };
+    }
+    if (paymentBatch.status !== PayrollPaymentBatchStatus.DRAFT) {
+      throw new BusinessRuleError(
+        "Only draft payroll payment batches can be approved.",
+      );
+    }
+    if (paymentBatch.requestedById === parsed.approvedById) {
+      throw new BusinessRuleError(
+        "SOD_VIOLATION: Payroll payment approval requires an actor independent from the requester.",
+      );
+    }
+
+    const controlDecision = evaluateSensitiveAction({
+      action: "payroll.payment.approve",
+      actorId: parsed.approvedById,
+      organizationId: parsed.organizationId,
+      actorPermissions: parsed.actorPermissions,
+      lastAuthAt: parsed.lastAuthAt,
+      now: approvedAt,
+      resourceType: "PayrollPaymentBatch",
+      resourceId: paymentBatch.id,
+      subjectActorId: paymentBatch.requestedById,
+      amount: paymentBatch.amount,
+      currency: paymentBatch.currency,
+      metadata: { payrollRunId: paymentBatch.payrollRunId },
+    });
+    await auditSensitiveActionDecision(tx, controlDecision);
+    assertSensitiveActionAllowed(controlDecision);
+
+    const claimed = await tx.payrollPaymentBatch.updateMany({
+      where: {
+        id: paymentBatch.id,
+        organizationId: parsed.organizationId,
+        status: PayrollPaymentBatchStatus.DRAFT,
+        approvedById: null,
+      },
+      data: {
+        status: PayrollPaymentBatchStatus.APPROVED,
+        approvedById: parsed.approvedById,
+        approvedAt,
+      },
+    });
+    if (claimed.count !== 1) {
+      throw new ConflictError(
+        "Payroll payment batch approval changed concurrently; refresh before retrying.",
+      );
+    }
+
+    const eventResult = await recordBusinessEventInTx(
+      tx as unknown as BusinessEventTx,
+      {
+        organizationId: parsed.organizationId,
+        eventType: "payroll.payment_batch.approved",
+        eventSource: "INTERNAL",
+        schemaVersion: 1,
+        idempotencyKey: parsed.idempotencyKey,
+        payload: {
+          payrollPaymentBatchId: paymentBatch.id,
+          payrollRunId: paymentBatch.payrollRunId,
+          batchNumber: paymentBatch.batchNumber,
+          amount: decimal2(paymentBatch.amount).toFixed(2),
+          requesterId: paymentBatch.requestedById,
+          approverId: parsed.approvedById,
+          approvalPayloadHash,
+        },
+        occurredAt: approvedAt,
+        actorId: parsed.approvedById,
+        sourceType: AccountingSourceType.PAYROLL_PAYMENT,
+        sourceId: paymentBatch.id,
+        documentHash: paymentBatch.documentHash ?? undefined,
+        metadata: {
+          gate: "012-payroll-presence-completion-gate",
+          approvalPayloadHash,
+        },
+        outboxMessages: [
+          {
+            channel: "NOTIFICATION",
+            eventName: "payroll_payment_batch.release_ready",
+            destination: "treasury",
+            payload: {
+              severity: "warning",
+              payrollPaymentBatchId: paymentBatch.id,
+              payrollRunId: paymentBatch.payrollRunId,
+              amount: decimal2(paymentBatch.amount).toFixed(2),
+              actionRequired: "INDEPENDENT_RELEASE",
+            },
+          },
+        ],
+      },
+    );
+    await markBusinessEventAppliedInTx(
+      tx as unknown as BusinessEventTx,
+      parsed.organizationId,
+      eventResult.event.id,
+    );
+
+    const approvedBatch = await tx.payrollPaymentBatch.update({
+      where: { id: paymentBatch.id },
+      data: {
+        metadata: safeJson({
+          ...asRecord(paymentBatch.metadata),
+          approvalPayloadHash,
+          approvalBusinessEventId: eventResult.event.id,
+        }),
+      },
+      include: { allocations: true },
+    });
+
+    await writeAudit(tx, {
+      organizationId: parsed.organizationId,
+      entityType: "PayrollPaymentBatch",
+      entityId: paymentBatch.id,
+      action: "PAYROLL_PAYMENT_BATCH_APPROVED",
+      actorId: parsed.approvedById,
+      changes: safeJson({
+        before: { status: PayrollPaymentBatchStatus.DRAFT },
+        after: {
+          status: PayrollPaymentBatchStatus.APPROVED,
+          requesterId: paymentBatch.requestedById,
+          approverId: parsed.approvedById,
+          businessEventId: eventResult.event.id,
+          approvalPayloadHash,
+        },
+      }),
+    });
+
+    return {
+      payrollPaymentBatch: approvedBatch,
+      approved: true,
+      businessEventId: eventResult.event.id,
+    };
+  });
+}
+
+export async function releasePayrollPaymentBatch(
+  input: ReleasePayrollPaymentBatchInput,
+  client: DbClient = db,
+) {
+  const parsed = releasePayrollPaymentBatchInputSchema.parse(input);
+  const releasedAt = parseDate(parsed.now);
+  const releasePayloadHash = prefixedHash({
+    operation: "releasePayrollPaymentBatch",
+    payrollPaymentBatchId: parsed.payrollPaymentBatchId,
+    releasedById: parsed.releasedById,
+    idempotencyKey: parsed.idempotencyKey,
+  });
+
+  return inSerializableTransaction(client, async (tx) => {
+    const paymentBatch = await tx.payrollPaymentBatch.findFirst({
+      where: {
+        id: parsed.payrollPaymentBatchId,
+        organizationId: parsed.organizationId,
+      },
+      include: {
+        allocations: true,
+        payrollRun: {
+          include: {
+            payrollPeriod: true,
+            payslips: {
+              include: { employee: true },
+              orderBy: { createdAt: "asc" },
+            },
+          },
+        },
+      },
+    });
+    if (!paymentBatch)
+      throw new NotFoundError("Payroll payment batch not found");
+
+    if (
+      paymentBatch.status === PayrollPaymentBatchStatus.RELEASED ||
+      paymentBatch.status === PayrollPaymentBatchStatus.PARTIALLY_SETTLED ||
+      paymentBatch.status === PayrollPaymentBatchStatus.SETTLED
+    ) {
+      assertMetadataPayloadMatches(
+        paymentBatch.metadata,
+        "releasePayloadHash",
+        releasePayloadHash,
+        "Payroll payment release idempotency key was reused with a different payload.",
+      );
+      return {
+        payrollPaymentBatch: paymentBatch,
+        postingBatchId: paymentBatch.ledgerPostingBatchId,
+        businessEventId: paymentBatch.postedBusinessEventId,
+        ledgerStatus:
+          metadataString(paymentBatch.metadata, "ledgerStatus") ??
+          "IDEMPOTENT_REPLAY",
+        paymentTransactionId: paymentBatch.paymentTransactionId,
+        paymentExceptionId: paymentBatch.paymentExceptionId,
+        reconciliationStatus: paymentBatch.reconciliationStatus,
+      };
+    }
+    if (paymentBatch.status !== PayrollPaymentBatchStatus.APPROVED) {
+      throw new BusinessRuleError(
+        "APPROVAL_REQUIRED: Payroll payment release requires a persisted approved payment batch.",
+      );
+    }
+    if (!paymentBatch.approvedById || !paymentBatch.approvedAt) {
+      throw new BusinessRuleError(
+        "APPROVAL_REQUIRED: Payroll payment release requires authoritative approval evidence.",
+      );
+    }
+    if (
+      parsed.releasedById === paymentBatch.requestedById ||
+      parsed.releasedById === paymentBatch.approvedById ||
+      paymentBatch.requestedById === paymentBatch.approvedById
+    ) {
+      throw new BusinessRuleError(
+        "SOD_VIOLATION: Payroll payment requester, approver, and releaser must be separate authenticated actors.",
+      );
+    }
+
+    const run = paymentBatch.payrollRun;
+    const paymentDate = paymentBatch.paymentDate;
+    const method = paymentBatch.method;
+    assertSupportedPayrollPaymentMethod(method);
+    if (run.status === PayrollRunStatus.PAID) {
+      throw new BusinessRuleError("Payroll run has already been paid.");
+    }
+    if (run.status !== PayrollRunStatus.POSTED) {
+      throw new BusinessRuleError(
+        "Payroll payments can only be released for posted payroll runs.",
+      );
+    }
+    if (!run.ledgerPostingBatchId || !run.postedBusinessEventId) {
+      throw new BusinessRuleError(
+        "Payroll payment release requires posted payroll ledger and business-event evidence.",
+      );
+    }
+    if (run.payslips.length === 0 || paymentBatch.allocations.length === 0) {
+      throw new BusinessRuleError(
+        "Payroll payment release requires persisted emitted-payslip allocations.",
+      );
+    }
+
+    const legalProvenance = legalProvenanceFromMetadata(run.metadata);
+    const legalProvenanceHash = prefixedHash(legalProvenance);
+    const roundingPolicyMetadata = payrollRoundingPolicyProofMetadata(
+      run.metadata,
+    );
+    const yearToDateProofMetadata = payrollYearToDateProofMetadata(
+      run.metadata,
+    );
+    const runProofMetadata = payrollRunProofMetadata(run.metadata);
+    const correctionMetadata = payrollRunCorrectionMetadata(run);
+    if (
+      correctionMetadata.correctionRun === true &&
+      decimal2(run.netPayableAmount).lt(0)
+    ) {
+      throw new BusinessRuleError(
+        "Negative payroll correction runs require employee receivable or refund workflow before payment release; payroll payment release cannot disburse a negative net payable.",
+      );
+    }
+    const paymentAdapterMetadata = payrollPaymentAdapterProofMetadata({
+      method,
+      bankFileHash: paymentBatch.bankFileHash,
+      metadata: paymentBatch.metadata,
+    });
+
+    const controlDecision = evaluateSensitiveAction({
+      action: "payroll.payment.release",
+      actorId: parsed.releasedById,
+      organizationId: parsed.organizationId,
+      actorPermissions: parsed.actorPermissions,
+      lastAuthAt: parsed.lastAuthAt,
+      now: releasedAt,
+      resourceType: "PayrollPaymentBatch",
+      resourceId: paymentBatch.id,
+      subjectActorId: paymentBatch.approvedById,
+      amount: paymentBatch.amount,
+      currency: paymentBatch.currency,
+      metadata: {
+        payrollRunId: run.id,
+        runNumber: run.runNumber,
+        payrollPeriodId: run.payrollPeriodId,
+        requesterId: paymentBatch.requestedById,
+        approverId: paymentBatch.approvedById,
+        ...yearToDateProofMetadata,
+        ...correctionMetadata,
+        ...runProofMetadata,
+        ...paymentAdapterMetadata,
+      },
+    });
+    await auditSensitiveActionDecision(tx, controlDecision);
+    assertSensitiveActionAllowed(controlDecision);
+
+    const payslipIds = paymentBatch.allocations.map(
+      (allocation) => allocation.payslipId,
+    );
+    if (payslipIds.length !== new Set(payslipIds).size) {
+      throw new BusinessRuleError(
+        "Payroll payment cannot contain duplicate payslip allocations.",
+      );
+    }
+    const payslipById = new Map(
+      run.payslips.map((payslip) => [payslip.id, payslip]),
+    );
+    const existingAllocations = await tx.payrollPaymentAllocation.findMany({
+      where: {
+        organizationId: parsed.organizationId,
+        payslipId: { in: payslipIds },
+        payrollPaymentBatchId: { not: paymentBatch.id },
+        payrollPaymentBatch: {
+          status: {
+            notIn: [
+              PayrollPaymentBatchStatus.CANCELLED,
+              PayrollPaymentBatchStatus.FAILED,
+            ],
+          },
+        },
+      },
+    });
+    const paidByPayslip = new Map<string, Prisma.Decimal>();
+    for (const allocation of existingAllocations) {
+      paidByPayslip.set(
+        allocation.payslipId,
+        (paidByPayslip.get(allocation.payslipId) ?? new Prisma.Decimal(0))
+          .plus(allocation.amount)
+          .toDecimalPlaces(2),
+      );
+    }
+
+    let totalPayment = new Prisma.Decimal(0);
+    const allocationPlans = paymentBatch.allocations.map((allocation) => {
+      const payslip = payslipById.get(allocation.payslipId);
+      if (!payslip || payslip.employeeId !== allocation.employeeId) {
+        throw new BusinessRuleError(
+          "Persisted payroll payment allocation no longer matches the selected run.",
+        );
+      }
+      if (payslip.status !== PayrollPayslipStatus.EMITTED) {
+        throw new BusinessRuleError(
+          "Payroll payments can only be released for emitted payslips.",
+        );
+      }
+      if (!payslip.employee.paymentDestinationHash) {
+        throw new BusinessRuleError(
+          `Employee ${payslip.employee.displayName} has no approved payment destination evidence.`,
+        );
+      }
+      const amount = decimal2(allocation.amount);
+      if (amount.lte(0)) {
+        throw new BusinessRuleError(
+          "Payroll payment allocation amount must be greater than zero.",
+        );
+      }
+      const outstanding = decimal2(payslip.netPayableAmount)
+        .minus(paidByPayslip.get(payslip.id) ?? new Prisma.Decimal(0))
+        .toDecimalPlaces(2);
+      if (amount.gt(outstanding)) {
+        throw new BusinessRuleError(
+          "Payroll payment allocation exceeds unpaid payslip net payable.",
+        );
+      }
+      totalPayment = totalPayment.plus(amount).toDecimalPlaces(2);
+      return { payslip, amount };
+    });
+    for (const allocation of allocationPlans) {
+      await assertApprovedPaymentDestinationEvidence(tx, {
+        organizationId: parsed.organizationId,
+        employeeId: allocation.payslip.employeeId,
+      });
+    }
+    if (
+      !totalPayment.eq(decimal2(paymentBatch.amount)) ||
+      !totalPayment.eq(decimal2(run.netPayableAmount))
+    ) {
+      throw new BusinessRuleError(
+        "Approved payroll payment batch total must equal the posted payroll net payable amount.",
+      );
+    }
+
+    const period = await getOpenPeriodForDate(
+      parsed.organizationId,
+      paymentDate,
+      tx,
+    );
+    const documentHash = paymentBatch.documentHash;
+    const evidenceHash = paymentBatch.evidenceHash;
+    if (!documentHash || !evidenceHash) {
+      throw new BusinessRuleError(
+        "Payroll payment release requires immutable request document and evidence hashes.",
+      );
+    }
+
     const postingResult = await createPayrollPaymentLedgerPosting(tx, {
       organizationId: parsed.organizationId,
       periodId: period.id,
       payrollPaymentBatchId: paymentBatch.id,
       batchNumber: paymentBatch.batchNumber,
       paymentDate,
-      actorId: releasedById,
+      actorId: parsed.releasedById,
       currency: paymentBatch.currency,
       method,
       documentHash,
@@ -7198,8 +9101,8 @@ export async function releasePayrollPaymentBatch(
           ...runProofMetadata,
           ...paymentAdapterMetadata,
         },
-        occurredAt: paymentDate,
-        actorId: releasedById,
+        occurredAt: releasedAt,
+        actorId: parsed.releasedById,
         sourceType: AccountingSourceType.PAYROLL_PAYMENT,
         sourceId: paymentBatch.id,
         postingBatchId: postingResult.ledgerBatch.id,
@@ -7286,8 +9189,8 @@ export async function releasePayrollPaymentBatch(
         correlationId: parsed.idempotencyKey ?? eventResult.event.id,
       },
       {
-        actorId: releasedById,
-        now: paymentDate,
+        actorId: parsed.releasedById,
+        now: releasedAt,
       },
     );
     const releasedBatch = await tx.payrollPaymentBatch.update({
@@ -7299,9 +9202,12 @@ export async function releasePayrollPaymentBatch(
         paymentTransactionId: reconciliationResult.paymentTransaction.id,
         paymentExceptionId: reconciliationResult.paymentException.id,
         reconciliationStatus: reconciliationResult.reconciliationStatus,
+        releasedById: parsed.releasedById,
+        releasedAt,
         metadata: safeJson({
+          ...asRecord(paymentBatch.metadata),
           gate: "012-payroll-presence-completion-gate",
-          idempotencyPayloadHash,
+          releasePayloadHash,
           ledgerStatus: postingResult.ledgerStatus,
           ledgerBlockerCode: postingResult.blockerCode ?? null,
           ledgerBlockerMessage: postingResult.blockerMessage ?? null,
@@ -7316,7 +9222,6 @@ export async function releasePayrollPaymentBatch(
           ...correctionMetadata,
           ...runProofMetadata,
           ...paymentAdapterMetadata,
-          requestedMetadata: parsed.metadata ?? null,
         }),
       },
       include: { allocations: true },
@@ -7336,9 +9241,16 @@ export async function releasePayrollPaymentBatch(
       entityType: "PayrollPaymentBatch",
       entityId: paymentBatch.id,
       action: "PAYROLL_PAYMENT_BATCH_RELEASED",
-      actorId: releasedById,
+      actorId: parsed.releasedById,
       changes: safeJson({
+        before: {
+          status: PayrollPaymentBatchStatus.APPROVED,
+          requestedById: paymentBatch.requestedById,
+          approvedById: paymentBatch.approvedById,
+        },
         after: {
+          status: PayrollPaymentBatchStatus.RELEASED,
+          releasedById: parsed.releasedById,
           payrollRunId: run.id,
           amount: totalPayment.toFixed(2),
           batchNumber: paymentBatch.batchNumber,
@@ -7823,81 +9735,150 @@ async function writePayrollRunWorkbenchReadAudit(
   });
 }
 
-function payrollRunNextActions(run: {
-  id: string;
-  status: PayrollRunStatus;
-  runType: PayrollRunType;
-  _count: { declarations: number; paymentBatches: number };
-}) {
+function payrollRunNextActions(
+  run: {
+    id: string;
+    status: PayrollRunStatus;
+    runType: PayrollRunType;
+    _count: { declarations: number; paymentBatches: number };
+    paymentBatches: Array<{ status: PayrollPaymentBatchStatus }>;
+  },
+  lifecycle: PayrollRunLifecycleReadModel,
+  actorPermissions: readonly string[],
+) {
   const actions: PayrollRunWorkbenchData["runs"][number]["nextActions"] = [];
+  const actionAvailable = (permission: string, blockedBy: readonly string[] = []) =>
+    blockedBy.length === 0 &&
+    hasAnyRbacPermission(actorPermissions, [permission]);
 
-  if (run.status === PayrollRunStatus.DRAFT) {
+  if (lifecycle.nextAction) {
     actions.push({
-      id: "calculate",
-      label: "Calculate payroll run",
-      requiredPermission: "payroll.runs.calculate",
-      requiresFreshAuth: false,
-      requiresSeparateApprover: false,
-      href: null,
-    });
-  }
-
-  if (
-    run.status === PayrollRunStatus.CALCULATED ||
-    run.status === PayrollRunStatus.REVIEWED
-  ) {
-    actions.push({
-      id: "approve-post",
-      label: "Approve and post run",
-      requiredPermission: "payroll.runs.approve",
-      requiresFreshAuth: true,
-      requiresSeparateApprover: true,
-      href: null,
+      ...lifecycle.nextAction,
+      allowed: actionAvailable(
+        lifecycle.nextAction.requiredPermission,
+        lifecycle.blockerCodes,
+      ),
+      blockedBy: lifecycle.blockerCodes,
     });
   }
 
   if (run.status === PayrollRunStatus.POSTED && run._count.declarations === 0) {
+    const requiredPermission = "payroll.declarations.prepare";
     actions.push({
       id: "prepare-declarations",
       label: "Prepare statutory declarations",
-      requiredPermission: "payroll.declarations.prepare",
+      requiredPermission,
       requiresFreshAuth: false,
       requiresSeparateApprover: false,
       href: "/dashboard/payroll/declarations",
+      allowed: actionAvailable(requiredPermission),
+      blockedBy: [],
     });
   }
 
-  if (
-    run.status === PayrollRunStatus.POSTED &&
-    run._count.paymentBatches === 0
-  ) {
-    actions.push({
-      id: "release-payments",
-      label: "Release payroll payments",
-      requiredPermission: "payroll.payments.release",
-      requiresFreshAuth: true,
-      requiresSeparateApprover: true,
-      href: "/dashboard/payroll/payments",
-    });
+  if (run.status === PayrollRunStatus.POSTED) {
+    const activePaymentBatch = run.paymentBatches.find(
+      (batch) =>
+        batch.status !== PayrollPaymentBatchStatus.CANCELLED &&
+        batch.status !== PayrollPaymentBatchStatus.FAILED,
+    );
+    if (!activePaymentBatch) {
+      const requiredPermission = "payroll.payments.request";
+      actions.push({
+        id: "request-payments",
+        label: "Request payroll payments",
+        requiredPermission,
+        requiresFreshAuth: true,
+        requiresSeparateApprover: false,
+        href: "/dashboard/payroll/payments",
+        allowed: actionAvailable(requiredPermission),
+        blockedBy: [],
+      });
+    } else if (activePaymentBatch.status === PayrollPaymentBatchStatus.DRAFT) {
+      const requiredPermission = "payroll.payments.approve";
+      actions.push({
+        id: "approve-payments",
+        label: "Approve payroll payments",
+        requiredPermission,
+        requiresFreshAuth: true,
+        requiresSeparateApprover: true,
+        href: "/dashboard/payroll/payments",
+        allowed: actionAvailable(requiredPermission),
+        blockedBy: [],
+      });
+    } else if (
+      activePaymentBatch.status === PayrollPaymentBatchStatus.APPROVED
+    ) {
+      const requiredPermission = "payroll.payments.release";
+      actions.push({
+        id: "release-payments",
+        label: "Release payroll payments",
+        requiredPermission,
+        requiresFreshAuth: true,
+        requiresSeparateApprover: true,
+        href: "/dashboard/payroll/payments",
+        allowed: actionAvailable(requiredPermission),
+        blockedBy: [],
+      });
+    }
   }
 
   if (
     run.status === PayrollRunStatus.PAID ||
     run.status === PayrollRunStatus.POSTED
   ) {
+    const requiredPermission = "accounting.close.read";
     actions.push({
       id: "review-close",
       label: "Review accounting close readiness",
-      requiredPermission: "accounting.close.read",
+      requiredPermission,
       requiresFreshAuth: false,
       requiresSeparateApprover: false,
       href: "/dashboard/accounting/close",
+      allowed: actionAvailable(requiredPermission),
+      blockedBy: [],
     });
   }
 
   return actions;
 }
-
+function payrollRunLifecycleBlockers(
+  lifecycle: PayrollRunLifecycleReadModel,
+): PayrollRunWorkbenchData["runs"][number]["blockers"] {
+  return lifecycle.blockerCodes.map((code) => {
+    if (code === "PAYROLL_TRANSITION_PROOF_MISSING") {
+      return {
+        id: code,
+        severity: "critical" as const,
+        title: "Payroll transition proof is incomplete",
+        detail:
+          "The append-only transition ledger does not prove every required runtime stage for this run.",
+        nextAction:
+          "Reconcile the transition ledger before attempting another payroll lifecycle command.",
+      };
+    }
+    if (code === "PAYROLL_TRANSITION_PROOF_LEGACY_PARTIAL") {
+      return {
+        id: code,
+        severity: "high" as const,
+        title: "Payroll transition proof is historical and partial",
+        detail:
+          "This run contains explicit legacy backfill evidence and cannot be represented as verified runtime proof.",
+        nextAction:
+          "Keep the historical disclosure and use a new runtime-proven run for further lifecycle processing.",
+      };
+    }
+    return {
+      id: code,
+      severity: "high" as const,
+      title: "Payroll Trust Spine writes are disabled",
+      detail:
+        "The guarded payroll lifecycle write switch is not enabled for this environment.",
+      nextAction:
+        "Enable the controlled Trust Spine write rollout only after the focused release gates pass.",
+    };
+  });
+}
 function payrollRunBlockers(input: {
   run: {
     runType: PayrollRunType;
@@ -8289,6 +10270,11 @@ export async function getPayrollRunWorkbenchData(
             paymentTransactionId: true,
             paymentExceptionId: true,
             reconciliationStatus: true,
+            requestedById: true,
+            approvedById: true,
+            releasedById: true,
+            approvedAt: true,
+            releasedAt: true,
             metadata: true,
           },
         },
@@ -8331,6 +10317,19 @@ export async function getPayrollRunWorkbenchData(
             currency: true,
             evidenceHash: true,
             ledgerPostingBatchId: true,
+          },
+        },
+        transitions: {
+          orderBy: { sequence: "asc" },
+          select: {
+            toStatus: true,
+            fromVersion: true,
+            toVersion: true,
+            actorId: true,
+            transitionedAt: true,
+            businessEventId: true,
+            origin: true,
+            evidenceStatus: true,
           },
         },
       },
@@ -8454,12 +10453,21 @@ export async function getPayrollRunWorkbenchData(
 
   const rows = runs.map((run) => {
     const runLedgerBatches = ledgerByRun.get(run.id) ?? [];
-    const blockers = payrollRunBlockers({
-      run,
-      declarations: run.declarations,
-      paymentBatches: run.paymentBatches,
-      ledgerBatches: runLedgerBatches,
+    const lifecycle = buildPayrollRunLifecycleReadModel({
+      status: run.status,
+      version: run.version,
+      transitions: run.transitions,
+      writeEnabled: process.env.PAYROLL_TRUST_SPINE_WRITES_ENABLED === "true",
     });
+    const blockers = [
+      ...payrollRunBlockers({
+        run,
+        declarations: run.declarations,
+        paymentBatches: run.paymentBatches,
+        ledgerBatches: runLedgerBatches,
+      }),
+      ...payrollRunLifecycleBlockers(lifecycle),
+    ];
     const componentRegisterProofHash = metadataString(
       run.metadata,
       "componentRegisterProofHash",
@@ -8532,6 +10540,8 @@ export async function getPayrollRunWorkbenchData(
         approvedAt: isoDate(run.approvedAt),
         emittedAt: isoDate(run.emittedAt),
         postedAt: isoDate(run.postedAt),
+        lifecycle,
+
       },
       correction: {
         correctionRun: run.runType === PayrollRunType.CORRECTION,
@@ -8614,6 +10624,11 @@ export async function getPayrollRunWorkbenchData(
         paymentTransactionId: batch.paymentTransactionId,
         paymentExceptionId: batch.paymentExceptionId,
         reconciliationStatus: batch.reconciliationStatus,
+        requestedById: batch.requestedById,
+        approvedById: batch.approvedById,
+        releasedById: batch.releasedById,
+        approvedAt: isoDate(batch.approvedAt),
+        releasedAt: isoDate(batch.releasedAt),
         latestSettlementSourceRegisterHash: metadataString(
           batch.metadata,
           "latestSettlementSourceRegisterHash",
@@ -8648,7 +10663,11 @@ export async function getPayrollRunWorkbenchData(
         evidenceHash: balanceCase.evidenceHash,
         ledgerPostingBatchId: balanceCase.ledgerPostingBatchId,
       })),
-      nextActions: payrollRunNextActions(run),
+      nextActions: payrollRunNextActions(
+        run,
+        lifecycle,
+        parsed.actorPermissions,
+      ),
       blockers,
     };
   });

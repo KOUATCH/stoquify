@@ -25,6 +25,7 @@ import {
   validateFieldMap,
   type MasterDataFieldMap,
   type MasterDataImportTarget,
+  type MasterDataAnalyzedRow,
   type MasterDataSafeIssue,
 } from "./master-data-csv"
 
@@ -50,6 +51,52 @@ export const MASTER_DATA_ONBOARDING_CONTROL_BOUNDARY = {
   ],
   compensation: "Any remediation is a separately authorized domain archive or correction; this slice never resets or hard-deletes business truth.",
 } as const
+
+export const MASTER_DATA_HIGH_RISK_ROW_THRESHOLD = 100
+export const MASTER_DATA_IMPORT_RISK_REASONS = [
+  "BULK_BATCH",
+  "SUPPLIER_CREATION",
+  "CUSTOMER_CREDIT_LIMIT",
+  "ITEM_PRICING",
+] as const
+
+export type MasterDataImportRiskLevel = "STANDARD" | "HIGH"
+export type MasterDataImportRiskReason = (typeof MASTER_DATA_IMPORT_RISK_REASONS)[number]
+export type MasterDataImportStatus =
+  | "UPLOADED"
+  | "VALIDATED"
+  | "BLOCKED"
+  | "APPROVED"
+  | "COMMITTING"
+  | "COMMITTED"
+
+export function classifyMasterDataImportRisk(input: {
+  target: MasterDataImportTarget
+  rows: readonly MasterDataAnalyzedRow[]
+}): { level: MasterDataImportRiskLevel; reasons: MasterDataImportRiskReason[] } {
+  const reasons = new Set<MasterDataImportRiskReason>()
+  const validRows = input.rows.filter((row) => row.valid)
+
+  if (input.rows.length >= MASTER_DATA_HIGH_RISK_ROW_THRESHOLD) reasons.add("BULK_BATCH")
+  if (input.target === "SUPPLIER" && validRows.length > 0) reasons.add("SUPPLIER_CREATION")
+  if (
+    input.target === "CUSTOMER" &&
+    validRows.some((row) => Number(row.normalizedData.creditLimit ?? 0) > 0)
+  ) {
+    reasons.add("CUSTOMER_CREDIT_LIMIT")
+  }
+  if (
+    input.target === "ITEM" &&
+    validRows.some((row) => row.normalizedData.costPrice != null || row.normalizedData.sellingPrice != null)
+  ) {
+    reasons.add("ITEM_PRICING")
+  }
+
+  return {
+    level: reasons.size > 0 ? "HIGH" : "STANDARD",
+    reasons: [...reasons],
+  }
+}
 
 const BATCH_INCLUDE = {
   mapping: true,
@@ -102,7 +149,7 @@ type ImportBatchRecord = {
   id: string
   organizationId: string
   target: string
-  status: string
+  status: MasterDataImportStatus
   sourceFilename: string
   sourceMimeType: string
   sourceByteSize: number
@@ -114,6 +161,8 @@ type ImportBatchRecord = {
   validRecordCount: number
   errorRecordCount: number
   duplicateRecordCount: number
+  riskLevel: MasterDataImportRiskLevel
+  riskReasons: string[]
   sourceRequiredFieldTotals: Prisma.JsonValue
   preCommitRecordCount: number | null
   postCommitRecordCount: number | null
@@ -180,13 +229,18 @@ export type MasterDataImportSummary = {
   batchId: string
   organizationId: string
   target: MasterDataImportTarget
-  status: string
+  status: MasterDataImportStatus
   sourceFilename: string
   contentHash: string
   mappingVersion: number
   schemaVersion: string
   replayed: boolean
   replayCount: number
+  risk: {
+    level: MasterDataImportRiskLevel
+    reasons: MasterDataImportRiskReason[]
+    separateApproverRequired: boolean
+  }
   controls: {
     sourceRecordCount: number
     validRecordCount: number
@@ -204,6 +258,7 @@ export type MasterDataImportSummary = {
     digest: string
     approvedById: string | null
     approvedAt: string | null
+    canCurrentActorApprove: boolean
   }
   evidenceHash: string | null
   committedRecordIds: string[]
@@ -224,6 +279,18 @@ export type MasterDataOnboardingDashboard = {
     waiverReason: string | null
   }>
   recentBatches: MasterDataImportSummary[]
+  adoption: {
+    evidenceWindow: "RECENT_12_BATCHES"
+    batchCount: number
+    committedBatchCount: number
+    blockedBatchCount: number
+    highRiskBatchCount: number
+    separatelyApprovedHighRiskBatchCount: number
+    stagedRecordCount: number
+    committedRecordCount: number
+    rejectedRecordCount: number
+    duplicateRecordCount: number
+  }
   controlBoundary: typeof MASTER_DATA_ONBOARDING_CONTROL_BOUNDARY
 }
 
@@ -252,6 +319,8 @@ function approvalPayload(batch: Pick<
   | "validRecordCount"
   | "errorRecordCount"
   | "duplicateRecordCount"
+  | "riskLevel"
+  | "riskReasons"
   | "sourceRequiredFieldTotals"
 >) {
   return {
@@ -262,6 +331,10 @@ function approvalPayload(batch: Pick<
     mappingId: batch.mappingId,
     mappingVersion: batch.mappingVersion,
     schemaVersion: batch.schemaVersion,
+    risk: {
+      level: batch.riskLevel,
+      reasons: batch.riskReasons,
+    },
     controls: {
       sourceRecordCount: batch.sourceRecordCount,
       validRecordCount: batch.validRecordCount,
@@ -276,19 +349,31 @@ export function buildMasterDataApprovalDigest(batch: Parameters<typeof approvalP
   return hashStablePayload(approvalPayload(batch))
 }
 
-function toSummary(batch: ImportBatchRecord, replayed = false): MasterDataImportSummary {
+function toSummary(
+  batch: ImportBatchRecord,
+  replayed = false,
+  currentActorId?: string,
+): MasterDataImportSummary {
   const digest = batch.approvalDigest ?? buildMasterDataApprovalDigest(batch)
+  const separateApproverRequired = batch.riskLevel === "HIGH"
   return {
     batchId: batch.id,
     organizationId: batch.organizationId,
     target: batch.target as MasterDataImportTarget,
-    status: batch.status,
+    status: batch.status as MasterDataImportStatus,
     sourceFilename: batch.sourceFilename,
     contentHash: batch.contentHash,
     mappingVersion: batch.mappingVersion,
     schemaVersion: batch.schemaVersion,
     replayed,
     replayCount: batch.replayCount,
+    risk: {
+      level: batch.riskLevel,
+      reasons: batch.riskReasons.filter((reason): reason is MasterDataImportRiskReason =>
+        MASTER_DATA_IMPORT_RISK_REASONS.includes(reason as MasterDataImportRiskReason),
+      ),
+      separateApproverRequired,
+    },
     controls: {
       sourceRecordCount: batch.sourceRecordCount,
       validRecordCount: batch.validRecordCount,
@@ -314,6 +399,10 @@ function toSummary(batch: ImportBatchRecord, replayed = false): MasterDataImport
       digest,
       approvedById: batch.approvedById,
       approvedAt: batch.approvedAt?.toISOString() ?? null,
+      canCurrentActorApprove:
+        Boolean(currentActorId) &&
+        batch.status === "VALIDATED" &&
+        (!separateApproverRequired || batch.uploadedById !== currentActorId),
     },
     evidenceHash: batch.evidenceHash,
     committedRecordIds: batch.rows.flatMap((row) => row.committedRecordId ? [row.committedRecordId] : []),
@@ -517,6 +606,12 @@ export function buildMasterDataEvidenceManifest(batch: ImportBatchRecord) {
       digest: batch.approvalDigest ?? buildMasterDataApprovalDigest(batch),
       approvedById: batch.approvedById,
       approvedAt: batch.approvedAt?.toISOString() ?? null,
+      riskLevel: batch.riskLevel,
+      riskReasons: batch.riskReasons,
+      separateApproverRequired: batch.riskLevel === "HIGH",
+      makerCheckerSatisfied:
+        batch.riskLevel !== "HIGH" ||
+        Boolean(batch.approvedById && batch.approvedById !== batch.uploadedById),
     },
     controls: {
       preCommitRecordCount: batch.preCommitRecordCount,
@@ -595,7 +690,7 @@ export async function stageMasterDataImport(input: {
       include: BATCH_INCLUDE,
     })
     await refreshEvidence(input.organizationId, updated.id)
-    return toSummary(await readBatch(input.organizationId, updated.id), true)
+    return toSummary(await readBatch(input.organizationId, updated.id), true, input.actorId)
   }
 
   const fieldMap = asRecord(mapping.fieldMap) as MasterDataFieldMap
@@ -611,6 +706,7 @@ export async function stageMasterDataImport(input: {
     fieldMap,
     existingBusinessKeys: existingKeys,
   })
+  const risk = classifyMasterDataImportRisk({ target: input.target, rows: analysis.rows })
   const status = analysis.issues.some((issue) => issue.severity === "ERROR") ? "BLOCKED" : "VALIDATED"
   const batch = await controlDb.onboardingImportBatch.create({
     data: {
@@ -628,6 +724,8 @@ export async function stageMasterDataImport(input: {
       validRecordCount: analysis.validRecordCount,
       errorRecordCount: analysis.errorRecordCount,
       duplicateRecordCount: analysis.duplicateRecordCount,
+      riskLevel: risk.level,
+      riskReasons: risk.reasons,
       sourceRequiredFieldTotals: analysis.sourceRequiredFieldTotals,
       uploadedById: input.actorId,
       uploadedAt: now,
@@ -668,7 +766,7 @@ export async function stageMasterDataImport(input: {
     blockerCount: batch.errorRecordCount,
   })
   await refreshEvidence(input.organizationId, batch.id)
-  return toSummary(await readBatch(input.organizationId, batch.id))
+  return toSummary(await readBatch(input.organizationId, batch.id), false, input.actorId)
 }
 
 export async function approveMasterDataImport(input: {
@@ -693,6 +791,9 @@ export async function approveMasterDataImport(input: {
   if (batch.status !== "VALIDATED" || batch.errorRecordCount > 0 || batch.validRecordCount !== batch.sourceRecordCount) {
     throw new BusinessRuleError("Only a fully valid dry run can be approved")
   }
+  if (batch.riskLevel === "HIGH" && batch.uploadedById === input.actorId) {
+    throw new BusinessRuleError("A high-risk onboarding batch requires approval by a different authorized user")
+  }
   const updated = await controlDb.onboardingImportBatch.update({
     where: { id: batch.id },
     data: {
@@ -705,7 +806,7 @@ export async function approveMasterDataImport(input: {
     include: BATCH_INCLUDE,
   })
   await refreshEvidence(input.organizationId, batch.id)
-  return toSummary(await readBatch(input.organizationId, updated.id))
+  return toSummary(await readBatch(input.organizationId, updated.id), false, input.actorId)
 }
 
 async function countDomainRecords(organizationId: string, target: MasterDataImportTarget) {
@@ -859,10 +960,13 @@ export async function commitMasterDataImport(input: {
   if (input.expectedApprovalDigest !== digest || batch.approvalDigest !== digest || !batch.approvedAt) {
     throw new BusinessRuleError("Commit requires the current explicit approval")
   }
-  if (batch.status === "COMMITTED") return toSummary(batch, true)
+  if (batch.riskLevel === "HIGH" && batch.approvedById === batch.uploadedById) {
+    throw new BusinessRuleError("A high-risk onboarding batch requires a separate approver before commit")
+  }
+  if (batch.status === "COMMITTED") return toSummary(batch, true, input.actorId)
   if (batch.status === "COMMITTING") {
     const stale = !batch.commitStartedAt || now.getTime() - batch.commitStartedAt.getTime() > 5 * 60 * 1_000
-    if (!stale) return toSummary(batch, true)
+    if (!stale) return toSummary(batch, true, input.actorId)
     await controlDb.onboardingImportBatch.update({ where: { id: batch.id }, data: { status: "APPROVED" } })
     batch = await readBatch(input.organizationId, input.batchId)
   }
@@ -878,7 +982,7 @@ export async function commitMasterDataImport(input: {
       lastSafeErrorCode: null,
     },
   })
-  if (claim.count !== 1) return toSummary(await readBatch(input.organizationId, batch.id), true)
+  if (claim.count !== 1) return toSummary(await readBatch(input.organizationId, batch.id), true, input.actorId)
 
   batch = await readBatch(input.organizationId, input.batchId)
   for (const row of batch.rows.filter((candidate) => candidate.valid && !candidate.committedRecordId)) {
@@ -955,7 +1059,7 @@ export async function commitMasterDataImport(input: {
     blockerCount: committed ? 0 : 1,
   })
   await refreshEvidence(input.organizationId, batch.id)
-  return toSummary(await readBatch(input.organizationId, batch.id))
+  return toSummary(await readBatch(input.organizationId, batch.id), false, input.actorId)
 }
 
 export async function getMasterDataImportEvidence(
@@ -1016,6 +1120,7 @@ function overallReadiness(states: MasterDataOnboardingDashboard["milestones"][nu
 export async function getMasterDataOnboardingDashboard(
   organizationId: string,
   allowedTargets: readonly MasterDataImportTarget[] = MASTER_DATA_IMPORT_TARGETS,
+  currentActorId?: string,
 ): Promise<MasterDataOnboardingDashboard> {
   const targets = MASTER_DATA_IMPORT_TARGETS.filter((target) => allowedTargets.includes(target))
   const [storedMilestones, recentBatches] = await Promise.all([
@@ -1043,12 +1148,27 @@ export async function getMasterDataOnboardingDashboard(
       waiverReason: milestone?.waiverReason ?? null,
     }
   })
+  const highRiskBatches = recentBatches.filter((batch) => batch.riskLevel === "HIGH")
   return {
     organizationId,
     overallState: overallReadiness(milestones.map((milestone) => milestone.state)),
     generatedAt: new Date().toISOString(),
     milestones,
-    recentBatches: recentBatches.map((batch) => toSummary(batch)),
+    recentBatches: recentBatches.map((batch) => toSummary(batch, false, currentActorId)),
+    adoption: {
+      evidenceWindow: "RECENT_12_BATCHES",
+      batchCount: recentBatches.length,
+      committedBatchCount: recentBatches.filter((batch) => batch.status === "COMMITTED").length,
+      blockedBatchCount: recentBatches.filter((batch) => batch.status === "BLOCKED").length,
+      highRiskBatchCount: highRiskBatches.length,
+      separatelyApprovedHighRiskBatchCount: highRiskBatches.filter(
+        (batch) => Boolean(batch.approvedById && batch.approvedById !== batch.uploadedById),
+      ).length,
+      stagedRecordCount: recentBatches.reduce((total, batch) => total + batch.sourceRecordCount, 0),
+      committedRecordCount: recentBatches.reduce((total, batch) => total + batch.committedRecordCount, 0),
+      rejectedRecordCount: recentBatches.reduce((total, batch) => total + batch.errorRecordCount, 0),
+      duplicateRecordCount: recentBatches.reduce((total, batch) => total + batch.duplicateRecordCount, 0),
+    },
     controlBoundary: MASTER_DATA_ONBOARDING_CONTROL_BOUNDARY,
   }
 }

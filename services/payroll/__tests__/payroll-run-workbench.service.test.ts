@@ -55,6 +55,8 @@ import {
   PayrollPayslipStatus,
   PayrollPeriodStatus,
   PayrollRunStatus,
+  PayrollRunTransitionEvidenceStatus,
+  PayrollRunTransitionOrigin,
   PayrollRunType,
   Prisma,
 } from "@prisma/client";
@@ -62,6 +64,8 @@ import {
 import { db } from "@/prisma/db";
 
 import { getPayrollRunWorkbenchData } from "../payroll-control.service";
+
+const originalTrustSpineWriteSwitch = process.env.PAYROLL_TRUST_SPINE_WRITES_ENABLED
 
 const mockDb = db as unknown as {
   payrollRun: {
@@ -82,11 +86,19 @@ const mockDb = db as unknown as {
 
 describe("payroll run workbench service", () => {
   beforeEach(() => {
+    process.env.PAYROLL_TRUST_SPINE_WRITES_ENABLED = "true";
     jest.clearAllMocks();
     mockDb.auditLog.create.mockResolvedValue({ id: "audit-1" });
     mockDb.user.findMany.mockResolvedValue([]);
   });
 
+  afterAll(() => {
+    if (originalTrustSpineWriteSwitch === undefined) {
+      delete process.env.PAYROLL_TRUST_SPINE_WRITES_ENABLED;
+    } else {
+      process.env.PAYROLL_TRUST_SPINE_WRITES_ENABLED = originalTrustSpineWriteSwitch;
+    }
+  });
   it("builds a proof-backed run lifecycle read model with close blockers", async () => {
     const periodStart = new Date("2026-06-01T00:00:00.000Z");
     const periodEnd = new Date("2026-06-30T23:59:59.999Z");
@@ -102,7 +114,7 @@ describe("payroll run workbench service", () => {
         runNumber: "RUN-2026-06-CORR",
         runType: PayrollRunType.CORRECTION,
         status: PayrollRunStatus.POSTED,
-        version: 2,
+        version: 5,
         countryCode: "CM",
         countryPackVersion: "CM-2026.1",
         countryPackSchemaVersion: "country-pack.v1",
@@ -130,6 +142,48 @@ describe("payroll run workbench service", () => {
         approvedAt: new Date("2026-06-30T09:00:00.000Z"),
         emittedAt: new Date("2026-06-30T09:10:00.000Z"),
         postedAt: new Date("2026-06-30T09:20:00.000Z"),
+        transitions: [
+          {
+            toStatus: PayrollRunStatus.REVIEWED,
+            fromVersion: 1,
+            toVersion: 2,
+            actorId: "reviewer-1",
+            transitionedAt: new Date("2026-06-30T08:40:00.000Z"),
+            businessEventId: "event-reviewed-1",
+            origin: PayrollRunTransitionOrigin.RUNTIME,
+            evidenceStatus: PayrollRunTransitionEvidenceStatus.VERIFIED,
+          },
+          {
+            toStatus: PayrollRunStatus.APPROVED,
+            fromVersion: 2,
+            toVersion: 3,
+            actorId: "approver-1",
+            transitionedAt: new Date("2026-06-30T09:00:00.000Z"),
+            businessEventId: "event-approved-1",
+            origin: PayrollRunTransitionOrigin.RUNTIME,
+            evidenceStatus: PayrollRunTransitionEvidenceStatus.VERIFIED,
+          },
+          {
+            toStatus: PayrollRunStatus.EMITTED,
+            fromVersion: 3,
+            toVersion: 4,
+            actorId: "emitter-1",
+            transitionedAt: new Date("2026-06-30T09:10:00.000Z"),
+            businessEventId: "event-emitted-1",
+            origin: PayrollRunTransitionOrigin.RUNTIME,
+            evidenceStatus: PayrollRunTransitionEvidenceStatus.VERIFIED,
+          },
+          {
+            toStatus: PayrollRunStatus.POSTED,
+            fromVersion: 4,
+            toVersion: 5,
+            actorId: "poster-1",
+            transitionedAt: new Date("2026-06-30T09:20:00.000Z"),
+            businessEventId: "event-posted-1",
+            origin: PayrollRunTransitionOrigin.RUNTIME,
+            evidenceStatus: PayrollRunTransitionEvidenceStatus.VERIFIED,
+          },
+        ],
         metadata: {
           componentRegisterProofHash: "sha256:component-register",
           payrollComponentMappingHash: "sha256:component-mapping",
@@ -193,6 +247,11 @@ describe("payroll run workbench service", () => {
             paymentTransactionId: "payment-transaction-1",
             paymentExceptionId: null,
             reconciliationStatus: "PENDING",
+            requestedById: "requester-1",
+            approvedById: "approver-1",
+            releasedById: "releaser-1",
+            approvedAt: new Date("2026-07-05T00:01:00.000Z"),
+            releasedAt: new Date("2026-07-05T00:02:00.000Z"),
             metadata: {},
           },
         ],
@@ -312,6 +371,11 @@ describe("payroll run workbench service", () => {
         proof: expect.objectContaining({
           registerProofPresent: true,
           componentRegisterProofHash: "sha256:component-register",
+          lifecycle: expect.objectContaining({
+            transitionEvidence: "VERIFIED",
+            complete: true,
+            nextAction: null,
+          }),
         }),
         accounting: expect.objectContaining({
           ledgerPostingBatchId: "ledger-batch-1",
@@ -347,9 +411,14 @@ describe("payroll run workbench service", () => {
           paymentBatches: expect.any(Object),
           payslips: expect.any(Object),
           payrollPeriod: expect.any(Object),
+          transitions: expect.objectContaining({
+            orderBy: { sequence: "asc" },
+          }),
         }),
       }),
     );
+    expect(JSON.stringify(result.runs[0].proof.lifecycle)).not.toContain("reviewer-1");
+    expect(JSON.stringify(result.runs[0].proof.lifecycle)).not.toContain("approver-1");
     expect(mockDb.user.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
         where: expect.objectContaining({
@@ -543,6 +612,14 @@ describe("payroll run workbench service", () => {
     );
     expect(result.runs[0].blockers.map((blocker) => blocker.id)).not.toContain(
       "PAYROLL_CORRECTION_EVIDENCE_HASH_MISSING",
+    );
+    expect(result.runs[0].nextActions).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "request-payments",
+          requiredPermission: "payroll.payments.request",
+        }),
+      ]),
     );
     expect(mockDb.auditLog.create).toHaveBeenCalledWith(
       expect.objectContaining({

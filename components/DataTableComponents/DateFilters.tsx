@@ -20,11 +20,13 @@ export default function DateFilters({
   data,
   onFilter,
   setIsDateFilterActive,
+  className,
   variant = "default",
 }: {
   data: any[];
   onFilter: any;
   setIsDateFilterActive: (isDateFilterActive: boolean) => void;
+  className?: string;
   variant?: "default" | "landing";
 }) {
   const options = [
@@ -64,7 +66,7 @@ export default function DateFilters({
   };
 
   return (
-    <div className="w-full sm:w-[150px]">
+    <div className={cn("w-full sm:w-[150px]", className)}>
       <Select
         value={selectedFilter}
         onValueChange={handleChange}

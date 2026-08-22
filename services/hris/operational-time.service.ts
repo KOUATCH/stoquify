@@ -21,8 +21,13 @@ import {
   NotFoundError,
 } from "@/services/_shared/action-errors"
 import { resolveHrisPeopleAccessScope } from "@/services/hris/org.service"
+import {
+  markBusinessEventAppliedInTx,
+  recordBusinessEventInTx,
+} from "@/services/events/business-event.service"
 
 type OperationalTimeClient = typeof db | Prisma.TransactionClient
+type BusinessEventTx = Parameters<typeof recordBusinessEventInTx>[0]
 
 const proofHash = z.string().trim().min(8).max(256)
 const actor = z.object({
@@ -575,15 +580,55 @@ export async function decideOperationalTimeRequest(
       }
     }
     const approved = parsed.decision === "APPROVE"
+    const now = new Date()
+    const decisionEvent = approved && request.type === HrisTimeRequestType.LEAVE
+      ? await recordBusinessEventInTx(tx as unknown as BusinessEventTx, {
+        organizationId: parsed.organizationId,
+        eventType: "LEAVE_APPROVED",
+        eventSource: "INTERNAL",
+        schemaVersion: 1,
+        idempotencyKey: `hris-leave-approved:${parsed.organizationId}:${request.id}`,
+        payload: {
+          requestId: request.id,
+          employeeId: request.employeeId,
+          leavePolicyId: request.leavePolicyId,
+          periodStart: request.periodStart.toISOString(),
+          periodEnd: request.periodEnd.toISOString(),
+          requestedMinutes: request.requestedMinutes,
+          requestEvidenceHash: request.requestEvidenceHash,
+          approvalEvidenceHash: parsed.approvalEvidenceHash,
+          sourceHash: request.sourceHash,
+        },
+        occurredAt: now,
+        actorId: parsed.actorId,
+        sourceId: request.id,
+        documentHash: parsed.approvalEvidenceHash,
+        metadata: {
+          gate: "stoquify-payroll-trust-spine-wp4",
+        },
+        outboxMessages: [{
+          channel: "NOTIFICATION",
+          eventName: "LEAVE_APPROVED",
+          destination: "payroll",
+          payload: {
+            organizationId: parsed.organizationId,
+            requestId: request.id,
+            employeeId: request.employeeId,
+            sourceHash: request.sourceHash,
+          },
+        }],
+      })
+      : null
     const updated = await tx.hrisTimeRequest.update({
-      where: { id: request.id },
+      where: { id: request.id, organizationId: parsed.organizationId },
       data: {
         status: approved
           ? HrisTimeRequestStatus.APPROVED
           : HrisTimeRequestStatus.REJECTED,
         reviewedById: parsed.actorId,
-        reviewedAt: new Date(),
+        reviewedAt: now,
         approvalEvidenceHash: parsed.approvalEvidenceHash ?? null,
+        decisionBusinessEventId: decisionEvent?.event.id ?? null,
         metadata: json({
           decisionReasonHash: hash(parsed.decisionReason),
           rawDecisionReasonStored: false,
@@ -612,7 +657,15 @@ export async function decideOperationalTimeRequest(
         employeeId: request.employeeId,
         approvalEvidencePresent: Boolean(parsed.approvalEvidenceHash),
         decisionReasonHash: hash(parsed.decisionReason),
+        businessEventId: decisionEvent?.event.id ?? null,
       })
+    if (decisionEvent) {
+      await markBusinessEventAppliedInTx(
+        tx as unknown as BusinessEventTx,
+        parsed.organizationId,
+        decisionEvent.event.id,
+      )
+    }
     return updated
   })
 }

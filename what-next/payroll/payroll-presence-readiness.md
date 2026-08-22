@@ -1,12 +1,12 @@
 # Payroll Presence Readiness Gate
 
-Generated: 2026-08-11T16:07:03.105Z
+Generated: 2026-08-22T09:01:37.507Z
 Mode: fail
 Status: ready
 
 ## Summary
 
-- Checks ready: 13/13
+- Checks ready: 14/14
 - Blockers: 0
 
 ## Checks
@@ -17,6 +17,7 @@ Status: ready
 - ready: payroll_register_ledger_tieout
 - ready: ghost_and_duplicate_destination_risk_visible
 - ready: tenant_rbac_fresh_auth_and_sod
+- ready: payroll_payment_request_approval_release_sod
 - ready: correction_event_audit_and_notification
 - ready: operational_time_ledgers_present
 - ready: time_request_maker_checker_and_balance_control

@@ -16,6 +16,13 @@ export type ApplicationErrorCode =
   | "CONFLICT"
   | "BUSINESS_RULE_VIOLATION"
   | "FRESH_AUTH_REQUIRED"
+  | "INVALID_TRANSITION"
+  | "CONCURRENCY_CONFLICT"
+  | "IDEMPOTENCY_CONFLICT"
+  | "SOD_VIOLATION"
+  | "TENANT_SCOPE_VIOLATION"
+  | "PAYROLL_TRANSITION_EVIDENCE_MISSING"
+  | "PAYROLL_LIFECYCLE_WRITES_DISABLED"
   | "DUPLICATE_KEY_CONFLICT"
   | "DATABASE_CONFLICT"
   | "DATABASE_UNAVAILABLE"
@@ -101,9 +108,10 @@ export function getPrismaKnownRequest(error: unknown): PrismaKnownRequestLike | 
 
   return {
     code: candidate.code,
-    meta: candidate.meta && typeof candidate.meta === "object"
-      ? candidate.meta as Record<string, unknown>
-      : null,
+    meta:
+      candidate.meta && typeof candidate.meta === "object"
+        ? (candidate.meta as Record<string, unknown>)
+        : null,
   }
 }
 
@@ -121,6 +129,13 @@ function legacyCode(code: CanonicalError["code"]): ApplicationErrorCode {
     case "CONFLICT":
     case "BUSINESS_RULE_VIOLATION":
     case "FRESH_AUTH_REQUIRED":
+    case "INVALID_TRANSITION":
+    case "CONCURRENCY_CONFLICT":
+    case "IDEMPOTENCY_CONFLICT":
+    case "SOD_VIOLATION":
+    case "TENANT_SCOPE_VIOLATION":
+    case "PAYROLL_TRANSITION_EVIDENCE_MISSING":
+    case "PAYROLL_LIFECYCLE_WRITES_DISABLED":
     case "DUPLICATE_KEY_CONFLICT":
     case "DATABASE_CONFLICT":
     case "DATABASE_UNAVAILABLE":
@@ -150,7 +165,10 @@ export function toCanonicalActionError(
   return normalizeToCanonicalError(error, options)
 }
 
-export function toSafeActionError(error: unknown, options: CanonicalErrorOptions = {}): {
+export function toSafeActionError(
+  error: unknown,
+  options: CanonicalErrorOptions = {},
+): {
   error: string
   status: SafeActionStatus
   code: ApplicationErrorCode

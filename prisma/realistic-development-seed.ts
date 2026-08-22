@@ -6,6 +6,10 @@ import { chmod, mkdir, readFile, rename, writeFile } from "fs/promises";
 import path from "path";
 
 import { PrismaClient } from "@prisma/client";
+import {
+  COMPLIANCE_HRIS_ROLE_COUNT,
+  ensureComplianceHrisRoleCoverage,
+} from "./compliance-hris-role-seed";
 import { reuseCompleteRealisticSeed } from "./realistic-seed-rerun";
 
 const ARTIFACT_DIRECTORY = path.join(process.cwd(), ".seed-artifacts");
@@ -96,7 +100,12 @@ async function writeCredentialArtifact(
   const prisma = new PrismaClient();
   try {
     const credentials = [];
-    for (const seededCredential of seeded.credentials) {
+    const uniqueSeededCredentials = [
+      ...new Map(
+        seeded.credentials.map((credential) => [credential.userId, credential]),
+      ).values(),
+    ];
+    for (const seededCredential of uniqueSeededCredentials) {
       const user = await prisma.user.findUnique({
         where: { id: seededCredential.userId },
         select: {
@@ -172,15 +181,33 @@ async function main() {
 
   const reuseClient = new PrismaClient();
   try {
+    const existingOrganizationCount = await reuseClient.organization.count({
+      where: { id: { startsWith: "rds_org_" } },
+    });
+    let complianceCoverage:
+      | Awaited<ReturnType<typeof ensureComplianceHrisRoleCoverage>>
+      | null = null;
+    if (existingOrganizationCount === 2) {
+      complianceCoverage = await ensureComplianceHrisRoleCoverage({
+        prisma: reuseClient,
+        password,
+      });
+    }
     const reused = await reuseCompleteRealisticSeed({
       prisma: reuseClient,
       organizationIdPrefix: "rds_org_",
       expectedOrganizationCount: 2,
       password,
+      minimumRoleCountPerOrganization: COMPLIANCE_HRIS_ROLE_COUNT,
+      minimumUserCountPerOrganization: COMPLIANCE_HRIS_ROLE_COUNT + 2,
     });
     if (reused) {
       const artifact = await writeCredentialArtifact(password, {
         ...reused,
+        credentials: [
+          ...reused.credentials,
+          ...(complianceCoverage?.credentials ?? []),
+        ],
         fakerSeed: 20260527,
       });
       console.log(
@@ -198,7 +225,22 @@ async function main() {
   );
   try {
     const seeded = await runComprehensiveSeed();
-    const artifact = await writeCredentialArtifact(password, seeded);
+    const complianceClient = new PrismaClient();
+    let complianceCoverage: Awaited<
+      ReturnType<typeof ensureComplianceHrisRoleCoverage>
+    >;
+    try {
+      complianceCoverage = await ensureComplianceHrisRoleCoverage({
+        prisma: complianceClient,
+        password,
+      });
+    } finally {
+      await complianceClient.$disconnect();
+    }
+    const artifact = await writeCredentialArtifact(password, {
+      ...seeded,
+      credentials: [...seeded.credentials, ...complianceCoverage.credentials],
+    });
     console.log(
       `Realistic development seed completed. ${artifact.credentialCount} login personas saved to .seed-artifacts/seed-login-credentials.json.`,
     );

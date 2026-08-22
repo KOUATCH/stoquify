@@ -113,6 +113,8 @@ describe("PurchaseOrderManagement error surface", () => {
           initialPurchaseOrderData={[]}
           initialSupplierData={[]}
           initialLocationData={[]}
+          currency="XAF"
+          canCreate={false}
         />
       </PurchaseOrdersRouteBoundary>,
     )

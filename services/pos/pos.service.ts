@@ -12,6 +12,7 @@ import {
   TransactionType,
 } from "@prisma/client"
 import { db } from "@/prisma/db"
+import { currencyFractionDigits } from "@/lib/i18n/organization-money"
 import { ApplicationError, BusinessRuleError, ConflictError, ForbiddenError, NotFoundError } from "@/services/_shared/action-errors"
 import { postRefund } from "@/services/accounting/postings/post-refund"
 import { postPayment } from "@/services/accounting/postings/post-payment"
@@ -37,13 +38,12 @@ import {
   postPOSStockReturn,
 } from "@/services/inventory/inventory-stock-event.service"
 import {
-  assertNoDuplicateProviderCapture,
-  assertUniqueProviderCaptureReferences,
-  resolveProviderCaptureEvidence,
-} from "@/services/payments/payment-reconciliation.service"
+  claimPOSElectronicTenderAuthority,
+  resolvePOSElectronicTenderAuthority,
+  type POSElectronicTenderAuthorityEvidence,
+} from "@/services/payments/pos-electronic-tender-authority.service"
 import { addMoney, moneyToNumber, moneyToString, subtractMoney, toDecimal } from "./money"
-import { getSalesReceipt, sendReceipt, type ReceiptDeliveryResult, type SalesReceiptPayload } from "./receipt.service"
-import { normalizeReceiptDestination } from "./receipt-channels"
+import { getPOSSaleCommitReceipt, type ReceiptDeliveryResult, type SalesReceiptPayload } from "./receipt.service"
 import { requirePOSCustomerAtLocation } from "./pos-customer.service"
 import {
   activeCartSchema,
@@ -87,10 +87,27 @@ type TenderAllocation = {
 
 const STORE_CREDIT_TENDER_UNAVAILABLE_MESSAGE =
   "Store credit tender is unavailable until an authoritative store-credit instrument ledger is implemented"
+const DEVELOPMENT_RECEIPT_ONLY_MESSAGE =
+  "This development POS pilot supports an on-screen non-statutory receipt only; delivery channels are disabled"
+const POS_SALE_COMMIT_RESULT_SCHEMA_VERSION = 1
 
 function assertSupportedSaleTenders(tenders: POSTenderInput[]) {
   if (tenders.some((tender) => tender.method === "STORE_CREDIT")) {
     throw new BusinessRuleError(STORE_CREDIT_TENDER_UNAVAILABLE_MESSAGE)
+  }
+}
+
+function assertSupportedDevelopmentReceipt(receipt: {
+  channel: string
+  destination?: string
+  whatsAppCustomerOptInConfirmed?: boolean
+} | undefined) {
+  if (
+    receipt?.channel !== undefined && receipt.channel !== "NONE" ||
+    Boolean(receipt?.destination?.trim()) ||
+    receipt?.whatsAppCustomerOptInConfirmed !== undefined
+  ) {
+    throw new BusinessRuleError(DEVELOPMENT_RECEIPT_ONLY_MESSAGE)
   }
 }
 
@@ -493,6 +510,25 @@ function allocateTenders(tenders: POSTenderInput[], total: Prisma.Decimal) {
   return { allocations, changeDue }
 }
 
+function assertUniquePOSElectronicTenderAuthority(
+  evidence: Array<POSElectronicTenderAuthorityEvidence | null>,
+) {
+  const transactionIds = new Set<string>()
+  const providerEventIds = new Set<string>()
+
+  for (const entry of evidence) {
+    if (!entry) continue
+    if (
+      transactionIds.has(entry.paymentTransactionId) ||
+      providerEventIds.has(entry.providerEventId)
+    ) {
+      throw new ConflictError("Provider-authoritative electronic tender evidence cannot be reused")
+    }
+    transactionIds.add(entry.paymentTransactionId)
+    providerEventIds.add(entry.providerEventId)
+  }
+}
+
 function cleanJson(input: Record<string, unknown>): Prisma.JsonObject {
   return Object.fromEntries(Object.entries(input).filter(([, value]) => value !== undefined)) as Prisma.JsonObject
 }
@@ -584,6 +620,18 @@ function closeVarianceDirection(variance: Prisma.Decimal): ClosePOSShiftResult["
   return variance.lt(0) ? "SHORTAGE" : "OVERAGE"
 }
 
+function shiftCloseVariance(
+  actualBalance: Prisma.Decimal,
+  expectedBalance: Prisma.Decimal,
+  currency: string,
+) {
+  const fractionDigits = currencyFractionDigits(currency)
+  return actualBalance
+    .toDecimalPlaces(fractionDigits)
+    .minus(expectedBalance.toDecimalPlaces(fractionDigits))
+    .toDecimalPlaces(fractionDigits)
+}
+
 function shiftCloseCommandHash(input: {
   organizationId: string
   sessionId: string
@@ -656,8 +704,9 @@ async function readCommittedShiftClose(
     return inconsistentShiftCloseEvidence()
   }
 
-  const variance = subtractMoney(input.actualBalance, expectedBalance).toDecimalPlaces(2)
   const organization = await tx.organization.findUnique({ where: { id: input.organizationId }, select: { currency: true } })
+  if (!organization) return inconsistentShiftCloseEvidence()
+  const variance = shiftCloseVariance(input.actualBalance, expectedBalance, organization.currency)
   const closingTransaction = await tx.cashDrawerTransaction.findFirst({
     where: { id: closingTransactionId, sessionId: input.session.id, type: "CLOSING_BALANCE" },
     select: { cashDrawerId: true, userId: true, amount: true, balanceBefore: true, balanceAfter: true },
@@ -681,7 +730,6 @@ async function readCommittedShiftClose(
   const expectedOutboxIdempotencyKey = `POS:${input.event.idempotencyKey}:NOTIFICATION:${POS_SHIFT_CLOSED_EVENT_TYPE}`
 
   if (
-    !organization ||
     !["CLOSED", "RECONCILED"].includes(input.session.status) ||
     !input.session.endTime ||
     input.session.endTime.getTime() !== input.event.occurredAt.getTime() ||
@@ -1181,6 +1229,20 @@ export async function openPOSShift(rawInput: UserScoped) {
       },
     })
 
+    const terminalClaim = await tx.pOSStation.updateMany({
+      where: {
+        id: input.terminalId,
+        organizationId: rawInput.organizationId,
+        locationId: input.locationId,
+        isActive: true,
+        currentSessionId: null,
+      },
+      data: { currentSessionId: created.id },
+    })
+    if (terminalClaim.count !== 1) {
+      throw new BusinessRuleError("Terminal already has an open shift")
+    }
+
     const drawer = await tx.cashDrawer.findFirst({
       where: {
         terminalId: input.terminalId,
@@ -1222,11 +1284,6 @@ export async function openPOSShift(rawInput: UserScoped) {
         balanceBefore: 0,
         balanceAfter: openingBalance,
       },
-    })
-
-    await tx.pOSStation.update({
-      where: { id: input.terminalId },
-      data: { currentSessionId: created.id },
     })
 
     return created
@@ -1315,17 +1372,16 @@ export async function closePOSShift(rawInput: UserScoped) {
       throw new BusinessRuleError("Cash drawer balance evidence does not match the active shift")
     }
 
-    const variance = subtractMoney(actualBalance, expectedBalance).toDecimalPlaces(2)
-    const direction = closeVarianceDirection(variance)
-    if (!variance.eq(0) && !notes) {
-      throw new BusinessRuleError("A variance explanation is required when counted cash differs from expected cash")
-    }
-
     const organization = await tx.organization.findUnique({
       where: { id: rawInput.organizationId },
       select: { currency: true },
     })
     if (!organization) throw new NotFoundError("Organization not found")
+    const variance = shiftCloseVariance(actualBalance, expectedBalance, organization.currency)
+    const direction = closeVarianceDirection(variance)
+    if (!variance.eq(0) && !notes) {
+      throw new BusinessRuleError("A variance explanation is required when counted cash differs from expected cash")
+    }
 
     const closedAt = new Date()
     const sessionTransition = await tx.pOSSession.updateMany({
@@ -1807,6 +1863,9 @@ export async function removePOSCartLine(rawInput: UserScoped) {
 }
 
 export type CommitPOSSaleResult = {
+  clientCommitId: string
+  resultSchemaVersion: 1
+  replayed: boolean
   saleId: string
   orderNumber: string
   status: string
@@ -1849,11 +1908,196 @@ export type CommitPOSSaleResult = {
   delivery: ReceiptDeliveryResult | null
 }
 
+type POSCommitResultRecord = {
+  id: string
+  organizationId: string
+  locationId: string
+  terminalId: string
+  sessionId: string
+  salesOrderId: string
+  actorId: string
+  clientCommitId: string
+  requestHash: string
+  requestSchemaVersion: number
+  status: "CLAIMED" | "COMMITTED" | "COMPLETED"
+  resultEnvelope: Prisma.JsonValue | null
+  resultHash: string | null
+}
+
+class POSSaleCommitReplayConflict extends Error {
+  constructor(
+    readonly existing: POSCommitResultRecord,
+    readonly attemptedRequestHash: string,
+  ) {
+    super("POS sale commit idempotency conflict")
+  }
+}
+
+function posSaleCommitRequestHash(
+  rawInput: UserScoped,
+  input: Prisma.JsonObject & {
+    salesOrderId: string
+    locationId: string
+    terminalId: string
+    sessionId: string
+    customerId?: string
+    notes?: string
+    tenders: POSTenderInput[]
+    receipt?: { channel: string; locale?: string }
+  },
+) {
+  return hashBusinessPayload({
+    requestSchemaVersion: POS_SALE_COMMIT_RESULT_SCHEMA_VERSION,
+    organizationId: rawInput.organizationId,
+    actorId: rawInput.userId,
+    salesOrderId: input.salesOrderId,
+    locationId: input.locationId,
+    terminalId: input.terminalId,
+    sessionId: input.sessionId,
+    customerId: input.customerId ?? null,
+    notes: input.notes ?? null,
+    tenders: input.tenders.map((tender) => ({
+      method: tender.method,
+      amount: moneyToString(toDecimal(tender.amount)),
+      paymentTransactionId: tender.paymentTransactionId ?? null,
+      reference: tender.reference ?? null,
+      cardLast4: tender.cardLast4 ?? null,
+      cardType: tender.cardType ?? null,
+      authorizationCode: tender.authorizationCode ?? null,
+      mobileMoneyProvider: tender.mobileMoneyProvider ?? null,
+      mobileMoneyPhoneNumber: tender.mobileMoneyPhoneNumber ?? null,
+      bankName: tender.bankName ?? null,
+    })),
+    receipt: {
+      channel: input.receipt?.channel ?? "NONE",
+      locale: input.receipt?.locale ?? null,
+    },
+  })
+}
+
+function commitResultEnvelope(result: CommitPOSSaleResult): Prisma.InputJsonObject {
+  return JSON.parse(JSON.stringify(result)) as Prisma.InputJsonObject
+}
+
+function isJsonObject(value: Prisma.JsonValue | null): value is Prisma.JsonObject {
+  return value !== null && typeof value === "object" && !Array.isArray(value)
+}
+
+function assertPOSCommitRegistryRequest(
+  record: POSCommitResultRecord,
+  rawInput: UserScoped,
+  input: {
+    salesOrderId: string
+    locationId: string
+    terminalId: string
+    sessionId: string
+    clientCommitId: string
+  },
+  requestHash: string,
+) {
+  if (
+    record.organizationId !== rawInput.organizationId ||
+    record.locationId !== input.locationId ||
+    record.terminalId !== input.terminalId ||
+    record.sessionId !== input.sessionId ||
+    record.salesOrderId !== input.salesOrderId ||
+    record.actorId !== rawInput.userId ||
+    record.clientCommitId !== input.clientCommitId ||
+    record.requestSchemaVersion !== POS_SALE_COMMIT_RESULT_SCHEMA_VERSION ||
+    record.requestHash !== requestHash
+  ) {
+    throw new POSSaleCommitReplayConflict(record, requestHash)
+  }
+}
+
+function readStoredPOSCommitResult(
+  record: POSCommitResultRecord,
+  replayed = true,
+): CommitPOSSaleResult {
+  if (
+    record.status === "CLAIMED" ||
+    !record.resultHash ||
+    !isJsonObject(record.resultEnvelope) ||
+    hashBusinessPayload(record.resultEnvelope) !== record.resultHash
+  ) {
+    throw new ApplicationError(
+      "INTERNAL_ERROR",
+      "Stored POS commit result evidence is incomplete or inconsistent",
+      500,
+      false,
+    )
+  }
+
+  const result = record.resultEnvelope as unknown as CommitPOSSaleResult
+  if (
+    result.clientCommitId !== record.clientCommitId ||
+    result.resultSchemaVersion !== POS_SALE_COMMIT_RESULT_SCHEMA_VERSION ||
+    result.replayed !== false ||
+    result.saleId !== record.salesOrderId
+  ) {
+    throw new ApplicationError(
+      "INTERNAL_ERROR",
+      "Stored POS commit result identity is inconsistent",
+      500,
+      false,
+    )
+  }
+
+  return { ...result, replayed }
+}
+
+async function auditPOSSaleCommitReplayConflict(
+  organizationId: string,
+  userId: string,
+  conflict: POSSaleCommitReplayConflict,
+) {
+  await db.auditLog.create({
+    data: {
+      entityType: "POSCommitResult",
+      entityId: conflict.existing.id,
+      action: "POS_SALE_COMMIT_IDEMPOTENCY_CONFLICT",
+      organizationId,
+      userId,
+      changes: {
+        clientCommitId: conflict.existing.clientCommitId,
+        locationId: conflict.existing.locationId,
+        terminalId: conflict.existing.terminalId,
+        sessionId: conflict.existing.sessionId,
+        salesOrderId: conflict.existing.salesOrderId,
+        requestSchemaVersion: conflict.existing.requestSchemaVersion,
+        existingRequestHash: conflict.existing.requestHash,
+        attemptedRequestHash: conflict.attemptedRequestHash,
+      },
+    },
+  })
+}
+
 export async function commitPOSSale(rawInput: UserScoped) {
   const input = commitSaleSchema.parse(rawInput)
   assertSupportedSaleTenders(input.tenders)
+  assertSupportedDevelopmentReceipt(input.receipt)
+  const requestHash = posSaleCommitRequestHash(rawInput, input)
 
-  const committed = await db.$transaction(async (tx) => {
+  const runCommit = async (tx: Prisma.TransactionClient) => {
+    const existingCommit = await tx.pOSCommitResult.findUnique({
+      where: {
+        organizationId_terminalId_clientCommitId: {
+          organizationId: rawInput.organizationId,
+          terminalId: input.terminalId,
+          clientCommitId: input.clientCommitId,
+        },
+      },
+    })
+    if (existingCommit) {
+      assertPOSCommitRegistryRequest(existingCommit, rawInput, input, requestHash)
+      return {
+        registryId: existingCommit.id,
+        result: readStoredPOSCommitResult(existingCommit, existingCommit.status === "COMPLETED"),
+        needsCompletion: existingCommit.status === "COMMITTED",
+        callerReplayed: true,
+      }
+    }
+
     const sale = await tx.salesOrder.findFirst({
       where: {
         id: input.salesOrderId,
@@ -1980,22 +2224,32 @@ export async function commitPOSSale(rawInput: UserScoped) {
       .reduce((sum, allocation) => addMoney(sum, allocation.amount), new Prisma.Decimal(0))
       .toDecimalPlaces(2)
     const amountPaid = total.minus(onAccountAmount).toDecimalPlaces(2)
-    const providerCaptures = allocations.map((allocation) =>
-      resolveProviderCaptureEvidence({
+    const providerAuthorities: Array<POSElectronicTenderAuthorityEvidence | null> = []
+    for (const allocation of allocations) {
+      providerAuthorities.push(await resolvePOSElectronicTenderAuthority(tx, {
         organizationId: rawInput.organizationId,
         paymentMethod: allocation.paymentMethod,
-        reference: allocation.tender.reference,
-        authorizationCode: allocation.tender.authorizationCode,
-        mobileMoneyProvider: allocation.tender.mobileMoneyProvider,
-        bankName: allocation.tender.bankName,
-      }),
-    )
-    assertUniqueProviderCaptureReferences(providerCaptures)
-    for (const capture of providerCaptures) {
-      if (capture) {
-        await assertNoDuplicateProviderCapture(tx, capture)
-      }
+        paymentTransactionId: allocation.tender.paymentTransactionId,
+        amount: allocation.amount,
+        currencyCode: sale.organization.currency,
+      }))
     }
+    assertUniquePOSElectronicTenderAuthority(providerAuthorities)
+
+    const commitRegistry = await tx.pOSCommitResult.create({
+      data: {
+        organizationId: rawInput.organizationId,
+        locationId: input.locationId,
+        terminalId: input.terminalId,
+        sessionId: input.sessionId,
+        salesOrderId: sale.id,
+        actorId: rawInput.userId,
+        clientCommitId: input.clientCommitId,
+        requestHash,
+        requestSchemaVersion: POS_SALE_COMMIT_RESULT_SCHEMA_VERSION,
+        status: "CLAIMED",
+      },
+    })
 
     const sessionClaim = await tx.pOSSession.updateMany({
       where: {
@@ -2164,7 +2418,7 @@ export async function commitPOSSale(rawInput: UserScoped) {
 
     const capturedPaymentIds: string[] = []
     for (const [index, allocation] of allocations.entries()) {
-      const providerCapture = providerCaptures[index]
+      const providerAuthority = providerAuthorities[index]
       const payment = await tx.payment.create({
         data: {
           paymentNumber: nextPaymentNumber(),
@@ -2179,24 +2433,34 @@ export async function commitPOSSale(rawInput: UserScoped) {
           cardType: allocation.tender.cardType,
           authorizationCode:
             allocation.paymentMethod === "CARD"
-              ? providerCapture?.providerReference ?? allocation.tender.authorizationCode
-              : allocation.tender.authorizationCode,
-          mobileMoneyProvider: allocation.tender.mobileMoneyProvider,
+              ? providerAuthority?.providerReference
+              : undefined,
+          mobileMoneyProvider: providerAuthority?.mobileMoneyProvider ?? undefined,
           mobileMoneyPhoneNumber: allocation.tender.mobileMoneyPhoneNumber,
           mobileMoneyReference:
             allocation.paymentMethod === "MOBILE_MONEY"
-              ? providerCapture?.providerReference ?? allocation.tender.reference
+              ? providerAuthority?.providerReference
               : undefined,
           bankReference:
             allocation.paymentMethod === "BANK_TRANSFER"
-              ? providerCapture?.providerReference ?? allocation.tender.reference
+              ? providerAuthority?.providerReference
               : undefined,
-          bankName: allocation.tender.bankName,
-          transactionId: providerCapture?.providerReference ?? allocation.tender.reference,
+          bankName: allocation.paymentMethod === "BANK_TRANSFER"
+            ? providerAuthority?.providerName
+            : undefined,
+          transactionId: providerAuthority?.providerTransactionId,
           processedAt: allocation.paymentMethod === "CREDIT" ? undefined : now,
           processedById: rawInput.userId,
         },
       })
+
+      if (providerAuthority) {
+        await claimPOSElectronicTenderAuthority(tx, {
+          organizationId: rawInput.organizationId,
+          legacyPaymentId: payment.id,
+          evidence: providerAuthority,
+        })
+      }
 
       if (allocation.paymentMethod !== "CREDIT") {
         capturedPaymentIds.push(payment.id)
@@ -2294,6 +2558,16 @@ export async function commitPOSSale(rawInput: UserScoped) {
       throw new BusinessRuleError("Finance journal is not balanced")
     }
 
+    const providerAuthorityEvidence = providerAuthorities
+      .filter((entry): entry is POSElectronicTenderAuthorityEvidence => entry !== null)
+      .map((entry) => ({
+        paymentMethod: entry.paymentMethod,
+        paymentTransactionId: entry.paymentTransactionId,
+        providerEventId: entry.providerEventId,
+        providerAccountId: entry.providerAccountId,
+        state: entry.state,
+      }))
+
     const postingBatchId = requireLedgerPostingBatchId(
       saleJournalEntry.postingBatchId,
       "POS sale posting",
@@ -2349,6 +2623,7 @@ export async function commitPOSSale(rawInput: UserScoped) {
           customerReceivableDocumentId: postedReceivableDocumentId,
           onAccountAmount: moneyToString(onAccountAmount),
           changeDue: moneyToString(changeDue),
+          providerAuthorityEvidence,
           fiscalizationRequestId,
           fiscalizationStatus: "PENDING",
         }),
@@ -2380,6 +2655,7 @@ export async function commitPOSSale(rawInput: UserScoped) {
         saleJournalEntryId: saleJournalEntry.id,
         paymentJournalEntryIds: paymentJournalEntries.map((entry) => entry.id),
         capturedPaymentIds,
+        providerAuthorityEvidence,
         inventoryTransactionIds,
         fiscalization: {
           requestId: fiscalizationRequestId,
@@ -2420,15 +2696,18 @@ export async function commitPOSSale(rawInput: UserScoped) {
       ],
     })
 
-    return {
+    const result = {
+      clientCommitId: input.clientCommitId,
+      resultSchemaVersion: POS_SALE_COMMIT_RESULT_SCHEMA_VERSION,
+      replayed: false,
       saleId: sale.id,
       orderNumber: sale.orderNumber,
       status: updatedSale.status,
       paymentStatus: updatedSale.paymentStatus,
-      total,
-      amountPaid,
-      onAccountAmount,
-      changeDue,
+      total: moneyToNumber(total),
+      amountPaid: moneyToNumber(amountPaid),
+      onAccountAmount: moneyToNumber(onAccountAmount),
+      changeDue: moneyToNumber(changeDue),
       accountingMovements: {
         saleJournalEntry: {
           id: saleJournalEntry.id,
@@ -2454,59 +2733,175 @@ export async function commitPOSSale(rawInput: UserScoped) {
         authoritative: false as const,
         watermark: "NOT FOR STATUTORY USE" as const,
       },
+      receipt: null,
+      receiptStatus: "RETRY_REQUIRED" as const,
+      delivery: null,
+    } satisfies CommitPOSSaleResult
+    const resultEnvelope = commitResultEnvelope(result)
+    const resultHash = hashBusinessPayload(resultEnvelope)
+    const commitTransition = await tx.pOSCommitResult.updateMany({
+      where: {
+        id: commitRegistry.id,
+        organizationId: rawInput.organizationId,
+        status: "CLAIMED",
+        requestHash,
+      },
+      data: {
+        status: "COMMITTED",
+        resultEnvelope,
+        resultHash,
+        committedAt: now,
+      },
+    })
+    if (commitTransition.count !== 1) {
+      throw new ApplicationError(
+        "DATABASE_CONFLICT",
+        "POS commit result could not be recorded atomically",
+        409,
+      )
     }
-  })
+
+    return {
+      registryId: commitRegistry.id,
+      result,
+      needsCompletion: true,
+      callerReplayed: false,
+    }
+  }
+
+  let outcome: Awaited<ReturnType<typeof runCommit>> | undefined
+  for (let attempt = 0; attempt < 2 && !outcome; attempt += 1) {
+    try {
+      outcome = await db.$transaction(runCommit, {
+        isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+      })
+    } catch (error) {
+      if (error instanceof POSSaleCommitReplayConflict) {
+        await auditPOSSaleCommitReplayConflict(rawInput.organizationId, rawInput.userId, error)
+        throw new ApplicationError(
+          "DUPLICATE_KEY_CONFLICT",
+          "This POS commit identifier was already used for a different sale request",
+          409,
+        )
+      }
+
+      const errorCode = prismaErrorCode(error)
+      if (["P2002", "P2034"].includes(errorCode ?? "")) {
+        const existingCommit = await db.pOSCommitResult.findUnique({
+          where: {
+            organizationId_terminalId_clientCommitId: {
+              organizationId: rawInput.organizationId,
+              terminalId: input.terminalId,
+              clientCommitId: input.clientCommitId,
+            },
+          },
+        })
+        if (existingCommit) {
+          try {
+            assertPOSCommitRegistryRequest(existingCommit, rawInput, input, requestHash)
+          } catch (recoveryError) {
+            if (recoveryError instanceof POSSaleCommitReplayConflict) {
+              await auditPOSSaleCommitReplayConflict(
+                rawInput.organizationId,
+                rawInput.userId,
+                recoveryError,
+              )
+              throw new ApplicationError(
+                "DUPLICATE_KEY_CONFLICT",
+                "This POS commit identifier was already used for a different sale request",
+                409,
+              )
+            }
+            throw recoveryError
+          }
+          outcome = {
+            registryId: existingCommit.id,
+            result: readStoredPOSCommitResult(existingCommit, existingCommit.status === "COMPLETED"),
+            needsCompletion: existingCommit.status === "COMMITTED",
+            callerReplayed: true,
+          }
+          break
+        }
+        if (errorCode === "P2034" && attempt === 0) continue
+      }
+      if (error instanceof ApplicationError) throw error
+      throw new ApplicationError(
+        "INTERNAL_ERROR",
+        "POS sale could not be completed safely",
+        500,
+        false,
+      )
+    }
+  }
+
+  if (!outcome) {
+    throw new ApplicationError(
+      "DATABASE_CONFLICT",
+      "POS sale could not be serialized safely",
+      409,
+    )
+  }
+  if (!outcome.needsCompletion) return outcome.result
 
   let receipt: SalesReceiptPayload | null = null
   let receiptStatus: CommitPOSSaleResult["receiptStatus"] = "READY"
   try {
-    receipt = await getSalesReceipt({
-      salesOrderId: committed.saleId,
+    receipt = await getPOSSaleCommitReceipt({
+      salesOrderId: outcome.result.saleId,
       organizationId: rawInput.organizationId,
     })
   } catch {
     receiptStatus = "RETRY_REQUIRED"
   }
 
-  let delivery: ReceiptDeliveryResult | null = null
-  if (input.receipt && receipt) {
-    try {
-      delivery = await sendReceipt({
-        salesOrderId: committed.saleId,
-        organizationId: rawInput.organizationId,
-        userId: rawInput.userId,
-        channel: input.receipt.channel,
-        destination: normalizeReceiptDestination(input.receipt.channel, input.receipt.destination),
-        locale: input.receipt.locale,
-        whatsAppCustomerOptInConfirmed: input.receipt.whatsAppCustomerOptInConfirmed,
-      })
-    } catch (error) {
-      delivery = {
-        channel: input.receipt.channel,
-        status: "FAILED",
-        retryable: false,
-        message: error instanceof Error ? error.message : "Receipt delivery failed",
-        digitalReceiptUrl: receipt.digitalReceiptUrl,
-      }
-    }
-  }
-
-  return {
-    saleId: committed.saleId,
-    orderNumber: committed.orderNumber,
-    status: committed.status,
-    paymentStatus: committed.paymentStatus,
-    total: moneyToNumber(committed.total),
-    amountPaid: moneyToNumber(committed.amountPaid),
-    onAccountAmount: moneyToNumber(committed.onAccountAmount),
-    changeDue: moneyToNumber(committed.changeDue),
-    accountingMovements: committed.accountingMovements,
-    fiscalDocument: committed.fiscalDocument,
-    fiscalization: committed.fiscalization,
+  const completedResult = {
+    ...outcome.result,
+    replayed: false,
     receipt,
     receiptStatus,
-    delivery,
+    delivery: null,
   } satisfies CommitPOSSaleResult
+  const completedEnvelope = commitResultEnvelope(completedResult)
+  const completion = await db.pOSCommitResult.updateMany({
+    where: {
+      id: outcome.registryId,
+      organizationId: rawInput.organizationId,
+      status: "COMMITTED",
+      requestHash,
+    },
+    data: {
+      status: "COMPLETED",
+      resultEnvelope: completedEnvelope,
+      resultHash: hashBusinessPayload(completedEnvelope),
+      completedAt: new Date(),
+    },
+  })
+  if (completion.count === 1) {
+    return { ...completedResult, replayed: outcome.callerReplayed }
+  }
+
+  const racedCompletion = await db.pOSCommitResult.findFirst({
+    where: {
+      id: outcome.registryId,
+      organizationId: rawInput.organizationId,
+      locationId: input.locationId,
+      terminalId: input.terminalId,
+      sessionId: input.sessionId,
+      salesOrderId: input.salesOrderId,
+      actorId: rawInput.userId,
+      clientCommitId: input.clientCommitId,
+      requestHash,
+      status: "COMPLETED",
+    },
+  })
+  if (!racedCompletion) {
+    throw new ApplicationError(
+      "DATABASE_CONFLICT",
+      "POS commit result completion changed unexpectedly",
+      409,
+    )
+  }
+  return readStoredPOSCommitResult(racedCompletion)
 }
 
 const correctionSaleInclude = {

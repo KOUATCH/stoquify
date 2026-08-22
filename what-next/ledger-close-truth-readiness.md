@@ -1,6 +1,6 @@
 # Ledger Close Truth Readiness Gate
 
-Generated: 2026-08-15T16:52:05.490Z
+Generated: 2026-08-22T09:02:47.213Z
 Mode: fail
 Status: ready
 

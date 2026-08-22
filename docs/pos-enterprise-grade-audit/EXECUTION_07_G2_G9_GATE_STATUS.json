@@ -1,0 +1,242 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-08-19T11:21:28.651Z",
+  "status": "BLOCKED",
+  "technicalStatus": "PROGRAM_CONTROL_PLANE_READY",
+  "firstBlockingGate": "G1",
+  "activeGate": "G1",
+  "productionAuthorized": false,
+  "summary": {
+    "technicalChecks": 11,
+    "technicalReady": 11,
+    "gates": 10,
+    "passedGates": 0,
+    "externalEvidenceItems": 9,
+    "verifiedExternalEvidenceItems": 0,
+    "m2WorkPackages": 18
+  },
+  "technicalChecks": [
+    {
+      "id": "g0_development_baseline_exists",
+      "ready": true
+    },
+    {
+      "id": "canonical_gate_set_complete",
+      "ready": true
+    },
+    {
+      "id": "dependency_graph_resolves_without_cycle",
+      "ready": true
+    },
+    {
+      "id": "m2_a01_a09_b01_b09_covered",
+      "ready": true
+    },
+    {
+      "id": "g2_g9_have_evidence_and_stop_contracts",
+      "ready": true
+    },
+    {
+      "id": "external_evidence_register_is_gate_scoped",
+      "ready": true
+    },
+    {
+      "id": "no_placeholder_external_evidence_marked_verified",
+      "ready": true
+    },
+    {
+      "id": "candidate_is_not_misrepresented_as_promotable",
+      "ready": true
+    },
+    {
+      "id": "high_invariant_stop_policy_is_enabled",
+      "ready": true
+    },
+    {
+      "id": "g1_exact_hash_approval_gate_is_connected",
+      "ready": true
+    },
+    {
+      "id": "roadmap_contains_all_program_gates",
+      "ready": true
+    }
+  ],
+  "gates": [
+    {
+      "id": "G1",
+      "name": "Architecture and control contract freeze",
+      "status": "BLOCKED_AUTHENTIC_APPROVALS",
+      "dependenciesReady": true,
+      "declaredStatus": "BLOCKED_AUTHENTIC_APPROVALS",
+      "blockers": [
+        "d-01_accountable_approval",
+        "d-02_accountable_approval",
+        "d-03_accountable_approval",
+        "d-04_accountable_approval",
+        "d-05_accountable_approval",
+        "d-06_accountable_approval",
+        "d-07_accountable_approval",
+        "d-08_accountable_approval",
+        "d-09_accountable_approval",
+        "d-10_accountable_approval",
+        "d-11_accountable_approval"
+      ]
+    },
+    {
+      "id": "G2",
+      "name": "Transaction and access trust",
+      "status": "BLOCKED_DEPENDENCY",
+      "dependenciesReady": false,
+      "declaredStatus": "BLOCKED_DEPENDENCY_AND_PARTIAL_IMPLEMENTATION",
+      "externalEvidenceReady": true,
+      "externalBlockers": [],
+      "dependencies": [
+        "G1"
+      ]
+    },
+    {
+      "id": "G3A",
+      "name": "Provider-authoritative payment truth",
+      "status": "BLOCKED_DEPENDENCY",
+      "dependenciesReady": false,
+      "declaredStatus": "BLOCKED_DEPENDENCY_AND_EXTERNAL_PROVIDER",
+      "externalEvidenceReady": false,
+      "externalBlockers": [
+        "EXT-PROVIDER-SANDBOX"
+      ],
+      "dependencies": [
+        "G2"
+      ]
+    },
+    {
+      "id": "G3B",
+      "name": "Immutable receipt and fiscal-source truth",
+      "status": "BLOCKED_DEPENDENCY",
+      "dependenciesReady": false,
+      "declaredStatus": "BLOCKED_DEPENDENCY_AND_QUALIFIED_COUNTRY_REVIEW",
+      "externalEvidenceReady": false,
+      "externalBlockers": [
+        "EXT-CM-QUALIFIED-REVIEW"
+      ],
+      "dependencies": [
+        "G2"
+      ]
+    },
+    {
+      "id": "G4",
+      "name": "Bounded POS workstation release candidate",
+      "status": "BLOCKED_DEPENDENCY",
+      "dependenciesReady": false,
+      "declaredStatus": "BLOCKED_DEPENDENCY_AND_PHYSICAL_MATRIX",
+      "externalEvidenceReady": false,
+      "externalBlockers": [
+        "EXT-HARDWARE-MATRIX"
+      ],
+      "dependencies": [
+        "G2",
+        "G3B"
+      ]
+    },
+    {
+      "id": "G5",
+      "name": "Store financial close",
+      "status": "BLOCKED_DEPENDENCY",
+      "dependenciesReady": false,
+      "declaredStatus": "BLOCKED_DEPENDENCY_AND_PARTIAL_CLOSE_MODEL",
+      "externalEvidenceReady": false,
+      "externalBlockers": [
+        "EXT-CLOSE-CYCLE"
+      ],
+      "dependencies": [
+        "G3A",
+        "G3B",
+        "G4"
+      ]
+    },
+    {
+      "id": "G6",
+      "name": "Physical fulfillment truth",
+      "status": "BLOCKED_DEPENDENCY",
+      "dependenciesReady": false,
+      "declaredStatus": "BLOCKED_DEPENDENCY_AND_MISSING_AGGREGATES",
+      "externalEvidenceReady": false,
+      "externalBlockers": [
+        "EXT-INVENTORY-POLICY"
+      ],
+      "dependencies": [
+        "G2"
+      ]
+    },
+    {
+      "id": "G7",
+      "name": "Financial order-to-cash and returns",
+      "status": "BLOCKED_DEPENDENCY",
+      "dependenciesReady": false,
+      "declaredStatus": "BLOCKED_DEPENDENCY_AND_PARTIAL_AR_FOUNDATION",
+      "externalEvidenceReady": false,
+      "externalBlockers": [
+        "EXT-AR-RETURNS-POLICY"
+      ],
+      "dependencies": [
+        "G3A",
+        "G3B",
+        "G6"
+      ]
+    },
+    {
+      "id": "G8",
+      "name": "Operational readiness candidate",
+      "status": "BLOCKED_DEPENDENCY",
+      "dependenciesReady": false,
+      "declaredStatus": "BLOCKED_DEPENDENCIES_AND_PRODUCTION_LIKE_EVIDENCE",
+      "externalEvidenceReady": false,
+      "externalBlockers": [
+        "EXT-OPS-DRILLS"
+      ],
+      "dependencies": [
+        "G3A",
+        "G3B",
+        "G4",
+        "G5",
+        "G6",
+        "G7"
+      ]
+    },
+    {
+      "id": "G9",
+      "name": "Bounded pilot and production expansion",
+      "status": "BLOCKED_DEPENDENCY",
+      "dependenciesReady": false,
+      "declaredStatus": "BLOCKED_DEPENDENCY_NOT_STARTED",
+      "externalEvidenceReady": false,
+      "externalBlockers": [
+        "EXT-PILOT-COHORTS"
+      ],
+      "dependencies": [
+        "G8"
+      ]
+    }
+  ],
+  "nextPermittedWork": {
+    "activeGate": "G1",
+    "allowed": [
+      "Complete authentic G1 approvals",
+      "Maintain current cash-only synthetic development controls",
+      "Read-only preflight of G2-G9",
+      "Build gate tooling and evidence templates"
+    ],
+    "notAllowed": [
+      "Mark G2 or later passed",
+      "Activate electronic payment provider",
+      "Allocate statutory fiscal numbers",
+      "Claim physical hardware certification",
+      "Deploy production migration",
+      "Begin production pilot"
+    ]
+  },
+  "nonClaims": [
+    "A technically ready program controller does not approve any domain gate.",
+    "Local evidence is not provider, statutory, physical-hardware, production-operations or pilot proof.",
+    "Passing G1 through G8 would still require a separate bounded G9 expansion decision."
+  ]
+}

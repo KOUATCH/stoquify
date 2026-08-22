@@ -138,9 +138,21 @@ export interface GoodsReceiptPayload {
   id: string // Purchase Order ID
   organizationId: string
   receivedBy: string // User ID
+  idempotencyKey: string
   locationId?: string
   notes?: string
+  inspectionOutcome: "PASSED" | "FAILED" | "INCOMPLETE"
+  inspectionReason?: string
+  inspectionEvidenceNotes?: string
   items: GoodsReceiptItemInput[]
+}
+
+export interface GoodsReceiptInspectionResolutionPayload {
+  goodsReceiptId: string
+  organizationId: string
+  decision: "ACCEPT" | "REJECT"
+  reason: string
+  idempotencyKey: string
 }
 
 export type PurchaseOrderFilters = {

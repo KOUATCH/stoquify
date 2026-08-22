@@ -143,6 +143,8 @@ function ProofList({ run }: { run: RunRow }) {
     ["Attendance", run.proof.attendanceSnapshotHash],
     ["Document", run.proof.documentHash],
     ["Evidence", run.proof.evidenceHash],
+    ["Transition proof", run.proof.lifecycle.transitionEvidence],
+    ["Trust Spine writes", run.proof.lifecycle.writeEnabled ? "Enabled" : "Disabled"],
     ...(run.correction.correctionRun
       ? [
           ["Original document", run.correction.originalRunDocumentHash],
@@ -220,6 +222,14 @@ function runProofSubject(
     rows: [
       { label: "Run type", value: run.runType },
       { label: "Version", value: `v${run.version}` },
+      { label: "Transition proof", value: run.proof.lifecycle.transitionEvidence },
+      { label: "Trust Spine writes", value: run.proof.lifecycle.writeEnabled ? "Enabled" : "Disabled" },
+      ...run.proof.lifecycle.stages.flatMap((stage) => [
+        { label: stage.stage + " event", value: stage.businessEventId },
+        { label: stage.stage + " at", value: stage.transitionedAt },
+        { label: stage.stage + " evidence", value: stage.evidenceStatus },
+        { label: stage.stage + " actor", value: stage.actorPresent ? "Present" : null },
+      ]),
       { label: "Period", value: run.period.name },
       { label: "Period status", value: run.period.status },
       { label: "Pay date", value: run.period.payDate },
@@ -360,11 +370,9 @@ function Blockers({ run }: { run: RunRow }) {
 function NextActions({
   run,
   locale,
-  paymentRequesterCandidates,
 }: {
   run: RunRow;
   locale: Locale;
-  paymentRequesterCandidates: PayrollRunWorkbenchResult["paymentRequesterCandidates"];
 }) {
   if (!run.nextActions.length) return <Badge value="No manual action" />;
 
@@ -382,6 +390,8 @@ function NextActions({
             {action.requiresSeparateApprover ? (
               <Badge value="Maker-checker" />
             ) : null}
+            {action.allowed ? <Badge value="Allowed" /> : <Badge value="Blocked" />}
+            {action.blockedBy.map((code) => <Badge key={code} value={code} />)}
             {action.href ? (
               <Link
                 href={localizePath(action.href, locale)}
@@ -394,7 +404,7 @@ function NextActions({
           <PayrollRunActionPanel
             run={run}
             action={action}
-            paymentRequesterCandidates={paymentRequesterCandidates}
+            disabled={!action.allowed || action.blockedBy.length > 0}
           />
         </div>
       ))}
@@ -642,9 +652,6 @@ export default function PayrollRunWorkbench({ data, error, locale }: Props) {
                       <NextActions
                         run={run}
                         locale={locale}
-                        paymentRequesterCandidates={
-                          data.paymentRequesterCandidates
-                        }
                       />
                     </td>
                   </tr>

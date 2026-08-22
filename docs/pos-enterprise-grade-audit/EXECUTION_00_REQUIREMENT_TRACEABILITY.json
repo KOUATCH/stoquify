@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "1.0.0",
+  "programId": "STOQUIFY-POS-SALES-TO-CASH",
+  "requirements": [
+    { "id": "R-01", "requirement": "One authoritative owner and explicit state contract for every material transition", "milestones": ["M1", "M8"], "gates": ["G1", "G8"], "evidence": ["State catalog", "Owner map", "Static boundary gate"] },
+    { "id": "R-02", "requirement": "Immediate POS and delivery/on-account paths reuse the same accounting, inventory, receipt, payment and reconciliation kernels", "milestones": ["M1", "M6", "M7"], "gates": ["G1", "G6", "G7"], "evidence": ["Kernel ownership map", "Posting tests", "Cross-flow tie-out"] },
+    { "id": "R-03", "requirement": "Sale retries replay the original result safely", "milestones": ["M2"], "gates": ["G2"], "evidence": ["Real PostgreSQL duplicate race", "Response-loss replay", "Payload mismatch rejection"] },
+    { "id": "R-04", "requirement": "Provider-owned pending, unknown, captured and settled semantics", "milestones": ["M3A", "M5"], "gates": ["G3A", "G5"], "evidence": ["Provider contract", "Signed webhook tests", "Statement reconciliation"] },
+    { "id": "R-05", "requirement": "Immutable receipt/fiscal source independent of delivery", "milestones": ["M3B"], "gates": ["G3B"], "evidence": ["Immutable source schema", "Delivery failure test", "Fiscal replay test"] },
+    { "id": "R-06", "requirement": "Inventory quantity and COGS move at the correct physical event", "milestones": ["M2", "M6", "M7"], "gates": ["G2", "G6", "G7"], "evidence": ["Stock-event link", "Valuation/COGS tie-out", "Concurrent reservation test"] },
+    { "id": "R-07", "requirement": "Cash, clearing, AR, revenue, tax, COGS, inventory, fees, refunds and settlement postings balance and are source-linked", "milestones": ["M2", "M3A", "M5", "M7"], "gates": ["G2", "G3A", "G5", "G7"], "evidence": ["Balanced journal tests", "Source links", "Reconciliation proof"] },
+    { "id": "R-08", "requirement": "Refunds, voids and returns preserve history with compensating evidence", "milestones": ["M1", "M3A", "M3B", "M7"], "gates": ["G1", "G3A", "G3B", "G7"], "evidence": ["Correction policy", "Lineage tests", "Immutability gate"] },
+    { "id": "R-09", "requirement": "Shift close, statements, reconciliation and accounting close are distinct and observable", "milestones": ["M5"], "gates": ["G5"], "evidence": ["Separate state machines", "Tie-out", "Close blocker matrix"] },
+    { "id": "R-10", "requirement": "Offline events are signed, ordered, replay-safe, conflict-aware and resolvable", "milestones": ["M1", "M4", "M8"], "gates": ["G1", "G4", "G8"], "evidence": ["Device policy", "Sequence/replay tests", "Conflict workbench"] },
+    { "id": "R-11", "requirement": "Isolation, RBAC, entitlement, fresh auth, redaction, auditability and separation of duties are tested", "milestones": ["M2", "M4", "M8", "M9"], "gates": ["G2", "G4", "G8", "G9"], "evidence": ["Positive/negative access matrix", "Cross-tenant abuse tests", "Redacted audit evidence"] },
+    { "id": "R-12", "requirement": "Local evidence is distinguished from production proof and unresolved blockers remain explicit", "milestones": ["M0", "M8", "M9"], "gates": ["G0", "G8", "G9"], "evidence": ["Evidence taxonomy", "Production evidence pack", "Dated approvals"] }
+  ]
+}

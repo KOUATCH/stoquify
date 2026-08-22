@@ -1,0 +1,525 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-08-20T14:55:50.328Z",
+  "classification": "DEVELOPMENT_EVIDENCE_NOT_PRODUCTION_AUTHORIZATION",
+  "sourceRegister": {
+    "path": "docs/blockers-and-gates/COMPLIANCE_AUTHORIZATION_SUPPLIED_SOURCE_2026-08-20.json",
+    "sha256": "aa93715b04b46f6a7e88652d87f4c60fe2ab9a93c0bd2d0a39bb233240ff5d1e"
+  },
+  "sourceArtifacts": [
+    {
+      "path": "docs/blockers-and-gates/COMPLIANCE_AUTHORIZATION_VALIDATION_G1_COMPLETION_FORM_2026-08-19.docx",
+      "sha256": "34356ac2c77db34300f13b60d6538dad25bec0439641bbcd693c97e799b2981f",
+      "classification": "CANDIDATE_WORKING_DOCUMENT",
+      "authorityLimitation": "Form structure and supplied assertions only; not independent identity, appointment, qualification, signature, statutory, fiscal, or production approval evidence."
+    },
+    {
+      "path": "docs/blockers-and-gates/COMPLIANCE_AUTHORIZATION_G1_PREFILL_STATUS_2026-08-19.json",
+      "sha256": "cb8d97d342cf128d631c40a8f2e0648c768392318d708fce0d804e2bf335a605",
+      "classification": "REPOSITORY_PREFILL_ASSESSMENT",
+      "authorityLimitation": "Machine-readable prefill and conflict assessment; not a signed approval or qualified statutory decision."
+    }
+  ],
+  "classifications": [
+    {
+      "code": "REPOSITORY_VERIFIED",
+      "meaning": "Verified directly from a hash-pinned repository artifact or deterministic repository check."
+    },
+    {
+      "code": "DATABASE_DEVELOPMENT_EVIDENCE",
+      "meaning": "Observed in the scoped local development database; never external or production authorization."
+    },
+    {
+      "code": "SUPPLIED_UNVERIFIED_STATEMENT",
+      "meaning": "Transcribed from a supplied or working document without independent authentication."
+    },
+    {
+      "code": "SYNTHETIC_DEVELOPMENT_PERSONA",
+      "meaning": "Seeded application identity for development testing only."
+    },
+    {
+      "code": "REQUIRES_HUMAN_REVIEW",
+      "meaning": "Requires an authorized human decision or attestation that engineering cannot create."
+    },
+    {
+      "code": "REQUIRES_QUALIFIED_REVIEW",
+      "meaning": "Requires verified professional capacity, scope, source review, and independent checking."
+    },
+    {
+      "code": "BLOCKED_EXTERNAL",
+      "meaning": "Depends on a regulator, external authority, authentic signature, credential, or independently retained evidence."
+    },
+    {
+      "code": "NOT_APPLICABLE",
+      "meaning": "Outside the declared scope with an explicit reason."
+    },
+    {
+      "code": "REJECTED_AS_UNSUPPORTED",
+      "meaning": "A supplied assertion is not accepted as current truth because required evidence is absent or contradictory."
+    }
+  ],
+  "claims": [
+    {
+      "id": "organization_name",
+      "field": "Organization",
+      "value": "Stoquify",
+      "sourceArtifact": "COMPLIANCE_AUTHORIZATION_VALIDATION_G1_COMPLETION_FORM_2026-08-19.docx",
+      "sourceClassification": "SUPPLIED_UNVERIFIED_STATEMENT",
+      "disposition": "SUPPLIED_UNVERIFIED_STATEMENT",
+      "evidenceRequestId": "organization_identity",
+      "notes": "The local database maps Stoquify to the primary development organization's trade name.",
+      "accountableOwner": "Stoquify organization administrator",
+      "requiredEvidence": "Current organization record and, if legal identity is claimed, official registration evidence bound to the tenant ID.",
+      "authoritativeSource": "Tenant organization record and official registration evidence.",
+      "acceptanceTest": "Independent checker matches the name and tenant identifier to the retained authoritative record.",
+      "developmentImpact": "Display-label use is permitted after database reconciliation.",
+      "integrationImpact": "No blocker while tenant IDs remain authoritative.",
+      "productionImpact": "Does not establish legal identity without verified registration evidence.",
+      "engineeringCompletable": true
+    },
+    {
+      "id": "migration_operator",
+      "field": "Migration operator",
+      "value": "SANGO MALO",
+      "sourceArtifact": "COMPLIANCE_AUTHORIZATION_VALIDATION_G1_COMPLETION_FORM_2026-08-19.docx",
+      "sourceClassification": "SUPPLIED_UNVERIFIED_STATEMENT",
+      "disposition": "REQUIRES_HUMAN_REVIEW",
+      "evidenceRequestId": "migration_authority",
+      "notes": "Database persona linkage is application context only.",
+      "accountableOwner": "Database change owner, operator, and independent checker",
+      "requiredEvidence": "Authenticated subject IDs, appointments, conflict declaration, target proof, final evidence hashes, separate signatures, and ordered timestamps.",
+      "authoritativeSource": "Enterprise identity, change-approval, and migration evidence systems.",
+      "acceptanceTest": "Operator and checker are distinct; target and hashes match; checker signs after final execution evidence.",
+      "developmentImpact": "Static and non-destructive development checks may continue.",
+      "integrationImpact": "No destructive or production execution authority is granted.",
+      "productionImpact": "Blocks controlled migration approval claims.",
+      "engineeringCompletable": false
+    },
+    {
+      "id": "migration_checker",
+      "field": "Migration checker",
+      "value": "MAXIMILLIANO BONGA",
+      "sourceArtifact": "COMPLIANCE_AUTHORIZATION_VALIDATION_G1_COMPLETION_FORM_2026-08-19.docx",
+      "sourceClassification": "SUPPLIED_UNVERIFIED_STATEMENT",
+      "disposition": "REQUIRES_HUMAN_REVIEW",
+      "evidenceRequestId": "migration_authority",
+      "notes": "Distinct seeded IDs demonstrate software segregation of duties only.",
+      "accountableOwner": "Database change owner, operator, and independent checker",
+      "requiredEvidence": "Authenticated subject IDs, appointments, conflict declaration, target proof, final evidence hashes, separate signatures, and ordered timestamps.",
+      "authoritativeSource": "Enterprise identity, change-approval, and migration evidence systems.",
+      "acceptanceTest": "Operator and checker are distinct; target and hashes match; checker signs after final execution evidence.",
+      "developmentImpact": "Static and non-destructive development checks may continue.",
+      "integrationImpact": "No destructive or production execution authority is granted.",
+      "productionImpact": "Blocks controlled migration approval claims.",
+      "engineeringCompletable": false
+    },
+    {
+      "id": "maker_identity",
+      "field": "Maker",
+      "value": "Tamen Marceline",
+      "sourceArtifact": "COMPLIANCE_AUTHORIZATION_VALIDATION_G1_COMPLETION_FORM_2026-08-19.docx",
+      "sourceClassification": "SUPPLIED_UNVERIFIED_STATEMENT",
+      "disposition": "REQUIRES_HUMAN_REVIEW",
+      "evidenceRequestId": "workflow_appointments",
+      "notes": "Typed names are not signatures or appointments.",
+      "accountableOwner": "Workflow authority owner",
+      "requiredEvidence": "Stable subject IDs and effective appointments for the exact role, organization, decision, and period.",
+      "authoritativeSource": "Enterprise IAM and authority register.",
+      "acceptanceTest": "Independent checker verifies appointment scope, effective dates, and segregation of duties.",
+      "developmentImpact": "Seeded personas may exercise development workflows.",
+      "integrationImpact": "Fail-closed maker-checker integration testing may continue.",
+      "productionImpact": "No production decision authority is established.",
+      "engineeringCompletable": false
+    },
+    {
+      "id": "checker_identity",
+      "field": "Checker",
+      "value": "Yonga Claude in the working form; Yonga Springfield in repository prefill and development mappings",
+      "sourceArtifact": "Both pinned source artifacts",
+      "sourceClassification": "SUPPLIED_UNVERIFIED_STATEMENT",
+      "disposition": "REQUIRES_HUMAN_REVIEW",
+      "evidenceRequestId": "identity_conflict_resolution",
+      "notes": "Engineering must not silently select or merge either identity.",
+      "accountableOwner": "HRIS, IAM, and workflow authority owners",
+      "requiredEvidence": "Stable subject IDs, authoritative names, appointments, effective dates, and independent verification.",
+      "authoritativeSource": "Enterprise IAM, HRIS, and authority register.",
+      "acceptanceTest": "The conflict is resolved without name-only matching or silent subject merging.",
+      "developmentImpact": "Existing distinct seeded personas may continue for development tests.",
+      "integrationImpact": "The conflict must remain visible in evidence exports.",
+      "productionImpact": "Blocks reliance on the conflicting identity as an approver or checker.",
+      "engineeringCompletable": false
+    },
+    {
+      "id": "product_approver",
+      "field": "Product approver",
+      "value": "KOUATCHOUA MARK",
+      "sourceArtifact": "COMPLIANCE_AUTHORIZATION_VALIDATION_G1_COMPLETION_FORM_2026-08-19.docx",
+      "sourceClassification": "SUPPLIED_UNVERIFIED_STATEMENT",
+      "disposition": "REQUIRES_HUMAN_REVIEW",
+      "evidenceRequestId": "product_approval",
+      "notes": "The spelling variant 'Kouatchoua mMark' also remains unresolved.",
+      "accountableOwner": "Product governance owner and authorized product approver",
+      "requiredEvidence": "Authenticated identity, appointment, scope, signature, timestamp, and exact candidate hash.",
+      "authoritativeSource": "Product governance and enterprise approval records.",
+      "acceptanceTest": "Independent checker verifies appointment and signature against the exact frozen artifact hash.",
+      "developmentImpact": "Candidate persona may exercise development approval tests.",
+      "integrationImpact": "No production authority is inferred from seed data or DOCX metadata.",
+      "productionImpact": "Blocks product approval claims.",
+      "engineeringCompletable": false
+    },
+    {
+      "id": "controller_approver",
+      "field": "Controller approver",
+      "value": "KOUATCHOUA MARCELINE",
+      "sourceArtifact": "COMPLIANCE_AUTHORIZATION_VALIDATION_G1_COMPLETION_FORM_2026-08-19.docx",
+      "sourceClassification": "SUPPLIED_UNVERIFIED_STATEMENT",
+      "disposition": "REQUIRES_HUMAN_REVIEW",
+      "evidenceRequestId": "controller_approval",
+      "notes": "System-administration wording does not establish financial-controller capacity.",
+      "accountableOwner": "Finance governance owner and authorized controller",
+      "requiredEvidence": "Authenticated identity, verified professional capacity, appointment, scope, conflict declaration, signature, and timestamp.",
+      "authoritativeSource": "Finance governance, HRIS, and enterprise approval records.",
+      "acceptanceTest": "Independent checker verifies capacity, appointment, signature, and separation from the maker.",
+      "developmentImpact": "Candidate persona may exercise development approval workflows.",
+      "integrationImpact": "Fail-closed control integration testing may continue.",
+      "productionImpact": "Blocks controller and accounting-certification claims.",
+      "engineeringCompletable": false
+    },
+    {
+      "id": "supplied_approval_timestamp",
+      "field": "Supplied approval timestamp",
+      "value": "2026-08-17T08:00:00Z",
+      "sourceArtifact": "COMPLIANCE_AUTHORIZATION_VALIDATION_G1_COMPLETION_FORM_2026-08-19.docx",
+      "sourceClassification": "SUPPLIED_UNVERIFIED_STATEMENT",
+      "disposition": "SUPPLIED_UNVERIFIED_STATEMENT",
+      "evidenceRequestId": "product_approval",
+      "notes": "Document metadata is not an authenticated approval event.",
+      "accountableOwner": "Product governance owner and authorized product approver",
+      "requiredEvidence": "Authenticated identity, appointment, scope, signature, timestamp, and exact candidate hash.",
+      "authoritativeSource": "Product governance and enterprise approval records.",
+      "acceptanceTest": "Independent checker verifies appointment and signature against the exact frozen artifact hash.",
+      "developmentImpact": "Candidate persona may exercise development approval tests.",
+      "integrationImpact": "No production authority is inferred from seed data or DOCX metadata.",
+      "productionImpact": "Blocks product approval claims.",
+      "engineeringCompletable": false
+    },
+    {
+      "id": "migration_decision",
+      "field": "Migration decision",
+      "value": "CONDITIONALLY_APPROVED_EMPTY_TARGET_EXECUTE",
+      "sourceArtifact": "COMPLIANCE_AUTHORIZATION_VALIDATION_G1_COMPLETION_FORM_2026-08-19.docx",
+      "sourceClassification": "SUPPLIED_UNVERIFIED_STATEMENT",
+      "disposition": "SUPPLIED_UNVERIFIED_STATEMENT",
+      "evidenceRequestId": "migration_authority",
+      "notes": "Target verification, execution, and restore evidence remain separately required.",
+      "accountableOwner": "Database change owner, operator, and independent checker",
+      "requiredEvidence": "Authenticated subject IDs, appointments, conflict declaration, target proof, final evidence hashes, separate signatures, and ordered timestamps.",
+      "authoritativeSource": "Enterprise identity, change-approval, and migration evidence systems.",
+      "acceptanceTest": "Operator and checker are distinct; target and hashes match; checker signs after final execution evidence.",
+      "developmentImpact": "Static and non-destructive development checks may continue.",
+      "integrationImpact": "No destructive or production execution authority is granted.",
+      "productionImpact": "Blocks controlled migration approval claims.",
+      "engineeringCompletable": false
+    },
+    {
+      "id": "certification_schema",
+      "field": "Development certification schema",
+      "value": "codex_pos_commit_result_cert_20260817",
+      "sourceArtifact": "COMPLIANCE_AUTHORIZATION_VALIDATION_G1_COMPLETION_FORM_2026-08-19.docx",
+      "sourceClassification": "SUPPLIED_UNVERIFIED_STATEMENT",
+      "disposition": "SUPPLIED_UNVERIFIED_STATEMENT",
+      "evidenceRequestId": "scratch_target_verification",
+      "notes": "Do not create, reset, or mutate a schema merely from this statement.",
+      "accountableOwner": "Database test operator",
+      "requiredEvidence": "Verified host, database, schema, environment, and non-production boundary.",
+      "authoritativeSource": "Database connection preflight and target-verification artifact.",
+      "acceptanceTest": "All non-secret target coordinates match the retained preflight hash before any operation.",
+      "developmentImpact": "A verified scratch target may support development rehearsal.",
+      "integrationImpact": "It must remain isolated from public and production schemas.",
+      "productionImpact": "No production authority.",
+      "engineeringCompletable": true
+    },
+    {
+      "id": "restore_schema",
+      "field": "Restore rehearsal schema",
+      "value": "codex_pos_commit_result_restore_20260817",
+      "sourceArtifact": "COMPLIANCE_AUTHORIZATION_VALIDATION_G1_COMPLETION_FORM_2026-08-19.docx",
+      "sourceClassification": "SUPPLIED_UNVERIFIED_STATEMENT",
+      "disposition": "SUPPLIED_UNVERIFIED_STATEMENT",
+      "evidenceRequestId": "restore_rehearsal",
+      "notes": "Naming a scratch schema does not prove that a restore rehearsal ran.",
+      "accountableOwner": "Database recovery operator and independent checker",
+      "requiredEvidence": "Verified scratch target, timestamped restore run, integrity checks, result, and independent verification.",
+      "authoritativeSource": "Controlled restore execution and database verification artifacts.",
+      "acceptanceTest": "Restore succeeds on a verified non-production target and the checker validates integrity from retained hashes.",
+      "developmentImpact": "Documentation and dry-run validation may continue.",
+      "integrationImpact": "Recovery readiness remains unproven until execution evidence exists.",
+      "productionImpact": "Blocks production recovery-readiness claims.",
+      "engineeringCompletable": true
+    },
+    {
+      "id": "production_authorization_claim",
+      "field": "Production authorization",
+      "value": "YES",
+      "sourceArtifact": "COMPLIANCE_AUTHORIZATION_VALIDATION_G1_COMPLETION_FORM_2026-08-19.docx",
+      "sourceClassification": "SUPPLIED_UNVERIFIED_STATEMENT",
+      "disposition": "REJECTED_AS_UNSUPPORTED",
+      "evidenceRequestId": "production_authorization",
+      "notes": "The typed YES is retained for traceability but receives zero approval credit.",
+      "accountableOwner": "Authorized product, finance, security, compliance, and release approvers",
+      "requiredEvidence": "Completed release evidence, verified appointments, authentic signatures, qualified review, external prerequisites, and passing production gates bound to one frozen candidate.",
+      "authoritativeSource": "Independent release decision and applicable external authority evidence.",
+      "acceptanceTest": "Every mandatory production gate passes without override and independent approvers sign after the final evidence timestamp.",
+      "developmentImpact": "No effect; development is controlled by a separate gate.",
+      "integrationImpact": "Core integration remains non-production and fail-closed.",
+      "productionImpact": "Production use remains blocked.",
+      "engineeringCompletable": false
+    },
+    {
+      "id": "statutory_fiscal_authorization_claim",
+      "field": "Statutory/fiscal certification authorization",
+      "value": "YES",
+      "sourceArtifact": "COMPLIANCE_AUTHORIZATION_VALIDATION_G1_COMPLETION_FORM_2026-08-19.docx",
+      "sourceClassification": "SUPPLIED_UNVERIFIED_STATEMENT",
+      "disposition": "REJECTED_AS_UNSUPPORTED",
+      "evidenceRequestId": "qualified_country_pack_review",
+      "notes": "Stoquify engineering cannot self-certify statutory interpretation.",
+      "accountableOwner": "Compliance/legal owner and appointed independent Cameroon reviewer",
+      "requiredEvidence": "Verified identity, professional capacity, qualification reference, scope, conflict declaration, review window, recomputed source digests, family decisions, tie-out hashes, signature, and independent checker record.",
+      "authoritativeSource": "Qualified signed review decision bound to retained official sources and the frozen country-pack candidate.",
+      "acceptanceTest": "Qualified-review preflight and statutory production gate pass for the same candidate without override.",
+      "developmentImpact": "Development and sandbox work may continue fail-closed.",
+      "integrationImpact": "Production activation and legal-effect execution remain disabled.",
+      "productionImpact": "Blocks statutory, fiscal, payroll, and CNPS production reliance.",
+      "engineeringCompletable": false
+    },
+    {
+      "id": "product_approver_signature",
+      "field": "Product approver signature",
+      "value": "Blank / not authenticated",
+      "sourceArtifact": "COMPLIANCE_AUTHORIZATION_VALIDATION_G1_COMPLETION_FORM_2026-08-19.docx",
+      "sourceClassification": "BLOCKED_EXTERNAL",
+      "disposition": "BLOCKED_EXTERNAL",
+      "evidenceRequestId": "product_approval",
+      "notes": "Engineering must leave the field unapproved.",
+      "accountableOwner": "Product governance owner and authorized product approver",
+      "requiredEvidence": "Authenticated identity, appointment, scope, signature, timestamp, and exact candidate hash.",
+      "authoritativeSource": "Product governance and enterprise approval records.",
+      "acceptanceTest": "Independent checker verifies appointment and signature against the exact frozen artifact hash.",
+      "developmentImpact": "Candidate persona may exercise development approval tests.",
+      "integrationImpact": "No production authority is inferred from seed data or DOCX metadata.",
+      "productionImpact": "Blocks product approval claims.",
+      "engineeringCompletable": false
+    },
+    {
+      "id": "dgi_signature",
+      "field": "DGI signature / authority evidence",
+      "value": "Blank / not supplied",
+      "sourceArtifact": "COMPLIANCE_AUTHORIZATION_VALIDATION_G1_COMPLETION_FORM_2026-08-19.docx",
+      "sourceClassification": "BLOCKED_EXTERNAL",
+      "disposition": "BLOCKED_EXTERNAL",
+      "evidenceRequestId": "external_authority_conformance",
+      "notes": "Local adapter fixtures are not DGI conformance evidence.",
+      "accountableOwner": "DGI/MINFI liaison, security owner, integration owner, and qualified fiscal reviewer",
+      "requiredEvidence": "Applicable official contract or decision, endpoints, credential process, sandbox conformance, response fixtures, signature/transport controls, scope, date, and retained hashes.",
+      "authoritativeSource": "Official authority channels and independently verified conformance evidence.",
+      "acceptanceTest": "Every applicable external-authority checklist row passes and an independent checker verifies origin, applicability, scope, signatures, and hashes.",
+      "developmentImpact": "Sandbox-shaped adapter development may continue.",
+      "integrationImpact": "Live authority calls remain disabled.",
+      "productionImpact": "Blocks DGI/MINFI production-authority claims.",
+      "engineeringCompletable": false
+    },
+    {
+      "id": "minfi_signature",
+      "field": "MINFI signature / authority evidence",
+      "value": "Blank / not supplied",
+      "sourceArtifact": "COMPLIANCE_AUTHORIZATION_VALIDATION_G1_COMPLETION_FORM_2026-08-19.docx",
+      "sourceClassification": "BLOCKED_EXTERNAL",
+      "disposition": "BLOCKED_EXTERNAL",
+      "evidenceRequestId": "external_authority_conformance",
+      "notes": "No substitute may be generated locally.",
+      "accountableOwner": "DGI/MINFI liaison, security owner, integration owner, and qualified fiscal reviewer",
+      "requiredEvidence": "Applicable official contract or decision, endpoints, credential process, sandbox conformance, response fixtures, signature/transport controls, scope, date, and retained hashes.",
+      "authoritativeSource": "Official authority channels and independently verified conformance evidence.",
+      "acceptanceTest": "Every applicable external-authority checklist row passes and an independent checker verifies origin, applicability, scope, signatures, and hashes.",
+      "developmentImpact": "Sandbox-shaped adapter development may continue.",
+      "integrationImpact": "Live authority calls remain disabled.",
+      "productionImpact": "Blocks DGI/MINFI production-authority claims.",
+      "engineeringCompletable": false
+    },
+    {
+      "id": "cnps_signature",
+      "field": "CNPS signature / qualified source approval",
+      "value": "Blank / not supplied",
+      "sourceArtifact": "COMPLIANCE_AUTHORIZATION_VALIDATION_G1_COMPLETION_FORM_2026-08-19.docx",
+      "sourceClassification": "BLOCKED_EXTERNAL",
+      "disposition": "BLOCKED_EXTERNAL",
+      "evidenceRequestId": "qualified_country_pack_review",
+      "notes": "Source hashes alone do not establish legal approval.",
+      "accountableOwner": "Compliance/legal owner and appointed independent Cameroon reviewer",
+      "requiredEvidence": "Verified identity, professional capacity, qualification reference, scope, conflict declaration, review window, recomputed source digests, family decisions, tie-out hashes, signature, and independent checker record.",
+      "authoritativeSource": "Qualified signed review decision bound to retained official sources and the frozen country-pack candidate.",
+      "acceptanceTest": "Qualified-review preflight and statutory production gate pass for the same candidate without override.",
+      "developmentImpact": "Development and sandbox work may continue fail-closed.",
+      "integrationImpact": "Production activation and legal-effect execution remain disabled.",
+      "productionImpact": "Blocks statutory, fiscal, payroll, and CNPS production reliance.",
+      "engineeringCompletable": false
+    },
+    {
+      "id": "operator_checker_attestation",
+      "field": "Operator/checker authentication attestation",
+      "value": "Not supplied",
+      "sourceArtifact": "COMPLIANCE_AUTHORIZATION_VALIDATION_G1_COMPLETION_FORM_2026-08-19.docx",
+      "sourceClassification": "REQUIRES_HUMAN_REVIEW",
+      "disposition": "REQUIRES_HUMAN_REVIEW",
+      "evidenceRequestId": "migration_authority",
+      "notes": "Seeded logins are not attestations.",
+      "accountableOwner": "Database change owner, operator, and independent checker",
+      "requiredEvidence": "Authenticated subject IDs, appointments, conflict declaration, target proof, final evidence hashes, separate signatures, and ordered timestamps.",
+      "authoritativeSource": "Enterprise identity, change-approval, and migration evidence systems.",
+      "acceptanceTest": "Operator and checker are distinct; target and hashes match; checker signs after final execution evidence.",
+      "developmentImpact": "Static and non-destructive development checks may continue.",
+      "integrationImpact": "No destructive or production execution authority is granted.",
+      "productionImpact": "Blocks controlled migration approval claims.",
+      "engineeringCompletable": false
+    },
+    {
+      "id": "restore_rehearsal_result",
+      "field": "Restore rehearsal result",
+      "value": "Not yet available",
+      "sourceArtifact": "COMPLIANCE_AUTHORIZATION_VALIDATION_G1_COMPLETION_FORM_2026-08-19.docx",
+      "sourceClassification": "BLOCKED_EXTERNAL",
+      "disposition": "BLOCKED_EXTERNAL",
+      "evidenceRequestId": "restore_rehearsal",
+      "notes": "This remediation does not authorize a destructive database operation.",
+      "accountableOwner": "Database recovery operator and independent checker",
+      "requiredEvidence": "Verified scratch target, timestamped restore run, integrity checks, result, and independent verification.",
+      "authoritativeSource": "Controlled restore execution and database verification artifacts.",
+      "acceptanceTest": "Restore succeeds on a verified non-production target and the checker validates integrity from retained hashes.",
+      "developmentImpact": "Documentation and dry-run validation may continue.",
+      "integrationImpact": "Recovery readiness remains unproven until execution evidence exists.",
+      "productionImpact": "Blocks production recovery-readiness claims.",
+      "engineeringCompletable": true
+    },
+    {
+      "id": "qualified_country_pack_review",
+      "field": "Qualified Cameroon country-pack review",
+      "value": "Missing",
+      "sourceArtifact": "COMPLIANCE_AUTHORIZATION_G1_PREFILL_STATUS_2026-08-19.json",
+      "sourceClassification": "REQUIRES_QUALIFIED_REVIEW",
+      "disposition": "REQUIRES_QUALIFIED_REVIEW",
+      "evidenceRequestId": "qualified_country_pack_review",
+      "notes": "Engineering prepares the packet but does not supply legal conclusions.",
+      "accountableOwner": "Compliance/legal owner and appointed independent Cameroon reviewer",
+      "requiredEvidence": "Verified identity, professional capacity, qualification reference, scope, conflict declaration, review window, recomputed source digests, family decisions, tie-out hashes, signature, and independent checker record.",
+      "authoritativeSource": "Qualified signed review decision bound to retained official sources and the frozen country-pack candidate.",
+      "acceptanceTest": "Qualified-review preflight and statutory production gate pass for the same candidate without override.",
+      "developmentImpact": "Development and sandbox work may continue fail-closed.",
+      "integrationImpact": "Production activation and legal-effect execution remain disabled.",
+      "productionImpact": "Blocks statutory, fiscal, payroll, and CNPS production reliance.",
+      "engineeringCompletable": false
+    },
+    {
+      "id": "qualified_accounting_review",
+      "field": "Qualified accounting review",
+      "value": "Missing",
+      "sourceArtifact": "COMPLIANCE_AUTHORIZATION_G1_PREFILL_STATUS_2026-08-19.json",
+      "sourceClassification": "REQUIRES_QUALIFIED_REVIEW",
+      "disposition": "REQUIRES_QUALIFIED_REVIEW",
+      "evidenceRequestId": "qualified_accounting_review",
+      "notes": "A seeded qualified-reviewer persona remains qualification-pending.",
+      "accountableOwner": "Finance governance owner and appointed qualified accounting reviewer",
+      "requiredEvidence": "Verified qualification, appointment, scope, conflict declaration, reviewed evidence, decision, signature, and independent check.",
+      "authoritativeSource": "Qualified signed accounting review packet.",
+      "acceptanceTest": "Reviewer capacity and every conclusion are independently verified against the frozen evidence set.",
+      "developmentImpact": "Accounting workflow development may continue with non-certification labels.",
+      "integrationImpact": "No certified accounting conclusion may be exposed.",
+      "productionImpact": "Blocks accounting certification claims.",
+      "engineeringCompletable": false
+    }
+  ],
+  "identityConflicts": [
+    {
+      "id": "checker_yonga_name_conflict",
+      "values": [
+        "Yonga Claude",
+        "Yonga Springfield"
+      ],
+      "status": "REQUIRES_HUMAN_REVIEW",
+      "reason": "The working form and repository prefill use different names for checker-related authority. Name matching cannot establish subject identity.",
+      "requiredResolution": "Provide stable subject IDs, appointments, effective dates, and independent authority-register verification. Do not merge the names automatically."
+    },
+    {
+      "id": "kouatchoua_mark_transcription_conflict",
+      "values": [
+        "KOUATCHOUA MARK",
+        "Kouatchoua mMark"
+      ],
+      "status": "REQUIRES_HUMAN_REVIEW",
+      "reason": "The G1 roster contains a spelling variant and proposes the product approver as a qualified country-pack reviewer without qualification evidence.",
+      "requiredResolution": "Verify the stable subject ID, correct spelling, each separate appointment, professional capacity, scope, and conflict declaration."
+    }
+  ],
+  "gateStatuses": [
+    {
+      "id": "countryPackDevelopment",
+      "status": "READY_FOR_DEVELOPMENT_TESTING",
+      "generatedAt": "2026-08-20T15:01:12.162Z",
+      "blockers": [],
+      "source": "what-next/statutory-country-pack-development-readiness.json"
+    },
+    {
+      "id": "countryPackIntegration",
+      "status": "READY_FOR_CORE_INTEGRATION",
+      "generatedAt": "2026-08-20T15:01:00.779Z",
+      "blockers": [],
+      "source": "what-next/statutory-country-pack-integration-readiness.json"
+    },
+    {
+      "id": "countryPackProduction",
+      "status": "blocked",
+      "generatedAt": "2026-08-20T15:01:47.126Z",
+      "blockers": [
+        "source_artifact_expert_approval"
+      ],
+      "source": "what-next/statutory-country-pack-production-readiness.json"
+    },
+    {
+      "id": "qualifiedReviewPreflight",
+      "status": "BLOCKED_PENDING_QUALIFIED_REVIEW",
+      "generatedAt": "2026-08-20T15:01:35.246Z",
+      "blockers": [
+        "reviewer_identity_complete",
+        "review_window_complete",
+        "reviewer_recomputed_source_digests",
+        "fixture_family_decisions_complete",
+        "all_required_fixture_families_approved",
+        "final_decision_consistent",
+        "signed_approval_metadata_complete",
+        "signed_approval_artifact_verified"
+      ],
+      "source": "what-next/AQSTOQFLOW_COMPLIANCE_AUTHORIZATION_REMEDIATION_REVIEW_PREFLIGHT_2026-08-20.json"
+    },
+    {
+      "id": "countryAdapterPilot",
+      "status": "ready",
+      "generatedAt": "2026-08-20T15:00:48.029Z",
+      "blockers": [],
+      "source": "what-next/country-adapter-pilot-readiness.json"
+    }
+  ],
+  "assertions": {
+    "developmentTestingPermitted": true,
+    "coreIntegrationPermitted": true,
+    "productionAuthorized": false,
+    "statutoryOrFiscalCertified": false,
+    "liveAuthoritySubmissionPermitted": false,
+    "observedProductionGateStatus": "blocked"
+  },
+  "nonClaims": [
+    "This register is a transcription and classification artifact, not an approval.",
+    "Typed names, DOCX metadata, seeded users, database roles, and blank signature fields are not authentic signatures or appointments.",
+    "Development readiness and core integration readiness are separate from statutory, fiscal, payroll, regulator, or production approval.",
+    "Engineering cannot supply qualified legal/accounting conclusions or external authority evidence."
+  ]
+}

@@ -286,6 +286,42 @@ describe("sensitive action fraud-control backbone", () => {
     })
   })
 
+  it("keeps payroll payment request and approval on distinct critical policies", () => {
+    const request = evaluateSensitiveAction({
+      action: "payroll.payment.request",
+      actorId: "requester-1",
+      organizationId: "org-1",
+      actorPermissions: ["payroll.payments.request"],
+      lastAuthAt: Date.now(),
+    })
+    const approval = evaluateSensitiveAction({
+      action: "payroll.payment.approve",
+      actorId: "requester-1",
+      organizationId: "org-1",
+      actorPermissions: ["payroll.payments.approve"],
+      subjectActorId: "requester-1",
+      lastAuthAt: Date.now(),
+    })
+
+    expect(request).toMatchObject({
+      allowed: true,
+      policy: expect.objectContaining({
+        permission: "payroll.payments.request",
+        auditAction: "PAYROLL_PAYMENT_REQUEST_CONTROL",
+        riskTier: "critical",
+      }),
+    })
+    expect(approval).toMatchObject({
+      allowed: false,
+      reasonCode: "SELF_APPROVAL_BLOCKED",
+      policy: expect.objectContaining({
+        permission: "payroll.payments.approve",
+        auditAction: "PAYROLL_PAYMENT_APPROVE_CONTROL",
+        riskTier: "critical",
+      }),
+    })
+  })
+
   it("blocks self-approval for payroll payment reconciliation settlement", () => {
     const decision = evaluateSensitiveAction({
       action: "payroll.payment.reconcile",

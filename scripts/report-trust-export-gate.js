@@ -3248,6 +3248,7 @@ function hasSignedCustomerStatementExternalAccessFoundation(
   schemaSource,
   migrationSource,
   tokenServiceSource,
+  sharedTokenHelperSource,
   accessServiceSource,
   recipientActionServiceSource,
   viewRouteSource,
@@ -3256,6 +3257,7 @@ function hasSignedCustomerStatementExternalAccessFoundation(
 ) {
   const schema = schemaSource.replace(/\s+/g, "")
   const tokenService = tokenServiceSource.replace(/\s+/g, "")
+  const sharedTokenHelper = sharedTokenHelperSource.replace(/\s+/g, "")
   const accessService = accessServiceSource.replace(/\s+/g, "")
   const recipientActionService = recipientActionServiceSource.replace(/\s+/g, "")
   const viewRoute = viewRouteSource.replace(/\s+/g, "")
@@ -3295,18 +3297,26 @@ function hasSignedCustomerStatementExternalAccessFoundation(
   ]
   const tokenMarkers = [
     'TOKEN_SCOPE="customer_statement"',
-    'process.env.AQSTOQFLOW_STATEMENT_TOKEN_SECRET||process.env.STATEMENT_TOKEN_SECRET',
-    "secret.length>=32",
-    'createHmac("sha256",secret)',
-    "timingSafeEqual(leftBuffer,rightBuffer)",
+    'configuredExternalAccessSecret(["AQSTOQFLOW_STATEMENT_TOKEN_SECRET","STATEMENT_TOKEN_SECRET",])',
+    "signExternalAccessPayload(payload,secret)",
+    "verifyExternalAccessSignature({token:input.token,secret,})",
     "statementContentHash:input.statementContentHash",
     "payload.statementSnapshotId!==input.statementSnapshotId",
     "payload.exp<=nowSeconds",
+  ]
+  const sharedTokenHelperMarkers = [
+    'import{createHmac,timingSafeEqual}from"node:crypto"',
+    "secret.length>=32",
+    'createHmac("sha256",secret)',
+    "leftBuffer.length===rightBuffer.length",
+    "timingSafeEqual(leftBuffer,rightBuffer)",
   ]
   const accessMarkers = [
     "hashCustomerStatementAccessValue(token)",
     "hashCustomerStatementAccessValue(jti)",
     "tokenHash,jtiHash,statementContentHash:snapshot.contentHash",
+    "organizationId:payload.organizationId",
+    "statementSnapshotId,tokenHash,jtiHash,statementContentHash:payload.statementContentHash",
     "hashBusinessPayload(snapshot.statementPayload)!==snapshot.contentHash",
     "row.status!==CustomerStatementAccessTokenStatus.ACTIVE",
     "!permissionAllowed(input.action,row,payload.permissions)",
@@ -3334,6 +3344,9 @@ function hasSignedCustomerStatementExternalAccessFoundation(
     schemaMarkers.every((marker) => schema.includes(marker)) &&
     migrationMarkers.every((marker) => migrationSource.includes(marker)) &&
     tokenMarkers.every((marker) => tokenService.includes(marker)) &&
+    sharedTokenHelperMarkers.every((marker) =>
+      sharedTokenHelper.includes(marker),
+    ) &&
     accessMarkers.every((marker) => accessService.includes(marker)) &&
     actionMarkers.every((marker) => recipientActionService.includes(marker)) &&
     viewRoute.includes('if(!token)thrownewNotFoundError("Statementnotfound")') &&
@@ -3970,6 +3983,10 @@ function buildReportTrustExportReadiness(root = process.cwd(), options = {}) {
     root,
     "services/accounting/customer-statement-token.ts",
   )
+  const sharedSignedExternalAccessTokenHelper = read(
+    root,
+    "services/_shared/signed-external-access-token.ts",
+  )
   const customerStatementAccessService = read(
     root,
     "services/accounting/customer-statement-access.service.ts",
@@ -4367,6 +4384,7 @@ function buildReportTrustExportReadiness(root = process.cwd(), options = {}) {
         accountantAccessSchema,
         customerStatementExternalAccessMigration,
         customerStatementTokenService,
+        sharedSignedExternalAccessTokenHelper,
         customerStatementAccessService,
         customerStatementRecipientActionService,
         customerStatementViewRoute,

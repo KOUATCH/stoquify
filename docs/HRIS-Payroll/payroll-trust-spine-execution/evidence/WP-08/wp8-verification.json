@@ -1,0 +1,62 @@
+{
+  "workPackage": "WP8",
+  "decision": "PROGRAM_COMPLETE_INTERNAL_ENGINEERING_RATIFIED",
+  "productionAuthorized": false,
+  "verifiedAt": "2026-08-22",
+  "scope": "live_skill_012_013_014_cross_domain_ratification",
+  "skillDecisions": {
+    "012": "APPROVED_FOR_013_INTERNAL_ENGINEERING_ONLY",
+    "013": "APPROVED_FOR_014_INTERNAL_ENGINEERING_ONLY",
+    "014": "APPROVED_FOR_015_INTERNAL_ENGINEERING_ONLY"
+  },
+  "verification": {
+    "purchasingAp": "READY_11_OF_11_GOODS_RECEIPT_ATOMIC_STOCK_POSTING",
+    "payrollPresence": "READY_14_OF_14",
+    "payrollTrustSpine": "READY_6_OF_6",
+    "paymentsDeclarationsDevelopment": "READY_9_OF_9",
+    "payrollAccountingCloseDevelopment": "READY_10_OF_10",
+    "countryPackDevelopment": "READY_11_OF_11_PRODUCTION_BLOCKED_EXPERT_APPROVAL",
+    "reportTrust": "READY_35_OF_35",
+    "skill013ServiceActionGateSuites": "PASS_6_OF_6_372_OF_372",
+    "skill013PortalSuite": "PASS_1_OF_1_3_OF_3",
+    "skill013Combined": "PASS_7_OF_7_375_OF_375",
+    "offlinePos": "READY_16_OF_16",
+    "skill014CoreSuites": "PASS_2_OF_2_28_OF_28",
+    "skill014QueueGateSuites": "PASS_2_OF_2_8_OF_8",
+    "skill014Combined": "PASS_4_OF_4_36_OF_36",
+    "inventoryBoundary": "PASS_0_ACTIVE_OF_47_SCANNED",
+    "skill014PrismaSurfaceScan": "PASS_ZERO_FINDINGS",
+    "skill014PlaceholderScan": "PASS_ZERO_FINDINGS",
+    "skill014UnsafeErrorScan": "PASS_ZERO_FINDINGS",
+    "prismaValidate": "PASS",
+    "typecheck": "PASS_NO_DIAGNOSTICS"
+  },
+  "wp7PostgresEvidenceRetained": {
+    "migrationReplay": "PASS_76_OF_76",
+    "concurrency": "ONE_WINNER_ONE_SQLSTATE_40001_LOSER",
+    "duplicateEvidence": "REJECTED_SQLSTATE_23505_COUNTS_UNCHANGED",
+    "failureInjection": "ZERO_PARTIAL_TRANSITION_EVENT_OUTBOX_AUDIT"
+  },
+  "productCodeChangedInWp8": false,
+  "nextNumberedSkill": "015-aqstoqflow-country-adapter-pilot",
+  "artifactHashesSha256": {
+    "what-next/payroll/AQSTOQFLOW_012_PAYROLL_PRESENCE_RATIFICATION_2026-08-22.md": "3C3DCFC0C719F6B1ABC2AFCFF9E4C877E0C214A5418552370FE2572FB4A8FE56",
+    "what-next/accounting/AQSTOQFLOW_013_DATA_TRUST_ACCOUNTANT_PORTAL_RATIFICATION_2026-08-22.md": "DD3843AC200AEE78272B9D6817790C193DC5221E0BB9F68E9908F0F0FA228F65",
+    "what-next/AQSTOQFLOW_014_OFFLINE_POS_SYNC_RATIFICATION_2026-08-22.md": "0F72AC87AC82B52BA02F39A5EBA21CDF903BFDB61B7DA948893D32C9EBA38C05",
+    "skill-012-purchasing-ap.json": "8897DA33EA29EF9BE75B4C86D8E062BE0113C6A15B6BD6183A99BA963CABFEAE",
+    "skill-012-payroll-presence.json": "0B36867D11603C78F16707DAF31AB7135912A56B2CA6BE526E6BC281B2289E1E",
+    "skill-012-trust-spine.json": "3A141AC8F2F93F31FF36E64C50E4130DF472CDA3F0D6CB29B8ECCE87548B9660",
+    "skill-013-report-trust.json": "8159CF2D46A4F37850FCBD73D4285624F878991AF94272534E026A507AA53EA0",
+    "skill-014-offline-pos.json": "0FAF29793395913764401E481ED24B9FCAF522BC56774A9F72E12CDC885E7A79"
+  },
+  "externalOrInheritedBlockers": [
+    "qualified_statutory_source_artifact_expert_approval_missing",
+    "external_production_credentials_provider_authority_and_device_evidence_missing",
+    "managed_production_database_and_controlled_migration_evidence_missing",
+    "inherited_destructive_migration_exact_hash_approvals_missing",
+    "broad_inherited_dirty_state_blocks_clean_candidate",
+    "inherited_raw_error_gate_8_findings",
+    "final_release_observability_dr_accessibility_and_operational_signoff_missing",
+    "windows_generated_report_file_lock_on_monolithic_policy_replay"
+  ]
+}

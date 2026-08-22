@@ -1,0 +1,178 @@
+{
+  "schemaVersion": "1.0.0",
+  "artifactId": "STOQUIFY-FINAL-RELEASE-EVIDENCE-COMPLETION-20260817",
+  "generatedAt": "2026-08-17T16:37:47.982Z",
+  "status": "PARTIALLY_PREPOPULATED_REQUIRES_AUTHENTIC_EXTERNAL_RETURNS",
+  "verdict": {
+    "production": "REJECTED_NO_GO",
+    "development": "AUTHORIZED_WITHIN_EXISTING_CASH_ONLY_SYNTHETIC_NON_STATUTORY_SCOPE",
+    "productionAuthorizedByThisArtifact": false,
+    "statutoryCertifiedByThisArtifact": false
+  },
+  "candidate": {
+    "branch": "codex/service-boundary-burndown",
+    "commit": "35b4cc6a06a50ee11de5bfce6b04993e38bd589a",
+    "tree": "7efce91d5ba871e91470f60ed3b53833a1c3b4b4",
+    "worktree": "DIRTY",
+    "immutableReleaseCandidate": false,
+    "approvalBindingPermitted": false
+  },
+  "migration": {
+    "path": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+    "rawFileSha256": "f7de8dc7ace0a5e063cdb7ecd9527e77807b7f872e474546819e9fca13a273d4",
+    "canonicalLfSha256": "2fde92f4ad0cbb1a2a517b12e71c38997dc4956c9d57d70ff1ae0c636ff2f191",
+    "byteLength": 24674,
+    "destructiveInventorySha256": "55d332c3319b65acfdf415e64042a15504d12861b664429af7e63155296e1ad1",
+    "inventoryArtifact": {
+      "path": "docs/pos-enterprise-grade-audit/templates/migration-production-approval-20260817/01-destructive-finding-inventory.json",
+      "sha256": "cb549001aef5ba40974e68e331fbb3e6fd24f2120b43264e5964c5c2f35aa952"
+    },
+    "prismaSchemaSha256": "cdbc9c64e88d642f2bfc716ee4fda2e8b7dfbfc26f08a5170645311268ae8af9",
+    "approvalRegistry": {
+      "path": "prisma/migration-risk-approvals.json",
+      "sha256": "6d386babbd94bcc3eabbdae9ba493717bbe47a12aa769a6cf7ed23ff85fc2192",
+      "approved": 0,
+      "pending": 13
+    },
+    "findings": [
+      {"id":"D-001","line":80,"rule":"drop_column","object":"accounts.access_token","risk":"HIGH","canonicalOperationSha256":"5f9f80a6ef931e002134e4e2aa220ea9acf22c3c2134496e0671affe147988c0","findingSha256":"4781af03745e807d47ccdc89b62f0562b923707465d36d215cbeaea3e3e164fb"},
+      {"id":"D-002","line":81,"rule":"drop_column","object":"accounts.expires_at","risk":"HIGH","canonicalOperationSha256":"b7eab3bc9315a06e40938ff57ded5c5431ed2222fe68dd09b3f587aa7c69090f","findingSha256":"277a312724a1c524d910f7c5966d70170825cf1d6a60679269b2388a6c9f3e55"},
+      {"id":"D-003","line":82,"rule":"drop_column","object":"accounts.id_token","risk":"HIGH","canonicalOperationSha256":"9617601b5fa48b23905e69ab0709e24ac42a9aeac346621a19f4af0d4fa46889","findingSha256":"5807ad92f5163c0922dce2373dd15df9d064a28a61b1601e063a510448c52c13"},
+      {"id":"D-004","line":83,"rule":"drop_column","object":"accounts.provider","risk":"CRITICAL","canonicalOperationSha256":"8b5c158498132b69a3f1d9ee8fb82ccc46676000e296d6beead2cf6356a8b26d","findingSha256":"fbc401c6980f7b01658bb2b2f3702c618e2378e92395b4caee631fd8d8bee2cb"},
+      {"id":"D-005","line":84,"rule":"drop_column","object":"accounts.providerAccountId","risk":"CRITICAL","canonicalOperationSha256":"4e87e6a7aa428e2c1ff064889c6b7c140a9e458bbf99ca558d7fe461ad111252","findingSha256":"b5d38ed4fd3e87f368f0948c54731873ffdbec440832c219a078af57364ec76b"},
+      {"id":"D-006","line":85,"rule":"drop_column","object":"accounts.refresh_token","risk":"HIGH","canonicalOperationSha256":"eb731b37536517b7ff029fb4029e0413b15b95911de15c47d49adee177966cfc","findingSha256":"07a6cfdfae6507d5572505bc8a0505c74d4f0f1b496f0864b1e2d4e537ce1492"},
+      {"id":"D-007","line":86,"rule":"drop_column","object":"accounts.session_state","risk":"HIGH","canonicalOperationSha256":"d78e048f5e398174730608db403aac86b2e829c97c731ef3e872a88683db3b82","findingSha256":"6ad18571cee52ce1386eacb37d9b18e40c4d6ffbb3b3166de4ffe4710df83988"},
+      {"id":"D-008","line":87,"rule":"drop_column","object":"accounts.token_type","risk":"HIGH","canonicalOperationSha256":"0f20190067a5fe024673fb1985a6d656ac380dca7266d2469ade5831a37a1f3b","findingSha256":"42bf676feeb19705c6bd4a57cf83ac0f99d8cbb830b46cd42b1f980243a31165"},
+      {"id":"D-009","line":88,"rule":"drop_column","object":"accounts.type","risk":"HIGH","canonicalOperationSha256":"d57e56dd40511f3240b0efd4eeeb8483d2589e5bef799c7d1fd458a0c8b3a8d6","findingSha256":"5f168672b10fcdcbe1af94b0da9d9ead18688f6254a326c146ccb1aecda6d9de"},
+      {"id":"D-010","line":101,"rule":"drop_column","object":"sessions.expires","risk":"CRITICAL","canonicalOperationSha256":"84c1f1c438a50d09814575e756f95e636c4d0cbd0b7814eecb622e500bd31a95","findingSha256":"8f4f2215000c21bc293358a28c8c4f8df6b90abdbc7c5200cb0b4e7d814807b9"},
+      {"id":"D-011","line":102,"rule":"drop_column","object":"sessions.sessionToken","risk":"CRITICAL","canonicalOperationSha256":"eba142f101ee62145d06759f392bea86a325dade07838aeff2d52be93ac73076","findingSha256":"ec44f20e8dd677d05d2303eef1758a22bebb08077983362349f6d9c5e4fd9178"},
+      {"id":"D-012","line":112,"rule":"drop_column","object":"users.emailVerified","risk":"CRITICAL","canonicalOperationSha256":"6ee6d1bbaa68a1cba355923e93db7f5489648b2dbe4d3685a0c865d1c36f7d88","findingSha256":"4b1479492af21a9dd97c0a5212afe7c7383b8cd3b31045310e8ab0e0143bc95d"},
+      {"id":"D-013","line":116,"rule":"drop_table","object":"auth_sessions","risk":"CRITICAL","canonicalOperationSha256":"0f5eb881cca0bd115195a7aa7f27045beb5d02b8d6dde09684cc190c3a5df3bd","findingSha256":"69294f51328a0a7575cff0524e5196accf0159913177b11dd249b65e554295fe"}
+    ],
+    "developmentEvidence": {
+      "scope": "LOCAL_SYNTHETIC_DEVELOPMENT_ONLY",
+      "technicalManifest": {"path":"docs/pos-enterprise-grade-audit/evidence/migration-certification/2026-08-17-r2/destructive-migration-technical-hash-manifest.json","sha256":"956fc6789101b39c57c6cad00e0a237f309c7557cd0fe8b6c76fcd1b7712f66d"},
+      "targetVerification": {"sha256":"15d2b01dffffea239841c65cbff91eec20325f60c99a3f58ade0f0dc7ad8319c"},
+      "historyBefore": {"sha256":"1ad0fc48f66ea29845f3f168e3d0adf511b3d7980cfcde27198c564823417d78"},
+      "historyAfter": {"sha256":"5cda1d63f324057b137aee82c54a1b2968509304d3f16025686d58eba26e5069"},
+      "fingerprintReassessment": {"sha256":"c593b8c7aedd8202e0713cc5944a33f4fe20b0ec31306007ba2916f74272d441"},
+      "boundaryVerification": {"sha256":"fc075fe4dc040401165774357289f2449fa3c2d8ec5f1bd7a29ae7df284cb86c"},
+      "authenticatedEdgeReport": {"sha256":"fcb109ac5e434c032846cbb3b133b7c8615dc09df923b26caaaa83738c596036"},
+      "restoreReplay": {"migrationExitCode":0,"finishedMigrations":67,"expectedMigrations":67,"fingerprintsMatch":true},
+      "productionProof": false
+    },
+    "requiredProductionReturn": {
+      "template": "docs/pos-enterprise-grade-audit/templates/migration-production-approval-20260817/05-production-restore-evidence.json",
+      "targetIdentity": null,
+      "backupReference": null,
+      "backupSha256": null,
+      "isolatedRestoreReference": null,
+      "restoreEvidenceSha256": null,
+      "dataImpactCensus": null,
+      "authRegressionEvidence": null,
+      "makerFreshAuthSignature": null,
+      "checkerFreshAuthSignature": null,
+      "finalCondition": "REJECTED_PENDING_AUTHENTIC_RETURN"
+    }
+  },
+  "cameroonCountryPack": {
+    "countryCode": "CM",
+    "countryPackVersion": "CM-2026.1",
+    "technicalGate": "11_OF_12",
+    "productionUseAllowed": false,
+    "manifest": {"path":"docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/manifest.json","sha256":"661bec902f0c55d699c100c2b3ce1323de6f88813c2761a566e29806e91a2224"},
+    "sourceSupplementSha256": "b0a8fc1aedd3f7e75754a67e09088b450fd02cc5f522572638708f4af9ed3dfe",
+    "reviewPackageIndexSha256": "aad222adbc409daebe41729b716f41b12af8633b18c75cc82b54b31d43c4a720",
+    "sourceArtifacts": [
+      {"legalRef":"CM_CNPS_CONTRIBUTION_DECREE_2016","file":"CNPS-Decree-2016-072-contribution-rates.pdf","bytes":2608628,"sha256":"1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61","machineHashVerified":true},
+      {"legalRef":"CM_CNPS_EMPLOYER_RULES","file":"CNPS-employer-general-rules.html","bytes":248633,"sha256":"bc51f74de8dd3b0c7babd86e8f98d92dbdbece214480f66ac89c42d3e894a868","machineHashVerified":true},
+      {"legalRef":"CM_CNPS_STATISTICAL_YEARBOOK_2025","file":"CNPS-Statistical-Yearbook-2025.pdf","bytes":2895247,"sha256":"53a22ebb9a9bf31bc0c7c60f8cc0eed9383192ef4f0d6a309f2782ad60875504","machineHashVerified":true},
+      {"legalRef":"CM_CNPS_EMPLOYER_OBLIGATIONS_CURRENT","file":"CNPS-Employer-Obligations-current-2026-07-26.html","bytes":231875,"sha256":"8e319e856a0f473accac53587708523b7080c5aac5f6d8eb4e8bd5cb5bb8d743","machineHashVerified":true},
+      {"legalRef":"CM_CNPS_OFFICIAL_FAQ_DECREE_2016_072","file":"CNPS-Official-FAQ-Decree-2016-072.pdf","bytes":380118,"sha256":"166f12931df869f4a6f96a977342ce18600ece1361535c96fc2e841f2ffb7d5d","machineHashVerified":true},
+      {"legalRef":"CM_CNPS_CONTRIBUTION_SCALE_OFFICIAL_2025","file":"CNPS-Contribution-Scale-official-2025.jpg","bytes":1476553,"sha256":"ae152e77b7a26ab2a2270d032a256815e8f3544e66700f207191edf584ed2259","machineHashVerified":true}
+    ],
+    "reviewTemplates": {
+      "sourceHashVerificationSha256": "1abd60960b3b6dd67b5eb6600126300d0b75aa9b76162d01d0c58fb9bace070d",
+      "reviewerQualificationConflictSha256": "ed0300c32271044bc693bd0b8071e60b1a5ceed5d2e14e758b093fa3a8633222",
+      "fixtureReviewWorkbookSha256": "f28e3968c33c65828cb021262ea36ccda50d173c7e4cf0f0c2633f3d7035482b",
+      "reviewDecisionReturnSha256": "d3c927cf27907e7c173e1fdc81a67d167b9ddafa02aa1d86c7e087f9c6f59b3d",
+      "makerCheckerApprovalSha256": "49a3cc06d49a324d18f0e6fa79789e930e187148a78f4a2018c748726dfb64cd",
+      "signatureVerificationProcedureSha256": "9a69cfc2531d3d7b7815b2a0373ea6aeb6e132a4ad908f7ac5fa0456fc9a1dc4"
+    },
+    "administrativeDocument": {
+      "path": "docs/Compliance/Complaince authorization validation.docx",
+      "bytes": 13663,
+      "sha256": "f373afa6dd8f4e50470cccf30b12c854921142c1a3c20a7b6757bab6622bae59",
+      "classification": "ADMINISTRATIVE_DECLARATION_UNSIGNED_NOT_APPROVAL",
+      "officeAuthor": "KOUATCHOUA MARK",
+      "embeddedSignatureOrCertificateParts": false
+    },
+    "qualifiedReviewerReturn": {
+      "reviewerFullName": null,
+      "professionalCapacity": null,
+      "qualificationReference": null,
+      "conflictDeclaration": null,
+      "reviewWindow": null,
+      "reviewerDigestRecomputation": false,
+      "fixtureFamilyDecisions": null,
+      "signedOpinion": null,
+      "independentCheckerVerification": null,
+      "status": "MISSING_AUTHENTIC_EXTERNAL_ACTION"
+    },
+    "unboundAuthorityScopes": [
+      {"scope":"2026 tax and IRPP rules","authority":"Cameroon DGI/MINFI","status":"NOT_CAPTURED_NOT_HASH_BOUND_REQUIRES_QUALIFIED_REVIEW"},
+      {"scope":"DGI electronic invoicing/authority submission technical contract","authority":"Cameroon DGI","status":"NOT_CAPTURED_NOT_HASH_BOUND_REQUIRES_EXTERNAL_CONFORMANCE"},
+      {"scope":"labor, time, leave, payroll declarations and payslip requirements","authority":"qualified Cameroon labor/payroll expert","status":"REQUIRES_SEPARATE_QUALIFIED_SCOPE_DECISION"},
+      {"scope":"fiscal receipts, retention, privacy and statutory corrections","authority":"qualified Cameroon tax/privacy expert","status":"REQUIRES_SEPARATE_QUALIFIED_SCOPE_DECISION"}
+    ]
+  },
+  "releaseEvidence": {
+    "enterpriseGateReport": {"path":"what-next/AQSTOQFLOW_017_ENTERPRISE_RELEASE_GATE_EXECUTION_REPORT_2026-08-17_163006.md","sha256":"5ddd6c72f4bafb21a53b6eff0ad507f7578694fb363cc340345558f5f1b5a429"},
+    "releaseVerificationReport": {"path":"what-next/AQSTOQFLOW_RELEASE_VERIFICATION_FOUNDATION_REPORT_2026-08-17_R2.md","sha256":"32e32575514b69ae84763cca8b837d3a1977a147013345948b27edca46ad6aee"},
+    "releaseSecretPreflight": {"path":"what-next/release-secret-preflight.json","sha256":"9bd2993c5a6221798860d546a9ca19d7c776182131df589b97ad35cc547fa113","ready":5,"checks":21},
+    "operationalEvidenceRegister": {"path":"docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_OPERATIONAL_RELEASE_EVIDENCE_2026-07-25.json","sha256":"c7786a98784cf9b24d422fd59b993d3d8207ab27127ae99fac8ed14c7427dfd0","status":"BLOCKED_EXTERNAL_RETURN"},
+    "credentialRotationRegister": {"path":"docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_CREDENTIAL_ROTATION_REGISTER_2026-07-25.json","sha256":"7c247a953ac8774fd74f5ec6b40b22aadfdf827dd1c07738ddd21d74a5f1f19d","status":"BLOCKED_EXTERNAL_RETURN"},
+    "freezeAttestation": {"path":"docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json","sha256":"1d9b9c276229a3607bbeb2851f3a94b7c7fa470904a4ad858ba053be1261add4","status":"BLOCKED_STALE_DIRTY_CANDIDATE"},
+    "phase2bDecision": {"path":"docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_ENTRY_DECISION_2026-07-25.json","sha256":"6fe058084837a2d8f01f0dfb5eb06b56510b0136ccebd50a65d3a0840ce424c0","status":"BLOCKED","passed":2,"checks":23},
+    "phase3Decision": {"path":"docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_ENTRY_DECISION_2026-07-25.json","sha256":"e8dadfaabdd3d568ce437a1c9ede3b2943748c3a868d31b606b51579f76ae688","status":"BLOCKED","passed":0,"checks":34},
+    "phase3PromotionLedger": {"path":"docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json","sha256":"4aab7663b63895635842918fc8e62c9e13f215541c08696e1d4ae1d588bfeac8"},
+    "externalInputReadiness": {"path":"docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUT_READINESS_2026-07-25.json","sha256":"4adf4a6497dc2e1a3170d0dfa939481c226f0e5cc1ff7a772b41384abf235b7b","passed":1,"checks":13},
+    "humanInterventionPlan": {"path":"docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_HUMAN_INTERVENTION_PLAN_2026-07-25.json","sha256":"b39cee56fe99eb52599d06b92cfe7124e20b816ba0a688330cba9c010f52a594","evidenceReady":0,"interventions":9}
+  },
+  "managedSecrets": {
+    "secretValuesMustNotBeStoredHere": true,
+    "requiredReferences": [
+      {"variable":"PUBLIC_IDENTITY_ABUSE_HASH_SECRET","proposedManagedName":"stoquify/prod/public-identity-abuse-hash","reference":null,"status":"NOT_PROVISIONED"},
+      {"variable":"AQSTOQFLOW_RECEIPT_TOKEN_SECRET","proposedManagedName":"stoquify/prod/receipt-token-signing","reference":null,"status":"NOT_PROVISIONED"},
+      {"variable":"AQSTOQFLOW_HISTORY_CURSOR_SECRET","proposedManagedName":"stoquify/prod/history-cursor-signing","reference":null,"status":"NOT_PROVISIONED"},
+      {"variable":"AQSTOQFLOW_STATEMENT_TOKEN_SECRET","proposedManagedName":"stoquify/prod/statement-token-signing","reference":null,"status":"NOT_PROVISIONED"},
+      {"variable":"AQSTOQFLOW_STATEMENT_DELIVERY_ENCRYPTION_KEY","proposedManagedName":"stoquify/prod/statement-envelope-aes256","reference":null,"status":"NOT_PROVISIONED"},
+      {"variable":"AQSTOQFLOW_ACCOUNTANT_INVITE_ENCRYPTION_KEY","proposedManagedName":"stoquify/prod/accountant-invite-aes256","reference":null,"status":"NOT_PROVISIONED"},
+      {"variable":"NEXT_PUBLIC_BASE_URL","proposedManagedName":"stoquify/prod/public-base-url","reference":null,"status":"NOT_CONFIGURED"}
+    ]
+  },
+  "knownActorsNotYetAuthenticatedForFinalRelease": [
+    {"name":"SANGO MALO","claimedRole":"Database administrator / engineering lead","intendedFunction":"migration maker/operator","freshAuthEvidence":null,"signature":null},
+    {"name":"MAXIMILLIANO BONGA","claimedRole":"Database administrator / engineering lead","intendedFunction":"independent migration checker","freshAuthEvidence":null,"signature":null},
+    {"name":"KOUATCHOUA MARK","claimedRole":"Product Owner or Financial Controller","intendedFunction":"product approval","roleAuthorityEvidence":null,"freshApproval":null},
+    {"name":"KOUATCHOUA MARCELINE","claimedRole":"SYSTEM ADMINISTRATION","intendedFunction":"controller approval","roleAuthorityEvidence":null,"freshApproval":null}
+  ],
+  "remainingExternalActions": [
+    "Freeze one clean immutable candidate and regenerate every candidate-bound digest.",
+    "Return an authorized production target census, backup, isolated restore replay and direct migration-history proof.",
+    "Provision managed production secret references and rotation/revocation evidence without exposing values.",
+    "Obtain fresh-auth maker signature, then a later independent checker signature, both bound to the final immutable manifest.",
+    "Manually approve or reject each of the 13 exact finding hashes after production data-impact evidence exists.",
+    "Obtain an authentic qualified Cameroon expert decision and independent signature verification.",
+    "Return physical hardware certification or a signed production-scope exclusion.",
+    "Return accepted operational owners, scheduler windows, alert lifecycle and final CI evidence.",
+    "Make Phase 2B and Phase 3 decisions only after their upstream gates pass."
+  ],
+  "nonClaims": [
+    "Repository hashes prove file identity, not human review or legal correctness.",
+    "Typed names and historical timestamps are not signatures or fresh-auth evidence.",
+    "The local schema-rebound replay is not production restore proof.",
+    "A proposed secret reference name does not prove provisioning or rotation.",
+    "No field in this packet authorizes deployment, production migration, statutory submission or payment capture."
+  ]
+}

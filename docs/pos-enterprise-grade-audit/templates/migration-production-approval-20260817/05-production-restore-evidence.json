@@ -1,0 +1,122 @@
+{
+  "artifactId": "B-02-PRODUCTION-RESTORE-AND-RECOVERY-EVIDENCE",
+  "artifactStatus": "TEMPLATE_NOT_EVIDENCE",
+  "organization": "Stoquify",
+  "productionSource": {
+    "redactedEnvironmentId": null,
+    "databaseEngineAndExactVersion": null,
+    "region": null,
+    "schema": null,
+    "selectedPath": null,
+    "allowedPaths": ["EMPTY_TARGET_EXECUTE", "EXISTING_TARGET_RESOLVE_ONLY"],
+    "migrationHistoryBeforePath": null,
+    "migrationHistoryBeforeSha256": null,
+    "aggregateDataProfilePath": null,
+    "aggregateDataProfileSha256": null
+  },
+  "backup": {
+    "providerOrPlatform": null,
+    "redactedSnapshotOrPitrId": null,
+    "createdAt": null,
+    "retentionUntil": null,
+    "encryptionOrKmsReference": null,
+    "providerIntegrityIdentifier": null,
+    "sizeBytes": null,
+    "custodian": null,
+    "backupManifestPath": null,
+    "backupManifestSha256": null
+  },
+  "isolatedRestoreTarget": {
+    "redactedTargetId": null,
+    "separateFromProduction": null,
+    "networkIsolationEvidencePath": null,
+    "networkIsolationEvidenceSha256": null,
+    "emptyBeforeRestore": null,
+    "startedAt": null,
+    "finishedAt": null,
+    "durationSeconds": null,
+    "exitStatus": null,
+    "providerOperationId": null,
+    "restoreLogPath": null,
+    "restoreLogSha256": null
+  },
+  "recoveryObjectives": {
+    "acceptedRpoSeconds": null,
+    "achievedRpoSeconds": null,
+    "acceptedRtoSeconds": null,
+    "achievedRtoSeconds": null,
+    "accountableOwner": null,
+    "ownerAcceptanceRecordId": null,
+    "ownerAcceptanceRecordSha256": null
+  },
+  "verification": {
+    "schemaFingerprintBefore": null,
+    "schemaFingerprintAfterRestore": null,
+    "schemaFingerprintMatch": null,
+    "migrationHistoryFingerprintBefore": null,
+    "migrationHistoryFingerprintAfterRestore": null,
+    "migrationHistoryMatch": null,
+    "aggregateOnlyObjectChecks": [
+      { "object": "accounts", "beforeCount": null, "afterCount": null, "beforeDigest": null, "afterDigest": null, "match": null },
+      { "object": "sessions", "beforeCount": null, "afterCount": null, "beforeDigest": null, "afterDigest": null, "match": null },
+      { "object": "users", "beforeCount": null, "afterCount": null, "beforeDigest": null, "afterDigest": null, "match": null },
+      { "object": "auth_sessions", "beforeCount": null, "afterCount": null, "beforeDigest": null, "afterDigest": null, "match": null },
+      { "object": "_prisma_migrations", "beforeCount": null, "afterCount": null, "beforeDigest": null, "afterDigest": null, "match": null }
+    ],
+    "all13FindingReconciliationPath": null,
+    "all13FindingReconciliationSha256": null,
+    "all13FindingReconciliationPassed": null,
+    "authenticationRegressionPath": null,
+    "authenticationRegressionSha256": null,
+    "authenticationRegressionPassed": null,
+    "failureInjectionPath": null,
+    "failureInjectionSha256": null,
+    "transactionRollbackPassed": null,
+    "fixForwardOrMetadataRecoveryPath": null,
+    "fixForwardOrMetadataRecoverySha256": null,
+    "recoveryRehearsalPassed": null
+  },
+  "secureDisposal": {
+    "restoreTargetDisposed": null,
+    "disposedAt": null,
+    "disposalMethod": null,
+    "disposalEvidencePath": null,
+    "disposalEvidenceSha256": null,
+    "approvedBy": null
+  },
+  "operator": {
+    "identity": "SANGO MALO",
+    "role": "Database administrator / engineering lead",
+    "freshAuthenticationRecordId": null,
+    "freshAuthenticationRecordSha256": null,
+    "signedAt": null,
+    "signatureOrImmutableRecord": null
+  },
+  "independentChecker": {
+    "identity": "MAXIMILLIANO BONGA",
+    "role": "Database administrator / engineering lead",
+    "verificationStatus": null,
+    "verifiedAt": null,
+    "signatureOrImmutableRecord": null
+  },
+  "nonProductionSupportingEvidence": [
+    { "path": "docs/pos-enterprise-grade-audit/evidence/migration-certification/2026-08-17-r2/target-verification.json", "sha256": "15d2b01dffffea239841c65cbff91eec20325f60c99a3f58ade0f0dc7ad8319c", "classification": "DEVELOPMENT_SYNTHETIC_ONLY" },
+    { "path": "docs/pos-enterprise-grade-audit/evidence/migration-certification/2026-08-17-r2/migration-history-before.json", "sha256": "1ad0fc48f66ea29845f3f168e3d0adf511b3d7980cfcde27198c564823417d78", "classification": "DEVELOPMENT_SYNTHETIC_ONLY" },
+    { "path": "docs/pos-enterprise-grade-audit/evidence/migration-certification/2026-08-17-r2/migration-history-after.json", "sha256": "5cda1d63f324057b137aee82c54a1b2968509304d3f16025686d58eba26e5069", "classification": "DEVELOPMENT_SYNTHETIC_ONLY" },
+    { "path": "docs/pos-enterprise-grade-audit/evidence/migration-certification/2026-08-17-r2/restore-rehearsal-result.json", "sha256": "a0796eb9fcc9d3744deb2c32d4a60583c8b070981bedc089375b8000c0684f89", "classification": "SUPERSEDED_DEVELOPMENT_FALSE_NEGATIVE" },
+    { "path": "docs/pos-enterprise-grade-audit/evidence/migration-certification/2026-08-17-r2/schema-fingerprint-reassessment.json", "sha256": "c593b8c7aedd8202e0713cc5944a33f4fe20b0ec31306007ba2916f74272d441", "classification": "DEVELOPMENT_SYNTHETIC_PASS" },
+    { "path": "docs/pos-enterprise-grade-audit/evidence/migration-certification/2026-08-17-r2/post-execution-boundary-verification.json", "sha256": "fc075fe4dc040401165774357289f2449fa3c2d8ec5f1bd7a29ae7df284cb86c", "classification": "DEVELOPMENT_SYNTHETIC_PASS" },
+    { "path": "docs/pos-enterprise-grade-audit/evidence/migration-certification/2026-08-17-r2/schema-rebound-projection-manifest.json", "sha256": "4eb7eb68d3fb8b11f5c6c3c0fa842605886ef60998cde8e5557474a833a4a92e", "classification": "DEVELOPMENT_SYNTHETIC_ONLY" }
+  ],
+  "privacy": { "redactionChecked": null, "containsSecrets": false, "containsRawTokensOrSessionValues": false, "containsUnnecessaryPii": false },
+  "finalResult": {
+    "status": "NOT_RUN",
+    "allowedStatuses": ["PASS", "FAIL", "NOT_RUN"],
+    "productionRestoreProven": false,
+    "limitations": [
+      "Localhost R2 artifacts are supporting development evidence, not production restore proof.",
+      "Production credentials, backup identifiers, operation records, target aggregates, and signatures were not provided."
+    ]
+  },
+  "completionRule": "Set artifactStatus to PRESENT_VALID and finalResult.status to PASS only after an authorized production backup is restored into a separate isolated target and every proof is SHA-256-bound and independently checked."
+}

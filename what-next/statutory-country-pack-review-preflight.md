@@ -1,6 +1,6 @@
 # Statutory country-pack qualified-review preflight
 
-Generated: 2026-08-01T16:53:22.329Z
+Generated: 2026-08-18T04:51:01.214Z
 
 Status: **BLOCKED_PENDING_QUALIFIED_REVIEW**  
 Operator manifest update allowed: **false**  

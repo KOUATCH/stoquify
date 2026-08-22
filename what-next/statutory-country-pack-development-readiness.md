@@ -1,6 +1,6 @@
 # Statutory Country Pack Development Readiness Gate
 
-Generated: 2026-08-12T19:16:17.416Z
+Generated: 2026-08-20T15:01:12.162Z
 Mode: fail
 Status: READY_FOR_DEVELOPMENT_TESTING
 

@@ -79,6 +79,7 @@ import {
 } from "lucide-react"
 import { getLocaleFromPathname, localizePath } from "@/i18n/routing"
 import { DEFAULT_LOCALE } from "@/types/bilingual"
+import { formatCurrency as formatMoney } from "@/lib/i18n/formatters"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 
@@ -91,9 +92,10 @@ import {
   useReceiveItems
 } from "@/hooks/useRecentPurchaseOrderQueries"
 import type { PurchaseOrderWithRelations } from "@/types/purchase-orders-system-types"
+import type { PurchaseOrderPresentation } from "@/services/purchase-order/purchase-order-capabilities"
 
 // Use the real type from the database
-type PurchaseOrderData = PurchaseOrderWithRelations
+type PurchaseOrderData = PurchaseOrderWithRelations & PurchaseOrderPresentation
 
 function dateSortValue(value: unknown) {
   if (!value) return null
@@ -325,19 +327,19 @@ const getColumns = (
                 <Eye className="h-3 w-3" />
               </Button>
             </Link>
-            {/* Edit Action - Only for DRAFT status */}
-            <Link href={localizedHref(`/dashboard/purchase-orders/${po.id}/edit`)}>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleEditClick(po)}
-                disabled={status !== 'DRAFT'}
-                className={`h-8 w-8 p-0 ${getActionButtonVariant('edit', status)}`}
-                title={status === 'DRAFT' ? 'Edit purchase order' : 'Cannot edit non-draft orders'}
-              >
-                <Edit className="h-3 w-3" />
-              </Button>
-            </Link>
+            {po.capabilities.edit.allowed ? (
+              <Link href={localizedHref(`/dashboard/purchase-orders/${po.id}/edit`)}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleEditClick(po)}
+                  className={`h-8 w-8 p-0 ${getActionButtonVariant('edit', status)}`}
+                  title="Edit purchase order"
+                >
+                  <Edit className="h-3 w-3" />
+                </Button>
+              </Link>
+            ) : null}
             {/* More Actions Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -351,7 +353,7 @@ const getColumns = (
                 <DropdownMenuSeparator />
 
                 {/* Approve Action - For SUBMITTED status */}
-                {status === 'SUBMITTED' && (
+                {po.capabilities.approve.allowed && (
                   <DropdownMenuItem
                     onClick={() => handleApproveClick(po)}
                     className="text-emerald-700 focus:text-emerald-700 dark:text-emerald-300 dark:focus:text-emerald-300"
@@ -362,7 +364,7 @@ const getColumns = (
                 )}
 
                 {/* Receive Action - For APPROVED/ORDERED status */}
-                {(['APPROVED', 'ORDERED', 'PARTIALLY_RECEIVED'].includes(status)) && (
+                {po.capabilities.receive.allowed && (
                   <DropdownMenuItem
                     onClick={() => handleReceiveClick(po)}
                     className="text-blue-700 focus:text-blue-700 dark:text-blue-300 dark:focus:text-blue-300"
@@ -373,7 +375,7 @@ const getColumns = (
                 )}
 
                 {/* Cancel Action - For non-completed orders */}
-                {!['RECEIVED', 'COMPLETED', 'CANCELLED'].includes(status) && (
+                {po.capabilities.cancel.allowed && (
                   <DropdownMenuItem
                     onClick={() => handleCancelClick(po)}
                     className="text-rose-700 focus:text-rose-700 dark:text-rose-300 dark:focus:text-rose-300"
@@ -383,14 +385,13 @@ const getColumns = (
                   </DropdownMenuItem>
                 )}
 
-                {/* Delete Action - Only for DRAFT status */}
-                {status === 'DRAFT' && (
+                {po.capabilities.archive.allowed && (
                   <DropdownMenuItem
                     onClick={() => handleDeleteClick(po)}
                     className="text-rose-700 focus:text-rose-700 dark:text-rose-300 dark:focus:text-rose-300"
                   >
                     <XCircle className="mr-2 h-4 w-4" />
-                    Delete Order
+                    Archive Order
                   </DropdownMenuItem>
                 )}
 
@@ -418,6 +419,7 @@ const ModernPurchaseOrderTable = ({
   title,
   subtitle,
   localizedHref,
+  canCreate,
 }: {
   data: PurchaseOrderData[]
   columns: ColumnDef<PurchaseOrderData>[]
@@ -428,6 +430,7 @@ const ModernPurchaseOrderTable = ({
   title: string
   subtitle: string
   localizedHref: (href: string) => string
+  canCreate: boolean
 }) => {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -511,15 +514,17 @@ const ModernPurchaseOrderTable = ({
             <Download className="w-4 h-4 mr-2" />
             Export
           </Button>
-          <Link href={localizedHref("/dashboard/purchase-orders/new")}>
-            <Button
-              size="sm"
-              className="dashboard-button-primary h-9 w-full justify-center rounded-lg sm:w-auto"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Create PO
-            </Button>
-          </Link>
+          {canCreate ? (
+            <Link href={localizedHref("/dashboard/purchase-orders/new")}>
+              <Button
+                size="sm"
+                className="dashboard-button-primary h-9 w-full justify-center rounded-lg sm:w-auto"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Create PO
+              </Button>
+            </Link>
+          ) : null}
         </div>
       </div>
 
@@ -640,9 +645,11 @@ const ModernPurchaseOrderTable = ({
 interface PurchaseOrderManagementProps {
   title: string
   organizationId: string
-  initialPurchaseOrderData: any[]
+  initialPurchaseOrderData: PurchaseOrderData[]
   initialSupplierData: SupplierData[]
   initialLocationData: LocationData[]
+  currency: string
+  canCreate: boolean
 }
 
 const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
@@ -650,7 +657,9 @@ const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
   organizationId,
   initialPurchaseOrderData,
   initialSupplierData,
-  initialLocationData
+  initialLocationData,
+  currency,
+  canCreate,
 }: PurchaseOrderManagementProps) {
   const router = useRouter()
   const pathname = usePathname()
@@ -738,7 +747,7 @@ const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
   // Get purchase orders data
   const purchaseOrdersArray = useMemo(() => {
     if (purchaseOrdersResponse?.data && purchaseOrdersResponse.data != null) {
-      return purchaseOrdersResponse.data ?? []
+      return (purchaseOrdersResponse.data ?? []) as PurchaseOrderData[]
     }
     // Fallback to initial data if hook hasn't loaded yet
     return initialPurchaseOrderData as PurchaseOrderData[]
@@ -751,9 +760,9 @@ const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
   }, [localizedHref, router])
 
   const handleEditClick = useCallback((po: PurchaseOrderData) => {
-    if (po.status !== 'DRAFT') {
+    if (!po.capabilities.edit.allowed) {
       notify.error("Cannot edit", {
-        description: "Only draft purchase orders can be edited"
+        description: po.capabilities.edit.reason ?? "Editing is unavailable for this purchase order."
       })
       return
     }
@@ -792,9 +801,9 @@ const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
   }, [openConfirmationDialog])
 
   const handleDeleteClick = useCallback((po: PurchaseOrderData) => {
-    if (po.status !== 'DRAFT') {
-      notify.error("Cannot delete", {
-        description: "Only draft purchase orders can be deleted"
+    if (!po.capabilities.archive.allowed) {
+      notify.error("Cannot archive", {
+        description: po.capabilities.archive.reason ?? "Archiving is unavailable for this purchase order."
       })
       return
     }
@@ -802,9 +811,9 @@ const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
     openConfirmationDialog(
       'delete',
       po,
-      'Delete Purchase Order',
-      `Are you sure you want to delete purchase order ${po.orderNumber}? This action cannot be undone and all associated data will be permanently removed.`,
-      'Delete Order',
+      'Archive Purchase Order',
+      `Archive purchase order ${po.orderNumber}? It will be removed from the active register and retained with its audit evidence.`,
+      'Archive Order',
       'destructive'
     )
   }, [openConfirmationDialog])
@@ -858,12 +867,8 @@ const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
 
   // Format currency helper
   const formatCurrencyValue = useCallback((amount: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 0,
-    }).format(amount)
-  }, [])
+    return formatMoney(amount, locale, currency)
+  }, [currency, locale])
 
   // Format date helper
   const formatDateValue = useCallback((date: Date | string) => {
@@ -921,6 +926,7 @@ const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
         title={title}
         subtitle={subtitle}
         localizedHref={localizedHref}
+        canCreate={canCreate}
       />
 
       {/* Confirmation Dialog */}

@@ -611,6 +611,20 @@ export async function getSalesReceipt(rawInput: unknown): Promise<SalesReceiptPa
   return findSalesReceipt(input.salesOrderId, input.organizationId)
 }
 
+/**
+ * Produces the private, non-statutory receipt snapshot embedded in the POS
+ * commit result. It deliberately excludes customer contact data and never
+ * issues a bearer-style public receipt token, making the envelope safe to
+ * retain for exact idempotent replay.
+ */
+export async function getPOSSaleCommitReceipt(rawInput: unknown): Promise<SalesReceiptPayload> {
+  const input = getSalesReceiptSchema.parse(rawInput)
+  return findSalesReceipt(input.salesOrderId, input.organizationId, {
+    includeCustomerContact: false,
+    issuePublicReceiptToken: false,
+  })
+}
+
 export async function getPublicSalesReceipt(rawInput: unknown): Promise<SalesReceiptPayload> {
   const input = salesReceiptLookupSchema.parse(rawInput)
 

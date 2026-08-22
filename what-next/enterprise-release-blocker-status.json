@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "1.0",
-  "generatedAt": "2026-08-11T13:31:31.345Z",
+  "schemaVersion": "1.1",
+  "generatedAt": "2026-08-16T10:14:35.460Z",
   "status": "BLOCKED",
   "releasePosture": "DEVELOPMENT_CONTINUES_PILOT_AND_PRODUCTION_FAIL_CLOSED",
   "summary": {
     "blockerCount": 12,
-    "readyCount": 2,
-    "openCount": 10,
+    "readyCount": 3,
+    "openCount": 9,
     "evidenceErrorCount": 0,
     "externalInputChecksPassed": 1,
     "externalInputChecks": 13,
@@ -21,43 +21,61 @@
     "readyForPhase3Review": false,
     "activationAuthorizedByThisGate": false
   },
+  "claims": {
+    "payrollImmutability": {
+      "status": "ISOLATED_POSTGRESQL_RUNTIME_CONTROL_VERIFIED",
+      "scope": "ISOLATED_NON_PRODUCTION_POSTGRESQL_RUNTIME_CONTROL",
+      "productionDatabaseVerified": false,
+      "productionReleaseAuthorized": false
+    },
+    "countryPackProduction": {
+      "status": "FAIL_CLOSED",
+      "gateIds": ["B05", "B06"],
+      "productionUseAuthorized": false
+    },
+    "operatorReadiness": {
+      "status": "FAIL_CLOSED",
+      "gateIds": ["B07", "B08", "B09", "B10"],
+      "productionOperationAuthorized": false
+    },
+    "overallRelease": {
+      "status": "NOT_READY",
+      "activationAuthorized": false
+    }
+  },
   "blockers": [
     {
       "id": "B01",
       "title": "Application production build",
       "ready": true,
       "status": "READY",
-      "facts": [
-        "buildStatus=passed",
-        "buildExitCode=0"
-      ],
+      "facts": ["buildStatus=passed", "buildExitCode=0"],
       "blockers": [],
       "nextAction": "Preserve and bind this evidence to the final candidate."
     },
     {
       "id": "B02",
       "title": "Payroll immutability runtime proof",
-      "ready": false,
-      "status": "ENGINEERING_BLOCKED",
+      "ready": true,
+      "status": "READY",
       "facts": [
-        "triggers=0/9",
-        "blockedMutations=0/14"
+        "proofScope=ISOLATED_NON_PRODUCTION_POSTGRESQL_RUNTIME_CONTROL",
+        "proofSource=what-next/payroll/payroll-immutability-runtime-check-run-2.json",
+        "proofGeneratedAt=2026-08-12T19:21:43.961Z",
+        "triggers=9/9",
+        "blockedMutations=14/14",
+        "allowedLifecycle=3/3",
+        "staleAggregateInvalidated=true"
       ],
-      "blockers": [
-        "payroll_immutability_not_verified"
-      ],
-      "nextAction": "Restore the dedicated database proof and rerun payroll immutability."
+      "blockers": [],
+      "nextAction": "Preserve and bind this evidence to the final candidate."
     },
     {
       "id": "B03",
       "title": "Production database target and migration history",
       "ready": false,
       "status": "BLOCKED_EXTERNAL_CONFIG",
-      "facts": [
-        "preflight=8/9",
-        "history=7/8",
-        "historyTarget=local"
-      ],
+      "facts": ["preflight=8/9", "history=7/8", "historyTarget=local"],
       "blockers": [
         "deployment_target_is_safe",
         "database_url_missing",
@@ -70,9 +88,7 @@
       "title": "Managed production release secrets",
       "ready": false,
       "status": "BLOCKED_EXTERNAL_CONFIG",
-      "facts": [
-        "secretChecks=5/21"
-      ],
+      "facts": ["secretChecks=5/21"],
       "blockers": [
         "public_identity_secret_present",
         "public_identity_secret_strong",
@@ -98,9 +114,7 @@
       "title": "Cameroon source-artifact hash binding",
       "ready": true,
       "status": "READY",
-      "facts": [
-        "sourceHashes=7/7"
-      ],
+      "facts": ["sourceHashes=7/7"],
       "blockers": [],
       "nextAction": "Preserve and bind this evidence to the final candidate."
     },
@@ -109,10 +123,7 @@
       "title": "Cameroon qualified expert approval",
       "ready": false,
       "status": "REQUIRES_EXPERT_REVIEW",
-      "facts": [
-        "reviewChecks=4/12",
-        "approvalArtifactVerified=false"
-      ],
+      "facts": ["reviewChecks=4/12", "approvalArtifactVerified=false"],
       "blockers": [
         "reviewer_identity_complete",
         "review_window_complete",
@@ -131,10 +142,7 @@
       "title": "Credential rotation and revocation",
       "ready": false,
       "status": "BLOCKED_DEPENDENCY",
-      "facts": [
-        "credentialStatus=BLOCKED",
-        "credentialBlockers=31"
-      ],
+      "facts": ["credentialStatus=BLOCKED", "credentialBlockers=31"],
       "blockers": [
         "authority:ENVIRONMENT_MISSING",
         "authority:SOURCE_SYSTEM_REFERENCE_MISSING",
@@ -175,10 +183,7 @@
       "title": "Operational release evidence",
       "ready": false,
       "status": "BLOCKED_DEPENDENCY",
-      "facts": [
-        "operationalStatus=BLOCKED",
-        "operationalBlockers=152"
-      ],
+      "facts": ["operationalStatus=BLOCKED", "operationalBlockers=152"],
       "blockers": [
         "release:PACKAGE_ID_MISSING",
         "release:RELEASE_VERSION_MISSING",
@@ -363,10 +368,7 @@
       "title": "Governance approvals and ownership",
       "ready": false,
       "status": "BLOCKED_DEPENDENCY",
-      "facts": [
-        "governanceBlockers=50",
-        "freezeReady=false"
-      ],
+      "facts": ["governanceBlockers=50", "freezeReady=false"],
       "blockers": [
         "approvals:PRODUCT_NOT_APPROVED",
         "approvals:PRODUCT_ACTOR_INVALID",
@@ -427,10 +429,7 @@
       "title": "Phase 2B entry",
       "ready": false,
       "status": "BLOCKED_DEPENDENCY",
-      "facts": [
-        "phase2b=2/23",
-        "eligible=false"
-      ],
+      "facts": ["phase2b=2/23", "eligible=false"],
       "blockers": [
         "AUTHORIZED_SCOPE_COMPLETE",
         "FROZEN_COMMIT_VERIFIED",
@@ -461,10 +460,7 @@
       "title": "Phase 3 production decision",
       "ready": false,
       "status": "NOT_STARTED",
-      "facts": [
-        "phase3=0/34",
-        "eligible=false"
-      ],
+      "facts": ["phase3=0/34", "eligible=false"],
       "blockers": [
         "AUTHORIZED_SCOPE_COMPLETE",
         "FROZEN_COMMIT_VERIFIED",
@@ -506,10 +502,6 @@
   ],
   "evidenceErrors": [],
   "nextActions": [
-    {
-      "id": "B02",
-      "action": "Restore the dedicated database proof and rerun payroll immutability."
-    },
     {
       "id": "B03",
       "action": "Provision the approved production target, deploy, and pass direct history health."
@@ -562,6 +554,40 @@
     "phase3": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_ENTRY_DECISION_2026-07-25.json",
     "external": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUT_READINESS_2026-07-25.json",
     "intervention": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_HUMAN_INTERVENTION_PLAN_2026-07-25.json"
+  },
+  "evidenceProvenance": {
+    "immutability": {
+      "selectedSource": "what-next/payroll/payroll-immutability-runtime-check-run-2.json",
+      "sourceKind": "direct_isolated_postgresql_proof",
+      "generatedAt": "2026-08-12T19:21:43.961Z",
+      "sha256": "sha256:527d792bfe54368af368806fe0b1f75932acdc2f3a83104224bce9284a4ffe45",
+      "claimScope": "ISOLATED_NON_PRODUCTION_POSTGRESQL_RUNTIME_CONTROL",
+      "productionDatabaseVerifiedByThisProof": false,
+      "productionReleaseAuthorizedByThisProof": false,
+      "candidateCount": 3,
+      "conflictingCandidateCount": 0,
+      "supersededSources": [
+        {
+          "source": "what-next/payroll/payroll-immutability-runtime-check-run-1.json",
+          "generatedAt": "2026-08-12T19:21:10.853Z",
+          "ready": true
+        },
+        {
+          "source": "what-next/payroll/payroll-immutability-runtime-check.json",
+          "generatedAt": "2026-08-11T16:09:17.999Z",
+          "ready": true
+        }
+      ],
+      "priorAggregate": {
+        "generatedAt": "2026-08-11T13:31:31.345Z",
+        "generatedAtMs": 1786455091345,
+        "ready": false,
+        "status": "ENGINEERING_BLOCKED"
+      },
+      "aggregateConflictDetected": true,
+      "staleAggregateInvalidated": true,
+      "precedence": "Newest direct runtime evidence wins by evidence generatedAt; derived release aggregates never override their source proof."
+    }
   },
   "safety": {
     "evidenceMutated": false,

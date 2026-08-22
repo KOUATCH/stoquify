@@ -1090,6 +1090,7 @@
       "terminal": "Terminal",
       "chooseLocation": "Choisir un lieu",
       "chooseTerminal": "Choisir un terminal",
+      "terminalOccupied": "Occupe",
       "noLocation": "Aucun lieu selectionne",
       "noTerminal": "Aucun terminal selectionne",
       "activeRegister": "Caisse active",
@@ -1101,6 +1102,8 @@
       "closed": "Aucun service ouvert",
       "active": "Ouvert",
       "notOpen": "Ferme",
+      "occupied": "Occupe",
+      "occupiedDescription": "Ce terminal est deja affecte au service {number}. Choisissez un terminal disponible ou fermez d'abord ce service.",
       "hud": "{count} ventes - {gross} brut",
       "cashOnHand": "Especes en caisse : {amount}",
       "openingPlaceholder": "Fond de caisse",
@@ -1222,6 +1225,10 @@
       "removeTender": "Retirer reglement",
       "reference": "Reference",
       "referencePlaceholder": "Autorisation, virement ou reference mobile",
+      "providerEvidence": "ID de preuve de paiement fournisseur",
+      "providerEvidencePlaceholder": "ID de transaction de paiement confirmee",
+      "providerEvidenceHelp": "Utilisez l'ID renvoye par le flux de paiement autorise par le fournisseur. Une reference saisie manuellement ne constitue pas une autorite de paiement.",
+      "providerEvidenceRequired": "Un reglement electronique exige une transaction de paiement confirmee par le fournisseur avant l'encaissement de la vente.",
       "splitTender": "{count} reglements",
       "methods": {
         "CASH": "Especes",
@@ -3576,6 +3583,173 @@
       "reviewed": "Décision acheteur enregistrée. Aucun registre de référence n’a été modifié.",
       "actionFailed": "L’action n’a pas pu être effectuée.",
       "hash": "Empreinte de preuve"
+    }
+  },
+  "masterDataOnboarding": {
+    "eyebrow": "Intégration gouvernée",
+    "title": "Préparation de l’import des données de référence",
+    "description": "Validez les CSV de l’organisation, liez l’approbation aux preuves de simulation et créez uniquement les clients, fournisseurs ou articles via leurs services de référence.",
+    "targets": {
+      "CUSTOMER": "Clients",
+      "SUPPLIER": "Fournisseurs",
+      "ITEM": "Articles"
+    },
+    "milestoneStates": {
+      "NOT_STARTED": "Non commencé",
+      "IMPORTED": "Importé",
+      "RECONCILED": "Rapproché",
+      "BLOCKED": "Bloqué",
+      "WAIVED": "Dérogation"
+    },
+    "batchStatuses": {
+      "UPLOADED": "Téléversé",
+      "VALIDATED": "Validé",
+      "BLOCKED": "Bloqué",
+      "APPROVED": "Approuvé",
+      "COMMITTING": "En cours de création",
+      "COMMITTED": "Créé"
+    },
+    "readiness": {
+      "title": "Jalons de préparation",
+      "milestone": "Jalon de préparation de l’organisation"
+    },
+    "stage": {
+      "title": "1. Modèle et simulation",
+      "description": "Les fichiers sont empreintés et préparés par organisation. Une simulation n’écrit jamais dans les données de référence."
+    },
+    "fields": {
+      "target": "Cible",
+      "csvFile": "Fichier CSV",
+      "csvHelp": "Choisissez un fichier CSV de 5 Mo et 1 000 lignes au maximum."
+    },
+    "metrics": {
+      "source": "Source",
+      "committed": "Créés",
+      "blockers": "Blocages",
+      "status": "État",
+      "sourceRows": "Lignes source",
+      "valid": "Valides",
+      "errorRows": "Lignes en erreur",
+      "duplicates": "Doublons"
+    },
+    "actions": {
+      "backToDashboard": "Retour au tableau de bord",
+      "downloadTemplate": "Télécharger le modèle",
+      "working": "Traitement…",
+      "runValidation": "Lancer la simulation",
+      "recordApproval": "Enregistrer l’approbation",
+      "commit": "Créer via les services de référence",
+      "exportEvidence": "Exporter le manifeste de preuve"
+    },
+    "notices": {
+      "operationFailed": "L’opération gouvernée n’a pas abouti. Vérifiez l’état du lot et les erreurs de ligne sécurisées, puis réessayez.",
+      "templateDownloaded": "Modèle {target} propre à l’organisation téléchargé.",
+      "chooseFile": "Choisissez un fichier CSV avant de lancer la validation.",
+      "batchReplayed": "Le lot lié à cette empreinte a été rejoué sans écriture en double.",
+      "dryRunRecorded": "Simulation enregistrée. Aucune donnée de référence n’a été écrite.",
+      "approvalRecorded": "Approbation liée à l’empreinte source, à la version du mappage, au niveau de risque et aux contrôles de simulation.",
+      "commitReconciled": "Création rapprochée et preuve scellée.",
+      "commitPaused": "Création interrompue à une limite de contrôle gouvernée.",
+      "evidenceExported": "Manifeste de preuve exporté sans les lignes source brutes."
+    },
+    "states": {
+      "loading": {
+        "title": "Préparation de l’intégration gouvernée",
+        "message": "La préparation, les autorisations et les preuves de lots récentes de l’organisation sont en cours de chargement."
+      },
+      "error": {
+        "title": "Impossible de charger l’intégration des données",
+        "message": "Les preuves d’intégration propres à l’organisation sont temporairement indisponibles. Réessayez sans téléverser un autre fichier.",
+        "retry": "Réessayer",
+        "dashboard": "Retour au tableau de bord"
+      },
+      "empty": {
+        "eyebrow": "Aucune cible autorisée",
+        "title": "Aucune cible d’intégration disponible",
+        "message": "Ce rôle ne peut consulter ni clients, ni fournisseurs, ni articles. Demandez à un administrateur l’accès requis."
+      },
+      "partial": {
+        "title": "Certaines cibles sont en lecture seule",
+        "message": "Vous pouvez consulter la préparation et les preuves de chaque cible visible, mais l’import exige l’autorisation de création correspondante."
+      },
+      "noBatch": {
+        "title": "Aucun lot sélectionné",
+        "message": "Téléchargez un modèle propre à l’organisation et lancez une simulation pour créer le premier lot gouverné."
+      },
+      "readOnly": "Cette cible est en lecture seule pour votre rôle. Vous pouvez consulter les preuves, mais pas préparer ni créer un lot."
+    },
+    "risk": {
+      "label": "Décision de risque du lot",
+      "levels": {
+        "STANDARD": "Risque standard",
+        "HIGH": "Risque élevé"
+      },
+      "reasons": {
+        "BULK_BATCH": "100 lignes ou plus",
+        "SUPPLIER_CREATION": "Création de fournisseurs",
+        "CUSTOMER_CREDIT_LIMIT": "Plafond de crédit client",
+        "ITEM_PRICING": "Prix des articles"
+      },
+      "separateApproverTitle": "Approbateur distinct requis",
+      "separateApproverReady": "Vous n’êtes pas l’auteur du téléversement. Confirmez les preuves exactes de simulation avant d’approuver.",
+      "separateApproverBlocked": "L’auteur du téléversement ne peut pas approuver ce lot à risque élevé. Demandez à un autre utilisateur autorisé de le contrôler."
+    },
+    "approval": {
+      "title": "2. Contrôles, approbation et création",
+      "batch": "Lot {id} · mappage v{version}",
+      "confirmation": "J’approuve cette empreinte source, cette version de mappage, ce niveau de risque, ces volumes, ces totaux de champs requis et cette simulation sans erreur."
+    },
+    "controls": {
+      "requiredFields": "Contrôles des champs requis",
+      "fieldTotal": "{field} : {count}/{total}",
+      "prePost": "Contrôles avant/après",
+      "prePostValues": "Avant : {before} · Après : {after}",
+      "pending": "en attente"
+    },
+    "issues": {
+      "title": "Erreurs de ligne sécurisées",
+      "row": "ligne",
+      "rowPrefix": "Ligne {row}",
+      "unterminatedQuote": "Le CSV contient un champ entre guillemets non terminé.",
+      "duplicateHeader": "Chaque en-tête CSV doit être unique.",
+      "missingMappedColumn": "Une colonne CSV mappée manque dans l’en-tête.",
+      "unmappedColumn": "Chaque colonne source doit figurer dans la version de mappage choisie.",
+      "rowLimit": "Cette première version accepte au maximum 1 000 lignes par lot.",
+      "columnCount": "Le nombre de colonnes de la ligne ne correspond pas à l’en-tête CSV.",
+      "formulaRejected": "Les formules de tableur ne sont pas acceptées dans les imports d’intégration.",
+      "requiredField": "Le champ {field} est requis.",
+      "duplicateInFile": "La valeur {field} apparaît plusieurs fois dans ce fichier.",
+      "duplicateInTenant": "La valeur {field} existe déjà dans cette organisation.",
+      "fieldInvalid": "Le champ {field} est invalide.",
+      "generic": "La ligne ne respecte pas le contrat d’import gouverné."
+    },
+    "adoption": {
+      "title": "Preuves d’adoption ciblées",
+      "description": "Vue propre à l’organisation sur les 12 lots les plus récents. Il s’agit d’une preuve opérationnelle, pas d’une certification de mise en production.",
+      "batches": "Lots récents",
+      "committed": "Lots créés",
+      "blocked": "Lots bloqués",
+      "highRiskApproved": "Approbations à risque élevé"
+    },
+    "boundary": {
+      "title": "Limite exacte du contrôle",
+      "description": "Ce jalon constitue une preuve de préparation, pas une certification comptable ou réglementaire.",
+      "included": "Inclus",
+      "excluded": "Exclus",
+      "includedItems": [
+        "Identité et contacts des clients",
+        "Identité et contacts des fournisseurs",
+        "Identité, descriptions et prix du catalogue d’articles",
+        "Préparation, mappages, validation, approbations, contrôles, preuves et état de préparation propres à l’organisation"
+      ],
+      "excludedItems": [
+        "Soldes courants des clients ou fournisseurs",
+        "Soldes comptables d’ouverture",
+        "Quantités de stock initiales ou mouvements de stock",
+        "Écritures de journal ou de grand livre",
+        "Migration des transactions historiques ou des documents réglementaires",
+        "Mises à jour, fusions, suppressions définitives, réinitialisations destructives ou annulation automatique"
+      ]
     }
   }
 }

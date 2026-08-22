@@ -12,12 +12,17 @@ import {
   enqueuePayrollAuthorityAdapterExecution,
 } from "@/services/payroll/authority-adapter-execution.service";
 import {
-  approveAndPostPayrollRun,
+  approvePayrollRun,
+  approvePayrollPaymentBatch,
   calculatePayrollRun,
+  emitPayrollPayslips,
   getPayrollRunWorkbenchData,
   getPayrollWorkbenchData,
+  postPayrollRun,
   preparePayrollDeclarations,
+  requestPayrollPaymentBatch,
   releasePayrollPaymentBatch,
+  reviewPayrollRun,
 } from "@/services/payroll/payroll-control.service";
 import {
   getPayrollDeclarationWorkbenchData,
@@ -32,9 +37,11 @@ import {
 } from "@/services/payroll/payroll-employee-balance.service";
 
 import {
+  approvePayrollRunAction,
+  approvePayrollPaymentBatchAction,
   enqueuePayrollAuthorityAdapterExecutionAction,
-  approveAndPostPayrollRunAction,
   calculatePayrollRunAction,
+  emitPayrollPayslipsAction,
   getPayrollDeclarationWorkbenchAction,
   getPayrollEmployeeBalanceWorkbenchAction,
   getPayrollRunWorkbenchAction,
@@ -43,8 +50,11 @@ import {
   openPayrollEmployeeBalanceCaseAction,
   openPayrollEmployeeBalanceCasesForCorrectionRunAction,
   planPayrollEmployeeBalanceCasesAction,
+  postPayrollRunAction,
   recordPayrollDeclarationEvidenceAction,
+  requestPayrollPaymentBatchAction,
   releasePayrollPaymentBatchAction,
+  reviewPayrollRunAction,
   settlePayrollEmployeeBalanceCaseAction,
 } from "../payroll-control.actions";
 
@@ -101,13 +111,18 @@ jest.mock("@/services/payroll/payroll-control.service", () => ({
   payrollRunWorkbenchInputSchema: {
     parse: jest.fn((input) => input),
   },
+  requestPayrollPaymentBatch: jest.fn(),
+  approvePayrollPaymentBatch: jest.fn(),
   releasePayrollPaymentBatch: jest.fn(),
   preparePayrollDeclarations: jest.fn(),
+  postPayrollRun: jest.fn(),
+  reviewPayrollRun: jest.fn(),
+  emitPayrollPayslips: jest.fn(),
   calculatePayrollRun: jest.fn(),
   calculatePayrollRunInputSchema: {
     parse: jest.fn((input) => input),
   },
-  approveAndPostPayrollRun: jest.fn(),
+  approvePayrollRun: jest.fn(),
 }));
 
 jest.mock("@/services/payroll/authority-adapter-execution.service", () => ({
@@ -157,10 +172,15 @@ const mockObserveModuleAccess = observeModuleAccess as jest.Mock;
 const mockLoggerError = logger.error as jest.Mock;
 const mockEnqueuePayrollAuthorityAdapterExecution =
   enqueuePayrollAuthorityAdapterExecution as jest.Mock;
-const mockApproveAndPostPayrollRun = approveAndPostPayrollRun as jest.Mock;
+const mockApprovePayrollRun = approvePayrollRun as jest.Mock;
+const mockReviewPayrollRun = reviewPayrollRun as jest.Mock;
+const mockEmitPayrollPayslips = emitPayrollPayslips as jest.Mock;
+const mockPostPayrollRun = postPayrollRun as jest.Mock;
 const mockCalculatePayrollRun = calculatePayrollRun as jest.Mock;
 const mockGetPayrollRunWorkbenchData = getPayrollRunWorkbenchData as jest.Mock;
 const mockGetPayrollWorkbenchData = getPayrollWorkbenchData as jest.Mock;
+const mockRequestPayrollPaymentBatch = requestPayrollPaymentBatch as jest.Mock;
+const mockApprovePayrollPaymentBatch = approvePayrollPaymentBatch as jest.Mock;
 const mockReleasePayrollPaymentBatch = releasePayrollPaymentBatch as jest.Mock;
 const mockPreparePayrollDeclarations = preparePayrollDeclarations as jest.Mock;
 const mockGetPayrollDeclarationWorkbenchData =
@@ -323,18 +343,8 @@ describe("payroll control actions", () => {
     mockRequireFreshAuth.mockRejectedValue(new FreshAuthRequiredError());
 
     const result = await releasePayrollPaymentBatchAction({
-      payrollRunId: "run-1",
-      requestedById: "requester-1",
-      method: PaymentMethod.BANK_TRANSFER,
-      paymentDate: "2026-06-30",
+      payrollPaymentBatchId: "batch-1",
       idempotencyKey: "payroll-payment-key-1",
-      allocations: [
-        {
-          payslipId: "payslip-1",
-          employeeId: "employee-1",
-          amount: "95800.00",
-        },
-      ],
     });
 
     expect(result).toEqual(
@@ -352,40 +362,174 @@ describe("payroll control actions", () => {
     expect(mockReleasePayrollPaymentBatch).not.toHaveBeenCalled();
   });
 
-  it("passes verified fresh-auth evidence when approving and posting payroll runs", async () => {
+  it("passes server-derived actor and verified fresh-auth evidence when approving a reviewed payroll run", async () => {
     mockRequirePermission.mockResolvedValue(
       rbacContext("approver-1", ["payroll.runs.approve"]),
     );
-    mockApproveAndPostPayrollRun.mockResolvedValue({
+    mockApprovePayrollRun.mockResolvedValue({
       payrollRun: { id: "run-1" },
-      ledgerStatus: "POSTED",
+      businessEventId: "event-approved-1",
     });
 
-    const result = await approveAndPostPayrollRunAction({
+    const result = await approvePayrollRunAction({
       organizationId: "client-org",
       payrollRunId: "run-1",
       approvedById: "client-approver",
+      actorId: "client-actor",
+      expectedVersion: 2,
       idempotencyKey: "approve-key-1",
+      lastAuthAt: "1900-01-01T00:00:00.000Z",
+      now: "1900-01-01T00:00:00.000Z",
     });
 
     expect(result.success).toBe(true);
-    expect(mockApproveAndPostPayrollRun).toHaveBeenCalledWith(
+    expect(mockApprovePayrollRun).toHaveBeenCalledWith(
       expect.objectContaining({
         organizationId: "org-1",
         payrollRunId: "run-1",
-        approvedById: "approver-1",
+        actorId: "approver-1",
+        expectedVersion: 2,
         actorPermissions: ["payroll.runs.approve"],
         lastAuthAt: new Date("2026-06-30T11:59:00.000Z"),
+        now: expect.any(Date),
       }),
     );
-    expect(mockApproveAndPostPayrollRun.mock.calls[0][0]).not.toMatchObject({
+    expect(mockApprovePayrollRun.mock.calls[0][0]).not.toMatchObject({
       organizationId: "client-org",
       approvedById: "client-approver",
+      actorId: "client-actor",
+      lastAuthAt: "1900-01-01T00:00:00.000Z",
+      now: "1900-01-01T00:00:00.000Z",
     });
+    expect(mockRequireFreshAuth).toHaveBeenCalledWith(300);
     expect(mockRevalidatePath).toHaveBeenCalledWith(
       "/dashboard/payroll",
       "page",
     );
+  });
+
+  it("fails payroll approval closed when step-up authentication is missing", async () => {
+    mockRequireFreshAuth.mockRejectedValue(new FreshAuthRequiredError());
+
+    const result = await approvePayrollRunAction({
+      payrollRunId: "run-1",
+      expectedVersion: 2,
+      idempotencyKey: "approve-key-missing-step-up",
+    });
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        success: false,
+        data: null,
+        status: 403,
+        code: "FRESH_AUTH_REQUIRED",
+      }),
+    );
+    expect(mockRequirePermission).not.toHaveBeenCalled();
+    expect(mockApprovePayrollRun).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    {
+      label: "review",
+      permission: "payroll.runs.review",
+      surface: "payroll.runs.review",
+      actorId: "reviewer-1",
+      action: reviewPayrollRunAction,
+      serviceMock: mockReviewPayrollRun,
+    },
+    {
+      label: "payslip emission",
+      permission: "payroll.payslips.emit",
+      surface: "payroll.payslips.emit",
+      actorId: "emitter-1",
+      action: emitPayrollPayslipsAction,
+      serviceMock: mockEmitPayrollPayslips,
+    },
+    {
+      label: "posting",
+      permission: "payroll.runs.post",
+      surface: "payroll.runs.post",
+      actorId: "poster-1",
+      action: postPayrollRunAction,
+      serviceMock: mockPostPayrollRun,
+    },
+  ])(
+    "protects $label with server-derived tenant, actor, permissions, and fresh-auth evidence",
+    async ({ permission, surface, actorId, action, serviceMock }) => {
+      mockRequirePermission.mockResolvedValue(rbacContext(actorId, [permission]));
+      serviceMock.mockResolvedValue({
+        payrollRun: { id: "run-1" },
+        businessEventId: `event-${actorId}`,
+      });
+
+      const result = await action({
+        organizationId: "client-org",
+        payrollRunId: "run-1",
+        actorId: "client-actor",
+        actorPermissions: ["client.permission"],
+        expectedVersion: 2,
+        idempotencyKey: `transition-${actorId}`,
+        lastAuthAt: "1900-01-01T00:00:00.000Z",
+        now: "1900-01-01T00:00:00.000Z",
+      });
+
+      expect(result.success).toBe(true);
+      expect(serviceMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          organizationId: "org-1",
+          payrollRunId: "run-1",
+          actorId,
+          actorPermissions: [permission],
+          expectedVersion: 2,
+          lastAuthAt: new Date("2026-06-30T11:59:00.000Z"),
+          now: expect.any(Date),
+        }),
+      );
+      expect(serviceMock.mock.calls[0][0]).not.toMatchObject({
+        organizationId: "client-org",
+        actorId: "client-actor",
+        actorPermissions: ["client.permission"],
+        lastAuthAt: "1900-01-01T00:00:00.000Z",
+        now: "1900-01-01T00:00:00.000Z",
+      });
+      expect(mockRequireFreshAuth).toHaveBeenCalledWith(300);
+      expect(mockRequirePermission).toHaveBeenCalledWith(permission, {
+        resource: "PayrollRun",
+      });
+      expect(mockObserveModuleAccess).toHaveBeenCalledWith(
+        expect.objectContaining({
+          organizationId: "org-1",
+          userId: actorId,
+          surface,
+          accessIntent: "write",
+          mode: "enforce",
+        }),
+      );
+    },
+  );
+
+  it.each([
+    ["review", reviewPayrollRunAction, mockReviewPayrollRun],
+    ["payslip emission", emitPayrollPayslipsAction, mockEmitPayrollPayslips],
+    ["posting", postPayrollRunAction, mockPostPayrollRun],
+  ])("fails %s closed when step-up authentication is missing", async (_label, action, serviceMock) => {
+    mockRequireFreshAuth.mockRejectedValue(new FreshAuthRequiredError());
+
+    const result = await action({
+      payrollRunId: "run-1",
+      expectedVersion: 2,
+      idempotencyKey: "transition-missing-step-up",
+    });
+
+    expect(result).toEqual(expect.objectContaining({
+      success: false,
+      data: null,
+      status: 403,
+      code: "FRESH_AUTH_REQUIRED",
+    }));
+    expect(mockRequirePermission).not.toHaveBeenCalled();
+    expect(serviceMock).not.toHaveBeenCalled();
   });
 
   it("derives payroll calculation tenant and preparer from authenticated context", async () => {
@@ -433,7 +577,62 @@ describe("payroll control actions", () => {
     );
   });
 
-  it("derives payroll payment tenant and release actor fields from the authenticated context", async () => {
+  it("derives each payroll payment actor from its authenticated action context", async () => {
+    mockRequirePermission.mockResolvedValue(
+      rbacContext("requester-1", ["payroll.payments.request"]),
+    );
+    mockRequestPayrollPaymentBatch.mockResolvedValue({
+      payrollPaymentBatch: { id: "batch-1" },
+      created: true,
+    });
+
+    const requestResult = await requestPayrollPaymentBatchAction({
+      organizationId: "client-org",
+      payrollRunId: "run-1",
+      requestedById: "client-requester",
+      method: PaymentMethod.BANK_TRANSFER,
+      paymentDate: "2026-06-30",
+      idempotencyKey: "payroll-payment-request-key-1",
+      allocations: [
+        {
+          payslipId: "payslip-1",
+          employeeId: "employee-1",
+          amount: "95800.00",
+        },
+      ],
+    });
+
+    expect(requestResult.success).toBe(true);
+    expect(mockRequestPayrollPaymentBatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        organizationId: "org-1",
+        requestedById: "requester-1",
+        actorPermissions: ["payroll.payments.request"],
+      }),
+    );
+
+    mockRequirePermission.mockResolvedValue(
+      rbacContext("approver-1", ["payroll.payments.approve"]),
+    );
+    mockApprovePayrollPaymentBatch.mockResolvedValue({
+      payrollPaymentBatch: { id: "batch-1" },
+      approved: true,
+    });
+    const approvalResult = await approvePayrollPaymentBatchAction({
+      organizationId: "client-org",
+      payrollPaymentBatchId: "batch-1",
+      approvedById: "client-approver",
+      idempotencyKey: "payroll-payment-approve-key-1",
+    });
+    expect(approvalResult.success).toBe(true);
+    expect(mockApprovePayrollPaymentBatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        organizationId: "org-1",
+        approvedById: "approver-1",
+        actorPermissions: ["payroll.payments.approve"],
+      }),
+    );
+
     mockRequirePermission.mockResolvedValue(
       rbacContext("treasury-1", ["payroll.payments.release"]),
     );
@@ -444,27 +643,16 @@ describe("payroll control actions", () => {
 
     const result = await releasePayrollPaymentBatchAction({
       organizationId: "client-org",
-      payrollRunId: "run-1",
-      requestedById: "requester-1",
-      approvedById: "client-approver",
+      payrollPaymentBatchId: "batch-1",
       releasedById: "client-releaser",
-      method: PaymentMethod.BANK_TRANSFER,
-      paymentDate: "2026-06-30",
-      idempotencyKey: "payroll-payment-key-1",
-      allocations: [
-        {
-          payslipId: "payslip-1",
-          employeeId: "employee-1",
-          amount: "95800.00",
-        },
-      ],
+      idempotencyKey: "payroll-payment-release-key-1",
     });
 
     expect(result.success).toBe(true);
     expect(mockReleasePayrollPaymentBatch).toHaveBeenCalledWith(
       expect.objectContaining({
         organizationId: "org-1",
-        approvedById: "treasury-1",
+        payrollPaymentBatchId: "batch-1",
         releasedById: "treasury-1",
         actorPermissions: ["payroll.payments.release"],
         lastAuthAt: new Date("2026-06-30T11:59:00.000Z"),
@@ -472,7 +660,6 @@ describe("payroll control actions", () => {
     );
     expect(mockReleasePayrollPaymentBatch.mock.calls[0][0]).not.toMatchObject({
       organizationId: "client-org",
-      approvedById: "client-approver",
       releasedById: "client-releaser",
     });
     expect(mockRevalidatePath).toHaveBeenCalledWith(
@@ -758,6 +945,23 @@ describe("payroll control actions", () => {
       }),
     );
   });
+  it("requires fresh auth before preparing payroll declarations", async () => {
+    mockRequireFreshAuth.mockRejectedValue(new FreshAuthRequiredError());
+
+    const result = await preparePayrollDeclarationsAction({
+      payrollRunId: "run-1",
+    });
+
+    expect(result).toEqual(expect.objectContaining({
+      success: false,
+      data: null,
+      status: 403,
+      code: "FRESH_AUTH_REQUIRED",
+    }));
+    expect(mockRequirePermission).not.toHaveBeenCalled();
+    expect(mockPreparePayrollDeclarations).not.toHaveBeenCalled();
+  });
+
   it("derives declaration preparer from the authenticated context", async () => {
     mockRequirePermission.mockResolvedValue(
       rbacContext("payroll-1", ["payroll.declarations.prepare"]),
@@ -781,6 +985,7 @@ describe("payroll control actions", () => {
         preparedById: "payroll-1",
       }),
     );
+    expect(mockRequireFreshAuth).toHaveBeenCalledWith(undefined);
   });
   it("requires fresh auth before queueing certified authority adapter execution", async () => {
     mockRequireFreshAuth.mockRejectedValue(new FreshAuthRequiredError());

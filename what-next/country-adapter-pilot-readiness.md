@@ -1,6 +1,6 @@
 # Country Adapter Pilot Readiness Gate
 
-Generated: 2026-08-12T19:18:26.128Z
+Generated: 2026-08-22T09:02:53.939Z
 Mode: fail
 Status: ready
 

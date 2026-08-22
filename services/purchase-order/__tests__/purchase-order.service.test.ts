@@ -6,6 +6,7 @@ import {
 import {
   approvePurchaseOrder,
   bulkUpdateStatus,
+  closePurchaseOrder,
   deletePurchaseOrder,
   updatePurchaseOrder,
 } from "../purchase-order.service"
@@ -15,6 +16,9 @@ jest.mock("@/prisma/db", () => ({
   db: {
     $transaction: jest.fn(),
     purchaseOrder: {
+      findFirst: jest.fn(),
+    },
+    goodsReceipt: {
       findFirst: jest.fn(),
     },
     supplier: {
@@ -41,6 +45,9 @@ jest.mock("@/services/events/business-event.service", () => ({
 const mockDb = db as unknown as {
   $transaction: jest.Mock
   purchaseOrder: {
+    findFirst: jest.Mock
+  }
+  goodsReceipt: {
     findFirst: jest.Mock
   }
   supplier: {
@@ -158,6 +165,25 @@ beforeEach(() => {
 })
 
 describe("purchase-order.service controls", () => {
+  it("blocks order completion while a tenant-scoped receipt is held for inspection", async () => {
+    mockDb.goodsReceipt.findFirst.mockResolvedValue({ receiptNumber: "GR-000009" })
+
+    await expect(closePurchaseOrder("po-1", "org-1")).rejects.toThrow(
+      "Purchase order cannot be completed while goods receipt GR-000009 is held for inspection.",
+    )
+
+    expect(mockDb.goodsReceipt.findFirst).toHaveBeenCalledWith({
+      where: {
+        purchaseOrderId: "po-1",
+        organizationId: "org-1",
+        status: "HELD",
+        deletedAt: null,
+      },
+      select: { receiptNumber: true },
+    })
+    expect(mockDb.purchaseOrder.findFirst).not.toHaveBeenCalled()
+  })
+
   it("rejects bulk approval before opening a transaction", async () => {
     await expect(
       bulkUpdateStatus({

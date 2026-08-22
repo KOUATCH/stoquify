@@ -1,5 +1,6 @@
 import { getOrgPurchaseOrderById as getPurchaseOrder } from "@/actions/purchaseOrderWorkflow/newPOActions"
 import { routeByKey, withPurchasesSurfaceAccess } from "../purchases-route-access"
+import { buildPurchaseOrderRedirect, type PurchaseRouteSearchParams } from "../purchase-route-redirect"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -16,7 +17,7 @@ import type { PurchaseOrderStatus } from "@/services/purchase-order/purchase-ord
 import { format } from "date-fns"
 import { ArrowLeft, AtSign, Building2, Calendar, CreditCard, DollarSign, Edit, FileText, Hash, Mail, MapPin, MoreHorizontal, Package, Phone, User } from 'lucide-react'
 import { Link } from "@/i18n/navigation"
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 import React from "react"
 
 // Small helpers
@@ -185,10 +186,12 @@ type PurchaseOrderDetails = {
 
 interface PurchaseOrderDetailsPageProps {
   params: Promise<{ locale: string; id: string }>
+  searchParams?: Promise<PurchaseRouteSearchParams>
 }
 
-export default async function PurchaseOrderPage({ params }: PurchaseOrderDetailsPageProps) {
+export default async function PurchaseOrderPage({ params, searchParams }: PurchaseOrderDetailsPageProps) {
   const { id: orderId, locale: rawLocale } = await params
+  const query = await searchParams
   const surface = routeByKey("purchases-detail")
 
   if (!surface) {
@@ -206,6 +209,8 @@ export default async function PurchaseOrderPage({ params }: PurchaseOrderDetails
       resourceId: orderId,
     },
     onAllowed: async (ctx, locale) => {
+      redirect(buildPurchaseOrderRedirect({ locale, id: orderId, searchParams: query }))
+
       let po: PurchaseOrderDetails | null = null
 
       try {
@@ -282,7 +287,7 @@ export default async function PurchaseOrderPage({ params }: PurchaseOrderDetails
                         Created{" "}
                         {(() => {
                           const d = safeDate(createdAt)
-                          return d ? format(d, "PPP") : "—"
+                          return d ? format(d!, "PPP") : "—"
                         })()}
                       </span>
                     </div>
@@ -396,12 +401,12 @@ export default async function PurchaseOrderPage({ params }: PurchaseOrderDetails
                     <>
                       <div className="flex items-center gap-2">
                         <User className="h-4 w-4 text-muted-foreground" />
-                        <span className="font-medium">{createdBy.name ?? "Unknown"}</span>
+                        <span className="font-medium">{createdBy!.name ?? "Unknown"}</span>
                       </div>
-                      {createdBy.email && (
+                      {createdBy!.email && (
                         <div className="flex items-center gap-2">
                           <AtSign className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm">{createdBy.email}</span>
+                          <span className="text-sm">{createdBy!.email}</span>
                         </div>
                       )}
                     </>
@@ -417,12 +422,12 @@ export default async function PurchaseOrderPage({ params }: PurchaseOrderDetails
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <User className="h-4 w-4 text-muted-foreground" />
-                      <span className="font-medium">{approvedBy.name ?? "Unknown"}</span>
+                      <span className="font-medium">{approvedBy!.name ?? "Unknown"}</span>
                     </div>
-                    {approvedBy.email && (
+                    {approvedBy!.email && (
                       <div className="flex items-center gap-2">
                         <AtSign className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm">{approvedBy.email}</span>
+                        <span className="text-sm">{approvedBy!.email}</span>
                       </div>
                     )}
                   </div>

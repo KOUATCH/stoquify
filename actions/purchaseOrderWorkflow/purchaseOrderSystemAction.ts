@@ -10,6 +10,7 @@ import {
     CreatePurchaseOrderSchema,
     POAnalyticsSchema,
     ReceiveItemsSchema,
+    ResolveGoodsReceiptInspectionSchema,
     UpdatePurchaseOrderSchema,
     type PurchaseOrderStatus,
 } from "@/services/purchase-order/purchase-order.schemas";
@@ -25,17 +26,21 @@ import {
     getAnalytics,
     getGoodsReceipts,
     getPurchaseOrderById,
+    getPurchaseOrderCurrency,
     getRequiringAttention,
     getStatusHistory,
     getSummary,
     listPurchaseOrders,
     receiveItems as receiveItemsService,
+    resolveGoodsReceiptInspection as resolveGoodsReceiptInspectionService,
     searchLocations as searchPurchaseOrderLocations,
     submitPurchaseOrder as submitPurchaseOrderService,
     updatePurchaseOrder as updatePurchaseOrderService,
 } from "@/services/purchase-order/purchase-order.service";
+import { projectPurchaseOrderForActor } from "@/services/purchase-order/purchase-order-capabilities";
 import type {
     GoodsReceiptPayload as ClientGoodsReceiptPayload,
+    GoodsReceiptInspectionResolutionPayload,
     CreatePurchaseOrderPayload,
     PurchaseOrderFilters,
     PurchaseOrderResponse,
@@ -62,17 +67,17 @@ function revalidatePurchaseOrderWorkflow(organizationId: string, id?: string) {
 async function scopedOrg(
   requestedOrganizationId: string | undefined,
   permission = "purchases.orders.read",
-  options?: { resourceId?: string; auditAllowed?: boolean },
+  options?: { resource?: string; resourceId?: string; auditAllowed?: boolean },
 ) {
   const ctx = await requirePermission(permission, {
-    resource: "PurchaseOrder",
+    resource: options?.resource ?? "PurchaseOrder",
     resourceId: options?.resourceId,
     auditAllowed: options?.auditAllowed,
   })
   if (requestedOrganizationId && requestedOrganizationId !== ctx.orgId) {
     throw new BusinessRuleError("You do not have access to this organization")
   }
-  return { orgId: ctx.orgId, userId: ctx.userId }
+  return { orgId: ctx.orgId, userId: ctx.userId, permissions: ctx.permissions }
 }
 
 function permissionForBulkStatus(status: PurchaseOrderStatus) {
@@ -113,9 +118,14 @@ export async function getOrgPurchaseOrders(
   _filters: Partial<PurchaseOrderFilters> = {},
 ): Promise<PurchaseOrderResponse<PurchaseOrderWithRelations[]>> {
   try {
-    const { orgId } = await scopedOrg(organizationId, "purchases.orders.read")
-    const purchaseOrders = await listPurchaseOrders(orgId)
-    return response(purchaseOrders as PurchaseOrderWithRelations[])
+    const actor = await scopedOrg(organizationId, "purchases.orders.read")
+    const [purchaseOrders, currency] = await Promise.all([
+      listPurchaseOrders(actor.orgId),
+      getPurchaseOrderCurrency(actor.orgId),
+    ])
+    return response(
+      purchaseOrders.map((order) => projectPurchaseOrderForActor(order, actor, currency)) as PurchaseOrderWithRelations[],
+    )
   } catch (error) {
     return { success: false, data: [], error: error instanceof Error ? error.message : "Failed to fetch purchase orders" }
   }
@@ -128,8 +138,12 @@ export async function getOrgPurchaseOrderBYLocationId(organizationId: string, lo
 }
 
 export async function getOrgPurchaseOrderById(id: string, organizationId?: string) {
-  const { orgId } = await scopedOrg(organizationId, "purchases.orders.read", { resourceId: id })
-  return getPurchaseOrderById(id, orgId)
+  const actor = await scopedOrg(organizationId, "purchases.orders.read", { resourceId: id })
+  const [order, currency] = await Promise.all([
+    getPurchaseOrderById(id, actor.orgId),
+    getPurchaseOrderCurrency(actor.orgId),
+  ])
+  return projectPurchaseOrderForActor(order, actor, currency)
 }
 
 export async function createPurchaseOrder(
@@ -235,8 +249,12 @@ export async function receiveItems(payload: GoodsReceiptPayload): Promise<Purcha
       purchaseOrderId: payload.id,
       organizationId: orgId,
       receivedById: userId,
+      idempotencyKey: payload.idempotencyKey,
       locationId: payload.locationId,
       notes: payload.notes,
+      inspectionOutcome: payload.inspectionOutcome,
+      inspectionReason: payload.inspectionReason,
+      inspectionEvidenceNotes: payload.inspectionEvidenceNotes,
       items: payload.items,
     })
     const result = await receiveItemsService(parsed)
@@ -246,13 +264,50 @@ export async function receiveItems(payload: GoodsReceiptPayload): Promise<Purcha
     revalidatePath("/[locale]/dashboard/inventory", "page")
     return response(
       result.purchaseOrder as PurchaseOrderWithRelations,
-      `Items received successfully. Goods receipt ${result.receiptNumber} created.`,
+      result.receiptStatus === "HELD"
+        ? `Goods receipt ${result.receiptNumber} recorded and held pending inspection resolution.`
+        : `Items received successfully. Goods receipt ${result.receiptNumber} created.`,
     )
   } catch (error) {
     return {
       success: false,
       data: null as unknown as PurchaseOrderWithRelations,
       error: error instanceof Error ? error.message : "Failed to receive items",
+    }
+  }
+}
+
+export async function resolveGoodsReceiptInspection(payload: GoodsReceiptInspectionResolutionPayload) {
+  try {
+    const { orgId, userId } = await scopedOrg(payload.organizationId, "purchases.orders.receive", {
+      resource: "GoodsReceipt",
+      resourceId: payload.goodsReceiptId,
+      auditAllowed: true,
+    })
+    const parsed = ResolveGoodsReceiptInspectionSchema.parse({
+      goodsReceiptId: payload.goodsReceiptId,
+      organizationId: orgId,
+      resolvedById: userId,
+      decision: payload.decision,
+      reason: payload.reason,
+      idempotencyKey: payload.idempotencyKey,
+    })
+    const result = await resolveGoodsReceiptInspectionService(parsed)
+    revalidatePurchaseOrderWorkflow(orgId, result.purchaseOrderId)
+    revalidateTag("inventory")
+    revalidateTag(`inventory-${orgId}`)
+    revalidatePath("/[locale]/dashboard/inventory", "page")
+    return response(
+      result,
+      result.decision === "ACCEPT"
+        ? `Goods receipt ${result.receiptNumber} released to inventory.`
+        : `Goods receipt ${result.receiptNumber} rejected and kept unavailable.`,
+    )
+  } catch (error) {
+    return {
+      success: false,
+      data: null,
+      error: error instanceof Error ? error.message : "Failed to resolve goods receipt inspection",
     }
   }
 }

@@ -1,6 +1,6 @@
 # Stoquify Agent Runtime Phase 2B Entry Decision
 
-**Evaluated:** 2026-08-03T14:37:33.262Z<br>
+**Evaluated:** 2026-08-18T04:52:05.063Z<br>
 **Status:** `BLOCKED`<br>
 **Eligible:** No<br>
 **Activation authorized by gate:** No<br>

@@ -8,6 +8,8 @@ const { spawnSync } = require("child_process");
 const DEFAULT_MARKDOWN_OUT =
   "what-next/prisma-migration-deployment-readiness.md";
 const DEFAULT_JSON_OUT = "what-next/prisma-migration-deployment-readiness.json";
+const DEFAULT_REVIEW_PACKET_OUT =
+  "what-next/prisma-migration-risk-review-packet.md";
 const APPROVALS_FILE = "prisma/migration-risk-approvals.json";
 const LOCAL_HOSTS = new Set([
   "localhost",
@@ -40,6 +42,7 @@ function parseArgs(argv = process.argv.slice(2)) {
     environment: "auto",
     out: DEFAULT_MARKDOWN_OUT,
     jsonOut: DEFAULT_JSON_OUT,
+    reviewPacketOut: DEFAULT_REVIEW_PACKET_OUT,
   };
 
   for (let index = 0; index < argv.length; index += 1) {
@@ -49,10 +52,12 @@ function parseArgs(argv = process.argv.slice(2)) {
     else if (value === "--environment") options.environment = argv[++index];
     else if (value === "--out") options.out = argv[++index];
     else if (value === "--json-out") options.jsonOut = argv[++index];
+    else if (value === "--review-packet-out")
+      options.reviewPacketOut = argv[++index];
     else throw new Error("Unknown argument: " + value);
   }
 
-  if (!["report", "fail", "execute"].includes(options.mode))
+  if (!["report", "fail", "execute", "review"].includes(options.mode))
     throw new Error("Unsupported mode: " + options.mode);
   if (
     !["auto", "production", "preview", "local"].includes(options.environment)
@@ -70,8 +75,61 @@ function sha256(value) {
   return crypto.createHash("sha256").update(value).digest("hex");
 }
 
+function canonicalSql(value) {
+  return String(value).replace(/\r\n/g, "\n");
+}
+
+function sqlSha256(value) {
+  return sha256(canonicalSql(value));
+}
+
 function lineAt(source, index) {
   return source.slice(0, index).split(/\r?\n/).length;
+}
+
+function isIsoTimestamp(value) {
+  return (
+    typeof value === "string" &&
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/.test(value) &&
+    Number.isFinite(Date.parse(value))
+  );
+}
+
+function isHumanAuthoredText(value) {
+  return (
+    typeof value === "string" &&
+    value.trim().length > 0 &&
+    !/\b(?:REQUIRED|PLACEHOLDER|TBD|TODO)\b/i.test(value)
+  );
+}
+
+function approvalEntryIsValid(approval) {
+  const revocation = approval?.revocation;
+  const revocationValid =
+    revocation == null ||
+    (revocation.humanAuthored === true &&
+      isHumanAuthoredText(revocation.revokedBy) &&
+      isHumanAuthoredText(revocation.reason) &&
+      isIsoTimestamp(revocation.revokedAt));
+
+  return Boolean(
+    approval &&
+    typeof approval.migration === "string" &&
+    /^prisma\/migrations\/[^/]+\/migration\.sql$/.test(
+      normalizeRelativePath(approval.migration),
+    ) &&
+    /^[a-f0-9]{64}$/.test(String(approval.migrationSha256 || "")) &&
+    /^[a-f0-9]{64}$/.test(String(approval.findingSha256 || "")) &&
+    RISK_RULE_IDS.has(approval.rule) &&
+    approval.humanAuthored === true &&
+    approval.consequenceAcknowledged === true &&
+    isHumanAuthoredText(approval.approvedBy) &&
+    isHumanAuthoredText(approval.reviewerRole) &&
+    isHumanAuthoredText(approval.reason) &&
+    isIsoTimestamp(approval.approvedAt) &&
+    (approval.expiresAt == null || isIsoTimestamp(approval.expiresAt)) &&
+    revocationValid,
+  );
 }
 
 function listMigrationFiles(root) {
@@ -100,25 +158,22 @@ function readApprovalRegistry(root) {
     const parsed = JSON.parse(fs.readFileSync(target, "utf8"));
     const approvals = Array.isArray(parsed.approvals) ? parsed.approvals : [];
     const errors = [];
-    if (parsed.version !== 1) errors.push("approval_registry_version");
+    if (parsed.version !== 2) errors.push("approval_registry_version");
     for (const approval of approvals) {
-      if (
-        typeof approval.migration !== "string" ||
-        !/^prisma\/migrations\/[^/]+\/migration\.sql$/.test(
-          normalizeRelativePath(approval.migration),
-        ) ||
-        !/^[a-f0-9]{64}$/.test(String(approval.sha256 || "")) ||
-        !Array.isArray(approval.rules) ||
-        !approval.rules.length ||
-        !approval.rules.every((rule) => RISK_RULE_IDS.has(rule)) ||
-        typeof approval.approvedBy !== "string" ||
-        !approval.approvedBy.trim() ||
-        typeof approval.reason !== "string" ||
-        !approval.reason.trim() ||
-        !/^\d{4}-\d{2}-\d{2}/.test(String(approval.approvedAt || ""))
-      ) {
+      if (!approvalEntryIsValid(approval)) {
         errors.push("approval_registry_entry_invalid");
       }
+    }
+    const approvalKeys = approvals
+      .filter(approvalEntryIsValid)
+      .map(
+        (approval) =>
+          normalizeRelativePath(approval.migration) +
+          ":" +
+          approval.findingSha256,
+      );
+    if (new Set(approvalKeys).size !== approvalKeys.length) {
+      errors.push("approval_registry_duplicate_entry");
     }
     return {
       exists: true,
@@ -136,53 +191,193 @@ function readApprovalRegistry(root) {
   }
 }
 
-function scanMigrationRisks(root) {
+function statementBounds(source, matchIndex) {
+  const start = source.lastIndexOf(";", Math.max(0, matchIndex - 1)) + 1;
+  const terminator = source.indexOf(";", matchIndex);
+  return {
+    start,
+    end: terminator < 0 ? source.length : terminator + 1,
+  };
+}
+
+function exactClauseFor(source, rule, matchIndex) {
+  if (rule === "drop_column") {
+    const comma = source.indexOf(",", matchIndex);
+    const semicolon = source.indexOf(";", matchIndex);
+    const candidates = [comma, semicolon].filter((index) => index >= 0);
+    const end = candidates.length ? Math.min(...candidates) : source.length;
+    return source.slice(matchIndex, end).trim();
+  }
+  const bounds = statementBounds(source, matchIndex);
+  return source.slice(matchIndex, bounds.end).trim();
+}
+
+function destructiveObjectFor(source, rule, matchIndex, clause) {
+  if (rule === "drop_column") {
+    const bounds = statementBounds(source, matchIndex);
+    const statementPrefix = source.slice(bounds.start, matchIndex);
+    const tableMatch = statementPrefix.match(
+      /\bALTER\s+TABLE(?:\s+IF\s+EXISTS)?\s+("(?:[^"]|"")+"|[A-Za-z_][\w.$]*)/i,
+    );
+    const columnMatch = clause.match(
+      /\bDROP\s+COLUMN(?:\s+IF\s+EXISTS)?\s+("(?:[^"]|"")+"|[A-Za-z_][\w$]*)/i,
+    );
+    return {
+      table: tableMatch?.[1] || "the altered table",
+      column: columnMatch?.[1] || "the named column",
+    };
+  }
+  if (rule === "drop_table") {
+    const tableMatch = clause.match(
+      /\bDROP\s+TABLE(?:\s+IF\s+EXISTS)?\s+("(?:[^"]|"")+"|[A-Za-z_][\w.$]*)/i,
+    );
+    return { table: tableMatch?.[1] || "the named table" };
+  }
+  return {};
+}
+
+function consequenceFor(rule, object) {
+  if (rule === "drop_column") {
+    return (
+      "Permanently removes " +
+      object.table +
+      "." +
+      object.column +
+      " and its stored values; owned indexes/constraints may also be removed."
+    );
+  }
+  if (rule === "drop_table") {
+    return (
+      "Permanently removes " +
+      object.table +
+      " and all of its rows, indexes, triggers, and constraints."
+    );
+  }
+  if (rule === "drop_type")
+    return "Permanently removes the named database type and may invalidate dependent schema objects.";
+  if (rule === "drop_schema")
+    return "Permanently removes the named schema; CASCADE, when present, also removes contained objects.";
+  if (rule === "truncate")
+    return "Permanently removes all rows from the targeted table or tables without row-by-row recovery.";
+  if (rule === "delete_rows")
+    return "Permanently removes every row selected by this DELETE statement.";
+  if (rule === "alter_column_type")
+    return "Rewrites or coerces stored column values and can fail or lose fidelity for incompatible data.";
+  return "Renames a database object and can break consumers that still use the previous name.";
+}
+
+function buildFinding(source, migration, migrationSha256, rule, matchIndex) {
+  const clause = exactClauseFor(source, rule, matchIndex);
+  const object = destructiveObjectFor(source, rule, matchIndex, clause);
+  const consequence = consequenceFor(rule, object);
+  const clauseSha256 = sqlSha256(clause);
+  const findingSha256 = sha256(
+    [migration, migrationSha256, rule, clauseSha256, consequence].join("\n"),
+  );
+  return {
+    migration,
+    migrationSha256,
+    rule,
+    line: lineAt(source, matchIndex),
+    clause,
+    clauseSha256,
+    findingSha256,
+    consequence,
+  };
+}
+
+function scanMigrationRisks(root, options = {}) {
   const files = listMigrationFiles(root);
   const registry = readApprovalRegistry(root);
   const findings = [];
+  const now = new Date(options.now || Date.now());
 
   for (const file of files) {
     const source = fs.readFileSync(file, "utf8");
     const migration = normalizeRelativePath(path.relative(root, file));
-    const digest = sha256(source);
+    const digest = sqlSha256(source);
     for (const rule of RISK_RULES) {
       const pattern = new RegExp(rule.pattern.source, rule.pattern.flags);
       for (const match of source.matchAll(pattern)) {
-        const approval = registry.approvals.find(
-          (candidate) =>
-            normalizeRelativePath(candidate.migration) === migration &&
-            candidate.sha256 === digest &&
-            candidate.rules.includes(rule.id),
+        findings.push(
+          buildFinding(source, migration, digest, rule.id, match.index || 0),
         );
-        findings.push({
-          migration,
-          rule: rule.id,
-          line: lineAt(source, match.index || 0),
-          approved: Boolean(approval),
-        });
       }
     }
   }
 
-  const staleApprovals = registry.approvals
-    .filter((approval) => {
-      const relative = normalizeRelativePath(approval.migration);
-      const target = path.resolve(root, relative);
-      const migrationsRoot =
-        path.resolve(root, "prisma", "migrations") + path.sep;
-      return (
-        !target.startsWith(migrationsRoot) ||
-        !fs.existsSync(target) ||
-        sha256(fs.readFileSync(target, "utf8")) !== approval.sha256
+  const staleApprovals = [];
+  const revokedApprovals = [];
+  for (const approval of registry.approvals.filter(approvalEntryIsValid)) {
+    const migration = normalizeRelativePath(approval.migration);
+    const currentFinding = findings.find(
+      (finding) =>
+        finding.migration === migration &&
+        finding.migrationSha256 === approval.migrationSha256 &&
+        finding.findingSha256 === approval.findingSha256 &&
+        finding.rule === approval.rule,
+    );
+    let staleReason = null;
+    const target = path.resolve(root, migration);
+    if (!fs.existsSync(target)) staleReason = "migration_missing";
+    else if (
+      sqlSha256(fs.readFileSync(target, "utf8")) !== approval.migrationSha256
+    )
+      staleReason = "migration_hash_changed";
+    else if (!currentFinding) staleReason = "finding_hash_missing";
+    else if (
+      approval.expiresAt &&
+      Date.parse(approval.expiresAt) <= now.getTime()
+    )
+      staleReason = "approval_expired";
+
+    if (approval.revocation) {
+      revokedApprovals.push({
+        migration,
+        findingSha256: approval.findingSha256,
+        revokedAt: approval.revocation.revokedAt,
+        revokedBy: approval.revocation.revokedBy,
+        reason: approval.revocation.reason,
+      });
+    }
+    if (staleReason) {
+      staleApprovals.push({
+        migration,
+        findingSha256: approval.findingSha256,
+        reason: staleReason,
+      });
+    }
+  }
+
+  for (const finding of findings) {
+    const approval = registry.approvals
+      .filter(approvalEntryIsValid)
+      .find(
+        (candidate) =>
+          normalizeRelativePath(candidate.migration) === finding.migration &&
+          candidate.migrationSha256 === finding.migrationSha256 &&
+          candidate.findingSha256 === finding.findingSha256 &&
+          candidate.rule === finding.rule,
       );
-    })
-    .map((approval) => normalizeRelativePath(approval.migration));
+    const stale = staleApprovals.some(
+      (candidate) => candidate.findingSha256 === approval?.findingSha256,
+    );
+    finding.approvalStatus = !approval
+      ? "pending"
+      : approval.revocation
+        ? "revoked"
+        : stale
+          ? "stale"
+          : "approved";
+    finding.approved = finding.approvalStatus === "approved";
+  }
 
   return {
     files,
     registry,
     findings,
-    staleApprovals: [...new Set(staleApprovals)],
+    staleApprovals,
+    revokedApprovals,
   };
 }
 
@@ -269,7 +464,7 @@ function buildPrismaMigrationReadiness(root = process.cwd(), options = {}) {
     options.environment || "auto",
     environment,
   );
-  const risk = scanMigrationRisks(root);
+  const risk = scanMigrationRisks(root, { now: options.now });
   const deployment = buildDeploymentDecision(environmentName, environment);
   const packagePath = path.join(root, "package.json");
   const packageSource = fs.existsSync(packagePath)
@@ -351,6 +546,7 @@ function buildPrismaMigrationReadiness(root = process.cwd(), options = {}) {
     ...checks.filter((check) => !check.ready).map((check) => check.id),
     ...risk.registry.errors,
     ...risk.staleApprovals.map(() => "stale_migration_risk_approval"),
+    ...risk.revokedApprovals.map(() => "revoked_migration_risk_approval"),
     ...deployment.blockers,
   ];
 
@@ -365,6 +561,8 @@ function buildPrismaMigrationReadiness(root = process.cwd(), options = {}) {
       riskFindingCount: risk.findings.length,
       approvedRiskCount: risk.findings.filter((finding) => finding.approved)
         .length,
+      staleApprovalCount: risk.staleApprovals.length,
+      revokedApprovalCount: risk.revokedApprovals.length,
       secretValuePrinted: false,
     },
     deployment,
@@ -376,6 +574,7 @@ function buildPrismaMigrationReadiness(root = process.cwd(), options = {}) {
     checks,
     findings: risk.findings,
     staleApprovals: risk.staleApprovals,
+    revokedApprovals: risk.revokedApprovals,
     blockers: [...new Set(blockers)],
   };
 }
@@ -452,6 +651,8 @@ function renderMarkdown(report, mode = "report") {
     "- Migrations: " + report.summary.migrationCount,
     "- Risk findings: " + report.summary.riskFindingCount,
     "- Approved risks: " + report.summary.approvedRiskCount,
+    "- Stale approvals: " + report.summary.staleApprovalCount,
+    "- Revoked approvals: " + report.summary.revokedApprovalCount,
     "- Blockers: " + report.summary.blockerCount,
     "- Secret values printed: no",
     "",
@@ -484,7 +685,10 @@ function renderMarkdown(report, mode = "report") {
             " in " +
             finding.migration +
             ":" +
-            finding.line,
+            finding.line +
+            " (`" +
+            finding.findingSha256 +
+            "`)",
         )
       : ["- No destructive SQL patterns detected."]),
     "",
@@ -498,9 +702,120 @@ function renderMarkdown(report, mode = "report") {
     "",
     "- Local and preview deployments skip database mutation by default.",
     "- Production deployment requires a non-local PostgreSQL DATABASE_URL supplied through the process environment.",
-    "- Approved destructive SQL is bound to the exact migration file hash.",
+    "- Each approved destructive finding is independently bound to the exact migration and SQL-clause hashes.",
+    "- Revoked, expired, hash-drifted, and missing-finding approvals remain blocked.",
     "- Database URLs and credentials are never written to evidence.",
   ];
+  return lines.join("\n") + "\n";
+}
+
+function markdownCell(value) {
+  return String(value).replace(/\|/g, "\\|").replace(/\r?\n/g, "<br>");
+}
+
+function renderRiskReviewPacket(report) {
+  const pendingCount = report.findings.filter(
+    (finding) => !finding.approved,
+  ).length;
+  const lines = [
+    "# Destructive SQL Risk Review Packet",
+    "",
+    "Generated: " + report.summary.generatedAt,
+    "Decision status: `" +
+      report.summary.approvedRiskCount +
+      "/" +
+      report.summary.riskFindingCount +
+      " approved`; `" +
+      pendingCount +
+      "` require a current human decision.",
+    "",
+    "This packet is review evidence only. It does not approve a finding, execute SQL, or authorize deployment. The generator never writes `prisma/migration-risk-approvals.json`.",
+    "",
+    "## Exact findings",
+    "",
+    "| # | State | Rule / location | Exact SQL clause | Consequence | Finding SHA-256 |",
+    "|---:|---|---|---|---|---|",
+    ...report.findings.map(
+      (finding, index) =>
+        "| " +
+        (index + 1) +
+        " | `" +
+        finding.approvalStatus +
+        "` | `" +
+        finding.rule +
+        "`<br>`" +
+        finding.migration +
+        ":" +
+        finding.line +
+        "` | `" +
+        markdownCell(finding.clause) +
+        "` | " +
+        markdownCell(finding.consequence) +
+        " | `" +
+        finding.findingSha256 +
+        "` |",
+    ),
+    "",
+    "## Hash and decision contract",
+    "",
+    ...[
+      ...new Map(
+        report.findings.map((finding) => [
+          finding.migration,
+          finding.migrationSha256,
+        ]),
+      ),
+    ].map(
+      ([migration, digest]) =>
+        "- `" + migration + "` migration SHA-256: `" + digest + "`",
+    ),
+    "- Finding SHA-256 is SHA-256 of `migration path`, `migration SHA-256`, `rule`, `clause SHA-256`, and `consequence`, joined in that order by LF with no trailing LF.",
+    "- One registry entry is required per finding SHA-256; rule-level or migration-wide blanket approvals are rejected.",
+    "- A reviewer must manually author `humanAuthored`, identity, role, rationale, consequence acknowledgement, and UTC timestamp fields in the registry.",
+    "- Hashes use the exact SQL text with line endings canonicalized to LF, so Windows and CI checkouts agree. Any other migration or clause change makes the old entry stale.",
+    "- An optional `expiresAt` in the past also makes an approval stale.",
+    "- Adding a human-authored `revocation` object preserves the original decision but immediately makes the finding unapproved.",
+    "",
+    "## Required human review",
+    "",
+    "Before authoring any approval, independently verify the target schema/data state, authentication compatibility, backup/restore evidence, and fix-forward plan. Existing non-empty databases must follow the migration's guarded adoption decision; this packet does not authorize `migrate resolve` or execution.",
+  ];
+
+  if (report.staleApprovals.length) {
+    lines.push(
+      "",
+      "## Stale approvals",
+      "",
+      ...report.staleApprovals.map(
+        (approval) =>
+          "- `" +
+          approval.findingSha256 +
+          "` in `" +
+          approval.migration +
+          "`: `" +
+          approval.reason +
+          "`",
+      ),
+    );
+  }
+  if (report.revokedApprovals.length) {
+    lines.push(
+      "",
+      "## Revoked approvals",
+      "",
+      ...report.revokedApprovals.map(
+        (approval) =>
+          "- `" +
+          approval.findingSha256 +
+          "` revoked by " +
+          approval.revokedBy +
+          " at `" +
+          approval.revokedAt +
+          "`: " +
+          approval.reason,
+      ),
+    );
+  }
   return lines.join("\n") + "\n";
 }
 
@@ -517,10 +832,17 @@ function writeReport(root, options, report) {
   fs.writeFileSync(jsonTarget, JSON.stringify(report, null, 2) + "\n", "utf8");
 }
 
+function writeRiskReviewPacket(root, options, report) {
+  const target = path.resolve(root, options.reviewPacketOut);
+  fs.mkdirSync(path.dirname(target), { recursive: true });
+  fs.writeFileSync(target, renderRiskReviewPacket(report), "utf8");
+}
+
 function gateResultForReport(report, mode = "report") {
   return {
     status: report.summary.status,
-    exitCode: mode !== "report" && report.blockers.length ? 1 : 0,
+    exitCode:
+      !["report", "review"].includes(mode) && report.blockers.length ? 1 : 0,
   };
 }
 
@@ -532,8 +854,13 @@ if (require.main === module) {
       environment: options.environment,
     });
     if (options.mode === "execute") report = executeMigration(report, { root });
-    writeReport(root, options, report);
-    console.log(renderMarkdown(report, options.mode));
+    if (options.mode === "review") {
+      writeRiskReviewPacket(root, options, report);
+      console.log(renderRiskReviewPacket(report));
+    } else {
+      writeReport(root, options, report);
+      console.log(renderMarkdown(report, options.mode));
+    }
     process.exitCode = gateResultForReport(report, options.mode).exitCode;
   } catch (error) {
     console.error(error instanceof Error ? error.message : String(error));
@@ -548,6 +875,7 @@ module.exports = {
   gateResultForReport,
   parseArgs,
   renderMarkdown,
+  renderRiskReviewPacket,
   resolveEnvironment,
   scanMigrationRisks,
   validateDatabaseTarget,

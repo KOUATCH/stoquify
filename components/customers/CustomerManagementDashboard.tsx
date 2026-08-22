@@ -142,7 +142,7 @@ const copy = {
     search: "Search customers, code, email, phone, address, tax ID...",
     status: "Status",
     activity: "Activity",
-    language: "Language",
+    language: "Preferred language",
     all: "All",
     active: "Active",
     inactive: "Inactive",
@@ -266,7 +266,7 @@ const copy = {
     search: "Rechercher client, code, email, telephone, adresse, ID fiscal...",
     status: "Statut",
     activity: "Activite",
-    language: "Langue",
+    language: "Langue preferee",
     all: "Tous",
     active: "Actif",
     inactive: "Inactif",
@@ -1082,13 +1082,14 @@ export default function CustomerManagementDashboard({
               emptyMessage={`${t.emptyTitle}. ${t.emptyBody}`}
               searchPlaceholder={t.search}
               onVisibleDataChange={handleVisibleCustomersChange}
+              singleRowControls
               showToolbar={false}
               variant="landing"
               filters={{
                 additionalFilters: (
                   <>
                     <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as StatusFilter)}>
-                      <SelectTrigger aria-label={t.status} className="dashboard-control h-9 w-full rounded-lg sm:w-[150px]">
+                      <SelectTrigger aria-label={t.status} className="dashboard-control h-9 w-full rounded-lg sm:w-[150px] xl:w-[100px] xl:shrink-0">
                         <SelectValue placeholder={t.status} />
                       </SelectTrigger>
                       <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
@@ -1098,7 +1099,7 @@ export default function CustomerManagementDashboard({
                       </SelectContent>
                     </Select>
                     <Select value={activityFilter} onValueChange={(value) => setActivityFilter(value as ActivityFilter)}>
-                      <SelectTrigger aria-label={t.activity} className="dashboard-control h-9 w-full rounded-lg sm:w-[170px]">
+                      <SelectTrigger aria-label={t.activity} className="dashboard-control h-9 w-full rounded-lg sm:w-[170px] xl:w-28 xl:shrink-0">
                         <SelectValue placeholder={t.activity} />
                       </SelectTrigger>
                       <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
@@ -1111,7 +1112,7 @@ export default function CustomerManagementDashboard({
                       </SelectContent>
                     </Select>
                     <Select value={localeFilter} onValueChange={(value) => setLocaleFilter(value as LocaleFilter)}>
-                      <SelectTrigger aria-label={t.language} className="dashboard-control h-9 w-full rounded-lg sm:w-[145px]">
+                      <SelectTrigger aria-label={t.language} className="dashboard-control h-9 w-full rounded-lg sm:w-[145px] xl:w-[92px] xl:shrink-0">
                         <SelectValue placeholder={t.language} />
                       </SelectTrigger>
                       <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">

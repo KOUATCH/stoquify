@@ -4,6 +4,7 @@ import {
   InventoryTransactionTimeProvenance,
   LedgerPostingBatchStatus,
   Prisma,
+  PurchaseCorrectionDirection,
   TransactionReferenceType,
   TransactionType,
 } from "@prisma/client"
@@ -44,6 +45,8 @@ type StockEventLineInput = {
   batchNumber?: string | null
   serialNumbers?: string[]
   expiryDate?: Date | null
+  reservedQuantityToConsume?: Prisma.Decimal.Value
+  reversalOfTransactionId?: string | null
 }
 
 type StockEventInput = {
@@ -55,6 +58,7 @@ type StockEventInput = {
   occurredAt?: Date
   sourceType?: AccountingSourceType
   sourceId?: string | null
+  accountingPostingBatchId?: string | null
   documentHash?: string | null
   metadata?: Record<string, unknown>
   requiresOpenPeriod?: boolean
@@ -122,6 +126,29 @@ export type GoodsReceiptStockInput = {
   lines: GoodsReceiptStockLineInput[]
 }
 
+export type PurchaseReturnStockLineInput = {
+  itemId: string
+  locationId: string
+  quantity: Prisma.Decimal.Value
+  unitCost: Prisma.Decimal.Value
+  sourceInventoryTransactionId?: string | null
+}
+
+export type PurchaseReturnStockInput = {
+  organizationId: string
+  purchaseReturnId: string
+  returnNumber: string
+  purchaseOrderId: string
+  goodsReceiptId: string
+  direction: PurchaseCorrectionDirection
+  postedById?: string | null
+  occurredAt?: Date
+  idempotencyKey: string
+  documentHash: string
+  accountingPostingBatchId?: string | null
+  lines: PurchaseReturnStockLineInput[]
+}
+
 export type POSStockLineInput = {
   itemId: string
   quantity: Prisma.Decimal.Value
@@ -155,6 +182,39 @@ export type InventoryReservationInput = {
   expiresAt?: Date | null
   occurredAt?: Date
   idempotencyKey?: string
+}
+
+export type DeliveryOrderReservationInput = {
+  organizationId: string
+  salesOrderId: string
+  orderNumber: string
+  locationId: string
+  actorId: string
+  occurredAt?: Date
+  idempotencyKey: string
+  lines: Array<{
+    salesOrderLineId: string
+    itemId: string
+    quantity: Prisma.Decimal.Value
+    unitCost?: Prisma.Decimal.Value | null
+  }>
+}
+
+export type DeliveryOrderStockIssueInput = {
+  organizationId: string
+  salesOrderId: string
+  goodsIssueId: string
+  issueNumber: string
+  locationId: string
+  actorId: string
+  occurredAt?: Date
+  idempotencyKey: string
+  lines: Array<{
+    salesOrderLineId: string
+    itemId: string
+    quantity: Prisma.Decimal.Value
+    unitCost?: Prisma.Decimal.Value | null
+  }>
 }
 
 function hasTransaction(client: DbClient): client is typeof db {
@@ -372,7 +432,8 @@ async function postReservationLine(
       unitCost: money(input.line.unitCost ?? level.averageCost ?? loaded.item.costPrice ?? 0),
       totalCost: new Prisma.Decimal(0),
       balanceAfter: decimal3(level.quantityOnHand),
-      referenceType: TransactionReferenceType.MANUAL,
+      referenceType: input.line.referenceType ?? TransactionReferenceType.MANUAL,
+      referenceId: input.line.referenceId ?? null,
       referenceNumber: input.line.referenceNumber ?? "INVENTORY_RESERVATION",
       notes: input.line.notes ?? null,
       serialNumbers: [],
@@ -430,10 +491,19 @@ async function postStockLine(
   const currentReserved = decimal3(level?.quantityReserved ?? 0)
   const currentTotalValue = money(level?.totalValue ?? 0)
   const unitCost = money(input.line.unitCost ?? level?.averageCost ?? loaded.item.costPrice ?? 0)
+  const reservedToConsume = decimal3(input.line.reservedQuantityToConsume ?? 0)
+
+  if (reservedToConsume.lt(0) || reservedToConsume.gt(currentReserved)) {
+    throw new BusinessRuleError("Reserved quantity consumption exceeds the active reservation.")
+  }
+  if (reservedToConsume.gt(quantity.abs())) {
+    throw new BusinessRuleError("Reserved quantity consumption cannot exceed the stock issue quantity.")
+  }
 
   if (quantity.lt(0) && !loaded.location.allowNegativeStock) {
     const decrease = quantity.abs().toDecimalPlaces(3)
-    if (currentOnHand.lt(decrease) || currentAvailable.lt(decrease)) {
+    const unreservedDecrease = decrease.minus(reservedToConsume).toDecimalPlaces(3)
+    if (currentOnHand.lt(decrease) || currentAvailable.lt(unreservedDecrease)) {
       throw new InsufficientStockError(
         `Insufficient inventory for item ${loaded.item.sku}. Available: ${currentAvailable.toFixed(3)}, Required: ${decrease.toFixed(3)}`,
         {
@@ -447,7 +517,8 @@ async function postStockLine(
   }
 
   const nextOnHand = currentOnHand.plus(quantity).toDecimalPlaces(3)
-  const nextAvailable = currentAvailable.plus(quantity).toDecimalPlaces(3)
+  const nextReserved = currentReserved.minus(reservedToConsume).toDecimalPlaces(3)
+  const nextAvailable = currentAvailable.plus(quantity).plus(reservedToConsume).toDecimalPlaces(3)
   const valueDelta = unitCost.times(quantity).toDecimalPlaces(2)
   const nextTotalValue = nextOnHand.eq(0)
     ? new Prisma.Decimal(0)
@@ -465,13 +536,15 @@ async function postStockLine(
     if (quantity.lt(0) && !loaded.location.allowNegativeStock) {
       const decrease = quantity.abs().toDecimalPlaces(3)
       guard.quantityOnHand = { gte: decrease }
-      guard.quantityAvailable = { gte: decrease }
+      guard.quantityAvailable = { gte: decrease.minus(reservedToConsume).toDecimalPlaces(3) }
+      if (reservedToConsume.gt(0)) guard.quantityReserved = { gte: reservedToConsume }
     }
 
     const update = await tx.inventoryLevel.updateMany({
       where: guard,
       data: {
         quantityOnHand: nextOnHand,
+        quantityReserved: nextReserved,
         quantityAvailable: nextAvailable,
         averageCost: nextAverageCost,
         totalValue: nextTotalValue,
@@ -520,6 +593,7 @@ async function postStockLine(
       batchNumber: input.line.batchNumber ?? null,
       serialNumbers: input.line.serialNumbers ?? [],
       expiryDate: input.line.expiryDate ?? null,
+      reversalOfTransactionId: input.line.reversalOfTransactionId ?? null,
       effectiveAt: input.effectiveAt,
       recordedAt: input.recordedAt,
       timeProvenance: InventoryTransactionTimeProvenance.EXPLICIT_SOURCE_TIME,
@@ -546,9 +620,14 @@ function stockEventPayload(input: StockEventInput, postingBatchId?: string) {
       quantity: decimal3(line.quantity).toFixed(3),
       unitCost: line.unitCost === null || line.unitCost === undefined ? null : money(line.unitCost).toFixed(2),
       movementType: line.movementType,
+      reservedQuantityToConsume:
+        line.reservedQuantityToConsume === undefined
+          ? null
+          : decimal3(line.reservedQuantityToConsume).toFixed(3),
       referenceType: line.referenceType ?? null,
       referenceId: line.referenceId ?? null,
       referenceNumber: line.referenceNumber ?? null,
+      reversalOfTransactionId: line.reversalOfTransactionId ?? null,
       batchNumber: line.batchNumber ?? null,
       serialNumbers: line.serialNumbers ?? [],
       expiryDate: line.expiryDate?.toISOString() ?? null,
@@ -573,9 +652,14 @@ async function postInventoryStockEvent(
       quantity: decimal3(line.quantity).toFixed(3),
       unitCost: line.unitCost === null || line.unitCost === undefined ? null : money(line.unitCost).toFixed(2),
       movementType: line.movementType,
+      reservedQuantityToConsume:
+        line.reservedQuantityToConsume === undefined
+          ? null
+          : decimal3(line.reservedQuantityToConsume).toFixed(3),
       referenceType: line.referenceType ?? null,
       referenceId: line.referenceId ?? null,
       referenceNumber: line.referenceNumber ?? null,
+      reversalOfTransactionId: line.reversalOfTransactionId ?? null,
     })),
   })
 
@@ -603,7 +687,8 @@ async function postInventoryStockEvent(
           blocker: input.ledgerBlocker,
         })
       : null
-    const payload = stockEventPayload({ ...input, lines: runnableLines, documentHash }, ledgerBatch?.id)
+    const postingBatchId = ledgerBatch?.id ?? input.accountingPostingBatchId ?? undefined
+    const payload = stockEventPayload({ ...input, lines: runnableLines, documentHash }, postingBatchId)
     const eventResult = await recordBusinessEventInTx(tx, {
       organizationId: input.organizationId,
       eventType: input.eventType,
@@ -614,7 +699,7 @@ async function postInventoryStockEvent(
       occurredAt,
       sourceType: input.sourceType,
       sourceId: input.sourceId ?? undefined,
-      postingBatchId: ledgerBatch?.id,
+      postingBatchId,
       documentHash,
       payload,
       metadata: {
@@ -631,7 +716,7 @@ async function postInventoryStockEvent(
             sourceType: input.sourceType ?? null,
             sourceId: input.sourceId ?? null,
             documentHash,
-            postingBatchId: ledgerBatch?.id ?? null,
+            postingBatchId: postingBatchId ?? null,
             lineCount: runnableLines.length,
           },
         },
@@ -659,7 +744,7 @@ async function postInventoryStockEvent(
         documentHash,
         movementTransactionIds: [],
         totalCost: new Prisma.Decimal(0),
-        postingBatchId: ledgerBatch?.id,
+        postingBatchId,
         replayed: true,
       }
     }
@@ -695,7 +780,7 @@ async function postInventoryStockEvent(
             eventType: input.eventType,
             idempotencyKey: input.idempotencyKey,
             documentHash,
-            postingBatchId: ledgerBatch?.id ?? null,
+            postingBatchId: postingBatchId ?? null,
             movementTransactionIds,
             totalCost: totalCost.toFixed(2),
           },
@@ -723,7 +808,7 @@ async function postInventoryStockEvent(
       documentHash,
       movementTransactionIds,
       totalCost,
-      postingBatchId: ledgerBatch?.id,
+      postingBatchId,
       replayed: false,
     }
   }
@@ -866,6 +951,56 @@ export function postGoodsReceiptStock(input: GoodsReceiptStockInput, client: DbC
   )
 }
 
+export function postPurchaseReturnStock(input: PurchaseReturnStockInput, client: DbClient = db) {
+  const isReversal = input.direction === PurchaseCorrectionDirection.REVERSAL
+
+  if (isReversal && input.lines.some((line) => !line.sourceInventoryTransactionId)) {
+    throw new BusinessRuleError("Purchase return reversals must reference every original inventory movement.")
+  }
+
+  return postInventoryStockEvent(
+    {
+      organizationId: input.organizationId,
+      eventType: isReversal
+        ? "purchase.return.stock_reversed"
+        : "purchase.return.stock_posted",
+      idempotencyKey: input.idempotencyKey,
+      actorId: input.postedById,
+      occurredAt: input.occurredAt,
+      sourceType: AccountingSourceType.PURCHASE_RETURN,
+      sourceId: input.purchaseReturnId,
+      documentHash: input.documentHash,
+      accountingPostingBatchId: input.accountingPostingBatchId,
+      outboxEventName: isReversal
+        ? "inventory.purchase_return.reversed"
+        : "inventory.purchase_return.posted",
+      metadata: {
+        returnNumber: input.returnNumber,
+        purchaseOrderId: input.purchaseOrderId,
+        goodsReceiptId: input.goodsReceiptId,
+        correctionDirection: input.direction,
+      },
+      lines: input.lines.map((line) => ({
+        itemId: line.itemId,
+        locationId: line.locationId,
+        quantity: isReversal ? decimal3(line.quantity) : decimal3(line.quantity).negated(),
+        unitCost: line.unitCost,
+        movementType: isReversal
+          ? TransactionType.PURCHASE_RETURN_REVERSAL
+          : TransactionType.PURCHASE_RETURN,
+        referenceType: TransactionReferenceType.RETURN,
+        referenceId: input.purchaseReturnId,
+        referenceNumber: input.returnNumber,
+        reversalOfTransactionId: line.sourceInventoryTransactionId ?? null,
+        notes: isReversal
+          ? "Reversal of purchase return"
+          : "Goods returned against source purchase receipt",
+      })),
+    },
+    client,
+  )
+}
+
 export function postPOSStockIssue(input: POSStockIssueInput, client: DbClient = db) {
   const idempotencyKey =
     input.idempotencyKey ?? `pos-sale-stock:${input.organizationId}:${input.saleId}`
@@ -935,6 +1070,78 @@ export function postPOSStockReturn(input: POSStockReturnInput, client: DbClient 
         referenceId: input.saleId,
         referenceNumber: input.orderNumber,
         notes: line.notes ?? input.reason,
+      })),
+    },
+    client,
+  )
+}
+
+export function postDeliveryOrderReservation(
+  input: DeliveryOrderReservationInput,
+  client: DbClient = db,
+) {
+  return postInventoryStockEvent(
+    {
+      organizationId: input.organizationId,
+      eventType: "delivery.order.inventory_reserved",
+      idempotencyKey: input.idempotencyKey,
+      actorId: input.actorId,
+      occurredAt: input.occurredAt,
+      sourceType: AccountingSourceType.DELIVERY_ORDER,
+      sourceId: input.salesOrderId,
+      requiresOpenPeriod: false,
+      outboxEventName: "inventory.delivery_order.reserved",
+      metadata: {
+        salesOrderId: input.salesOrderId,
+        orderNumber: input.orderNumber,
+        locationId: input.locationId,
+      },
+      lines: input.lines.map((line) => ({
+        itemId: line.itemId,
+        locationId: input.locationId,
+        quantity: line.quantity,
+        unitCost: line.unitCost,
+        movementType: TransactionType.RESERVATION,
+        referenceType: TransactionReferenceType.SALES_ORDER,
+        referenceId: line.salesOrderLineId,
+        referenceNumber: input.orderNumber,
+        notes: `Delivery order ${input.orderNumber} reservation`,
+      })),
+    },
+    client,
+  )
+}
+
+export function postDeliveryOrderStockIssue(
+  input: DeliveryOrderStockIssueInput,
+  client: DbClient = db,
+) {
+  return postInventoryStockEvent(
+    {
+      organizationId: input.organizationId,
+      eventType: "delivery.order.goods_issued",
+      idempotencyKey: input.idempotencyKey,
+      actorId: input.actorId,
+      occurredAt: input.occurredAt,
+      sourceType: AccountingSourceType.DELIVERY_GOODS_ISSUE,
+      sourceId: input.goodsIssueId,
+      outboxEventName: "inventory.delivery_order.goods_issued",
+      metadata: {
+        salesOrderId: input.salesOrderId,
+        issueNumber: input.issueNumber,
+        locationId: input.locationId,
+      },
+      lines: input.lines.map((line) => ({
+        itemId: line.itemId,
+        locationId: input.locationId,
+        quantity: decimal3(line.quantity).times(-1),
+        reservedQuantityToConsume: line.quantity,
+        unitCost: line.unitCost,
+        movementType: TransactionType.SALE,
+        referenceType: TransactionReferenceType.SALES_ORDER,
+        referenceId: line.salesOrderLineId,
+        referenceNumber: input.issueNumber,
+        notes: `Delivery goods issue ${input.issueNumber}`,
       })),
     },
     client,

@@ -1,15 +1,15 @@
 {
   "summary": {
-    "generatedAt": "2026-08-11T13:29:41.094Z",
+    "generatedAt": "2026-08-22T08:01:07.682Z",
     "mode": "fail",
-    "releaseEnforced": true,
-    "status": "blocked",
+    "releaseEnforced": false,
+    "status": "conditional",
     "checkCount": 11,
     "readyCount": 11,
     "blockerCount": 0,
     "releaseConditionCount": 4,
-    "releaseBlockerCount": 7,
-    "readinessReleaseBlockerCount": 3,
+    "releaseBlockerCount": 6,
+    "readinessReleaseBlockerCount": 2,
     "releaseConditionBlockerCount": 4,
     "runReportCount": 14,
     "readinessArtifactCount": 10,
@@ -85,7 +85,6 @@
     }
   ],
   "releaseBlockers": [
-    "readiness:public-identity-abuse",
     "readiness:statutory-country-pack-production",
     "readiness:prisma-migration-deployment",
     "public_identity_hash_secret",
@@ -230,12 +229,12 @@
       "markdownExists": true,
       "parseable": true,
       "structurallyClear": true,
-      "releaseReady": false,
-      "status": "blocked",
-      "readyCount": 14,
+      "releaseReady": true,
+      "status": "ready",
+      "readyCount": 15,
       "checkCount": 15,
-      "blockerCount": 1,
-      "warningCount": 0
+      "blockerCount": 0,
+      "warningCount": 1
     },
     {
       "id": "ledger-close-truth",
@@ -262,8 +261,8 @@
       "structurallyClear": true,
       "releaseReady": true,
       "status": "ready",
-      "readyCount": 12,
-      "checkCount": 12,
+      "readyCount": 14,
+      "checkCount": 14,
       "blockerCount": 0,
       "warningCount": 0
     },
@@ -352,9 +351,9 @@
       "structurallyClear": true,
       "releaseReady": false,
       "status": "blocked",
-      "readyCount": 7,
+      "readyCount": 8,
       "checkCount": 9,
-      "blockerCount": 3,
+      "blockerCount": 1,
       "warningCount": 0
     },
     {
@@ -374,7 +373,6 @@
     }
   ],
   "readinessReleaseBlockers": [
-    "readiness:public-identity-abuse",
     "readiness:statutory-country-pack-production",
     "readiness:prisma-migration-deployment"
   ],
