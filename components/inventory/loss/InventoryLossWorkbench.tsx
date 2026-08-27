@@ -28,8 +28,8 @@ import {
   dashboardMutedTextClass,
   dashboardPanelClass,
 } from "@/components/dashboard/primitives/command-center-primitives";
+import { TableDateRangePicker } from "@/components/DataTableComponents/TableDateRangePicker";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -181,18 +181,14 @@ export function InventoryLossWorkbench() {
             },
           ]}
         >
-          <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-end">
-            <DateControl
-              label={copy.from}
-              value={filters.from}
-              onChange={(from) => updateFilters({ from })}
-            />
-            <DateControl
-              label={copy.through}
-              value={filters.to}
-              onChange={(to) => updateFilters({ to })}
-            />
-          </div>
+          <TableDateRangePicker
+            value={{ from: filters.from, to: filters.to }}
+            onChange={(range) => updateFilters({ from: range.from ?? "", to: range.to ?? "" })}
+            locale={locale === "fr" ? "fr" : "en"}
+            placeholder={copy.from + " - " + copy.through}
+            ariaLabel={copy.from + " - " + copy.through}
+            triggerClassName="h-10"
+          />
         </FilterBar>
 
         {periodError ? (
@@ -378,27 +374,6 @@ export function InventoryLossWorkbench() {
   );
 }
 
-function DateControl({
-  label,
-  value,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-}) {
-  return (
-    <label className="min-w-0 text-xs font-medium text-[var(--dash-text-soft)]">
-      <span className="mb-1 block">{label}</span>
-      <Input
-        type="date"
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        className="dashboard-control h-10 w-full min-w-[10rem] rounded-lg sm:w-44"
-      />
-    </label>
-  );
-}
 function LossBreakdown({
   result,
   locale,

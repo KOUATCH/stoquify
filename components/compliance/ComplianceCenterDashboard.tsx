@@ -608,7 +608,7 @@ function DocumentQueue({
           <EmptyState icon={FileText} title={t("empty.documentsTitle")} description={t("empty.documentsDescription")} />
         ) : (
           <ScrollArea className="w-full">
-            <table className="w-full min-w-[1040px] text-sm">
+            <table className="dashboard-table-base w-full min-w-[1040px] text-sm">
               <thead className={cn("text-left text-xs", mutedTextClass)}>
                 <tr className="border-b border-[var(--dash-border-subtle)]">
                   <th className="py-2 pr-3 font-medium">{t("table.document")}</th>
@@ -841,7 +841,7 @@ function SubmissionQueue({
           <EmptyState icon={ShieldCheck} title={t("empty.submissionsTitle")} description={t("empty.submissionsDescription")} />
         ) : (
           <ScrollArea className="w-full">
-            <table className="w-full min-w-[1040px] text-sm">
+            <table className="dashboard-table-base w-full min-w-[1040px] text-sm">
               <thead className={cn("text-left text-xs", mutedTextClass)}>
                 <tr className="border-b border-[var(--dash-border-subtle)]">
                   <th className="py-2 pr-3 font-medium">{t("table.submission")}</th>

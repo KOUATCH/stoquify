@@ -1,3 +1,5 @@
+import { BusinessRuleError } from "@/services/_shared/action-errors"
+
 import {
   allocatePurchaseDocumentNumber,
   PURCHASE_DOCUMENT_TYPE,
@@ -63,5 +65,18 @@ describe("purchase document number allocation", () => {
       organizationId: "org-1",
       documentType: PURCHASE_DOCUMENT_TYPE.PURCHASE_RETURN,
     })).resolves.toBe("PR-000007")
+  })
+
+  it("returns a typed business-rule failure when the persisted sequence is invalid", async () => {
+    const tx = {
+      documentSequence: {
+        upsert: jest.fn().mockResolvedValue({ nextValue: 1 }),
+      },
+    }
+
+    await expect(allocatePurchaseDocumentNumber(tx as never, {
+      organizationId: "org-1",
+      documentType: PURCHASE_DOCUMENT_TYPE.PURCHASE_ORDER,
+    })).rejects.toBeInstanceOf(BusinessRuleError)
   })
 })

@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 1,
+  "skill": "004-aqstoqflow-business-event-gateway",
+  "generatedAt": "2026-08-23T08:15:57.4226069Z",
+  "sourceRevision": "7736416bd57fc45d3b618ba397850d39320ac3e1",
+  "branch": "codex/service-boundary-burndown",
+  "status": "READY_FOR_REVIEW",
+  "scope": {
+    "included": [
+      "BusinessEvent correlation and durable audit linkage",
+      "BusinessEventAudit and BusinessEventAnomaly additive schema",
+      "same-payload replay and different-payload conflict evidence",
+      "concurrent P2002 replay resolution",
+      "tenant-scoped outbox leasing, bounded retry, delivery, dead-letter, and readiness",
+      "focused and representative consumer regression tests"
+    ],
+    "excluded": [
+      "HR and payroll UI worktree changes",
+      "country-specific legal or authority behavior",
+      "external-release configuration and production deployment blockers",
+      "live migration deployment"
+    ]
+  },
+  "gates": {
+    "architectureAndContext": {
+      "status": "PASS",
+      "evidence": "Reused the canonical services/events boundary, shared typed errors, Prisma transaction client, and existing workflow-assurance outbox visibility checks."
+    },
+    "tenantIsolation": {
+      "status": "PASS",
+      "evidence": "Event uniqueness, replay lookup, leases, delivery/failure updates, anomaly queries, and readiness reads all require organizationId; cross-tenant completion regression passed."
+    },
+    "rbacAndModuleControl": {
+      "status": "NOT_APPLICABLE",
+      "evidence": "This slice adds internal service and worker primitives only; no user action, route, hook, or UI surface was introduced."
+    },
+    "eventAndLedgerIntegrity": {
+      "status": "PASS",
+      "evidence": "Successful event, initial audit, and outbox records use one nested transaction write; recordBusinessEventInTx remains available to domain transactions. Rejected conflict evidence commits independently before the typed error so an outer rollback cannot erase the audit/anomaly record."
+    },
+    "errorAndNotificationContract": {
+      "status": "PASS",
+      "evidence": "IDEMPOTENCY_CONFLICT and DUPLICATE_KEY_CONFLICT use canonical ApplicationError subclasses; unknown worker errors persist only a safe generic message; the fail-mode raw-error boundary gate reported zero active findings."
+    },
+    "operatorVisibility": {
+      "status": "PASS",
+      "evidence": "Open anomalies have a tenant-scoped operator queue service; retry/dead-letter backlog has a tenant-scoped readiness summary and remains covered by the existing workflow-assurance outbox SLA check."
+    },
+    "uxCompleteness": {
+      "status": "NOT_APPLICABLE",
+      "evidence": "No UI surface was added or changed."
+    },
+    "verification": {
+      "status": "PASS",
+      "evidence": "Prisma schema validation, generated types, focused tests, representative consumer tests, raw-error gate, and repository typecheck all passed."
+    },
+    "liveMigrationAndRelease": {
+      "status": "NOT_RUN",
+      "evidence": "The additive migration was created and schema-validated but was not deployed. External-release preflight/configuration was deliberately left untouched."
+    }
+  },
+  "verification": [
+    {
+      "command": "npm test -- --runInBand services/events/__tests__/business-event.service.test.ts services/events/__tests__/business-event-anomaly.service.test.ts services/events/__tests__/business-event-outbox.service.test.ts",
+      "exitCode": 0,
+      "result": "3 suites passed; 14 tests passed"
+    },
+    {
+      "command": "npm test -- --runInBand services/pos/__tests__/pos.service.test.ts services/payments/__tests__/provider-event.service.test.ts services/compliance/__tests__/fiscal-document.service.test.ts services/reconciliation/__tests__/payment-suspense-workflow.service.test.ts",
+      "exitCode": 0,
+      "result": "4 suites passed; 49 tests passed"
+    },
+    {
+      "command": "npm run prisma:validate",
+      "exitCode": 0,
+      "result": "Prisma schema valid"
+    },
+    {
+      "command": ".\\node_modules\\.bin\\prisma.cmd generate --no-engine",
+      "exitCode": 0,
+      "result": "Prisma Client types generated with engine=none after the normal generator encountered a locked Windows query-engine DLL"
+    },
+    {
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "result": "TypeScript check passed"
+    },
+    {
+      "command": "npm run error:boundary:fail",
+      "exitCode": 0,
+      "result": "0 active unsafe raw-error findings; 129 allowed classified findings"
+    }
+  ],
+  "filesChanged": [
+    "prisma/schema.prisma",
+    "prisma/migrations/20260823100000_business_event_gateway_completion/migration.sql",
+    "services/_shared/action-errors.ts",
+    "services/events/business-event.schemas.ts",
+    "services/events/business-event.service.ts",
+    "services/events/business-event-anomaly.service.ts",
+    "services/events/business-event-outbox.service.ts",
+    "services/events/EVENT_SPEC_TEMPLATE.md",
+    "services/events/__tests__/business-event.service.test.ts",
+    "services/events/__tests__/business-event-anomaly.service.test.ts",
+    "services/events/__tests__/business-event-outbox.service.test.ts",
+    "docs/engineering/quality-gates/AQSTOQFLOW_004_BUSINESS_EVENT_GATEWAY_RUN_REPORT_2026-08-23.json",
+    "docs/engineering/quality-gates/AQSTOQFLOW_004_BUSINESS_EVENT_GATEWAY_RUN_REPORT_2026-08-23.md"
+  ],
+  "blocked": [
+    "Live PostgreSQL migration deployment and database-level integration proof were not run.",
+    "External-release preflight remains outside this skill run by explicit scope."
+  ],
+  "nextRecommendedSkill": "005-aqstoqflow-accounting-control-center"
+}

@@ -3,6 +3,7 @@ import "server-only"
 import { logger } from "@/lib/logger"
 import { db } from "@/prisma/db"
 import {
+  ApplicationError,
   BusinessRuleError,
   ConflictError,
   getPrismaKnownRequest,
@@ -1141,7 +1142,15 @@ export async function receiveItems(input: ReceiveItemsInput) {
       replayed: result.replayed,
     }
   } catch (error) {
-    if (getPrismaKnownRequest(error)?.code !== "P2002") throw error
+    if (error instanceof ApplicationError) throw error
+    if (getPrismaKnownRequest(error)?.code !== "P2002") {
+      throw new ApplicationError(
+        "INTERNAL_ERROR",
+        "Goods receipt could not be completed safely.",
+        500,
+        false,
+      )
+    }
 
     const existingReceipt = await db.goodsReceipt.findFirst({
       where: {
@@ -1155,7 +1164,9 @@ export async function receiveItems(input: ReceiveItemsInput) {
         status: true,
       },
     })
-    if (!existingReceipt) throw error
+    if (!existingReceipt) {
+      throw new ConflictError("A concurrent goods receipt conflict was detected. Refresh and retry.")
+    }
     assertReceiptReplay(existingReceipt, input, payloadHash)
 
     const purchaseOrder = await db.purchaseOrder.findFirst({
@@ -1425,7 +1436,15 @@ export async function resolveGoodsReceiptInspection(input: ResolveGoodsReceiptIn
       }
     })
   } catch (error) {
-    if (getPrismaKnownRequest(error)?.code !== "P2002") throw error
+    if (error instanceof ApplicationError) throw error
+    if (getPrismaKnownRequest(error)?.code !== "P2002") {
+      throw new ApplicationError(
+        "INTERNAL_ERROR",
+        "Goods receipt inspection resolution could not be completed safely.",
+        500,
+        false,
+      )
+    }
 
     const existingCommand = await db.goodsReceiptInspectionResolution.findFirst({
       where: {
@@ -1441,7 +1460,9 @@ export async function resolveGoodsReceiptInspection(input: ResolveGoodsReceiptIn
         },
       },
     })
-    if (!existingCommand) throw error
+    if (!existingCommand) {
+      throw new ConflictError("A concurrent inspection resolution conflict was detected. Refresh and retry.")
+    }
     assertInspectionResolutionReplay(existingCommand, input, payloadHash)
     return {
       goodsReceiptId: existingCommand.goodsReceiptId,

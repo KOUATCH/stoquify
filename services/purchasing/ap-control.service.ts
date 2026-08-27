@@ -30,7 +30,7 @@ import { recordPostedJournalCloseInvalidationInTx } from "@/services/accounting/
 import { createLedgerPostingBatch, linkAccountingSource } from "@/services/accounting/posting.service"
 import { getOpenPeriodForDate } from "@/services/accounting/periods.service"
 import { getActivePostingRule } from "@/services/accounting/posting-rules.service"
-import { BusinessRuleError, ConflictError, NotFoundError } from "@/services/_shared/action-errors"
+import { ApplicationError, BusinessRuleError, ConflictError, NotFoundError } from "@/services/_shared/action-errors"
 import {
   auditSensitiveActionDecision,
   assertSensitiveActionAllowed,
@@ -2203,10 +2203,16 @@ export async function requestSupplierInvoiceMatchException(
       return { matchException, businessEventId: eventResult.event.id }
     })
   } catch (error) {
+    if (error instanceof ApplicationError) throw error
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
       throw new ConflictError("An active match exception already exists for this supplier invoice match.")
     }
-    throw error
+    throw new ApplicationError(
+      "INTERNAL_ERROR",
+      "Supplier invoice match exception request could not be completed safely.",
+      500,
+      false,
+    )
   }
 }
 

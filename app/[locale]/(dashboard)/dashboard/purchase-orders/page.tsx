@@ -209,6 +209,7 @@ export default async function PurchaseOrdersPage() {
                     initialLocationData={options.locations}
                     currency={currency}
                     canCreate={createCapability.allowed}
+                    locale={locale}
                   />
                 </div>
               </Suspense>

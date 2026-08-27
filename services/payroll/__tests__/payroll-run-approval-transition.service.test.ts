@@ -952,12 +952,14 @@ describe("approvePayrollRun REVIEWED -> APPROVED", () => {
     expect(mockMarkBusinessEventAppliedInTx).not.toHaveBeenCalled();
   });
 
-  it("retries a serializable transaction conflict and applies the transition once", async () => {
+  it.each(["P2002", "P2034"])(
+    "retries a %s serializable transaction conflict and applies the transition once",
+    async (code) => {
     const tx = buildTx();
     const client = {
       $transaction: jest
         .fn()
-        .mockRejectedValueOnce({ code: "P2034" })
+        .mockRejectedValueOnce({ code })
         .mockImplementationOnce(async (work: (value: typeof tx) => unknown) =>
           work(tx),
         ),
@@ -969,6 +971,26 @@ describe("approvePayrollRun REVIEWED -> APPROVED", () => {
     expect(client.$transaction).toHaveBeenCalledTimes(2);
     expect(tx.payrollRunTransition.create).toHaveBeenCalledTimes(1);
     expect(tx.payrollRun.updateMany).toHaveBeenCalledTimes(1);
+    },
+  );
+
+  it("normalizes an unexpected transaction failure without leaking the raw error", async () => {
+    const client = {
+      $transaction: jest.fn().mockRejectedValueOnce(new Error("database connection details")),
+    };
+
+    await expect(
+      approvePayrollRun(approvalInput(), client as never),
+    ).rejects.toEqual(
+      expect.objectContaining({
+        code: "INTERNAL_ERROR",
+        status: 500,
+        expose: false,
+        message: "Payroll transition could not be completed safely.",
+      }),
+    );
+
+    expect(client.$transaction).toHaveBeenCalledTimes(1);
   });
 
   it("returns the prior result for a same-payload idempotent replay", async () => {

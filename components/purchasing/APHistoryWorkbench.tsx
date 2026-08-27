@@ -56,6 +56,7 @@ export function APHistoryWorkbench() {
 
   return (
     <TransactionHistoryWorkbenchShell
+      locale={locale === "fr" ? "fr" : "en"}
       labels={{
         eyebrow: t("eyebrow"),
         title: t("title"),

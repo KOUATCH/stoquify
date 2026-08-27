@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { DatePicker } from "@/components/ui/date-picker"
+import { TableDateRangePicker } from "@/components/DataTableComponents/TableDateRangePicker"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -212,24 +212,24 @@ export function StockMovementDashboard() {
   const [selectedItem, setSelectedItem] = useState<string>("all")
   const [selectedLocation, setSelectedLocation] = useState<string>("all")
   const [selectedType, setSelectedType] = useState<TransactionType | "all">("all")
-  const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined)
-  const [dateTo, setDateTo] = useState<Date | undefined>(undefined)
+  const [dateFrom, setDateFrom] = useState("")
+  const [dateTo, setDateTo] = useState("")
 
   // Fetch data
   const { data: transactions, isLoading: transactionsLoading } = useInventoryTransactions(orgId, {
     itemId: selectedItem === "all" ? undefined : selectedItem,
     locationId: selectedLocation === "all" ? undefined : selectedLocation,
     type: selectedType === "all" ? undefined : selectedType,
-    dateFrom: dateFrom?.toISOString().split('T')[0] || undefined,
-    dateTo: dateTo?.toISOString().split('T')[0] || undefined,
+    dateFrom: dateFrom || undefined,
+    dateTo: dateTo || undefined,
     limit: 100,
   })
 
   const { data: summary, isLoading: summaryLoading } = useStockMovementSummary(orgId, {
     itemId: selectedItem === "all" ? undefined : selectedItem,
     locationId: selectedLocation === "all" ? undefined : selectedLocation,
-    dateFrom: dateFrom?.toISOString().split('T')[0] || undefined,
-    dateTo: dateTo?.toISOString().split('T')[0] || undefined,
+    dateFrom: dateFrom || undefined,
+    dateTo: dateTo || undefined,
   })
 
   const { data: itemsResponse } = useOrgItemsNew(orgId, { enabled: !!orgId })
@@ -301,8 +301,8 @@ export function StockMovementDashboard() {
     setSelectedItem("all")
     setSelectedLocation("all")
     setSelectedType("all")
-    setDateFrom(undefined)
-    setDateTo(undefined)
+    setDateFrom("")
+    setDateTo("")
   }
 
   if (!orgId || transactionsLoading || summaryLoading) {
@@ -420,7 +420,7 @@ export function StockMovementDashboard() {
             </TabsList>
 
             <TabsContent value="transactions" className="space-y-5">
-              <div className="dashboard-filter-chip rounded-lg p-4">
+              <div className="dashboard-table-toolbar rounded-lg p-4">
                 <div className="mb-4 flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <h4 className="text-sm font-semibold uppercase text-[var(--dash-text-muted)]">Filters</h4>
@@ -483,21 +483,17 @@ export function StockMovementDashboard() {
                     </SelectContent>
                   </Select>
 
-                  <DatePicker
-                    date={dateFrom}
-                    onDateChange={setDateFrom}
-                    placeholder="From Date"
-                    maxDate={dateTo || new Date()}
-                    className="dashboard-control h-10 rounded-lg"
-                  />
-
-                  <DatePicker
-                    date={dateTo}
-                    onDateChange={setDateTo}
-                    placeholder="To Date"
-                    minDate={dateFrom}
-                    maxDate={new Date()}
-                    className="dashboard-control h-10 rounded-lg"
+                  <TableDateRangePicker
+                    value={{ from: dateFrom || undefined, to: dateTo || undefined }}
+                    onChange={(range) => {
+                      setDateFrom(range.from ?? "")
+                      setDateTo(range.to ?? "")
+                    }}
+                    locale={locale}
+                    placeholder="Date range"
+                    ariaLabel="Date range"
+                    className="md:col-span-2 xl:col-span-2 xl:w-full xl:[&_button]:w-full"
+                    triggerClassName="h-10"
                   />
                 </div>
               </div>

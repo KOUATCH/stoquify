@@ -60,6 +60,19 @@ const REQUIRED_PERMISSIONS = [
 ]
 const DENIED_PERMISSIONS = ["dashboard.read"]
 
+function normalizePrismaDatasourceUrl(rawUrl) {
+  if (!rawUrl) return rawUrl
+
+  const trimmed = String(rawUrl).trim()
+  if (!trimmed) return trimmed
+  if (trimmed.startsWith("prisma://") || trimmed.startsWith("prisma+postgres://")) return trimmed
+  if (trimmed.startsWith("postgres://") || trimmed.startsWith("postgresql://")) {
+    return "prisma+postgres://" + trimmed.slice(trimmed.indexOf("://") + 3)
+  }
+
+  return trimmed
+}
+
 const SUPPLIER_E2E_FIXTURE_CONTRACT = Object.freeze({
   fixtureSource: FIXTURE_SOURCE,
   fixturePurpose: "authenticated supplier workflow browser certification",
@@ -85,14 +98,16 @@ const SUPPLIER_E2E_FIXTURE_CONTRACT = Object.freeze({
 
 function resolvedDatabaseUrl(env = process.env) {
   const candidate = expandEnvValue(env.DIRECT_URL || env.DATABASE_URL || env.AQSTOQFLOW_SUPPLIER_E2E_DATABASE_URL || "")
-  if (candidate.startsWith("postgres://") || candidate.startsWith("postgresql://")) return candidate
+  if (candidate) return normalizePrismaDatasourceUrl(candidate)
   const host = env.DB_HOST || env.PGHOST || "127.0.0.1"
   const port = env.DB_PORT || env.PGPORT || "5432"
   const user = env.DB_USER || env.PGUSER || "postgres"
   const password = env.DB_PASSWORD || env.PGPASSWORD || ""
   const database = env.DB_NAME || env.PGDATABASE || env.SUPPLIER_E2E_DATABASE || "dbakesman"
   const auth = encodeURIComponent(user) + (password ? ":" + encodeURIComponent(password) : "")
-  return "postgresql://" + auth + "@" + host + ":" + port + "/" + database
+  return normalizePrismaDatasourceUrl(
+    "postgresql://" + auth + "@" + host + ":" + port + "/" + database,
+  )
 }
 
 function assertLocalFixtureAllowed(env = process.env, databaseUrl = "postgresql://postgres@127.0.0.1:5432/stoquify") {
@@ -406,6 +421,8 @@ if (require.main === module) {
 }
 
 module.exports = {
+  normalizePrismaDatasourceUrl,
+  resolvedDatabaseUrl,
   assertLocalFixtureAllowed,
   assureSupplierFixture,
   cleanupSupplierFixture,

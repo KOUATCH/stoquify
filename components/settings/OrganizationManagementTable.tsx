@@ -1014,7 +1014,7 @@ export default function OrganizationManagementTable({
           </Table>
         </div>
 
-        <DataTablePagination table={table} variant="landing" />
+        <DataTablePagination table={table} variant="landing" locale={locale} />
       </div>
       </section>
 

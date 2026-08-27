@@ -1,0 +1,296 @@
+%PDF-1.4
+1 0 obj
+<< /Length 2557 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 50 0 Tm
+50 770 Td
+0 -14 Td
+14 TL
+(2-Week constrained sprint plan: Top 8 non-table UI/UX deltas) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Scope: Only non-table component families \(shell, commands, overlays, state systems, forms, accessibility microcopy\).) Tj
+0 -14 Td
+(Date: 2026-08-24) Tj
+0 -14 Td
+(Source baseline: prior `what-next/ui-ux-enterprise-review` findings.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Top 8 deltas selected) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Standardize shell command interactions \(keyboard + focus + empty/error behavior\)) Tj
+0 -14 Td
+(Standardize entitlement/disabled action messaging in navigation) Tj
+0 -14 Td
+(Shared destructive confirmation contract \(`action`, `impact`, `consequence`, `undo`\)) Tj
+0 -14 Td
+(Shared command-no-match guidance and recovery action) Tj
+0 -14 Td
+(Overlay standardization \(modal/drawer width, close semantics, focus trap, restore focus\)) Tj
+0 -14 Td
+(Shared form phase pattern for high-frequency multi-step workflows) Tj
+0 -14 Td
+(Unified state vocabulary for alert/toast/error/loading/empty surfaces) Tj
+0 -14 Td
+(Accessibility hardening: focus-visible, aria-labeling, keyboard contracts) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Sprint objective) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(- Deliver a measurable reduction in enterprise workflow friction without changing backend logic.) Tj
+0 -14 Td
+(- Target: 4 audited modules fully upgraded + one pilot migration pattern to reuse enterprise-wide.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Team assumptions) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(- Frontend delivery capacity: 2 developers \(shared design-system and app teams\)) Tj
+0 -14 Td
+(- Design support: 1 UX designer half-time) Tj
+0 -14 Td
+(- QA: 1 QA engineer for regression + accessibility smoke) Tj
+0 -14 Td
+(- DevOps/release support as needed for feature flags) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Day-by-day plan \(10 working days\)) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Week 1) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Day 1 \(Mon\)) Tj
+0 -14 Td
+(- Finalize sprint contract definitions:) Tj
+0 -14 Td
+(- Document behavior contracts for shell command, overlay, destructive confirmation, and feedback state vocabulary.) Tj
+0 -14 Td
+(- Create sprint feature flags for rollout safety.) Tj
+0 -14 Td
+(- Add minimal acceptance criteria per delta.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Day 2 \(Tue\)) Tj
+0 -14 Td
+(- Implement shell command contract foundation:) Tj
+0 -14 Td
+(- Keyboard map, open/close lifecycle, empty results semantics, result action ranking rules.) Tj
+0 -14 Td
+(- Add shared types + lightweight schema validators for command actions.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+ET
+endstream
+endobj
+2 0 obj
+<< /Length 2264 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 50 0 Tm
+50 770 Td
+0 -14 Td
+14 TL
+(Day 3 \(Wed\)) Tj
+0 -14 Td
+(- Navigation entitlement messaging pass:) Tj
+0 -14 Td
+(- Standard why disabled + what to do labels and iconography across sidebar and module entry points.) Tj
+0 -14 Td
+(- Begin telemetry hooks for access-denied interactions.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Day 4 \(Thu\)) Tj
+0 -14 Td
+(- Overlay standardization v1:) Tj
+0 -14 Td
+(- Shared modal/drawer primitives with consistent width variants, escape/cancel behavior, focus trap, restore-focus.) Tj
+0 -14 Td
+(- Migrate two highest-volume surfaces.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Day 5 \(Fri\)) Tj
+0 -14 Td
+(- Destructive confirmation contract v1:) Tj
+0 -14 Td
+(- Add consequence framing \(`financial/legal/compliance` impact snippets by action class\).) Tj
+0 -14 Td
+(- Team review + internal demo with operations + support.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Week 2) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Day 6 \(Mon\)) Tj
+0 -14 Td
+(- Form phase template v1 for top 2 workflows:) Tj
+0 -14 Td
+(- Intake  validate  confirm  finalize.) Tj
+0 -14 Td
+(- Preserve values and recovery state on validation failure.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Day 7 \(Tue\)) Tj
+0 -14 Td
+(- Feedback taxonomy implementation:) Tj
+0 -14 Td
+(- One canonical status ladder \(`info`, `success`, `warning`, `error`, `critical`, `blocked`\) used by toast/badges/alerts.) Tj
+0 -14 Td
+(- Map at least 20 high-volume action outcomes.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Day 8 \(Wed\)) Tj
+0 -14 Td
+(- Command recovery and empty-state improvements:) Tj
+0 -14 Td
+(- No matches suggestions, create/adjust shortcut options, quick docs fallback.) Tj
+0 -14 Td
+(- Accessibility pass 1:) Tj
+0 -14 Td
+(- focus-visible visibility, key bindings, role/aria audit on touched components.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Day 9 \(Thu\)) Tj
+0 -14 Td
+(- Integration hardening:) Tj
+0 -14 Td
+(- Regression pass for changed modules.) Tj
+0 -14 Td
+(- Validate mobile shell behavior for new shell/overlay patterns.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Day 10 \(Fri\)) Tj
+0 -14 Td
+(- Release readiness:) Tj
+0 -14 Td
+(- Demo + stakeholder sign-off.) Tj
+0 -14 Td
+(- Publish change log and run acceptance checklist.) Tj
+0 -14 Td
+(- Create Phase 2 handoff list for remaining modules.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+ET
+endstream
+endobj
+3 0 obj
+<< /Length 1510 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 50 0 Tm
+50 770 Td
+0 -14 Td
+14 TL
+(Deliverables by sprint end) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(- 4 upgraded modules at enterprise contract parity on targeted deltas.) Tj
+0 -14 Td
+(- Centralized component contracts for command, modal, confirmation, and feedback state behavior.) Tj
+0 -14 Td
+(- Accessibility baseline for all changed journeys.) Tj
+0 -14 Td
+(- Pilot de-risk report and rollout playbook for remaining modules.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Exit gates \(must pass before merge\)) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Deterministic command behavior across all migrated modules.) Tj
+0 -14 Td
+(100% destructive confirmations using consequence framing.) Tj
+0 -14 Td
+(All changed modals/drawers pass keyboard + focus retention checks.) Tj
+0 -14 Td
+(No regression for existing high-volume flows \(measured by scenario smoke checks\).) Tj
+0 -14 Td
+(Accessibility smoke pass for touched screens \(keyboard, labeling, contrast\).) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Known trade-offs) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(- Restricting scope to 8 deltas means other polish items are deferred and may appear inconsistent briefly.) Tj
+0 -14 Td
+(- Some modules may need minor visual reflow where old overlay behavior is replaced.) Tj
+0 -14 Td
+(- Localization copy hardening is deferred to reduce risk of scope spillover.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Success metric) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(- Targeted consistency uplift of +1.0 in audited families \(from 3.0  ~4.0\) across the 4 migrated modules.) Tj
+0 -14 Td
+ET
+endstream
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+5 0 obj
+<< /Type /Page /Parent 6 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 2 0 R >>
+endobj
+6 0 obj
+<< /Type /Page /Parent 6 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 3 0 R >>
+endobj
+7 0 obj
+<< /Type /Page /Parent 6 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 4 0 R >>
+endobj
+8 0 obj
+<< /Type /Pages /Kids [6 0 R 7 0 R 8 0 R] /Count 3 >>
+endobj
+9 0 obj
+<< /Type /Catalog /Pages 8 0 R >>
+endobj
+xref
+0 10
+0000000000 65535 f 
+0000000009 00000 n 
+0000002617 00000 n 
+0000004911 00000 n 
+0000006469 00000 n 
+0000006539 00000 n 
+0000006665 00000 n 
+0000006791 00000 n 
+0000006917 00000 n 
+0000006986 00000 n 
+trailer
+<< /Size 10 /Root 9 0 R >>
+startxref
+7035
+%%EOF

@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link"
 import {
   AlertTriangle,
@@ -13,6 +15,11 @@ import { localizePath } from "@/i18n/routing"
 import { HrisOperationalTimeApprovalPanel } from "@/components/hris/HrisOperationalTimeApprovalPanel"
 import type { HrisManagerSelfServiceResult } from "@/services/hris/manager-self-service.service"
 import type { Locale } from "@/types/bilingual"
+import {
+  HrPayrollTableControls,
+  HrPayrollTablePagination,
+  useHrPayrollTable,
+} from "@/components/hr-payroll/HrPayrollTableControls"
 
 type Props = {
   model: HrisManagerSelfServiceResult
@@ -29,6 +36,18 @@ function formatCode(value: string) {
 }
 
 export function HrisManagerSelfService({ model, approvalsHref, locale }: Props) {
+  const workforceTable = useHrPayrollTable({
+    rows: model.workforce,
+    searchText: (employee) => JSON.stringify(employee),
+    dateValue: (employee) => employee.attendance.latestCertifiedPeriodEnd ?? model.asOf,
+    sortOptions: [
+      { key: "employee", label: "Employee", value: (employee) => employee.displayName },
+      { key: "role", label: "Role", value: (employee) => employee.employment.jobTitle },
+      { key: "location", label: "Location", value: (employee) => employee.employment.location?.name },
+      { key: "attendance", label: "Attendance date", value: (employee) => employee.attendance.latestCertifiedPeriodEnd },
+      { key: "readiness", label: "Readiness", value: (employee) => employee.readiness.status },
+    ],
+  })
   const summaryItems = [
     ["Visible workforce", model.summary.workforceCount],
     ["Payroll-input ready", model.summary.readyCount],
@@ -93,8 +112,10 @@ export function HrisManagerSelfService({ model, approvalsHref, locale }: Props) 
           <span className="text-xs text-slate-500">As of {formatDate(model.asOf, locale)}</span>
         </div>
         {model.workforce.length ? (
-          <div className="min-w-0 overflow-x-auto border-y border-white/10">
-            <table className="w-full min-w-[860px] table-fixed text-left text-sm">
+          <div className="min-w-0 overflow-hidden border-y border-white/10">
+            <HrPayrollTableControls table={workforceTable} locale={locale} tableLabel="workforce readiness" />
+            <div className="dashboard-data-table dashboard-table-shell overflow-x-auto">
+              <table className="w-full min-w-[860px] table-fixed text-left text-sm">
               <thead className="bg-white/[0.03] text-xs uppercase text-slate-400">
                 <tr>
                   <th className="w-[23%] px-3 py-3 font-medium">Employee</th>
@@ -106,7 +127,7 @@ export function HrisManagerSelfService({ model, approvalsHref, locale }: Props) 
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/10">
-                {model.workforce.map((employee) => (
+                {workforceTable.rows.length ? workforceTable.rows.map((employee) => (
                   <tr key={employee.profileHref} className="align-top text-slate-200">
                     <td className="px-3 py-3">
                       <Link href={localizePath(employee.profileHref, locale)} className="break-words font-medium text-white hover:text-emerald-200">
@@ -142,9 +163,13 @@ export function HrisManagerSelfService({ model, approvalsHref, locale }: Props) 
                       ) : null}
                     </td>
                   </tr>
-                ))}
+                )) : (
+                  <tr><td colSpan={6} className="px-3 py-8 text-center text-slate-400">No employees match the table filters.</td></tr>
+                )}
               </tbody>
-            </table>
+              </table>
+            </div>
+            <HrPayrollTablePagination table={workforceTable} locale={locale} />
           </div>
         ) : (
           <p className="border-y border-white/10 py-6 text-sm text-slate-400">No employees are visible in the current responsibility scope.</p>

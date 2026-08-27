@@ -112,7 +112,34 @@ function loadLocalEnv() {
 
 loadLocalEnv()
 
-const prisma = new PrismaClient()
+function normalizePrismaDatasourceUrl(rawUrl) {
+  if (!rawUrl) return rawUrl
+
+  const trimmed = String(rawUrl).trim()
+  if (!trimmed) return trimmed
+  if (trimmed.startsWith("prisma://") || trimmed.startsWith("prisma+postgres://")) return trimmed
+  if (trimmed.startsWith("postgres://") || trimmed.startsWith("postgresql://")) {
+    return "prisma+postgres://" + trimmed.slice(trimmed.indexOf("://") + 3)
+  }
+
+  return trimmed
+}
+
+function resolvePrismaDatasourceUrl(env = process.env) {
+  const candidate = expandEnvValue(String(env.DATABASE_URL || env.DIRECT_URL || "").trim())
+  if (!candidate) return candidate
+  return normalizePrismaDatasourceUrl(candidate)
+}
+
+function createPrismaClient(env = process.env) {
+  const databaseUrl = resolvePrismaDatasourceUrl(env)
+  return databaseUrl ? new PrismaClient({ datasources: { db: { url: databaseUrl } } }) : new PrismaClient()
+}
+
+const resolvedDatasourceUrl = resolvePrismaDatasourceUrl()
+if (resolvedDatasourceUrl) process.env.DATABASE_URL = resolvedDatasourceUrl
+
+const prisma = createPrismaClient(process.env)
 
 const DEMO_ONLY_NOTICE =
   "Demo-only payroll browser fixture. This is not production payroll backfill and must not be used for statutory truth."
@@ -1650,11 +1677,19 @@ async function main() {
   console.log("Provisioned local payroll browser smoke data. Auth state remains local at playwright/.auth/payroll.json.")
 }
 
-main()
-  .catch((error) => {
-    console.error(error instanceof Error ? error.message : error)
-    process.exitCode = 1
-  })
-  .finally(async () => {
-    await prisma.$disconnect()
-  })
+if (require.main === module) {
+  main()
+    .catch((error) => {
+      console.error(error instanceof Error ? error.message : error)
+      process.exitCode = 1
+    })
+    .finally(async () => {
+      await prisma.$disconnect()
+    })
+}
+
+module.exports = {
+  assertLocalSeedAllowed,
+  normalizePrismaDatasourceUrl,
+  resolvePrismaDatasourceUrl,
+}

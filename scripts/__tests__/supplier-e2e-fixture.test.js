@@ -1,6 +1,8 @@
 const {
   assertLocalFixtureAllowed,
   SUPPLIER_E2E_FIXTURE_CONTRACT,
+  normalizePrismaDatasourceUrl,
+  resolvedDatabaseUrl,
 } = require("../supplier-e2e-fixture")
 
 describe("supplier E2E fixture contract", () => {
@@ -73,5 +75,32 @@ describe("supplier E2E fixture contract", () => {
         "postgresql://postgres@db.internal:5432/stoquify",
       ),
     ).not.toThrow()
+  })
+
+  it("normalizes supplier datasource URLs for Prisma Edge compatibility", () => {
+    expect(normalizePrismaDatasourceUrl("postgresql://postgres@db.internal:5432/stoquify")).toBe(
+      "prisma+postgres://postgres@db.internal:5432/stoquify",
+    )
+    expect(normalizePrismaDatasourceUrl("postgres://postgres@db.internal:5432/stoquify")).toBe(
+      "prisma+postgres://postgres@db.internal:5432/stoquify",
+    )
+    expect(normalizePrismaDatasourceUrl("prisma+postgres://postgres@db.internal:5432/stoquify")).toBe(
+      "prisma+postgres://postgres@db.internal:5432/stoquify",
+    )
+  })
+
+  it("resolves supplier datasource URLs from explicit URLs and DB_* fallback", () => {
+    expect(resolvedDatabaseUrl({ DATABASE_URL: "postgres://postgres@db.internal:5432/stoquify" })).toBe(
+      "prisma+postgres://postgres@db.internal:5432/stoquify",
+    )
+    expect(
+      resolvedDatabaseUrl({
+        DB_USER: "tenant",
+        DB_PASSWORD: "pa:ss",
+        DB_HOST: "10.0.0.5",
+        DB_PORT: "5444",
+        DB_NAME: "fixturedb",
+      }),
+    ).toBe("prisma+postgres://tenant:pa%3Ass@10.0.0.5:5444/fixturedb")
   })
 })

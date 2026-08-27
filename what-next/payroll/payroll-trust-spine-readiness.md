@@ -1,6 +1,6 @@
 # Payroll Trust Spine Readiness Gate
 
-Generated: 2026-08-22T09:01:38.293Z
+Generated: 2026-08-22T15:56:10.235Z
 Mode: fail
 Status: ready
 

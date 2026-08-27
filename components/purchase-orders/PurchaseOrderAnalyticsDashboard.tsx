@@ -38,6 +38,7 @@ import {
   dashboardRowClass,
   dashboardToneClass,
 } from "@/components/dashboard/primitives/command-center-primitives"
+import { TableDateRangePicker } from "@/components/DataTableComponents/TableDateRangePicker"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -452,27 +453,19 @@ export function PurchaseOrderAnalyticsDashboard({ data, locale: localeInput, ran
                   </Button>
                 ))}
               </nav>
-              <form method="get" className="grid gap-2 rounded-xl border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)]/72 p-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto] sm:items-end">
-                <label className="grid gap-1.5 text-xs font-medium text-[var(--dash-text-soft)]">
-                  {t.fromDate}
-                  <input
-                    type="date"
-                    name="from"
-                    aria-label={t.fromDate}
-                    defaultValue={range === "custom" ? data.period.from?.slice(0, 10) ?? "" : ""}
-                    className="dashboard-control h-10 min-w-0 rounded-lg border border-[var(--dash-border-subtle)] px-3 text-sm text-[var(--dash-text)]"
-                  />
-                </label>
-                <label className="grid gap-1.5 text-xs font-medium text-[var(--dash-text-soft)]">
-                  {t.toDate}
-                  <input
-                    type="date"
-                    name="to"
-                    aria-label={t.toDate}
-                    defaultValue={range === "custom" ? data.period.to?.slice(0, 10) ?? "" : ""}
-                    className="dashboard-control h-10 min-w-0 rounded-lg border border-[var(--dash-border-subtle)] px-3 text-sm text-[var(--dash-text)]"
-                  />
-                </label>
+              <form method="get" className="grid gap-2 rounded-xl border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)]/72 p-3 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
+                <TableDateRangePicker
+                  defaultValue={{
+                    from: range === "custom" ? data.period.from?.slice(0, 10) : undefined,
+                    to: range === "custom" ? data.period.to?.slice(0, 10) : undefined,
+                  }}
+                  locale={locale}
+                  placeholder={t.customDates}
+                  ariaLabel={t.customDates}
+                  fromName="from"
+                  toName="to"
+                  triggerClassName="h-10 sm:w-full"
+                />
                 <Button type="submit" size="sm" className="dashboard-button-create h-10 rounded-lg">{t.applyRange}</Button>
                 <Button asChild type="button" variant="outline" size="sm" className="dashboard-button-secondary h-10 rounded-lg">
                   <Link href="/dashboard/purchase-orders/analytics?range=90d">{t.resetRange}</Link>
@@ -515,27 +508,19 @@ export function PurchaseOrderAnalyticsDashboard({ data, locale: localeInput, ran
                 </Button>
               ))}
             </nav>
-            <form method="get" className="grid gap-2 rounded-xl border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)]/72 p-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto] sm:items-end">
-              <label className="grid gap-1.5 text-xs font-medium text-[var(--dash-text-soft)]">
-                {t.fromDate}
-                <input
-                  type="date"
-                  name="from"
-                  aria-label={t.fromDate}
-                  defaultValue={range === "custom" ? data.period.from?.slice(0, 10) ?? "" : ""}
-                  className="dashboard-control h-10 min-w-0 rounded-lg border border-[var(--dash-border-subtle)] px-3 text-sm text-[var(--dash-text)]"
-                />
-              </label>
-              <label className="grid gap-1.5 text-xs font-medium text-[var(--dash-text-soft)]">
-                {t.toDate}
-                <input
-                  type="date"
-                  name="to"
-                  aria-label={t.toDate}
-                  defaultValue={range === "custom" ? data.period.to?.slice(0, 10) ?? "" : ""}
-                  className="dashboard-control h-10 min-w-0 rounded-lg border border-[var(--dash-border-subtle)] px-3 text-sm text-[var(--dash-text)]"
-                />
-              </label>
+            <form method="get" className="grid gap-2 rounded-xl border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)]/72 p-3 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
+              <TableDateRangePicker
+                defaultValue={{
+                  from: range === "custom" ? data.period.from?.slice(0, 10) : undefined,
+                  to: range === "custom" ? data.period.to?.slice(0, 10) : undefined,
+                }}
+                locale={locale}
+                placeholder={t.customDates}
+                ariaLabel={t.customDates}
+                fromName="from"
+                toName="to"
+                triggerClassName="h-10 sm:w-full"
+              />
               <Button type="submit" size="sm" className="dashboard-button-create h-10 rounded-lg">{t.applyRange}</Button>
               <Button asChild type="button" variant="outline" size="sm" className="dashboard-button-secondary h-10 rounded-lg">
                 <Link href="/dashboard/purchase-orders/analytics?range=90d">{t.resetRange}</Link>

@@ -28,6 +28,7 @@ import {
 
 import { getProofTrailAction } from "@/actions/evidence/proof-trail.actions"
 import { BIProofDrawerHost } from "@/components/bi"
+import { TableDateRangePicker } from "@/components/DataTableComponents/TableDateRangePicker"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -602,20 +603,12 @@ export default function PaymentReconciliationWorkbench() {
 
             <div className="flex items-end gap-2">
               {period === "custom" ? (
-                <>
-                  <Input
-                    type="date"
-                    value={customRange.start}
-                    onChange={(event) => setCustomRange((current) => ({ ...current, start: event.target.value }))}
-                    className="dashboard-control h-10 w-36 rounded-lg"
-                  />
-                  <Input
-                    type="date"
-                    value={customRange.end}
-                    onChange={(event) => setCustomRange((current) => ({ ...current, end: event.target.value }))}
-                    className="dashboard-control h-10 w-36 rounded-lg"
-                  />
-                </>
+                <TableDateRangePicker
+                  value={{ from: customRange.start, to: customRange.end }}
+                  onChange={(range) => setCustomRange({ start: range.from ?? "", end: range.to ?? "" })}
+                  locale={locale === "fr" ? "fr" : "en"}
+                  triggerClassName="h-10"
+                />
               ) : null}
               <Button
                 type="button"
@@ -1530,7 +1523,7 @@ function RunSummaryTable({
 }) {
   return (
     <ScrollArea className="w-full">
-      <table className="w-full min-w-[920px] text-sm">
+      <table className="dashboard-table-base w-full min-w-[920px] text-sm">
         <thead className={cn("text-left text-xs", mutedTextClass)}>
           <tr className="border-b border-[var(--dash-border-subtle)]">
             <th className="py-2 pr-3 font-medium">{t("table.rail")}</th>
@@ -1699,7 +1692,7 @@ function SuspenseFailures({
 
   return (
     <ScrollArea className="w-full">
-      <table className="w-full min-w-[1120px] text-sm">
+      <table className="dashboard-table-base w-full min-w-[1120px] text-sm">
         <thead className={cn("text-left text-xs", mutedTextClass)}>
           <tr className="border-b border-[var(--dash-border-subtle)]">
             <th className="py-2 pr-3 font-medium">{t("table.failure")}</th>

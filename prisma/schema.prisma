@@ -333,6 +333,8 @@ model Organization {
   ledgerAuditEvents                       LedgerAuditEvent[]
   businessEvents                          BusinessEvent[]
   businessEventOutbox                     BusinessEventOutbox[]
+  businessEventAudits                     BusinessEventAudit[]
+  businessEventAnomalies                  BusinessEventAnomaly[]
   auditLogs                               AuditLog[]
   branchDailyCloseRuns                    BranchDailyCloseRun[]
   branchDailyCloseSignOffs                BranchDailyCloseSignOff[]
@@ -8029,6 +8031,7 @@ model BusinessEvent {
   idempotencyKey String
   payloadHash    String
   payload        Json
+  correlationId  String?
 
   occurredAt  DateTime
   recordedAt  DateTime  @default(now())
@@ -8050,6 +8053,8 @@ model BusinessEvent {
   metadata       Json?
 
   outboxMessages   BusinessEventOutbox[]
+  audits           BusinessEventAudit[]
+  anomalies        BusinessEventAnomaly[]
   offlinePosEvents POSOfflineEvent[]
   reviewedPayrollRuns PayrollRun[] @relation("PayrollRunReviewedBusinessEvent")
   approvedPayrollRuns PayrollRun[] @relation("PayrollRunApprovedBusinessEvent")
@@ -8067,6 +8072,7 @@ model BusinessEvent {
   @@index([organizationId, eventType, occurredAt])
   @@index([organizationId, status, recordedAt])
   @@index([organizationId, sourceType, sourceId])
+  @@index([organizationId, correlationId])
   @@index([payloadHash])
   @@map("business_events")
 }
@@ -8087,6 +8093,7 @@ model BusinessEventOutbox {
   idempotencyKey String
   payloadHash    String
   payload        Json
+  correlationId  String?
 
   status      BusinessOutboxStatus @default(PENDING)
   attempts    Int                  @default(0)
@@ -8107,8 +8114,68 @@ model BusinessEventOutbox {
 
   @@unique([organizationId, channel, idempotencyKey])
   @@index([organizationId, status, availableAt])
+  @@index([organizationId, correlationId])
   @@index([businessEventId])
   @@map("business_event_outbox")
+}
+
+model BusinessEventAudit {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  businessEventId String
+  businessEvent   BusinessEvent @relation(fields: [businessEventId], references: [id], onDelete: Cascade)
+
+  action               BusinessEventAuditAction
+  eventSource          BusinessEventSource?
+  actorId              String?
+  reason               String?
+  payloadHash          String?
+  attemptedPayloadHash String?
+  correlationId        String?
+  metadata             Json?
+  createdAt            DateTime @default(now())
+
+  @@index([organizationId, createdAt])
+  @@index([businessEventId, createdAt])
+  @@index([organizationId, action, createdAt])
+  @@map("business_event_audits")
+}
+
+model BusinessEventAnomaly {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  businessEventId String
+  businessEvent   BusinessEvent @relation(fields: [businessEventId], references: [id], onDelete: Cascade)
+
+  anomalyType      String
+  code             String
+  severity         BusinessEventAnomalySeverity
+  status           BusinessEventAnomalyStatus @default(OPEN)
+  summary          String
+  fingerprint      String
+  occurrenceCount Int @default(1)
+  correlationId    String?
+  metadata         Json?
+  firstSeenAt      DateTime @default(now())
+  lastSeenAt       DateTime @default(now())
+  acknowledgedAt   DateTime?
+  acknowledgedBy   String?
+  resolvedAt       DateTime?
+  resolvedBy       String?
+  resolutionReason String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@unique([organizationId, businessEventId, anomalyType, fingerprint])
+  @@index([organizationId, status, severity, lastSeenAt])
+  @@index([businessEventId, createdAt])
+  @@map("business_event_anomalies")
 }
 
 enum BusinessEventSource {
@@ -8149,6 +8216,31 @@ enum BusinessOutboxStatus {
   FAILED
   DEAD_LETTER
   CANCELLED
+}
+
+enum BusinessEventAuditAction {
+  RECORDED
+  APPLIED
+  STATUS_CHANGED
+  IDEMPOTENT_REPLAY
+  IDEMPOTENCY_CONFLICT
+  OUTBOX_RETRY
+  OUTBOX_DELIVERED
+  OUTBOX_DEAD_LETTERED
+}
+
+enum BusinessEventAnomalySeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum BusinessEventAnomalyStatus {
+  OPEN
+  ACKNOWLEDGED
+  RESOLVED
+  DISMISSED
 }
 
 // ============================================================

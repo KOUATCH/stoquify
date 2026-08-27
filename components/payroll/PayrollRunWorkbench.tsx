@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -16,6 +18,11 @@ import {
 import type { PayrollRunWorkbenchResult } from "@/actions/payroll/payroll-control.actions";
 import { localizePath } from "@/i18n/routing";
 import type { Locale } from "@/types/bilingual";
+import {
+  HrPayrollTableControls,
+  HrPayrollTablePagination,
+  useHrPayrollTable,
+} from "@/components/hr-payroll/HrPayrollTableControls";
 import PayrollProofDrawerButton, {
   type PayrollProofDrawerSubject,
 } from "./PayrollProofDrawerButton";
@@ -470,6 +477,19 @@ function RelatedItems({ run }: { run: RunRow }) {
 }
 
 export default function PayrollRunWorkbench({ data, error, locale }: Props) {
+  const runTable = useHrPayrollTable({
+    rows: data?.runs ?? [],
+    searchText: (run) => JSON.stringify(run),
+    dateValue: (run) => run.period.payDate ?? run.period.periodEnd,
+    sortOptions: [
+      { key: "run", label: "Run", value: (run) => run.runNumber },
+      { key: "period", label: "Pay date", value: (run) => run.period.payDate },
+      { key: "status", label: "Status", value: (run) => run.status },
+      { key: "net", label: "Net payable", value: (run) => Number(run.amounts.netPayableAmount) },
+      { key: "blockers", label: "Blockers", value: (run) => run.blockers.length },
+    ],
+  });
+
   if (error) return <ErrorPanel message={error} />;
   if (!data) return <EmptyState />;
 
@@ -559,7 +579,8 @@ export default function PayrollRunWorkbench({ data, error, locale }: Props) {
           <BadgeCheck className="h-4 w-4 text-cyan-200" aria-hidden="true" />
           <h2 className="text-sm font-semibold text-white">Run lifecycle</h2>
         </div>
-        <div className="overflow-x-auto">
+        <HrPayrollTableControls table={runTable} locale={locale} tableLabel="payroll runs" />
+        <div className="dashboard-data-table dashboard-table-shell overflow-x-auto">
           <table className="min-w-[1680px] w-full table-fixed border-collapse text-left text-sm">
             <thead className="border-b border-white/10 text-xs uppercase tracking-normal text-slate-400">
               <tr>
@@ -580,8 +601,8 @@ export default function PayrollRunWorkbench({ data, error, locale }: Props) {
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
-              {data.runs.length ? (
-                data.runs.map((run) => (
+              {runTable.rows.length ? (
+                runTable.rows.map((run) => (
                   <tr key={run.id} className="align-top">
                     <td className="px-4 py-3">
                       <p className="break-words font-semibold text-white">
@@ -666,6 +687,7 @@ export default function PayrollRunWorkbench({ data, error, locale }: Props) {
             </tbody>
           </table>
         </div>
+        <HrPayrollTablePagination table={runTable} locale={locale} />
       </section>
 
       <section className="rounded-lg border border-white/10 bg-white/[0.05] p-4">

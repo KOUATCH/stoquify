@@ -1,6 +1,6 @@
 # Payroll Immutability Migration Deploy Diagnostics
 
-Generated: 2026-08-22T08:59:08.046Z
+Generated: 2026-08-22T14:24:25.807Z
 Command: `prisma migrate deploy`
 Target: `localhost/stockflow_immutability_test`
 Exit code: 0
@@ -258,16 +258,6 @@ All migrations have been successfully applied.
 Loaded Prisma config from prisma.config.ts.
 
 Prisma config detected, skipping environment variable loading.
-┌─────────────────────────────────────────────────────────┐
-│  Update available 6.19.3 -> 7.9.1                       │
-│                                                         │
-│  This is a major update - please follow the guide at    │
-│  https://pris.ly/d/major-version-upgrade                │
-│                                                         │
-│  Run the following to update                            │
-│    npm i --save-dev prisma@latest                       │
-│    npm i @prisma/client@latest                          │
-└─────────────────────────────────────────────────────────┘
 
 ```
 

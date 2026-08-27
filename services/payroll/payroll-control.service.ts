@@ -1515,9 +1515,18 @@ async function inPayrollTransitionTransaction<T>(
         isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
       });
     } catch (error) {
+      if (error instanceof ApplicationError) throw error;
       const code = prismaConflictCode(error);
       const retryable = code === "P2002" || code === "P2034";
-      if (!retryable) throw error;
+      if (!retryable) {
+        throw new ApplicationError(
+          "INTERNAL_ERROR",
+          "Payroll transition could not be completed safely.",
+          500,
+          false,
+          { domain: "payroll_trust_spine" },
+        );
+      }
       if (attempt === maximumAttempts) {
         throw payrollTrustSpineError(
           "CONCURRENCY_CONFLICT",

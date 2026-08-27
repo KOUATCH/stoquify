@@ -49,6 +49,7 @@ export const recordBusinessEventInputSchema = z.object({
   idempotencyKey: z.string().trim().min(1),
   payload: z.unknown(),
   payloadHash: z.string().trim().min(1).optional(),
+  correlationId: z.string().trim().min(1).optional(),
   occurredAt: z.date().optional(),
   actorId: z.string().trim().min(1).optional(),
   locationId: z.string().trim().min(1).optional(),
@@ -64,4 +65,3 @@ export const recordBusinessEventInputSchema = z.object({
 
 export type RecordBusinessEventInput = z.input<typeof recordBusinessEventInputSchema>
 export type ParsedRecordBusinessEventInput = z.output<typeof recordBusinessEventInputSchema>
-

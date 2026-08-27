@@ -7,7 +7,7 @@ import {
   filterByYesterday,
 } from "@/lib/dateFilters";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -21,24 +21,62 @@ export default function DateFilters({
   onFilter,
   setIsDateFilterActive,
   className,
+  locale = "en",
+  label,
+  copy,
+  resetKey,
   variant = "default",
 }: {
   data: any[];
   onFilter: any;
   setIsDateFilterActive: (isDateFilterActive: boolean) => void;
   className?: string;
+  locale?: "en" | "fr";
+  label?: string;
+  copy?: Partial<{
+    allTime: string;
+    today: string;
+    yesterday: string;
+    last7Days: string;
+    thisMonth: string;
+    thisYear: string;
+  }>;
+  resetKey?: number;
   variant?: "default" | "landing";
 }) {
+  const defaultCopy = locale === "fr"
+    ? {
+      allTime: "Toutes les dates",
+      today: "Aujourd'hui",
+      yesterday: "Hier",
+      last7Days: "7 derniers jours",
+      thisMonth: "Ce mois-ci",
+      thisYear: "Cette année",
+    }
+    : {
+      allTime: "All time",
+      today: "Today",
+      yesterday: "Yesterday",
+      last7Days: "Last 7 days",
+      thisMonth: "This month",
+      thisYear: "This year",
+    };
+  const resolvedCopy = { ...defaultCopy, ...copy };
+  const resolvedLabel = label ?? (locale === "fr" ? "Filtrer" : "Filter");
   const options = [
-    { value: "life", label: "Life time" },
-    { value: "today", label: "Today" },
-    { value: "yesterday", label: "Yesterday" },
-    { value: "last-7-days", label: "Last 7 days" },
-    { value: "month", label: "This Month" },
-    { value: "year", label: "This year" },
+    { value: "life", label: resolvedCopy.allTime },
+    { value: "today", label: resolvedCopy.today },
+    { value: "yesterday", label: resolvedCopy.yesterday },
+    { value: "last-7-days", label: resolvedCopy.last7Days },
+    { value: "month", label: resolvedCopy.thisMonth },
+    { value: "year", label: resolvedCopy.thisYear },
   ];
   const [selectedFilter, setSelectedFilter] = useState(options[0].value);
   const isLanding = variant === "landing";
+
+  useEffect(() => {
+    setSelectedFilter("life");
+  }, [resetKey]);
 
   const handleChange = (valueString: string) => {
     if (!valueString) return;
@@ -72,13 +110,13 @@ export default function DateFilters({
         onValueChange={handleChange}
       >
         <SelectTrigger
-          aria-label="Date filter"
+          aria-label={resolvedLabel}
           className={cn(
             "h-9 w-full rounded-lg",
             isLanding && "dashboard-control border-[var(--dash-border-subtle)] text-[var(--dash-text)]"
           )}
         >
-          <SelectValue placeholder="Date filter" />
+          <SelectValue placeholder={resolvedLabel} />
         </SelectTrigger>
         <SelectContent className={cn(isLanding && "border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]")}>
           {options.map((option) => (

@@ -351,6 +351,7 @@ async function ItemsPageImpl(props: {
                 initialBrandData={initialBrandData as never}
                 initialUnitData={initialUnitData as never}
                 initialTaxRateData={initialTaxRateData as never}
+                locale={locale}
               />
             </div>
           </Suspense>

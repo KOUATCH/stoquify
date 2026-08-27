@@ -620,6 +620,47 @@ describe("ap-control.service", () => {
     expect(tx.supplierInvoiceMatchException.create).not.toHaveBeenCalled()
   })
 
+  it("maps a concurrent P2002 match-exception race to the canonical conflict", async () => {
+    const error = new Prisma.PrismaClientKnownRequestError(
+      "Unique constraint failed",
+      { code: "P2002", clientVersion: "test", meta: { target: ["organizationId", "threeWayMatchId"] } },
+    )
+    mockDb.$transaction.mockRejectedValueOnce(error)
+
+    await expect(
+      requestSupplierInvoiceMatchException({
+        organizationId: "org-1",
+        supplierInvoiceId: "invoice-disputed",
+        requestedById: "maker-1",
+        reason: "Supplier documented a temporary price variance.",
+        evidenceReference: "artifact://supplier/invoice-variance-proof",
+        expiresAt: "2099-06-30T00:00:00.000Z",
+      }),
+    ).rejects.toBeInstanceOf(ConflictError)
+  })
+
+  it("normalizes unexpected match-exception persistence failures without leaking details", async () => {
+    mockDb.$transaction.mockRejectedValueOnce(new Error("supplier_invoice_match_exception SQL failed"))
+
+    await expect(
+      requestSupplierInvoiceMatchException({
+        organizationId: "org-1",
+        supplierInvoiceId: "invoice-disputed",
+        requestedById: "maker-1",
+        reason: "Supplier documented a temporary price variance.",
+        evidenceReference: "artifact://supplier/invoice-variance-proof",
+        expiresAt: "2099-06-30T00:00:00.000Z",
+      }),
+    ).rejects.toEqual(
+      expect.objectContaining({
+        code: "INTERNAL_ERROR",
+        status: 500,
+        expose: false,
+        message: "Supplier invoice match exception request could not be completed safely.",
+      }),
+    )
+  })
+
   it("keeps match-exception reads tenant scoped", async () => {
     const tx = buildTx()
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx))

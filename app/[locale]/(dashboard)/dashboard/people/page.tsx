@@ -1,7 +1,8 @@
 import Link from "next/link"
-import { ArrowRight, CircleAlert, ClipboardCheck, History, ShieldCheck, UserCheck, UsersRound } from "lucide-react"
+import { ClipboardCheck, History, ShieldCheck, UsersRound } from "lucide-react"
 
 import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
+import { HrisEmployeeDirectoryTable } from "@/components/hris/HrisEmployeeDirectoryTable"
 import { localizePath, pickLocale } from "@/i18n/routing"
 import { getHrisEmployeeDirectory } from "@/services/hris/employee.service"
 import { routeByKey, withPeopleSurfaceAccess } from "./people-route-access"
@@ -9,10 +10,6 @@ import { routeByKey, withPeopleSurfaceAccess } from "./people-route-access"
 export const metadata = {
   title: "People | Stoquify",
   description: "Permission-gated HRIS employee directory and people-readiness workspace.",
-}
-
-function readinessLabel(blockers: readonly string[]) {
-  return blockers.length === 0 ? "Ready" : `${blockers.length} blocker${blockers.length === 1 ? "" : "s"}`
 }
 
 export default async function PeopleWorkspacePage({
@@ -112,59 +109,7 @@ export default async function PeopleWorkspacePage({
                   <p className="mt-1 text-sm text-slate-400">People records will appear here after an HRIS profile is created.</p>
                 </div>
               ) : (
-                <div className="min-w-0 overflow-x-auto rounded-lg border border-white/10">
-                  <table className="w-full min-w-[860px] border-collapse text-left text-sm">
-                    <thead className="bg-slate-950 text-xs uppercase tracking-normal text-slate-400">
-                      <tr>
-                        <th className="px-4 py-3 font-medium">Employee</th>
-                        <th className="px-4 py-3 font-medium">Status</th>
-                        <th className="px-4 py-3 font-medium">Job</th>
-                        <th className="px-4 py-3 font-medium">Department</th>
-                        <th className="px-4 py-3 font-medium">User mapping</th>
-                        <th className="px-4 py-3 font-medium">Readiness</th>
-                        <th className="w-12 px-3 py-3"><span className="sr-only">Open profile</span></th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/10 bg-slate-950/70 text-slate-200">
-                      {directory.employees.map((employee) => (
-                        <tr key={employee.id} className="transition-colors hover:bg-white/[0.03]">
-                          <td className="px-4 py-3">
-                            <p className="font-medium text-white">{employee.displayName}</p>
-                            <p className="mt-0.5 text-xs text-slate-500">{employee.employment.countryCode ?? "Country not set"}</p>
-                          </td>
-                          <td className="px-4 py-3">{employee.status}</td>
-                          <td className="px-4 py-3">{employee.employment.jobTitle ?? "Not assigned"}</td>
-                          <td className="px-4 py-3">{employee.employment.department ?? "Not assigned"}</td>
-                          <td className="px-4 py-3">
-                            <span className="inline-flex items-center gap-1.5">
-                              {employee.userMapping.state === "LINKED" ? (
-                                <UserCheck className="h-4 w-4 text-emerald-300" aria-hidden="true" />
-                              ) : (
-                                <CircleAlert className="h-4 w-4 text-amber-300" aria-hidden="true" />
-                              )}
-                              {employee.userMapping.state}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3">
-                            <span className={employee.blockers.length === 0 ? "text-emerald-200" : "text-amber-200"}>
-                              {readinessLabel(employee.blockers)}
-                            </span>
-                          </td>
-                          <td className="px-3 py-3 text-right">
-                            <Link
-                              href={localizePath(`/dashboard/people/${employee.id}`, locale)}
-                              className="inline-flex h-9 w-9 items-center justify-center rounded-md text-slate-300 transition hover:bg-white/10 hover:text-white"
-                              title={`Open ${employee.displayName} profile`}
-                            >
-                              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                              <span className="sr-only">Open {employee.displayName} profile</span>
-                            </Link>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <HrisEmployeeDirectoryTable employees={directory.employees} asOf={directory.asOf} locale={locale} />
               )}
             </section>
           </div>

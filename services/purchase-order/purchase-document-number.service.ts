@@ -1,5 +1,7 @@
 import type { Prisma } from "@prisma/client"
 
+import { BusinessRuleError } from "@/services/_shared/action-errors"
+
 export const PURCHASE_DOCUMENT_TYPE = {
   PURCHASE_ORDER: "PURCHASE_ORDER",
   GOODS_RECEIPT: "GOODS_RECEIPT",
@@ -47,7 +49,7 @@ export async function allocatePurchaseDocumentNumber(
 
   const issuedValue = sequence.nextValue - 1
   if (!Number.isSafeInteger(issuedValue) || issuedValue < 1) {
-    throw new Error("Purchase document sequence returned an invalid value.")
+    throw new BusinessRuleError("Purchase document sequence returned an invalid value.")
   }
 
   return `${DOCUMENT_PREFIX[input.documentType]}-${String(issuedValue).padStart(6, "0")}`

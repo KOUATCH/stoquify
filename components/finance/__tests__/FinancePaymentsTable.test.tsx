@@ -23,6 +23,24 @@ jest.mock("@/i18n/routing", () => ({
   pickLocale: () => "en",
 }))
 
+jest.mock("@/components/DataTableComponents/TableDateRangePicker", () => ({
+  TableDateRangePicker: ({
+    onChange,
+    ariaLabel,
+  }: {
+    onChange: (value: { from?: string; to?: string }) => void
+    ariaLabel: string
+  }) => (
+    <button
+      type="button"
+      aria-label={ariaLabel}
+      onClick={() => onChange({ from: "2026-08-10" })}
+    >
+      Choose payment range
+    </button>
+  ),
+}))
+
 jest.mock("lucide-react", () => {
   const React = require("react")
   const createIcon = (name: string) => {
@@ -212,9 +230,9 @@ describe("PaymentsTable", () => {
     expect(screen.queryByText("PAY-011")).not.toBeInTheDocument()
 
     fireEvent.click(screen.getByRole("button", { name: "Clear payment search" }))
-    fireEvent.change(screen.getByLabelText("Payments from date"), {
-      target: { value: "2026-08-10" },
-    })
+    fireEvent.click(screen.getByRole("button", {
+      name: "Payments from date - Payments to date",
+    }))
 
     expect(screen.getByText("PAY-010")).toBeInTheDocument()
     expect(screen.getByText("PAY-011")).toBeInTheDocument()
@@ -422,8 +440,7 @@ describe("Finance Retail and Sales recent-payment ledgers", () => {
     expect(ledger.getByRole("searchbox", { name: "payments.ledger.searchLabel" })).toBeInTheDocument()
     expect(ledger.getByRole("combobox", { name: "payments.ledger.statusFilter" })).toBeInTheDocument()
     expect(ledger.getByRole("combobox", { name: "payments.ledger.methodFilter" })).toBeInTheDocument()
-    expect(ledger.getByLabelText("payments.ledger.dateFrom")).toBeInTheDocument()
-    expect(ledger.getByLabelText("payments.ledger.dateTo")).toBeInTheDocument()
+    expect(ledger.getByLabelText("payments.ledger.dateFrom - payments.ledger.dateTo")).toBeInTheDocument()
     expect(ledger.getByRole("button", { name: "payments.ledger.columns" })).toBeInTheDocument()
     expect(ledger.getAllByRole("button", { name: "payments.ledger.sortBy" })).toHaveLength(6)
     expect(ledger.getByRole("combobox", { name: "payments.ledger.rowsPerPage" })).toBeInTheDocument()

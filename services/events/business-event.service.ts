@@ -3,8 +3,19 @@ import { createHash } from "crypto"
 import type { Prisma } from "@prisma/client"
 
 import { db } from "@/prisma/db"
-import { ConflictError } from "@/services/_shared/action-errors"
+import { createCorrelationId } from "@/lib/error-handling/canonical"
+import {
+  ApplicationError,
+  DuplicateKeyConflictError,
+  IdempotencyConflictError,
+  getPrismaKnownRequest,
+  isApplicationError,
+} from "@/services/_shared/action-errors"
 
+import {
+  recordIdempotencyConflictEvidence,
+  type BusinessEventEvidenceClient,
+} from "./business-event-anomaly.service"
 import {
   recordBusinessEventInputSchema,
   type ParsedRecordBusinessEventInput,
@@ -14,9 +25,11 @@ import {
 type BusinessEventRecord = {
   id: string
   organizationId: string
+  eventType: string
   eventSource: string
   idempotencyKey: string
   payloadHash: string
+  correlationId?: string | null
   outboxMessages?: unknown[]
 }
 
@@ -29,6 +42,19 @@ type BusinessEventTransactionalClient = {
   auditLog: {
     create(args: unknown): Promise<unknown>
   }
+}
+
+export type BusinessEventDatabaseClient = {
+  businessEvent: {
+    findUnique(args: unknown): Promise<BusinessEventRecord | null>
+  }
+  $transaction<T>(
+    callback: (tx: BusinessEventTransactionalClient) => Promise<T>,
+  ): Promise<T>
+}
+
+type RecordBusinessEventOptions = {
+  evidenceClient?: BusinessEventEvidenceClient
 }
 
 export type RecordBusinessEventResult = {
@@ -62,44 +88,85 @@ function outboxIdempotencyKey(
   event: ParsedRecordBusinessEventInput,
   message: ParsedRecordBusinessEventInput["outboxMessages"][number],
 ): string {
-  return message.idempotencyKey ?? `${event.eventSource}:${event.idempotencyKey}:${message.channel}:${message.eventName}`
+  return (
+    message.idempotencyKey ??
+    `${event.eventSource}:${event.idempotencyKey}:${message.channel}:${message.eventName}`
+  )
 }
 
-async function auditIdempotencyConflict(
-  tx: BusinessEventTransactionalClient,
+function parseBusinessEventInput(input: RecordBusinessEventInput) {
+  const parsed = recordBusinessEventInputSchema.safeParse(input)
+  if (parsed.success) return parsed.data
+
+  throw new ApplicationError(
+    "VALIDATION_ERROR",
+    "Invalid business-event input.",
+    400,
+    true,
+    { fieldErrors: parsed.error.flatten().fieldErrors },
+  )
+}
+
+function prepareBusinessEvent(input: RecordBusinessEventInput) {
+  const parsed = parseBusinessEventInput(input)
+  return {
+    parsed,
+    payloadHash: parsed.payloadHash ?? hashBusinessPayload(parsed.payload),
+    correlationId: parsed.correlationId ?? createCorrelationId("evt"),
+  }
+}
+
+async function recordIdempotencyConflict(
   input: ParsedRecordBusinessEventInput,
   existing: BusinessEventRecord,
   attemptedPayloadHash: string,
+  correlationId: string,
+  evidenceClient?: BusinessEventEvidenceClient,
 ) {
-  await tx.auditLog.create({
-    data: {
-      entityType: "BusinessEvent",
-      entityId: existing.id,
-      action: "BUSINESS_EVENT_IDEMPOTENCY_CONFLICT",
-      userId: input.actorId ?? null,
-      organizationId: input.organizationId,
-      changes: {
-        before: {
-          eventSource: existing.eventSource,
-          idempotencyKey: existing.idempotencyKey,
-          payloadHash: existing.payloadHash,
-        },
-        after: {
-          eventSource: input.eventSource,
-          idempotencyKey: input.idempotencyKey,
-          payloadHash: attemptedPayloadHash,
-        },
-      },
-    },
+  const fingerprint = hashBusinessPayload({
+    organizationId: input.organizationId,
+    eventSource: input.eventSource,
+    idempotencyKey: input.idempotencyKey,
+    existingPayloadHash: existing.payloadHash,
+    attemptedPayloadHash,
   })
+
+  await recordIdempotencyConflictEvidence(
+    {
+      organizationId: input.organizationId,
+      businessEventId: existing.id,
+      eventType: input.eventType,
+      eventSource: input.eventSource,
+      idempotencyKey: input.idempotencyKey,
+      existingPayloadHash: existing.payloadHash,
+      attemptedPayloadHash,
+      fingerprint,
+      actorId: input.actorId,
+      correlationId,
+    },
+    evidenceClient,
+  )
+
+  throw new IdempotencyConflictError(
+    "Business event idempotency key was reused with a different payload.",
+    {
+      organizationId: input.organizationId,
+      businessEventId: existing.id,
+      eventSource: input.eventSource,
+      idempotencyKey: input.idempotencyKey,
+      existingPayloadHash: existing.payloadHash,
+      attemptedPayloadHash,
+      correlationId,
+    },
+  )
 }
 
 export async function recordBusinessEventInTx(
   tx: BusinessEventTransactionalClient,
   input: RecordBusinessEventInput,
+  options: RecordBusinessEventOptions = {},
 ): Promise<RecordBusinessEventResult> {
-  const parsed = recordBusinessEventInputSchema.parse(input)
-  const payloadHash = parsed.payloadHash ?? hashBusinessPayload(parsed.payload)
+  const { parsed, payloadHash, correlationId } = prepareBusinessEvent(input)
 
   const existing = await tx.businessEvent.findUnique({
     where: {
@@ -114,59 +181,181 @@ export async function recordBusinessEventInTx(
 
   if (existing) {
     if (existing.payloadHash !== payloadHash) {
-      await auditIdempotencyConflict(tx, parsed, existing, payloadHash)
-      throw new ConflictError(
-        "Business event idempotency key was reused with a different payload.",
+      await recordIdempotencyConflict(
+        parsed,
+        existing,
+        payloadHash,
+        correlationId,
+        options.evidenceClient,
       )
     }
 
     return { event: existing, created: false }
   }
 
-  const event = await tx.businessEvent.create({
-    data: {
-      organizationId: parsed.organizationId,
-      eventType: parsed.eventType,
-      eventSource: parsed.eventSource,
-      schemaVersion: parsed.schemaVersion,
-      idempotencyKey: parsed.idempotencyKey,
-      payloadHash,
-      payload: parsed.payload as Prisma.InputJsonValue,
-      occurredAt: parsed.occurredAt ?? new Date(),
-      actorId: parsed.actorId,
-      locationId: parsed.locationId,
-      registerId: parsed.registerId,
-      deviceId: parsed.deviceId,
-      sourceType: parsed.sourceType,
-      sourceId: parsed.sourceId,
-      postingBatchId: parsed.postingBatchId,
-      documentHash: parsed.documentHash,
-      metadata: parsed.metadata as Prisma.InputJsonValue | undefined,
-      outboxMessages: {
-        create: parsed.outboxMessages.map((message) => ({
-          organizationId: parsed.organizationId,
-          channel: message.channel,
-          eventName: message.eventName,
-          destination: message.destination,
-          idempotencyKey: outboxIdempotencyKey(parsed, message),
-          payloadHash: hashBusinessPayload(message.payload),
-          payload: message.payload as Prisma.InputJsonValue,
-          availableAt: message.availableAt,
-          maxAttempts: message.maxAttempts,
-          metadata: message.metadata as Prisma.InputJsonValue | undefined,
-        })),
+  try {
+    const event = await tx.businessEvent.create({
+      data: {
+        organizationId: parsed.organizationId,
+        eventType: parsed.eventType,
+        eventSource: parsed.eventSource,
+        schemaVersion: parsed.schemaVersion,
+        idempotencyKey: parsed.idempotencyKey,
+        payloadHash,
+        payload: parsed.payload as Prisma.InputJsonValue,
+        correlationId,
+        occurredAt: parsed.occurredAt ?? new Date(),
+        actorId: parsed.actorId,
+        locationId: parsed.locationId,
+        registerId: parsed.registerId,
+        deviceId: parsed.deviceId,
+        sourceType: parsed.sourceType,
+        sourceId: parsed.sourceId,
+        postingBatchId: parsed.postingBatchId,
+        documentHash: parsed.documentHash,
+        metadata: parsed.metadata as Prisma.InputJsonValue | undefined,
+        audits: {
+          create: {
+            organizationId: parsed.organizationId,
+            action: "RECORDED",
+            eventSource: parsed.eventSource,
+            actorId: parsed.actorId,
+            reason: "Business event recorded.",
+            payloadHash,
+            correlationId,
+            metadata: {
+              eventType: parsed.eventType,
+              schemaVersion: parsed.schemaVersion,
+              outboxMessageCount: parsed.outboxMessages.length,
+            },
+          },
+        },
+        outboxMessages: {
+          create: parsed.outboxMessages.map((message) => ({
+            organizationId: parsed.organizationId,
+            channel: message.channel,
+            eventName: message.eventName,
+            destination: message.destination,
+            idempotencyKey: outboxIdempotencyKey(parsed, message),
+            payloadHash: hashBusinessPayload(message.payload),
+            payload: message.payload as Prisma.InputJsonValue,
+            correlationId,
+            availableAt: message.availableAt,
+            maxAttempts: message.maxAttempts,
+            metadata: message.metadata as Prisma.InputJsonValue | undefined,
+          })),
+        },
       },
-    },
-    include: { outboxMessages: true },
-  })
+      include: { outboxMessages: true },
+    })
 
-  return { event, created: true }
+    return { event, created: true }
+  } catch (error) {
+    const prismaError = getPrismaKnownRequest(error)
+    if (prismaError?.code === "P2002") {
+      throw new DuplicateKeyConflictError(
+        "A concurrent business-event or outbox record already uses this unique key.",
+        {
+          organizationId: parsed.organizationId,
+          eventSource: parsed.eventSource,
+          idempotencyKey: parsed.idempotencyKey,
+          payloadHash,
+          correlationId,
+        },
+      )
+    }
+    if (isApplicationError(error)) {
+      throw new ApplicationError(
+        error.code,
+        error.message,
+        error.status,
+        error.expose,
+        error.metadata,
+      )
+    }
+
+    throw new ApplicationError(
+      "INTERNAL_ERROR",
+      "Business event could not be recorded.",
+      500,
+      false,
+      {
+        operation: "business_event.record",
+        organizationId: parsed.organizationId,
+        eventSource: parsed.eventSource,
+        correlationId,
+      },
+    )
+  }
 }
 
-export async function recordBusinessEvent(input: RecordBusinessEventInput) {
-  return db.$transaction((tx) =>
-    recordBusinessEventInTx(tx as unknown as BusinessEventTransactionalClient, input),
-  )
+export async function recordBusinessEvent(
+  input: RecordBusinessEventInput,
+  client: BusinessEventDatabaseClient = db as unknown as BusinessEventDatabaseClient,
+) {
+  const prepared = prepareBusinessEvent(input)
+  const normalizedInput: RecordBusinessEventInput = {
+    ...prepared.parsed,
+    payloadHash: prepared.payloadHash,
+    correlationId: prepared.correlationId,
+  }
+
+  try {
+    return await client.$transaction((tx) =>
+      recordBusinessEventInTx(tx, normalizedInput, {
+        evidenceClient: client as unknown as BusinessEventEvidenceClient,
+      }),
+    )
+  } catch (error) {
+    if (!(error instanceof DuplicateKeyConflictError)) {
+      if (isApplicationError(error)) {
+        throw new ApplicationError(
+          error.code,
+          error.message,
+          error.status,
+          error.expose,
+          error.metadata,
+        )
+      }
+
+      throw new ApplicationError(
+        "INTERNAL_ERROR",
+        "Business event transaction failed.",
+        500,
+        false,
+        {
+          operation: "business_event.transaction",
+          organizationId: prepared.parsed.organizationId,
+          correlationId: prepared.correlationId,
+        },
+      )
+    }
+
+    const existing = await client.businessEvent.findUnique({
+      where: {
+        organizationId_eventSource_idempotencyKey: {
+          organizationId: prepared.parsed.organizationId,
+          eventSource: prepared.parsed.eventSource,
+          idempotencyKey: prepared.parsed.idempotencyKey,
+        },
+      },
+      include: { outboxMessages: true },
+    })
+    if (!existing) {
+      throw new DuplicateKeyConflictError(error.message, error.metadata)
+    }
+    if (existing.payloadHash === prepared.payloadHash) {
+      return { event: existing, created: false }
+    }
+
+    return recordIdempotencyConflict(
+      prepared.parsed,
+      existing,
+      prepared.payloadHash,
+      prepared.correlationId,
+      client as unknown as BusinessEventEvidenceClient,
+    )
+  }
 }
 
 export async function markBusinessEventAppliedInTx(
@@ -179,7 +368,16 @@ export async function markBusinessEventAppliedInTx(
     data: {
       status: "APPLIED",
       processedAt: new Date(),
+      audits: {
+        create: {
+          organizationId,
+          action: "APPLIED",
+          reason: "Business event applied to its domain mutation.",
+          metadata: {
+            status: "APPLIED",
+          },
+        },
+      },
     },
   })
 }
-

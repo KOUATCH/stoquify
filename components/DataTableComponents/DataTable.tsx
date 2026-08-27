@@ -18,14 +18,6 @@ import * as React from "react";
 import { useState } from "react";
 
 import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
   Table,
   TableBody,
   TableCell,
@@ -36,7 +28,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Download, ListFilter, Plus, RefreshCw } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, Download, FilterX, Plus, RefreshCw } from "lucide-react";
 import { DataTablePagination } from "./DataTablePagination";
 import { DataTableViewOptions } from "./DataTableViewOptions";
 import DateFilters from "./DateFilters";
@@ -63,6 +55,121 @@ interface LegacyTableFilters<TData> {
   additionalFilters?: ReactNode;
 }
 
+export type TableLocale = "en" | "fr";
+
+export type TableCopy = {
+  actions: string;
+  addNew: string;
+  allTime: string;
+  clearFilters: string;
+  clearSearch: string;
+  dateRange: string;
+  filter: string;
+  firstPage: string;
+  last7Days: string;
+  lastPage: string;
+  loading: string;
+  nextPage: string;
+  noResults: string;
+  of: string;
+  page: string;
+  previousPage: string;
+  refresh: string;
+  rowsPerPage: string;
+  search: string;
+  searchBy: string;
+  export: string;
+  sortBy: string;
+  sortedAscending: string;
+  sortedDescending: string;
+  sortedNone: string;
+  selectedRowsLabel: string;
+  tableFallback: string;
+  thisMonth: string;
+  thisYear: string;
+  today: string;
+  viewColumns: string;
+  yesterday: string;
+};
+
+const DEFAULT_TABLE_COPY: Record<TableLocale, TableCopy> = {
+  en: {
+    actions: "Actions",
+    addNew: "Add New",
+    allTime: "All time",
+    clearFilters: "Clear filters",
+    clearSearch: "Clear table search",
+    dateRange: "Date range",
+    filter: "Filter",
+    firstPage: "Go to first page",
+    last7Days: "Last 7 days",
+    lastPage: "Go to last page",
+    loading: "Loading data...",
+    nextPage: "Go to next page",
+    export: "Export",
+    noResults: "No results.",
+    of: "of",
+    page: "Page",
+    previousPage: "Go to previous page",
+    refresh: "Refresh",
+    rowsPerPage: "Rows per page",
+    search: "Search table data...",
+    searchBy: "Search by",
+    selectedRowsLabel: "row(s) selected.",
+    sortBy: "Sort",
+    sortedAscending: "sorted ascending",
+    sortedDescending: "sorted descending",
+    sortedNone: "not sorted",
+    tableFallback: "Data table",
+    thisMonth: "This month",
+    thisYear: "This year",
+    today: "Today",
+    viewColumns: "View columns",
+    yesterday: "Yesterday",
+  },
+  fr: {
+    actions: "Actions",
+    addNew: "Ajouter",
+    allTime: "Toutes les dates",
+    clearFilters: "Effacer les filtres",
+    clearSearch: "Effacer la recherche",
+    dateRange: "Période",
+    filter: "Filtrer",
+    firstPage: "Aller à la première page",
+    last7Days: "7 derniers jours",
+    lastPage: "Aller à la dernière page",
+    loading: "Chargement...",
+    nextPage: "Aller à la page suivante",
+    export: "Exporter",
+    noResults: "Aucun résultat.",
+    of: "sur",
+    page: "Page",
+    previousPage: "Aller à la page précédente",
+    refresh: "Actualiser",
+    rowsPerPage: "Lignes par page",
+    search: "Rechercher dans le tableau...",
+    searchBy: "Rechercher par",
+    selectedRowsLabel: "lignes sélectionnées.",
+    sortBy: "Trier",
+    sortedAscending: "tri croissant",
+    sortedDescending: "tri décroissant",
+    sortedNone: "non trié",
+    tableFallback: "Tableau de données",
+    thisMonth: "Ce mois-ci",
+    thisYear: "Cette année",
+    today: "Aujourd'hui",
+    viewColumns: "Colonnes",
+    yesterday: "Hier",
+  },
+};
+
+function resolveTableCopy(locale: TableLocale, override?: Partial<TableCopy>) {
+  return {
+    ...DEFAULT_TABLE_COPY[locale],
+    ...(override ?? {}),
+  };
+}
+
 interface DataTableProps<TData> {
   columns: ColumnDef<any, any>[] | Column<any>[];
   data: TData[];
@@ -86,6 +193,10 @@ interface DataTableProps<TData> {
   filters?: LegacyTableFilters<TData>;
   renderRowActions?: (item: TData) => ReactNode;
   emptyState?: ReactNode;
+  locale?: TableLocale;
+  copy?: Partial<TableCopy>;
+  caption?: string;
+  showSelectionSummary?: boolean;
 }
 
 function getAccessorId<TData>(accessor: Column<TData>["accessorKey"], index: number) {
@@ -122,7 +233,8 @@ function intersectRows<TData>(primary: TData[], secondary: TData[], keyField?: k
 
 function createLegacyColumnDefs<TData>(
   columns: Column<TData>[],
-  renderRowActions?: (item: TData) => ReactNode
+  renderRowActions?: (item: TData) => ReactNode,
+  actionsLabel = "Actions"
 ): ColumnDef<TData, unknown>[] {
   const tableColumns: ColumnDef<TData, unknown>[] = columns.map((column, index) => {
     const accessor = column.accessorKey;
@@ -138,7 +250,7 @@ function createLegacyColumnDefs<TData>(
   if (renderRowActions) {
     tableColumns.push({
       id: "__row_actions",
-      header: "Actions",
+      header: actionsLabel,
       enableSorting: false,
       enableHiding: false,
       cell: ({ row }) => (
@@ -159,11 +271,11 @@ export default function DataTable<TData>({
   subtitle,
   keyField,
   isLoading = false,
-  emptyMessage = "No results.",
+  emptyMessage,
   searchKey,
   searchPlaceholder,
   searchContainerClassName,
-  singleRowControls = false,
+  singleRowControls = true,
   showSearch = true,
   showDateFilters = true,
   showToolbar = true,
@@ -174,6 +286,10 @@ export default function DataTable<TData>({
   filters,
   renderRowActions,
   emptyState,
+  locale = "en",
+  copy,
+  caption,
+  showSelectionSummary = true,
 }: DataTableProps<TData>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState({});
@@ -183,18 +299,21 @@ export default function DataTable<TData>({
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [isDateFilterActive, setIsDateFilterActive] = useState(false);
+  const [filterResetKey, setFilterResetKey] = useState(0);
   const isLanding = variant === "landing";
   const isLegacyShape = Boolean(title || subtitle || keyField || actions || renderRowActions || emptyState);
   const hasTableControls = showSearch || showDateFilters || showToolbar || Boolean(filters?.additionalFilters);
+  const tableCopy = resolveTableCopy(locale, copy);
   const resolvedSearchPlaceholder =
-    searchPlaceholder ?? (searchKey ? `Search by ${String(searchKey)}...` : "Search table data...");
+    searchPlaceholder ?? (searchKey ? `${tableCopy.searchBy} ${String(searchKey)}...` : tableCopy.search);
+  const hasCaption = caption || title || subtitle || tableCopy.tableFallback;
 
   const tableColumns = React.useMemo(
     () =>
       isLegacyShape
-        ? createLegacyColumnDefs(columns as Column<TData>[], renderRowActions)
+        ? createLegacyColumnDefs(columns as Column<TData>[], renderRowActions, tableCopy.actions)
         : (columns as ColumnDef<TData, any>[]),
-    [columns, isLegacyShape, renderRowActions]
+    [columns, isLegacyShape, renderRowActions, tableCopy.actions]
   );
 
   React.useEffect(() => {
@@ -202,6 +321,7 @@ export default function DataTable<TData>({
     setDateFilteredData(data);
     setIsSearchActive(false);
     setIsDateFilterActive(false);
+    setFilterResetKey((key) => key + 1);
   }, [data]);
 
   const tableData = React.useMemo(() => {
@@ -242,6 +362,17 @@ export default function DataTable<TData>({
 
   const visibleData = table.getFilteredRowModel().rows.map((row) => row.original);
   const hasHeader = Boolean(title || subtitle || onRefresh || actions?.onExport || actions?.onAdd);
+  const hasActiveTableFilters = isSearchActive || isDateFilterActive || columnFilters.length > 0;
+
+  const clearTableFilters = () => {
+    setSearchResults(data);
+    setDateFilteredData(data);
+    setIsSearchActive(false);
+    setIsDateFilterActive(false);
+    table.resetColumnFilters();
+    table.setPageIndex(0);
+    setFilterResetKey((key) => key + 1);
+  };
 
   return (
     <div className={cn("w-full min-w-0", isLanding ? "dashboard-data-table space-y-3" : "space-y-3")}>
@@ -265,13 +396,13 @@ export default function DataTable<TData>({
                 variant="outline"
                 size="sm"
                 onClick={onRefresh}
-                disabled={isLoading}
-                className={cn("h-9 rounded-lg", isLanding && "dashboard-button-secondary")}
-              >
-                <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} />
-                Refresh
-              </Button>
-            ) : null}
+                  disabled={isLoading}
+                  className={cn("h-9 rounded-lg", isLanding && "dashboard-button-secondary")}
+                >
+                  <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} />
+                  {tableCopy.refresh}
+                </Button>
+              ) : null}
             {actions?.onExport ? (
               <Button
                 type="button"
@@ -280,8 +411,8 @@ export default function DataTable<TData>({
                 onClick={() => actions.onExport?.(visibleData)}
                 className={cn("h-9 rounded-lg", isLanding && "dashboard-button-secondary")}
               >
-                <Download className="h-4 w-4" />
-                Export
+                  <Download className="h-4 w-4" />
+                {tableCopy.export}
               </Button>
             ) : null}
             {actions?.onAdd ? (
@@ -292,7 +423,7 @@ export default function DataTable<TData>({
                 className={cn("h-9 rounded-lg", isLanding && "dashboard-button-create")}
               >
                 <Plus className="h-4 w-4" />
-                Add New
+                {tableCopy.addNew}
               </Button>
             ) : null}
           </div>
@@ -319,6 +450,8 @@ export default function DataTable<TData>({
                 onSearch={setSearchResults}
                 setIsSearchActive={setIsSearchActive}
                 placeholder={resolvedSearchPlaceholder}
+                clearButtonLabel={tableCopy.clearSearch}
+                resetKey={filterResetKey}
                 variant={variant}
               />
             </div>
@@ -336,6 +469,9 @@ export default function DataTable<TData>({
                     data={data}
                     onFilter={setDateFilteredData}
                     setIsDateFilterActive={setIsDateFilterActive}
+                    locale={locale}
+                    placeholder={tableCopy.dateRange}
+                    resetKey={filterResetKey}
                     variant={variant}
                     className={singleRowControls ? "xl:w-36 xl:shrink-0 xl:[&_button]:w-36 xl:[&_button]:overflow-hidden xl:[&_button]:whitespace-nowrap" : undefined}
                   />
@@ -343,40 +479,29 @@ export default function DataTable<TData>({
                     data={data}
                     onFilter={setDateFilteredData}
                     setIsDateFilterActive={setIsDateFilterActive}
+                    locale={locale}
+                    label={tableCopy.filter}
+                    copy={tableCopy}
+                    resetKey={filterResetKey}
                     variant={variant}
                     className={singleRowControls ? "xl:w-28 xl:shrink-0" : undefined}
                   />
                 </>
               ) : null}
               {filters?.additionalFilters}
-              {showToolbar ? (
-                <>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className={cn("h-8 gap-1", isLanding && "dashboard-button-secondary rounded-lg")}
-                      >
-                        <ListFilter className="h-3.5 w-3.5" />
-                        <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                          Filter
-                        </span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuCheckboxItem checked>
-                        Active
-                      </DropdownMenuCheckboxItem>
-                      <DropdownMenuCheckboxItem>Draft</DropdownMenuCheckboxItem>
-                      <DropdownMenuCheckboxItem>Archived</DropdownMenuCheckboxItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                  <DataTableViewOptions table={table} />
-                </>
+              {hasActiveTableFilters ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearTableFilters}
+                  className={cn("h-9 rounded-lg", isLanding && "text-[var(--dash-text-soft)] hover:bg-[var(--dash-brand-soft)] hover:text-[var(--dash-text)]")}
+                >
+                  <FilterX className="h-4 w-4" aria-hidden="true" />
+                  {tableCopy.clearFilters}
+                </Button>
               ) : null}
+              {showToolbar ? <DataTableViewOptions table={table} label={tableCopy.viewColumns} /> : null}
             </div>
           ) : null}
         </div>
@@ -388,11 +513,12 @@ export default function DataTable<TData>({
             <div className="absolute inset-0 z-10 flex min-h-24 items-center justify-center bg-background/70 backdrop-blur-sm">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <RefreshCw className="h-4 w-4 animate-spin" />
-                Loading data...
+                {tableCopy.loading}
               </div>
             </div>
           ) : null}
           <Table>
+            <caption className="sr-only">{hasCaption}</caption>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
@@ -400,11 +526,44 @@ export default function DataTable<TData>({
                     <TableHead
                       key={header.id}
                       colSpan={header.colSpan}
+                      aria-sort={
+                        header.column.getCanSort()
+                          ? header.column.getIsSorted() === "asc"
+                            ? "ascending"
+                            : header.column.getIsSorted() === "desc"
+                              ? "descending"
+                              : "none"
+                          : undefined
+                      }
                       className={cn(isLanding && "px-3")}
                     >
                       {header.isPlaceholder
                         ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                        : header.column.getCanSort() && typeof header.column.columnDef.header === "string"
+                          ? (
+                            <button
+                              type="button"
+                              onClick={() => header.column.toggleSorting(header.column.getIsSorted() === "asc")}
+                              aria-label={`${tableCopy.sortBy} ${header.column.columnDef.header}, ${
+                                header.column.getIsSorted() === "asc"
+                                  ? tableCopy.sortedAscending
+                                  : header.column.getIsSorted() === "desc"
+                                    ? tableCopy.sortedDescending
+                                    : tableCopy.sortedNone
+                              }`}
+                              className="inline-flex w-full items-center gap-2 text-left text-sm font-medium"
+                            >
+                              <span>{header.column.columnDef.header}</span>
+                              {header.column.getIsSorted() === "asc" ? (
+                                <ArrowUp className="h-3.5 w-3.5 text-[var(--dash-brand)]" aria-hidden="true" />
+                              ) : header.column.getIsSorted() === "desc" ? (
+                                <ArrowDown className="h-3.5 w-3.5 text-[var(--dash-brand)]" aria-hidden="true" />
+                              ) : (
+                                <ArrowUpDown className="h-3.5 w-3.5 text-[var(--dash-text-faint)]" aria-hidden="true" />
+                              )}
+                            </button>
+                          )
+                          : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -437,7 +596,7 @@ export default function DataTable<TData>({
                     colSpan={tableColumns.length}
                     className={cn("h-24 text-center", isLanding && "text-[var(--dash-text-soft)]")}
                   >
-                    {emptyState || emptyMessage}
+                    {emptyState || emptyMessage || tableCopy.noResults}
                   </TableCell>
                 </TableRow>
               )}
@@ -459,7 +618,12 @@ export default function DataTable<TData>({
           </Table>
         </div>
       </div>
-      <DataTablePagination table={table} variant={variant} />
+      <DataTablePagination
+        table={table}
+        variant={variant}
+        copy={tableCopy}
+        showSelectionCount={showSelectionSummary}
+      />
     </div>
   );
 }

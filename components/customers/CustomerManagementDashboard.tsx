@@ -1079,6 +1079,7 @@ export default function CustomerManagementDashboard({
             <DataTable
               columns={columns}
               data={filteredCustomers}
+              locale={locale}
               emptyMessage={`${t.emptyTitle}. ${t.emptyBody}`}
               searchPlaceholder={t.search}
               onVisibleDataChange={handleVisibleCustomersChange}

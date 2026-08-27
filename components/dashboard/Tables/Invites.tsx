@@ -34,7 +34,7 @@ export default function InviteTableWithSearch({data}:{data:InviteDataProps[]}) {
 
   return (
     <div className="space-y-4">
-      <div className="relative">
+      <div className="dashboard-table-toolbar relative">
         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-[var(--dash-text-soft)]" />
         <Input
           type="text"

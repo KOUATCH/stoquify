@@ -19,10 +19,9 @@ Packet: `STOQUIFY-POS-PROD-GATE-20260817-01`
 - Migration disposition: `EMPTY_TARGET_EXECUTE after successful empty-target verification`
 - Host: `localhost`
 - Port: `5432`
-- Database: `stoquify_dev_migrated_20260814`
+- Database: `stoquify_dev_migrated_20260814` *(verify typo: prior packet used `stoquify_dev_migrated_20260814` in most contexts)*
 - Target schema: `codex_pos_commit_result_cert_20260817`
-- Fresh restore schema: `codex_pos_commit_result_restore_20260817_r2`
-- Preserved partial restore schema: `codex_pos_commit_result_restore_20260817`
+- Restore schema: `codex_pos_commit_result_restore_20260817`
 - Authorizations:
   - Controlled schema-rebound certification projection: `Yes`
   - Copy migrations to temporary directory: `YES`
@@ -33,15 +32,11 @@ Packet: `STOQUIFY-POS-PROD-GATE-20260817-01`
 
 Required actions to close this blocker:
 - Confirm exact hashes for the destructive migration set:
-  - current rolling evidence-manifest SHA-256: `37c4b416c2e58609866770bef995f85ec35839ecd8b0c497e760487b52a41911`
-  - migration.sql raw SHA-256: `f7de8dc7ace0a5e063cdb7ecd9527e77807b7f872e474546819e9fca13a273d4`
-  - migration.sql canonical-LF SHA-256: `2fde92f4ad0cbb1a2a517b12e71c38997dc4956c9d57d70ff1ae0c636ff2f191`
-  - 13-finding inventory SHA-256: `55d332c3319b65acfdf415e64042a15504d12861b664429af7e63155296e1ad1`
-  - development technical evidence-manifest SHA-256: `956fc6789101b39c57c6cad00e0a237f309c7557cd0fe8b6c76fcd1b7712f66d`
+  - migration manifest hash: `PENDING`
+  - migration.sql hash(es): `PENDING`
+  - replay command hash: `PENDING`
 - Attach maker + checker signed approval artifact.
 - Keep conditions and residual risks explicit on the approved form.
-
-Current evidence status: packet bindings `27/27` pass, manifest structure passes, candidate freeze is blocked, production artifacts are `0/14`, and exact-hash approvals are `0/13`.
 
 ## 2) Signed authentication attestation (filled)
 
@@ -119,8 +114,6 @@ Remaining evidence to finalize hardware matrix:
 - Add approver signature that confirms this exclusion is intentional and not a hidden production dependency.
 - If production run needs physical POS hardware later, a separate matrix with device replay and I/O logs is required.
 
-Role qualification warning: `SYSTEM ADMINISTRATION` is not, by itself, evidence of financial-controller authority. The final production packet must either provide KOUATCHOUA MARCELINE's qualified finance/controller role and authority record or name a qualified replacement controller.
-
 ## Fast production-readiness completion checklist (from this packet)
 
 1. Resolve the following high blockers explicitly in one gate decision artifact:
@@ -137,10 +130,3 @@ Role qualification warning: `SYSTEM ADMINISTRATION` is not, by itself, evidence 
    - `...\evidence\migration-certification\2026-08-17\target-verification.json`
 3. Re-run production gate and attach all four completed templates plus the command hash manifest.
 
-## Locally closed after the 017 report
-
-- Inventory boundary: `0` active violations after excluding `.codex-tmp` certification copies and explicitly marking the local synthetic supplier fixture.
-- Role cockpit: `9/9` checks ready after the gate was aligned with the route-access and route-data-access ownership split.
-- Focused regression for these two fixes: `2` suites, `8` unique tests passed.
-
-These technical closures do not change the production verdict while the human, production-infrastructure, secret, clean-freeze, restore, hardware, and statutory evidence gates remain open.

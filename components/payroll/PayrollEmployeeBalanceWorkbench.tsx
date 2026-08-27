@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link"
 import type { LucideIcon } from "lucide-react"
 import {
@@ -15,6 +17,11 @@ import type { PayrollEmployeeBalanceWorkbenchResult } from "@/actions/payroll/pa
 import { localizePath } from "@/i18n/routing"
 import type { Locale } from "@/types/bilingual"
 import PayrollEmployeeBalanceSettlementForm from "./PayrollEmployeeBalanceSettlementForm"
+import {
+  HrPayrollTableControls,
+  HrPayrollTablePagination,
+  useHrPayrollTable,
+} from "@/components/hr-payroll/HrPayrollTableControls"
 
 type Props = {
   data: PayrollEmployeeBalanceWorkbenchResult | null
@@ -130,6 +137,19 @@ function ProofList({ balanceCase }: { balanceCase: BalanceCase }) {
 }
 
 export default function PayrollEmployeeBalanceWorkbench({ data, error, locale }: Props) {
+  const balanceTable = useHrPayrollTable({
+    rows: data?.cases ?? [],
+    searchText: (balanceCase) => JSON.stringify(balanceCase),
+    dateValue: (balanceCase) => balanceCase.timeline.openedAt,
+    sortOptions: [
+      { key: "case", label: "Case", value: (balanceCase) => balanceCase.caseNumber },
+      { key: "employee", label: "Employee", value: (balanceCase) => balanceCase.employee.displayName ?? balanceCase.employee.employeeNumber },
+      { key: "opened", label: "Opened date", value: (balanceCase) => balanceCase.timeline.openedAt },
+      { key: "outstanding", label: "Outstanding amount", value: (balanceCase) => Number(balanceCase.amounts.outstandingAmount) },
+      { key: "status", label: "Status", value: (balanceCase) => balanceCase.status },
+    ],
+  })
+
   if (error) return <ErrorPanel message={error} />
   if (!data) return <EmptyState />
 
@@ -175,7 +195,8 @@ export default function PayrollEmployeeBalanceWorkbench({ data, error, locale }:
           <FileText className="h-4 w-4 text-cyan-200" aria-hidden="true" />
           <h2 className="text-sm font-semibold text-white">Recovery cases</h2>
         </div>
-        <div className="overflow-x-auto">
+        <HrPayrollTableControls table={balanceTable} locale={locale} tableLabel="employee recovery cases" />
+        <div className="dashboard-data-table dashboard-table-shell overflow-x-auto">
           <table className="min-w-[1280px] w-full table-fixed border-collapse text-left text-sm">
             <thead className="border-b border-white/10 text-xs uppercase tracking-normal text-slate-400">
               <tr>
@@ -188,8 +209,8 @@ export default function PayrollEmployeeBalanceWorkbench({ data, error, locale }:
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
-              {data.cases.length ? (
-                data.cases.map((balanceCase) => (
+              {balanceTable.rows.length ? (
+                balanceTable.rows.map((balanceCase) => (
                   <tr key={balanceCase.id} className="align-top">
                     <td className="px-4 py-3">
                       <p className="break-words font-semibold text-white">{balanceCase.caseNumber}</p>
@@ -255,6 +276,7 @@ export default function PayrollEmployeeBalanceWorkbench({ data, error, locale }:
             </tbody>
           </table>
         </div>
+        <HrPayrollTablePagination table={balanceTable} locale={locale} />
       </section>
 
       <section className="rounded-lg border border-white/10 bg-white/[0.05] p-4">

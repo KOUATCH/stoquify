@@ -1,6 +1,7 @@
 import { AccountingPostingPurpose, AccountingSourceType, Prisma } from "@prisma/client"
 
 import { db } from "@/prisma/db"
+import { BusinessRuleError } from "@/services/_shared/action-errors"
 import {
   DEFAULT_AP_POSTING_RULES,
   DEFAULT_DELIVERY_ORDER_POSTING_RULES,
@@ -212,7 +213,7 @@ export async function ensureDefaultDeliveryOrderPostingRule(
       candidate.sourceType === input.sourceType &&
       candidate.postingPurpose === input.postingPurpose,
   )
-  if (!template) throw new Error("Default delivery posting rule is not registered")
+  if (!template) throw new BusinessRuleError("Default delivery posting rule is not registered")
 
   const existing = await tx.postingRule.findFirst({
     where: { organizationId, code: template.code },

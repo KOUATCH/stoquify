@@ -184,7 +184,7 @@ async function AccountingAccountsPageImpl({ params, searchParams }: PageProps) {
 
         <AccountingPanel title="Account list" description={accountsResponse.success ? "Active and archived account nodes." : accountsResponse.error || "Accounts unavailable."}>
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[860px] text-sm">
+            <table className="dashboard-table-base w-full min-w-[860px] text-sm">
               <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
                 <tr>
                   <th className="px-4 py-3">Code</th>

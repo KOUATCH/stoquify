@@ -50,6 +50,7 @@ import {
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { TableDateRangePicker } from "@/components/DataTableComponents/TableDateRangePicker"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   DropdownMenu,
@@ -350,22 +351,14 @@ function SurfaceFilters({ context }: { context: FinanceSurfaceContext }) {
 
       <div className="flex items-end gap-2">
         {period === "custom" ? (
-          <>
-            <Input
-              type="date"
-              aria-label={t("filters.startDate")}
-              value={customRange.start}
-              onChange={(event) => setCustomRange((current) => ({ ...current, start: event.target.value }))}
-              className={cn(dashboardControlClass, "w-36")}
-            />
-            <Input
-              type="date"
-              aria-label={t("filters.endDate")}
-              value={customRange.end}
-              onChange={(event) => setCustomRange((current) => ({ ...current, end: event.target.value }))}
-              className={cn(dashboardControlClass, "w-36")}
-            />
-          </>
+          <TableDateRangePicker
+            value={{ from: customRange.start, to: customRange.end }}
+            onChange={(range) => setCustomRange({ start: range.from ?? "", end: range.to ?? "" })}
+            locale={context.locale}
+            placeholder={t("filters.startDate") + " - " + t("filters.endDate")}
+            ariaLabel={t("filters.startDate") + " - " + t("filters.endDate")}
+            triggerClassName="h-10"
+          />
         ) : null}
         <Button
           type="button"
@@ -604,6 +597,7 @@ export function PaymentsTable({
   surfaceT: ReturnType<typeof useTranslations>
   empty: string
 }) {
+  const locale: Locale = pickLocale(useLocale())
   const [sorting, setSorting] = useState<SortingState>([{ id: "createdAt", desc: true }])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [searchTerm, setSearchTerm] = useState("")
@@ -896,27 +890,16 @@ export function PaymentsTable({
             </SelectContent>
           </Select>
 
-          <Input
-            type="date"
-            value={startDate}
-            aria-label={surfaceT("payments.ledger.dateFrom")}
-            title={surfaceT("payments.ledger.dateFrom")}
-            onChange={(event) => {
-              setStartDate(event.target.value)
+          <TableDateRangePicker
+            value={{ from: startDate || undefined, to: endDate || undefined }}
+            onChange={(range) => {
+              setStartDate(range.from ?? "")
+              setEndDate(range.to ?? "")
               table.setPageIndex(0)
             }}
-            className="dashboard-control h-9 w-full rounded-lg sm:w-[150px]"
-          />
-          <Input
-            type="date"
-            value={endDate}
-            aria-label={surfaceT("payments.ledger.dateTo")}
-            title={surfaceT("payments.ledger.dateTo")}
-            onChange={(event) => {
-              setEndDate(event.target.value)
-              table.setPageIndex(0)
-            }}
-            className="dashboard-control h-9 w-full rounded-lg sm:w-[150px]"
+            locale={locale}
+            placeholder={surfaceT("payments.ledger.dateFrom") + " - " + surfaceT("payments.ledger.dateTo")}
+            ariaLabel={surfaceT("payments.ledger.dateFrom") + " - " + surfaceT("payments.ledger.dateTo")}
           />
 
           <DropdownMenu>

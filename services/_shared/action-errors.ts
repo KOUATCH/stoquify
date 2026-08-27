@@ -64,6 +64,26 @@ export class ConflictError extends ApplicationError {
   }
 }
 
+export class IdempotencyConflictError extends ApplicationError {
+  constructor(
+    message = "The idempotency key was already used with a different payload.",
+    metadata?: Record<string, unknown>,
+  ) {
+    super("IDEMPOTENCY_CONFLICT", message, 409, true, metadata)
+    this.name = "IdempotencyConflictError"
+  }
+}
+
+export class DuplicateKeyConflictError extends ApplicationError {
+  constructor(
+    message = "A record with the same unique key already exists.",
+    metadata?: Record<string, unknown>,
+  ) {
+    super("DUPLICATE_KEY_CONFLICT", message, 409, true, metadata)
+    this.name = "DuplicateKeyConflictError"
+  }
+}
+
 export class AuthRequiredError extends ApplicationError {
   constructor(message = "Unauthenticated") {
     super("AUTH_REQUIRED", message, 401)

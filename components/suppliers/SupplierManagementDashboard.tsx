@@ -1533,6 +1533,7 @@ export default function SupplierManagementDashboard({
             <DataTable
               columns={columns}
               data={filteredSuppliers}
+              locale={locale}
               emptyMessage={`${t.emptyTitle}. ${t.emptyBody}`}
               searchPlaceholder={t.search}
               searchContainerClassName="lg:w-64 lg:flex-none xl:w-72"

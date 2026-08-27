@@ -1,3 +1,5 @@
+"use client";
+
 import {
   AlertTriangle,
   Banknote,
@@ -18,6 +20,11 @@ import type {
 } from "@/actions/payroll/payroll-setup.actions";
 
 import PayrollProofBackfillExecutionPanel from "./PayrollProofBackfillExecutionPanel";
+import {
+  HrPayrollTableControls,
+  HrPayrollTablePagination,
+  useHrPayrollTable,
+} from "@/components/hr-payroll/HrPayrollTableControls";
 
 type Props = {
   readiness: PayrollSetupReadinessResult | null;
@@ -353,6 +360,15 @@ function ProofBackfillDryRun({
       ...proofGapCopy(key),
     }),
   );
+  const proofGapTable = useHrPayrollTable({
+    rows: proofGaps,
+    searchText: (item) => JSON.stringify(item),
+    dateValue: () => plan.generatedAt,
+    sortOptions: [
+      { key: "gap", label: "Proof gap", value: (item) => item.label },
+      { key: "count", label: "Count", value: (item) => item.value },
+    ],
+  });
 
   return (
     <section className="rounded-lg border border-white/10 bg-white/[0.05]">
@@ -373,7 +389,9 @@ function ProofBackfillDryRun({
         </div>
       </div>
       <div className="grid gap-4 p-4 xl:grid-cols-[minmax(0,1fr)_minmax(280px,420px)]">
-        <div className="overflow-x-auto rounded-lg border border-white/10">
+        <div className="overflow-hidden rounded-lg border border-white/10">
+          <HrPayrollTableControls table={proofGapTable} locale="en" tableLabel="historical proof gaps" />
+          <div className="dashboard-data-table dashboard-table-shell overflow-x-auto">
           <table className="min-w-full text-left text-sm">
             <thead className="border-b border-white/10 text-xs uppercase tracking-normal text-slate-400">
               <tr>
@@ -382,7 +400,7 @@ function ProofBackfillDryRun({
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
-              {proofGaps.map((item) => (
+              {proofGapTable.rows.length ? proofGapTable.rows.map((item) => (
                 <tr key={item.key}>
                   <td className="max-w-[360px] break-words px-4 py-3 font-semibold text-white">
                     <p>{item.label}</p>
@@ -395,9 +413,13 @@ function ProofBackfillDryRun({
                   </td>
                   <td className="px-4 py-3 text-slate-100">{item.value}</td>
                 </tr>
-              ))}
+              )) : (
+                <tr><td colSpan={2} className="px-4 py-8 text-center text-slate-400">No proof gaps match the table filters.</td></tr>
+              )}
             </tbody>
           </table>
+          </div>
+          <HrPayrollTablePagination table={proofGapTable} locale="en" />
         </div>
         <div className="grid gap-3">
           <div className="rounded-lg border border-white/10 bg-black/10 p-4">
@@ -441,6 +463,17 @@ function ProofBackfillDryRun({
 }
 
 function PlannedWrites({ plan }: { plan: PayrollSeedBackfillDryRunPlan }) {
+  const plannedWriteTable = useHrPayrollTable({
+    rows: plan.plannedWrites,
+    searchText: (item) => JSON.stringify(item),
+    dateValue: () => plan.generatedAt,
+    sortOptions: [
+      { key: "target", label: "Target", value: (item) => item.target },
+      { key: "operation", label: "Operation", value: (item) => item.operation },
+      { key: "count", label: "Count", value: (item) => item.count },
+    ],
+  });
+
   return (
     <section className="rounded-lg border border-white/10 bg-white/[0.05]">
       <div className="flex flex-col gap-3 border-b border-white/10 px-4 py-3 lg:flex-row lg:items-center lg:justify-between">
@@ -463,7 +496,8 @@ function PlannedWrites({ plan }: { plan: PayrollSeedBackfillDryRunPlan }) {
           />
         </div>
       </div>
-      <div className="overflow-x-auto">
+      <HrPayrollTableControls table={plannedWriteTable} locale="en" tableLabel="planned seed and backfill writes" />
+      <div className="dashboard-data-table dashboard-table-shell overflow-x-auto">
         <table className="min-w-full text-left text-sm">
           <thead className="border-b border-white/10 text-xs uppercase tracking-normal text-slate-400">
             <tr>
@@ -475,7 +509,7 @@ function PlannedWrites({ plan }: { plan: PayrollSeedBackfillDryRunPlan }) {
             </tr>
           </thead>
           <tbody className="divide-y divide-white/10">
-            {plan.plannedWrites.map((item) => (
+            {plannedWriteTable.rows.length ? plannedWriteTable.rows.map((item) => (
               <tr key={`${item.target}-${item.operation}`}>
                 <td className="px-4 py-3 font-semibold text-white">
                   {item.target}
@@ -491,10 +525,13 @@ function PlannedWrites({ plan }: { plan: PayrollSeedBackfillDryRunPlan }) {
                   {item.reason}
                 </td>
               </tr>
-            ))}
+            )) : (
+              <tr><td colSpan={5} className="px-4 py-8 text-center text-slate-400">No planned writes match the table filters.</td></tr>
+            )}
           </tbody>
         </table>
       </div>
+      <HrPayrollTablePagination table={plannedWriteTable} locale="en" />
     </section>
   );
 }

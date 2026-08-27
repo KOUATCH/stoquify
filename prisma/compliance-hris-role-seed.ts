@@ -36,6 +36,27 @@ type ComplianceRolePersona = {
   sourceClassification?: "SUPPLIED_CANDIDATE" | "SYNTHETIC_DEVELOPMENT_PERSONA" | "SYNTHETIC_QUALIFICATION_PENDING";
 };
 
+
+export const DOCUMENT_G1_CANDIDATE_ROLES = [
+  { roleCode: "product_owner", sourceName: { firstName: "Arielle", lastName: "Yongwa" } },
+  { roleCode: "financial_controller", sourceName: { firstName: "Tchami", lastName: "Jennifer" } },
+  { roleCode: "payments_owner", sourceName: { firstName: "Yonga", lastName: "Junie" } },
+  { roleCode: "retail_operations_owner", sourceName: { firstName: "Tamen", lastName: "Max" } },
+  { roleCode: "pos_architect", sourceName: { firstName: "tchakoumiLorrain", lastName: "" } },
+  { roleCode: "security_owner", sourceName: { firstName: "Yonga", lastName: "Springfield" } },
+  { roleCode: "treasury_owner", sourceName: { firstName: "Tamen", lastName: "Stanick" } },
+  { roleCode: "risk_owner", sourceName: { firstName: "Tamen", lastName: "Martial" } },
+  { roleCode: "qa_owner", sourceName: { firstName: "Sonkeng", lastName: "Steve" } },
+  { roleCode: "support_owner", sourceName: { firstName: "Etoo", lastName: "Naomie" } },
+  { roleCode: "qualified_cameroon_country_pack_reviewer", sourceName: { firstName: "Kouatchoua", lastName: "mMark" } },
+  { roleCode: "sre_owner", sourceName: { firstName: "Ronald", lastName: "Djakou" } },
+  { roleCode: "order_to_cash_product_owner", sourceName: { firstName: "Tamen", lastName: "Marceline" } },
+  { roleCode: "qualified_accounting_reviewer", sourceName: { firstName: "Tchana", lastName: "Nikita" } },
+  { roleCode: "inventory_controller", sourceName: { firstName: "Tchana", lastName: "Rose" } },
+  { roleCode: "fulfillment_owner", sourceName: { firstName: "Yonga", lastName: "Lysette" } },
+  { roleCode: "accounting_owner", sourceName: { firstName: "Yongwa", lastName: "Eli" } },
+] as const;
+
 const BASE_ROLE_PERSONAS: ComplianceRolePersona[] = [
   { code: "super_admin", nameEn: "Super Admin", nameFr: "Super administrateur", description: "Full local development tenant administration.", emailLocalPart: "super.admin", firstName: "Amina", lastName: "Ngono", department: "EXECUTIVE", permissionTerms: [], allPermissions: true },
   { code: "admin", nameEn: "Admin", nameFr: "Administrateur", description: "Local development organization administration.", emailLocalPart: "admin", firstName: "Marc", lastName: "Dubois", department: "EXECUTIVE", permissionTerms: [], allPermissions: true },
@@ -108,10 +129,16 @@ function selectedPermissions(persona: ComplianceRolePersona) {
 const evidenceHash = (value: string) => `sha256:${createHash("sha256").update(value).digest("hex")}`;
 const effectiveFrom = new Date("2026-01-01T00:00:00.000Z");
 const approvalAt = new Date("2026-01-05T09:00:00.000Z");
-const sourceDocument = "docs/blockers-and-gates/Compliance authorization validation.docx";
+const sourceDocument = "docs/blockers-and-gates/hris-payroll-compliance-prefill/COMPLIANCE_AUTHORIZATION_G1_EVIDENCE_RECONCILED_WORKING_COPY_2026-08-19.docx";
+
+const displayName = (identity: { firstName: string; lastName: string }) =>
+  [identity.firstName, identity.lastName].filter(Boolean).join(" ");
 
 function identityFor(persona: ComplianceRolePersona, organizationIndex: number) {
-  const sourceIdentity = organizationIndex === 1 ? persona.primarySourceName : undefined;
+  const documentIdentity = DOCUMENT_G1_CANDIDATE_ROLES.find((entry) => entry.roleCode === persona.code)?.sourceName;
+  const sourceIdentity = organizationIndex === 1
+    ? documentIdentity ?? persona.primarySourceName
+    : undefined;
   return {
     firstName: sourceIdentity?.firstName ?? persona.firstName,
     lastName: sourceIdentity?.lastName ?? persona.lastName,
@@ -261,7 +288,7 @@ export async function ensureComplianceHrisRoleCoverage(input: {
         ? await input.prisma.user.update({
             where: { id: existingUser.id },
             data: {
-              name: `${identity.firstName} ${identity.lastName}`,
+              name: displayName(identity),
               firstName: identity.firstName,
               lastName: identity.lastName,
               jobTitle: persona.nameEn,
@@ -277,7 +304,7 @@ export async function ensureComplianceHrisRoleCoverage(input: {
             data: {
               id: userId,
               organizationId: organization.id,
-              name: `${identity.firstName} ${identity.lastName}`,
+              name: displayName(identity),
               email,
               emailVerified: true,
               firstName: identity.firstName,
@@ -324,8 +351,8 @@ export async function ensureComplianceHrisRoleCoverage(input: {
         ? await input.prisma.payrollEmployee.update({
             where: { id: existingEmployee.id },
             data: {
-              displayName: `${identity.firstName} ${identity.lastName}`,
-              legalName: `${identity.firstName} ${identity.lastName}`,
+              displayName: displayName(identity),
+              legalName: displayName(identity),
               status: PayrollEmployeeStatus.ACTIVE,
               locationId: defaultLocationId,
               department: persona.department,
@@ -341,8 +368,8 @@ export async function ensureComplianceHrisRoleCoverage(input: {
               organizationId: organization.id,
               userId: user.id,
               employeeNumber: `CMP-${String(personaOffset + 1).padStart(3, "0")}`,
-              displayName: `${identity.firstName} ${identity.lastName}`,
-              legalName: `${identity.firstName} ${identity.lastName}`,
+              displayName: displayName(identity),
+              legalName: displayName(identity),
               status: PayrollEmployeeStatus.ACTIVE,
               hireDate: effectiveFrom,
               countryCode: "CM",
@@ -420,10 +447,10 @@ export async function ensureComplianceHrisRoleCoverage(input: {
         update: { calendarId: calendar.id, timezone: organization.timezone, status: HrisOperationalStatus.ACTIVE, effectiveTo: null },
       });
 
-      seededPeople.set(persona.code, { userId: user.id, employeeId: employee.id, assignmentId: assignment.id, name: `${identity.firstName} ${identity.lastName}` });
+      seededPeople.set(persona.code, { userId: user.id, employeeId: employee.id, assignmentId: assignment.id, name: displayName(identity) });
       credentials.push({
         organizationId: organization.id,
-        name: `${identity.firstName} ${identity.lastName}`,
+        name: displayName(identity),
         email,
         password: input.password,
         role: persona.nameEn,

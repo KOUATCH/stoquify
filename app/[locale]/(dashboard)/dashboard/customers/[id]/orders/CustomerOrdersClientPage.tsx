@@ -454,7 +454,7 @@ export default function CustomerOrdersClientPage({
                   </div>
 
                   {/* Filters */}
-                  <div className="flex flex-col sm:flex-row gap-4 mt-4">
+                  <div className="dashboard-table-toolbar mt-4 flex flex-col gap-4 sm:flex-row">
                     <div className="relative flex-1 max-w-md">
                       <Search className="absolute start-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--dash-text-faint)]" />
                       <Input

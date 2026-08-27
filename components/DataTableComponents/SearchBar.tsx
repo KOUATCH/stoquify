@@ -19,16 +19,24 @@ export default function SearchBar<TData>({
   onSearch,
   setIsSearchActive,
   placeholder = "Search table data...",
+  clearButtonLabel = "Clear table search",
+  resetKey,
   variant = "default",
 }: {
   data: TData[];
   onSearch: (data: TData[]) => void;
   setIsSearchActive: (isSearchActive: boolean) => void;
   placeholder?: string;
+  clearButtonLabel?: string;
+  resetKey?: number;
   variant?: "default" | "landing";
 }) {
   const [searchTerm, setSearchTerm] = useState("");
   const isLanding = variant === "landing";
+
+  React.useEffect(() => {
+    setSearchTerm("");
+  }, [resetKey]);
 
   const runSearch = (value: string) => {
     const query = value.trim().toLowerCase();
@@ -75,7 +83,7 @@ export default function SearchBar<TData>({
       {searchTerm ? (
         <button
           type="button"
-          aria-label="Clear table search"
+          aria-label={clearButtonLabel}
           onClick={clearSearch}
           className={cn(
             "absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 transition-colors",

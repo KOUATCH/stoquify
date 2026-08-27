@@ -1,0 +1,262 @@
+%PDF-1.4
+1 0 obj
+<< /Length 2743 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 50 0 Tm
+50 770 Td
+0 -14 Td
+14 TL
+(Prioritized backlog, keep/remove/defer, and phased roadmap) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(A\) Prioritized backlog) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Must-fix \(P1\)) Tj
+0 -14 Td
+(Standardize shell and command interaction contract \(keyboard, focus, empty/error behavior\).) Tj
+0 -14 Td
+(Enforce shared destructive-action confirmation contract with explicit consequence + rollback context.) Tj
+0 -14 Td
+(Normalize overlay \(modal/drawer\) accessibility and focus behavior.) Tj
+0 -14 Td
+(Add enterprise breadcrumb + workflow context model for deep screens.) Tj
+0 -14 Td
+(Localize critical microcopy and action state vocabulary.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Should-fix \(P2\)) Tj
+0 -14 Td
+(Unify feedback taxonomies for toast/alert/error with routing-to-recovery mapping.) Tj
+0 -14 Td
+(Introduce command surface observability metadata \(open rate, fail recovery, abandoned flow rate\).) Tj
+0 -14 Td
+(Normalize action grouping and form phase orchestration on high-volume workflows.) Tj
+0 -14 Td
+(Apply responsive shell contract for mobile and compact viewport.) Tj
+0 -14 Td
+(Standardize filter/search affordance across non-table pages.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Could-fix \(P3\)) Tj
+0 -14 Td
+(Consolidate duplicated copy patterns and microinteraction variants in legacy modules.) Tj
+0 -14 Td
+(Implement last successful path recall for common return flows.) Tj
+0 -14 Td
+(Add richer visual motion tokens for trust-sensitive workflows.) Tj
+0 -14 Td
+(Upgrade non-critical decorative polish with enterprise-safe effect policy.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(B\) Keep / Remove / Defer) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Keep) Tj
+0 -14 Td
+(- Permission-aware route gating and tenant-aware shell baseline.) Tj
+0 -14 Td
+(- Existing component primitives \(command-center primitives, dashboard primitives\) to avoid breakage risk.) Tj
+0 -14 Td
+(- Existing enterprise route organization in `graph` + dashboard structure.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Remove) Tj
+0 -14 Td
+(- Legacy command implementations that bypass the shared command contract.) Tj
+0 -14 Td
+(- Divergent modal size variants and ad-hoc overlay exit behavior.) Tj
+0 -14 Td
+(- Non-governed typography overrides that bypass token boundaries.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Defer) Tj
+0 -14 Td
+(- Full visual re-skin beyond enterprise-safe scope \(cosmetic redesign\).) Tj
+0 -14 Td
+(- Deep AI-assisted workflow orchestration in-shell until operational policy is mature.) Tj
+0 -14 Td
+(- Any non-essential motion redesign until accessibility and performance budgets are validated.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(C\) Phased modernization roadmap \(non-table only\)) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Phase 1: Foundation and safety \(Weeks 14\)) Tj
+0 -14 Td
+ET
+endstream
+endobj
+2 0 obj
+<< /Length 2909 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 50 0 Tm
+50 770 Td
+0 -14 Td
+14 TL
+(- Deliverables:) Tj
+0 -14 Td
+(- Shell contract spec \(sidebar/nav/command\)) Tj
+0 -14 Td
+(- Accessibility baseline \(focus, aria, keyboard\)) Tj
+0 -14 Td
+(- Unified confirmation/error policy) Tj
+0 -14 Td
+(- Non-table route-state taxonomy) Tj
+0 -14 Td
+(- Dependencies: product, design, security, QA alignment) Tj
+0 -14 Td
+(- Exit criteria:) Tj
+0 -14 Td
+(- 100% critical workflows have deterministic command/error semantics) Tj
+0 -14 Td
+(- No unhandled destructive confirmation paths) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Phase 2: Workflow consistency \(Weeks 510\)) Tj
+0 -14 Td
+(- Deliverables:) Tj
+0 -14 Td
+(- Shared overlay primitives) Tj
+0 -14 Td
+(- Unified feedback-state taxonomy \(toast, alert, empty, loading, error\)) Tj
+0 -14 Td
+(- Form stage patterns + recovery map) Tj
+0 -14 Td
+(- Non-table localization dictionary and reviewer workflow) Tj
+0 -14 Td
+(- Dependencies: Phase 1 + domain leads for finance/inventory/settings) Tj
+0 -14 Td
+(- Exit criteria:) Tj
+0 -14 Td
+(- Consistency score improvement from 3.0 to 4.0 in core modules) Tj
+0 -14 Td
+(- Reduced variation in command and overlay behavior across 80% of target surfaces) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Phase 3: Enterprise harmonization \(Weeks 1118\)) Tj
+0 -14 Td
+(- Deliverables:) Tj
+0 -14 Td
+(- Cross-module IA harmonization and breadcrumb model) Tj
+0 -14 Td
+(- Mobile/compact mode audit) Tj
+0 -14 Td
+(- Observability instrumentation for UI interaction failures) Tj
+0 -14 Td
+(- Release gates for localization and accessibility by module) Tj
+0 -14 Td
+(- Exit criteria:) Tj
+0 -14 Td
+(- Consistency score reaches 4.3+ in target set) Tj
+0 -14 Td
+(- No unresolved high-severity accessibility gaps) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(D\) Blockers and trade-off decisions requested) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Should we target **single enterprise shell behavior** \(strictly standardized\) or allow controlled module variance for local business workflows?) Tj
+0 -14 Td
+(Keep glassmorphism design language as brand signature, or lower effect budget in dense operations for clarity and speed?) Tj
+0 -14 Td
+(Should localization hardening be centralized \(single dictionary\) immediately, or progressively by most-used locale first?) Tj
+0 -14 Td
+(Do we gate Phase 3 on full observability instrumentation before/after shell rollout?) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(E\) Risk and dependency chain) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(- High dependency: command contract changes influence many components; roll out under feature flags or pilot cohort first.) Tj
+0 -14 Td
+(- Security dependency: entitlement explanation text must align with IAM language and compliance requirements.) Tj
+0 -14 Td
+(- Product dependency: each module owner signs off on standardized flow patterns before broad release.) Tj
+0 -14 Td
+(- QA dependency: non-regression requirement on existing functional flows before visual changes.) Tj
+0 -14 Td
+ET
+endstream
+endobj
+3 0 obj
+<< /Length 510 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 50 0 Tm
+50 770 Td
+0 -14 Td
+14 TL
+() Tj
+0 -14 Td
+(F\) Delivery recommendation by package) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(- Packaging order: `core-shell package`, `workflow package`, `localization package`, `visual polish package`.) Tj
+0 -14 Td
+(- Customer success dependency: release training content after P1 and P2, not before.) Tj
+0 -14 Td
+(- Billing/packaging: no change to entitlement tiers unless specific enterprise add-on UX modules are sold separately.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+ET
+endstream
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+5 0 obj
+<< /Type /Page /Parent 6 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 2 0 R >>
+endobj
+6 0 obj
+<< /Type /Page /Parent 6 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 3 0 R >>
+endobj
+7 0 obj
+<< /Type /Page /Parent 6 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 4 0 R >>
+endobj
+8 0 obj
+<< /Type /Pages /Kids [6 0 R 7 0 R 8 0 R] /Count 3 >>
+endobj
+9 0 obj
+<< /Type /Catalog /Pages 8 0 R >>
+endobj
+xref
+0 10
+0000000000 65535 f 
+0000000009 00000 n 
+0000002794 00000 n 
+0000005748 00000 n 
+0000006308 00000 n 
+0000006378 00000 n 
+0000006504 00000 n 
+0000006630 00000 n 
+0000006756 00000 n 
+0000006825 00000 n 
+trailer
+<< /Size 10 /Root 9 0 R >>
+startxref
+6874
+%%EOF

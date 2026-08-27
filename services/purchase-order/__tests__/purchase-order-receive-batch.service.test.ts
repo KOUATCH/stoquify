@@ -259,6 +259,24 @@ describe("purchase-order receiving batch defaults", () => {
     expect(first.replayed).toBe(false)
     expect(replay).toMatchObject({ receiptNumber: "GR-000001", replayed: true })
     expect(mockPostGoodsReceiptStock).toHaveBeenCalledTimes(1)
+
+    mockDb.$transaction.mockRejectedValueOnce({ code: "P2002", clientVersion: "test" })
+    mockDb.goodsReceipt.findFirst.mockResolvedValue({
+      receiptNumber: "GR-000001",
+      purchaseOrderId: "po-1",
+      payloadHash,
+      status: "RECEIVED",
+    })
+    mockDb.purchaseOrder.findFirst.mockResolvedValue(po)
+
+    const raceReplay = await receiveItems(input)
+
+    expect(raceReplay).toMatchObject({ receiptNumber: "GR-000001", replayed: true })
+    expect(mockDb.goodsReceipt.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { organizationId: "org-1", idempotencyKey },
+      }),
+    )
   })
 
   it("rejects reuse of a receipt idempotency key with a different inspection payload", async () => {
@@ -467,6 +485,27 @@ describe("purchase-order receiving batch defaults", () => {
     expect(first).toMatchObject({ receiptStatus: "RECEIVED", decision: "ACCEPT", replayed: false })
     expect(replay).toMatchObject({ receiptStatus: "RECEIVED", decision: "ACCEPT", replayed: true })
     expect(mockPostGoodsReceiptStock).toHaveBeenCalledTimes(1)
+
+    mockDb.$transaction.mockRejectedValueOnce({ code: "P2002", clientVersion: "test" })
+    mockDb.goodsReceiptInspectionResolution.findFirst.mockResolvedValue({
+      goodsReceiptId: "receipt-held",
+      payloadHash,
+      decision: "ACCEPT",
+      goodsReceipt: {
+        receiptNumber: "GR-000001",
+        purchaseOrderId: "po-1",
+        status: "RECEIVED",
+      },
+    })
+
+    const raceReplay = await resolveGoodsReceiptInspection(input)
+
+    expect(raceReplay).toMatchObject({ receiptStatus: "RECEIVED", decision: "ACCEPT", replayed: true })
+    expect(mockDb.goodsReceiptInspectionResolution.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { organizationId: "org-1", idempotencyKey: "inspection-resolution:accept-1" },
+      }),
+    )
     expect(tx.purchaseOrderLine.updateMany).toHaveBeenCalledWith({
       where: { id: "line-1", purchaseOrderId: "po-1", receivedQuantity: 0 },
       data: { receivedQuantity: { increment: 3 } },
@@ -581,5 +620,107 @@ describe("purchase-order receiving batch defaults", () => {
 
     expect(tx.$queryRaw).toHaveBeenCalledTimes(1)
     expect(mockPostGoodsReceiptStock).not.toHaveBeenCalled()
+  })
+
+  it("normalizes unexpected receipt transaction failures without leaking details", async () => {
+    mockDb.$transaction.mockRejectedValueOnce(new Error("goods_receipts SQL failed"))
+
+    await expect(receiveItems({
+      purchaseOrderId: "po-1",
+      organizationId: "org-1",
+      receivedById: "receiver-1",
+      idempotencyKey: "receipt:unexpected-failure-1",
+      inspectionOutcome: "PASSED",
+      items: [{ lineId: "line-1", receivedQuantity: 1 }],
+    })).rejects.toMatchObject({
+      code: "INTERNAL_ERROR",
+      status: 500,
+      expose: false,
+      message: "Goods receipt could not be completed safely.",
+    })
+
+    expect(mockDb.goodsReceipt.findFirst).not.toHaveBeenCalled()
+  })
+
+  it("returns a typed conflict when a receipt P2002 has no replay record", async () => {
+    mockDb.$transaction.mockRejectedValueOnce({ code: "P2002" })
+    mockDb.goodsReceipt.findFirst.mockResolvedValueOnce(null)
+
+    await expect(receiveItems({
+      purchaseOrderId: "po-1",
+      organizationId: "org-1",
+      receivedById: "receiver-1",
+      idempotencyKey: "receipt:orphan-conflict-1",
+      inspectionOutcome: "PASSED",
+      items: [{ lineId: "line-1", receivedQuantity: 1 }],
+    })).rejects.toMatchObject({
+      code: "CONFLICT",
+      message: "A concurrent goods receipt conflict was detected. Refresh and retry.",
+    })
+
+    expect(mockDb.goodsReceipt.findFirst).toHaveBeenCalledWith({
+      where: {
+        organizationId: "org-1",
+        idempotencyKey: "receipt:orphan-conflict-1",
+      },
+      select: {
+        receiptNumber: true,
+        purchaseOrderId: true,
+        payloadHash: true,
+        status: true,
+      },
+    })
+  })
+
+  it("normalizes unexpected inspection-resolution transaction failures without leaking details", async () => {
+    mockDb.$transaction.mockRejectedValueOnce(new Error("inspection SQL failed"))
+
+    await expect(resolveGoodsReceiptInspection({
+      goodsReceiptId: "receipt-held",
+      organizationId: "org-1",
+      resolvedById: "receiver-lead",
+      decision: "ACCEPT",
+      reason: "Verified",
+      idempotencyKey: "inspection-resolution:unexpected-failure-1",
+    })).rejects.toMatchObject({
+      code: "INTERNAL_ERROR",
+      status: 500,
+      expose: false,
+      message: "Goods receipt inspection resolution could not be completed safely.",
+    })
+
+    expect(mockDb.goodsReceiptInspectionResolution.findFirst).not.toHaveBeenCalled()
+  })
+
+  it("returns a typed conflict when an inspection P2002 has no replay record", async () => {
+    mockDb.$transaction.mockRejectedValueOnce({ code: "P2002" })
+    mockDb.goodsReceiptInspectionResolution.findFirst.mockResolvedValueOnce(null)
+
+    await expect(resolveGoodsReceiptInspection({
+      goodsReceiptId: "receipt-held",
+      organizationId: "org-1",
+      resolvedById: "receiver-lead",
+      decision: "ACCEPT",
+      reason: "Verified",
+      idempotencyKey: "inspection-resolution:orphan-conflict-1",
+    })).rejects.toMatchObject({
+      code: "CONFLICT",
+      message: "A concurrent inspection resolution conflict was detected. Refresh and retry.",
+    })
+
+    expect(mockDb.goodsReceiptInspectionResolution.findFirst).toHaveBeenCalledWith({
+      where: {
+        organizationId: "org-1",
+        idempotencyKey: "inspection-resolution:orphan-conflict-1",
+      },
+      select: {
+        goodsReceiptId: true,
+        payloadHash: true,
+        decision: true,
+        goodsReceipt: {
+          select: { receiptNumber: true, purchaseOrderId: true, status: true },
+        },
+      },
+    })
   })
 })

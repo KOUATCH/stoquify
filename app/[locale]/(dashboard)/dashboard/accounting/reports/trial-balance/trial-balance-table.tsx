@@ -95,7 +95,7 @@ export function TrialBalanceTable({
 
   return (
     <div>
-      <div className="border-b border-[var(--dash-border-subtle)] bg-[var(--dash-surface)]/55 p-4">
+      <div className="dashboard-table-toolbar border-b border-[var(--dash-border-subtle)] bg-[var(--dash-surface)]/55 p-4">
         <div className="grid gap-3 lg:grid-cols-[minmax(16rem,1fr)_repeat(3,minmax(9rem,auto))] lg:items-end">
           <label className="flex min-w-0 flex-col gap-1.5 text-xs font-medium text-[var(--dash-text-soft)]">
             Search accounts
@@ -183,7 +183,7 @@ export function TrialBalanceTable({
       </div>
 
       <div className="max-h-[36rem] overflow-auto" role="region" tabIndex={0} aria-label="Scrollable trial balance table">
-        <table className="w-full min-w-[980px] text-sm">
+        <table className="dashboard-table-base w-full min-w-[980px] text-sm">
           <caption className="sr-only">
             Trial balance accounts with posted debit and credit activity and resulting balances.
           </caption>
@@ -256,7 +256,7 @@ export function TrialBalanceTable({
 
       <nav
         aria-label="Trial balance pagination"
-        className="flex flex-col gap-3 border-t border-[var(--dash-border-subtle)] bg-[var(--dash-surface)]/55 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+        className="dashboard-table-pagination flex flex-col gap-3 border-t border-[var(--dash-border-subtle)] bg-[var(--dash-surface)]/55 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
       >
         <p className="text-xs text-[var(--dash-text-soft)]">
           Page <span className="font-semibold text-[var(--dash-text)]">{currentPage}</span> of{" "}

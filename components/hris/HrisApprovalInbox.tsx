@@ -15,6 +15,11 @@ import {
 
 import { decideHrisApprovalInboxItemAction } from "@/actions/hris/approval-inbox.actions"
 import { localizePath } from "@/i18n/routing"
+import {
+  HrPayrollTableControls,
+  HrPayrollTablePagination,
+  useHrPayrollTable,
+} from "@/components/hr-payroll/HrPayrollTableControls"
 import type {
   HrisApprovalDecision,
   HrisApprovalDomain,
@@ -77,6 +82,18 @@ export function HrisApprovalInboxView({
     if (queueFilter !== "ALL" && item.stage !== queueFilter) return false
     return domainFilter === "ALL" || item.domain === domainFilter
   }), [domainFilter, inbox.items, queueFilter])
+  const approvalTable = useHrPayrollTable({
+    rows: items,
+    searchText: (item) => JSON.stringify(item),
+    dateValue: (item) => item.requestedAt,
+    sortOptions: [
+      { key: "request", label: "Request", value: (item) => item.title },
+      { key: "employee", label: "Employee", value: (item) => item.employee.displayName },
+      { key: "requested", label: "Requested date", value: (item) => item.requestedAt },
+      { key: "stage", label: "Stage", value: (item) => item.stage },
+      { key: "readiness", label: "Readiness", value: (item) => item.readiness.blockerCode },
+    ],
+  })
 
   function openDecision(item: HrisApprovalInboxItem, action: HrisApprovalDecision) {
     setSelected({ item, action })
@@ -183,6 +200,7 @@ export function HrisApprovalInboxView({
             </select>
           </div>
         </div>
+        <HrPayrollTableControls table={approvalTable} locale={locale} tableLabel="approval queue" />
 
         {items.length === 0 ? (
           <div className="rounded-lg border border-dashed border-white/15 bg-slate-950/60 px-5 py-10 text-center">
@@ -190,7 +208,8 @@ export function HrisApprovalInboxView({
             <p className="mt-3 text-sm font-medium text-white">No approvals in this view</p>
           </div>
         ) : (
-          <div className="min-w-0 overflow-x-auto rounded-lg border border-white/10">
+          <div className="min-w-0 overflow-hidden rounded-lg border border-white/10">
+            <div className="dashboard-data-table dashboard-table-shell overflow-x-auto">
             <table className="w-full min-w-[1040px] border-collapse text-left text-sm">
               <thead className="bg-slate-950 text-xs uppercase tracking-normal text-slate-400">
                 <tr>
@@ -203,7 +222,7 @@ export function HrisApprovalInboxView({
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/10 bg-slate-950/70 text-slate-200">
-                {items.map((item) => (
+                {approvalTable.rows.length ? approvalTable.rows.map((item) => (
                   <tr key={item.id} className="align-top transition-colors hover:bg-white/[0.03]">
                     <td className="px-4 py-3">
                       <p className="font-medium text-white">{item.title}</p>
@@ -276,9 +295,13 @@ export function HrisApprovalInboxView({
                       </div>
                     </td>
                   </tr>
-                ))}
+                )) : (
+                  <tr><td colSpan={6} className="px-4 py-8 text-center text-slate-400">No approvals match the table filters.</td></tr>
+                )}
               </tbody>
             </table>
+            </div>
+            <HrPayrollTablePagination table={approvalTable} locale={locale} />
           </div>
         )}
       </section>

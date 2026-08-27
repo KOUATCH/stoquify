@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-24",
+  "decision": "BLOCK_PHASE_1",
+  "applicationFilesChangedByAudit": false,
+  "databaseMutationsPerformed": false,
+  "blockers": [
+    {
+      "id": "P0-001",
+      "status": "resolved",
+      "area": "browser_sandbox",
+      "finding": "The Windows helper could not apply its protective ACL because the repository .git directory was owned by BUILTIN\\Administrators.",
+      "resolution": "Only the .git directory owner was changed to the current user; approved in-app browser startup then succeeded."
+    },
+    {
+      "id": "P0-002",
+      "status": "ready",
+      "area": "application_auth_health",
+      "finding": "The auth endpoint responds normally, and a fresh post-Prisma-repair protected-route navigation completes and redirects the unauthenticated controlled browser to the login callback."
+    },
+    {
+      "id": "P0-003",
+      "status": "blocking",
+      "area": "browser_authentication",
+      "finding": "The approved evidence browser has no authenticated Stoquify session. A fresh supplier-route navigation after the Prisma repair and server restart again redirected to the login callback.",
+      "remediation": "Authenticate in the approved in-app browser after an evidence-only account has been provisioned with the required route access."
+    },
+    {
+      "id": "P0-004",
+      "status": "blocking",
+      "area": "authorized_identity",
+      "finding": "A read-only database audit found zero active verified users combining the five highlighted route permissions with payroll and purchasing module access.",
+      "remediation": "Provision one least-privilege evidence account or explicitly approve a multi-account evidence plan."
+    },
+    {
+      "id": "P0-005",
+      "status": "blocking",
+      "area": "test_fixtures",
+      "finding": "The known payroll, supplier, and supplier-PO fixture organizations and users are absent. Their roles are split by route and no existing fixture covers the complete Phase 0 route set.",
+      "remediation": "Prefer one purpose-scoped evidence account. Do not seed the current database without confirming it is an approved non-production target."
+    },
+    {
+      "id": "P0-006",
+      "status": "ready",
+      "area": "fixture_runtime",
+      "finding": "Supplier and payroll fixture scripts now normalize postgresql-style datasource URLs to prisma+postgres and preserve existing local/nonlocal safety guards.",
+      "resolution": "Focused fixture-connection checks were run without DB mutation: supplier and payroll helper tests validate URL normalization for postgresql/prisma formats and guard behavior.",
+      "remediation": "Do not bypass the nonlocal guard or fixture environment checks when running these scripts."
+    },
+    {
+      "id": "P0-007",
+      "status": "blocking",
+      "area": "evidence_scope",
+      "finding": "The representative evidence/audit route is still a placeholder rather than a concrete URL.",
+      "remediation": "Resolve it before capture; /en/dashboard/people/history is a concrete candidate but requires HRIS read access and strict redaction."
+    },
+    {
+      "id": "P0-008",
+      "status": "blocking_phase_1",
+      "area": "worktree_ownership",
+      "finding": "Shared table, date-range, payroll, and purchase-order files already contain directly overlapping user-owned changes.",
+      "remediation": "After Phase 0 passes, explicitly adopt the recorded hashes as the baseline or perform hunk-level ownership isolation. Stop if a required hunk cannot be isolated."
+    },
+    {
+      "id": "P0-009",
+      "status": "pending",
+      "area": "browser_evidence",
+      "finding": "No screenshot, responsive, EN/FR, keyboard, zoom/reflow, or accessibility evidence exists yet.",
+      "remediation": "Capture only after authentication, authorization, scope resolution, and a redaction-safe dataset are established."
+    },
+    {
+      "id": "P0-010",
+      "status": "non_blocking",
+      "area": "developer_tooling",
+      "finding": "Git warns that the user-level .config/git/ignore path is not readable in the sandbox.",
+      "remediation": "Repair that separate user-profile ACL only if the warning starts affecting Git behavior; it does not block the current repository audit."
+    },
+    {
+      "id": "P0-011",
+      "status": "passed_limited_scope",
+      "area": "structural_contract_tests",
+      "finding": "Two focused contract suites passed: 2 suites and 5 tests.",
+      "limitation": "These static contracts do not establish browser layout, keyboard behavior, localization quality, responsive behavior, or accessibility."
+    }
+  ]
+}

@@ -81,7 +81,7 @@ async function BrandsPageImpl({ params }: BrandsPageProps) {
         </div>
 
         <Suspense fallback={<div className="dashboard-glass-panel rounded-lg p-8 text-sm text-[var(--dash-text-soft)]">Loading brands...</div>}>
-          <EnhancedBrandsManagement data={initialBrandData} organizationId={organizationId} basePath={basePath} />
+          <EnhancedBrandsManagement data={initialBrandData} organizationId={organizationId} basePath={basePath} locale={locale} />
         </Suspense>
       </div>
     </div>

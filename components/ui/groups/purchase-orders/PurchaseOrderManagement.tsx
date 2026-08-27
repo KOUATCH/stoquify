@@ -29,6 +29,10 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { DataTablePagination } from "@/components/DataTableComponents/DataTablePagination"
+import {
+  TableDateRangePicker,
+  type TableDateRangeValue,
+} from "@/components/DataTableComponents/TableDateRangePicker"
 
 import {
   DropdownMenu,
@@ -78,7 +82,7 @@ import {
   XCircle
 } from "lucide-react"
 import { getLocaleFromPathname, localizePath } from "@/i18n/routing"
-import { DEFAULT_LOCALE } from "@/types/bilingual"
+import { DEFAULT_LOCALE, type Locale } from "@/types/bilingual"
 import { formatCurrency as formatMoney } from "@/lib/i18n/formatters"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
@@ -102,6 +106,23 @@ function dateSortValue(value: unknown) {
 
   const timestamp = new Date(value as Date | string).getTime()
   return Number.isNaN(timestamp) ? null : timestamp
+}
+
+function isOrderDateWithinRange(
+  value: Date | string | null | undefined,
+  range: TableDateRangeValue,
+) {
+  if (!range.from && !range.to) return true
+
+  const timestamp = dateSortValue(value)
+  if (timestamp === null) return false
+
+  const from = range.from ? new Date(`${range.from}T00:00:00`).getTime() : null
+  const to = range.to ? new Date(`${range.to}T23:59:59.999`).getTime() : null
+
+  if (from !== null && timestamp < from) return false
+  if (to !== null && timestamp > to) return false
+  return true
 }
 
 const dateSortingFn: SortingFn<PurchaseOrderData> = (rowA, rowB, columnId) => {
@@ -420,6 +441,7 @@ const ModernPurchaseOrderTable = ({
   subtitle,
   localizedHref,
   canCreate,
+  locale,
 }: {
   data: PurchaseOrderData[]
   columns: ColumnDef<PurchaseOrderData>[]
@@ -431,15 +453,22 @@ const ModernPurchaseOrderTable = ({
   subtitle: string
   localizedHref: (href: string) => string
   canCreate: boolean
+  locale: Locale
 }) => {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
   const [globalFilter, setGlobalFilter] = useState("")
+  const [orderDateRange, setOrderDateRange] = useState<TableDateRangeValue>({})
+
+  const dateFilteredData = useMemo(
+    () => data.filter((order) => isOrderDateWithinRange(order.orderDate, orderDateRange)),
+    [data, orderDateRange],
+  )
 
   const table = useReactTable({
-    data,
+    data: dateFilteredData,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -464,6 +493,18 @@ const ModernPurchaseOrderTable = ({
       },
     },
   })
+
+  const hasActiveTableState = Boolean(
+    globalFilter || orderDateRange.from || orderDateRange.to || sorting.length || columnFilters.length,
+  )
+
+  const clearTableState = () => {
+    setGlobalFilter("")
+    setOrderDateRange({})
+    setSorting([])
+    setColumnFilters([])
+    table.setPageIndex(0)
+  }
 
   if (isLoading) {
     return (
@@ -529,44 +570,74 @@ const ModernPurchaseOrderTable = ({
       </div>
 
       {/* Filters */}
-      <div className="dashboard-table-toolbar flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <div className="relative min-w-0 flex-1 sm:max-w-sm">
+      <div className="dashboard-table-toolbar flex min-w-0 flex-col gap-3 rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)]/70 p-3 lg:flex-row lg:items-center lg:justify-between xl:flex-nowrap">
+        <div className="relative w-full min-w-0 flex-1 xl:min-w-0">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--dash-text-faint)]" />
           <Input
             placeholder="Search purchase orders..."
             value={globalFilter ?? ""}
-            onChange={(event) => setGlobalFilter(event.target.value)}
-            className="dashboard-control h-10 w-full rounded-lg pl-10"
+            onChange={(event) => {
+              setGlobalFilter(event.target.value)
+              table.setPageIndex(0)
+            }}
+            className="dashboard-control h-9 w-full rounded-lg pl-10"
           />
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" className="dashboard-button-secondary h-10 justify-center rounded-lg">
-              <SlidersHorizontal className="w-4 h-4 mr-2" />
-              View
-              <ChevronDownIcon className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48 border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
-            <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div
+          className="flex w-full min-w-0 flex-wrap items-center gap-2 lg:w-auto lg:flex-1 lg:justify-end xl:flex-none xl:flex-nowrap"
+          data-slot="purchase-order-table-filter-controls"
+        >
+          <TableDateRangePicker
+            value={orderDateRange}
+            onChange={(range) => {
+              setOrderDateRange(range)
+              table.setPageIndex(0)
+            }}
+            locale={locale}
+            placeholder="Order date range"
+            ariaLabel="Order date range"
+            className="min-w-[210px] flex-1 sm:flex-none xl:w-[230px] xl:min-w-0 xl:flex-none"
+          />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="dashboard-button-secondary h-9 shrink-0 justify-center whitespace-nowrap rounded-lg">
+                <SlidersHorizontal className="mr-2 h-4 w-4" />
+                View
+                <ChevronDownIcon className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48 border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
+              <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  )
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={clearTableState}
+            disabled={!hasActiveTableState}
+            className="dashboard-button-secondary h-9 shrink-0 whitespace-nowrap rounded-lg"
+          >
+            <XCircle className="mr-2 h-4 w-4" />
+            Clear filters
+          </Button>
+        </div>
       </div>
 
       {/* Selected rows info */}
@@ -637,7 +708,7 @@ const ModernPurchaseOrderTable = ({
       </div>
 
       {/* Pagination */}
-      <DataTablePagination table={table} variant="landing" />
+      <DataTablePagination table={table} variant="landing" locale={locale} />
     </div>
   )
 }
@@ -650,6 +721,7 @@ interface PurchaseOrderManagementProps {
   initialLocationData: LocationData[]
   currency: string
   canCreate: boolean
+  locale?: Locale
 }
 
 const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
@@ -660,10 +732,11 @@ const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
   initialLocationData,
   currency,
   canCreate,
+  locale: localeProp,
 }: PurchaseOrderManagementProps) {
   const router = useRouter()
   const pathname = usePathname()
-  const locale = getLocaleFromPathname(pathname) ?? DEFAULT_LOCALE
+  const locale = localeProp ?? getLocaleFromPathname(pathname) ?? DEFAULT_LOCALE
   const localizedHref = useCallback((href: string) => localizePath(href, locale), [locale])
 
   // Use real data hooks
@@ -927,6 +1000,7 @@ const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
         subtitle={subtitle}
         localizedHref={localizedHref}
         canCreate={canCreate}
+        locale={locale}
       />
 
       {/* Confirmation Dialog */}

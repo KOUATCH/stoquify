@@ -400,7 +400,7 @@ export default async function PurchaseOrderPage({ params, searchParams }: Purcha
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto rounded-md border bg-white">
-                  <table className="w-full">
+                  <table className="dashboard-table-base w-full">
                     <thead>
                       <tr className="border-b bg-muted/40">
                         <th className="text-start py-2 px-4">Item</th>

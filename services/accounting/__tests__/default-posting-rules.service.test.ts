@@ -5,6 +5,8 @@ import {
   PostingRuleLineSide,
 } from "@prisma/client";
 
+import { BusinessRuleError } from "@/services/_shared/action-errors";
+
 jest.mock("@/prisma/db", () => ({
   db: {
     chartOfAccount: { findMany: jest.fn() },
@@ -136,6 +138,22 @@ describe("default POS posting rules", () => {
         data: expect.objectContaining({ code: "DELIVERY-SALES-INVOICE" }),
       }),
     );
+  });
+
+  it("returns a typed business-rule failure for an unregistered delivery template", async () => {
+    await expect(
+      ensureDefaultDeliveryOrderPostingRule(
+        "org-1",
+        {
+          sourceType: AccountingSourceType.POS_SALE,
+          postingPurpose: AccountingPostingPurpose.SALE_COMPLETION,
+        },
+        "user-1",
+        mockTx as never,
+      ),
+    ).rejects.toBeInstanceOf(BusinessRuleError);
+
+    expect(mockTx.postingRule.findFirst).not.toHaveBeenCalled();
   });
 
   it("creates the sale, payment, refund, and void posting rules when they are missing", async () => {

@@ -33,6 +33,28 @@ jest.mock("xlsx", () => ({
   writeFile: jest.fn(),
 }))
 
+jest.mock("@/components/DataTableComponents/TableDateRangePicker", () => ({
+  TableDateRangePicker: ({
+    onChange,
+    ariaLabel,
+    className,
+  }: {
+    onChange: (value: { from?: string; to?: string }) => void
+    ariaLabel: string
+    className?: string
+  }) => (
+    <div className={className}>
+      <button
+        type="button"
+        aria-label={ariaLabel}
+        onClick={() => onChange({ from: "2026-08-01", to: "2026-08-31" })}
+      >
+        Choose test range
+      </button>
+    </div>
+  ),
+}))
+
 jest.mock("@/lib/notifications/notify", () => ({
   notify: {
     error: jest.fn(),
@@ -62,6 +84,28 @@ jest.mock("@/hooks/useRecentPurchaseOrderQueries", () => {
 })
 
 const mockUsePurchaseOrders = usePurchaseOrders as jest.Mock
+
+function purchaseOrder(orderNumber: string, orderDate: string) {
+  return {
+    id: orderNumber,
+    orderNumber,
+    status: "DRAFT",
+    orderDate,
+    expectedDeliveryDate: orderDate,
+    createdAt: orderDate,
+    total: 100,
+    lines: [],
+    supplier: { name: `${orderNumber} supplier`, email: null },
+    location: { name: "Main location", address: null },
+    capabilities: {
+      edit: { allowed: false },
+      approve: { allowed: false },
+      receive: { allowed: false },
+      cancel: { allowed: false },
+      archive: { allowed: false },
+    },
+  } as never
+}
 
 class PurchaseOrdersRouteBoundary extends Component<
   { children: ReactNode; reset: () => void },
@@ -126,5 +170,54 @@ describe("PurchaseOrderManagement error surface", () => {
     fireEvent.click(screen.getByRole("button", { name: "Try again" }))
 
     expect(reset).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe("PurchaseOrderManagement table controls", () => {
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
+  it("keeps desktop controls on one row and filters by an inclusive order-date range", () => {
+    mockUsePurchaseOrders.mockReturnValue({
+      data: undefined,
+      error: null,
+      isLoading: false,
+      refetch: jest.fn(),
+    })
+
+    const { container } = render(
+      <PurchaseOrderManagement
+        title="Purchase orders"
+        organizationId="org-1"
+        initialPurchaseOrderData={[
+          purchaseOrder("PO-JUL", "2026-07-31T12:00:00.000Z"),
+          purchaseOrder("PO-AUG", "2026-08-31T12:00:00.000Z"),
+        ]}
+        initialSupplierData={[]}
+        initialLocationData={[]}
+        currency="XAF"
+        canCreate={false}
+      />,
+    )
+
+    expect(container.querySelector(".dashboard-table-toolbar")).toHaveClass("xl:flex-nowrap")
+    expect(container.querySelector('[data-slot="purchase-order-table-filter-controls"]')).toHaveClass(
+      "flex-wrap",
+      "xl:flex-nowrap",
+      "xl:flex-none",
+    )
+    expect(screen.getByText("PO-JUL")).toBeInTheDocument()
+    expect(screen.getByText("PO-AUG")).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole("button", { name: "Order date range" }))
+
+    expect(screen.queryByText("PO-JUL")).not.toBeInTheDocument()
+    expect(screen.getByText("PO-AUG")).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole("button", { name: "Clear filters" }))
+
+    expect(screen.getByText("PO-JUL")).toBeInTheDocument()
+    expect(screen.getByText("PO-AUG")).toBeInTheDocument()
   })
 })
