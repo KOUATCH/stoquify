@@ -4,6 +4,14 @@ const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
+const {
+  HASH_CONTRACT,
+  validateManifest,
+} = require("./prisma-migration-catalog-gate");
+const {
+  buildMigrationDeploymentHistory,
+  queryHistoryRows,
+} = require("./prisma-migration-history-health-check");
 
 const DEFAULT_MARKDOWN_OUT =
   "what-next/prisma-migration-deployment-readiness.md";
@@ -11,6 +19,8 @@ const DEFAULT_JSON_OUT = "what-next/prisma-migration-deployment-readiness.json";
 const DEFAULT_REVIEW_PACKET_OUT =
   "what-next/prisma-migration-risk-review-packet.md";
 const APPROVALS_FILE = "prisma/migration-risk-approvals.json";
+const BASELINE_BRIDGE_MIGRATION =
+  "20260611130000_accounting_auth_baseline_bridge";
 const LOCAL_HOSTS = new Set([
   "localhost",
   "127.0.0.1",
@@ -266,7 +276,14 @@ function consequenceFor(rule, object) {
   return "Renames a database object and can break consumers that still use the previous name.";
 }
 
-function buildFinding(source, migration, migrationSha256, rule, matchIndex) {
+function buildFinding(
+  source,
+  migration,
+  migrationSha256,
+  migrationRawSha256,
+  rule,
+  matchIndex,
+) {
   const clause = exactClauseFor(source, rule, matchIndex);
   const object = destructiveObjectFor(source, rule, matchIndex, clause);
   const consequence = consequenceFor(rule, object);
@@ -277,6 +294,8 @@ function buildFinding(source, migration, migrationSha256, rule, matchIndex) {
   return {
     migration,
     migrationSha256,
+    migrationRawSha256,
+    hashContractVersion: HASH_CONTRACT.version,
     rule,
     line: lineAt(source, matchIndex),
     clause,
@@ -289,18 +308,26 @@ function buildFinding(source, migration, migrationSha256, rule, matchIndex) {
 function scanMigrationRisks(root, options = {}) {
   const files = listMigrationFiles(root);
   const registry = readApprovalRegistry(root);
-  const findings = [];
+  const catalogFindings = [];
   const now = new Date(options.now || Date.now());
 
   for (const file of files) {
     const source = fs.readFileSync(file, "utf8");
     const migration = normalizeRelativePath(path.relative(root, file));
     const digest = sqlSha256(source);
+    const rawDigest = sha256(fs.readFileSync(file));
     for (const rule of RISK_RULES) {
       const pattern = new RegExp(rule.pattern.source, rule.pattern.flags);
       for (const match of source.matchAll(pattern)) {
-        findings.push(
-          buildFinding(source, migration, digest, rule.id, match.index || 0),
+        catalogFindings.push(
+          buildFinding(
+            source,
+            migration,
+            digest,
+            rawDigest,
+            rule.id,
+            match.index || 0,
+          ),
         );
       }
     }
@@ -310,7 +337,7 @@ function scanMigrationRisks(root, options = {}) {
   const revokedApprovals = [];
   for (const approval of registry.approvals.filter(approvalEntryIsValid)) {
     const migration = normalizeRelativePath(approval.migration);
-    const currentFinding = findings.find(
+    const currentFinding = catalogFindings.find(
       (finding) =>
         finding.migration === migration &&
         finding.migrationSha256 === approval.migrationSha256 &&
@@ -349,7 +376,7 @@ function scanMigrationRisks(root, options = {}) {
     }
   }
 
-  for (const finding of findings) {
+  for (const finding of catalogFindings) {
     const approval = registry.approvals
       .filter(approvalEntryIsValid)
       .find(
@@ -372,10 +399,20 @@ function scanMigrationRisks(root, options = {}) {
     finding.approved = finding.approvalStatus === "approved";
   }
 
+  const migrationNames = options.migrationNames
+    ? new Set(options.migrationNames)
+    : null;
+  const findings = migrationNames
+    ? catalogFindings.filter((finding) =>
+        migrationNames.has(path.basename(path.dirname(finding.migration))),
+      )
+    : catalogFindings;
+
   return {
     files,
     registry,
     findings,
+    catalogFindings,
     staleApprovals,
     revokedApprovals,
   };
@@ -464,8 +501,46 @@ function buildPrismaMigrationReadiness(root = process.cwd(), options = {}) {
     options.environment || "auto",
     environment,
   );
-  const risk = scanMigrationRisks(root, { now: options.now });
   const deployment = buildDeploymentDecision(environmentName, environment);
+  const catalogManifest = validateManifest(root);
+  const allMigrationNames = listMigrationFiles(root).map((file) =>
+    path.basename(path.dirname(file)),
+  );
+  const deploymentHistory = options.deploymentHistory || null;
+  const baselineBridgePending = Boolean(
+    deploymentHistory?.pendingMigrationNames?.includes(
+      BASELINE_BRIDGE_MIGRATION,
+    ),
+  );
+  const existingDatabaseRequiresManualBaselineAdoption = Boolean(
+    deployment.shouldDeploy &&
+      baselineBridgePending &&
+      deploymentHistory?.summary?.completedRowCount > 0,
+  );
+  let riskScopeMode;
+  let riskMigrationNames;
+
+  if (options.riskScope === "catalog") {
+    riskScopeMode = "full_catalog_review";
+    riskMigrationNames = allMigrationNames;
+  } else if (deployment.shouldDeploy) {
+    riskScopeMode = "target_pending";
+    riskMigrationNames =
+      deploymentHistory?.summary?.status === "ready"
+        ? deploymentHistory.pendingMigrationNames
+        : allMigrationNames;
+  } else if (catalogManifest.manifestPresent) {
+    riskScopeMode = "unmanifested_catalog_delta";
+    riskMigrationNames = catalogManifest.unmanifested;
+  } else {
+    riskScopeMode = "legacy_full_catalog";
+    riskMigrationNames = allMigrationNames;
+  }
+
+  const risk = scanMigrationRisks(root, {
+    now: options.now,
+    migrationNames: riskMigrationNames,
+  });
   const packagePath = path.join(root, "package.json");
   const packageSource = fs.existsSync(packagePath)
     ? fs.readFileSync(packagePath, "utf8")
@@ -506,6 +581,10 @@ function buildPrismaMigrationReadiness(root = process.cwd(), options = {}) {
       ready: risk.findings.every((finding) => finding.approved),
     },
     {
+      id: "migration_catalog_manifest_integrity",
+      ready: catalogManifest.status === "ready",
+    },
+    {
       id: "deployment_target_is_safe",
       ready: deployment.blockers.length === 0,
     },
@@ -542,11 +621,31 @@ function buildPrismaMigrationReadiness(root = process.cwd(), options = {}) {
     },
   ];
 
+  if (deployment.shouldDeploy) {
+    checks.push({
+      id: "target_migration_history_integrity_verified",
+      ready: deploymentHistory?.summary?.status === "ready",
+    });
+    checks.push({
+      id: "baseline_bridge_execution_path_is_safe",
+      ready: !existingDatabaseRequiresManualBaselineAdoption,
+    });
+  }
+
   const blockers = [
     ...checks.filter((check) => !check.ready).map((check) => check.id),
     ...risk.registry.errors,
     ...risk.staleApprovals.map(() => "stale_migration_risk_approval"),
     ...risk.revokedApprovals.map(() => "revoked_migration_risk_approval"),
+    ...catalogManifest.errors,
+    ...(deployment.shouldDeploy && deploymentHistory
+      ? deploymentHistory.blockers.map(
+          (blocker) => `target_history_${blocker}`,
+        )
+      : []),
+    ...(existingDatabaseRequiresManualBaselineAdoption
+      ? ["baseline_bridge_manual_adoption_required"]
+      : []),
     ...deployment.blockers,
   ];
 
@@ -559,6 +658,7 @@ function buildPrismaMigrationReadiness(root = process.cwd(), options = {}) {
       blockerCount: [...new Set(blockers)].length,
       migrationCount: risk.files.length,
       riskFindingCount: risk.findings.length,
+      catalogRiskFindingCount: risk.catalogFindings.length,
       approvedRiskCount: risk.findings.filter((finding) => finding.approved)
         .length,
       staleApprovalCount: risk.staleApprovals.length,
@@ -566,6 +666,39 @@ function buildPrismaMigrationReadiness(root = process.cwd(), options = {}) {
       secretValuePrinted: false,
     },
     deployment,
+    riskScope: {
+      mode: riskScopeMode,
+      migrationNames: riskMigrationNames,
+      pendingMigrationCount:
+        deploymentHistory?.pendingMigrationNames?.length ?? null,
+    },
+    baselinePath: {
+      migration: BASELINE_BRIDGE_MIGRATION,
+      pending: baselineBridgePending,
+      selected:
+        !deployment.shouldDeploy || !baselineBridgePending
+          ? "not_applicable"
+          : existingDatabaseRequiresManualBaselineAdoption
+            ? "resolve_existing_manual_only"
+            : "execute_empty_requires_approval",
+      automaticExecutionAllowed:
+        deployment.shouldDeploy &&
+        baselineBridgePending &&
+        !existingDatabaseRequiresManualBaselineAdoption,
+    },
+    targetHistory: deploymentHistory
+      ? {
+          status: deploymentHistory.summary.status,
+          targetClass: deploymentHistory.database.targetClass,
+          querySucceeded: deploymentHistory.query.succeeded,
+          repositoryMigrationCount:
+            deploymentHistory.summary.repositoryMigrationCount,
+          completedRowCount: deploymentHistory.summary.completedRowCount,
+          pendingMigrationNames: deploymentHistory.pendingMigrationNames,
+          blockers: deploymentHistory.blockers,
+        }
+      : null,
+    catalogManifest,
     execution: {
       attempted: false,
       status: deployment.shouldDeploy ? "pending" : "skipped",
@@ -573,10 +706,47 @@ function buildPrismaMigrationReadiness(root = process.cwd(), options = {}) {
     },
     checks,
     findings: risk.findings,
+    catalogFindings: risk.catalogFindings,
     staleApprovals: risk.staleApprovals,
     revokedApprovals: risk.revokedApprovals,
     blockers: [...new Set(blockers)],
   };
+}
+
+async function preparePrismaMigrationReadiness(
+  root = process.cwd(),
+  options = {},
+) {
+  const environment = options.environmentValues || process.env;
+  const environmentName = resolveEnvironment(
+    options.environment || "auto",
+    environment,
+  );
+  const deployment = buildDeploymentDecision(environmentName, environment);
+  let deploymentHistory = options.deploymentHistory || null;
+
+  if (
+    deployment.shouldDeploy &&
+    deployment.databaseTargetSafe &&
+    !deploymentHistory
+  ) {
+    const historyQuery = options.historyQuery || queryHistoryRows;
+    const query = await historyQuery(environment.DATABASE_URL);
+    deploymentHistory = buildMigrationDeploymentHistory(root, {
+      mode: "fail",
+      databaseUrl: environment.DATABASE_URL,
+      rows: query.rows,
+      querySucceeded: query.succeeded,
+      queryErrorCode: query.errorCode,
+    });
+  }
+
+  return buildPrismaMigrationReadiness(root, {
+    ...options,
+    environment: environmentName,
+    environmentValues: environment,
+    deploymentHistory,
+  });
 }
 
 function executeMigration(report, options = {}) {
@@ -649,7 +819,9 @@ function renderMarkdown(report, mode = "report") {
       "/" +
       report.summary.checkCount,
     "- Migrations: " + report.summary.migrationCount,
-    "- Risk findings: " + report.summary.riskFindingCount,
+    "- Risk findings in active scope: " + report.summary.riskFindingCount,
+    "- Risk findings in full catalog: " +
+      report.summary.catalogRiskFindingCount,
     "- Approved risks: " + report.summary.approvedRiskCount,
     "- Stale approvals: " + report.summary.staleApprovalCount,
     "- Revoked approvals: " + report.summary.revokedApprovalCount,
@@ -666,6 +838,38 @@ function renderMarkdown(report, mode = "report") {
     "- Database target safe: " +
       (report.deployment.databaseTargetSafe ? "yes" : "no"),
     "- Execution: `" + report.execution.status + "`",
+    "- Risk scope: `" + report.riskScope.mode + "`",
+    "- Scoped migrations: " + report.riskScope.migrationNames.length,
+    "- Baseline path: `" + report.baselinePath.selected + "`",
+    "- Automatic baseline execution allowed: " +
+      (report.baselinePath.automaticExecutionAllowed ? "yes" : "no"),
+    "",
+    "## Target History",
+    "",
+    ...(report.targetHistory
+      ? [
+          "- Status: `" + report.targetHistory.status + "`",
+          "- Target class: `" + report.targetHistory.targetClass + "`",
+          "- Query succeeded: " +
+            (report.targetHistory.querySucceeded ? "yes" : "no"),
+          "- Repository migrations: " +
+            report.targetHistory.repositoryMigrationCount,
+          "- Completed migrations: " +
+            report.targetHistory.completedRowCount,
+          "- Pending migrations: " +
+            report.targetHistory.pendingMigrationNames.length,
+        ]
+      : ["- Not required for this non-deployment scan."]),
+    "",
+    "## Catalog Manifest",
+    "",
+    "- Status: `" + report.catalogManifest.status + "`",
+    "- Hash contract: `" + report.catalogManifest.hashContract.version + "`",
+    "- Catalog SHA-256: `" + report.catalogManifest.catalogSha256 + "`",
+    "- Grandfathered timestamp collisions: " +
+      report.catalogManifest.duplicateTimestamps.filter(
+        (finding) => finding.grandfathered,
+      ).length,
     "",
     "## Checks",
     "",
@@ -690,7 +894,7 @@ function renderMarkdown(report, mode = "report") {
             finding.findingSha256 +
             "`)",
         )
-      : ["- No destructive SQL patterns detected."]),
+      : ["- No destructive SQL patterns detected in the active scope."]),
     "",
     "## Blockers",
     "",
@@ -703,6 +907,7 @@ function renderMarkdown(report, mode = "report") {
     "- Local and preview deployments skip database mutation by default.",
     "- Production deployment requires a non-local PostgreSQL DATABASE_URL supplied through the process environment.",
     "- Each approved destructive finding is independently bound to the exact migration and SQL-clause hashes.",
+    "- Full-catalog history integrity is evaluated separately from target-pending destructive execution risk.",
     "- Revoked, expired, hash-drifted, and missing-finding approvals remain blocked.",
     "- Database URLs and credentials are never written to evidence.",
   ];
@@ -758,21 +963,25 @@ function renderRiskReviewPacket(report) {
     "",
     "## Hash and decision contract",
     "",
+    "- Hash contract: `" + HASH_CONTRACT.version + "`.",
     ...[
       ...new Map(
         report.findings.map((finding) => [
           finding.migration,
-          finding.migrationSha256,
+          {
+            canonical: finding.migrationSha256,
+            raw: finding.migrationRawSha256,
+          },
         ]),
       ),
-    ].map(
-      ([migration, digest]) =>
-        "- `" + migration + "` migration SHA-256: `" + digest + "`",
-    ),
+    ].flatMap(([migration, digests]) => [
+      "- `" + migration + "` canonical LF approval SHA-256: `" + digests.canonical + "`",
+      "- `" + migration + "` raw-byte transport SHA-256: `" + digests.raw + "`",
+    ]),
     "- Finding SHA-256 is SHA-256 of `migration path`, `migration SHA-256`, `rule`, `clause SHA-256`, and `consequence`, joined in that order by LF with no trailing LF.",
     "- One registry entry is required per finding SHA-256; rule-level or migration-wide blanket approvals are rejected.",
     "- A reviewer must manually author `humanAuthored`, identity, role, rationale, consequence acknowledgement, and UTC timestamp fields in the registry.",
-    "- Hashes use the exact SQL text with line endings canonicalized to LF, so Windows and CI checkouts agree. Any other migration or clause change makes the old entry stale.",
+    "- Approval hashes use UTF-8 SQL with line endings canonicalized to LF; raw-byte hashes provide transport integrity. Any non-line-ending SQL change makes the old entry stale.",
     "- An optional `expiresAt` in the past also makes an approval stale.",
     "- Adding a human-authored `revocation` object preserves the original decision but immediately makes the finding unapproved.",
     "",
@@ -846,26 +1055,29 @@ function gateResultForReport(report, mode = "report") {
   };
 }
 
+async function main() {
+  const options = parseArgs();
+  const root = path.resolve(options.root);
+  let report = await preparePrismaMigrationReadiness(root, {
+    environment: options.environment,
+    riskScope: options.mode === "review" ? "catalog" : undefined,
+  });
+  if (options.mode === "execute") report = executeMigration(report, { root });
+  if (options.mode === "review") {
+    writeRiskReviewPacket(root, options, report);
+    console.log(renderRiskReviewPacket(report));
+  } else {
+    writeReport(root, options, report);
+    console.log(renderMarkdown(report, options.mode));
+  }
+  process.exitCode = gateResultForReport(report, options.mode).exitCode;
+}
+
 if (require.main === module) {
-  try {
-    const options = parseArgs();
-    const root = path.resolve(options.root);
-    let report = buildPrismaMigrationReadiness(root, {
-      environment: options.environment,
-    });
-    if (options.mode === "execute") report = executeMigration(report, { root });
-    if (options.mode === "review") {
-      writeRiskReviewPacket(root, options, report);
-      console.log(renderRiskReviewPacket(report));
-    } else {
-      writeReport(root, options, report);
-      console.log(renderMarkdown(report, options.mode));
-    }
-    process.exitCode = gateResultForReport(report, options.mode).exitCode;
-  } catch (error) {
+  main().catch((error) => {
     console.error(error instanceof Error ? error.message : String(error));
     process.exitCode = 1;
-  }
+  });
 }
 
 module.exports = {
@@ -874,6 +1086,7 @@ module.exports = {
   executeMigration,
   gateResultForReport,
   parseArgs,
+  preparePrismaMigrationReadiness,
   renderMarkdown,
   renderRiskReviewPacket,
   resolveEnvironment,

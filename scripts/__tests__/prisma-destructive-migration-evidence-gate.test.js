@@ -16,8 +16,13 @@ describe("destructive migration evidence gate", () => {
 
     expect(REQUIRED_ARTIFACT_IDS).toHaveLength(14);
     expect(report.packetBindings).toMatchObject({
+      ready: true,
       operationCount: 13,
       boundFileCount: 27,
+    });
+    expect(report.releaseSnapshot).toMatchObject({
+      ready: false,
+      mutableFilesInvalidateHistoricalApproval: false,
     });
     expect(report.candidateFreeze.ready).toBe(false);
     expect(report.candidateFreeze.mode).toBe("DEVELOPMENT_ROLLING");
@@ -29,6 +34,7 @@ describe("destructive migration evidence gate", () => {
       approvedFindingCount: 0,
     });
     expect(report.exactHashApprovalRecorded).toBe(false);
+    expect(report.historicalApprovalReady).toBe(false);
     expect(report.productionExecutionAuthorized).toBe(false);
     expect(report.status).toBe("REJECTED_BLOCKED_EVIDENCE_INCOMPLETE");
   });
