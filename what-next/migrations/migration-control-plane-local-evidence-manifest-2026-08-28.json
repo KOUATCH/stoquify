@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-28T17:42:25.891Z",
+  "scope": "LOCAL_IMPLEMENTATION_AND_REPLAY",
+  "sourceCommit": "415789cb005da1d07bf80d5d714d79f32c3c6e10",
+  "candidateMode": "DEVELOPMENT_ROLLING",
+  "sourceWorktreeDirty": true,
+  "hashAlgorithm": "SHA-256",
+  "secretsRetained": false,
+  "productionExecutionAuthorized": false,
+  "artifacts": [
+    {
+      "path": "prisma/migration-catalog-manifest.json",
+      "sha256": "ae4b9ff033eb5261fe4041ec52464240badbad1f2e240b2759ac9a85e3ea0794"
+    },
+    {
+      "path": "what-next/migrations/migration-catalog-health-2026-08-28.json",
+      "sha256": "f1d66c8b12af807879eedf5ea499314f68071f978621c66069b91cdba9f95bbb"
+    },
+    {
+      "path": "what-next/migrations/local-migration-history-health-2026-08-28.json",
+      "sha256": "da9e615880713e730252f6536d1c953552276e3e2866da3a0f9a60e306ce2a5d"
+    },
+    {
+      "path": "what-next/migrations/migration-control-plane-readiness-2026-08-28.json",
+      "sha256": "15f2518760d987957a0cfe02f5c3c31b4b213b57ef724a276695e501b5d21966"
+    },
+    {
+      "path": "what-next/migrations/current-fresh-replay-certification-2026-08-28.json",
+      "sha256": "a9832f0f177e13a6e6aedf7368af36a6e222ab78357be30ff9da6dee276499b4"
+    },
+    {
+      "path": "what-next/migrations/destructive-migration-evidence-separation-2026-08-28.json",
+      "sha256": "db5ae33e12644f915d60cb68ea08995a40e694574cd25cbd26893f7f55cc17d4"
+    },
+    {
+      "path": "what-next/migrations/migration-environment-census-2026-08-28.json",
+      "sha256": "c15e960e6a3b12cb5bf70c48aad70b68b68f9dd455a10b288dc5839dc472f7e6"
+    }
+  ],
+  "externalBlockers": [
+    "remote_environment_census_and_named_database_owners",
+    "target_specific_backup_and_pitr_attestation",
+    "isolated_restore_rehearsal",
+    "transaction_failure_injection",
+    "functional_auth_session_and_accounting_smoke_evidence",
+    "named_maker_and_independent_checker_decisions",
+    "clean_frozen_release_candidate_manifest"
+  ]
+}

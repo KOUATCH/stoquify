@@ -1,0 +1,85 @@
+{
+  "summary": {
+    "generatedAt": "2026-08-28T17:42:19.262Z",
+    "mode": "fail",
+    "status": "ready",
+    "checkCount": 9,
+    "readyCount": 9,
+    "blockerCount": 0,
+    "repositoryMigrationCount": 80,
+    "completedRowCount": 80,
+    "unfinishedRowCount": 0,
+    "rolledBackRowCount": 0,
+    "secretValuePrinted": false,
+    "migrationLogPrinted": false
+  },
+  "database": {
+    "configured": true,
+    "targetClass": "local"
+  },
+  "checksumApprovals": {
+    "exists": true,
+    "valid": true,
+    "approvalCount": 0,
+    "approvedChecksumMismatches": [],
+    "staleApprovals": [],
+    "errors": []
+  },
+  "query": {
+    "succeeded": true,
+    "errorCode": null
+  },
+  "checks": [
+    {
+      "id": "database_url_configured",
+      "ready": true
+    },
+    {
+      "id": "migration_catalog_present",
+      "ready": true
+    },
+    {
+      "id": "migration_checksum_approval_registry_valid",
+      "ready": true
+    },
+    {
+      "id": "migration_history_query_succeeded",
+      "ready": true
+    },
+    {
+      "id": "migration_history_has_no_unfinished_rows",
+      "ready": true
+    },
+    {
+      "id": "all_repository_migrations_successfully_applied",
+      "ready": true
+    },
+    {
+      "id": "applied_migration_checksums_match_repository",
+      "ready": true
+    },
+    {
+      "id": "database_has_no_unknown_successful_migrations",
+      "ready": true
+    },
+    {
+      "id": "database_has_no_duplicate_successful_migrations",
+      "ready": true
+    }
+  ],
+  "findings": {
+    "unfinished": [],
+    "missing": [],
+    "checksumMismatches": [],
+    "approvedChecksumMismatches": [],
+    "unknown": [],
+    "duplicateSuccesses": []
+  },
+  "blockers": [],
+  "safety": {
+    "readOnly": true,
+    "databaseUrlRetained": false,
+    "migrationLogsRetained": false,
+    "checksumApprovalExactMatchOnly": true
+  }
+}

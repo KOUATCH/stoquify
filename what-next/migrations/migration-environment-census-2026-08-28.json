@@ -1,0 +1,103 @@
+{
+  "$schema": "./migration-environment-census.schema.json",
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-28T17:42:25.891Z",
+  "secretsRetained": false,
+  "environments": [
+    {
+      "id": "configured-local-development",
+      "class": "local_development",
+      "ownerStatus": "LOCAL_OPERATOR",
+      "databaseRef": "configured-local-database",
+      "databaseNameRetained": false,
+      "history": {
+        "observed": true,
+        "expectedCount": 80,
+        "appliedCount": 80,
+        "ready": true,
+        "missing": [],
+        "checksumMismatches": []
+      },
+      "selectedPath": "NO_ACTION_CURRENT",
+      "schemaStatus": "ALIGNED_BY_FORWARD_MIGRATION",
+      "backupRestoreStatus": "NOT_EVIDENCED",
+      "releaseStatus": "READY_LOCAL_ONLY",
+      "notes": [
+        "The narrow riskReasons default-alignment migration was applied locally.",
+        "No database URL, password, host credential, or raw identifier is retained."
+      ]
+    },
+    {
+      "id": "fresh-replay-2026-08-28-v2",
+      "class": "local_replay",
+      "ownerStatus": "LOCAL_OPERATOR",
+      "databaseRef": "local-replay-v2",
+      "databaseNameRetained": false,
+      "history": {
+        "observed": true,
+        "expectedCount": 80,
+        "appliedCount": 80,
+        "ready": true,
+        "missing": [],
+        "checksumMismatches": []
+      },
+      "selectedPath": "EXECUTE_EMPTY_REHEARSAL",
+      "schemaStatus": "READY_WITH_INTENTIONAL_RESIDUAL_DRIFT",
+      "backupRestoreStatus": "NOT_REQUIRED_LOCAL_REPLAY",
+      "releaseStatus": "READY_LOCAL_ONLY",
+      "notes": [
+        "The database was newly created for replay, all 80 migrations applied, and the second deploy was a no-op.",
+        "All remaining schema-diff statements were classified by the existing intentional residual-drift policy; no unexpected drift remained.",
+        "This replay proves technical executability but does not substitute for target-specific backup, restore, zero-row, or human approval evidence."
+      ]
+    },
+    {
+      "id": "fresh-replay-2026-08-28-v1",
+      "class": "local_replay",
+      "ownerStatus": "LOCAL_OPERATOR",
+      "databaseRef": "local-replay-v1",
+      "databaseNameRetained": false,
+      "history": {
+        "observed": true,
+        "expectedCount": 80,
+        "appliedCount": 79,
+        "ready": false,
+        "missing": [
+          "20260828190000_align_onboarding_risk_reasons_default"
+        ],
+        "checksumMismatches": []
+      },
+      "selectedPath": "SUPERSEDED_REPLAY",
+      "schemaStatus": "SUPERSEDED_AFTER_UNEXPECTED_DEFAULT_DRIFT",
+      "backupRestoreStatus": "NOT_REQUIRED_LOCAL_REPLAY",
+      "releaseStatus": "SUPERSEDED",
+      "notes": [
+        "The first replay exposed the riskReasons default mismatch and was intentionally retained as diagnostic evidence.",
+        "It was not reused as final fresh-chain proof after the corrective migration was added."
+      ]
+    },
+    {
+      "id": "remote-estate",
+      "class": "remote_unresolved",
+      "ownerStatus": "UNRESOLVED_EXTERNAL",
+      "databaseRef": "remote-targets-not-provided",
+      "databaseNameRetained": false,
+      "history": {
+        "observed": false,
+        "expectedCount": null,
+        "appliedCount": null,
+        "ready": null,
+        "missing": [],
+        "checksumMismatches": []
+      },
+      "selectedPath": "UNCLASSIFIED_BLOCKED",
+      "schemaStatus": null,
+      "backupRestoreStatus": "UNRESOLVED_EXTERNAL",
+      "releaseStatus": "BLOCKED_EXTERNAL_EVIDENCE",
+      "notes": [
+        "No staging, preview, production, restore-clone, or other remote target inventory or credentials were supplied.",
+        "Each remote database must be independently inventoried and classified before any deploy or resolve action."
+      ]
+    }
+  ]
+}

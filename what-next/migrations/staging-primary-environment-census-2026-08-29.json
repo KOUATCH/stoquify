@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-29T08:15:38.600Z",
+  "sourceDocument": "docs/migrations/Database Migration Info.docx",
+  "secretsRetained": false,
+  "environment": {
+    "environmentId": "staging-primary",
+    "purpose": "STAGING",
+    "databaseOwner": "Kouatchoua Mark",
+    "hostingProvider": "local",
+    "databaseRef": "db-6074d3e925d2",
+    "databaseNameRetained": false,
+    "existingBusinessData": true,
+    "documentedSecureCredentialMethod": "CI secret",
+    "accessUsedForThisRun": "configured local environment",
+    "mappingBasis": "single configured local PostgreSQL target matching the document's local hosting classification",
+    "maker": "Tchami Jennifer",
+    "independentChecker": "Yonga Sprinfield"
+  },
+  "migrationState": {
+    "repositoryMigrationCount": 80,
+    "completedMigrationCount": 80,
+    "pendingMigrations": [],
+    "unfinishedMigrations": [],
+    "checksumMismatches": [],
+    "unknownSuccessfulMigrations": [],
+    "duplicateSuccessfulMigrations": [],
+    "baselineBridgeRecordedWithMatchingChecksum": true,
+    "selectedPath": "NO_ACTION_CURRENT",
+    "migrationMutationRequired": false,
+    "resolveRequired": false
+  },
+  "recoveryState": {
+    "backupOrPitrDocumentedEnabled": true,
+    "pitrProviderConfigurationIndependentlyVerified": false,
+    "logicalBackupCreated": true,
+    "logicalBackupByteLength": 4712768,
+    "logicalBackupSha256": "6253ebd4aada4994fde2e65cd97ed3b84b2267b0ecd1cd9442606a76e8d11209",
+    "restoreRehearsalDate": "2026-08-29",
+    "restoreRehearsalStatus": "READY",
+    "restoredHistory": "80/80",
+    "schemaDiffFingerprintMatched": true,
+    "authAccountingTableProfileMatched": true,
+    "temporaryDumpRetained": false,
+    "restoreDatabaseRetained": false
+  },
+  "authorization": {
+    "migrationExecutionAuthorized": false,
+    "migrationExecutionNeeded": false,
+    "resolveAuthorized": false,
+    "resolveNeeded": false,
+    "makerSignatureRecorded": false,
+    "checkerSignatureRecorded": false,
+    "signatureReason": "No migration or resolve action is pending; names are retained for future controlled changes only."
+  },
+  "closure": {
+    "migrationStatus": "READY_NO_ACTION",
+    "permanentControlsReady": true,
+    "functionalAuthAccountingReleaseSmoke": "NOT_APPLICABLE_NO_DEPLOYMENT_PERFORMED",
+    "productionCertificationClaimed": false
+  }
+}

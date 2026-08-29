@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stoquify://migration-environment-census.schema.json",
+  "title": "Stoquify migration environment census",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "generatedAt",
+    "secretsRetained",
+    "environments"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "secretsRetained": { "const": false },
+    "environments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "class",
+          "ownerStatus",
+          "databaseRef",
+          "history",
+          "selectedPath",
+          "backupRestoreStatus",
+          "releaseStatus"
+        ],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "class": {
+            "enum": [
+              "local_development",
+              "local_replay",
+              "remote_unresolved"
+            ]
+          },
+          "ownerStatus": { "enum": ["LOCAL_OPERATOR", "UNRESOLVED_EXTERNAL"] },
+          "databaseRef": { "type": "string", "minLength": 1 },
+          "databaseNameRetained": { "type": "boolean" },
+          "history": {
+            "type": "object",
+            "required": ["observed", "expectedCount", "appliedCount", "ready"],
+            "properties": {
+              "observed": { "type": "boolean" },
+              "expectedCount": { "type": ["integer", "null"], "minimum": 0 },
+              "appliedCount": { "type": ["integer", "null"], "minimum": 0 },
+              "ready": { "type": ["boolean", "null"] },
+              "missing": { "type": "array", "items": { "type": "string" } },
+              "checksumMismatches": { "type": "array", "items": { "type": "string" } }
+            },
+            "additionalProperties": false
+          },
+          "selectedPath": {
+            "enum": [
+              "NO_ACTION_CURRENT",
+              "EXECUTE_EMPTY_REHEARSAL",
+              "SUPERSEDED_REPLAY",
+              "UNCLASSIFIED_BLOCKED"
+            ]
+          },
+          "schemaStatus": { "type": ["string", "null"] },
+          "backupRestoreStatus": {
+            "enum": ["NOT_REQUIRED_LOCAL_REPLAY", "NOT_EVIDENCED", "UNRESOLVED_EXTERNAL"]
+          },
+          "releaseStatus": {
+            "enum": ["READY_LOCAL_ONLY", "SUPERSEDED", "BLOCKED_EXTERNAL_EVIDENCE"]
+          },
+          "notes": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}

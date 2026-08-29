@@ -1,0 +1,28 @@
+{
+  "generatedAt": "2026-08-28T17:41:21.541Z",
+  "status": "READY_WITH_INTENTIONAL_RESIDUAL_DRIFT",
+  "ready": true,
+  "databaseName": "stoquify_replay_migration_control_20260828_v2",
+  "history": {
+    "expectedCount": 80,
+    "appliedCount": 80,
+    "missing": [],
+    "unknown": [],
+    "unfinished": [],
+    "checksumMismatches": [],
+    "ready": true
+  },
+  "drift": {
+    "statementCount": 226,
+    "sha256": "bc6bde503763d8c8d0063ca7c50731f89a56afc43a6717727d24add1dc6f6593",
+    "allowedCategories": {
+      "retained_database_foreign_key": 12,
+      "retained_database_timestamp_default": 7,
+      "retained_legacy_evidence_table": 3,
+      "retained_legacy_evidence_enum": 1,
+      "metadata_foreign_key_rename": 54,
+      "metadata_index_rename": 149
+    },
+    "unexpected": []
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-29T08:15:38.600Z",
+  "environmentId": "staging-primary",
+  "databaseRef": "db-6074d3e925d2",
+  "sourceCommit": "b39c6a301f833d5791452e25fd00ab909fafb4a8",
+  "sourceWorktreeDirty": false,
+  "decision": "NO_ACTION_CURRENT",
+  "migrationIssueResolvedForTarget": true,
+  "productionExecutionAuthorized": false,
+  "secretsRetained": false,
+  "verification": {
+    "catalogReady": true,
+    "historyReady": true,
+    "pendingMigrationCount": 0,
+    "restoreRehearsalReady": true,
+    "schemaValid": true,
+    "prismaStatusReady": true,
+    "focusedTestSuitesPassed": 7,
+    "focusedTestsPassed": 53
+  },
+  "artifacts": [
+    {
+      "path": "prisma/migration-catalog-manifest.json",
+      "sha256": "ae4b9ff033eb5261fe4041ec52464240badbad1f2e240b2759ac9a85e3ea0794"
+    },
+    {
+      "path": "what-next/migrations/migration-catalog-health-2026-08-29.json",
+      "sha256": "ac0c56695426f59fd169a8d1be425bd54ec38f8120c1fb3b8d4a713545c39afc"
+    },
+    {
+      "path": "what-next/migrations/staging-primary-history-health-2026-08-29.json",
+      "sha256": "066a309de2766df9d8409d46299a78388495efec2d58258744cf99835e725a39"
+    },
+    {
+      "path": "what-next/migrations/staging-primary-deployment-readiness-2026-08-29.json",
+      "sha256": "91d7f26e9604420091ec0a85186747902c48622341d932b0c85b65aaf80702be"
+    },
+    {
+      "path": "what-next/migrations/staging-primary-restore-rehearsal-2026-08-29.json",
+      "sha256": "94485594cbe743801f844cdc4fc5d535c90553918a8231b627fdd4d613ac8546"
+    },
+    {
+      "path": "what-next/migrations/current-fresh-replay-certification-2026-08-28.json",
+      "sha256": "a9832f0f177e13a6e6aedf7368af36a6e222ab78357be30ff9da6dee276499b4"
+    }
+  ],
+  "followUpControls": [
+    "Review and merge the migration-scoped working-tree changes on a clean candidate.",
+    "Keep the catalog and pending-risk gates mandatory in CI.",
+    "Repeat the census and route selection before connecting any additional database not listed in the source document.",
+    "Run functional auth/accounting smokes whenever a future migration is actually deployed."
+  ]
+}
