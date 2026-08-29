@@ -4,6 +4,7 @@ const os = require("os");
 const path = require("path");
 
 const {
+  buildMigrationDeploymentHistory,
   buildMigrationHistoryHealth,
   classifyTarget,
   gateResultForReport,
@@ -178,6 +179,45 @@ describe("Prisma migration history health check", () => {
       ]),
     );
     expect(gateResultForReport(report, "fail").exitCode).toBe(1);
+  });
+
+  it("treats missing repository migrations as a pending deploy set when history integrity is otherwise healthy", () => {
+    const { root, migrations } = makeRepo();
+    const report = buildMigrationDeploymentHistory(root, {
+      mode: "fail",
+      databaseUrl: "postgresql://user:secret@db.example.com:5432/stoquify",
+      querySucceeded: true,
+      rows: [completed(migrations[0])],
+    });
+
+    expect(report.summary).toMatchObject({
+      phase: "pre_deploy",
+      status: "ready",
+      pendingMigrationCount: 1,
+    });
+    expect(report.pendingMigrationNames).toEqual([migrations[1].name]);
+    expect(report.blockers).toEqual([]);
+  });
+
+  it("still blocks pending-set calculation when applied history has checksum or unknown-row defects", () => {
+    const { root, migrations } = makeRepo();
+    const report = buildMigrationDeploymentHistory(root, {
+      mode: "fail",
+      databaseUrl: "postgresql://user:secret@db.example.com:5432/stoquify",
+      querySucceeded: true,
+      rows: [
+        completed(migrations[0], { checksum: "0".repeat(64) }),
+        completed({ name: "20260601000000_unknown", checksum: "1".repeat(64) }),
+      ],
+    });
+
+    expect(report.summary.status).toBe("blocked");
+    expect(report.blockers).toEqual(
+      expect.arrayContaining([
+        "applied_migration_checksums_match_repository",
+        "database_has_no_unknown_successful_migrations",
+      ]),
+    );
   });
 
   it("blocks missing, unknown, duplicate, and checksum-mismatched success rows", () => {

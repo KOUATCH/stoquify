@@ -26,6 +26,15 @@ describe("prisma local fresh bootstrap", () => {
     expect(target.searchParams.get("schema")).toBe("public")
   })
 
+  it("accepts a dedicated replay namespace", () => {
+    const target = resolveTarget({
+      databaseName: "stoquify_replay_control_plane",
+      sourceUrl: "postgresql://user:secret@localhost:5432/existing",
+      nodeEnv: "development",
+    })
+    expect(target.pathname).toBe("/stoquify_replay_control_plane")
+  })
+
   it("refuses production, remote hosts, and unsafe database names", () => {
     expect(() =>
       resolveTarget({

@@ -7,12 +7,12 @@ const dotenv = require("dotenv")
 const { Client } = require("pg")
 
 const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "::1", "[::1]"])
-const SAFE_DATABASE_NAME = /^stoquify_local_[a-z0-9_]+$/
+const SAFE_DATABASE_NAME = /^stoquify_(?:local|replay)_[a-z0-9_]+$/
 
 function parseArgs(argv = process.argv.slice(2)) {
   if (argv.length !== 2 || argv[0] !== "--database" || !argv[1]) {
     throw new Error(
-      "Usage: node scripts/prisma-local-fresh-bootstrap.js --database stoquify_local_<name>",
+      "Usage: node scripts/prisma-local-fresh-bootstrap.js --database stoquify_local_<name>|stoquify_replay_<name>",
     )
   }
   return { databaseName: argv[1] }
@@ -33,7 +33,7 @@ function resolveTarget({ databaseName, sourceUrl, nodeEnv = process.env.NODE_ENV
     throw new Error("Refusing local bootstrap while NODE_ENV=production")
   }
   if (!SAFE_DATABASE_NAME.test(databaseName)) {
-    throw new Error("Database name must match stoquify_local_[a-z0-9_]+")
+    throw new Error("Database name must match stoquify_local_* or stoquify_replay_*")
   }
 
   const target = new URL(sourceUrl)
@@ -103,6 +103,8 @@ if (require.main === module) {
 }
 
 module.exports = {
+  createNewDatabase,
+  deployMigrations,
   loadDatabaseUrl,
   parseArgs,
   resolveTarget,

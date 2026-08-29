@@ -6,19 +6,37 @@ const {
   buildPrismaMigrationReadiness,
   executeMigration,
   gateResultForReport,
+  preparePrismaMigrationReadiness,
   renderMarkdown,
   renderRiskReviewPacket,
   validateDatabaseTarget,
 } = require("../prisma-production-migration-gate");
+const {
+  buildCatalog,
+  writeManifest,
+} = require("../prisma-migration-catalog-gate");
 
-function makeRepo(sql = 'CREATE TABLE "example" ("id" TEXT PRIMARY KEY);\n') {
+function makeRepo(
+  sql = 'CREATE TABLE "example" ("id" TEXT PRIMARY KEY);\n',
+  migrationName = "20260711000000_example",
+) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "prisma-migration-gate-"));
-  const migration = "prisma/migrations/20260711000000_example/migration.sql";
+  const migration = `prisma/migrations/${migrationName}/migration.sql`;
   fs.mkdirSync(path.dirname(path.join(root, migration)), { recursive: true });
   fs.writeFileSync(path.join(root, migration), sql, "utf8");
   fs.writeFileSync(
     path.join(root, "prisma/migration-risk-approvals.json"),
     JSON.stringify({ version: 2, approvals: [] }),
+    "utf8",
+  );
+  fs.writeFileSync(
+    path.join(root, "prisma/migration-history-checksum-approvals.json"),
+    JSON.stringify({ version: 1, approvals: [] }),
+    "utf8",
+  );
+  fs.writeFileSync(
+    path.join(root, "prisma/migration-catalog-exceptions.json"),
+    JSON.stringify({ schemaVersion: 1, duplicateTimestampGroups: [] }),
     "utf8",
   );
   fs.writeFileSync(
@@ -39,13 +57,30 @@ function makeRepo(sql = 'CREATE TABLE "example" ("id" TEXT PRIMARY KEY);\n') {
     }),
     "utf8",
   );
+  writeManifest(root);
   return { root, migration };
+}
+
+function readyDeploymentHistory(root, pendingMigrationNames = []) {
+  const catalog = buildCatalog(root);
+  return {
+    summary: {
+      status: "ready",
+      repositoryMigrationCount: catalog.length,
+      completedRowCount: catalog.length - pendingMigrationNames.length,
+    },
+    database: { targetClass: "remote" },
+    query: { succeeded: true },
+    pendingMigrationNames,
+    blockers: [],
+  };
 }
 
 function approve(root, overrides = {}) {
   const report = buildPrismaMigrationReadiness(root, {
     environment: "local",
     environmentValues: {},
+    riskScope: "catalog",
   });
   const finding = report.findings[0];
   const approval = {
@@ -77,12 +112,13 @@ describe("Prisma production migration gate", () => {
     const report = buildPrismaMigrationReadiness(root, {
       environment: "local",
       environmentValues: {},
+      riskScope: "catalog",
     });
 
     expect(report.summary).toMatchObject({
       status: "ready",
-      readyCount: 9,
-      checkCount: 9,
+      readyCount: 10,
+      checkCount: 10,
       blockerCount: 0,
     });
     expect(report.deployment).toMatchObject({
@@ -134,6 +170,7 @@ describe("Prisma production migration gate", () => {
     const report = buildPrismaMigrationReadiness(root, {
       environment: "production",
       environmentValues,
+      deploymentHistory: readyDeploymentHistory(root),
     });
     const calls = [];
 
@@ -168,6 +205,7 @@ describe("Prisma production migration gate", () => {
     const report = buildPrismaMigrationReadiness(root, {
       environment: "production",
       environmentValues,
+      deploymentHistory: readyDeploymentHistory(root),
     });
     const runner = jest
       .fn()
@@ -193,6 +231,7 @@ describe("Prisma production migration gate", () => {
     const report = buildPrismaMigrationReadiness(root, {
       environment: "local",
       environmentValues: {},
+      riskScope: "catalog",
     });
 
     expect(report.findings).toEqual([
@@ -209,6 +248,7 @@ describe("Prisma production migration gate", () => {
     const approved = buildPrismaMigrationReadiness(root, {
       environment: "local",
       environmentValues: {},
+      riskScope: "catalog",
     });
     expect(approved.summary.status).toBe("ready");
     expect(approved.findings[0].approved).toBe(true);
@@ -221,6 +261,7 @@ describe("Prisma production migration gate", () => {
     const changed = buildPrismaMigrationReadiness(root, {
       environment: "local",
       environmentValues: {},
+      riskScope: "catalog",
     });
     expect(changed.blockers).toEqual(
       expect.arrayContaining([
@@ -239,6 +280,7 @@ describe("Prisma production migration gate", () => {
     const report = buildPrismaMigrationReadiness(root, {
       environment: "local",
       environmentValues: {},
+      riskScope: "catalog",
     });
 
     expect(report.findings[0].approvalStatus).toBe("approved");
@@ -252,6 +294,7 @@ describe("Prisma production migration gate", () => {
     const report = buildPrismaMigrationReadiness(root, {
       environment: "local",
       environmentValues: {},
+      riskScope: "catalog",
     });
 
     expect(report.findings).toHaveLength(2);
@@ -283,6 +326,7 @@ describe("Prisma production migration gate", () => {
     const report = buildPrismaMigrationReadiness(root, {
       environment: "local",
       environmentValues: {},
+      riskScope: "catalog",
     });
 
     expect(report.findings[0]).toMatchObject({
@@ -307,6 +351,7 @@ describe("Prisma production migration gate", () => {
       environment: "local",
       environmentValues: {},
       now: "2026-07-13T00:00:00Z",
+      riskScope: "catalog",
     });
 
     expect(report.findings[0].approvalStatus).toBe("stale");
@@ -327,6 +372,7 @@ describe("Prisma production migration gate", () => {
     const report = buildPrismaMigrationReadiness(root, {
       environment: "local",
       environmentValues: {},
+      riskScope: "catalog",
     });
 
     expect(report.findings[0].approved).toBe(false);
@@ -345,6 +391,7 @@ describe("Prisma production migration gate", () => {
     const report = buildPrismaMigrationReadiness(root, {
       environment: "local",
       environmentValues: {},
+      riskScope: "catalog",
     });
     const packet = renderRiskReviewPacket(report);
 
@@ -355,6 +402,134 @@ describe("Prisma production migration gate", () => {
     expect(packet).toContain("The generator never writes");
     expect(packet).toContain(report.findings[0].findingSha256);
     expect(report.summary.approvedRiskCount).toBe(0);
+  });
+
+  it("keeps historical destructive SQL visible without blocking a target that already applied it", () => {
+    const sql = 'DROP TABLE "auth_sessions";\n';
+    const { root } = makeRepo(sql);
+    const environmentValues = {
+      DATABASE_URL:
+        "postgresql://user:production-secret@db.example.com:5432/stoquify",
+    };
+
+    const report = buildPrismaMigrationReadiness(root, {
+      environment: "production",
+      environmentValues,
+      deploymentHistory: readyDeploymentHistory(root),
+    });
+
+    expect(report.summary.status).toBe("ready");
+    expect(report.riskScope).toMatchObject({
+      mode: "target_pending",
+      pendingMigrationCount: 0,
+    });
+    expect(report.findings).toEqual([]);
+    expect(report.catalogFindings).toHaveLength(1);
+    expect(report.blockers).not.toContain(
+      "destructive_sql_is_exact_hash_approved",
+    );
+  });
+
+  it("queries target history before authorizing a production deploy", async () => {
+    const sql = 'DROP TABLE "auth_sessions";\n';
+    const { root } = makeRepo(sql);
+    const environmentValues = {
+      DATABASE_URL:
+        "postgresql://user:production-secret@db.example.com:5432/stoquify",
+    };
+    const historyQuery = jest.fn(async () => ({
+      succeeded: true,
+      errorCode: null,
+      rows: buildCatalog(root).map((migration) => ({
+        migration_name: migration.name,
+        checksum: migration.rawSha256,
+        started_at: "2026-08-28T00:00:00.000Z",
+        finished_at: "2026-08-28T00:00:01.000Z",
+        rolled_back_at: null,
+        applied_steps_count: 1,
+      })),
+    }));
+
+    const report = await preparePrismaMigrationReadiness(root, {
+      environment: "production",
+      environmentValues,
+      historyQuery,
+    });
+
+    expect(historyQuery).toHaveBeenCalledWith(environmentValues.DATABASE_URL);
+    expect(report.summary.status).toBe("ready");
+    expect(report.targetHistory).toMatchObject({
+      status: "ready",
+      querySucceeded: true,
+      pendingMigrationNames: [],
+    });
+    expect(JSON.stringify(report)).not.toContain("production-secret");
+  });
+
+  it("blocks the same destructive SQL when it is pending on the selected target", () => {
+    const sql = 'DROP TABLE "auth_sessions";\n';
+    const { root, migration } = makeRepo(sql);
+    const migrationName = migration.split("/")[2];
+    const environmentValues = {
+      DATABASE_URL:
+        "postgresql://user:production-secret@db.example.com:5432/stoquify",
+    };
+
+    const report = buildPrismaMigrationReadiness(root, {
+      environment: "production",
+      environmentValues,
+      deploymentHistory: readyDeploymentHistory(root, [migrationName]),
+    });
+
+    expect(report.findings).toHaveLength(1);
+    expect(report.blockers).toContain("destructive_sql_is_exact_hash_approved");
+  });
+
+  it("never automatically executes the baseline bridge on an existing database", () => {
+    const baselineName =
+      "20260611130000_accounting_auth_baseline_bridge";
+    const { root } = makeRepo(
+      'DROP TABLE "auth_sessions";\n',
+      baselineName,
+    );
+    const priorTarget = path.join(
+      root,
+      "prisma/migrations/20260528124341_refine_item_barcode/migration.sql",
+    );
+    fs.mkdirSync(path.dirname(priorTarget), { recursive: true });
+    fs.writeFileSync(priorTarget, "SELECT 1;\n", "utf8");
+    writeManifest(root);
+    const environmentValues = {
+      DATABASE_URL:
+        "postgresql://user:production-secret@db.example.com:5432/stoquify",
+    };
+
+    const report = buildPrismaMigrationReadiness(root, {
+      environment: "production",
+      environmentValues,
+      deploymentHistory: readyDeploymentHistory(root, [baselineName]),
+    });
+
+    expect(report.baselinePath).toMatchObject({
+      selected: "resolve_existing_manual_only",
+      automaticExecutionAllowed: false,
+    });
+    expect(report.blockers).toContain("baseline_bridge_manual_adoption_required");
+  });
+
+  it("uses the immutable manifest delta for non-deployment safety checks", () => {
+    const sql = 'DROP TABLE "auth_sessions";\n';
+    const { root } = makeRepo(sql);
+
+    const report = buildPrismaMigrationReadiness(root, {
+      environment: "local",
+      environmentValues: {},
+    });
+
+    expect(report.summary.status).toBe("ready");
+    expect(report.riskScope.mode).toBe("unmanifested_catalog_delta");
+    expect(report.findings).toEqual([]);
+    expect(report.catalogFindings).toHaveLength(1);
   });
 
   it("requires explicit isolated-target attestation for forced preview deploys", () => {

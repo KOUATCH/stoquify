@@ -5,8 +5,6 @@ const fs = require("fs");
 const path = require("path");
 const { Client } = require("pg");
 
-require("dotenv").config();
-
 const DEFAULT_MARKDOWN_OUT = "what-next/prisma-migration-history-health.md";
 const DEFAULT_JSON_OUT = "what-next/prisma-migration-history-health.json";
 const CHECKSUM_APPROVALS_FILE =
@@ -320,6 +318,36 @@ function buildMigrationHistoryHealth(root = process.cwd(), options = {}) {
   };
 }
 
+function buildMigrationDeploymentHistory(root = process.cwd(), options = {}) {
+  const report = buildMigrationHistoryHealth(root, options);
+  const checks = report.checks.map((check) =>
+    check.id === "all_repository_migrations_successfully_applied"
+      ? {
+          id: "target_pending_migration_set_calculated",
+          ready: report.query.succeeded,
+        }
+      : check,
+  );
+  const blockers = checks
+    .filter((check) => !check.ready)
+    .map((check) => check.id);
+  return {
+    ...report,
+    summary: {
+      ...report.summary,
+      phase: "pre_deploy",
+      status: blockers.length ? "blocked" : "ready",
+      checkCount: checks.length,
+      readyCount: checks.filter((check) => check.ready).length,
+      blockerCount: blockers.length,
+      pendingMigrationCount: report.findings.missing.length,
+    },
+    checks,
+    blockers,
+    pendingMigrationNames: report.findings.missing,
+  };
+}
+
 function renderMarkdown(report) {
   return [
     "# Prisma Migration History Health",
@@ -441,6 +469,7 @@ async function queryHistoryRows(
 }
 
 async function main() {
+  require("dotenv").config();
   const options = parseArgs();
   const root = path.resolve(options.root);
   const databaseUrl = expandDatabaseUrl();
@@ -465,6 +494,7 @@ if (require.main === module) {
 }
 
 module.exports = {
+  buildMigrationDeploymentHistory,
   buildMigrationHistoryHealth,
   classifyTarget,
   expandDatabaseUrl,
